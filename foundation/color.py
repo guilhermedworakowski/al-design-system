@@ -70,7 +70,10 @@ STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
 BRAND_HOVER = '#EA4900'
 L_LADDER = {
     50: 0.977, 100: 0.950, 200: 0.908, 300: 0.852, 400: 0.768,
-    500: 0.666, 600: 0.552, 700: 0.452, 800: 0.362, 900: 0.282, 950: 0.208,
+    # 600 e calibrado, nao escolhido: e o L mais claro em que o cinza acromatico
+    # ainda da 4.5:1 contra neutral-50. Com o neutro frio antigo cabia 0.552;
+    # sem o chroma a luminancia sobe e o degrau precisou escurecer.
+    500: 0.666, 600: 0.550, 700: 0.452, 800: 0.362, 900: 0.282, 950: 0.208,
 }
 # curva de chroma relativa ao pico da familia
 C_REL = {
@@ -86,10 +89,12 @@ FAMILIES = {
     'green':   dict(hue=148.0, peak=0.185, drift={50: 6, 100: 5, 200: 3, 300: 1, 400: 0, 500: 0, 600: -2, 700: -4, 800: -5, 900: -6, 950: -6}),
     'blue':    dict(hue=252.0, peak=0.200, drift={50: -6, 100: -5, 200: -3, 300: -2, 400: -1, 500: 0, 600: 1, 700: 2, 800: 3, 900: 4, 950: 5}),
 }
-# neutro frio: chroma baixa e quase constante (nao segue C_REL)
-NEUTRAL_HUE = 264.0
-NEUTRAL_C = {50: 0.004, 100: 0.006, 200: 0.008, 300: 0.010, 400: 0.012, 500: 0.013,
-             600: 0.014, 700: 0.014, 800: 0.014, 900: 0.014, 950: 0.014}
+# neutro acromatico: preto/cinza puro, chroma zero em toda a rampa.
+# A marca trocou o cinza frio (hue 264) por uma escala neutra de verdade -
+# os swatches novos da pagina Assets vem com r=g=b. Com C=0 o hue nao tem
+# efeito nenhum; a constante fica so para nao quebrar quem a importa.
+NEUTRAL_HUE = 0.0
+NEUTRAL_C = {s: 0.0 for s in STEPS}
 
 def build():
     scales = {}

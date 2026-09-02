@@ -41,12 +41,12 @@ def brand_window():
     BH = T['color']['brandHover']
     TRACKS = [
         ("tema claro", "tela branca", [(O['500'], "rest", "orange-500"), (O['600'], "hover", "orange-600"), (O['700'], "pressed", "orange-700")]),
-        ("tema escuro", "tela #15181E", [(O['500'], "rest", "orange-500"), (BH, "hover", "orange-550"), (O['600'], "pressed", "orange-600")]),
+        ("tema escuro", "tela #181818", [(O['500'], "rest", "orange-500"), (BH, "hover", "orange-550"), (O['600'], "pressed", "orange-600")]),
     ]
     x0, x1, W = 3.0, 8.5, 880.0
     def X(v): return 132 + (v - x0) / (x1 - x0) * (W - 172)
     s = [f'<svg viewBox="0 0 {int(W)} 210" class="winsvg" role="img" '
-         f'aria-label="Contraste do label branco em cada estado do botão primário, nos dois temas, contra a linha de 4.5 para 1 do AA">']
+         f'aria-label="Contraste do texto branco sobre cada estado do preenchimento de marca, nos dois temas, contra a linha de 4.5 para 1 do AA">']
     # faixa de excecao
     s.append(f'<rect x="{X(3.0):.1f}" y="30" width="{X(4.5)-X(3.0):.1f}" height="128" class="win-exc"/>')
     s.append(f'<line x1="{X(4.5):.1f}" y1="30" x2="{X(4.5):.1f}" y2="158" class="win-bound"/>')
@@ -63,12 +63,12 @@ def brand_window():
             s.append(f'<circle cx="{X(v):.1f}" cy="{y:.0f}" r="10" fill="{hexv}" class="win-dot"/>')
             s.append(f'<text x="{X(v):.1f}" y="{y-17:.0f}" class="win-name" text-anchor="middle">{state}</text>')
             s.append(f'<text x="{X(v):.1f}" y="{y+26:.0f}" class="win-role{"" if ok else " bad"}" text-anchor="middle">{v:.2f}:1</text>')
-    s.append(f'<text x="{X(x0):.1f}" y="196" class="win-axis">contraste do label branco sobre o preenchimento →</text>')
+    s.append(f'<text x="{X(x0):.1f}" y="196" class="win-axis">contraste do texto branco sobre o preenchimento de marca →</text>')
     s.append('</svg>')
     return ''.join(s)
 
 # ---------- semanticos ----------
-GROUPS = [('bg/', 'Superfície e preenchimento'), ('text/', 'Texto'), ('border/', 'Borda')]
+GROUPS = [('bg-', 'Superfície e preenchimento'), ('text-', 'Texto'), ('border-', 'Borda')]
 def semantic_tables():
     out = []
     for prefix, title in GROUPS:
@@ -150,134 +150,39 @@ def elevation_scale():
     return ''.join(out)
 
 
-# ---------- matriz do botao nos dois temas ----------
-ICON = {
- "plus": "M12 5v14M5 12h14",
- "arrow-right": "M5 12h14M12 5l7 7-7 7",
-}
-def glyph(d, px=16):
-    return (f'<svg class="ico" style="width:{px}px;height:{px}px" viewBox="0 0 24 24" fill="none" '
-            f'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" '
-            f'aria-hidden="true"><path d="{d}"/></svg>')
-def spinner(px=16):
-    return (f'<svg class="ico spin" style="width:{px}px;height:{px}px" viewBox="0 0 24 24" fill="none" '
-            f'stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">'
-            f'<path d="M12 3a9 9 0 1 0 9 9"/></svg>')
-SPIN = spinner(16)
-SPIN20 = spinner(20)
-
-def button_matrix():
-    STATES = ["rest", "hover", "pressed"]
-    def panel(i, label):
-        g = lambda k: SEM[k][i]
-        GROUPS = [
-            ("Primary",   "ação principal da tela",  [g('bg/brand'), g('bg/brand-hover'), g('bg/brand-active')], g('text/on-brand'), None, "shadow"),
-            ("Secondary", "ações menos relevantes",  [None, g('bg/hover'), g('bg/active')], g('text/primary'), g('border/strong'), "inset"),
-            ("Ghost",     "ação terciária",          [None, g('bg/hover'), g('bg/active')], g('text/primary'), None, "outset"),
-            ("Danger",    "ação destrutiva",         [g('bg/danger'), g('bg/danger-hover'), g('bg/danger-active')], g('text/on-solid'), None, "shadow"),
-        ]
-        out = [f'<div class="bm" style="background:{g("bg/canvas")};border-color:{g("border/subtle")}">'
-               f'<div class="bm-tag" style="color:{g("text/secondary")};border-color:{g("border/subtle")}">{label}</div>'
-               f'<div class="bm-body">']
-        for name, use, fills, inkc, brd, focus in GROUPS:
-            out.append(f'<div class="bm-grp"><span class="bm-name" style="color:{g("text/primary")}">{name}'
-                       f'<span class="bm-use" style="color:{g("text/secondary")}">{use}</span></span><div class="bm-row">')
-            ratios = []
-            for st, bgc in zip(STATES, fills):
-                base = bgc or g('bg/canvas')
-                ratios.append(f'{st} {cr(inkc, base):.2f}:1')
-                style = f'background:{bgc or "transparent"};color:{inkc}'
-                if brd: style += f';box-shadow:inset 0 0 0 1px {brd}'
-                out.append(f'<div class="bm-cell"><button class="bm-btn" style="{style}">Button</button>'
-                           f'<span class="bm-lab" style="color:{g("text/secondary")}">{st}</span></div>')
-            # o foco muda de mecanismo conforme haja ou nao preenchimento
-            if focus == "shadow":
-                fs = f'0 0 0 2px {g("bg/canvas")}, 0 0 0 4px {g("border/focus")}'
-            elif focus == "inset":
-                fs = f'inset 0 0 0 2px {g("border/focus")}'
-            else:
-                fs = f'0 0 0 2px {g("border/focus")}'
-            out.append(f'<div class="bm-cell"><button class="bm-btn" style="background:{fills[0] or "transparent"};'
-                       f'color:{inkc};box-shadow:{fs}">Button</button>'
-                       f'<span class="bm-lab" style="color:{g("text/secondary")}">focus</span></div>')
-            below = [1 for _, bgc in zip(STATES, fills) if cr(inkc, bgc or g('bg/canvas')) < 4.5]
-            tone = g('text/warning') if below else g('text/secondary')
-            note = ' · '.join(ratios) + ('   ← abaixo de 4.5:1' if below else '')
-            out.append(f'</div><span class="bm-note" style="color:{tone}">{note}</span></div>')
-
-        # slots de icone e loading
-        out.append(f'<div class="bm-grp"><span class="bm-name" style="color:{g("text/primary")}">Ícone e loading</span><div class="bm-row">')
-        for content, lab in [
-            (glyph(ICON["plus"]) + "<span>Button</span>", "icon left"),
-            ("<span>Button</span>" + glyph(ICON["arrow-right"]), "icon right"),
-            (glyph(ICON["plus"]) + "<span>Button</span>" + glyph(ICON["arrow-right"]), "ambos"),
-            (SPIN + "<span>Button</span>", "loading"),
-        ]:
-            out.append(f'<div class="bm-cell"><button class="bm-btn ico-btn" '
-                       f'style="background:{g("bg/brand")};color:{g("text/on-brand")}">{content}</button>'
-                       f'<span class="bm-lab" style="color:{g("text/secondary")}">{lab}</span></div>')
-        out.append(f'</div><span class="bm-note" style="color:{g("text/secondary")}">'
-                   f'o glifo herda a cor do label — currentColor no código, modo de variável no Figma</span></div>')
-
-        # icon-only: quadrado, glifo de 20px, nome acessivel obrigatorio
-        SQ = [("Primary", g('bg/brand'), g('text/on-brand'), None),
-              ("Secondary", None, g('text/primary'), g('border/strong')),
-              ("Ghost", None, g('text/primary'), None),
-              ("Danger", g('bg/danger'), g('text/on-solid'), None)]
-        out.append(f'<div class="bm-grp"><span class="bm-name" style="color:{g("text/primary")}">Icon only'
-                   f'<span class="bm-use" style="color:{g("text/secondary")}">ícone inequívoco sozinho</span></span><div class="bm-row">')
-        for nm, bgc, inkc, brd in SQ:
-            style = f'background:{bgc or "transparent"};color:{inkc}'
-            if brd: style += f';box-shadow:inset 0 0 0 1px {brd}'
-            out.append(f'<div class="bm-cell"><button class="bm-btn sq" style="{style}" aria-label="Adicionar">'
-                       f'{glyph(ICON["plus"], 20)}</button>'
-                       f'<span class="bm-lab" style="color:{g("text/secondary")}">{nm.lower()}</span></div>')
-        out.append(f'<div class="bm-cell"><button class="bm-btn sq" aria-label="Adicionar" '
-                   f'style="background:{g("bg/brand")};color:{g("text/on-brand")};'
-                   f'box-shadow:0 0 0 2px {g("bg/canvas")}, 0 0 0 4px {g("border/focus")}">{glyph(ICON["plus"], 20)}</button>'
-                   f'<span class="bm-lab" style="color:{g("text/secondary")}">focus</span></div>')
-        out.append(f'<div class="bm-cell"><button class="bm-btn sq" aria-label="Carregando" '
-                   f'style="background:{g("bg/brand")};color:{g("text/on-brand")}">{SPIN20}</button>'
-                   f'<span class="bm-lab" style="color:{g("text/secondary")}">loading</span></div>')
-        out.append(f'</div><span class="bm-note" style="color:{g("text/secondary")}">'
-                   f'32 / 40 / 48 quadrados — todos acima do mínimo 24x24 da WCAG 2.2</span></div>')
-        out.append('</div></div>')
-        return ''.join(out)
-    return f'<div class="btn-matrix">{panel(0, "tema claro")}{panel(1, "tema escuro")}</div>'
-
 # ---------- componentes de prova, renderizados nos dois temas ----------
 def proof():
     def panel(i, label):
         g = lambda k: SEM[k][i]
         bh = T['color']['brandHover'] if i == 0 else P['orange']['400']
         return f'''
-<div class="panel" style="background:{g('bg/canvas')};border-color:{g('border/subtle')}">
-  <div class="panel-tag" style="color:{g('text/secondary')};border-color:{g('border/subtle')}">{label}</div>
+<div class="panel" style="background:{g('bg-canvas')};border-color:{g('border-subtle')}">
+  <div class="panel-tag" style="color:{g('text-secondary')};border-color:{g('border-subtle')}">{label}</div>
   <div class="panel-body">
     <div class="btn-row">
-      <button class="pb" style="background:{g('bg/brand')};color:{g('text/on-brand')}">Publicar</button>
-      <button class="pb" style="background:{bh};color:{g('text/on-brand')}">Publicar<span class="st">hover</span></button>
-      <button class="pb" style="background:{g('bg/danger')};color:{g('text/on-solid')}">Excluir</button>
-      <button class="pb ghost" style="color:{g('text/primary')};border-color:{g('border/strong')}">Cancelar</button>
+      <button class="pb" style="background:{g('bg-brand')};color:{g('text-on-brand')}">Publicar</button>
+      <button class="pb" style="background:{bh};color:{g('text-on-brand')}">Publicar<span class="st">hover</span></button>
+      <button class="pb" style="background:{g('bg-danger')};color:{g('text-on-solid')}">Excluir</button>
+      <button class="pb ghost" style="color:{g('text-primary')};border-color:{g('border-strong')}">Cancelar</button>
     </div>
     <div class="fld">
-      <label style="color:{g('text/primary')}">Nome do projeto</label>
-      <div class="inp" style="border-color:{g('border/strong')};background:{g('bg/canvas')};color:{g('text/placeholder')}">design-system</div>
+      <label style="color:{g('text-primary')}">Nome do projeto</label>
+      <div class="inp" style="border-color:{g('border-strong')};background:{g('bg-canvas')};color:{g('text-placeholder')}">design-system</div>
     </div>
     <div class="fld">
-      <label style="color:{g('text/primary')}">Slug</label>
-      <div class="inp focus" style="border-color:{g('border/focus')};background:{g('bg/canvas')};color:{g('text/primary')};box-shadow:0 0 0 2px {g('bg/canvas')}, 0 0 0 4px {g('border/focus')}">al-ds</div>
+      <label style="color:{g('text-primary')}">Slug</label>
+      <div class="inp focus" style="border-color:{g('border-focus')};background:{g('bg-canvas')};color:{g('text-primary')};box-shadow:0 0 0 2px {g('bg-canvas')}, 0 0 0 4px {g('border-focus')}">al-ds</div>
     </div>
     <div class="fld">
-      <label style="color:{g('text/danger')}">E-mail</label>
-      <div class="inp" style="border-color:{g('border/danger')};background:{g('bg/canvas')};color:{g('text/primary')}">guilherme@</div>
-      <span class="help" style="color:{g('text/danger')}">Falta o domínio depois do @.</span>
+      <label style="color:{g('text-danger')}">E-mail</label>
+      <div class="inp" style="border-color:{g('border-danger')};background:{g('bg-canvas')};color:{g('text-primary')}">guilherme@</div>
+      <span class="help" style="color:{g('text-danger')}">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:{g('bg/success-subtle')};border-color:{g('border/success')};color:{g('text/success')}"><b>Publicado.</b> A versão 0.1.0 está disponível.</div>
-      <div class="bn" style="background:{g('bg/warning-subtle')};border-color:{g('border/warning')};color:{g('text/warning')}"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
-      <div class="bn" style="background:{g('bg/danger-subtle')};border-color:{g('border/danger')};color:{g('text/danger')}"><b>Contraste reprovado.</b> 1 par abaixo de 4.5:1.</div>
-      <div class="bn" style="background:{g('bg/info-subtle')};border-color:{g('border/info')};color:{g('text/info')}"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
+      <div class="bn" style="background:{g('bg-success-subtle')};border-color:{g('border-success')};color:{g('text-success')}"><b>Publicado.</b> A versão 0.1.0 está disponível.</div>
+      <div class="bn" style="background:{g('bg-warning-subtle')};border-color:{g('border-warning')};color:{g('text-warning')}"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
+      <div class="bn" style="background:{g('bg-danger-subtle')};border-color:{g('border-danger')};color:{g('text-danger')}"><b>Contraste reprovado.</b> 1 par abaixo de 4.5:1.</div>
+      <div class="bn" style="background:{g('bg-info-subtle')};border-color:{g('border-info')};color:{g('text-info')}"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
     </div>
   </div>
 </div>'''
@@ -287,32 +192,32 @@ def proof():
 g = lambda k, i: SEM[k][i]
 CSS = f'''
 :root {{
-  --canvas:{g('bg/canvas',0)}; --surface:{g('bg/surface',0)}; --subtle:{g('bg/subtle',0)};
-  --ink:{g('text/primary',0)}; --ink2:{g('text/secondary',0)}; --ink3:{N['500']};
-  --line:{g('border/subtle',0)}; --line2:{g('border/default',0)};
-  --brand:{P['orange']['500']}; --brand-ink:{g('text/brand',0)}; --on-brand:{g('text/on-brand',0)};
-  --ok:{g('text/success',0)}; --ok-bg:{g('bg/success-subtle',0)};
-  --warn:{g('text/warning',0)}; --warn-bg:{g('bg/warning-subtle',0)};
+  --canvas:{g('bg-canvas',0)}; --surface:{g('bg-surface',0)}; --subtle:{g('bg-subtle',0)};
+  --ink:{g('text-primary',0)}; --ink2:{g('text-secondary',0)}; --ink3:{N['500']};
+  --line:{g('border-subtle',0)}; --line2:{g('border-default',0)};
+  --brand:{P['orange']['500']}; --brand-ink:{g('text-brand',0)}; --on-brand:{g('text-on-brand',0)};
+  --ok:{g('text-success',0)}; --ok-bg:{g('bg-success-subtle',0)};
+  --warn:{g('text-warning',0)}; --warn-bg:{g('bg-warning-subtle',0)};
   --sans:'Inter','Inter var',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
 }}
 @media (prefers-color-scheme: dark) {{
   :root:not([data-theme="light"]) {{
-    --canvas:{g('bg/canvas',1)}; --surface:{g('bg/surface',1)}; --subtle:{g('bg/subtle',1)};
-    --ink:{g('text/primary',1)}; --ink2:{g('text/secondary',1)}; --ink3:{N['500']};
-    --line:{g('border/subtle',1)}; --line2:{g('border/default',1)};
-    --brand-ink:{g('text/brand',1)}; --ok:{g('text/success',1)}; --ok-bg:{g('bg/success-subtle',1)};
-    --warn:{g('text/warning',1)}; --warn-bg:{g('bg/warning-subtle',1)};
-    --warn:{g('text/warning',1)}; --warn-bg:{g('bg/warning-subtle',1)};
+    --canvas:{g('bg-canvas',1)}; --surface:{g('bg-surface',1)}; --subtle:{g('bg-subtle',1)};
+    --ink:{g('text-primary',1)}; --ink2:{g('text-secondary',1)}; --ink3:{N['500']};
+    --line:{g('border-subtle',1)}; --line2:{g('border-default',1)};
+    --brand-ink:{g('text-brand',1)}; --ok:{g('text-success',1)}; --ok-bg:{g('bg-success-subtle',1)};
+    --warn:{g('text-warning',1)}; --warn-bg:{g('bg-warning-subtle',1)};
+    --warn:{g('text-warning',1)}; --warn-bg:{g('bg-warning-subtle',1)};
   }}
 }}
 :root[data-theme="dark"] {{
-  --canvas:{g('bg/canvas',1)}; --surface:{g('bg/surface',1)}; --subtle:{g('bg/subtle',1)};
-  --ink:{g('text/primary',1)}; --ink2:{g('text/secondary',1)}; --ink3:{N['500']};
-  --line:{g('border/subtle',1)}; --line2:{g('border/default',1)};
-  --brand-ink:{g('text/brand',1)}; --ok:{g('text/success',1)}; --ok-bg:{g('bg/success-subtle',1)};
-    --warn:{g('text/warning',1)}; --warn-bg:{g('bg/warning-subtle',1)};
-    --warn:{g('text/warning',1)}; --warn-bg:{g('bg/warning-subtle',1)};
+  --canvas:{g('bg-canvas',1)}; --surface:{g('bg-surface',1)}; --subtle:{g('bg-subtle',1)};
+  --ink:{g('text-primary',1)}; --ink2:{g('text-secondary',1)}; --ink3:{N['500']};
+  --line:{g('border-subtle',1)}; --line2:{g('border-default',1)};
+  --brand-ink:{g('text-brand',1)}; --ok:{g('text-success',1)}; --ok-bg:{g('bg-success-subtle',1)};
+    --warn:{g('text-warning',1)}; --warn-bg:{g('bg-warning-subtle',1)};
+    --warn:{g('text-warning',1)}; --warn-bg:{g('bg-warning-subtle',1)};
 }}
 
 * {{ box-sizing:border-box; }}
@@ -406,27 +311,6 @@ table.tok tr:last-child td {{ border-bottom:0; }}
 .pass, .exc {{ display:inline-block; font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:0.04em;
   padding:2px 6px; border-radius:4px; background:var(--ok-bg); color:var(--ok); white-space:nowrap; }}
 .exc {{ background:var(--warn-bg); color:var(--warn); }}
-.btn-matrix {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(330px,1fr)); gap:20px; }}
-.bm {{ border:1px solid; border-radius:14px; overflow:hidden; }}
-.bm-tag {{ font-family:var(--mono); font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase;
-  padding:11px 20px; border-bottom:1px solid; }}
-.bm-body {{ padding:22px 20px; display:flex; flex-direction:column; gap:20px; }}
-.bm-grp {{ display:flex; flex-direction:column; gap:9px; }}
-.bm-name {{ font-size:12px; font-weight:600; }}
-.bm-row {{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }}
-.bm-cell {{ display:flex; flex-direction:column; gap:5px; align-items:center; }}
-.bm-btn {{ font-family:var(--sans); font-size:14px; font-weight:500; line-height:20px; height:40px;
-  padding:0 16px; border-radius:8px; border:0; display:inline-flex; align-items:center; }}
-.bm-lab {{ font-family:var(--mono); font-size:9.5px; }}
-.bm-use {{ font-family:var(--mono); font-size:9.5px; font-weight:400; margin-left:8px; }}
-.bm-btn.ico-btn {{ gap:8px; }}
-.bm-btn.sq {{ width:40px; padding:0; justify-content:center; }}
-.ico {{ width:16px; height:16px; flex:none; }}
-.spin {{ animation:sp 0.8s linear infinite; }}
-@keyframes sp {{ to {{ transform:rotate(360deg); }} }}
-@media (prefers-reduced-motion: reduce) {{ .spin {{ animation:none; }} }}
-.bm-note {{ font-family:var(--mono); font-size:10px; }}
-
 /* ---- tipografia ---- */
 .specimens {{ display:flex; flex-direction:column; }}
 .spec {{ padding:20px 0; border-bottom:1px solid var(--line); }}
@@ -497,7 +381,7 @@ a {{ color:var(--brand-ink); }}
 }}
 '''
 
-NAV = [('decisoes','Decisões'),('escada','Escada'),('primitivas','Primitivas'),('janela','Custo do label'),('button','Button'),
+NAV = [('decisoes','Decisões'),('escada','Escada'),('primitivas','Primitivas'),('janela','Custo do label'),
        ('semanticos','Semânticos'),('contraste','Contraste'),('tipografia','Tipografia'),
        ('medidas','Medidas'),('elevacao','Elevação'),('prova','Prova')]
 
@@ -534,10 +418,10 @@ HTML = f'''<title>AL Design System Foundation</title>
   numa contribuição, então estão registradas antes dos valores.</p>
   <div class="scroll-x"><table class="tok"><tbody>
     <tr><td class="tok-name">âncora</td><td><b>#FC5000 é imutável.</b> Ela fixa L 0.666 na escada compartilhada. Mudar a âncora é mudar a marca inteira.</td></tr>
-    <tr><td class="tok-name">label</td><td><b>O botão primário usa texto claro.</b> Branco sobre #FC5000 dá 3.34:1 — abaixo dos 4.5:1 de texto normal, acima dos 3:1 de texto grande e de elemento não-textual. É uma escolha de identidade, tomada com o número na mão.</td></tr>
-    <tr><td class="tok-name">neutro</td><td><b>O cinza é frio e constante</b> — hue 264° em toda a rampa, chroma entre 0.004 e 0.014. Nunca cinza puro no meio e azulado nas pontas.</td></tr>
+    <tr><td class="tok-name">label</td><td><b>Texto claro sobre a marca.</b> Branco sobre #FC5000 dá 3.34:1 — abaixo dos 4.5:1 de texto normal, acima dos 3:1 de texto grande e de elemento não-textual. É uma escolha de identidade, tomada com o número na mão.</td></tr>
+    <tr><td class="tok-name">neutro</td><td><b>O cinza é acromático.</b> Chroma zero em toda a rampa — preto e cinza puros, <code>r = g = b</code> em todos os onze degraus. A escala fria anterior (hue 264°) saiu junto com a atualização da marca.</td></tr>
     <tr><td class="tok-name">escuro</td><td><b>O tema escuro não é inversão.</b> Sólidos vão para o degrau 500 com texto escuro, tonalizados de 100 para 950, e elevação troca sombra por superfície que clareia.</td></tr>
-    <tr><td class="tok-name">portão</td><td><b>Contraste é build gate.</b> Os 70 pares rodam a cada alteração de cor. Um par abaixo do mínimo quebra o build — nunca se afrouxa o mínimo.</td></tr>
+    <tr><td class="tok-name">portão</td><td><b>Contraste é build gate.</b> Os 72 pares rodam a cada alteração de cor. Um par abaixo do mínimo quebra o build — nunca se afrouxa o mínimo.</td></tr>
   </tbody></table></div>
 </section>
 
@@ -549,7 +433,7 @@ HTML = f'''<title>AL Design System Foundation</title>
   A escada é comprimida nas duas pontas: os degraus claros ficam próximos porque é onde vivem superfície
   e borda, e os escuros também, porque é onde vive a elevação do tema escuro.</p>
   <div class="callout"><p><b>Por que 0.666 importa mais do que parece.</b> Um cinza nessa lightness dá
-  exatamente 3.04:1 contra o branco — o piso do WCAG para elemento não-textual. A âncora de marca caiu,
+  exatamente 3.03:1 contra o branco — o piso do WCAG para elemento não-textual. A âncora de marca caiu,
   por coincidência, na fronteira exata entre "serve como borda" e "não serve". Todo o resto do sistema
   se organiza em volta desse ponto.</p></div>
 </section>
@@ -557,9 +441,11 @@ HTML = f'''<title>AL Design System Foundation</title>
 <section id="primitivas">
   <h2>Primitivas</h2>
   <p class="sec-note">66 cores em 6 famílias, mais um degrau extra na marca. O número pequeno em cada
-  amostra é o contraste contra o branco. Os quatro laranjas originais do Figma sobreviveram à
-  regularização: <code>#FFBDA0</code>, <code>#FC5000</code>, <code>#992700</code> e <code>#4A1700</code>
-  caem dentro de 0.011 de lightness dos seus degraus.</p>
+  amostra é o contraste contra o branco. A rampa é conferida contra os swatches da página
+  <code>Assets</code> do Figma, que é a fonte da verdade da marca: <code>#FC5000</code> é reproduzido
+  exato no degrau 500, os outros quatro laranjas caem dentro de 0.024 de lightness dos seus degraus, e
+  no neutro o <code>#EEEEEE</code> da marca coincide com <code>neutral-100</code> na terceira casa
+  decimal — a escada já estava onde a marca foi parar.</p>
   {swatch_grid()}
   <div class="callout">
     <p><b>Como o vermelho e o amarelo fogem da marca.</b> O laranja está em hue 38°. O amarelo de warning
@@ -574,14 +460,14 @@ HTML = f'''<title>AL Design System Foundation</title>
 </section>
 
 <section id="janela">
-  <h2>O que o label claro custa, medido</h2>
-  <p class="sec-note">O botão primário usa label branco — decisão de identidade. Branco sobre
+  <h2>O que o texto claro sobre a marca custa, medido</h2>
+  <p class="sec-note">Superfície de marca carrega texto branco — decisão de identidade. Branco sobre
   <code>#FC5000</code> dá <b>3.34:1</b>: fica abaixo dos 4.5:1 que a WCAG exige de texto normal e acima
   dos 3:1 que ela exige de texto grande e de elemento não-textual. O sistema não esconde isso; ele mede,
   nomeia e mostra onde cada estado cai.</p>
   {brand_window()}
   <div class="callout">
-    <p><b>Com label claro a direção inverte — e isso simplifica o sistema.</b> Quando o label era escuro,
+    <p><b>Com texto claro a direção inverte — e isso simplifica o sistema.</b> Quando o texto era escuro,
     escurecer o preenchimento piorava o texto e só cabiam dois estados de cor. Agora escurecer melhora o
     label, então o hover escurece nos dois temas e o pressed passa a existir como cor de verdade.</p>
     <p><b>O tema escuro tem um teto que o claro não tem.</b> No claro dá para escurecer até
@@ -590,52 +476,8 @@ HTML = f'''<title>AL Design System Foundation</title>
     reprovaria em 2.24:1. Por isso o hover escuro para em <code>orange-550</code> — é o degrau que existe
     exatamente para esse ponto.</p>
     <p><b>Onde AA pleno for obrigatório</b> — texto legal, fluxo crítico, contexto regulado — use a
-    variante <code>Secondary</code> ou <code>bg/brand-strong</code> (<code>orange-700</code>, 7.94:1 com
-    label branco). Ambas mantêm o label claro e passam em AA no repouso.</p>
-  </div>
-</section>
-
-<section id="button">
-  <h2>Button</h2>
-  <p class="sec-note">Primeiro componente do sistema, fechado. Dois component sets irmãos —
-  <code>Button</code> e <code>Button Icon</code> — com 120 variantes no total: 4 variantes × 3 tamanhos ×
-  5 estados cada, mais slots de ícone dos dois lados, estado de carregamento e a versão só de ícone.
-  Alturas 32 / 40 / 48, todas da escala de espaçamento; padding e radius ligados a variáveis. Abaixo,
-  tudo renderizado com os tokens reais nos dois temas — o número embaixo de cada grupo é o contraste do
-  label medido em cada estado.</p>
-  {button_matrix()}
-  <div class="callout">
-    <p><b>Cada variante tem um trabalho.</b> <code>Primary</code> é a ação principal da tela, uma por vez.
-    <code>Secondary</code> é <b>outlined e sem preenchimento</b> — existe para ações menos relevantes, que
-    precisam estar disponíveis sem competir com a principal. <code>Ghost</code> é ação terciária, de barra
-    de ferramenta e linha de tabela. <code>Danger</code> é destrutiva e sempre pede confirmação.</p>
-    <p><b>Tirar o preenchimento do Secondary consertou um bug silencioso.</b> Antes ele tinha fundo
-    <code>bg/canvas</code>, o que é invisível sobre a tela branca e vira um retângulo branco em cima de
-    qualquer superfície colorida. Sem preenchimento ele funciona sobre qualquer fundo. O tint sutil no
-    hover e no pressed ficou: são feedback transitório, não a aparência do botão.</p>
-    <p><b>O foco muda de mecanismo conforme haja ou não preenchimento.</b> Variante preenchida usa o anel
-    duplo — 2px de <code>border/focus</code> com 2px de offset pintados de <code>bg/canvas</code>, sem o
-    qual o anel laranja sumiria em cima do botão laranja. Já <code>Secondary</code> e <code>Ghost</code>
-    não têm preenchimento, e no Figma um frame sem preenchimento não projeta sombra: neles o foco vive no
-    contorno — 2px por dentro no Secondary, para o botão não mudar de tamanho, e 2px por fora no Ghost,
-    que não tem contorno para engrossar.</p>
-    <p><b>O ícone não é recolorido à mão.</b> No código ele herda <code>currentColor</code>. No Figma, onde
-    isso não existe, o botão declara um modo da collection <code>3. Icon ink</code> e o ícone aninhado
-    resolve a própria cor — mesmo efeito, e impossível de esquecer de aplicar.</p>
-    <p><b>Loading mantém o label no lugar.</b> O spinner ocupa a posição do ícone esquerdo em vez de
-    substituir o texto, para o botão não mudar de largura no meio da interação. Em código ele fica inerte
-    e marcado com <code>aria-busy</code> enquanto carrega. No icon-only, ícone e spinner ficam
-    empilhados em posição absoluta: se alguém ligar o loading sem desligar o ícone, eles se sobrepõem em
-    vez de estourar o quadrado.</p>
-    <p><b>O icon-only virou um set separado, não um quarto eixo.</b> Um eixo a mais levaria o
-    <code>Button</code> a 120 variantes num set só — e, pior, o booleano <code>Icon left</code> nasce
-    desligado, então toda variante só-de-ícone apareceria vazia por padrão. Como set irmão, o ícone é
-    conteúdo obrigatório e não uma opção que se esquece de ligar.</p>
-    <p><b>Nome acessível é obrigatório no icon-only</b>, e o componente força a lembrança: existe uma
-    camada de texto oculta ligada à propriedade <code>Accessible name</code>, que vira
-    <code>aria-label</code> no código. Um ícone sem nome é um botão mudo para leitor de tela. E se o ícone
-    precisar de tooltip para ser entendido, ele não é inequívoco — nesse caso o certo é o Button com
-    label. Os três tamanhos quadrados (32/40/48) passam no mínimo de 24×24 da WCAG 2.2.</p>
+    <code>bg-brand-strong</code> (<code>orange-700</code>, 7.94:1 com texto branco) — ele existe
+    exatamente para isso e passa em AA pleno no repouso.</p>
   </div>
 </section>
 
@@ -649,7 +491,7 @@ HTML = f'''<title>AL Design System Foundation</title>
 <section id="contraste">
   <h2>O portão de contraste</h2>
   <p class="sec-note">Todo par que o sistema permite que se encontre na tela, medido. Texto em 4.5:1,
-  elemento não-textual em 3:1. Estes 70 pares rodam como teste — se um cair, o build quebra.</p>
+  elemento não-textual em 3:1. Estes 72 pares rodam como teste — se um cair, o build quebra.</p>
   {contrast_tables()}
 </section>
 
@@ -673,7 +515,7 @@ HTML = f'''<title>AL Design System Foundation</title>
       <div class="callout"><p><b>Radius aninhado = externo − padding.</b> Card com radius 16 e padding 8
       pede input com radius 8. Sem essa regra, canto aninhado sempre sai errado.</p></div></div>
   </div>
-  <div class="callout"><p><b>Foco.</b> Anel de 2px em <code>border/focus</code> com offset de 2px pintado
+  <div class="callout"><p><b>Foco.</b> Anel de 2px em <code>border-focus</code> com offset de 2px pintado
   da cor do fundo. O offset não é estética: sem ele o anel laranja desaparece em cima do botão laranja.
   No tema escuro o anel troca para <code>orange-400</code>, porque <code>orange-500</code> sobre a tela
   escura tem menos folga.</p></div>
@@ -682,10 +524,10 @@ HTML = f'''<title>AL Design System Foundation</title>
 <section id="elevacao">
   <h2>Elevação</h2>
   <p class="sec-note">Sombra de duas camadas — uma ambiente difusa e uma direcional curta. Camada única
-  parece adesivo. A sombra é tingida com o hue frio do neutro em vez de preto puro, que fica barrento.</p>
+  parece adesivo. Com o neutro acromático a sombra virou cinza puro (<code>rgba(24,24,24,α)</code>) — não há mais hue para tingir.</p>
   {elevation_scale()}
   <div class="callout"><p><b>No tema escuro a sombra não é o cue principal.</b> <code>rgba(0,0,0,.12)</code>
-  sobre <code>#15181E</code> é invisível. Quem comunica altura é a superfície clareando:
+  sobre <code>#181818</code> é invisível. Quem comunica altura é a superfície clareando:
   <code>950 → 900 → 800</code>. A sombra continua existindo, mais opaca, só como reforço.</p></div>
 </section>
 

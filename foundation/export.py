@@ -3,7 +3,7 @@ from build import SEM, PAIRS, EXCEPTIONS, HARD_FLOOR
 import json
 
 P = build()
-SHADOW_RGB = "21, 24, 30"   # neutral-950 -> sombra tingida de frio, nunca preto puro
+SHADOW_RGB = "24, 24, 24"   # neutral-950 acromatico -> sombra cinza, sem tingimento de hue
 
 TOKENS = {
   "meta": {
@@ -69,6 +69,11 @@ for i, theme in enumerate(('light','dark')):
         report.append({"theme":theme,"label":label,"fg":fg,"bg":bg,
                        "fgHex":a,"bgHex":b,"ratio":round(cr(a,b),2),"min":floor,
                        "pass":cr(a,b)>=floor,"exception":exc})
+
+fails = [r for r in report if not r["pass"]]
+if fails:
+    raise SystemExit(f"{len(fails)} par(es) reprovam o gate de contraste — export abortado: {fails}")
+
 TOKENS["contrastReport"] = report
 
 json.dump(TOKENS, open('tokens.json','w'), indent=2, ensure_ascii=False)
