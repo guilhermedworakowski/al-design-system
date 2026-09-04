@@ -3,21 +3,22 @@
 Design system open source, do Figma ao código. Construído em público, uma camada de cada vez.
 
 - **Licença:** MIT
-- **Versão:** `0.1.0`
-- **Figma:** biblioteca privada por enquanto — os primitivos, semânticos e o roadmap completo estão documentados abaixo
+- **Versão:** `0.2.0`
+- **Figma:** biblioteca privada por enquanto — primitivas, semânticos e tokens de componente documentados abaixo
 
 ## Estado atual
 
-A **Foundation** está fechada: primitivos de cor, camada semântica (dois temas), tipografia, espaçamento, radius e elevação — tudo gerado por código, nada digitado à mão no Figma ou na página de referência.
+A **Foundation** está fechada: primitivas de cor, camada semântica (dois temas), tipografia, espaçamento, radius, elevação e anel de foco — tudo gerado por código, nada digitado à mão no Figma ou na página de referência.
 
-Nenhum componente está tokenizado, documentado ou codado ainda. Os component sets do `Button` existem no Figma como ponto de partida para um redesenho manual — não são o Button final do sistema.
+O **Button** é o primeiro componente a fechar as oito etapas do pipeline: auditado, tokenizado, documentado, codado, com playground e QA de acessibilidade.
 
 | | |
 |---|---|
 | Primitivas de cor | 66 (6 famílias × 11 degraus) |
-| Tokens semânticos | 47 × 2 temas |
-| Pares de contraste validados | 72 — 69 em AA pleno, 3 exceções de marca nomeadas, 0 abaixo do piso |
-| Componentes prontos | 0 |
+| Tokens semânticos | 49 × 2 temas |
+| Pares de contraste validados | 80 — 77 em AA pleno, 3 exceções de marca nomeadas, 0 abaixo do piso |
+| Componentes prontos | 1 (Button) |
+| Tokens do Button | 46 — 38 alias, 8 transparentes, 0 valores soltos |
 
 O plano de evolução completo — divisão de trabalho, pipeline por componente e roadmap em tiers — está no [playbook](https://claude.ai/code/artifact/18a0c1ed-949c-4c8d-8906-93c21ed560a3).
 
@@ -28,31 +29,66 @@ foundation/
   color.py       # motor OKLCH -> sRGB, gamut mapping, contraste
   build.py       # camada semântica + portão de contraste (WCAG 2.1 AA)
   export.py      # gera tokens.json a partir de color.py + build.py
+  css.py         # gera al-foundation.css a partir de tokens.json
   page.py        # gera foundation.html a partir de tokens.json
   tune.py        # scripts de calibração da rampa neutra
-  tokens.json    # token set exportado (gerado, não editar à mão)
-  foundation.html
+
+components/button/
+  tokens.py      # camada de alias do Button + portão de alias, gera tokens.json e o CSS
+  button.css     # o componente, escrito à mão
+  check.py       # portão do CSS: recusa valor literal em button.css
+  a11y.py        # QA de acessibilidade por combinação renderizada
+
+site/
+  build.py       # gera button.html: playground, specs, diretrizes, acessibilidade
 ```
+
+Arquivos `tokens.json`, `*.css` gerados, `foundation.html` e `site/button.html` são saída — versionados para consulta, mas nunca editados à mão.
 
 ## Rodando localmente
 
 ```bash
-cd foundation
-python3 export.py   # regenera tokens.json e roda o portão de contraste
-python3 page.py      # regenera foundation.html a partir de tokens.json
+python3 foundation/export.py       # tokens.json + portão de contraste
+python3 foundation/css.py          # al-foundation.css
+python3 foundation/page.py         # foundation.html
+python3 components/button/tokens.py  # tokens do Button + portão de alias + CSS
+python3 components/button/check.py   # portão do CSS do componente
+python3 components/button/a11y.py    # QA de acessibilidade
+python3 site/build.py              # página do Button
 ```
 
-`export.py` aborta com erro se qualquer par de contraste reprovar — o portão é parte do build, não uma checagem opcional.
+## Os portões
+
+Validação é parte do build, não checagem opcional. Cada camada tem o seu, e cada um aborta com saída diferente de zero:
+
+| Portão | Onde | O que recusa |
+|---|---|---|
+| Contraste | `foundation/export.py` | Qualquer par de cor abaixo do mínimo WCAG. Exceções de marca são nomeadas uma a uma e nunca descem de 3:1. |
+| Alias | `components/button/tokens.py` | Token de componente com valor próprio — hex, px, ou nome semântico inexistente. |
+| CSS literal | `components/button/check.py` | Cor, comprimento ou peso literal dentro de `button.css`. |
+| Acessibilidade | `components/button/a11y.py` | Combinação renderizada (variante × estado × tema) fora do mínimo, medida contra o fundo efetivo. |
 
 ## Arquitetura de tokens
 
-Duas camadas hoje, uma terceira reservada para quando um componente precisar divergir do semântico:
+Três camadas, cada uma com um trabalho:
 
-1. **Primitiva** — escala de cor em OKLCH, uma única escada de lightness compartilhada por todas as famílias, ancorada na cor de marca.
-2. **Semântica** — papel de uso (`bg-brand`, `text-secondary`, `border-focus`), com um valor por tema. É esta camada que todo componente deveria consumir por padrão.
-3. **Componente** — só existe quando um valor precisa divergir do semântico para aquele componente específico. Nenhum token de componente existe hoje; entra junto com o primeiro componente construído do zero.
+1. **Primitiva** — escala de cor em OKLCH, uma única escada de lightness compartilhada por todas as famílias, ancorada na cor de marca. Nenhum componente consome esta camada direto.
+2. **Semântica** — papel de uso (`bg-brand`, `text-secondary`, `border-focus`), com um valor por tema. É onde o tema é resolvido.
+3. **Componente** — alias do semântico, um por papel do componente (`button-primary-bg-hover`). Só diverge para uma primitiva quando o componente exige. Nunca hex solto.
 
-**Nomenclatura:** o nome do token separa níveis com hífen (`bg-brand`, `button-primary-bg-hover`). No Figma, a mesma coisa vive em pasta (`bg/brand`, `button/primary/bg/hover`) — a barra é o mecanismo de agrupamento do painel de variáveis, não parte do nome do token.
+Em CSS, a camada de componente não tem bloco de tema — e não precisa. O tema troca no `:root`, que é o mesmo elemento onde os alias são declarados, então o `:root` re-substitui todos de uma vez.
+
+> Substituição de custom property acontece no elemento onde ela é **declarada**, não no ponto de uso. Um alias declarado no `:root` desce já resolvido. Tematizar um container solto — e não o `:root` — exige re-declarar a camada dentro dele; é o que `site/build.py` faz para o playground.
+
+**Nomenclatura:** o nome do token separa níveis com hífen (`bg-brand`, `button-primary-bg-hover`). No Figma, a mesma coisa vive em pasta dentro da collection do componente (`primary/bg-hover` na collection `4. Button`) — a barra é o mecanismo de agrupamento do painel de variáveis, não parte do nome do token.
+
+## Pendências registradas
+
+Coisas deliberadamente não construídas, anotadas para não voltarem como dúvida:
+
+- **Escala de ícone** — o Button usa 16px e o `Button Icon` usa 20px, mas a escala pertence ao componente `Icon`, do Tier 1. Fica em `pending` no `tokens.json` do Button.
+- **Escala de motion** — as durações no `button.css` são literais e aparecem no relatório do `check.py` como exceção consciente.
+- **Unidade de tipografia** — a escala é em `px`. Atende o critério 1.4.4 (zoom do navegador escala `px`), mas não acompanha a preferência de tamanho de fonte do usuário. Migrar para `rem` é decisão de Foundation, não de componente.
 
 ## Contribuindo
 
