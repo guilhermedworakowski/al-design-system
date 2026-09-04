@@ -1,0 +1,1487 @@
+<title>Button — AL Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
+/* AL Design System - Foundation
+ * v0.1.0 - MIT
+ * GERADO por foundation/css.py. Nao editar a mao: rode o script.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* primitivas de cor - a rampa crua. Nao consumir direto num componente. */
+  --al-color-neutral-50: #F7F7F7;
+  --al-color-neutral-100: #EEEEEE;
+  --al-color-neutral-200: #E0E0E0;
+  --al-color-neutral-300: #CECECE;
+  --al-color-neutral-400: #B3B3B3;
+  --al-color-neutral-500: #949494;
+  --al-color-neutral-600: #717171;
+  --al-color-neutral-700: #565656;
+  --al-color-neutral-800: #3E3E3E;
+  --al-color-neutral-900: #292929;
+  --al-color-neutral-950: #181818;
+  --al-color-orange-50: #FFF5F0;
+  --al-color-orange-100: #FFEADE;
+  --al-color-orange-200: #FFD7C4;
+  --al-color-orange-300: #FFBDA0;
+  --al-color-orange-400: #FF9267;
+  --al-color-orange-500: #FC5000;
+  --al-color-orange-600: #C53900;
+  --al-color-orange-700: #992700;
+  --al-color-orange-800: #6C2100;
+  --al-color-orange-900: #4A1700;
+  --al-color-orange-950: #2D0D00;
+  --al-color-red-50: #FFF5F5;
+  --al-color-red-100: #FFE8E9;
+  --al-color-red-200: #FFD5D5;
+  --al-color-red-300: #FFBABB;
+  --al-color-red-400: #FF8D91;
+  --al-color-red-500: #F84F5D;
+  --al-color-red-600: #CA293F;
+  --al-color-red-700: #A00E27;
+  --al-color-red-800: #780014;
+  --al-color-red-900: #550007;
+  --al-color-red-950: #360001;
+  --al-color-amber-50: #FBF7EC;
+  --al-color-amber-100: #F7EED5;
+  --al-color-amber-200: #F2DFB0;
+  --al-color-amber-300: #EBCA7E;
+  --al-color-amber-400: #DCAC2E;
+  --al-color-amber-500: #BA8C00;
+  --al-color-amber-600: #916A00;
+  --al-color-amber-700: #704F00;
+  --al-color-amber-800: #523800;
+  --al-color-amber-900: #392500;
+  --al-color-amber-950: #221500;
+  --al-color-green-50: #EFFBF2;
+  --al-color-green-100: #DEF6E4;
+  --al-color-green-200: #C1EECA;
+  --al-color-green-300: #9DE2A9;
+  --al-color-green-400: #6ACD7C;
+  --al-color-green-500: #1BB14B;
+  --al-color-green-600: #008A2A;
+  --al-color-green-700: #006911;
+  --al-color-green-800: #004C03;
+  --al-color-green-900: #013400;
+  --al-color-green-950: #001F00;
+  --al-color-blue-50: #F1F8FF;
+  --al-color-blue-100: #E2F1FF;
+  --al-color-blue-200: #CAE4FF;
+  --al-color-blue-300: #A9D3FF;
+  --al-color-blue-400: #76B8FF;
+  --al-color-blue-500: #2696FF;
+  --al-color-blue-600: #0071D0;
+  --al-color-blue-700: #0055A3;
+  --al-color-blue-800: #003C7A;
+  --al-color-blue-900: #002858;
+  --al-color-blue-950: #001639;
+
+  /* semanticos de cor - TEMA CLARO. E aqui que o tema e resolvido. */
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+
+  /* tipografia */
+  --al-font-sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --al-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-font-weight-regular: 400;
+  --al-font-weight-medium: 500;
+  --al-font-weight-semibold: 600;
+  --al-font-weight-bold: 700;
+  --al-font-size-xs: 12px;
+  --al-font-size-sm: 14px;
+  --al-font-size-md: 16px;
+  --al-font-size-lg: 18px;
+  --al-font-size-xl: 20px;
+  --al-font-size-2xl: 24px;
+  --al-font-size-3xl: 30px;
+  --al-font-size-4xl: 36px;
+  --al-font-size-5xl: 48px;
+  --al-font-size-6xl: 60px;
+  --al-line-height-xs: 16px;
+  --al-line-height-sm: 20px;
+  --al-line-height-md: 24px;
+  --al-line-height-lg: 28px;
+  --al-line-height-xl: 28px;
+  --al-line-height-2xl: 32px;
+  --al-line-height-3xl: 36px;
+  --al-line-height-4xl: 44px;
+  --al-line-height-5xl: 56px;
+  --al-line-height-6xl: 68px;
+
+  /* espacamento */
+  --al-space-0: 0px;
+  --al-space-2: 2px;
+  --al-space-4: 4px;
+  --al-space-8: 8px;
+  --al-space-12: 12px;
+  --al-space-16: 16px;
+  --al-space-20: 20px;
+  --al-space-24: 24px;
+  --al-space-32: 32px;
+  --al-space-40: 40px;
+  --al-space-48: 48px;
+  --al-space-64: 64px;
+  --al-space-80: 80px;
+  --al-space-96: 96px;
+
+  /* raio */
+  --al-radius-none: 0px;
+  --al-radius-xs: 2px;
+  --al-radius-sm: 4px;
+  --al-radius-md: 6px;
+  --al-radius-lg: 8px;
+  --al-radius-xl: 12px;
+  --al-radius-2xl: 16px;
+  --al-radius-3xl: 24px;
+  --al-radius-full: 9999px;
+
+  /* borda */
+  --al-border-width-0: 0px;
+  --al-border-width-1: 1px;
+  --al-border-width-2: 2px;
+  --al-border-width-focus: 2px;
+  --al-border-focus-offset: 2px;
+
+  /* elevacao - TEMA CLARO */
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+
+  /* anel de foco - composto uma vez, acompanha o tema sozinho.
+     Duas camadas: respiro na cor do fundo, depois o anel na cor do foco. */
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+}
+
+/* TEMA ESCURO. Tres estados, nao dois: sem carimbo no root, so o
+ * prefers-color-scheme separa; com carimbo, a escolha explicita vence. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --al-bg-canvas: #181818;
+    --al-bg-surface: #292929;
+    --al-bg-surface-raised: #3E3E3E;
+    --al-bg-subtle: #3E3E3E;
+    --al-bg-hover: #3E3E3E;
+    --al-bg-active: #565656;
+    --al-bg-disabled: #3E3E3E;
+    --al-bg-inverse: #F7F7F7;
+    --al-bg-brand: #FC5000;
+    --al-bg-brand-hover: #EA4900;
+    --al-bg-brand-active: #C53900;
+    --al-bg-brand-subtle: #2D0D00;
+    --al-bg-brand-strong: #992700;
+    --al-bg-danger: #F84F5D;
+    --al-bg-danger-hover: #FF8D91;
+    --al-bg-danger-active: #FFBABB;
+    --al-bg-danger-subtle: #360001;
+    --al-bg-success: #1BB14B;
+    --al-bg-success-hover: #6ACD7C;
+    --al-bg-success-subtle: #001F00;
+    --al-bg-warning: #DCAC2E;
+    --al-bg-warning-hover: #EBCA7E;
+    --al-bg-warning-subtle: #221500;
+    --al-bg-info: #2696FF;
+    --al-bg-info-hover: #76B8FF;
+    --al-bg-info-subtle: #001639;
+    --al-text-primary: #F7F7F7;
+    --al-text-secondary: #B3B3B3;
+    --al-text-placeholder: #B3B3B3;
+    --al-text-disabled: #717171;
+    --al-text-inverse: #292929;
+    --al-text-on-brand: #FFFFFF;
+    --al-text-on-solid: #181818;
+    --al-text-brand: #FF9267;
+    --al-text-danger: #FF8D91;
+    --al-text-success: #6ACD7C;
+    --al-text-warning: #EBCA7E;
+    --al-text-info: #76B8FF;
+    --al-border-subtle: #3E3E3E;
+    --al-border-default: #565656;
+    --al-border-strong: #949494;
+    --al-border-brand: #FC5000;
+    --al-border-focus: #FF9267;
+    --al-border-danger: #F84F5D;
+    --al-border-success: #1BB14B;
+    --al-border-warning: #DCAC2E;
+    --al-border-info: #2696FF;
+    --al-shadow-focus-default: #FF9267;
+    --al-shadow-focus-error: #FF8D91;
+    --al-elevation-0: none;
+    --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+    --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+    --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+    --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+    --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+  }
+}
+
+[data-theme="dark"] {
+  --al-bg-canvas: #181818;
+  --al-bg-surface: #292929;
+  --al-bg-surface-raised: #3E3E3E;
+  --al-bg-subtle: #3E3E3E;
+  --al-bg-hover: #3E3E3E;
+  --al-bg-active: #565656;
+  --al-bg-disabled: #3E3E3E;
+  --al-bg-inverse: #F7F7F7;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #EA4900;
+  --al-bg-brand-active: #C53900;
+  --al-bg-brand-subtle: #2D0D00;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #F84F5D;
+  --al-bg-danger-hover: #FF8D91;
+  --al-bg-danger-active: #FFBABB;
+  --al-bg-danger-subtle: #360001;
+  --al-bg-success: #1BB14B;
+  --al-bg-success-hover: #6ACD7C;
+  --al-bg-success-subtle: #001F00;
+  --al-bg-warning: #DCAC2E;
+  --al-bg-warning-hover: #EBCA7E;
+  --al-bg-warning-subtle: #221500;
+  --al-bg-info: #2696FF;
+  --al-bg-info-hover: #76B8FF;
+  --al-bg-info-subtle: #001639;
+  --al-text-primary: #F7F7F7;
+  --al-text-secondary: #B3B3B3;
+  --al-text-placeholder: #B3B3B3;
+  --al-text-disabled: #717171;
+  --al-text-inverse: #292929;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #181818;
+  --al-text-brand: #FF9267;
+  --al-text-danger: #FF8D91;
+  --al-text-success: #6ACD7C;
+  --al-text-warning: #EBCA7E;
+  --al-text-info: #76B8FF;
+  --al-border-subtle: #3E3E3E;
+  --al-border-default: #565656;
+  --al-border-strong: #949494;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FF9267;
+  --al-border-danger: #F84F5D;
+  --al-border-success: #1BB14B;
+  --al-border-warning: #DCAC2E;
+  --al-border-info: #2696FF;
+  --al-shadow-focus-default: #FF9267;
+  --al-shadow-focus-error: #FF8D91;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+  --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+  --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+  --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+  --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+}
+
+[data-theme="light"] {
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+  --al-border-focus-offset: 2px;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+}
+
+/* Re-declaracao para container tematizado - so o playground precisa.
+   Ver o comentario em scope_themes(), no site/build.py. */
+[data-theme="light"], [data-theme="dark"] {
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+
+
+  /* primary */
+  --al-button-primary-bg: var(--al-bg-brand);
+  --al-button-primary-bg-hover: var(--al-bg-brand-hover);
+  --al-button-primary-bg-active: var(--al-bg-brand-active);
+  --al-button-primary-bg-disabled: var(--al-bg-disabled);
+  --al-button-primary-label: var(--al-text-on-brand);
+  --al-button-primary-label-disabled: var(--al-text-disabled);
+  --al-button-primary-border: transparent;
+  --al-button-primary-border-disabled: var(--al-border-subtle);
+  --al-button-primary-ring: var(--al-focus-ring-default);
+
+  /* secondary */
+  --al-button-secondary-bg: transparent;
+  --al-button-secondary-bg-hover: var(--al-bg-hover);
+  --al-button-secondary-bg-active: var(--al-bg-active);
+  --al-button-secondary-bg-disabled: transparent;
+  --al-button-secondary-label: var(--al-text-primary);
+  --al-button-secondary-label-disabled: var(--al-text-disabled);
+  --al-button-secondary-border: var(--al-border-strong);
+  --al-button-secondary-border-disabled: var(--al-border-subtle);
+  --al-button-secondary-ring: var(--al-focus-ring-default);
+
+  /* ghost */
+  --al-button-ghost-bg: transparent;
+  --al-button-ghost-bg-hover: var(--al-bg-hover);
+  --al-button-ghost-bg-active: var(--al-bg-active);
+  --al-button-ghost-bg-disabled: transparent;
+  --al-button-ghost-label: var(--al-text-primary);
+  --al-button-ghost-label-disabled: var(--al-text-disabled);
+  --al-button-ghost-border: transparent;
+  --al-button-ghost-border-disabled: transparent;
+  --al-button-ghost-ring: var(--al-focus-ring-default);
+
+  /* danger */
+  --al-button-danger-bg: var(--al-bg-danger);
+  --al-button-danger-bg-hover: var(--al-bg-danger-hover);
+  --al-button-danger-bg-active: var(--al-bg-danger-active);
+  --al-button-danger-bg-disabled: var(--al-bg-disabled);
+  --al-button-danger-label: var(--al-text-on-solid);
+  --al-button-danger-label-disabled: var(--al-text-disabled);
+  --al-button-danger-border: transparent;
+  --al-button-danger-border-disabled: var(--al-border-subtle);
+  --al-button-danger-ring: var(--al-focus-ring-error);
+
+  /* tamanho sm - altura resultante: 36px */
+  --al-button-sm-padding-x: var(--al-space-12);
+  --al-button-sm-padding-y: var(--al-space-8);
+  --al-button-sm-gap: var(--al-space-8);
+  --al-button-sm-font-size: var(--al-font-size-sm);
+  --al-button-sm-line-height: var(--al-line-height-sm);
+  --al-button-sm-font-weight: var(--al-font-weight-medium);
+
+  /* tamanho md - altura resultante: 48px */
+  --al-button-md-padding-x: var(--al-space-16);
+  --al-button-md-padding-y: var(--al-space-12);
+  --al-button-md-gap: var(--al-space-8);
+  --al-button-md-font-size: var(--al-font-size-md);
+  --al-button-md-line-height: var(--al-line-height-md);
+  --al-button-md-font-weight: var(--al-font-weight-medium);
+
+  /* compartilhado */
+  --al-button-radius: var(--al-radius-full);
+  --al-button-border-width: var(--al-border-width-1);
+  --al-button-icon-size: 16px;  /* aguarda escala de icone na Foundation */
+}
+
+/* AL Design System - tokens do Button
+ * GERADO por components/button/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez, e o
+ * Button inteiro acompanha sem uma linha a mais.
+ *
+ * Cuidado: substituicao de custom property acontece no elemento onde ela e
+ * DECLARADA, nao no ponto de uso. Um alias declarado aqui desce ja resolvido.
+ * Por isso tematizar um container solto (e nao o :root) exige re-declarar
+ * esta camada dentro do bloco daquele container - ver site/build.py.
+ */
+
+:root {
+
+  /* primary */
+  --al-button-primary-bg: var(--al-bg-brand);
+  --al-button-primary-bg-hover: var(--al-bg-brand-hover);
+  --al-button-primary-bg-active: var(--al-bg-brand-active);
+  --al-button-primary-bg-disabled: var(--al-bg-disabled);
+  --al-button-primary-label: var(--al-text-on-brand);
+  --al-button-primary-label-disabled: var(--al-text-disabled);
+  --al-button-primary-border: transparent;
+  --al-button-primary-border-disabled: var(--al-border-subtle);
+  --al-button-primary-ring: var(--al-focus-ring-default);
+
+  /* secondary */
+  --al-button-secondary-bg: transparent;
+  --al-button-secondary-bg-hover: var(--al-bg-hover);
+  --al-button-secondary-bg-active: var(--al-bg-active);
+  --al-button-secondary-bg-disabled: transparent;
+  --al-button-secondary-label: var(--al-text-primary);
+  --al-button-secondary-label-disabled: var(--al-text-disabled);
+  --al-button-secondary-border: var(--al-border-strong);
+  --al-button-secondary-border-disabled: var(--al-border-subtle);
+  --al-button-secondary-ring: var(--al-focus-ring-default);
+
+  /* ghost */
+  --al-button-ghost-bg: transparent;
+  --al-button-ghost-bg-hover: var(--al-bg-hover);
+  --al-button-ghost-bg-active: var(--al-bg-active);
+  --al-button-ghost-bg-disabled: transparent;
+  --al-button-ghost-label: var(--al-text-primary);
+  --al-button-ghost-label-disabled: var(--al-text-disabled);
+  --al-button-ghost-border: transparent;
+  --al-button-ghost-border-disabled: transparent;
+  --al-button-ghost-ring: var(--al-focus-ring-default);
+
+  /* danger */
+  --al-button-danger-bg: var(--al-bg-danger);
+  --al-button-danger-bg-hover: var(--al-bg-danger-hover);
+  --al-button-danger-bg-active: var(--al-bg-danger-active);
+  --al-button-danger-bg-disabled: var(--al-bg-disabled);
+  --al-button-danger-label: var(--al-text-on-solid);
+  --al-button-danger-label-disabled: var(--al-text-disabled);
+  --al-button-danger-border: transparent;
+  --al-button-danger-border-disabled: var(--al-border-subtle);
+  --al-button-danger-ring: var(--al-focus-ring-error);
+
+  /* tamanho sm - altura resultante: 36px */
+  --al-button-sm-padding-x: var(--al-space-12);
+  --al-button-sm-padding-y: var(--al-space-8);
+  --al-button-sm-gap: var(--al-space-8);
+  --al-button-sm-font-size: var(--al-font-size-sm);
+  --al-button-sm-line-height: var(--al-line-height-sm);
+  --al-button-sm-font-weight: var(--al-font-weight-medium);
+
+  /* tamanho md - altura resultante: 48px */
+  --al-button-md-padding-x: var(--al-space-16);
+  --al-button-md-padding-y: var(--al-space-12);
+  --al-button-md-gap: var(--al-space-8);
+  --al-button-md-font-size: var(--al-font-size-md);
+  --al-button-md-line-height: var(--al-line-height-md);
+  --al-button-md-font-weight: var(--al-font-weight-medium);
+
+  /* compartilhado */
+  --al-button-radius: var(--al-radius-full);
+  --al-button-border-width: var(--al-border-width-1);
+  --al-button-icon-size: 16px;  /* aguarda escala de icone na Foundation */
+}
+
+/* AL Design System - Button
+ * Escrito a mao. Depende de al-foundation.css e al-button-tokens.css, nesta ordem.
+ *
+ * Nenhum valor aqui e literal: toda cor, espaco, raio e tipografia entra por
+ * var(--al-button-*). O check.py ao lado recusa o arquivo se algum escapar.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   <button type="button" class="al-btn al-btn--primary al-btn--md">
+ *     <span class="al-btn__spinner" aria-hidden="true"></span>
+ *     <span class="al-btn__icon al-btn__icon--leading" aria-hidden="true"><svg …></svg></span>
+ *     <span class="al-btn__label">Publicar</span>
+ *     <span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true"><svg …></svg></span>
+ *   </button>
+ *
+ *   variante : --primary | --secondary | --ghost | --danger
+ *   tamanho  : --sm | --md
+ *
+ *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *
+ * CARREGANDO
+ *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
+ *   o handler no JS. Nao use o atributo disabled: ele tira o botao da ordem de
+ *   foco no meio da interacao e nada e anunciado. Anuncie o progresso por uma
+ *   regiao viva separada (role="status" aria-live="polite").
+ *   O spinner ocupa o lugar do icone da esquerda - se nao havia icone, a largura
+ *   muda; troque tambem o rotulo ("Publicar" -> "Publicando…") para absorver isso.
+ *
+ * DESABILITADO
+ *   Prefira aria-disabled="true" ao atributo disabled: o botao continua focavel
+ *   e um tooltip pode dizer o motivo. Com aria-disabled o clique AINDA dispara -
+ *   a trava e no JS.
+ */
+
+/* ---------------------------------------------------------------- base */
+.al-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  margin: 0;
+  /* A borda entra no calculo da altura: todo variante tem 1px, transparente ou
+     nao, entao descontar aqui mantem 36 e 48 exatos e impede o botao de pular
+     1px quando o disabled acrescenta borda. */
+  padding:
+    calc(var(--_pad-y) - var(--al-button-border-width))
+    calc(var(--_pad-x) - var(--al-button-border-width));
+  border: var(--al-button-border-width) solid var(--_border);
+  border-radius: var(--al-button-radius);
+
+  background-color: var(--_bg);
+  color: var(--_label);
+
+  font-family: var(--al-font-sans);
+  font-size: var(--_font-size);
+  line-height: var(--_line-height);
+  font-weight: var(--_font-weight);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* ---------------------------------------------------------------- variantes */
+.al-btn--primary {
+  --_bg: var(--al-button-primary-bg);
+  --_bg-hover: var(--al-button-primary-bg-hover);
+  --_bg-active: var(--al-button-primary-bg-active);
+  --_bg-disabled: var(--al-button-primary-bg-disabled);
+  --_label: var(--al-button-primary-label);
+  --_label-disabled: var(--al-button-primary-label-disabled);
+  --_border: var(--al-button-primary-border);
+  --_border-disabled: var(--al-button-primary-border-disabled);
+  --_ring: var(--al-button-primary-ring);
+}
+
+.al-btn--secondary {
+  --_bg: var(--al-button-secondary-bg);
+  --_bg-hover: var(--al-button-secondary-bg-hover);
+  --_bg-active: var(--al-button-secondary-bg-active);
+  --_bg-disabled: var(--al-button-secondary-bg-disabled);
+  --_label: var(--al-button-secondary-label);
+  --_label-disabled: var(--al-button-secondary-label-disabled);
+  --_border: var(--al-button-secondary-border);
+  --_border-disabled: var(--al-button-secondary-border-disabled);
+  --_ring: var(--al-button-secondary-ring);
+}
+
+.al-btn--ghost {
+  --_bg: var(--al-button-ghost-bg);
+  --_bg-hover: var(--al-button-ghost-bg-hover);
+  --_bg-active: var(--al-button-ghost-bg-active);
+  --_bg-disabled: var(--al-button-ghost-bg-disabled);
+  --_label: var(--al-button-ghost-label);
+  --_label-disabled: var(--al-button-ghost-label-disabled);
+  --_border: var(--al-button-ghost-border);
+  --_border-disabled: var(--al-button-ghost-border-disabled);
+  --_ring: var(--al-button-ghost-ring);
+}
+
+.al-btn--danger {
+  --_bg: var(--al-button-danger-bg);
+  --_bg-hover: var(--al-button-danger-bg-hover);
+  --_bg-active: var(--al-button-danger-bg-active);
+  --_bg-disabled: var(--al-button-danger-bg-disabled);
+  --_label: var(--al-button-danger-label);
+  --_label-disabled: var(--al-button-danger-label-disabled);
+  --_border: var(--al-button-danger-border);
+  --_border-disabled: var(--al-button-danger-border-disabled);
+  --_ring: var(--al-button-danger-ring);
+}
+
+/* ---------------------------------------------------------------- tamanhos */
+.al-btn--sm {
+  --_pad-x: var(--al-button-sm-padding-x);
+  --_pad-y: var(--al-button-sm-padding-y);
+  --_gap: var(--al-button-sm-gap);
+  --_font-size: var(--al-button-sm-font-size);
+  --_line-height: var(--al-button-sm-line-height);
+  --_font-weight: var(--al-button-sm-font-weight);
+}
+
+.al-btn--md {
+  --_pad-x: var(--al-button-md-padding-x);
+  --_pad-y: var(--al-button-md-padding-y);
+  --_gap: var(--al-button-md-gap);
+  --_font-size: var(--al-button-md-font-size);
+  --_line-height: var(--al-button-md-line-height);
+  --_font-weight: var(--al-button-md-font-weight);
+}
+
+/* ---------------------------------------------------------------- estados */
+/* hover e pressed nunca valem quando o botao esta fora de acao */
+.al-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-hover);
+}
+
+.al-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-active);
+}
+
+/* :focus-visible, nao :focus - o anel aparece no teclado, nao no clique.
+   O anel e sombra, entao nao empurra layout e acompanha o raio da pilula. */
+.al-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--_ring);
+}
+
+.al-btn:disabled,
+.al-btn[aria-disabled="true"] {
+  background-color: var(--_bg-disabled);
+  color: var(--_label-disabled);
+  border-color: var(--_border-disabled);
+  cursor: not-allowed;
+}
+
+/* o anel continua valendo em cima do desabilitado: aria-disabled permanece
+   focavel de proposito, e quem chega nele de teclado precisa ver onde esta */
+.al-btn[aria-disabled="true"]:focus-visible {
+  box-shadow: var(--_ring);
+}
+
+/* ---------------------------------------------------------------- conteudo */
+.al-btn__icon {
+  display: block;
+  flex: none;
+  width: var(--al-button-icon-size);
+  height: var(--al-button-icon-size);
+}
+
+.al-btn__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.al-btn__label {
+  display: block;
+}
+
+/* ---------------------------------------------------------------- carregando */
+.al-btn__spinner {
+  display: none;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--al-button-icon-size);
+  height: var(--al-button-icon-size);
+  border: var(--al-border-width-2) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--al-radius-full);
+  animation: al-btn-spin 700ms linear infinite;
+}
+
+.al-btn[aria-busy="true"] .al-btn__spinner {
+  display: block;
+}
+
+/* o spinner toma o lugar do icone da esquerda, para a largura nao pular */
+.al-btn[aria-busy="true"] .al-btn__icon--leading {
+  display: none;
+}
+
+@keyframes al-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------- ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-btn {
+    transition: none;
+  }
+  /* o spinner nao para: ele e a unica pista de que algo esta acontecendo.
+     Desacelera ate deixar de ser movimento agressivo. */
+  .al-btn__spinner {
+    animation-duration: 2400ms;
+  }
+}
+
+/* No alto contraste do sistema a sombra e descartada - o anel some junto.
+   Aqui o foco volta como outline nativo, que o modo respeita. */
+@media (forced-colors: active) {
+  .al-btn {
+    border-color: currentColor;
+  }
+  .al-btn:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+  .al-btn:disabled,
+  .al-btn[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+}
+
+
+/* ═══ Chrome do site ═══ */
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--al-bg-canvas); color:var(--al-text-primary);
+  font-family:var(--al-font-sans); font-size:15px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.shell{display:grid; grid-template-columns:236px 1fr; min-height:100vh}
+
+/* ── rail ── */
+.rail{
+  border-right:1px solid var(--al-border-subtle); background:var(--al-bg-surface);
+  padding:26px 0 40px; position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.brand{display:flex; align-items:center; gap:10px; padding:0 22px 22px; margin-bottom:6px;
+  border-bottom:1px solid var(--al-border-subtle)}
+.brand-mark{width:26px; height:26px; border-radius:7px; background:var(--al-bg-brand);
+  display:grid; place-items:center; color:#fff; font-weight:700; font-size:13px; flex:none}
+.brand-name{font-weight:600; font-size:14px; letter-spacing:-.01em; line-height:1.25}
+.brand-name small{display:block; font-weight:400; font-size:11px; color:var(--al-text-secondary)}
+.rail-group{padding:18px 22px 6px; font-family:var(--al-font-mono); font-size:10px;
+  font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--al-text-secondary)}
+.rail a{display:block; padding:7px 22px; color:var(--al-text-secondary); text-decoration:none;
+  font-size:13.5px; border-left:2px solid transparent}
+.rail a:hover{color:var(--al-text-primary); background:var(--al-bg-hover)}
+.rail a[aria-current]{color:var(--al-bg-brand); border-left-color:var(--al-bg-brand); font-weight:500}
+.rail a.soon{opacity:.45}
+
+/* ── conteúdo ── */
+.main{min-width:0}
+.inner{max-width:1000px; padding:0 40px 100px}
+.phead{padding:44px 0 0}
+.eyebrow{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--al-text-secondary); margin-bottom:12px}
+h1{font-size:46px; line-height:1.03; letter-spacing:-.033em; font-weight:700; margin:0 0 12px}
+.lede{font-size:17px; color:var(--al-text-secondary); margin:0 0 8px; max-width:60ch}
+.meta{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
+.badge{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.06em;
+  padding:4px 10px; border-radius:9999px; background:var(--al-bg-subtle); color:var(--al-text-secondary)}
+.badge.on{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+
+/* ── abas ── */
+.tabs{display:flex; gap:2px; border-bottom:1px solid var(--al-border-subtle);
+  margin:32px 0 0; position:sticky; top:0; background:var(--al-bg-canvas); z-index:5;
+  overflow-x:auto}
+.tabs button{
+  appearance:none; background:none; border:0; border-bottom:2px solid transparent;
+  padding:13px 16px; font-family:inherit; font-size:14px; font-weight:500;
+  color:var(--al-text-secondary); cursor:pointer; white-space:nowrap; margin-bottom:-1px;
+}
+.tabs button:hover{color:var(--al-text-primary)}
+.tabs button[aria-selected="true"]{color:var(--al-bg-brand); border-bottom-color:var(--al-bg-brand)}
+.tabs button:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:-2px}
+.panel[hidden]{display:none}
+.panel{padding-top:36px}
+
+section{margin-bottom:52px}
+h2{font-size:12.5px; font-family:var(--al-font-mono); font-weight:500; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--al-text-secondary); margin:0 0 20px;
+  padding-bottom:10px; border-bottom:1px solid var(--al-border-subtle)}
+h3{font-size:18px; font-weight:600; letter-spacing:-.015em; margin:0 0 8px}
+p{margin:0 0 13px; max-width:68ch}
+p:last-child{margin-bottom:0}
+code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-subtle);
+  padding:2px 5px; border-radius:4px; white-space:nowrap}
+
+/* ── playground ── */
+.pg{border:1px solid var(--al-border-subtle); border-radius:12px; overflow:hidden}
+.stage{
+  display:grid; place-items:center; min-height:230px; padding:44px 24px;
+  background:var(--al-bg-surface);
+  background-image:radial-gradient(var(--al-border-subtle) 1px, transparent 1px);
+  background-size:16px 16px;
+}
+.stage[data-theme]{background-color:var(--al-bg-canvas)}
+.controls{border-top:1px solid var(--al-border-subtle); background:var(--al-bg-canvas);
+  padding:20px 22px; display:grid; gap:16px}
+.ctl{display:grid; grid-template-columns:104px 1fr; gap:14px; align-items:center}
+.ctl > label:first-child, .ctl > .ctl-name{
+  font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary);
+}
+.seg{display:inline-flex; flex-wrap:wrap; gap:6px}
+.seg input{position:absolute; opacity:0; width:1px; height:1px}
+.seg label{
+  padding:6px 13px; border-radius:9999px; border:1px solid var(--al-border-default);
+  font-size:13px; cursor:pointer; color:var(--al-text-secondary); user-select:none;
+}
+.seg label:hover{background:var(--al-bg-hover); color:var(--al-text-primary)}
+.seg input:checked + label{
+  background:var(--al-bg-brand-subtle); border-color:var(--al-bg-brand);
+  color:var(--al-text-brand); font-weight:500;
+}
+.seg input:focus-visible + label{outline:2px solid var(--al-border-focus); outline-offset:2px}
+.txt{
+  font-family:inherit; font-size:13.5px; padding:7px 11px; width:100%; max-width:280px;
+  border:1px solid var(--al-border-default); border-radius:8px;
+  background:var(--al-bg-canvas); color:var(--al-text-primary);
+}
+.txt:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:1px; border-color:var(--al-border-focus)}
+
+/* ── código gerado ── */
+.codewrap{border-top:1px solid var(--al-border-subtle)}
+.codebar{display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:11px 22px; background:var(--al-bg-surface); border-bottom:1px solid var(--al-border-subtle)}
+.codebar span{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--al-text-secondary)}
+.copy{
+  appearance:none; border:1px solid var(--al-border-default); background:var(--al-bg-canvas);
+  color:var(--al-text-secondary); font-family:var(--al-font-mono); font-size:11px;
+  padding:5px 12px; border-radius:9999px; cursor:pointer;
+}
+.copy:hover{color:var(--al-text-primary); border-color:var(--al-border-strong)}
+.copy:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
+pre{margin:0; padding:18px 22px; overflow-x:auto; background:var(--al-bg-canvas)}
+pre code{background:none; padding:0; font-size:12.5px; line-height:1.65; white-space:pre; color:var(--al-text-primary)}
+
+/* ── tabelas ── */
+.scroller{overflow-x:auto; border:1px solid var(--al-border-subtle); border-radius:10px}
+table{border-collapse:collapse; width:100%; font-size:13px; min-width:620px}
+th,td{padding:9px 15px; text-align:left; border-bottom:1px solid var(--al-border-subtle)}
+thead th{font-family:var(--al-font-mono); font-size:10px; font-weight:500; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary); background:var(--al-bg-surface); white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.tok{font-family:var(--al-font-mono); font-size:12px; white-space:nowrap}
+td.tok.dim{color:var(--al-text-secondary)}
+td.name{font-weight:600}
+td.num{font-family:var(--al-font-mono); text-align:right; font-variant-numeric:tabular-nums}
+.sw{display:inline-block; width:11px; height:11px; border-radius:3px; vertical-align:-1px;
+  margin-right:7px; border:1px solid var(--al-border-subtle)}
+
+/* ── folha de espécimes ── */
+.spec-row{display:grid; grid-template-columns:96px 1fr; gap:18px; align-items:start;
+  padding:20px 0; border-top:1px solid var(--al-border-subtle)}
+.spec-row:last-child{border-bottom:1px solid var(--al-border-subtle)}
+.spec-name{font-weight:600; font-size:14px; padding-top:20px}
+.spec-cells{display:flex; flex-wrap:wrap; gap:22px}
+.spec-cell{display:flex; flex-direction:column; gap:8px; align-items:flex-start}
+.spec-label{font-family:var(--al-font-mono); font-size:9.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary)}
+
+/* ── anatomia ── */
+.anat{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px;
+  background:var(--al-border-subtle); border:1px solid var(--al-border-subtle); border-radius:10px; overflow:hidden}
+.anat > div{background:var(--al-bg-canvas); padding:16px 18px}
+.anat b{display:block; font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-bg-brand); margin-bottom:5px}
+.anat span{font-size:13px; color:var(--al-text-secondary)}
+
+.note{padding:15px 18px; background:var(--al-bg-surface); border-left:2px solid var(--al-bg-brand);
+  border-radius:0 8px 8px 0; font-size:14px; margin-bottom:14px}
+.note b{display:block; margin-bottom:4px}
+.rule{display:grid; grid-template-columns:auto 1fr; gap:18px; padding:20px 0;
+  border-top:1px solid var(--al-border-subtle)}
+.rule:last-of-type{border-bottom:1px solid var(--al-border-subtle)}
+.rn{font-family:var(--al-font-mono); font-size:11.5px; font-weight:500; color:var(--al-text-secondary); padding-top:3px}
+.dd{display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:1px;
+  background:var(--al-border-subtle); border:1px solid var(--al-border-subtle);
+  border-radius:10px; overflow:hidden; margin-bottom:14px}
+.dd .cell{background:var(--al-bg-canvas); padding:18px 20px; display:flex; flex-direction:column; gap:13px}
+.dd .lab{font-family:var(--al-font-mono); font-size:10px; font-weight:500; letter-spacing:.13em;
+  text-transform:uppercase; display:flex; align-items:center; gap:7px}
+.dd .do .lab{color:var(--al-text-success)}
+.dd .no .lab{color:var(--al-text-danger)}
+.dd .lab::before{content:''; width:7px; height:7px; border-radius:50%; background:currentColor}
+.dd .stage2{display:flex; flex-wrap:wrap; gap:11px; align-items:center; padding:18px 16px;
+  background:var(--al-bg-surface); border-radius:8px; min-height:72px}
+.dd .cap{font-size:13px; color:var(--al-text-secondary); margin:0}
+.dd .cap b{color:var(--al-text-primary); font-weight:600}
+
+/* ── estados forçados: SÓ para o playground e a folha de espécimes.
+      Repetem as declarações reais do button.css, porque :hover e :active
+      não podem ser simulados sem ponteiro. ── */
+.al-btn.is-hover{background-color:var(--_bg-hover)}
+.al-btn.is-active{background-color:var(--_bg-active)}
+.al-btn.is-focus{box-shadow:var(--_ring); outline:none}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static; height:auto; padding-bottom:18px}
+  .rail-nav{display:flex; flex-wrap:wrap; gap:2px; padding:0 14px}
+  .rail-group{padding:12px 22px 4px}
+  .inner{padding:0 20px 72px}
+  h1{font-size:34px}
+  .ctl{grid-template-columns:1fr; gap:8px}
+  .spec-row{grid-template-columns:1fr}
+  .spec-name{padding-top:0}
+}
+</style>
+
+<div class="shell">
+  <nav class="rail" aria-label="Navegação do design system">
+    <div class="brand">
+      <span class="brand-mark">AL</span>
+      <span class="brand-name">AL Design System<small>v0.1.0 · MIT</small></span>
+    </div>
+    <div class="rail-nav">
+      <div class="rail-group">Fundação</div>
+      <a href="#" class="soon">Cor</a>
+      <a href="#" class="soon">Tipografia</a>
+      <a href="#" class="soon">Espaçamento</a>
+      <div class="rail-group">Componentes</div>
+      <a href="#" aria-current="page">Button</a>
+      <a href="#" class="soon">Icon</a>
+      <a href="#" class="soon">Badge</a>
+      <a href="#" class="soon">Avatar</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="inner">
+      <header class="phead">
+        <div class="eyebrow">Componentes</div>
+        <h1>Button</h1>
+        <p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p>
+        <div class="meta">
+          <span class="badge on">Estável</span>
+          <span class="badge">40 variantes no Figma</span>
+          <span class="badge">46 tokens</span>
+          <span class="badge">0 valores soltos</span>
+        </div>
+      </header>
+
+      <div class="tabs" role="tablist" aria-label="Seções do Button">
+        <button role="tab" id="t-overview" aria-controls="p-overview" aria-selected="true">Visão geral</button>
+        <button role="tab" id="t-specs" aria-controls="p-specs" aria-selected="false" tabindex="-1">Especificações</button>
+        <button role="tab" id="t-guide" aria-controls="p-guide" aria-selected="false" tabindex="-1">Diretrizes</button>
+        <button role="tab" id="t-a11y" aria-controls="p-a11y" aria-selected="false" tabindex="-1">Acessibilidade</button>
+      </div>
+
+      <!-- ═══════════ VISÃO GERAL ═══════════ -->
+      <div class="panel" id="p-overview" role="tabpanel" aria-labelledby="t-overview" tabindex="0">
+        <section>
+          <h2>Playground</h2>
+          <div class="pg">
+            <div class="stage" id="stage">
+              <button type="button" class="al-btn al-btn--primary al-btn--md" id="demo">
+                <span class="al-btn__spinner" aria-hidden="true"></span>
+                <span class="al-btn__icon al-btn__icon--leading" aria-hidden="true" hidden><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v9m0 0 3.5-3.5M8 11 4.5 7.5M2.5 13.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <span class="al-btn__label">Publicar</span>
+                <span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true" hidden><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </button>
+            </div>
+
+            <div class="controls">
+              <div class="ctl"><span class="ctl-name">Variante</span><div class="seg" role="radiogroup" aria-label="variant">
+<input type="radio" id="variant-primary" name="variant" value="primary" checked><label for="variant-primary">Primary</label>
+<input type="radio" id="variant-secondary" name="variant" value="secondary"><label for="variant-secondary">Secondary</label>
+<input type="radio" id="variant-ghost" name="variant" value="ghost"><label for="variant-ghost">Ghost</label>
+<input type="radio" id="variant-danger" name="variant" value="danger"><label for="variant-danger">Danger</label>
+</div></div>
+              <div class="ctl"><span class="ctl-name">Tamanho</span><div class="seg" role="radiogroup" aria-label="size">
+<input type="radio" id="size-sm" name="size" value="sm"><label for="size-sm">sm · 36px</label>
+<input type="radio" id="size-md" name="size" value="md" checked><label for="size-md">md · 48px</label>
+</div></div>
+              <div class="ctl"><span class="ctl-name">Estado</span><div class="seg" role="radiogroup" aria-label="state">
+<input type="radio" id="state-default" name="state" value="default" checked><label for="state-default">Default</label>
+<input type="radio" id="state-hover" name="state" value="hover"><label for="state-hover">Hover</label>
+<input type="radio" id="state-active" name="state" value="active"><label for="state-active">Pressed</label>
+<input type="radio" id="state-focus" name="state" value="focus"><label for="state-focus">Focus</label>
+<input type="radio" id="state-disabled" name="state" value="disabled"><label for="state-disabled">Disabled</label>
+<input type="radio" id="state-busy" name="state" value="busy"><label for="state-busy">Loading</label>
+</div></div>
+              <div class="ctl"><span class="ctl-name">Ícone</span><div class="seg" role="radiogroup" aria-label="icon">
+<input type="radio" id="icon-none" name="icon" value="none" checked><label for="icon-none">Sem ícone</label>
+<input type="radio" id="icon-leading" name="icon" value="leading"><label for="icon-leading">À esquerda</label>
+<input type="radio" id="icon-trailing" name="icon" value="trailing"><label for="icon-trailing">À direita</label>
+</div></div>
+              <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="theme">
+<input type="radio" id="theme-auto" name="theme" value="auto" checked><label for="theme-auto">Do sistema</label>
+<input type="radio" id="theme-light" name="theme" value="light"><label for="theme-light">Claro</label>
+<input type="radio" id="theme-dark" name="theme" value="dark"><label for="theme-dark">Escuro</label>
+</div></div>
+              <div class="ctl"><label for="labeltext">Rótulo</label>
+                <input class="txt" id="labeltext" type="text" value="Publicar" maxlength="40"></div>
+            </div>
+
+            <div class="codewrap">
+              <div class="codebar"><span>Marcação</span>
+                <button type="button" class="copy" id="copy">Copiar</button></div>
+              <pre><code id="code"></code></pre>
+            </div>
+          </div>
+          <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+            O botão acima é o componente real: esta página carrega o mesmo <code>button.css</code> que vai para produção.
+            Hover, pressed e focus são forçados por classe, porque não dá para simular ponteiro — as declarações são as mesmas.
+          </p>
+        </section>
+
+        <section>
+          <h2>As quatro variantes</h2>
+          <div class="dd">
+            <div class="cell">
+              <span class="lab" style="color:var(--al-text-secondary)">Ação principal e alternativa</span>
+              <div class="stage2">
+                <button type="button" class="al-btn al-btn--ghost al-btn--md" tabindex="-1"><span class="al-btn__label">Cancelar</span></button>
+                <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Salvar rascunho</span></button>
+                <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+              </div>
+              <p class="cap">Um Primary só, e ele fecha o grupo. Ghost e Secondary abrem caminho sem competir.</p>
+            </div>
+            <div class="cell">
+              <span class="lab" style="color:var(--al-text-secondary)">Ação destrutiva</span>
+              <div class="stage2">
+                <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Manter conta</span></button>
+                <button type="button" class="al-btn al-btn--danger al-btn--md" tabindex="-1"><span class="al-btn__label">Excluir conta</span></button>
+              </div>
+              <p class="cap">Danger só quando a ação destrói e é difícil de desfazer. Nunca para algo reversível.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════ ESPECIFICAÇÕES ═══════════ -->
+      <div class="panel" id="p-specs" role="tabpanel" aria-labelledby="t-specs" tabindex="0" hidden>
+        <section>
+          <h2>Anatomia</h2>
+          <div class="anat">
+            <div><b>Contêiner</b><span>Pílula. Raio total, borda de 1px sempre presente — transparente quando a variante não tem borda.</span></div>
+            <div><b>Spinner</b><span>16px, ocupa o lugar do ícone da esquerda quando <code>aria-busy</code> está ligado.</span></div>
+            <div><b>Ícone à esquerda</b><span>16px. Reforça a ação. Opcional, sempre <code>aria-hidden</code>.</span></div>
+            <div><b>Rótulo</b><span>Obrigatório. É também o nome acessível do botão.</span></div>
+            <div><b>Ícone à direita</b><span>16px. Indica movimento ou que algo abre.</span></div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Todos os estados</h2>
+          <div class="spec-row"><div class="spec-name">Primary</div><div class="spec-cells">
+<div class="spec-cell"><span class="spec-label">Default</span><button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Hover</span><button type="button" class="al-btn al-btn--primary al-btn--md is-hover" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Pressed</span><button type="button" class="al-btn al-btn--primary al-btn--md is-active" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Focus</span><button type="button" class="al-btn al-btn--primary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Disabled</span><button type="button" class="al-btn al-btn--primary al-btn--md" aria-disabled="true" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Loading</span><button type="button" class="al-btn al-btn--primary al-btn--md" aria-busy="true" aria-disabled="true" tabindex="-1"><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Button</span></button></div>
+</div></div>
+<div class="spec-row"><div class="spec-name">Secondary</div><div class="spec-cells">
+<div class="spec-cell"><span class="spec-label">Default</span><button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Hover</span><button type="button" class="al-btn al-btn--secondary al-btn--md is-hover" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Pressed</span><button type="button" class="al-btn al-btn--secondary al-btn--md is-active" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Focus</span><button type="button" class="al-btn al-btn--secondary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Disabled</span><button type="button" class="al-btn al-btn--secondary al-btn--md" aria-disabled="true" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Loading</span><button type="button" class="al-btn al-btn--secondary al-btn--md" aria-busy="true" aria-disabled="true" tabindex="-1"><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Button</span></button></div>
+</div></div>
+<div class="spec-row"><div class="spec-name">Ghost</div><div class="spec-cells">
+<div class="spec-cell"><span class="spec-label">Default</span><button type="button" class="al-btn al-btn--ghost al-btn--md" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Hover</span><button type="button" class="al-btn al-btn--ghost al-btn--md is-hover" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Pressed</span><button type="button" class="al-btn al-btn--ghost al-btn--md is-active" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Focus</span><button type="button" class="al-btn al-btn--ghost al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Disabled</span><button type="button" class="al-btn al-btn--ghost al-btn--md" aria-disabled="true" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Loading</span><button type="button" class="al-btn al-btn--ghost al-btn--md" aria-busy="true" aria-disabled="true" tabindex="-1"><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Button</span></button></div>
+</div></div>
+<div class="spec-row"><div class="spec-name">Danger</div><div class="spec-cells">
+<div class="spec-cell"><span class="spec-label">Default</span><button type="button" class="al-btn al-btn--danger al-btn--md" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Hover</span><button type="button" class="al-btn al-btn--danger al-btn--md is-hover" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Pressed</span><button type="button" class="al-btn al-btn--danger al-btn--md is-active" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Focus</span><button type="button" class="al-btn al-btn--danger al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Disabled</span><button type="button" class="al-btn al-btn--danger al-btn--md" aria-disabled="true" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Loading</span><button type="button" class="al-btn al-btn--danger al-btn--md" aria-busy="true" aria-disabled="true" tabindex="-1"><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Button</span></button></div>
+</div></div>
+        </section>
+
+        <section>
+          <h2>Medidas</h2>
+          <div class="scroller">
+            <table>
+              <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+              <tbody><tr><td class="name">sm</td><td class="tok">--al-button-sm-padding-x</td><td class="tok dim">space.12</td><td class="num">12</td></tr>
+<tr><td class="name">sm</td><td class="tok">--al-button-sm-padding-y</td><td class="tok dim">space.8</td><td class="num">8</td></tr>
+<tr><td class="name">sm</td><td class="tok">--al-button-sm-gap</td><td class="tok dim">space.8</td><td class="num">8</td></tr>
+<tr><td class="name">sm</td><td class="tok">--al-button-sm-font</td><td class="tok dim">type.styles.label-md</td><td class="num">label-md</td></tr>
+<tr><td class="name">md</td><td class="tok">--al-button-md-padding-x</td><td class="tok dim">space.16</td><td class="num">16</td></tr>
+<tr><td class="name">md</td><td class="tok">--al-button-md-padding-y</td><td class="tok dim">space.12</td><td class="num">12</td></tr>
+<tr><td class="name">md</td><td class="tok">--al-button-md-gap</td><td class="tok dim">space.8</td><td class="num">8</td></tr>
+<tr><td class="name">md</td><td class="tok">--al-button-md-font</td><td class="tok dim">type.styles.label-lg</td><td class="num">label-lg</td></tr>
+<tr><td class="name">ambos</td><td class="tok">--al-button-radius</td><td class="tok dim">radius.full</td><td class="num">9999</td></tr>
+<tr><td class="name">ambos</td><td class="tok">--al-button-border-width</td><td class="tok dim">border.width.1</td><td class="num">1</td></tr></tbody>
+            </table>
+          </div>
+          <div class="note" style="margin-top:16px">
+            <b>Não existe token de altura</b>
+            Altura é consequência: <code>padding-y</code> × 2 mais a entrelinha. Dá 36px no <code>sm</code> e 48px no <code>md</code> — conferido no navegador contra o Figma. Um token de altura fixaria a mesma decisão em dois lugares.
+          </div>
+        </section>
+
+        <section>
+          <h2>Tokens de cor</h2>
+          <div class="ctl" style="margin-bottom:14px"><span class="ctl-name">Filtrar</span>
+            <div class="seg" role="radiogroup" aria-label="tokfilter">
+<input type="radio" id="tokfilter-all" name="tokfilter" value="all" checked><label for="tokfilter-all">Todas</label>
+<input type="radio" id="tokfilter-primary" name="tokfilter" value="primary"><label for="tokfilter-primary">Primary</label>
+<input type="radio" id="tokfilter-secondary" name="tokfilter" value="secondary"><label for="tokfilter-secondary">Secondary</label>
+<input type="radio" id="tokfilter-ghost" name="tokfilter" value="ghost"><label for="tokfilter-ghost">Ghost</label>
+<input type="radio" id="tokfilter-danger" name="tokfilter" value="danger"><label for="tokfilter-danger">Danger</label>
+</div></div>
+          <div class="scroller">
+            <table>
+              <thead><tr><th>Token do Button</th><th>Aponta para</th><th>Resolve em (claro)</th></tr></thead>
+              <tbody id="tokbody"><tr data-variant="primary"><td class="tok">--al-button-primary-bg</td><td class="tok dim">bg-brand</td><td class="tok"><span class="sw" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-bg-hover</td><td class="tok dim">bg-brand-hover</td><td class="tok"><span class="sw" style="background:#C53900"></span>#C53900</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-bg-active</td><td class="tok dim">bg-brand-active</td><td class="tok"><span class="sw" style="background:#992700"></span>#992700</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-bg-disabled</td><td class="tok dim">bg-disabled</td><td class="tok"><span class="sw" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-label</td><td class="tok dim">text-on-brand</td><td class="tok"><span class="sw" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok"><span class="sw" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-border</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-border-disabled</td><td class="tok dim">border-subtle</td><td class="tok"><span class="sw" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-ring</td><td class="tok dim">focusRing.default</td><td class="tok">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-bg</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-bg-hover</td><td class="tok dim">bg-hover</td><td class="tok"><span class="sw" style="background:#EEEEEE"></span>#EEEEEE</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-bg-active</td><td class="tok dim">bg-active</td><td class="tok"><span class="sw" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-bg-disabled</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-label</td><td class="tok dim">text-primary</td><td class="tok"><span class="sw" style="background:#292929"></span>#292929</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok"><span class="sw" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-border</td><td class="tok dim">border-strong</td><td class="tok"><span class="sw" style="background:#717171"></span>#717171</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-border-disabled</td><td class="tok dim">border-subtle</td><td class="tok"><span class="sw" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-ring</td><td class="tok dim">focusRing.default</td><td class="tok">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-bg</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-bg-hover</td><td class="tok dim">bg-hover</td><td class="tok"><span class="sw" style="background:#EEEEEE"></span>#EEEEEE</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-bg-active</td><td class="tok dim">bg-active</td><td class="tok"><span class="sw" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-bg-disabled</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-label</td><td class="tok dim">text-primary</td><td class="tok"><span class="sw" style="background:#292929"></span>#292929</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok"><span class="sw" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-border</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-border-disabled</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-ring</td><td class="tok dim">focusRing.default</td><td class="tok">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-bg</td><td class="tok dim">bg-danger</td><td class="tok"><span class="sw" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-bg-hover</td><td class="tok dim">bg-danger-hover</td><td class="tok"><span class="sw" style="background:#780014"></span>#780014</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-bg-active</td><td class="tok dim">bg-danger-active</td><td class="tok"><span class="sw" style="background:#550007"></span>#550007</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-bg-disabled</td><td class="tok dim">bg-disabled</td><td class="tok"><span class="sw" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-label</td><td class="tok dim">text-on-solid</td><td class="tok"><span class="sw" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok"><span class="sw" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-border</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-border-disabled</td><td class="tok dim">border-subtle</td><td class="tok"><span class="sw" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-ring</td><td class="tok dim">focusRing.error</td><td class="tok">0 0 0 2px #FFFFFF, 0 0 0 4px #A00E27</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════ DIRETRIZES ═══════════ -->
+      <div class="panel" id="p-guide" role="tabpanel" aria-labelledby="t-guide" tabindex="0" hidden>
+        <section>
+          <h2>Hierarquia</h2>
+          <div class="dd">
+            <div class="cell do"><span class="lab">Faça</span>
+              <div class="stage2">
+                <button type="button" class="al-btn al-btn--ghost al-btn--md" tabindex="-1"><span class="al-btn__label">Cancelar</span></button>
+                <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+              </div>
+              <p class="cap">Uma ação principal, <b>no fim do grupo</b>.</p>
+            </div>
+            <div class="cell no"><span class="lab">Não faça</span>
+              <div class="stage2">
+                <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+                <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Salvar</span></button>
+              </div>
+              <p class="cap">Dois Primary se anulam. Se as duas são principais, nenhuma é.</p>
+            </div>
+          </div>
+          <div class="rule"><div class="rn">01</div><div>
+            <h3>Um Primary por tela</h3>
+            <p>É a regra mais unânime que existe em documentação de botão — Carbon, Primer e Red Hat dizem o mesmo. Precisa de duas ações de mesmo peso? As duas viram Secondary.</p>
+          </div></div>
+          <div class="rule"><div class="rn">02</div><div>
+            <h3>O Primary fecha o grupo</h3>
+            <p>Em linha, da menor para a maior ênfase. Em coluna — comum no mobile — o Primary vai no topo, porque ali a leitura desce.</p>
+          </div></div>
+          <div class="rule"><div class="rn">03</div><div>
+            <h3>Danger longe da saída</h3>
+            <p>Separe o destrutivo do resto. Clique errado em "Excluir" custa caro, e distância é a proteção mais barata.</p>
+          </div></div>
+        </section>
+
+        <section>
+          <h2>O rótulo</h2>
+          <div class="dd">
+            <div class="cell do"><span class="lab">Faça</span>
+              <div class="stage2">
+                <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Criar projeto</span></button>
+              </div>
+              <p class="cap">Verbo na frente e o substantivo que diz sobre o quê.</p>
+            </div>
+            <div class="cell no"><span class="lab">Não faça</span>
+              <div class="stage2">
+                <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">OK</span></button>
+                <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">CLIQUE AQUI</span></button>
+              </div>
+              <p class="cap">"OK" não diz o que confirma. Caixa alta derruba a velocidade de leitura.</p>
+            </div>
+          </div>
+          <div class="rule"><div class="rn">04</div><div>
+            <h3>Capitalização de frase, nunca caixa alta</h3>
+            <p>"Salvar alterações", não "Salvar Alterações" nem "SALVAR ALTERAÇÕES". É o padrão do Material 3 para todo rótulo, e o Primer proíbe caixa alta explicitamente.</p>
+          </div></div>
+          <div class="rule"><div class="rn">05</div><div>
+            <h3>Curto, e nunca em duas linhas</h3>
+            <p>Uma a três palavras. A pílula de raio total se destrói com rótulo em duas linhas — se não couber, o problema é o texto.</p>
+          </div></div>
+        </section>
+
+        <section>
+          <h2>Fora de escopo, de propósito</h2>
+          <div class="scroller">
+            <table>
+              <thead><tr><th>O quê</th><th>Situação</th><th>Se aparecer demanda</th></tr></thead>
+              <tbody>
+                <tr><td class="name">Largura total</td><td>Não existe</td><td>Vira propriedade, não variante.</td></tr>
+                <tr><td class="name">Danger contornado</td><td>Não existe</td><td>Secondary com rótulo explícito de consequência.</td></tr>
+                <tr><td class="name">Tamanho lg</td><td>Não existe</td><td>Fechado em dois tamanhos.</td></tr>
+                <tr><td class="name">Só ícone</td><td>Set irmão</td><td><code>Button Icon</code>, com nome acessível obrigatório.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ═══════════ ACESSIBILIDADE ═══════════ -->
+      <div class="panel" id="p-a11y" role="tabpanel" aria-labelledby="t-a11y" tabindex="0" hidden>
+        <section>
+          <h2>Foco</h2>
+          <p>O anel tem duas camadas: 2px de respiro na cor do fundo e 2px na cor do foco. O respiro é o que impede o anel de encostar no preenchimento — sem ele, laranja sobre laranja daria 1,00:1.</p>
+          <div class="dd" style="margin-top:16px">
+            <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel padrão · 3,34:1 no claro, 8,08:1 no escuro</span>
+              <div class="stage2">
+                <button type="button" class="al-btn al-btn--primary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+                <button type="button" class="al-btn al-btn--secondary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Cancelar</span></button>
+              </div>
+              <p class="cap">Aparece no <code>:focus-visible</code> — teclado sim, clique de mouse não.</p>
+            </div>
+            <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel de erro · 8,12:1 no claro</span>
+              <div class="stage2">
+                <button type="button" class="al-btn al-btn--danger al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Excluir</span></button>
+              </div>
+              <p class="cap">Danger usa o anel de erro, para o foco não brigar com o vermelho do preenchimento.</p>
+            </div>
+          </div>
+          <div class="note" style="margin-top:16px">
+            <b>O anel do Ghost só aparece em código</b>
+            No Figma o estado <code>Focus</code> do Ghost não mostra o anel: sombra projetada precisa de forma pintada, e o Ghost não tem preenchimento nem borda. Em CSS o <code>box-shadow</code> é lançado pela caixa, então o Ghost recebe exatamente o mesmo anel — como dá para ver ligando Ghost + Focus no playground.
+          </div>
+        </section>
+
+        <section>
+          <h2>Estados que enganam</h2>
+          <div class="rule"><div class="rn">06</div><div>
+            <h3>Carregando: <code>aria-busy</code>, não <code>disabled</code></h3>
+            <p>Marque <code>aria-busy="true"</code> e <code>aria-disabled="true"</code>, e trave o handler no JS. O atributo <code>disabled</code> tiraria o botão da ordem de foco no meio da interação, sem anunciar nada. Anuncie o progresso por região viva (<code>role="status"</code>, <code>aria-live="polite"</code>) e segure o estado por um piso de ~400ms.</p>
+          </div></div>
+          <div class="rule"><div class="rn">07</div><div>
+            <h3>Desabilitado é exceção</h3>
+            <p>Um botão desabilitado não explica por que está desabilitado. Em formulário, deixe habilitado e mostre o erro ao tentar enviar. Quando for mesmo necessário, use <code>aria-disabled</code>: continua focável e um tooltip pode dizer o motivo.</p>
+          </div></div>
+          <div class="rule"><div class="rn">08</div><div>
+            <h3>O contraste baixo do desabilitado é intencional</h3>
+            <p>1,59:1 no tema claro. O WCAG isenta componentes inativos do critério 1.4.3 — não é reprova, é sinal. Subir esse contraste faz o desabilitado parecer clicável.</p>
+          </div></div>
+          <div class="rule"><div class="rn">09</div><div>
+            <h3>Alvo de toque</h3>
+            <p>Os dois tamanhos passam o mínimo do WCAG 2.5.8 (24×24px). Só o <code>md</code>, com 48px, alcança o que Apple e Google recomendam para toque — por isso ele é o padrão e o <code>sm</code> precisa de justificativa de densidade.</p>
+          </div></div>
+          <div class="rule"><div class="rn">10</div><div>
+            <h3>Alto contraste do sistema</h3>
+            <p>O modo de alto contraste descarta <code>box-shadow</code> — o anel sumiria junto. O componente devolve o foco como <code>outline</code> nativo dentro de <code>@media (forced-colors: active)</code>.</p>
+          </div></div>
+        </section>
+
+        <section>
+          <h2>Marcação mínima</h2>
+          <pre><code>&lt;button type="button" class="al-btn al-btn--primary al-btn--md"&gt;
+  &lt;span class="al-btn__label"&gt;Publicar&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+          <p style="margin-top:14px"><code>type="button"</code> não é opcional: dentro de <code>&lt;form&gt;</code>, o padrão do HTML é <code>submit</code>. E o rótulo visível é o nome acessível — não coloque um <code>aria-label</code> dizendo outra coisa, ou o comando de voz para de funcionar.</p>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function () {
+  var demo  = document.getElementById('demo');
+  var stage = document.getElementById('stage');
+  var code  = document.getElementById('code');
+  var lead  = demo.querySelector('.al-btn__icon--leading');
+  var trail = demo.querySelector('.al-btn__icon--trailing');
+  var label = demo.querySelector('.al-btn__label');
+  var input = document.getElementById('labeltext');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function render() {
+    var variant = pick('variant'), size = pick('size');
+    var state = pick('state'), icon = pick('icon'), theme = pick('theme');
+
+    demo.className = 'al-btn al-btn--' + variant + ' al-btn--' + size
+      + (state === 'hover' || state === 'active' || state === 'focus' ? ' is-' + state : '');
+
+    demo.removeAttribute('aria-disabled');
+    demo.removeAttribute('aria-busy');
+    if (state === 'disabled') demo.setAttribute('aria-disabled', 'true');
+    if (state === 'busy') {
+      demo.setAttribute('aria-busy', 'true');
+      demo.setAttribute('aria-disabled', 'true');
+    }
+
+    lead.hidden  = !(icon === 'leading');
+    trail.hidden = !(icon === 'trailing');
+    label.textContent = input.value || 'Button';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    // marcação gerada, na ordem em que o contrato pede
+    var cls = 'al-btn al-btn--' + variant + ' al-btn--' + size;
+    var attrs = '';
+    if (state === 'disabled') attrs = ' aria-disabled="true"';
+    if (state === 'busy') attrs = ' aria-busy="true" aria-disabled="true"';
+    var lines = ['&lt;button type="button" class="' + cls + '"' + attrs + '&gt;'];
+    if (state === 'busy') lines.push('  &lt;span class="al-btn__spinner" aria-hidden="true"&gt;&lt;/span&gt;');
+    if (icon === 'leading' && state !== 'busy')
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading" aria-hidden="true"&gt;&lt;svg …&gt;&lt;/svg&gt;&lt;/span&gt;');
+    lines.push('  &lt;span class="al-btn__label"&gt;' +
+      (input.value || 'Button').replace(/&/g, '&amp;').replace(/</g, '&lt;') + '&lt;/span&gt;');
+    if (icon === 'trailing')
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true"&gt;&lt;svg …&gt;&lt;/svg&gt;&lt;/span&gt;');
+    lines.push('&lt;/button&gt;');
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('.controls input').forEach(function (el) {
+    el.addEventListener('change', render);
+    el.addEventListener('input', render);
+  });
+
+  // filtro da tabela de tokens
+  document.querySelectorAll('input[name="tokfilter"]').forEach(function (el) {
+    el.addEventListener('change', function () {
+      var v = pick('tokfilter');
+      document.querySelectorAll('#tokbody tr').forEach(function (tr) {
+        tr.hidden = (v !== 'all' && tr.getAttribute('data-variant') !== v);
+      });
+    });
+  });
+
+  // copiar marcação
+  document.getElementById('copy').addEventListener('click', function () {
+    var btn = this;
+    var text = code.textContent;
+    var done = function () { btn.textContent = 'Copiado'; setTimeout(function () { btn.textContent = 'Copiar'; }, 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { btn.textContent = 'Não deu'; });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Não deu'; }
+      document.body.removeChild(ta);
+    }
+  });
+
+  // abas, com navegação por seta como manda o padrão
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  function select(tab) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+  }
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener('click', function () { select(tab); });
+    tab.addEventListener('keydown', function (e) {
+      var next = null;
+      if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+      if (e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+      if (e.key === 'Home') next = tabs[0];
+      if (e.key === 'End') next = tabs[tabs.length - 1];
+      if (next) { e.preventDefault(); select(next); next.focus(); }
+    });
+  });
+
+  render();
+})();
+</script>
