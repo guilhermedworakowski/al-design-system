@@ -7,7 +7,7 @@ SHADOW_RGB = "24, 24, 24"   # neutral-950 acromatico -> sombra cinza, sem tingim
 
 TOKENS = {
   "meta": {
-    "name": "AL Design System", "version": "0.1.0", "license": "MIT",
+    "name": "AL Design System", "version": "0.2.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
@@ -43,6 +43,24 @@ TOKENS = {
   "space": {str(v): v for v in [0,2,4,8,12,16,20,24,32,40,48,64,80,96]},
   "radius": {"none":0,"xs":2,"sm":4,"md":6,"lg":8,"xl":12,"2xl":16,"3xl":24,"full":9999},
   "border": {"width": {"0":0,"1":1,"2":2,"focus":2}, "focusOffset": 2},
+  "focusRing": {
+    # Duas camadas na mesma sombra, sem offset:
+    #   interna  -> spread 2, na cor do fundo. E o respiro. Impede o anel de
+    #               encostar no preenchimento do componente.
+    #   externa  -> spread 4 (2 do respiro + 2 do anel), na cor do foco.
+    # Assim o anel so precisa contrastar com o fundo da tela - e o preenchimento
+    # do botao, seja laranja ou vermelho, deixa de ser um problema.
+    "default": {
+      "light": f"0 0 0 2px {SEM['bg-canvas'][0]}, 0 0 0 4px {SEM['shadow-focus-default'][0]}",
+      "dark":  f"0 0 0 2px {SEM['bg-canvas'][1]}, 0 0 0 4px {SEM['shadow-focus-default'][1]}",
+    },
+    "error": {
+      "light": f"0 0 0 2px {SEM['bg-canvas'][0]}, 0 0 0 4px {SEM['shadow-focus-error'][0]}",
+      "dark":  f"0 0 0 2px {SEM['bg-canvas'][1]}, 0 0 0 4px {SEM['shadow-focus-error'][1]}",
+    },
+    "_note": "Nao e elevacao. Elevacao comunica altura; isto comunica foco de teclado "
+             "e passa pelo portao de contraste. Nunca some, nunca anima.",
+  },
   "elevation": {
     "0":  {"light":"none", "dark":"none"},
     "1":  {"light":f"0 1px 2px 0 rgba({SHADOW_RGB},0.06), 0 1px 3px 0 rgba({SHADOW_RGB},0.10)",
