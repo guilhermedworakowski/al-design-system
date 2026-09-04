@@ -64,6 +64,11 @@ SEM = {
   'border-success':     (c('green',600),   c('green',500)),
   'border-warning':     (c('amber',600),   c('amber',400)),
   'border-info':        (c('blue',600),    c('blue',500)),
+  # cor do anel de foco. Vive aqui, e nao junto da elevacao, porque e cor de
+  # conteudo: precisa passar pelo portao de contraste como qualquer outra.
+  # A sombra composta que consome estes dois esta em export.py -> focusRing.
+  'shadow-focus-default': (c('orange',500), c('orange',400)),
+  'shadow-focus-error':   (c('red',700),    c('red',400)),
 }
 
 # ---------------- pares de contraste obrigatorios ----------------
@@ -106,6 +111,13 @@ PAIRS = [
   ('border-danger',   'bg-canvas',         3.0, 'borda de input em erro'),
   ('border-brand',    'bg-canvas',         3.0, 'borda de marca'),
   ('bg-brand',        'bg-canvas',         3.0, 'preenchimento de marca contra a tela'),
+  # anel de foco: o anel externo encosta no fundo, nunca no preenchimento do
+  # componente - quem separa os dois e a camada interna, na cor do fundo.
+  # Por isso o par medido aqui e sempre anel x fundo.
+  ('shadow-focus-default', 'bg-canvas',    3.0, 'anel de foco padrao na tela'),
+  ('shadow-focus-default', 'bg-surface',   3.0, 'anel de foco padrao em superficie'),
+  ('shadow-focus-error',   'bg-canvas',    3.0, 'anel de foco de erro na tela'),
+  ('shadow-focus-error',   'bg-surface',   3.0, 'anel de foco de erro em superficie'),
 ]
 
 # excecoes autorizadas pela marca: texto claro sobre a marca. Todas continuam >= 3:1,
