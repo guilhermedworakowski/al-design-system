@@ -1,0 +1,246 @@
+/* AL Design System - Button
+ * Escrito a mao. Depende de al-foundation.css e al-button-tokens.css, nesta ordem.
+ *
+ * Nenhum valor aqui e literal: toda cor, espaco, raio e tipografia entra por
+ * var(--al-button-*). O check.py ao lado recusa o arquivo se algum escapar.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   <button type="button" class="al-btn al-btn--primary al-btn--md">
+ *     <span class="al-btn__spinner" aria-hidden="true"></span>
+ *     <span class="al-btn__icon al-btn__icon--leading" aria-hidden="true"><svg …></svg></span>
+ *     <span class="al-btn__label">Publicar</span>
+ *     <span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true"><svg …></svg></span>
+ *   </button>
+ *
+ *   variante : --primary | --secondary | --ghost | --danger
+ *   tamanho  : --sm | --md
+ *
+ *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *
+ * CARREGANDO
+ *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
+ *   o handler no JS. Nao use o atributo disabled: ele tira o botao da ordem de
+ *   foco no meio da interacao e nada e anunciado. Anuncie o progresso por uma
+ *   regiao viva separada (role="status" aria-live="polite").
+ *   O spinner ocupa o lugar do icone da esquerda - se nao havia icone, a largura
+ *   muda; troque tambem o rotulo ("Publicar" -> "Publicando…") para absorver isso.
+ *
+ * DESABILITADO
+ *   Prefira aria-disabled="true" ao atributo disabled: o botao continua focavel
+ *   e um tooltip pode dizer o motivo. Com aria-disabled o clique AINDA dispara -
+ *   a trava e no JS.
+ */
+
+/* ---------------------------------------------------------------- base */
+.al-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  margin: 0;
+  /* A borda entra no calculo da altura: todo variante tem 1px, transparente ou
+     nao, entao descontar aqui mantem 36 e 48 exatos e impede o botao de pular
+     1px quando o disabled acrescenta borda. */
+  padding:
+    calc(var(--_pad-y) - var(--al-button-border-width))
+    calc(var(--_pad-x) - var(--al-button-border-width));
+  border: var(--al-button-border-width) solid var(--_border);
+  border-radius: var(--al-button-radius);
+
+  background-color: var(--_bg);
+  color: var(--_label);
+
+  font-family: var(--al-font-sans);
+  font-size: var(--_font-size);
+  line-height: var(--_line-height);
+  font-weight: var(--_font-weight);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* ---------------------------------------------------------------- variantes */
+.al-btn--primary {
+  --_bg: var(--al-button-primary-bg);
+  --_bg-hover: var(--al-button-primary-bg-hover);
+  --_bg-active: var(--al-button-primary-bg-active);
+  --_bg-disabled: var(--al-button-primary-bg-disabled);
+  --_label: var(--al-button-primary-label);
+  --_label-disabled: var(--al-button-primary-label-disabled);
+  --_border: var(--al-button-primary-border);
+  --_border-disabled: var(--al-button-primary-border-disabled);
+  --_ring: var(--al-button-primary-ring);
+}
+
+.al-btn--secondary {
+  --_bg: var(--al-button-secondary-bg);
+  --_bg-hover: var(--al-button-secondary-bg-hover);
+  --_bg-active: var(--al-button-secondary-bg-active);
+  --_bg-disabled: var(--al-button-secondary-bg-disabled);
+  --_label: var(--al-button-secondary-label);
+  --_label-disabled: var(--al-button-secondary-label-disabled);
+  --_border: var(--al-button-secondary-border);
+  --_border-disabled: var(--al-button-secondary-border-disabled);
+  --_ring: var(--al-button-secondary-ring);
+}
+
+.al-btn--ghost {
+  --_bg: var(--al-button-ghost-bg);
+  --_bg-hover: var(--al-button-ghost-bg-hover);
+  --_bg-active: var(--al-button-ghost-bg-active);
+  --_bg-disabled: var(--al-button-ghost-bg-disabled);
+  --_label: var(--al-button-ghost-label);
+  --_label-disabled: var(--al-button-ghost-label-disabled);
+  --_border: var(--al-button-ghost-border);
+  --_border-disabled: var(--al-button-ghost-border-disabled);
+  --_ring: var(--al-button-ghost-ring);
+}
+
+.al-btn--danger {
+  --_bg: var(--al-button-danger-bg);
+  --_bg-hover: var(--al-button-danger-bg-hover);
+  --_bg-active: var(--al-button-danger-bg-active);
+  --_bg-disabled: var(--al-button-danger-bg-disabled);
+  --_label: var(--al-button-danger-label);
+  --_label-disabled: var(--al-button-danger-label-disabled);
+  --_border: var(--al-button-danger-border);
+  --_border-disabled: var(--al-button-danger-border-disabled);
+  --_ring: var(--al-button-danger-ring);
+}
+
+/* ---------------------------------------------------------------- tamanhos */
+.al-btn--sm {
+  --_pad-x: var(--al-button-sm-padding-x);
+  --_pad-y: var(--al-button-sm-padding-y);
+  --_gap: var(--al-button-sm-gap);
+  --_font-size: var(--al-button-sm-font-size);
+  --_line-height: var(--al-button-sm-line-height);
+  --_font-weight: var(--al-button-sm-font-weight);
+}
+
+.al-btn--md {
+  --_pad-x: var(--al-button-md-padding-x);
+  --_pad-y: var(--al-button-md-padding-y);
+  --_gap: var(--al-button-md-gap);
+  --_font-size: var(--al-button-md-font-size);
+  --_line-height: var(--al-button-md-line-height);
+  --_font-weight: var(--al-button-md-font-weight);
+}
+
+/* ---------------------------------------------------------------- estados */
+/* hover e pressed nunca valem quando o botao esta fora de acao */
+.al-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-hover);
+}
+
+.al-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-active);
+}
+
+/* :focus-visible, nao :focus - o anel aparece no teclado, nao no clique.
+   O anel e sombra, entao nao empurra layout e acompanha o raio da pilula. */
+.al-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--_ring);
+}
+
+.al-btn:disabled,
+.al-btn[aria-disabled="true"] {
+  background-color: var(--_bg-disabled);
+  color: var(--_label-disabled);
+  border-color: var(--_border-disabled);
+  cursor: not-allowed;
+}
+
+/* o anel continua valendo em cima do desabilitado: aria-disabled permanece
+   focavel de proposito, e quem chega nele de teclado precisa ver onde esta */
+.al-btn[aria-disabled="true"]:focus-visible {
+  box-shadow: var(--_ring);
+}
+
+/* ---------------------------------------------------------------- conteudo */
+.al-btn__icon {
+  display: block;
+  flex: none;
+  width: var(--al-button-icon-size);
+  height: var(--al-button-icon-size);
+}
+
+.al-btn__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.al-btn__label {
+  display: block;
+}
+
+/* ---------------------------------------------------------------- carregando */
+.al-btn__spinner {
+  display: none;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--al-button-icon-size);
+  height: var(--al-button-icon-size);
+  border: var(--al-border-width-2) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--al-radius-full);
+  animation: al-btn-spin 700ms linear infinite;
+}
+
+.al-btn[aria-busy="true"] .al-btn__spinner {
+  display: block;
+}
+
+/* o spinner toma o lugar do icone da esquerda, para a largura nao pular */
+.al-btn[aria-busy="true"] .al-btn__icon--leading {
+  display: none;
+}
+
+@keyframes al-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------- ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-btn {
+    transition: none;
+  }
+  /* o spinner nao para: ele e a unica pista de que algo esta acontecendo.
+     Desacelera ate deixar de ser movimento agressivo. */
+  .al-btn__spinner {
+    animation-duration: 2400ms;
+  }
+}
+
+/* No alto contraste do sistema a sombra e descartada - o anel some junto.
+   Aqui o foco volta como outline nativo, que o modo respeita. */
+@media (forced-colors: active) {
+  .al-btn {
+    border-color: currentColor;
+  }
+  .al-btn:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+  .al-btn:disabled,
+  .al-btn[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+}

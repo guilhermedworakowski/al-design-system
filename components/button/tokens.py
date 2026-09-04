@@ -214,7 +214,96 @@ def run():
     }
     json.dump(out, open(os.path.join(HERE, 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
     print(f'\ncomponents/button/tokens.json escrito')
+    write_css(alias, heights)
     return 0
+
+
+# ---------------------------------------------------------------- css
+def css_ref(ref):
+    """Traduz a referencia da Foundation para a custom property equivalente."""
+    if ref == TRANSPARENT:
+        return 'transparent'
+    if ref.startswith('focusRing.'):
+        return f'var(--al-focus-ring-{ref.split(".")[1]})'
+    if ref.startswith('space.'):
+        return f'var(--al-space-{ref.split(".")[1]})'
+    if ref.startswith('radius.'):
+        return f'var(--al-radius-{ref.split(".")[1]})'
+    if ref.startswith('border.width.'):
+        return f'var(--al-border-width-{ref.split(".")[2]})'
+    return f'var(--al-{ref})'          # semantico de cor
+
+
+def write_css(alias, heights):
+    L = []
+    w = L.append
+    w('/* AL Design System - tokens do Button')
+    w(' * GERADO por components/button/tokens.py. Nao editar a mao.')
+    w(' *')
+    w(' * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um')
+    w(' * semantico, e o tema troca no :root - o mesmo elemento onde estes alias')
+    w(' * sao declarados. Entao o :root re-substitui todos eles de uma vez, e o')
+    w(' * Button inteiro acompanha sem uma linha a mais.')
+    w(' *')
+    w(' * Cuidado: substituicao de custom property acontece no elemento onde ela e')
+    w(' * DECLARADA, nao no ponto de uso. Um alias declarado aqui desce ja resolvido.')
+    w(' * Por isso tematizar um container solto (e nao o :root) exige re-declarar')
+    w(' * esta camada dentro do bloco daquele container - ver site/build.py.')
+    w(' */')
+    w('')
+    w(':root {')
+
+    for variant in COLOR:
+        w('')
+        w(f'  /* {variant} */')
+        for role, ref in COLOR[variant].items():
+            w(f'  --al-button-{variant}-{role}: {css_ref(ref)};')
+        w(f'  --al-button-{variant}-ring: {css_ref(RING[variant])};')
+
+    for size, roles in SIZE.items():
+        w('')
+        w(f'  /* tamanho {size} - altura resultante: {heights[size]}px */')
+        for role, ref in roles.items():
+            if role == 'font':
+                style = resolve_foundation(ref)
+                _, fsize, leading, weight, _, _ = style
+                w(f'  --al-button-{size}-font-size: var(--al-font-size-{size_key(fsize)});')
+                w(f'  --al-button-{size}-line-height: var(--al-line-height-{leading_key(leading)});')
+                w(f'  --al-button-{size}-font-weight: var(--al-font-weight-{weight_key(weight)});')
+            else:
+                w(f'  --al-button-{size}-{role}: {css_ref(ref)};')
+
+    w('')
+    w('  /* compartilhado */')
+    for role, ref in SHARED.items():
+        w(f'  --al-button-{role}: {css_ref(ref)};')
+    w(f'  --al-button-icon-size: {PENDING["icon-size"]["sm"]}px;  '
+      f'/* {PENDING["icon-size"]["nota"]} */')
+    w('}')
+    w('')
+
+    path = os.path.join(HERE, 'al-button-tokens.css')
+    open(path, 'w').write('\n'.join(L))
+    print(f'components/button/al-button-tokens.css escrito ({os.path.getsize(path)} bytes)')
+
+
+def size_key(v):
+    return scale_key_in(FOUND['type']['size'], v, 'font-size')
+
+
+def leading_key(v):
+    return scale_key_in(FOUND['type']['leading'], v, 'line-height')
+
+
+def weight_key(v):
+    return scale_key_in(FOUND['type']['weight'], v, 'font-weight')
+
+
+def scale_key_in(d, value, label):
+    for k, x in d.items():
+        if x == value:
+            return k
+    raise KeyError(f'{value} nao e um degrau de {label}')
 
 
 if __name__ == '__main__':
