@@ -40,10 +40,13 @@ components/button/
   a11y.py        # QA de acessibilidade por combinação renderizada
 
 site/
-  build.py       # gera button.html: playground, specs, diretrizes, acessibilidade
+  site.py        # gera index.html: o site — Foundation + componentes, navegação e playground
+  build.py       # gera button.html: a página isolada do Button, mantida como referência
 ```
 
-Arquivos `tokens.json`, `*.css` gerados, `foundation.html` e `site/button.html` são saída — versionados para consulta, mas nunca editados à mão.
+Arquivos `tokens.json`, `*.css` gerados, `foundation.html`, `site/index.html` e `site/button.html` são saída — versionados para consulta, mas nunca editados à mão.
+
+O `site/index.html` é o site: ele lê o `tokens.json` e embute o `al-foundation.css`, os tokens do Button e o `button.css` reais, então nenhuma contagem e nenhum componente ali é uma cópia. As páginas anteriores (`foundation.html` e `site/button.html`) continuam versionadas como referência do formato.
 
 ## Rodando localmente
 
@@ -54,7 +57,8 @@ python3 foundation/page.py         # foundation.html
 python3 components/button/tokens.py  # tokens do Button + portão de alias + CSS
 python3 components/button/check.py   # portão do CSS do componente
 python3 components/button/a11y.py    # QA de acessibilidade
-python3 site/build.py              # página do Button
+python3 site/build.py              # página isolada do Button (referência)
+python3 site/site.py               # o site: Foundation + componentes
 ```
 
 ## Os portões

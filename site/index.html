@@ -1,0 +1,2205 @@
+<title>AL Design System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
+/* AL Design System - Foundation
+ * v0.1.0 - MIT
+ * GERADO por foundation/css.py. Nao editar a mao: rode o script.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* primitivas de cor - a rampa crua. Nao consumir direto num componente. */
+  --al-color-neutral-50: #F7F7F7;
+  --al-color-neutral-100: #EEEEEE;
+  --al-color-neutral-200: #E0E0E0;
+  --al-color-neutral-300: #CECECE;
+  --al-color-neutral-400: #B3B3B3;
+  --al-color-neutral-500: #949494;
+  --al-color-neutral-600: #717171;
+  --al-color-neutral-700: #565656;
+  --al-color-neutral-800: #3E3E3E;
+  --al-color-neutral-900: #292929;
+  --al-color-neutral-950: #181818;
+  --al-color-orange-50: #FFF5F0;
+  --al-color-orange-100: #FFEADE;
+  --al-color-orange-200: #FFD7C4;
+  --al-color-orange-300: #FFBDA0;
+  --al-color-orange-400: #FF9267;
+  --al-color-orange-500: #FC5000;
+  --al-color-orange-600: #C53900;
+  --al-color-orange-700: #992700;
+  --al-color-orange-800: #6C2100;
+  --al-color-orange-900: #4A1700;
+  --al-color-orange-950: #2D0D00;
+  --al-color-red-50: #FFF5F5;
+  --al-color-red-100: #FFE8E9;
+  --al-color-red-200: #FFD5D5;
+  --al-color-red-300: #FFBABB;
+  --al-color-red-400: #FF8D91;
+  --al-color-red-500: #F84F5D;
+  --al-color-red-600: #CA293F;
+  --al-color-red-700: #A00E27;
+  --al-color-red-800: #780014;
+  --al-color-red-900: #550007;
+  --al-color-red-950: #360001;
+  --al-color-amber-50: #FBF7EC;
+  --al-color-amber-100: #F7EED5;
+  --al-color-amber-200: #F2DFB0;
+  --al-color-amber-300: #EBCA7E;
+  --al-color-amber-400: #DCAC2E;
+  --al-color-amber-500: #BA8C00;
+  --al-color-amber-600: #916A00;
+  --al-color-amber-700: #704F00;
+  --al-color-amber-800: #523800;
+  --al-color-amber-900: #392500;
+  --al-color-amber-950: #221500;
+  --al-color-green-50: #EFFBF2;
+  --al-color-green-100: #DEF6E4;
+  --al-color-green-200: #C1EECA;
+  --al-color-green-300: #9DE2A9;
+  --al-color-green-400: #6ACD7C;
+  --al-color-green-500: #1BB14B;
+  --al-color-green-600: #008A2A;
+  --al-color-green-700: #006911;
+  --al-color-green-800: #004C03;
+  --al-color-green-900: #013400;
+  --al-color-green-950: #001F00;
+  --al-color-blue-50: #F1F8FF;
+  --al-color-blue-100: #E2F1FF;
+  --al-color-blue-200: #CAE4FF;
+  --al-color-blue-300: #A9D3FF;
+  --al-color-blue-400: #76B8FF;
+  --al-color-blue-500: #2696FF;
+  --al-color-blue-600: #0071D0;
+  --al-color-blue-700: #0055A3;
+  --al-color-blue-800: #003C7A;
+  --al-color-blue-900: #002858;
+  --al-color-blue-950: #001639;
+
+  /* semanticos de cor - TEMA CLARO. E aqui que o tema e resolvido. */
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+
+  /* tipografia */
+  --al-font-sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --al-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-font-weight-regular: 400;
+  --al-font-weight-medium: 500;
+  --al-font-weight-semibold: 600;
+  --al-font-weight-bold: 700;
+  --al-font-size-xs: 12px;
+  --al-font-size-sm: 14px;
+  --al-font-size-md: 16px;
+  --al-font-size-lg: 18px;
+  --al-font-size-xl: 20px;
+  --al-font-size-2xl: 24px;
+  --al-font-size-3xl: 30px;
+  --al-font-size-4xl: 36px;
+  --al-font-size-5xl: 48px;
+  --al-font-size-6xl: 60px;
+  --al-line-height-xs: 16px;
+  --al-line-height-sm: 20px;
+  --al-line-height-md: 24px;
+  --al-line-height-lg: 28px;
+  --al-line-height-xl: 28px;
+  --al-line-height-2xl: 32px;
+  --al-line-height-3xl: 36px;
+  --al-line-height-4xl: 44px;
+  --al-line-height-5xl: 56px;
+  --al-line-height-6xl: 68px;
+
+  /* espacamento */
+  --al-space-0: 0px;
+  --al-space-2: 2px;
+  --al-space-4: 4px;
+  --al-space-8: 8px;
+  --al-space-12: 12px;
+  --al-space-16: 16px;
+  --al-space-20: 20px;
+  --al-space-24: 24px;
+  --al-space-32: 32px;
+  --al-space-40: 40px;
+  --al-space-48: 48px;
+  --al-space-64: 64px;
+  --al-space-80: 80px;
+  --al-space-96: 96px;
+
+  /* raio */
+  --al-radius-none: 0px;
+  --al-radius-xs: 2px;
+  --al-radius-sm: 4px;
+  --al-radius-md: 6px;
+  --al-radius-lg: 8px;
+  --al-radius-xl: 12px;
+  --al-radius-2xl: 16px;
+  --al-radius-3xl: 24px;
+  --al-radius-full: 9999px;
+
+  /* borda */
+  --al-border-width-0: 0px;
+  --al-border-width-1: 1px;
+  --al-border-width-2: 2px;
+  --al-border-width-focus: 2px;
+  --al-border-focus-offset: 2px;
+
+  /* elevacao - TEMA CLARO */
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+
+  /* anel de foco - composto uma vez, acompanha o tema sozinho.
+     Duas camadas: respiro na cor do fundo, depois o anel na cor do foco. */
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+}
+
+/* TEMA ESCURO. Tres estados, nao dois: sem carimbo no root, so o
+ * prefers-color-scheme separa; com carimbo, a escolha explicita vence. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --al-bg-canvas: #181818;
+    --al-bg-surface: #292929;
+    --al-bg-surface-raised: #3E3E3E;
+    --al-bg-subtle: #3E3E3E;
+    --al-bg-hover: #3E3E3E;
+    --al-bg-active: #565656;
+    --al-bg-disabled: #3E3E3E;
+    --al-bg-inverse: #F7F7F7;
+    --al-bg-brand: #FC5000;
+    --al-bg-brand-hover: #EA4900;
+    --al-bg-brand-active: #C53900;
+    --al-bg-brand-subtle: #2D0D00;
+    --al-bg-brand-strong: #992700;
+    --al-bg-danger: #F84F5D;
+    --al-bg-danger-hover: #FF8D91;
+    --al-bg-danger-active: #FFBABB;
+    --al-bg-danger-subtle: #360001;
+    --al-bg-success: #1BB14B;
+    --al-bg-success-hover: #6ACD7C;
+    --al-bg-success-subtle: #001F00;
+    --al-bg-warning: #DCAC2E;
+    --al-bg-warning-hover: #EBCA7E;
+    --al-bg-warning-subtle: #221500;
+    --al-bg-info: #2696FF;
+    --al-bg-info-hover: #76B8FF;
+    --al-bg-info-subtle: #001639;
+    --al-text-primary: #F7F7F7;
+    --al-text-secondary: #B3B3B3;
+    --al-text-placeholder: #B3B3B3;
+    --al-text-disabled: #717171;
+    --al-text-inverse: #292929;
+    --al-text-on-brand: #FFFFFF;
+    --al-text-on-solid: #181818;
+    --al-text-brand: #FF9267;
+    --al-text-danger: #FF8D91;
+    --al-text-success: #6ACD7C;
+    --al-text-warning: #EBCA7E;
+    --al-text-info: #76B8FF;
+    --al-border-subtle: #3E3E3E;
+    --al-border-default: #565656;
+    --al-border-strong: #949494;
+    --al-border-brand: #FC5000;
+    --al-border-focus: #FF9267;
+    --al-border-danger: #F84F5D;
+    --al-border-success: #1BB14B;
+    --al-border-warning: #DCAC2E;
+    --al-border-info: #2696FF;
+    --al-shadow-focus-default: #FF9267;
+    --al-shadow-focus-error: #FF8D91;
+    --al-elevation-0: none;
+    --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+    --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+    --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+    --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+    --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+  }
+}
+
+[data-theme="dark"] {
+  --al-bg-canvas: #181818;
+  --al-bg-surface: #292929;
+  --al-bg-surface-raised: #3E3E3E;
+  --al-bg-subtle: #3E3E3E;
+  --al-bg-hover: #3E3E3E;
+  --al-bg-active: #565656;
+  --al-bg-disabled: #3E3E3E;
+  --al-bg-inverse: #F7F7F7;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #EA4900;
+  --al-bg-brand-active: #C53900;
+  --al-bg-brand-subtle: #2D0D00;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #F84F5D;
+  --al-bg-danger-hover: #FF8D91;
+  --al-bg-danger-active: #FFBABB;
+  --al-bg-danger-subtle: #360001;
+  --al-bg-success: #1BB14B;
+  --al-bg-success-hover: #6ACD7C;
+  --al-bg-success-subtle: #001F00;
+  --al-bg-warning: #DCAC2E;
+  --al-bg-warning-hover: #EBCA7E;
+  --al-bg-warning-subtle: #221500;
+  --al-bg-info: #2696FF;
+  --al-bg-info-hover: #76B8FF;
+  --al-bg-info-subtle: #001639;
+  --al-text-primary: #F7F7F7;
+  --al-text-secondary: #B3B3B3;
+  --al-text-placeholder: #B3B3B3;
+  --al-text-disabled: #717171;
+  --al-text-inverse: #292929;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #181818;
+  --al-text-brand: #FF9267;
+  --al-text-danger: #FF8D91;
+  --al-text-success: #6ACD7C;
+  --al-text-warning: #EBCA7E;
+  --al-text-info: #76B8FF;
+  --al-border-subtle: #3E3E3E;
+  --al-border-default: #565656;
+  --al-border-strong: #949494;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FF9267;
+  --al-border-danger: #F84F5D;
+  --al-border-success: #1BB14B;
+  --al-border-warning: #DCAC2E;
+  --al-border-info: #2696FF;
+  --al-shadow-focus-default: #FF9267;
+  --al-shadow-focus-error: #FF8D91;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+  --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+  --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+  --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+  --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+}
+
+[data-theme="light"] {
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+  --al-border-focus-offset: 2px;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+}
+
+/* Re-declaracao para container tematizado - so o playground precisa. */
+[data-theme="light"], [data-theme="dark"] {
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+
+
+  /* primary */
+  --al-button-primary-bg: var(--al-bg-brand);
+  --al-button-primary-bg-hover: var(--al-bg-brand-hover);
+  --al-button-primary-bg-active: var(--al-bg-brand-active);
+  --al-button-primary-bg-disabled: var(--al-bg-disabled);
+  --al-button-primary-label: var(--al-text-on-brand);
+  --al-button-primary-label-disabled: var(--al-text-disabled);
+  --al-button-primary-border: transparent;
+  --al-button-primary-border-disabled: var(--al-border-subtle);
+  --al-button-primary-ring: var(--al-focus-ring-default);
+
+  /* secondary */
+  --al-button-secondary-bg: transparent;
+  --al-button-secondary-bg-hover: var(--al-bg-hover);
+  --al-button-secondary-bg-active: var(--al-bg-active);
+  --al-button-secondary-bg-disabled: transparent;
+  --al-button-secondary-label: var(--al-text-primary);
+  --al-button-secondary-label-disabled: var(--al-text-disabled);
+  --al-button-secondary-border: var(--al-border-strong);
+  --al-button-secondary-border-disabled: var(--al-border-subtle);
+  --al-button-secondary-ring: var(--al-focus-ring-default);
+
+  /* ghost */
+  --al-button-ghost-bg: transparent;
+  --al-button-ghost-bg-hover: var(--al-bg-hover);
+  --al-button-ghost-bg-active: var(--al-bg-active);
+  --al-button-ghost-bg-disabled: transparent;
+  --al-button-ghost-label: var(--al-text-primary);
+  --al-button-ghost-label-disabled: var(--al-text-disabled);
+  --al-button-ghost-border: transparent;
+  --al-button-ghost-border-disabled: transparent;
+  --al-button-ghost-ring: var(--al-focus-ring-default);
+
+  /* danger */
+  --al-button-danger-bg: var(--al-bg-danger);
+  --al-button-danger-bg-hover: var(--al-bg-danger-hover);
+  --al-button-danger-bg-active: var(--al-bg-danger-active);
+  --al-button-danger-bg-disabled: var(--al-bg-disabled);
+  --al-button-danger-label: var(--al-text-on-solid);
+  --al-button-danger-label-disabled: var(--al-text-disabled);
+  --al-button-danger-border: transparent;
+  --al-button-danger-border-disabled: var(--al-border-subtle);
+  --al-button-danger-ring: var(--al-focus-ring-error);
+
+  /* tamanho sm - altura resultante: 36px */
+  --al-button-sm-padding-x: var(--al-space-12);
+  --al-button-sm-padding-y: var(--al-space-8);
+  --al-button-sm-gap: var(--al-space-8);
+  --al-button-sm-font-size: var(--al-font-size-sm);
+  --al-button-sm-line-height: var(--al-line-height-sm);
+  --al-button-sm-font-weight: var(--al-font-weight-medium);
+
+  /* tamanho md - altura resultante: 48px */
+  --al-button-md-padding-x: var(--al-space-16);
+  --al-button-md-padding-y: var(--al-space-12);
+  --al-button-md-gap: var(--al-space-8);
+  --al-button-md-font-size: var(--al-font-size-md);
+  --al-button-md-line-height: var(--al-line-height-md);
+  --al-button-md-font-weight: var(--al-font-weight-medium);
+
+  /* compartilhado */
+  --al-button-radius: var(--al-radius-full);
+  --al-button-border-width: var(--al-border-width-1);
+  --al-button-icon-size: 16px;  /* aguarda escala de icone na Foundation */
+}
+
+/* AL Design System - tokens do Button
+ * GERADO por components/button/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez, e o
+ * Button inteiro acompanha sem uma linha a mais.
+ *
+ * Cuidado: substituicao de custom property acontece no elemento onde ela e
+ * DECLARADA, nao no ponto de uso. Um alias declarado aqui desce ja resolvido.
+ * Por isso tematizar um container solto (e nao o :root) exige re-declarar
+ * esta camada dentro do bloco daquele container - ver site/build.py.
+ */
+
+:root {
+
+  /* primary */
+  --al-button-primary-bg: var(--al-bg-brand);
+  --al-button-primary-bg-hover: var(--al-bg-brand-hover);
+  --al-button-primary-bg-active: var(--al-bg-brand-active);
+  --al-button-primary-bg-disabled: var(--al-bg-disabled);
+  --al-button-primary-label: var(--al-text-on-brand);
+  --al-button-primary-label-disabled: var(--al-text-disabled);
+  --al-button-primary-border: transparent;
+  --al-button-primary-border-disabled: var(--al-border-subtle);
+  --al-button-primary-ring: var(--al-focus-ring-default);
+
+  /* secondary */
+  --al-button-secondary-bg: transparent;
+  --al-button-secondary-bg-hover: var(--al-bg-hover);
+  --al-button-secondary-bg-active: var(--al-bg-active);
+  --al-button-secondary-bg-disabled: transparent;
+  --al-button-secondary-label: var(--al-text-primary);
+  --al-button-secondary-label-disabled: var(--al-text-disabled);
+  --al-button-secondary-border: var(--al-border-strong);
+  --al-button-secondary-border-disabled: var(--al-border-subtle);
+  --al-button-secondary-ring: var(--al-focus-ring-default);
+
+  /* ghost */
+  --al-button-ghost-bg: transparent;
+  --al-button-ghost-bg-hover: var(--al-bg-hover);
+  --al-button-ghost-bg-active: var(--al-bg-active);
+  --al-button-ghost-bg-disabled: transparent;
+  --al-button-ghost-label: var(--al-text-primary);
+  --al-button-ghost-label-disabled: var(--al-text-disabled);
+  --al-button-ghost-border: transparent;
+  --al-button-ghost-border-disabled: transparent;
+  --al-button-ghost-ring: var(--al-focus-ring-default);
+
+  /* danger */
+  --al-button-danger-bg: var(--al-bg-danger);
+  --al-button-danger-bg-hover: var(--al-bg-danger-hover);
+  --al-button-danger-bg-active: var(--al-bg-danger-active);
+  --al-button-danger-bg-disabled: var(--al-bg-disabled);
+  --al-button-danger-label: var(--al-text-on-solid);
+  --al-button-danger-label-disabled: var(--al-text-disabled);
+  --al-button-danger-border: transparent;
+  --al-button-danger-border-disabled: var(--al-border-subtle);
+  --al-button-danger-ring: var(--al-focus-ring-error);
+
+  /* tamanho sm - altura resultante: 36px */
+  --al-button-sm-padding-x: var(--al-space-12);
+  --al-button-sm-padding-y: var(--al-space-8);
+  --al-button-sm-gap: var(--al-space-8);
+  --al-button-sm-font-size: var(--al-font-size-sm);
+  --al-button-sm-line-height: var(--al-line-height-sm);
+  --al-button-sm-font-weight: var(--al-font-weight-medium);
+
+  /* tamanho md - altura resultante: 48px */
+  --al-button-md-padding-x: var(--al-space-16);
+  --al-button-md-padding-y: var(--al-space-12);
+  --al-button-md-gap: var(--al-space-8);
+  --al-button-md-font-size: var(--al-font-size-md);
+  --al-button-md-line-height: var(--al-line-height-md);
+  --al-button-md-font-weight: var(--al-font-weight-medium);
+
+  /* compartilhado */
+  --al-button-radius: var(--al-radius-full);
+  --al-button-border-width: var(--al-border-width-1);
+  --al-button-icon-size: 16px;  /* aguarda escala de icone na Foundation */
+}
+
+/* AL Design System - Button
+ * Escrito a mao. Depende de al-foundation.css e al-button-tokens.css, nesta ordem.
+ *
+ * Nenhum valor aqui e literal: toda cor, espaco, raio e tipografia entra por
+ * var(--al-button-*). O check.py ao lado recusa o arquivo se algum escapar.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   <button type="button" class="al-btn al-btn--primary al-btn--md">
+ *     <span class="al-btn__spinner" aria-hidden="true"></span>
+ *     <span class="al-btn__icon al-btn__icon--leading" aria-hidden="true"><svg …></svg></span>
+ *     <span class="al-btn__label">Publicar</span>
+ *     <span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true"><svg …></svg></span>
+ *   </button>
+ *
+ *   variante : --primary | --secondary | --ghost | --danger
+ *   tamanho  : --sm | --md
+ *
+ *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *
+ * CARREGANDO
+ *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
+ *   o handler no JS. Nao use o atributo disabled: ele tira o botao da ordem de
+ *   foco no meio da interacao e nada e anunciado. Anuncie o progresso por uma
+ *   regiao viva separada (role="status" aria-live="polite").
+ *   O spinner ocupa o lugar do icone da esquerda - se nao havia icone, a largura
+ *   muda; troque tambem o rotulo ("Publicar" -> "Publicando…") para absorver isso.
+ *
+ * DESABILITADO
+ *   Prefira aria-disabled="true" ao atributo disabled: o botao continua focavel
+ *   e um tooltip pode dizer o motivo. Com aria-disabled o clique AINDA dispara -
+ *   a trava e no JS.
+ */
+
+/* ---------------------------------------------------------------- base */
+.al-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  margin: 0;
+  /* A borda entra no calculo da altura: todo variante tem 1px, transparente ou
+     nao, entao descontar aqui mantem 36 e 48 exatos e impede o botao de pular
+     1px quando o disabled acrescenta borda. */
+  padding:
+    calc(var(--_pad-y) - var(--al-button-border-width))
+    calc(var(--_pad-x) - var(--al-button-border-width));
+  border: var(--al-button-border-width) solid var(--_border);
+  border-radius: var(--al-button-radius);
+
+  background-color: var(--_bg);
+  color: var(--_label);
+
+  font-family: var(--al-font-sans);
+  font-size: var(--_font-size);
+  line-height: var(--_line-height);
+  font-weight: var(--_font-weight);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* ---------------------------------------------------------------- variantes */
+.al-btn--primary {
+  --_bg: var(--al-button-primary-bg);
+  --_bg-hover: var(--al-button-primary-bg-hover);
+  --_bg-active: var(--al-button-primary-bg-active);
+  --_bg-disabled: var(--al-button-primary-bg-disabled);
+  --_label: var(--al-button-primary-label);
+  --_label-disabled: var(--al-button-primary-label-disabled);
+  --_border: var(--al-button-primary-border);
+  --_border-disabled: var(--al-button-primary-border-disabled);
+  --_ring: var(--al-button-primary-ring);
+}
+
+.al-btn--secondary {
+  --_bg: var(--al-button-secondary-bg);
+  --_bg-hover: var(--al-button-secondary-bg-hover);
+  --_bg-active: var(--al-button-secondary-bg-active);
+  --_bg-disabled: var(--al-button-secondary-bg-disabled);
+  --_label: var(--al-button-secondary-label);
+  --_label-disabled: var(--al-button-secondary-label-disabled);
+  --_border: var(--al-button-secondary-border);
+  --_border-disabled: var(--al-button-secondary-border-disabled);
+  --_ring: var(--al-button-secondary-ring);
+}
+
+.al-btn--ghost {
+  --_bg: var(--al-button-ghost-bg);
+  --_bg-hover: var(--al-button-ghost-bg-hover);
+  --_bg-active: var(--al-button-ghost-bg-active);
+  --_bg-disabled: var(--al-button-ghost-bg-disabled);
+  --_label: var(--al-button-ghost-label);
+  --_label-disabled: var(--al-button-ghost-label-disabled);
+  --_border: var(--al-button-ghost-border);
+  --_border-disabled: var(--al-button-ghost-border-disabled);
+  --_ring: var(--al-button-ghost-ring);
+}
+
+.al-btn--danger {
+  --_bg: var(--al-button-danger-bg);
+  --_bg-hover: var(--al-button-danger-bg-hover);
+  --_bg-active: var(--al-button-danger-bg-active);
+  --_bg-disabled: var(--al-button-danger-bg-disabled);
+  --_label: var(--al-button-danger-label);
+  --_label-disabled: var(--al-button-danger-label-disabled);
+  --_border: var(--al-button-danger-border);
+  --_border-disabled: var(--al-button-danger-border-disabled);
+  --_ring: var(--al-button-danger-ring);
+}
+
+/* ---------------------------------------------------------------- tamanhos */
+.al-btn--sm {
+  --_pad-x: var(--al-button-sm-padding-x);
+  --_pad-y: var(--al-button-sm-padding-y);
+  --_gap: var(--al-button-sm-gap);
+  --_font-size: var(--al-button-sm-font-size);
+  --_line-height: var(--al-button-sm-line-height);
+  --_font-weight: var(--al-button-sm-font-weight);
+}
+
+.al-btn--md {
+  --_pad-x: var(--al-button-md-padding-x);
+  --_pad-y: var(--al-button-md-padding-y);
+  --_gap: var(--al-button-md-gap);
+  --_font-size: var(--al-button-md-font-size);
+  --_line-height: var(--al-button-md-line-height);
+  --_font-weight: var(--al-button-md-font-weight);
+}
+
+/* ---------------------------------------------------------------- estados */
+/* hover e pressed nunca valem quando o botao esta fora de acao */
+.al-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-hover);
+}
+
+.al-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-active);
+}
+
+/* :focus-visible, nao :focus - o anel aparece no teclado, nao no clique.
+   O anel e sombra, entao nao empurra layout e acompanha o raio da pilula. */
+.al-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--_ring);
+}
+
+.al-btn:disabled,
+.al-btn[aria-disabled="true"] {
+  background-color: var(--_bg-disabled);
+  color: var(--_label-disabled);
+  border-color: var(--_border-disabled);
+  cursor: not-allowed;
+}
+
+/* o anel continua valendo em cima do desabilitado: aria-disabled permanece
+   focavel de proposito, e quem chega nele de teclado precisa ver onde esta */
+.al-btn[aria-disabled="true"]:focus-visible {
+  box-shadow: var(--_ring);
+}
+
+/* ---------------------------------------------------------------- conteudo */
+.al-btn__icon {
+  display: block;
+  flex: none;
+  width: var(--al-button-icon-size);
+  height: var(--al-button-icon-size);
+}
+
+.al-btn__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.al-btn__label {
+  display: block;
+}
+
+/* ---------------------------------------------------------------- carregando */
+.al-btn__spinner {
+  display: none;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--al-button-icon-size);
+  height: var(--al-button-icon-size);
+  border: var(--al-border-width-2) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--al-radius-full);
+  animation: al-btn-spin 700ms linear infinite;
+}
+
+.al-btn[aria-busy="true"] .al-btn__spinner {
+  display: block;
+}
+
+/* o spinner toma o lugar do icone da esquerda, para a largura nao pular */
+.al-btn[aria-busy="true"] .al-btn__icon--leading {
+  display: none;
+}
+
+@keyframes al-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------- ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-btn {
+    transition: none;
+  }
+  /* o spinner nao para: ele e a unica pista de que algo esta acontecendo.
+     Desacelera ate deixar de ser movimento agressivo. */
+  .al-btn__spinner {
+    animation-duration: 2400ms;
+  }
+}
+
+/* No alto contraste do sistema a sombra e descartada - o anel some junto.
+   Aqui o foco volta como outline nativo, que o modo respeita. */
+@media (forced-colors: active) {
+  .al-btn {
+    border-color: currentColor;
+  }
+  .al-btn:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+  .al-btn:disabled,
+  .al-btn[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+}
+
+/* ═══ Chrome do site ═══ */
+
+*{box-sizing:border-box}
+/* O atributo hidden vale pela regra [hidden]{display:none} do navegador, que
+   QUALQUER display declarado aqui derruba - e .nav-sub, .al-btn__icon e outros
+   declaram. Sem esta linha a página só funciona onde o hospedeiro injeta a
+   mesma regra com !important, e quebra servida direto do repositório. */
+[hidden]{display:none !important}
+body{
+  margin:0; background:var(--al-bg-canvas); color:var(--al-text-primary);
+  font-family:var(--al-font-sans); font-size:15px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.shell{display:grid; grid-template-columns:236px 1fr; min-height:100vh}
+
+/* ── trilho ── */
+.rail{
+  border-right:1px solid var(--al-border-subtle); background:var(--al-bg-surface);
+  padding:26px 0 0; position:sticky; top:0; height:100vh; overflow-y:auto;
+  display:flex; flex-direction:column;
+}
+.brand{display:flex; align-items:center; gap:10px; padding:0 22px 22px; margin-bottom:6px;
+  border-bottom:1px solid var(--al-border-subtle)}
+.brand-mark{width:26px; height:26px; border-radius:7px; background:var(--al-bg-brand);
+  display:grid; place-items:center; color:#fff; font-weight:700; font-size:13px; flex:none}
+.brand-name{font-weight:600; font-size:14px; letter-spacing:-.01em; line-height:1.25}
+.brand-name small{display:block; font-weight:400; font-size:11px; color:var(--al-text-secondary)}
+/* Trilho no estilo do Material 3: o item primario e uma pilula com icone, e a
+   lista de sub-itens abre embaixo dele. Sub-item nao tem icone - o recuo e o
+   alinhamento com o rotulo do pai ja dizem a hierarquia. */
+.rail-nav{padding:10px 10px 0; flex:1}
+.nav-group + .nav-group{margin-top:4px}
+.nav-primary{
+  display:flex; align-items:center; gap:12px;
+  padding:10px 14px; border-radius:9999px; text-decoration:none;
+  color:var(--al-text-primary); font-size:14px; font-weight:500;
+}
+.nav-primary:hover{background:var(--al-bg-hover)}
+.nav-primary[aria-current]{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+.nav-primary:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
+.nav-ico{width:20px; height:20px; flex:none; display:block; color:currentColor}
+.nav-ico svg{display:block; width:100%; height:100%}
+.nav-label{flex:1; min-width:0}
+/* o chevron mora dentro do proprio item: um alvo so, um clique so */
+.nav-chev{flex:none; width:16px; height:16px; display:block; opacity:.75}
+.nav-chev svg{display:block; width:100%; height:100%; transition:transform 160ms ease}
+.nav-group.is-open .nav-chev svg{transform:rotate(180deg)}
+.nav-sub{display:flex; flex-direction:column; gap:1px; padding:2px 0 4px}
+.nav-sub a{
+  display:block; padding:8px 14px 8px 46px; border-radius:9999px;
+  color:var(--al-text-secondary); text-decoration:none; font-size:13.5px;
+}
+.nav-sub a:hover{background:var(--al-bg-hover); color:var(--al-text-primary)}
+.nav-sub a[aria-current]{background:var(--al-bg-brand-subtle); color:var(--al-text-brand); font-weight:500}
+.nav-sub a:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
+.nav-sub a.soon{opacity:.45; cursor:default}
+.nav-sub a.soon:hover{background:none; color:var(--al-text-secondary)}
+
+/* ── rodapé do trilho: o switch de tema ──
+   Casca do site, não o componente. O AL ainda não tem um Switch, e inventar um
+   aqui criaria um componente por acidente — sem Figma, sem tokens, sem portão.
+   Quando o Switch existir de verdade, este vira consumo dele. */
+/* O padding de 6px aqui existe só para o alvo de toque: ele leva a área
+   clicável de 42×24 para 54×36 sem mudar o desenho, e o 18px do rodapé
+   compensa para o track continuar alinhado com os ícones do menu, em 24px. */
+.rail-foot{margin-top:auto; border-top:1px solid var(--al-border-subtle); padding:14px 18px}
+.theme-switch{
+  appearance:none; border:0; background:none; cursor:pointer;
+  display:block; padding:6px; border-radius:9999px; color:var(--al-text-secondary);
+}
+.theme-switch:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
+.theme-switch:not([aria-checked="true"]):hover .ts-track{border-color:var(--al-border-strong)}
+.theme-switch[aria-checked="true"]:hover .ts-track{
+  background:var(--al-bg-brand-hover); border-color:var(--al-bg-brand-hover);
+}
+.ts-track{
+  flex:none; width:42px; height:24px; border-radius:9999px; padding:2px; display:flex;
+  background:var(--al-bg-subtle); border:1px solid var(--al-border-default);
+  transition:background-color 160ms ease, border-color 160ms ease;
+}
+.theme-switch[aria-checked="true"] .ts-track{
+  background:var(--al-bg-brand); border-color:var(--al-bg-brand);
+}
+.ts-thumb{
+  width:18px; height:18px; border-radius:9999px; display:grid; place-items:center;
+  background:var(--al-bg-canvas); box-shadow:var(--al-elevation-1);
+  color:var(--al-text-secondary); transition:transform 160ms ease;
+}
+.theme-switch[aria-checked="true"] .ts-thumb{transform:translateX(18px)}
+.ts-thumb svg{display:block; width:12px; height:12px}
+.theme-switch[aria-checked="true"] .ts-sun{display:none}
+.theme-switch:not([aria-checked="true"]) .ts-moon{display:none}
+@media (prefers-reduced-motion: reduce){
+  .ts-track, .ts-thumb, .nav-chev svg{transition:none}
+}
+
+/* ── cards das páginas-índice ── */
+.cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(236px,1fr)); gap:16px}
+.card{
+  display:flex; flex-direction:column; overflow:hidden; text-decoration:none;
+  color:inherit; background:var(--al-bg-canvas); border-radius:14px;
+  border:1px solid var(--al-border-subtle);
+  transition:border-color 120ms ease, box-shadow 120ms ease;
+}
+.card:hover{border-color:var(--al-border-strong); box-shadow:var(--al-elevation-2)}
+.card:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
+.card-thumb{
+  height:112px; display:grid; place-items:center; padding:14px; overflow:hidden;
+  background:var(--al-bg-surface); border-bottom:1px solid var(--al-border-subtle);
+}
+.card-body{padding:14px 16px 16px; display:flex; flex-direction:column; gap:5px; flex:1}
+.card-title{font-size:15px; font-weight:600; letter-spacing:-.012em}
+.card-desc{font-size:13px; line-height:1.5; color:var(--al-text-secondary)}
+.card-soon{
+  margin-top:auto; padding-top:8px; font-family:var(--al-font-mono); font-size:9.5px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--al-text-secondary);
+}
+.card.is-soon{opacity:.5; pointer-events:none}
+.card.is-soon .card-thumb{
+  background-image:repeating-linear-gradient(45deg, var(--al-bg-subtle) 0 6px, transparent 6px 12px);
+}
+
+/* miniaturas — cada uma é feita do próprio assunto que ela abre */
+.th-ramp{display:flex; width:100%; height:56px; border-radius:8px; overflow:hidden}
+.th-ramp span{flex:1}
+.th-anchor{font-family:var(--al-font-mono); font-size:17px; font-weight:600;
+  color:var(--al-text-on-brand); background:var(--al-bg-brand); padding:12px 16px; border-radius:9999px}
+.th-aa{font-size:38px; font-weight:700; letter-spacing:-.03em; line-height:1;
+  color:var(--al-text-primary)}
+.th-aa small{display:block; font-size:10.5px; font-weight:400; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary); margin-top:7px}
+.th-bars{display:flex; flex-direction:column; gap:7px; align-items:flex-start; width:100%}
+.th-bars i{display:block; height:9px; border-radius:3px; background:var(--al-bg-brand)}
+.th-split{display:flex; width:100%; height:56px; border-radius:8px; overflow:hidden;
+  border:1px solid var(--al-border-subtle)}
+.th-split div{flex:1; display:grid; place-items:center}
+.th-split b{width:38px; height:13px; border-radius:9999px; display:block}
+.th-soon{width:44px; height:44px; border-radius:10px; border:1.5px dashed var(--al-border-default)}
+
+/* ── conteúdo ── */
+.main{min-width:0}
+.inner{max-width:1000px; padding:0 40px 100px}
+.phead{padding:44px 0 0}
+.eyebrow{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--al-text-secondary); margin-bottom:12px}
+h1{font-size:46px; line-height:1.03; letter-spacing:-.033em; font-weight:700; margin:0 0 12px}
+h1 em{font-style:normal; color:var(--al-bg-brand)}
+.lede{font-size:17px; color:var(--al-text-secondary); margin:0 0 8px; max-width:62ch}
+.meta{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
+.badge{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.06em;
+  padding:4px 10px; border-radius:9999px; background:var(--al-bg-subtle); color:var(--al-text-secondary)}
+.badge.on{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+
+/* ── abas ── */
+.tabs{display:flex; gap:2px; border-bottom:1px solid var(--al-border-subtle);
+  margin:32px 0 0; position:sticky; top:0; background:var(--al-bg-canvas); z-index:5;
+  overflow-x:auto}
+.tabs button{
+  appearance:none; background:none; border:0; border-bottom:2px solid transparent;
+  padding:13px 16px; font-family:inherit; font-size:14px; font-weight:500;
+  color:var(--al-text-secondary); cursor:pointer; white-space:nowrap; margin-bottom:-1px;
+}
+.tabs button:hover{color:var(--al-text-primary)}
+.tabs button[aria-selected="true"]{color:var(--al-bg-brand); border-bottom-color:var(--al-bg-brand)}
+.tabs button:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:-2px}
+.panel{padding-top:36px}
+
+section{margin-bottom:52px}
+h2{font-size:12.5px; font-family:var(--al-font-mono); font-weight:500; letter-spacing:.13em;
+  text-transform:uppercase; color:var(--al-text-secondary); margin:0 0 20px;
+  padding-bottom:10px; border-bottom:1px solid var(--al-border-subtle)}
+h3{font-size:18px; font-weight:600; letter-spacing:-.015em; margin:0 0 8px}
+h3.sub{font-size:11px; font-family:var(--al-font-mono); font-weight:500; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--al-text-secondary); margin:30px 0 12px;
+  display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+h3.sub:first-child{margin-top:0}
+.count{font-family:var(--al-font-mono); font-size:10.5px; letter-spacing:0; text-transform:none;
+  color:var(--al-text-secondary); opacity:.8; font-weight:400}
+p{margin:0 0 13px; max-width:68ch}
+p:last-child{margin-bottom:0}
+code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-subtle);
+  padding:2px 5px; border-radius:4px; white-space:nowrap}
+
+/* ── playground ── */
+.pg{border:1px solid var(--al-border-subtle); border-radius:12px; overflow:hidden}
+.stage{
+  display:grid; place-items:center; min-height:230px; padding:44px 24px;
+  background:var(--al-bg-surface);
+  background-image:radial-gradient(var(--al-border-subtle) 1px, transparent 1px);
+  background-size:16px 16px;
+}
+.stage[data-theme]{background-color:var(--al-bg-canvas)}
+.controls{border-top:1px solid var(--al-border-subtle); background:var(--al-bg-canvas);
+  padding:20px 22px; display:grid; gap:16px}
+.ctl{display:grid; grid-template-columns:104px 1fr; gap:14px; align-items:center}
+.ctl > label:first-child, .ctl > .ctl-name{
+  font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary);
+}
+.seg{display:inline-flex; flex-wrap:wrap; gap:6px}
+.seg input{position:absolute; opacity:0; width:1px; height:1px}
+.seg label{
+  padding:6px 13px; border-radius:9999px; border:1px solid var(--al-border-default);
+  font-size:13px; cursor:pointer; color:var(--al-text-secondary); user-select:none;
+}
+.seg label:hover{background:var(--al-bg-hover); color:var(--al-text-primary)}
+.seg input:checked + label{
+  background:var(--al-bg-brand-subtle); border-color:var(--al-bg-brand);
+  color:var(--al-text-brand); font-weight:500;
+}
+.seg input:focus-visible + label{outline:2px solid var(--al-border-focus); outline-offset:2px}
+.txt{
+  font-family:inherit; font-size:13.5px; padding:7px 11px; width:100%; max-width:280px;
+  border:1px solid var(--al-border-default); border-radius:8px;
+  background:var(--al-bg-canvas); color:var(--al-text-primary);
+}
+.txt:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:1px; border-color:var(--al-border-focus)}
+
+/* ── código ── */
+.codewrap{border-top:1px solid var(--al-border-subtle)}
+.codebar{display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:11px 22px; background:var(--al-bg-surface); border-bottom:1px solid var(--al-border-subtle)}
+.codebar span{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--al-text-secondary)}
+.copy{
+  appearance:none; border:1px solid var(--al-border-default); background:var(--al-bg-canvas);
+  color:var(--al-text-secondary); font-family:var(--al-font-mono); font-size:11px;
+  padding:5px 12px; border-radius:9999px; cursor:pointer;
+}
+.copy:hover{color:var(--al-text-primary); border-color:var(--al-border-strong)}
+.copy:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
+pre{margin:0; padding:18px 22px; overflow-x:auto; background:var(--al-bg-canvas)}
+pre code{background:none; padding:0; font-size:12.5px; line-height:1.65; white-space:pre; color:var(--al-text-primary)}
+
+/* ── tabelas ── */
+.scroller{overflow-x:auto; border:1px solid var(--al-border-subtle); border-radius:10px}
+.scroll-x{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:13px; min-width:620px}
+th,td{padding:9px 15px; text-align:left; border-bottom:1px solid var(--al-border-subtle)}
+thead th{font-family:var(--al-font-mono); font-size:10px; font-weight:500; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary); background:var(--al-bg-surface); white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.tok{font-family:var(--al-font-mono); font-size:12px; white-space:nowrap}
+td.tok.dim, td.num.dim{color:var(--al-text-secondary)}
+td.name{font-weight:600}
+td.num{font-family:var(--al-font-mono); text-align:right; font-variant-numeric:tabular-nums}
+td.num.strong{font-weight:600}
+td.chipcell{width:30px; padding-right:4px}
+.chip{display:inline-block; width:18px; height:18px; border-radius:5px; vertical-align:middle;
+  border:1px solid var(--al-border-subtle)}
+.chip.sm{width:11px; height:11px; border-radius:3px; margin-right:7px; vertical-align:-1px}
+.pass,.exc{display:inline-block; font-family:var(--al-font-mono); font-size:9.5px; font-weight:500;
+  letter-spacing:.05em; padding:2px 8px; border-radius:9999px; white-space:nowrap;
+  background:var(--al-bg-success-subtle); color:var(--al-text-success)}
+.exc{background:var(--al-bg-warning-subtle); color:var(--al-text-warning)}
+
+/* ── estatísticas ── */
+.stats{display:flex; flex-wrap:wrap; border:1px solid var(--al-border-subtle);
+  border-radius:12px; overflow:hidden; margin:22px 0 40px}
+.stat{flex:1 1 168px; padding:16px 18px; border-right:1px solid var(--al-border-subtle)}
+.stat:last-child{border-right:0}
+.stat b{display:block; font-size:24px; line-height:30px; font-weight:700; letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums}
+.stat span{display:block; font-size:12px; line-height:16px; color:var(--al-text-secondary); margin-top:4px}
+.stat.hl b{color:var(--al-bg-brand)}
+
+/* ── rampa de primitivas ── */
+table.ramp{border-collapse:separate; border-spacing:3px; min-width:960px}
+table.ramp th, table.ramp td{padding:0; border-bottom:0; background:none}
+table.ramp thead th{text-align:center; padding-bottom:8px; text-transform:none; letter-spacing:0}
+.step{display:block; font-family:var(--al-font-mono); font-size:11px; font-weight:600;
+  color:var(--al-text-primary)}
+.lval{display:block; font-family:var(--al-font-mono); font-size:9.5px;
+  color:var(--al-text-secondary); margin-top:1px}
+th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
+.fam-name{display:block; font-family:var(--al-font-mono); font-size:12.5px; font-weight:600;
+  color:var(--al-text-primary); text-transform:none; letter-spacing:0}
+.fam-role{display:block; font-size:11px; line-height:14px; color:var(--al-text-secondary);
+  margin-top:2px; text-transform:none; letter-spacing:0; font-family:var(--al-font-sans)}
+.ramp-cell{height:58px; border-radius:6px; display:flex; flex-direction:column;
+  justify-content:flex-end; padding:6px 7px; gap:1px}
+.ramp-hex{font-family:var(--al-font-mono); font-size:9.5px; font-weight:600; opacity:.92}
+.ramp-cr{font-family:var(--al-font-mono); font-size:9px; opacity:.62; font-variant-numeric:tabular-nums}
+
+/* ── janela da marca ── */
+.winsvg{width:100%; height:auto; margin:6px 0 4px}
+.win-exc{fill:var(--al-bg-brand); opacity:.09}
+.win-rail{stroke:var(--al-border-default); stroke-width:1.5}
+.win-bound{stroke:var(--al-bg-brand); stroke-width:1.5; stroke-dasharray:3 3}
+.win-track-name{fill:var(--al-text-primary); font-family:var(--al-font-sans); font-size:12px; font-weight:600}
+.win-track-sub{fill:var(--al-text-secondary); font-family:var(--al-font-mono); font-size:10px}
+.win-rule{fill:var(--al-text-secondary); font-family:var(--al-font-sans); font-size:11px}
+.win-dot{stroke:var(--al-bg-canvas); stroke-width:2.5}
+.win-name{fill:var(--al-text-primary); font-family:var(--al-font-mono); font-size:11px; font-weight:600}
+.win-role{fill:var(--al-text-secondary); font-family:var(--al-font-sans); font-size:10.5px}
+.win-role.bad{fill:var(--al-text-disabled)}
+.win-axis{fill:var(--al-text-secondary); font-family:var(--al-font-sans); font-size:10.5px}
+
+/* ── espécimes de tipografia ── */
+.types{display:flex; flex-direction:column}
+.type-row{padding:18px 0; border-bottom:1px solid var(--al-border-subtle)}
+.type-row:last-child{border-bottom:0}
+.type-meta{display:flex; flex-wrap:wrap; align-items:baseline; gap:14px; margin-bottom:9px}
+.type-name{font-family:var(--al-font-mono); font-size:11.5px; font-weight:600; min-width:92px}
+.type-num{font-family:var(--al-font-mono); font-size:11px; color:var(--al-text-secondary);
+  font-variant-numeric:tabular-nums}
+.type-use{font-size:11px; color:var(--al-text-secondary); margin-left:auto}
+.type-sample{color:var(--al-text-primary); text-wrap:balance}
+
+/* ── espaço, radius, elevação ── */
+.grid2{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:40px}
+.bars{display:flex; flex-direction:column; gap:7px}
+.bar-row{display:flex; align-items:center; gap:12px}
+.bar-name{font-family:var(--al-font-mono); font-size:11.5px; color:var(--al-text-secondary);
+  width:82px; flex:none}
+.bar{height:14px; background:var(--al-bg-brand); border-radius:3px; flex:none; min-width:1px}
+.bar-val{font-family:var(--al-font-mono); font-size:11px; color:var(--al-text-secondary);
+  font-variant-numeric:tabular-nums}
+.radii{display:flex; flex-wrap:wrap; gap:16px}
+.rad{display:flex; flex-direction:column; gap:6px; align-items:center}
+.rad-box{width:56px; height:56px; background:var(--al-bg-subtle); border:1.5px solid var(--al-bg-brand)}
+.rad-name{font-family:var(--al-font-mono); font-size:11px; font-weight:600}
+.rad-val{font-family:var(--al-font-mono); font-size:10px; color:var(--al-text-secondary)}
+.elevs{display:flex; flex-wrap:wrap; gap:22px}
+.elev{display:flex; flex-direction:column; gap:10px; align-items:center}
+.elev-box{width:84px; height:64px; border-radius:10px; background:var(--al-bg-surface-raised);
+  border:1px solid var(--al-border-subtle); box-shadow:var(--_e); display:grid; place-items:center;
+  font-family:var(--al-font-mono); font-size:15px; font-weight:600; color:var(--al-text-secondary)}
+.elev-name{font-family:var(--al-font-mono); font-size:10.5px; color:var(--al-text-secondary)}
+
+/* ── a prova ── */
+.proof{display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:20px}
+.proof-card{border:1px solid; border-radius:14px; overflow:hidden}
+.proof-tag{font-family:var(--al-font-mono); font-size:10.5px; letter-spacing:.07em;
+  text-transform:uppercase; padding:11px 20px; border-bottom:1px solid}
+.proof-body{padding:22px 20px; display:flex; flex-direction:column; gap:20px}
+.pb-row{display:flex; flex-wrap:wrap; gap:10px}
+.pb{font-size:14px; font-weight:500; line-height:20px; padding:10px 16px; border-radius:8px;
+  display:inline-flex; align-items:center; gap:7px}
+.pb i{font-style:normal; font-family:var(--al-font-mono); font-size:9px; opacity:.62}
+.pb.ghost{background:transparent; border:1px solid}
+.fld{display:flex; flex-direction:column; gap:6px}
+.fld .lbl{font-size:14px; font-weight:500; line-height:20px}
+.inp{border:1px solid; border-radius:8px; padding:9px 12px; font-size:14px; line-height:20px}
+.help{font-size:12px; line-height:16px}
+.banners{display:flex; flex-direction:column; gap:9px}
+.bn{border-left:3px solid; border-radius:0 8px 8px 0; padding:10px 14px; font-size:13px; line-height:19px}
+.bn b{font-weight:600}
+
+/* ── anatomia, notas, regras, do/don't ── */
+.anat{display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1px;
+  background:var(--al-border-subtle); border:1px solid var(--al-border-subtle);
+  border-radius:10px; overflow:hidden}
+.anat > div{background:var(--al-bg-canvas); padding:16px 18px}
+.anat b{display:block; font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-bg-brand); margin-bottom:5px}
+.anat span{font-size:13px; color:var(--al-text-secondary)}
+.note{padding:15px 18px; background:var(--al-bg-surface); border-left:2px solid var(--al-bg-brand);
+  border-radius:0 8px 8px 0; font-size:14px; margin-bottom:14px}
+.note:last-child{margin-bottom:0}
+.note b{display:block; margin-bottom:4px}
+.note p{max-width:74ch; font-size:14px}
+.note p + p{margin-top:9px}
+.rule{display:grid; grid-template-columns:auto 1fr; gap:18px; padding:20px 0;
+  border-top:1px solid var(--al-border-subtle)}
+.rule:last-of-type{border-bottom:1px solid var(--al-border-subtle)}
+.rn{font-family:var(--al-font-mono); font-size:11.5px; font-weight:500;
+  color:var(--al-text-secondary); padding-top:3px}
+.dd{display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:1px;
+  background:var(--al-border-subtle); border:1px solid var(--al-border-subtle);
+  border-radius:10px; overflow:hidden; margin-bottom:14px}
+.dd .cell{background:var(--al-bg-canvas); padding:18px 20px; display:flex; flex-direction:column; gap:13px}
+.dd .lab{font-family:var(--al-font-mono); font-size:10px; font-weight:500; letter-spacing:.13em;
+  text-transform:uppercase; display:flex; align-items:center; gap:7px}
+.dd .do .lab{color:var(--al-text-success)}
+.dd .no .lab{color:var(--al-text-danger)}
+.dd .do .lab::before, .dd .no .lab::before{content:''; width:7px; height:7px; border-radius:50%;
+  background:currentColor}
+.dd .stage2{display:flex; flex-wrap:wrap; gap:11px; align-items:center; padding:18px 16px;
+  background:var(--al-bg-surface); border-radius:8px; min-height:72px}
+.dd .cap{font-size:13px; color:var(--al-text-secondary); margin:0}
+.dd .cap b{color:var(--al-text-primary); font-weight:600}
+
+/* ── estados forçados: SÓ para o playground e as folhas de espécimes.
+      Repetem as declarações reais do button.css, porque :hover e :active
+      não podem ser simulados sem ponteiro. ── */
+.al-btn.is-hover{background-color:var(--_bg-hover)}
+.al-btn.is-active{background-color:var(--_bg-active)}
+.al-btn.is-focus{box-shadow:var(--_ring); outline:none}
+
+footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--al-border-subtle);
+  color:var(--al-text-secondary); font-size:12.5px; display:flex; flex-wrap:wrap; gap:8px 20px}
+footer code{background:none; padding:0}
+
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static; height:auto; padding-bottom:14px}
+  .inner{padding:0 20px 72px}
+  h1{font-size:34px}
+  .ctl{grid-template-columns:1fr; gap:8px}
+  .spec-row{grid-template-columns:1fr}
+  .spec-name{padding-top:0}
+}
+
+.spec-row{display:grid; grid-template-columns:96px 1fr; gap:18px; align-items:start;
+  padding:20px 0; border-top:1px solid var(--al-border-subtle)}
+.spec-row:last-child{border-bottom:1px solid var(--al-border-subtle)}
+.spec-name{font-weight:600; font-size:14px; padding-top:20px}
+.spec-cells{display:flex; flex-wrap:wrap; gap:22px}
+.spec-cell{display:flex; flex-direction:column; gap:8px; align-items:flex-start}
+.spec-label{font-family:var(--al-font-mono); font-size:9.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary)}
+</style>
+
+<div class="shell">
+<nav class="rail" aria-label="Navegação do design system">
+  <div class="brand">
+    <span class="brand-mark">AL</span>
+    <span class="brand-name">AL Design System<small>v0.2.0 · MIT</small></span>
+  </div>
+  <div class="rail-nav">
+    <div class="nav-group is-open" id="g-fundacao">
+      <a class="nav-primary" href="#/fundacao" data-page="fundacao" aria-current="page"
+         aria-expanded="true" aria-controls="sub-fundacao">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 3 7.5 12 12l9-4.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m3 12.5 9 4.5 9-4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="m3 17.5 9 4.5 9-4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="nav-label">Fundação</span>
+        <span class="nav-chev" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <div class="nav-sub" id="sub-fundacao">
+        <a href="#/principios" data-page="principios">Princípios</a>
+        <a href="#/prova" data-page="prova">A prova</a>
+        <a href="#/cor" data-page="cor">Cor</a>
+        <a href="#/tipografia" data-page="tipografia">Tipografia</a>
+        <a href="#/espacamento" data-page="espacamento">Espaçamento</a>
+      </div>
+    </div>
+    <div class="nav-group" id="g-componentes">
+      <a class="nav-primary" href="#/componentes" data-page="componentes"
+         aria-expanded="false" aria-controls="sub-componentes">
+        <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.6"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="3.75" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2.6 2.4"/></svg></span><span class="nav-label">Componentes</span>
+        <span class="nav-chev" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span></a>
+      <div class="nav-sub" id="sub-componentes" hidden>
+        <a href="#/button" data-page="button">Button</a>
+        <a class="soon" aria-disabled="true">Icon</a>
+        <a class="soon" aria-disabled="true">Badge</a>
+        <a class="soon" aria-disabled="true">Avatar</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail-foot">
+    <button type="button" class="theme-switch" id="themeswitch" role="switch" aria-checked="false"
+            aria-label="Tema escuro">
+      <span class="ts-track" aria-hidden="true"><span class="ts-thumb"><svg class="ts-sun" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="3.1" stroke="currentColor" stroke-width="1.5"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2 3.1 3.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="ts-moon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 9.6A5.9 5.9 0 0 1 6.4 2.5a5.9 5.9 0 1 0 7.1 7.1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span></span>
+    </button>
+  </div>
+</nav>
+<main class="main"><div class="inner">
+<div class="page" id="pg-fundacao"><header class="phead"><div class="eyebrow">Fundação</div><h1>Fundação</h1><p class="lede">A camada que decide antes de qualquer componente existir: a cor, a tipografia, a medida e a prova de que tudo isso atravessa o portão. Nenhum componente inventa valor — todos consomem daqui, e é por isso que trocar o tema não é retrabalho.</p></header><div class="panel"><div class="stats">
+  <div class="stat hl"><b>#FC5000</b><span>âncora de marca, preservada exata</span></div>
+  <div class="stat"><b>66</b><span>primitivas em 6 famílias</span></div>
+  <div class="stat"><b>49</b><span>semânticos, cada um com dois temas</span></div>
+  <div class="stat hl"><b>77 / 80</b><span>pares em AA pleno · 3 exceções de marca</span></div>
+</div>
+<section>
+  <h2>Os cinco assuntos da Fundação</h2>
+  <div class="cards">
+    <a class="card" href="#/principios" data-page="principios"><div class="card-thumb"><span class="th-anchor">#FC5000</span></div><div class="card-body"><span class="card-title">Princípios</span><span class="card-desc">As cinco decisões que travam o resto, o pipeline de oito etapas e os quatro portões de build.</span></div></a>
+    <a class="card" href="#/prova" data-page="prova"><div class="card-thumb"><div class="th-split"><div style="background:#FFFFFF"><b style="background:#FC5000"></b></div><div style="background:#181818"><b style="background:#FC5000"></b></div></div></div><div class="card-body"><span class="card-title">A prova</span><span class="card-desc">Os mesmos tokens montados nos dois temas, lado a lado: botões, campos, foco e avisos.</span></div></a>
+    <a class="card" href="#/cor" data-page="cor"><div class="card-thumb"><div class="th-ramp"><span style="background:#FFF5F0"></span><span style="background:#FFEADE"></span><span style="background:#FFD7C4"></span><span style="background:#FFBDA0"></span><span style="background:#FF9267"></span><span style="background:#FC5000"></span><span style="background:#C53900"></span><span style="background:#992700"></span><span style="background:#6C2100"></span><span style="background:#4A1700"></span><span style="background:#2D0D00"></span></div></div><div class="card-body"><span class="card-title">Cor</span><span class="card-desc">66 primitivas em OKLCH, 49 semânticos com dois temas e os 80 pares medidos do portão de contraste.</span></div></a>
+    <a class="card" href="#/tipografia" data-page="tipografia"><div class="card-thumb"><div class="th-aa">Aa<small>Inter · 14 estilos</small></div></div><div class="card-body"><span class="card-title">Tipografia</span><span class="card-desc">Inter e JetBrains Mono em 14 estilos fechados de tamanho, entrelinha, peso e tracking.</span></div></a>
+    <a class="card" href="#/espacamento" data-page="espacamento"><div class="card-thumb"><div class="th-bars"><i style="width:14%"></i><i style="width:26%"></i><i style="width:48%"></i><i style="width:84%"></i></div></div><div class="card-body"><span class="card-title">Espaçamento e medidas</span><span class="card-desc">Base 4 com ritmo de 8, 9 raios, 6 elevações e o anel de foco de duas camadas.</span></div></a>
+  </div>
+</section></div></div>
+<div class="page" id="pg-principios" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Princípios</h1><p class="lede">O que está decidido antes dos valores: as cinco escolhas que sustentam o sistema, as oito etapas que um componente percorre e os quatro portões que recusam o que não passa.</p><div class="meta"><span class="badge on">5 decisões</span><span class="badge">8 etapas</span><span class="badge">4 portões</span></div></header><div class="panel">
+<section>
+  <h2>As cinco decisões que travam o resto</h2>
+  <p>Tudo o que vem depois é consequência destas. São fáceis de desfazer por engano numa
+  contribuição, então ficam registradas antes de qualquer valor.</p>
+  <div class="scroller" style="margin-top:18px"><table><tbody>
+    <tr><td class="tok" style="width:96px">âncora</td><td><b>#FC5000 é imutável.</b>
+      Ela fixa L 0,666 na escada compartilhada. Mudar a âncora é mudar a marca inteira.</td></tr>
+    <tr><td class="tok">rótulo</td><td><b>Texto claro sobre a marca.</b> Branco sobre
+      <code>#FC5000</code> dá 3.34:1 — abaixo dos 4,5:1 de texto
+      normal, acima dos 3:1 de texto grande e de elemento não-textual. É escolha de identidade,
+      tomada com o número na mão.</td></tr>
+    <tr><td class="tok">neutro</td><td><b>O cinza é acromático.</b> Chroma zero em toda a rampa —
+      <code>r = g = b</code> nos onze degraus. A escala fria anterior saiu junto com a atualização
+      da marca.</td></tr>
+    <tr><td class="tok">escuro</td><td><b>O tema escuro não é inversão.</b> Sólidos vão para o degrau
+      500 com texto escuro, tonalizados de 100 para 950, e elevação troca sombra por superfície que
+      clareia.</td></tr>
+    <tr><td class="tok">portão</td><td><b>Contraste é portão de build.</b> Os 80 pares rodam a
+      cada alteração de cor. Um par abaixo do mínimo quebra o build — nunca se afrouxa o
+      mínimo.</td></tr>
+  </tbody></table></div>
+</section>
+
+<section>
+  <h2>Como um componente entra no sistema</h2>
+  <p>Oito etapas, uma fechada antes de a próxima abrir. O Button percorreu as oito; é por isso
+  que ele é o único componente publicado até aqui.</p>
+  <div class="anat" style="margin-top:18px">
+    <div><b>01 · Definir</b><span>Escopo, precedentes em Carbon, Primer, Polaris, Material e Spectrum, auditoria do que já existe.</span></div>
+    <div><b>02 · Desenhar</b><span>Forma e composição no Figma. Etapa humana, por escolha.</span></div>
+    <div><b>03 · Tokenizar</b><span>Cada decisão do desenho vira alias para a camada semântica. Nenhum valor cru.</span></div>
+    <div><b>04 · Documentar</b><span>Regras de uso e dos/don'ts ancorados no que os sistemas de referência publicam.</span></div>
+    <div><b>05 · Codar</b><span>CSS sem literal. O <code>check.py</code> recusa o arquivo se um escapar.</span></div>
+    <div><b>06 · Playground</b><span>A página instancia o CSS real, não uma cópia.</span></div>
+    <div><b>07 · QA</b><span>Combinação renderizada — variante × estado × tema — contra o fundo efetivo.</span></div>
+    <div><b>08 · Versionar</b><span>PR de <code>dev</code> para <code>main</code>, tag no merge. Componente novo sobe MINOR.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Os quatro portões</h2>
+  <p>Validação aqui é portão de build, nunca revisão manual. Cada script aborta com saída
+  diferente de zero, e um portão vermelho impede o commit de virar release.</p>
+  <div class="scroller" style="margin-top:18px"><table>
+    <thead><tr><th>Portão</th><th>Script</th><th>O que ele recusa</th></tr></thead>
+    <tbody>
+      <tr><td class="name">Contraste</td><td class="tok">foundation/export.py</td>
+        <td>Qualquer par abaixo do mínimo WCAG que não esteja nomeado como exceção.</td></tr>
+      <tr><td class="name">Alias</td><td class="tok">components/&lt;c&gt;/tokens.py</td>
+        <td>Token de componente que aponte para primitiva em vez de semântico.</td></tr>
+      <tr><td class="name">Literal no CSS</td><td class="tok">components/&lt;c&gt;/check.py</td>
+        <td>Cor, espaço, raio ou tipografia escrita direto no arquivo do componente.</td></tr>
+      <tr><td class="name">Acessibilidade</td><td class="tok">components/&lt;c&gt;/a11y.py</td>
+        <td>Combinação renderizada que reprove — não par de token solto.</td></tr>
+    </tbody>
+  </table></div>
+</section></div></div>
+<div class="page" id="pg-prova" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>A prova</h1><p class="lede">A mesma interface montada com os mesmos tokens, nos dois temas, lado a lado. Se a camada semântica estiver certa, nada aqui precisou ser escrito duas vezes.</p><div class="meta"><span class="badge on">Dois temas</span><span class="badge">49 semânticos</span><span class="badge">0 valores literais</span></div></header><div class="panel">
+<section>
+  <h2>Os mesmos tokens, os dois temas</h2>
+  <p>Nada aqui usa valor literal: cada cor destes dois painéis sai da camada semântica, lida do
+  <code>tokens.json</code> no momento em que esta página foi gerada. É a prova de que a troca de
+  tema não é retrabalho — é a mesma árvore de tokens resolvendo diferente.</p>
+  <div style="margin-top:20px"><div class="proof">
+<div class="proof-card" style="background:#FFFFFF;border-color:#E0E0E0">
+  <div class="proof-tag" style="color:#717171;border-color:#E0E0E0">tema claro</div>
+  <div class="proof-body">
+    <div class="pb-row">
+      <span class="pb" style="background:#FC5000;color:#FFFFFF">Publicar</span>
+      <span class="pb" style="background:#C53900;color:#FFFFFF">Publicar<i>hover</i></span>
+      <span class="pb" style="background:#A00E27;color:#FFFFFF">Excluir</span>
+      <span class="pb ghost" style="color:#292929;border-color:#717171">Cancelar</span>
+    </div>
+    <div class="fld">
+      <span class="lbl" style="color:#292929">Nome do projeto</span>
+      <span class="inp" style="border-color:#717171;background:#FFFFFF;color:#717171">design-system</span>
+    </div>
+    <div class="fld">
+      <span class="lbl" style="color:#292929">Slug</span>
+      <span class="inp" style="border-color:#FC5000;background:#FFFFFF;color:#292929;box-shadow:0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000">al-ds</span>
+    </div>
+    <div class="fld">
+      <span class="lbl" style="color:#A00E27">E-mail</span>
+      <span class="inp" style="border-color:#CA293F;background:#FFFFFF;color:#292929">guilherme@</span>
+      <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
+    </div>
+    <div class="banners">
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.2.0 está disponível.</div>
+      <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
+      <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
+      <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
+    </div>
+  </div>
+</div>
+<div class="proof-card" style="background:#181818;border-color:#3E3E3E">
+  <div class="proof-tag" style="color:#B3B3B3;border-color:#3E3E3E">tema escuro</div>
+  <div class="proof-body">
+    <div class="pb-row">
+      <span class="pb" style="background:#FC5000;color:#FFFFFF">Publicar</span>
+      <span class="pb" style="background:#EA4900;color:#FFFFFF">Publicar<i>hover</i></span>
+      <span class="pb" style="background:#F84F5D;color:#181818">Excluir</span>
+      <span class="pb ghost" style="color:#F7F7F7;border-color:#949494">Cancelar</span>
+    </div>
+    <div class="fld">
+      <span class="lbl" style="color:#F7F7F7">Nome do projeto</span>
+      <span class="inp" style="border-color:#949494;background:#181818;color:#B3B3B3">design-system</span>
+    </div>
+    <div class="fld">
+      <span class="lbl" style="color:#F7F7F7">Slug</span>
+      <span class="inp" style="border-color:#FF9267;background:#181818;color:#F7F7F7;box-shadow:0 0 0 2px #181818, 0 0 0 4px #FF9267">al-ds</span>
+    </div>
+    <div class="fld">
+      <span class="lbl" style="color:#FF8D91">E-mail</span>
+      <span class="inp" style="border-color:#F84F5D;background:#181818;color:#F7F7F7">guilherme@</span>
+      <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
+    </div>
+    <div class="banners">
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.2.0 está disponível.</div>
+      <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
+      <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
+      <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
+    </div>
+  </div>
+</div></div></div>
+</section></div></div>
+<div class="page" id="pg-cor" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Cor</h1><p class="lede">66 primitivas geradas em OKLCH a partir de #FC5000, 49 semânticos com dois temas cada, e 80 pares medidos antes de qualquer um virar token.</p><div class="meta"><span class="badge">66 primitivas</span><span class="badge on">49 semânticos</span><span class="badge">OKLCH</span><span class="badge">WCAG 2.1 AA</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Cor"><button role="tab" id="t-cor-escala" aria-controls="p-cor-escala" aria-selected="true">Escala</button><button role="tab" id="t-cor-semanticos" aria-controls="p-cor-semanticos" aria-selected="false" tabindex=-1>Semânticos</button><button role="tab" id="t-cor-contraste" aria-controls="p-cor-contraste" aria-selected="false" tabindex=-1>Contraste</button></div><div class="panel" id="p-cor-escala" role="tabpanel" aria-labelledby="t-cor-escala" tabindex="0">
+<section>
+  <h2>Uma escada de lightness para todas as famílias</h2>
+  <p>Cada degrau tem a mesma lightness OKLab nas seis famílias. O degrau 500 é <b>0,666</b> porque
+  é a lightness de <code>#FC5000</code>. Isso significa que trocar
+  <code>green-600</code> por <code>red-600</code> num componente não muda o contraste — a
+  acessibilidade sobrevive à troca de cor.</p>
+  <p>A escada é comprimida nas duas pontas: os degraus claros ficam próximos porque é onde vivem
+  superfície e borda, e os escuros também, porque é onde vive a elevação do tema escuro.</p>
+  <div class="note" style="margin-top:18px">
+    <b>Por que 0,666 importa mais do que parece</b>
+    <p>Um cinza nessa lightness dá exatamente 3,03:1 contra o branco — o piso do WCAG para elemento
+    não-textual. A âncora de marca caiu, por coincidência, na fronteira exata entre "serve como
+    borda" e "não serve". Todo o resto do sistema se organiza em volta desse ponto.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Primitivas <span class="count">66 cores</span></h2>
+  <p>O número pequeno em cada amostra é o contraste contra o branco. A rampa é conferida contra os
+  swatches da página <code>Assets</code> do Figma, que é a fonte da verdade da marca.</p>
+  <div style="margin-top:18px"><div class="scroll-x"><table class="ramp"><thead><tr><th class="fam"></th><th><span class="step">50</span><span class="lval">L 0.977</span></th><th><span class="step">100</span><span class="lval">L 0.950</span></th><th><span class="step">200</span><span class="lval">L 0.908</span></th><th><span class="step">300</span><span class="lval">L 0.852</span></th><th><span class="step">400</span><span class="lval">L 0.768</span></th><th><span class="step">500</span><span class="lval">L 0.666</span></th><th><span class="step">600</span><span class="lval">L 0.550</span></th><th><span class="step">700</span><span class="lval">L 0.452</span></th><th><span class="step">800</span><span class="lval">L 0.362</span></th><th><span class="step">900</span><span class="lval">L 0.282</span></th><th><span class="step">950</span><span class="lval">L 0.208</span></th></tr></thead><tbody><tr><th class="fam"><span class="fam-name">neutral</span><span class="fam-role">superfície, texto, borda</span></th><td><div class="ramp-cell" style="background:#F7F7F7;color:#181818"><span class="ramp-hex">F7F7F7</span><span class="ramp-cr">1.07</span></div></td><td><div class="ramp-cell" style="background:#EEEEEE;color:#181818"><span class="ramp-hex">EEEEEE</span><span class="ramp-cr">1.16</span></div></td><td><div class="ramp-cell" style="background:#E0E0E0;color:#181818"><span class="ramp-hex">E0E0E0</span><span class="ramp-cr">1.32</span></div></td><td><div class="ramp-cell" style="background:#CECECE;color:#181818"><span class="ramp-hex">CECECE</span><span class="ramp-cr">1.57</span></div></td><td><div class="ramp-cell" style="background:#B3B3B3;color:#181818"><span class="ramp-hex">B3B3B3</span><span class="ramp-cr">2.10</span></div></td><td><div class="ramp-cell" style="background:#949494;color:#181818"><span class="ramp-hex">949494</span><span class="ramp-cr">3.03</span></div></td><td><div class="ramp-cell" style="background:#717171;color:#FFFFFF"><span class="ramp-hex">717171</span><span class="ramp-cr">4.88</span></div></td><td><div class="ramp-cell" style="background:#565656;color:#FFFFFF"><span class="ramp-hex">565656</span><span class="ramp-cr">7.34</span></div></td><td><div class="ramp-cell" style="background:#3E3E3E;color:#FFFFFF"><span class="ramp-hex">3E3E3E</span><span class="ramp-cr">10.70</span></div></td><td><div class="ramp-cell" style="background:#292929;color:#FFFFFF"><span class="ramp-hex">292929</span><span class="ramp-cr">14.55</span></div></td><td><div class="ramp-cell" style="background:#181818;color:#FFFFFF"><span class="ramp-hex">181818</span><span class="ramp-cr">17.76</span></div></td></tr><tr><th class="fam"><span class="fam-name">orange</span><span class="fam-role">marca · ação</span></th><td><div class="ramp-cell" style="background:#FFF5F0;color:#181818"><span class="ramp-hex">FFF5F0</span><span class="ramp-cr">1.07</span></div></td><td><div class="ramp-cell" style="background:#FFEADE;color:#181818"><span class="ramp-hex">FFEADE</span><span class="ramp-cr">1.16</span></div></td><td><div class="ramp-cell" style="background:#FFD7C4;color:#181818"><span class="ramp-hex">FFD7C4</span><span class="ramp-cr">1.33</span></div></td><td><div class="ramp-cell" style="background:#FFBDA0;color:#181818"><span class="ramp-hex">FFBDA0</span><span class="ramp-cr">1.61</span></div></td><td><div class="ramp-cell" style="background:#FF9267;color:#181818"><span class="ramp-hex">FF9267</span><span class="ramp-cr">2.20</span></div></td><td><div class="ramp-cell" style="background:#FC5000;color:#181818"><span class="ramp-hex">FC5000</span><span class="ramp-cr">3.34</span></div></td><td><div class="ramp-cell" style="background:#C53900;color:#FFFFFF"><span class="ramp-hex">C53900</span><span class="ramp-cr">5.30</span></div></td><td><div class="ramp-cell" style="background:#992700;color:#FFFFFF"><span class="ramp-hex">992700</span><span class="ramp-cr">7.94</span></div></td><td><div class="ramp-cell" style="background:#6C2100;color:#FFFFFF"><span class="ramp-hex">6C2100</span><span class="ramp-cr">11.32</span></div></td><td><div class="ramp-cell" style="background:#4A1700;color:#FFFFFF"><span class="ramp-hex">4A1700</span><span class="ramp-cr">14.85</span></div></td><td><div class="ramp-cell" style="background:#2D0D00;color:#FFFFFF"><span class="ramp-hex">2D0D00</span><span class="ramp-cr">17.96</span></div></td></tr><tr><th class="fam"><span class="fam-name">red</span><span class="fam-role">danger</span></th><td><div class="ramp-cell" style="background:#FFF5F5;color:#181818"><span class="ramp-hex">FFF5F5</span><span class="ramp-cr">1.07</span></div></td><td><div class="ramp-cell" style="background:#FFE8E9;color:#181818"><span class="ramp-hex">FFE8E9</span><span class="ramp-cr">1.17</span></div></td><td><div class="ramp-cell" style="background:#FFD5D5;color:#181818"><span class="ramp-hex">FFD5D5</span><span class="ramp-cr">1.33</span></div></td><td><div class="ramp-cell" style="background:#FFBABB;color:#181818"><span class="ramp-hex">FFBABB</span><span class="ramp-cr">1.62</span></div></td><td><div class="ramp-cell" style="background:#FF8D91;color:#181818"><span class="ramp-hex">FF8D91</span><span class="ramp-cr">2.22</span></div></td><td><div class="ramp-cell" style="background:#F84F5D;color:#181818"><span class="ramp-hex">F84F5D</span><span class="ramp-cr">3.35</span></div></td><td><div class="ramp-cell" style="background:#CA293F;color:#FFFFFF"><span class="ramp-hex">CA293F</span><span class="ramp-cr">5.38</span></div></td><td><div class="ramp-cell" style="background:#A00E27;color:#FFFFFF"><span class="ramp-hex">A00E27</span><span class="ramp-cr">8.12</span></div></td><td><div class="ramp-cell" style="background:#780014;color:#FFFFFF"><span class="ramp-hex">780014</span><span class="ramp-cr">11.61</span></div></td><td><div class="ramp-cell" style="background:#550007;color:#FFFFFF"><span class="ramp-hex">550007</span><span class="ramp-cr">15.12</span></div></td><td><div class="ramp-cell" style="background:#360001;color:#FFFFFF"><span class="ramp-hex">360001</span><span class="ramp-cr">18.15</span></div></td></tr><tr><th class="fam"><span class="fam-name">amber</span><span class="fam-role">warning</span></th><td><div class="ramp-cell" style="background:#FBF7EC;color:#181818"><span class="ramp-hex">FBF7EC</span><span class="ramp-cr">1.07</span></div></td><td><div class="ramp-cell" style="background:#F7EED5;color:#181818"><span class="ramp-hex">F7EED5</span><span class="ramp-cr">1.16</span></div></td><td><div class="ramp-cell" style="background:#F2DFB0;color:#181818"><span class="ramp-hex">F2DFB0</span><span class="ramp-cr">1.32</span></div></td><td><div class="ramp-cell" style="background:#EBCA7E;color:#181818"><span class="ramp-hex">EBCA7E</span><span class="ramp-cr">1.58</span></div></td><td><div class="ramp-cell" style="background:#DCAC2E;color:#181818"><span class="ramp-hex">DCAC2E</span><span class="ramp-cr">2.10</span></div></td><td><div class="ramp-cell" style="background:#BA8C00;color:#181818"><span class="ramp-hex">BA8C00</span><span class="ramp-cr">3.07</span></div></td><td><div class="ramp-cell" style="background:#916A00;color:#FFFFFF"><span class="ramp-hex">916A00</span><span class="ramp-cr">4.92</span></div></td><td><div class="ramp-cell" style="background:#704F00;color:#FFFFFF"><span class="ramp-hex">704F00</span><span class="ramp-cr">7.48</span></div></td><td><div class="ramp-cell" style="background:#523800;color:#FFFFFF"><span class="ramp-hex">523800</span><span class="ramp-cr">10.91</span></div></td><td><div class="ramp-cell" style="background:#392500;color:#FFFFFF"><span class="ramp-hex">392500</span><span class="ramp-cr">14.60</span></div></td><td><div class="ramp-cell" style="background:#221500;color:#FFFFFF"><span class="ramp-hex">221500</span><span class="ramp-cr">17.87</span></div></td></tr><tr><th class="fam"><span class="fam-name">green</span><span class="fam-role">success</span></th><td><div class="ramp-cell" style="background:#EFFBF2;color:#181818"><span class="ramp-hex">EFFBF2</span><span class="ramp-cr">1.06</span></div></td><td><div class="ramp-cell" style="background:#DEF6E4;color:#181818"><span class="ramp-hex">DEF6E4</span><span class="ramp-cr">1.14</span></div></td><td><div class="ramp-cell" style="background:#C1EECA;color:#181818"><span class="ramp-hex">C1EECA</span><span class="ramp-cr">1.28</span></div></td><td><div class="ramp-cell" style="background:#9DE2A9;color:#181818"><span class="ramp-hex">9DE2A9</span><span class="ramp-cr">1.51</span></div></td><td><div class="ramp-cell" style="background:#6ACD7C;color:#181818"><span class="ramp-hex">6ACD7C</span><span class="ramp-cr">1.97</span></div></td><td><div class="ramp-cell" style="background:#1BB14B;color:#181818"><span class="ramp-hex">1BB14B</span><span class="ramp-cr">2.82</span></div></td><td><div class="ramp-cell" style="background:#008A2A;color:#FFFFFF"><span class="ramp-hex">008A2A</span><span class="ramp-cr">4.50</span></div></td><td><div class="ramp-cell" style="background:#006911;color:#FFFFFF"><span class="ramp-hex">006911</span><span class="ramp-cr">6.93</span></div></td><td><div class="ramp-cell" style="background:#004C03;color:#FFFFFF"><span class="ramp-hex">004C03</span><span class="ramp-cr">10.32</span></div></td><td><div class="ramp-cell" style="background:#013400;color:#FFFFFF"><span class="ramp-hex">013400</span><span class="ramp-cr">14.07</span></div></td><td><div class="ramp-cell" style="background:#001F00;color:#FFFFFF"><span class="ramp-hex">001F00</span><span class="ramp-cr">17.56</span></div></td></tr><tr><th class="fam"><span class="fam-name">blue</span><span class="fam-role">info</span></th><td><div class="ramp-cell" style="background:#F1F8FF;color:#181818"><span class="ramp-hex">F1F8FF</span><span class="ramp-cr">1.07</span></div></td><td><div class="ramp-cell" style="background:#E2F1FF;color:#181818"><span class="ramp-hex">E2F1FF</span><span class="ramp-cr">1.15</span></div></td><td><div class="ramp-cell" style="background:#CAE4FF;color:#181818"><span class="ramp-hex">CAE4FF</span><span class="ramp-cr">1.31</span></div></td><td><div class="ramp-cell" style="background:#A9D3FF;color:#181818"><span class="ramp-hex">A9D3FF</span><span class="ramp-cr">1.56</span></div></td><td><div class="ramp-cell" style="background:#76B8FF;color:#181818"><span class="ramp-hex">76B8FF</span><span class="ramp-cr">2.09</span></div></td><td><div class="ramp-cell" style="background:#2696FF;color:#181818"><span class="ramp-hex">2696FF</span><span class="ramp-cr">3.05</span></div></td><td><div class="ramp-cell" style="background:#0071D0;color:#FFFFFF"><span class="ramp-hex">0071D0</span><span class="ramp-cr">4.91</span></div></td><td><div class="ramp-cell" style="background:#0055A3;color:#FFFFFF"><span class="ramp-hex">0055A3</span><span class="ramp-cr">7.43</span></div></td><td><div class="ramp-cell" style="background:#003C7A;color:#FFFFFF"><span class="ramp-hex">003C7A</span><span class="ramp-cr">10.90</span></div></td><td><div class="ramp-cell" style="background:#002858;color:#FFFFFF"><span class="ramp-hex">002858</span><span class="ramp-cr">14.54</span></div></td><td><div class="ramp-cell" style="background:#001639;color:#FFFFFF"><span class="ramp-hex">001639</span><span class="ramp-cr">17.89</span></div></td></tr></tbody></table></div></div>
+  <div class="note" style="margin-top:20px">
+    <b>Como o vermelho e o amarelo fogem da marca</b>
+    <p>O laranja está em hue 38°. O amarelo de warning foi empurrado para 85° — 47° de distância,
+    sem ambiguidade. O vermelho de danger ficou em 20°, e nos degraus claros ele vira levemente
+    rosado justamente para se afastar do pêssego da marca.</p>
+    <p><b>O que a distância não resolve.</b> Em tonalizados muito claros, <code>orange-100</code> e
+    <code>red-100</code> ficam a 0,017 de distância perceptual — praticamente idênticos. Isso é
+    física, não erro de projeto: no degrau 100 nenhum par de cores quentes se distingue. Por isso
+    banner nenhum se identifica só pelo fundo — todos carregam ícone, borda colorida no degrau 500+
+    e texto. É o que a WCAG 1.4.1 exige de qualquer forma.</p>
+  </div>
+  <div class="note">
+    <b>Componente nenhum consome primitiva direto</b>
+    <p>Esta camada existe para ser referenciada pela camada semântica, e só por ela. Usar
+    <code>--al-color-orange-500</code> dentro de um componente é o erro que o portão de alias
+    recusa: o componente deixaria de acompanhar o tema.</p>
+  </div>
+</section></div><div class="panel" id="p-cor-semanticos" role="tabpanel" aria-labelledby="t-cor-semanticos" tabindex="0" hidden>
+<section>
+  <h2>A camada que troca com o tema</h2>
+  <p>49 tokens, cada um com um valor por tema. É esta camada que muda quando o tema vira, e é
+  aqui que a intenção fica registrada: <code>bg-danger</code> diz o que a cor <i>significa</i>,
+  <code>red-700</code> diz apenas o que ela <i>é</i>.</p>
+  <div style="margin-top:22px"><h3 class="sub">Superfície e preenchimento <span class="count">26 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-bg-canvas</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-bg-surface</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-bg-surface-raised</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-subtle</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-hover</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-active</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-disabled</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-inverse</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-bg-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-bg-brand-hover</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td><td class="chipcell"><span class="chip" style="background:#EA4900"></span></td><td class="tok dim">#EA4900</td></tr><tr><td class="tok">--al-bg-brand-active</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td></tr><tr><td class="tok">--al-bg-brand-subtle</td><td class="chipcell"><span class="chip" style="background:#FFEADE"></span></td><td class="tok dim">#FFEADE</td><td class="chipcell"><span class="chip" style="background:#2D0D00"></span></td><td class="tok dim">#2D0D00</td></tr><tr><td class="tok">--al-bg-brand-strong</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td></tr><tr><td class="tok">--al-bg-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-bg-danger-hover</td><td class="chipcell"><span class="chip" style="background:#780014"></span></td><td class="tok dim">#780014</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-bg-danger-active</td><td class="chipcell"><span class="chip" style="background:#550007"></span></td><td class="tok dim">#550007</td><td class="chipcell"><span class="chip" style="background:#FFBABB"></span></td><td class="tok dim">#FFBABB</td></tr><tr><td class="tok">--al-bg-danger-subtle</td><td class="chipcell"><span class="chip" style="background:#FFE8E9"></span></td><td class="tok dim">#FFE8E9</td><td class="chipcell"><span class="chip" style="background:#360001"></span></td><td class="tok dim">#360001</td></tr><tr><td class="tok">--al-bg-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-bg-success-hover</td><td class="chipcell"><span class="chip" style="background:#004C03"></span></td><td class="tok dim">#004C03</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-bg-success-subtle</td><td class="chipcell"><span class="chip" style="background:#DEF6E4"></span></td><td class="tok dim">#DEF6E4</td><td class="chipcell"><span class="chip" style="background:#001F00"></span></td><td class="tok dim">#001F00</td></tr><tr><td class="tok">--al-bg-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-bg-warning-hover</td><td class="chipcell"><span class="chip" style="background:#523800"></span></td><td class="tok dim">#523800</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-bg-warning-subtle</td><td class="chipcell"><span class="chip" style="background:#F7EED5"></span></td><td class="tok dim">#F7EED5</td><td class="chipcell"><span class="chip" style="background:#221500"></span></td><td class="tok dim">#221500</td></tr><tr><td class="tok">--al-bg-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr><tr><td class="tok">--al-bg-info-hover</td><td class="chipcell"><span class="chip" style="background:#003C7A"></span></td><td class="tok dim">#003C7A</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr><tr><td class="tok">--al-bg-info-subtle</td><td class="chipcell"><span class="chip" style="background:#E2F1FF"></span></td><td class="tok dim">#E2F1FF</td><td class="chipcell"><span class="chip" style="background:#001639"></span></td><td class="tok dim">#001639</td></tr></tbody></table></div><h3 class="sub">Texto <span class="count">12 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-text-primary</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-text-secondary</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-placeholder</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-disabled</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-text-inverse</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-text-on-brand</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td></tr><tr><td class="tok">--al-text-on-solid</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-text-brand</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-text-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-text-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-text-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-text-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr></tbody></table></div><h3 class="sub">Borda <span class="count">9 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-border-subtle</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-border-default</td><td class="chipcell"><span class="chip" style="background:#CECECE"></span></td><td class="tok dim">#CECECE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-border-strong</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#949494"></span></td><td class="tok dim">#949494</td></tr><tr><td class="tok">--al-border-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-border-focus</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-border-danger</td><td class="chipcell"><span class="chip" style="background:#CA293F"></span></td><td class="tok dim">#CA293F</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-border-success</td><td class="chipcell"><span class="chip" style="background:#008A2A"></span></td><td class="tok dim">#008A2A</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-border-warning</td><td class="chipcell"><span class="chip" style="background:#916A00"></span></td><td class="tok dim">#916A00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-border-info</td><td class="chipcell"><span class="chip" style="background:#0071D0"></span></td><td class="tok dim">#0071D0</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr></tbody></table></div><h3 class="sub">Cor do anel de foco <span class="count">2 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-shadow-focus-default</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-shadow-focus-error</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr></tbody></table></div></div>
+</section></div><div class="panel" id="p-cor-contraste" role="tabpanel" aria-labelledby="t-cor-contraste" tabindex="0" hidden>
+<section>
+  <h2>O que o texto claro sobre a marca custa, medido</h2>
+  <p>Superfície de marca carrega texto branco — decisão de identidade. Branco sobre
+  <code>#FC5000</code> dá <b>3.34:1</b>: abaixo dos 4,5:1 que
+  a WCAG exige de texto normal, acima dos 3:1 que ela exige de texto grande e de elemento
+  não-textual. O sistema não esconde isso; ele mede, nomeia e mostra onde cada estado cai.</p>
+  <svg viewBox="0 0 880 210" class="winsvg" role="img" aria-label="Contraste do texto branco sobre cada estado do preenchimento de marca, nos dois temas, contra a linha de 4,5 para 1 do AA"><rect x="132.0" y="30" width="193.1" height="128" class="win-exc"/><line x1="325.1" y1="30" x2="325.1" y2="158" class="win-bound"/><text x="333.1" y="24" class="win-rule">4,5:1 — AA para texto normal</text><text x="132.0" y="24" class="win-rule">3:1 — piso: AA para texto grande</text><text x="12" y="66" class="win-track-name">tema claro</text><text x="12" y="81" class="win-track-sub">tela branca</text><line x1="132.0" y1="62" x2="840.0" y2="62" class="win-rail"/><circle cx="175.8" cy="62" r="10" fill="#FC5000" class="win-dot"/><text x="175.8" y="45" class="win-name" text-anchor="middle">repouso</text><text x="175.8" y="88" class="win-role bad" text-anchor="middle">3.34:1</text><circle cx="428.6" cy="62" r="10" fill="#C53900" class="win-dot"/><text x="428.6" y="45" class="win-name" text-anchor="middle">hover</text><text x="428.6" y="88" class="win-role" text-anchor="middle">5.30:1</text><circle cx="768.0" cy="62" r="10" fill="#992700" class="win-dot"/><text x="768.0" y="45" class="win-name" text-anchor="middle">pressed</text><text x="768.0" y="88" class="win-role" text-anchor="middle">7.94:1</text><text x="12" y="128" class="win-track-name">tema escuro</text><text x="12" y="143" class="win-track-sub">tela #181818</text><line x1="132.0" y1="124" x2="840.0" y2="124" class="win-rail"/><circle cx="175.8" cy="124" r="10" fill="#FC5000" class="win-dot"/><text x="175.8" y="107" class="win-name" text-anchor="middle">repouso</text><text x="175.8" y="150" class="win-role bad" text-anchor="middle">3.34:1</text><circle cx="241.7" cy="124" r="10" fill="#EA4900" class="win-dot"/><text x="241.7" y="107" class="win-name" text-anchor="middle">hover</text><text x="241.7" y="150" class="win-role bad" text-anchor="middle">3.85:1</text><circle cx="428.6" cy="124" r="10" fill="#C53900" class="win-dot"/><text x="428.6" y="107" class="win-name" text-anchor="middle">pressed</text><text x="428.6" y="150" class="win-role" text-anchor="middle">5.30:1</text><text x="132.0" y="196" class="win-axis">contraste do texto branco sobre o preenchimento de marca →</text></svg>
+  <div class="note" style="margin-top:16px">
+    <b>Com texto claro a direção inverte — e isso simplifica o sistema</b>
+    <p>Quando o texto era escuro, escurecer o preenchimento piorava o texto e só cabiam dois
+    estados de cor. Agora escurecer melhora o rótulo, então o hover escurece nos dois temas e o
+    pressed passa a existir como cor de verdade.</p>
+    <p><b>O tema escuro tem um teto que o claro não tem.</b> No claro dá para escurecer até
+    <code>orange-700</code> (7.94:1) sem penalidade. No escuro o
+    preenchimento também precisa se separar da tela, então o hover para em
+    <code>orange-550</code> — o degrau que existe exatamente para esse ponto.</p>
+    <p><b>Onde AA pleno for obrigatório</b> — texto legal, fluxo crítico, contexto regulado — use
+    <code>bg-brand-strong</code> (<code>orange-700</code>, 7.94:1 com texto
+    branco). Ele existe exatamente para isso e passa em AA pleno no repouso.</p>
+  </div>
+</section>
+
+<section>
+  <h2>O portão de contraste <span class="count">80 pares · 77 em AA · 3 exceções · 0 reprovas</span></h2>
+  <p>Todo par que o sistema permite que se encontre na tela, medido. Texto em 4,5:1, elemento
+  não-textual em 3:1. Estes 80 pares rodam como teste a cada alteração de cor — se um cair,
+  o build quebra. As três exceções são de marca, estão nomeadas e nenhuma fica abaixo de 3:1.</p>
+  <div style="margin-top:22px"><h3 class="sub">Tema claro <span class="count">40 pares · 39 em AA pleno · 1 exceção de marca</span></h3><div class="scroller"><table><thead><tr><th>Par</th><th>Frente</th><th>Fundo</th><th class="num">Medido</th><th class="num">Mín.</th><th></th></tr></thead><tbody><tr><td>texto principal na tela</td><td class="tok"><span class="chip sm" style="background:#292929"></span>text-primary</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">14.55:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto principal em superficie</td><td class="tok"><span class="chip sm" style="background:#292929"></span>text-primary</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>bg-surface</td><td class="num strong">13.58:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto principal em card elevado</td><td class="tok"><span class="chip sm" style="background:#292929"></span>text-primary</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-surface-raised</td><td class="num strong">14.55:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto principal em fundo sutil</td><td class="tok"><span class="chip sm" style="background:#292929"></span>text-primary</td><td class="tok"><span class="chip sm" style="background:#EEEEEE"></span>bg-subtle</td><td class="num strong">12.54:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto secundario na tela</td><td class="tok"><span class="chip sm" style="background:#717171"></span>text-secondary</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">4.88:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto secundario em superficie</td><td class="tok"><span class="chip sm" style="background:#717171"></span>text-secondary</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>bg-surface</td><td class="num strong">4.56:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>placeholder de input</td><td class="tok"><span class="chip sm" style="background:#717171"></span>text-placeholder</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">4.88:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto em fundo invertido</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>text-inverse</td><td class="tok"><span class="chip sm" style="background:#292929"></span>bg-inverse</td><td class="num strong">13.58:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto claro sobre a marca</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-brand</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>bg-brand</td><td class="num strong">3.34:1</td><td class="num dim">3.0</td><td><span class="exc">MARCA</span></td></tr><tr><td>texto claro sobre a marca em hover</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-brand</td><td class="tok"><span class="chip sm" style="background:#C53900"></span>bg-brand-hover</td><td class="num strong">5.30:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto claro sobre a marca pressionada</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-brand</td><td class="tok"><span class="chip sm" style="background:#992700"></span>bg-brand-active</td><td class="num strong">7.94:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido destrutivo pressionado</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#550007"></span>bg-danger-active</td><td class="num strong">15.12:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>marca em hover contra a tela</td><td class="tok"><span class="chip sm" style="background:#C53900"></span>bg-brand-hover</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">5.30:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>marca em hover em superficie</td><td class="tok"><span class="chip sm" style="background:#C53900"></span>bg-brand-hover</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>bg-surface</td><td class="num strong">4.95:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>preenchimento de marca em superficie</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>bg-brand</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>bg-surface</td><td class="num strong">3.12:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido destrutivo</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#A00E27"></span>bg-danger</td><td class="num strong">8.12:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido de sucesso</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#006911"></span>bg-success</td><td class="num strong">6.93:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido de alerta</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#704F00"></span>bg-warning</td><td class="num strong">7.48:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido de info</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#0055A3"></span>bg-info</td><td class="num strong">7.43:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>link/texto de marca</td><td class="tok"><span class="chip sm" style="background:#992700"></span>text-brand</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">7.94:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de marca em fundo tonalizado</td><td class="tok"><span class="chip sm" style="background:#992700"></span>text-brand</td><td class="tok"><span class="chip sm" style="background:#FFEADE"></span>bg-brand-subtle</td><td class="num strong">6.83:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de erro</td><td class="tok"><span class="chip sm" style="background:#A00E27"></span>text-danger</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">8.12:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de erro em banner</td><td class="tok"><span class="chip sm" style="background:#A00E27"></span>text-danger</td><td class="tok"><span class="chip sm" style="background:#FFE8E9"></span>bg-danger-subtle</td><td class="num strong">6.95:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de sucesso</td><td class="tok"><span class="chip sm" style="background:#006911"></span>text-success</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">6.93:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de sucesso em banner</td><td class="tok"><span class="chip sm" style="background:#006911"></span>text-success</td><td class="tok"><span class="chip sm" style="background:#DEF6E4"></span>bg-success-subtle</td><td class="num strong">6.08:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de alerta</td><td class="tok"><span class="chip sm" style="background:#704F00"></span>text-warning</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">7.48:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de alerta em banner</td><td class="tok"><span class="chip sm" style="background:#704F00"></span>text-warning</td><td class="tok"><span class="chip sm" style="background:#F7EED5"></span>bg-warning-subtle</td><td class="num strong">6.46:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de info</td><td class="tok"><span class="chip sm" style="background:#0055A3"></span>text-info</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">7.43:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de info em banner</td><td class="tok"><span class="chip sm" style="background:#0055A3"></span>text-info</td><td class="tok"><span class="chip sm" style="background:#E2F1FF"></span>bg-info-subtle</td><td class="num strong">6.46:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>borda de input na tela</td><td class="tok"><span class="chip sm" style="background:#717171"></span>border-strong</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">4.88:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>borda de input em superficie</td><td class="tok"><span class="chip sm" style="background:#717171"></span>border-strong</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>bg-surface</td><td class="num strong">4.56:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco na tela</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>border-focus</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">3.34:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco em superficie</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>border-focus</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>bg-surface</td><td class="num strong">3.12:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>borda de input em erro</td><td class="tok"><span class="chip sm" style="background:#CA293F"></span>border-danger</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">5.38:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>borda de marca</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>border-brand</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">3.34:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>preenchimento de marca contra a tela</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>bg-brand</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">3.34:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco padrao na tela</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>shadow-focus-default</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">3.34:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco padrao em superficie</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>shadow-focus-default</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>bg-surface</td><td class="num strong">3.12:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco de erro na tela</td><td class="tok"><span class="chip sm" style="background:#A00E27"></span>shadow-focus-error</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>bg-canvas</td><td class="num strong">8.12:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco de erro em superficie</td><td class="tok"><span class="chip sm" style="background:#A00E27"></span>shadow-focus-error</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>bg-surface</td><td class="num strong">7.58:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr></tbody></table></div><h3 class="sub">Tema escuro <span class="count">40 pares · 38 em AA pleno · 2 exceçãoes de marca</span></h3><div class="scroller"><table><thead><tr><th>Par</th><th>Frente</th><th>Fundo</th><th class="num">Medido</th><th class="num">Mín.</th><th></th></tr></thead><tbody><tr><td>texto principal na tela</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>text-primary</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">16.57:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto principal em superficie</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>text-primary</td><td class="tok"><span class="chip sm" style="background:#292929"></span>bg-surface</td><td class="num strong">13.58:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto principal em card elevado</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>text-primary</td><td class="tok"><span class="chip sm" style="background:#3E3E3E"></span>bg-surface-raised</td><td class="num strong">9.98:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto principal em fundo sutil</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>text-primary</td><td class="tok"><span class="chip sm" style="background:#3E3E3E"></span>bg-subtle</td><td class="num strong">9.98:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto secundario na tela</td><td class="tok"><span class="chip sm" style="background:#B3B3B3"></span>text-secondary</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">8.47:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto secundario em superficie</td><td class="tok"><span class="chip sm" style="background:#B3B3B3"></span>text-secondary</td><td class="tok"><span class="chip sm" style="background:#292929"></span>bg-surface</td><td class="num strong">6.94:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>placeholder de input</td><td class="tok"><span class="chip sm" style="background:#B3B3B3"></span>text-placeholder</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">8.47:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto em fundo invertido</td><td class="tok"><span class="chip sm" style="background:#292929"></span>text-inverse</td><td class="tok"><span class="chip sm" style="background:#F7F7F7"></span>bg-inverse</td><td class="num strong">13.58:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto claro sobre a marca</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-brand</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>bg-brand</td><td class="num strong">3.34:1</td><td class="num dim">3.0</td><td><span class="exc">MARCA</span></td></tr><tr><td>texto claro sobre a marca em hover</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-brand</td><td class="tok"><span class="chip sm" style="background:#EA4900"></span>bg-brand-hover</td><td class="num strong">3.85:1</td><td class="num dim">3.0</td><td><span class="exc">MARCA</span></td></tr><tr><td>texto claro sobre a marca pressionada</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>text-on-brand</td><td class="tok"><span class="chip sm" style="background:#C53900"></span>bg-brand-active</td><td class="num strong">5.30:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido destrutivo pressionado</td><td class="tok"><span class="chip sm" style="background:#181818"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#FFBABB"></span>bg-danger-active</td><td class="num strong">10.99:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>marca em hover contra a tela</td><td class="tok"><span class="chip sm" style="background:#EA4900"></span>bg-brand-hover</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">4.61:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>marca em hover em superficie</td><td class="tok"><span class="chip sm" style="background:#EA4900"></span>bg-brand-hover</td><td class="tok"><span class="chip sm" style="background:#292929"></span>bg-surface</td><td class="num strong">3.78:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>preenchimento de marca em superficie</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>bg-brand</td><td class="tok"><span class="chip sm" style="background:#292929"></span>bg-surface</td><td class="num strong">4.36:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido destrutivo</td><td class="tok"><span class="chip sm" style="background:#181818"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#F84F5D"></span>bg-danger</td><td class="num strong">5.30:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido de sucesso</td><td class="tok"><span class="chip sm" style="background:#181818"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#1BB14B"></span>bg-success</td><td class="num strong">6.29:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido de alerta</td><td class="tok"><span class="chip sm" style="background:#181818"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#DCAC2E"></span>bg-warning</td><td class="num strong">8.44:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto sobre o solido de info</td><td class="tok"><span class="chip sm" style="background:#181818"></span>text-on-solid</td><td class="tok"><span class="chip sm" style="background:#2696FF"></span>bg-info</td><td class="num strong">5.82:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>link/texto de marca</td><td class="tok"><span class="chip sm" style="background:#FF9267"></span>text-brand</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">8.08:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de marca em fundo tonalizado</td><td class="tok"><span class="chip sm" style="background:#FF9267"></span>text-brand</td><td class="tok"><span class="chip sm" style="background:#2D0D00"></span>bg-brand-subtle</td><td class="num strong">8.18:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de erro</td><td class="tok"><span class="chip sm" style="background:#FF8D91"></span>text-danger</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">8.01:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de erro em banner</td><td class="tok"><span class="chip sm" style="background:#FF8D91"></span>text-danger</td><td class="tok"><span class="chip sm" style="background:#360001"></span>bg-danger-subtle</td><td class="num strong">8.18:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de sucesso</td><td class="tok"><span class="chip sm" style="background:#6ACD7C"></span>text-success</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">8.99:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de sucesso em banner</td><td class="tok"><span class="chip sm" style="background:#6ACD7C"></span>text-success</td><td class="tok"><span class="chip sm" style="background:#001F00"></span>bg-success-subtle</td><td class="num strong">8.89:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de alerta</td><td class="tok"><span class="chip sm" style="background:#EBCA7E"></span>text-warning</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">11.23:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de alerta em banner</td><td class="tok"><span class="chip sm" style="background:#EBCA7E"></span>text-warning</td><td class="tok"><span class="chip sm" style="background:#221500"></span>bg-warning-subtle</td><td class="num strong">11.30:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de info</td><td class="tok"><span class="chip sm" style="background:#76B8FF"></span>text-info</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">8.51:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>texto de info em banner</td><td class="tok"><span class="chip sm" style="background:#76B8FF"></span>text-info</td><td class="tok"><span class="chip sm" style="background:#001639"></span>bg-info-subtle</td><td class="num strong">8.58:1</td><td class="num dim">4.5</td><td><span class="pass">AA</span></td></tr><tr><td>borda de input na tela</td><td class="tok"><span class="chip sm" style="background:#949494"></span>border-strong</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">5.85:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>borda de input em superficie</td><td class="tok"><span class="chip sm" style="background:#949494"></span>border-strong</td><td class="tok"><span class="chip sm" style="background:#292929"></span>bg-surface</td><td class="num strong">4.80:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco na tela</td><td class="tok"><span class="chip sm" style="background:#FF9267"></span>border-focus</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">8.08:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco em superficie</td><td class="tok"><span class="chip sm" style="background:#FF9267"></span>border-focus</td><td class="tok"><span class="chip sm" style="background:#292929"></span>bg-surface</td><td class="num strong">6.62:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>borda de input em erro</td><td class="tok"><span class="chip sm" style="background:#F84F5D"></span>border-danger</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">5.30:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>borda de marca</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>border-brand</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">5.32:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>preenchimento de marca contra a tela</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>bg-brand</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">5.32:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco padrao na tela</td><td class="tok"><span class="chip sm" style="background:#FF9267"></span>shadow-focus-default</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">8.08:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco padrao em superficie</td><td class="tok"><span class="chip sm" style="background:#FF9267"></span>shadow-focus-default</td><td class="tok"><span class="chip sm" style="background:#292929"></span>bg-surface</td><td class="num strong">6.62:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco de erro na tela</td><td class="tok"><span class="chip sm" style="background:#FF8D91"></span>shadow-focus-error</td><td class="tok"><span class="chip sm" style="background:#181818"></span>bg-canvas</td><td class="num strong">8.01:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr><tr><td>anel de foco de erro em superficie</td><td class="tok"><span class="chip sm" style="background:#FF8D91"></span>shadow-focus-error</td><td class="tok"><span class="chip sm" style="background:#292929"></span>bg-surface</td><td class="num strong">6.56:1</td><td class="num dim">3.0</td><td><span class="pass">AA</span></td></tr></tbody></table></div></div>
+</section></div></div>
+<div class="page" id="pg-tipografia" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Tipografia</h1><p class="lede">Inter variável e JetBrains Mono. 14 estilos fechados — o produto escolhe um estilo, não quatro valores soltos.</p><div class="meta"><span class="badge on">14 estilos</span><span class="badge">4 pesos</span><span class="badge">10 tamanhos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Tipografia"><button role="tab" id="t-tipografia-escala" aria-controls="p-tipografia-escala" aria-selected="true">Escala</button><button role="tab" id="t-tipografia-tokens" aria-controls="p-tipografia-tokens" aria-selected="false" tabindex=-1>Tokens</button></div><div class="panel" id="p-tipografia-escala" role="tabpanel" aria-labelledby="t-tipografia-escala" tabindex="0">
+<section>
+  <h2>Espécimes <span class="count">14 estilos</span></h2>
+  <p>Inter variável para texto, JetBrains Mono para código. Quatro pesos. Cada estilo abaixo é uma
+  combinação fechada de tamanho, entrelinha, peso e tracking — o produto escolhe o estilo, não os
+  quatro valores separados.</p>
+  <div style="margin-top:10px"><div class="types"><div class="type-row"><div class="type-meta"><span class="type-name">display-2xl</span><span class="type-num">60/68</span><span class="type-num">w700</span><span class="type-num">-0.025em</span><span class="type-use">hero / numero de destaque</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:60px;line-height:68px;font-weight:700;letter-spacing:-0.025em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">display-xl</span><span class="type-num">48/56</span><span class="type-num">w700</span><span class="type-num">-0.02em</span><span class="type-use">titulo de pagina de marketing</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:48px;line-height:56px;font-weight:700;letter-spacing:-0.02em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">heading-lg</span><span class="type-num">36/44</span><span class="type-num">w600</span><span class="type-num">-0.02em</span><span class="type-use">H1 de produto</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:36px;line-height:44px;font-weight:600;letter-spacing:-0.02em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">heading-md</span><span class="type-num">30/36</span><span class="type-num">w600</span><span class="type-num">-0.015em</span><span class="type-use">H2</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:30px;line-height:36px;font-weight:600;letter-spacing:-0.015em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">heading-sm</span><span class="type-num">24/32</span><span class="type-num">w600</span><span class="type-num">-0.01em</span><span class="type-use">H3 / titulo de card</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:24px;line-height:32px;font-weight:600;letter-spacing:-0.01em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">heading-xs</span><span class="type-num">20/28</span><span class="type-num">w600</span><span class="type-num">-0.01em</span><span class="type-use">H4 / titulo de secao</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:20px;line-height:28px;font-weight:600;letter-spacing:-0.01em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">body-lg</span><span class="type-num">18/28</span><span class="type-num">w400</span><span class="type-num">0em</span><span class="type-use">lead / intro</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:18px;line-height:28px;font-weight:400;letter-spacing:0em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">body-md</span><span class="type-num">16/24</span><span class="type-num">w400</span><span class="type-num">0em</span><span class="type-use">corpo padrao do sistema</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:16px;line-height:24px;font-weight:400;letter-spacing:0em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">body-sm</span><span class="type-num">14/20</span><span class="type-num">w400</span><span class="type-num">0em</span><span class="type-use">texto de apoio / tabela</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:14px;line-height:20px;font-weight:400;letter-spacing:0em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">label-lg</span><span class="type-num">16/24</span><span class="type-num">w500</span><span class="type-num">0em</span><span class="type-use">label de botao grande</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:16px;line-height:24px;font-weight:500;letter-spacing:0em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">label-md</span><span class="type-num">14/20</span><span class="type-num">w500</span><span class="type-num">0em</span><span class="type-use">label de campo / botao</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:14px;line-height:20px;font-weight:500;letter-spacing:0em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">label-sm</span><span class="type-num">12/16</span><span class="type-num">w500</span><span class="type-num">0.01em</span><span class="type-use">badge / tag / overline</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:12px;line-height:16px;font-weight:500;letter-spacing:0.01em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">caption</span><span class="type-num">12/16</span><span class="type-num">w400</span><span class="type-num">0.01em</span><span class="type-use">legenda / helper text</span></div><div class="type-sample" style="font-family:var(--al-font-sans);font-size:12px;line-height:16px;font-weight:400;letter-spacing:0.01em">Foundation aberta do AL</div></div><div class="type-row"><div class="type-meta"><span class="type-name">code-md</span><span class="type-num">14/20</span><span class="type-num">w400</span><span class="type-num">0em</span><span class="type-use">codigo inline e bloco</span></div><div class="type-sample" style="font-family:var(--al-font-mono);font-size:14px;line-height:20px;font-weight:400;letter-spacing:0em">Foundation aberta do AL</div></div></div></div>
+</section></div><div class="panel" id="p-tipografia-tokens" role="tabpanel" aria-labelledby="t-tipografia-tokens" tabindex="0" hidden>
+<section>
+  <h2>Tamanho, entrelinha e tracking</h2>
+  <p>Os tamanhos não seguem múltiplos de 8 — isso daria 8/16/24/32 e não deixaria nada entre corpo
+  e H3. Quem cai na malha é a entrelinha: todas são múltiplos de 4, e o corpo (16/24) é múltiplo de
+  8. O tracking negativo cresce com o tamanho porque a Inter é espacejada para texto pequeno e fica
+  frouxa acima de 24px.</p>
+  <div class="scroller" style="margin-top:18px"><table>
+    <thead><tr><th>Token de tamanho</th><th class="num">Valor</th><th>Token de entrelinha</th>
+      <th class="num">Valor</th><th class="num">Tracking</th></tr></thead>
+    <tbody><tr><td class="tok">--al-font-size-xs</td><td class="num">12px</td><td class="tok">--al-line-height-xs</td><td class="num">16px</td><td class="num dim">0.01em</td></tr><tr><td class="tok">--al-font-size-sm</td><td class="num">14px</td><td class="tok">--al-line-height-sm</td><td class="num">20px</td><td class="num dim">0em</td></tr><tr><td class="tok">--al-font-size-md</td><td class="num">16px</td><td class="tok">--al-line-height-md</td><td class="num">24px</td><td class="num dim">0em</td></tr><tr><td class="tok">--al-font-size-lg</td><td class="num">18px</td><td class="tok">--al-line-height-lg</td><td class="num">28px</td><td class="num dim">0em</td></tr><tr><td class="tok">--al-font-size-xl</td><td class="num">20px</td><td class="tok">--al-line-height-xl</td><td class="num">28px</td><td class="num dim">-0.01em</td></tr><tr><td class="tok">--al-font-size-2xl</td><td class="num">24px</td><td class="tok">--al-line-height-2xl</td><td class="num">32px</td><td class="num dim">-0.01em</td></tr><tr><td class="tok">--al-font-size-3xl</td><td class="num">30px</td><td class="tok">--al-line-height-3xl</td><td class="num">36px</td><td class="num dim">-0.015em</td></tr><tr><td class="tok">--al-font-size-4xl</td><td class="num">36px</td><td class="tok">--al-line-height-4xl</td><td class="num">44px</td><td class="num dim">-0.02em</td></tr><tr><td class="tok">--al-font-size-5xl</td><td class="num">48px</td><td class="tok">--al-line-height-5xl</td><td class="num">56px</td><td class="num dim">-0.02em</td></tr><tr><td class="tok">--al-font-size-6xl</td><td class="num">60px</td><td class="tok">--al-line-height-6xl</td><td class="num">68px</td><td class="num dim">-0.025em</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Pesos</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Token</th><th class="num">Valor</th><th>Amostra</th></tr></thead>
+    <tbody><tr><td class="tok">--al-font-weight-regular</td><td class="num">400</td><td style="font-weight:400">Publicar alterações</td></tr><tr><td class="tok">--al-font-weight-medium</td><td class="num">500</td><td style="font-weight:500">Publicar alterações</td></tr><tr><td class="tok">--al-font-weight-semibold</td><td class="num">600</td><td style="font-weight:600">Publicar alterações</td></tr><tr><td class="tok">--al-font-weight-bold</td><td class="num">700</td><td style="font-weight:700">Publicar alterações</td></tr></tbody>
+  </table></div>
+  <div class="note" style="margin-top:18px">
+    <b>Peso não é ênfase de conteúdo</b>
+    <p>O <code>semibold</code> marca hierarquia estrutural — título, rótulo de campo. Para ênfase
+    dentro de um parágrafo, o elemento é <code>&lt;strong&gt;</code>, que carrega significado para
+    o leitor de tela. Peso sozinho não é anunciado.</p>
+  </div>
+</section></div></div>
+<div class="page" id="pg-espacamento" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Espaçamento e medidas</h1><p class="lede">Base 4 com ritmo de 8, nove raios, seis degraus de elevação e um anel de foco que passa pelo mesmo portão de contraste que as cores.</p><div class="meta"><span class="badge on">14 degraus de espaço</span><span class="badge">9 raios</span><span class="badge">6 elevações</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Espaçamento e medidas"><button role="tab" id="t-espacamento-espaco" aria-controls="p-espacamento-espaco" aria-selected="true">Espaçamento</button><button role="tab" id="t-espacamento-radius" aria-controls="p-espacamento-radius" aria-selected="false" tabindex=-1>Radius e borda</button><button role="tab" id="t-espacamento-elevacao" aria-controls="p-espacamento-elevacao" aria-selected="false" tabindex=-1>Elevação</button><button role="tab" id="t-espacamento-foco" aria-controls="p-espacamento-foco" aria-selected="false" tabindex=-1>Foco</button></div><div class="panel" id="p-espacamento-espaco" role="tabpanel" aria-labelledby="t-espacamento-espaco" tabindex="0">
+<section>
+  <h2>Espaçamento <span class="count">14 degraus</span></h2>
+  <p>Base 4 com ritmo de 8. Múltiplo de 8 puro quebra dentro do componente — gap de ícone, padding
+  de chip e offset de foco vivem em 4px. O valor 2 é exceção documentada, só para ajuste óptico.</p>
+  <div style="margin-top:20px"><div class="bars"><div class="bar-row"><span class="bar-name">space-0</span><span class="bar" style="width:1px"></span><span class="bar-val">0px</span></div><div class="bar-row"><span class="bar-name">space-2</span><span class="bar" style="width:2px"></span><span class="bar-val">2px</span></div><div class="bar-row"><span class="bar-name">space-4</span><span class="bar" style="width:4px"></span><span class="bar-val">4px</span></div><div class="bar-row"><span class="bar-name">space-8</span><span class="bar" style="width:8px"></span><span class="bar-val">8px</span></div><div class="bar-row"><span class="bar-name">space-12</span><span class="bar" style="width:12px"></span><span class="bar-val">12px</span></div><div class="bar-row"><span class="bar-name">space-16</span><span class="bar" style="width:16px"></span><span class="bar-val">16px</span></div><div class="bar-row"><span class="bar-name">space-20</span><span class="bar" style="width:20px"></span><span class="bar-val">20px</span></div><div class="bar-row"><span class="bar-name">space-24</span><span class="bar" style="width:24px"></span><span class="bar-val">24px</span></div><div class="bar-row"><span class="bar-name">space-32</span><span class="bar" style="width:32px"></span><span class="bar-val">32px</span></div><div class="bar-row"><span class="bar-name">space-40</span><span class="bar" style="width:40px"></span><span class="bar-val">40px</span></div><div class="bar-row"><span class="bar-name">space-48</span><span class="bar" style="width:48px"></span><span class="bar-val">48px</span></div><div class="bar-row"><span class="bar-name">space-64</span><span class="bar" style="width:64px"></span><span class="bar-val">64px</span></div><div class="bar-row"><span class="bar-name">space-80</span><span class="bar" style="width:80px"></span><span class="bar-val">80px</span></div><div class="bar-row"><span class="bar-name">space-96</span><span class="bar" style="width:96px"></span><span class="bar-val">96px</span></div></div></div>
+  <div class="note" style="margin-top:22px">
+    <b>Espaçamento é escolha de token, não de pixel</b>
+    <p>Um valor fora da escala é o sintoma mais comum de sistema que começou a vazar. Se nenhum
+    degrau serve, a pergunta é sobre o layout — não sobre acrescentar um degrau.</p>
+  </div>
+</section></div><div class="panel" id="p-espacamento-radius" role="tabpanel" aria-labelledby="t-espacamento-radius" tabindex="0" hidden>
+<section>
+  <h2>Radius <span class="count">9 degraus</span></h2>
+  <div style="margin-top:6px"><div class="radii"><div class="rad"><div class="rad-box" style="border-radius:0px"></div><span class="rad-name">none</span><span class="rad-val">0px</span></div><div class="rad"><div class="rad-box" style="border-radius:2px"></div><span class="rad-name">xs</span><span class="rad-val">2px</span></div><div class="rad"><div class="rad-box" style="border-radius:4px"></div><span class="rad-name">sm</span><span class="rad-val">4px</span></div><div class="rad"><div class="rad-box" style="border-radius:6px"></div><span class="rad-name">md</span><span class="rad-val">6px</span></div><div class="rad"><div class="rad-box" style="border-radius:8px"></div><span class="rad-name">lg</span><span class="rad-val">8px</span></div><div class="rad"><div class="rad-box" style="border-radius:12px"></div><span class="rad-name">xl</span><span class="rad-val">12px</span></div><div class="rad"><div class="rad-box" style="border-radius:16px"></div><span class="rad-name">2xl</span><span class="rad-val">16px</span></div><div class="rad"><div class="rad-box" style="border-radius:24px"></div><span class="rad-name">3xl</span><span class="rad-val">24px</span></div><div class="rad"><div class="rad-box" style="border-radius:48px"></div><span class="rad-name">full</span><span class="rad-val">999px</span></div></div></div>
+  <div class="note" style="margin-top:22px">
+    <b>Radius aninhado = externo − padding</b>
+    <p>Card com radius 16 e padding 8 pede input com radius 8. Sem essa regra, canto aninhado
+    sempre sai errado — o interno parece apertado demais ou frouxo demais em relação ao externo.</p>
+  </div>
+  <div class="note">
+    <b>O <code>full</code> não é um número grande, é um comportamento</b>
+    <p>9999px sempre resolve na pílula, independente da altura. É o que o Button usa, e é por isso
+    que o botão continua uma pílula perfeita nos dois tamanhos sem token por tamanho.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Borda</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Token</th><th class="num">Valor</th></tr></thead>
+    <tbody><tr><td class="tok">--al-border-width-0</td><td class="num">0px</td></tr><tr><td class="tok">--al-border-width-1</td><td class="num">1px</td></tr><tr><td class="tok">--al-border-width-2</td><td class="num">2px</td></tr><tr><td class="tok">--al-border-width-focus</td><td class="num">2px</td></tr><tr><td class="tok">--al-border-focus-offset</td><td class="num">2px</td></tr></tbody>
+  </table></div>
+</section></div><div class="panel" id="p-espacamento-elevacao" role="tabpanel" aria-labelledby="t-espacamento-elevacao" tabindex="0" hidden>
+<section>
+  <h2>Elevação <span class="count">6 degraus</span></h2>
+  <p>Sombra de duas camadas — uma ambiente difusa e uma direcional curta. Camada única parece
+  adesivo. Com o neutro acromático a sombra virou cinza puro
+  (<code>rgba(24,24,24,α)</code>) — não há mais hue para tingir.</p>
+  <div style="margin-top:22px"><div class="elevs"><div class="elev"><div class="elev-box" style="--_e:var(--al-elevation-0)">0</div><span class="elev-name">elevation-0</span></div><div class="elev"><div class="elev-box" style="--_e:var(--al-elevation-1)">1</div><span class="elev-name">elevation-1</span></div><div class="elev"><div class="elev-box" style="--_e:var(--al-elevation-2)">2</div><span class="elev-name">elevation-2</span></div><div class="elev"><div class="elev-box" style="--_e:var(--al-elevation-3)">3</div><span class="elev-name">elevation-3</span></div><div class="elev"><div class="elev-box" style="--_e:var(--al-elevation-4)">4</div><span class="elev-name">elevation-4</span></div><div class="elev"><div class="elev-box" style="--_e:var(--al-elevation-5)">5</div><span class="elev-name">elevation-5</span></div></div></div>
+  <div class="note" style="margin-top:24px">
+    <b>No tema escuro a sombra não é o sinal principal</b>
+    <p><code>rgba(0,0,0,.12)</code> sobre <code>#181818</code> é invisível. Quem comunica altura é a
+    superfície clareando: <code>950 → 900 → 800</code>. A sombra continua existindo, mais opaca, só
+    como reforço. Os quadrados acima já mostram isso: mude o tema do seu sistema e eles trocam de
+    estratégia sozinhos.</p>
+  </div>
+</section></div><div class="panel" id="p-espacamento-foco" role="tabpanel" aria-labelledby="t-espacamento-foco" tabindex="0" hidden>
+<section>
+  <h2>O anel de foco</h2>
+  <p>Duas camadas: 2px de respiro pintado na cor do fundo, e 2px na cor do foco. O respiro não é
+  estética — sem ele o anel laranja encostaria no preenchimento laranja do botão e daria 1,00:1.</p>
+  <div class="dd" style="margin-top:20px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel padrão</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--primary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+        <button type="button" class="al-btn al-btn--secondary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Cancelar</span></button>
+      </div>
+      <p class="cap">Aparece no <code>:focus-visible</code> — teclado sim, clique de mouse não.</p>
+    </div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel de erro</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--danger al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Excluir</span></button>
+      </div>
+      <p class="cap">O destrutivo usa o anel de erro, para o foco não brigar com o vermelho do preenchimento.</p>
+    </div>
+  </div>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Anel</th><th>Tema</th><th>Valor composto</th></tr></thead>
+    <tbody><tr><td class="name">default</td><td>tema claro</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr><tr><td class="name">default</td><td>tema escuro</td><td class="tok dim">0 0 0 2px #181818, 0 0 0 4px #FF9267</td></tr><tr><td class="name">error</td><td>tema claro</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #A00E27</td></tr><tr><td class="name">error</td><td>tema escuro</td><td class="tok dim">0 0 0 2px #181818, 0 0 0 4px #FF8D91</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Onde a cor do anel mora</h2>
+  <div class="note">
+    <b>Na camada semântica de cor, não junto da elevação</b>
+    <p>O anel é sombra em CSS, mas não é elevação: elevação comunica altura, o anel comunica foco
+    de teclado. Guardá-lo junto da elevação o tiraria do portão de contraste — e foi justamente o
+    portão que reprovou os valores <code>orange-300</code>/<code>red-300</code> testados antes, a
+    1,61:1 no tema claro.</p>
+    <p>No tema escuro o anel troca para <code>orange-400</code>, porque
+    <code>orange-500</code> sobre a tela escura tem menos folga.</p>
+  </div>
+  <div class="note">
+    <b>Alto contraste do sistema descarta sombra</b>
+    <p>Em <code>forced-colors: active</code> o <code>box-shadow</code> some, e o anel sumiria junto.
+    Todo componente do AL devolve o foco como <code>outline</code> nativo dentro desse modo — o
+    Button já faz isso.</p>
+  </div>
+</section></div></div>
+<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">1 publicado</span><span class="badge">3 no Tier 1</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
+<section>
+  <h2>Publicados</h2>
+  <div class="cards">
+    <a class="card" href="#/button" data-page="button"><div class="card-thumb"><button type="button" class="al-btn al-btn--primary al-btn--sm" tabindex="-1"><span class="al-btn__label">Publicar</span></button></div><div class="card-body"><span class="card-title">Button</span><span class="card-desc">Quatro variantes, dois tamanhos, cinco estados — com playground que instancia o CSS real.</span></div></a>
+  </div>
+</section>
+
+<section>
+  <h2>Tier 1, ainda não abertos</h2>
+  <p>A ordem não é negociável enquanto o pipeline for de um componente por vez. Cada um destes
+  começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
+  <div class="cards" style="margin-top:18px">
+    <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Icon</span><span class="card-desc">Traz junto a escala de ícone, que o Button hoje resolve com um valor provisório de 16px.</span><span class="card-soon">Em breve</span></div></div>
+    <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Badge</span><span class="card-desc">Rótulo curto de status ou contagem, sem ação associada.</span><span class="card-soon">Em breve</span></div></div>
+    <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Avatar</span><span class="card-desc">Identidade visual de uma pessoa ou entidade, com recurso a iniciais.</span><span class="card-soon">Em breve</span></div></div>
+  </div>
+</section></div></div>
+<div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">46 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="stage">
+      <button type="button" class="al-btn al-btn--primary al-btn--md" id="demo">
+        <span class="al-btn__spinner" aria-hidden="true"></span>
+        <span class="al-btn__icon al-btn__icon--leading" aria-hidden="true" hidden><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v9m0 0 3.5-3.5M8 11 4.5 7.5M2.5 13.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="al-btn__label">Publicar</span>
+        <span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true" hidden><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </button>
+    </div>
+
+    <div class="controls">
+      <div class="ctl"><span class="ctl-name">Variante</span><div class="seg" role="radiogroup" aria-label="variant">
+<input type="radio" id="variant-primary" name="variant" value="primary" checked><label for="variant-primary">Primary</label>
+<input type="radio" id="variant-secondary" name="variant" value="secondary"><label for="variant-secondary">Secondary</label>
+<input type="radio" id="variant-ghost" name="variant" value="ghost"><label for="variant-ghost">Ghost</label>
+<input type="radio" id="variant-danger" name="variant" value="danger"><label for="variant-danger">Danger</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tamanho</span><div class="seg" role="radiogroup" aria-label="size">
+<input type="radio" id="size-sm" name="size" value="sm"><label for="size-sm">sm · 36px</label>
+<input type="radio" id="size-md" name="size" value="md" checked><label for="size-md">md · 48px</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Estado</span><div class="seg" role="radiogroup" aria-label="state">
+<input type="radio" id="state-default" name="state" value="default" checked><label for="state-default">Default</label>
+<input type="radio" id="state-hover" name="state" value="hover"><label for="state-hover">Hover</label>
+<input type="radio" id="state-active" name="state" value="active"><label for="state-active">Pressed</label>
+<input type="radio" id="state-focus" name="state" value="focus"><label for="state-focus">Focus</label>
+<input type="radio" id="state-disabled" name="state" value="disabled"><label for="state-disabled">Disabled</label>
+<input type="radio" id="state-busy" name="state" value="busy"><label for="state-busy">Loading</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Ícone</span><div class="seg" role="radiogroup" aria-label="icon">
+<input type="radio" id="icon-none" name="icon" value="none" checked><label for="icon-none">Sem ícone</label>
+<input type="radio" id="icon-leading" name="icon" value="leading"><label for="icon-leading">À esquerda</label>
+<input type="radio" id="icon-trailing" name="icon" value="trailing"><label for="icon-trailing">À direita</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="theme">
+<input type="radio" id="theme-auto" name="theme" value="auto" checked><label for="theme-auto">Do sistema</label>
+<input type="radio" id="theme-light" name="theme" value="light"><label for="theme-light">Claro</label>
+<input type="radio" id="theme-dark" name="theme" value="dark"><label for="theme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><label for="labeltext">Rótulo</label>
+        <input class="txt" id="labeltext" type="text" value="Publicar" maxlength="40"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="copy">Copiar</button></div>
+      <pre><code id="code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O botão acima é o componente real: esta página carrega o mesmo <code>button.css</code> que vai
+    para produção. Hover, pressed e focus são forçados por classe, porque não dá para simular
+    ponteiro — as declarações são as mesmas.
+  </p>
+</section>
+
+<section>
+  <h2>As quatro variantes</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Ação principal e alternativa</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--ghost al-btn--md" tabindex="-1"><span class="al-btn__label">Cancelar</span></button>
+        <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Salvar rascunho</span></button>
+        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+      </div>
+      <p class="cap">Um Primary só, e ele fecha o grupo. Ghost e Secondary abrem caminho sem competir.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Ação destrutiva</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Manter conta</span></button>
+        <button type="button" class="al-btn al-btn--danger al-btn--md" tabindex="-1"><span class="al-btn__label">Excluir conta</span></button>
+      </div>
+      <p class="cap">Danger só quando a ação destrói e é difícil de desfazer. Nunca para algo reversível.</p>
+    </div>
+  </div>
+</section></div><div class="panel" id="p-button-specs" role="tabpanel" aria-labelledby="t-button-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Contêiner</b><span>Pílula. Raio total, borda de 1px sempre presente — transparente quando a variante não tem borda.</span></div>
+    <div><b>Spinner</b><span>16px, ocupa o lugar do ícone da esquerda quando <code>aria-busy</code> está ligado.</span></div>
+    <div><b>Ícone à esquerda</b><span>16px. Reforça a ação. Opcional, sempre <code>aria-hidden</code>.</span></div>
+    <div><b>Rótulo</b><span>Obrigatório. É também o nome acessível do botão.</span></div>
+    <div><b>Ícone à direita</b><span>16px. Indica movimento ou que algo abre.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Todos os estados</h2>
+  <div class="spec-row"><div class="spec-name">Primary</div><div class="spec-cells">
+<div class="spec-cell"><span class="spec-label">Default</span><button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Hover</span><button type="button" class="al-btn al-btn--primary al-btn--md is-hover" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Pressed</span><button type="button" class="al-btn al-btn--primary al-btn--md is-active" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Focus</span><button type="button" class="al-btn al-btn--primary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Disabled</span><button type="button" class="al-btn al-btn--primary al-btn--md" aria-disabled="true" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Loading</span><button type="button" class="al-btn al-btn--primary al-btn--md" aria-busy="true" aria-disabled="true" tabindex="-1"><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Button</span></button></div>
+</div></div>
+<div class="spec-row"><div class="spec-name">Secondary</div><div class="spec-cells">
+<div class="spec-cell"><span class="spec-label">Default</span><button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Hover</span><button type="button" class="al-btn al-btn--secondary al-btn--md is-hover" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Pressed</span><button type="button" class="al-btn al-btn--secondary al-btn--md is-active" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Focus</span><button type="button" class="al-btn al-btn--secondary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Disabled</span><button type="button" class="al-btn al-btn--secondary al-btn--md" aria-disabled="true" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Loading</span><button type="button" class="al-btn al-btn--secondary al-btn--md" aria-busy="true" aria-disabled="true" tabindex="-1"><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Button</span></button></div>
+</div></div>
+<div class="spec-row"><div class="spec-name">Ghost</div><div class="spec-cells">
+<div class="spec-cell"><span class="spec-label">Default</span><button type="button" class="al-btn al-btn--ghost al-btn--md" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Hover</span><button type="button" class="al-btn al-btn--ghost al-btn--md is-hover" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Pressed</span><button type="button" class="al-btn al-btn--ghost al-btn--md is-active" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Focus</span><button type="button" class="al-btn al-btn--ghost al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Disabled</span><button type="button" class="al-btn al-btn--ghost al-btn--md" aria-disabled="true" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Loading</span><button type="button" class="al-btn al-btn--ghost al-btn--md" aria-busy="true" aria-disabled="true" tabindex="-1"><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Button</span></button></div>
+</div></div>
+<div class="spec-row"><div class="spec-name">Danger</div><div class="spec-cells">
+<div class="spec-cell"><span class="spec-label">Default</span><button type="button" class="al-btn al-btn--danger al-btn--md" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Hover</span><button type="button" class="al-btn al-btn--danger al-btn--md is-hover" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Pressed</span><button type="button" class="al-btn al-btn--danger al-btn--md is-active" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Focus</span><button type="button" class="al-btn al-btn--danger al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Disabled</span><button type="button" class="al-btn al-btn--danger al-btn--md" aria-disabled="true" tabindex="-1"><span class="al-btn__label">Button</span></button></div>
+<div class="spec-cell"><span class="spec-label">Loading</span><button type="button" class="al-btn al-btn--danger al-btn--md" aria-busy="true" aria-disabled="true" tabindex="-1"><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Button</span></button></div>
+</div></div>
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+      <tbody><tr><td class="name">sm</td><td class="tok">--al-button-sm-padding-x</td><td class="tok dim">space.12</td><td class="num">12</td></tr>
+<tr><td class="name">sm</td><td class="tok">--al-button-sm-padding-y</td><td class="tok dim">space.8</td><td class="num">8</td></tr>
+<tr><td class="name">sm</td><td class="tok">--al-button-sm-gap</td><td class="tok dim">space.8</td><td class="num">8</td></tr>
+<tr><td class="name">sm</td><td class="tok">--al-button-sm-font</td><td class="tok dim">type.styles.label-md</td><td class="num">label-md</td></tr>
+<tr><td class="name">md</td><td class="tok">--al-button-md-padding-x</td><td class="tok dim">space.16</td><td class="num">16</td></tr>
+<tr><td class="name">md</td><td class="tok">--al-button-md-padding-y</td><td class="tok dim">space.12</td><td class="num">12</td></tr>
+<tr><td class="name">md</td><td class="tok">--al-button-md-gap</td><td class="tok dim">space.8</td><td class="num">8</td></tr>
+<tr><td class="name">md</td><td class="tok">--al-button-md-font</td><td class="tok dim">type.styles.label-lg</td><td class="num">label-lg</td></tr>
+<tr><td class="name">ambos</td><td class="tok">--al-button-radius</td><td class="tok dim">radius.full</td><td class="num">9999</td></tr>
+<tr><td class="name">ambos</td><td class="tok">--al-button-border-width</td><td class="tok dim">border.width.1</td><td class="num">1</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Não existe token de altura</b>
+    Altura é consequência: <code>padding-y</code> × 2 mais a entrelinha. Dá
+    36px no <code>sm</code> e 48px no
+    <code>md</code> — conferido no navegador contra o Figma. Um token de altura fixaria a mesma
+    decisão em dois lugares.
+  </div>
+</section>
+
+<section>
+  <h2>Tokens de cor</h2>
+  <div class="ctl" style="margin-bottom:14px"><span class="ctl-name">Filtrar</span>
+    <div class="seg" role="radiogroup" aria-label="tokfilter">
+<input type="radio" id="tokfilter-all" name="tokfilter" value="all" checked><label for="tokfilter-all">Todas</label>
+<input type="radio" id="tokfilter-primary" name="tokfilter" value="primary"><label for="tokfilter-primary">Primary</label>
+<input type="radio" id="tokfilter-secondary" name="tokfilter" value="secondary"><label for="tokfilter-secondary">Secondary</label>
+<input type="radio" id="tokfilter-ghost" name="tokfilter" value="ghost"><label for="tokfilter-ghost">Ghost</label>
+<input type="radio" id="tokfilter-danger" name="tokfilter" value="danger"><label for="tokfilter-danger">Danger</label>
+</div></div>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Button</th><th>Aponta para</th><th>Resolve em (claro)</th></tr></thead>
+      <tbody id="tokbody"><tr data-variant="primary"><td class="tok">--al-button-primary-bg</td><td class="tok dim">bg-brand</td><td class="tok"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-bg-hover</td><td class="tok dim">bg-brand-hover</td><td class="tok"><span class="chip sm" style="background:#C53900"></span>#C53900</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-bg-active</td><td class="tok dim">bg-brand-active</td><td class="tok"><span class="chip sm" style="background:#992700"></span>#992700</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-bg-disabled</td><td class="tok dim">bg-disabled</td><td class="tok"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-label</td><td class="tok dim">text-on-brand</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-border</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-border-disabled</td><td class="tok dim">border-subtle</td><td class="tok"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="primary"><td class="tok">--al-button-primary-ring</td><td class="tok dim">focusRing.default</td><td class="tok">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-bg</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-bg-hover</td><td class="tok dim">bg-hover</td><td class="tok"><span class="chip sm" style="background:#EEEEEE"></span>#EEEEEE</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-bg-active</td><td class="tok dim">bg-active</td><td class="tok"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-bg-disabled</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-label</td><td class="tok dim">text-primary</td><td class="tok"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-border</td><td class="tok dim">border-strong</td><td class="tok"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-border-disabled</td><td class="tok dim">border-subtle</td><td class="tok"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="secondary"><td class="tok">--al-button-secondary-ring</td><td class="tok dim">focusRing.default</td><td class="tok">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-bg</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-bg-hover</td><td class="tok dim">bg-hover</td><td class="tok"><span class="chip sm" style="background:#EEEEEE"></span>#EEEEEE</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-bg-active</td><td class="tok dim">bg-active</td><td class="tok"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-bg-disabled</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-label</td><td class="tok dim">text-primary</td><td class="tok"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-border</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-border-disabled</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="ghost"><td class="tok">--al-button-ghost-ring</td><td class="tok dim">focusRing.default</td><td class="tok">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-bg</td><td class="tok dim">bg-danger</td><td class="tok"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-bg-hover</td><td class="tok dim">bg-danger-hover</td><td class="tok"><span class="chip sm" style="background:#780014"></span>#780014</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-bg-active</td><td class="tok dim">bg-danger-active</td><td class="tok"><span class="chip sm" style="background:#550007"></span>#550007</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-bg-disabled</td><td class="tok dim">bg-disabled</td><td class="tok"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-label</td><td class="tok dim">text-on-solid</td><td class="tok"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-border</td><td class="tok dim">transparente</td><td class="tok">transparent</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-border-disabled</td><td class="tok dim">border-subtle</td><td class="tok"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-variant="danger"><td class="tok">--al-button-danger-ring</td><td class="tok dim">focusRing.error</td><td class="tok">0 0 0 2px #FFFFFF, 0 0 0 4px #A00E27</td></tr></tbody>
+    </table>
+  </div>
+</section></div><div class="panel" id="p-button-guide" role="tabpanel" aria-labelledby="t-button-guide" tabindex="0" hidden>
+<section>
+  <h2>Hierarquia</h2>
+  <div class="dd">
+    <div class="cell do"><span class="lab">Faça</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--ghost al-btn--md" tabindex="-1"><span class="al-btn__label">Cancelar</span></button>
+        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+      </div>
+      <p class="cap">Uma ação principal, <b>no fim do grupo</b>.</p>
+    </div>
+    <div class="cell no"><span class="lab">Não faça</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Salvar</span></button>
+      </div>
+      <p class="cap">Dois Primary se anulam. Se as duas são principais, nenhuma é.</p>
+    </div>
+  </div>
+  <div class="rule"><div class="rn">01</div><div>
+    <h3>Um Primary por tela</h3>
+    <p>É a regra mais unânime que existe em documentação de botão — Carbon, Primer e Red Hat dizem o mesmo. Precisa de duas ações de mesmo peso? As duas viram Secondary.</p>
+  </div></div>
+  <div class="rule"><div class="rn">02</div><div>
+    <h3>O Primary fecha o grupo</h3>
+    <p>Em linha, da menor para a maior ênfase. Em coluna — comum no mobile — o Primary vai no topo, porque ali a leitura desce.</p>
+  </div></div>
+  <div class="rule"><div class="rn">03</div><div>
+    <h3>Danger longe da saída</h3>
+    <p>Separe o destrutivo do resto. Clique errado em "Excluir" custa caro, e distância é a proteção mais barata.</p>
+  </div></div>
+</section>
+
+<section>
+  <h2>O rótulo</h2>
+  <div class="dd">
+    <div class="cell do"><span class="lab">Faça</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Criar projeto</span></button>
+      </div>
+      <p class="cap">Verbo na frente e o substantivo que diz sobre o quê.</p>
+    </div>
+    <div class="cell no"><span class="lab">Não faça</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">OK</span></button>
+        <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">CLIQUE AQUI</span></button>
+      </div>
+      <p class="cap">"OK" não diz o que confirma. Caixa alta derruba a velocidade de leitura.</p>
+    </div>
+  </div>
+  <div class="rule"><div class="rn">04</div><div>
+    <h3>Capitalização de frase, nunca caixa alta</h3>
+    <p>"Salvar alterações", não "Salvar Alterações" nem "SALVAR ALTERAÇÕES". É o padrão do Material 3 para todo rótulo, e o Primer proíbe caixa alta explicitamente.</p>
+  </div></div>
+  <div class="rule"><div class="rn">05</div><div>
+    <h3>Curto, e nunca em duas linhas</h3>
+    <p>Uma a três palavras. A pílula de raio total se destrói com rótulo em duas linhas — se não couber, o problema é o texto.</p>
+  </div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>O quê</th><th>Situação</th><th>Se aparecer demanda</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Largura total</td><td>Não existe</td><td>Vira propriedade, não variante.</td></tr>
+        <tr><td class="name">Danger contornado</td><td>Não existe</td><td>Secondary com rótulo explícito de consequência.</td></tr>
+        <tr><td class="name">Tamanho lg</td><td>Não existe</td><td>Fechado em dois tamanhos.</td></tr>
+        <tr><td class="name">Só ícone</td><td>Set irmão</td><td><code>Button Icon</code>, com nome acessível obrigatório.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section></div><div class="panel" id="p-button-a11y" role="tabpanel" aria-labelledby="t-button-a11y" tabindex="0" hidden>
+<section>
+  <h2>Foco</h2>
+  <p>O anel tem duas camadas: 2px de respiro na cor do fundo e 2px na cor do foco. O respiro é o que impede o anel de encostar no preenchimento — sem ele, laranja sobre laranja daria 1,00:1.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel padrão · 3,34:1 no claro, 8,08:1 no escuro</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--primary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+        <button type="button" class="al-btn al-btn--secondary al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Cancelar</span></button>
+      </div>
+      <p class="cap">Aparece no <code>:focus-visible</code> — teclado sim, clique de mouse não.</p>
+    </div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel de erro · 8,12:1 no claro</span>
+      <div class="stage2">
+        <button type="button" class="al-btn al-btn--danger al-btn--md is-focus" tabindex="-1"><span class="al-btn__label">Excluir</span></button>
+      </div>
+      <p class="cap">Danger usa o anel de erro, para o foco não brigar com o vermelho do preenchimento.</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O anel do Ghost só aparece em código</b>
+    No Figma o estado <code>Focus</code> do Ghost não mostra o anel: sombra projetada precisa de forma pintada, e o Ghost não tem preenchimento nem borda. Em CSS o <code>box-shadow</code> é lançado pela caixa, então o Ghost recebe exatamente o mesmo anel — como dá para ver ligando Ghost + Focus no playground.
+  </div>
+</section>
+
+<section>
+  <h2>Estados que enganam</h2>
+  <div class="rule"><div class="rn">06</div><div>
+    <h3>Carregando: <code>aria-busy</code>, não <code>disabled</code></h3>
+    <p>Marque <code>aria-busy="true"</code> e <code>aria-disabled="true"</code>, e trave o handler no JS. O atributo <code>disabled</code> tiraria o botão da ordem de foco no meio da interação, sem anunciar nada. Anuncie o progresso por região viva (<code>role="status"</code>, <code>aria-live="polite"</code>) e segure o estado por um piso de ~400ms.</p>
+  </div></div>
+  <div class="rule"><div class="rn">07</div><div>
+    <h3>Desabilitado é exceção</h3>
+    <p>Um botão desabilitado não explica por que está desabilitado. Em formulário, deixe habilitado e mostre o erro ao tentar enviar. Quando for mesmo necessário, use <code>aria-disabled</code>: continua focável e um tooltip pode dizer o motivo.</p>
+  </div></div>
+  <div class="rule"><div class="rn">08</div><div>
+    <h3>O contraste baixo do desabilitado é intencional</h3>
+    <p>1,59:1 no tema claro. O WCAG isenta componentes inativos do critério 1.4.3 — não é reprova, é sinal. Subir esse contraste faz o desabilitado parecer clicável.</p>
+  </div></div>
+  <div class="rule"><div class="rn">09</div><div>
+    <h3>Alvo de toque</h3>
+    <p>Os dois tamanhos passam o mínimo do WCAG 2.5.8 (24×24px). Só o <code>md</code>, com 48px, alcança o que Apple e Google recomendam para toque — por isso ele é o padrão e o <code>sm</code> precisa de justificativa de densidade.</p>
+  </div></div>
+  <div class="rule"><div class="rn">10</div><div>
+    <h3>Alto contraste do sistema</h3>
+    <p>O modo de alto contraste descarta <code>box-shadow</code> — o anel sumiria junto. O componente devolve o foco como <code>outline</code> nativo dentro de <code>@media (forced-colors: active)</code>.</p>
+  </div></div>
+</section>
+
+<section>
+  <h2>Marcação mínima</h2>
+  <pre><code>&lt;button type="button" class="al-btn al-btn--primary al-btn--md"&gt;
+  &lt;span class="al-btn__label"&gt;Publicar&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+  <p style="margin-top:14px"><code>type="button"</code> não é opcional: dentro de <code>&lt;form&gt;</code>, o padrão do HTML é <code>submit</code>. E o rótulo visível é o nome acessível — não coloque um <code>aria-label</code> dizendo outra coisa, ou o comando de voz para de funcionar.</p>
+</section></div></div>
+<footer>
+  <span><b>AL Design System</b> · v0.2.0</span>
+  <span>Licença MIT</span>
+  <span>OKLCH · WCAG 2.1 AA</span>
+  <span>Âncora <code>#FC5000</code></span>
+  <span>Gerado por <code>site/site.py</code></span>
+</footer>
+</div></main>
+</div>
+
+<script>
+(function () {
+  // ── trilho: uma página por vez, endereçável pelo hash ──
+  var pages = [].slice.call(document.querySelectorAll('.page'));
+  var links = [].slice.call(document.querySelectorAll('.rail a[data-page]'));
+  // os cards das páginas-índice navegam pelo mesmo roteador que o trilho
+  var cards = [].slice.call(document.querySelectorAll('a.card[data-page]'));
+
+  var groups = [].slice.call(document.querySelectorAll('.nav-group'));
+
+  function setOpen(group, on) {
+    if (!group) return;
+    group.classList.toggle('is-open', on);
+    var primary = group.querySelector('.nav-primary');
+    var sub = group.querySelector('.nav-sub');
+    if (primary) primary.setAttribute('aria-expanded', on ? 'true' : 'false');
+    if (sub) sub.hidden = !on;
+  }
+
+  // Acordeão: um aberto por vez. Abrir um fecha o outro, sempre.
+  function openOnly(group) {
+    groups.forEach(function (g) { setOpen(g, g === group); });
+  }
+
+  function show(id) {
+    var found = false;
+    pages.forEach(function (p) {
+      var on = p.id === 'pg-' + id;
+      p.hidden = !on;
+      if (on) found = true;
+    });
+    if (!found) return false;
+    var owner = null;
+    links.forEach(function (a) {
+      if (a.getAttribute('data-page') === id) {
+        a.setAttribute('aria-current', 'page');
+        owner = a.closest('.nav-group');
+      } else {
+        a.removeAttribute('aria-current');
+      }
+    });
+    // abre o grupo dono da página e fecha o outro
+    if (owner && owner.classList.contains('nav-group')) openOnly(owner);
+    return true;
+  }
+
+  function fromHash() {
+    var id = (location.hash || '').replace(/^#\/?/, '');
+    if (!id || !show(id)) show('fundacao');
+    window.scrollTo(0, 0);
+  }
+
+  // O clique troca a página direto, sem depender do hashchange: em contexto
+  // com o hash bloqueado (preview, sandbox, arquivo aberto local) o evento não
+  // dispara, e o trilho ficaria morto. O hash continua sendo escrito para o
+  // endereço permanecer copiável.
+  links.concat(cards).forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      var id = a.getAttribute('data-page');
+      var group = a.closest('.nav-group');
+      // Clicar de novo no item primário que já está aberto recolhe a lista, sem
+      // sair da página. É o único jeito de fechar os dois grupos agora que o
+      // chevron não é mais um alvo separado.
+      if (group && a.classList.contains('nav-primary') &&
+          group.classList.contains('is-open') &&
+          !document.getElementById('pg-' + id).hidden) {
+        setOpen(group, false);
+        return;
+      }
+      if (!show(id)) return;
+      window.scrollTo(0, 0);
+      try { history.replaceState(null, '', '#/' + id); } catch (err) { /* sandbox */ }
+    });
+  });
+
+  window.addEventListener('hashchange', fromHash);
+
+  // ── switch de tema ──
+  // Carimba data-theme na raiz, que é onde a Foundation resolve o tema. Só a
+  // raiz serve: a substituição de custom property acontece no elemento onde o
+  // alias é DECLARADO, e toda a camada semântica é declarada no :root.
+  var root = document.documentElement;
+  var sw = document.getElementById('themeswitch');
+
+  function applyTheme(dark, remember) {
+    root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    sw.setAttribute('aria-checked', dark ? 'true' : 'false');
+    if (remember) {
+      try { localStorage.setItem('al-theme', dark ? 'dark' : 'light'); } catch (e) { /* sem storage */ }
+    }
+  }
+
+  // Estado inicial. A Foundation tem TRÊS estados, não dois: sem carimbo, quem
+  // decide é o sistema. Carimbar na carga mataria o terceiro estado, então
+  // enquanto o leitor não tocar no switch a página continua seguindo o sistema
+  // e o switch apenas reflete o que está na tela.
+  var saved = null;
+  try { saved = localStorage.getItem('al-theme'); } catch (e) { /* sem storage */ }
+  var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+  var stamped = root.getAttribute('data-theme');
+
+  if (saved) {
+    applyTheme(saved === 'dark', false);          // escolha anterior: carimba
+  } else if (stamped) {
+    sw.setAttribute('aria-checked', stamped === 'dark' ? 'true' : 'false');
+  } else {
+    sw.setAttribute('aria-checked', mq && mq.matches ? 'true' : 'false');
+    if (mq && mq.addEventListener) {
+      mq.addEventListener('change', function (e) {
+        if (!root.getAttribute('data-theme')) {
+          sw.setAttribute('aria-checked', e.matches ? 'true' : 'false');
+        }
+      });
+    }
+  }
+
+  sw.addEventListener('click', function () {
+    applyTheme(sw.getAttribute('aria-checked') !== 'true', true);
+  });
+
+  // Se o ambiente reescrever data-theme por fora (o visualizador tem o próprio
+  // controle de tema), o switch acompanha em vez de ficar mentindo.
+  if (window.MutationObserver) {
+    new MutationObserver(function () {
+      var dark = root.getAttribute('data-theme') === 'dark';
+      if ((sw.getAttribute('aria-checked') === 'true') !== dark) {
+        sw.setAttribute('aria-checked', dark ? 'true' : 'false');
+      }
+    }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  }
+
+  // ── abas, com navegação por seta como manda o padrão ──
+  [].slice.call(document.querySelectorAll('.tabs')).forEach(function (bar) {
+    var tabs = [].slice.call(bar.querySelectorAll('[role="tab"]'));
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+      });
+    }
+    tabs.forEach(function (tab, i) {
+      tab.addEventListener('click', function () { select(tab); });
+      tab.addEventListener('keydown', function (e) {
+        var next = null;
+        if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
+        if (e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
+        if (e.key === 'Home') next = tabs[0];
+        if (e.key === 'End') next = tabs[tabs.length - 1];
+        if (next) { e.preventDefault(); select(next); next.focus(); }
+      });
+    });
+  });
+
+  // ── playground do Button ──
+  var demo = document.getElementById('demo');
+  var stage = document.getElementById('stage');
+  var code = document.getElementById('code');
+  var lead = demo.querySelector('.al-btn__icon--leading');
+  var trail = demo.querySelector('.al-btn__icon--trailing');
+  var label = demo.querySelector('.al-btn__label');
+  var input = document.getElementById('labeltext');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function render() {
+    var variant = pick('variant'), size = pick('size');
+    var state = pick('state'), icon = pick('icon'), theme = pick('theme');
+
+    demo.className = 'al-btn al-btn--' + variant + ' al-btn--' + size
+      + (state === 'hover' || state === 'active' || state === 'focus' ? ' is-' + state : '');
+
+    demo.removeAttribute('aria-disabled');
+    demo.removeAttribute('aria-busy');
+    if (state === 'disabled') demo.setAttribute('aria-disabled', 'true');
+    if (state === 'busy') {
+      demo.setAttribute('aria-busy', 'true');
+      demo.setAttribute('aria-disabled', 'true');
+    }
+
+    lead.hidden = !(icon === 'leading');
+    trail.hidden = !(icon === 'trailing');
+    label.textContent = input.value || 'Button';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    // marcação gerada, na ordem em que o contrato pede
+    var cls = 'al-btn al-btn--' + variant + ' al-btn--' + size;
+    var attrs = '';
+    if (state === 'disabled') attrs = ' aria-disabled="true"';
+    if (state === 'busy') attrs = ' aria-busy="true" aria-disabled="true"';
+    var lines = ['&lt;button type="button" class="' + cls + '"' + attrs + '&gt;'];
+    if (state === 'busy') lines.push('  &lt;span class="al-btn__spinner" aria-hidden="true"&gt;&lt;/span&gt;');
+    if (icon === 'leading' && state !== 'busy')
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading" aria-hidden="true"&gt;&lt;svg …&gt;&lt;/svg&gt;&lt;/span&gt;');
+    lines.push('  &lt;span class="al-btn__label"&gt;' +
+      (input.value || 'Button').replace(/&/g, '&amp;').replace(/</g, '&lt;') + '&lt;/span&gt;');
+    if (icon === 'trailing')
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true"&gt;&lt;svg …&gt;&lt;/svg&gt;&lt;/span&gt;');
+    lines.push('&lt;/button&gt;');
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('.controls input').forEach(function (el) {
+    el.addEventListener('change', render);
+    el.addEventListener('input', render);
+  });
+
+  // filtro da tabela de tokens
+  document.querySelectorAll('input[name="tokfilter"]').forEach(function (el) {
+    el.addEventListener('change', function () {
+      var v = pick('tokfilter');
+      document.querySelectorAll('#tokbody tr').forEach(function (tr) {
+        tr.hidden = (v !== 'all' && tr.getAttribute('data-variant') !== v);
+      });
+    });
+  });
+
+  // copiar marcação
+  document.getElementById('copy').addEventListener('click', function () {
+    var btn = this;
+    var text = code.textContent;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { btn.textContent = 'Não deu'; });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Não deu'; }
+      document.body.removeChild(ta);
+    }
+  });
+
+  render();
+  fromHash();
+})();
+</script>
