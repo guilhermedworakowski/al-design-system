@@ -1397,7 +1397,7 @@ BTN_GUIDE = '''
         <tr><td class="name">Largura total</td><td>Não existe</td><td>Vira propriedade, não variante.</td></tr>
         <tr><td class="name">Danger contornado</td><td>Não existe</td><td>Secondary com rótulo explícito de consequência.</td></tr>
         <tr><td class="name">Tamanho lg</td><td>Não existe</td><td>Fechado em dois tamanhos.</td></tr>
-        <tr><td class="name">Só ícone</td><td>Set irmão</td><td><code>Button Icon</code>, com nome acessível obrigatório.</td></tr>
+        <tr><td class="name">Só ícone</td><td>Set irmão</td><td><code>Icon Button</code>, com nome acessível obrigatório.</td></tr>
       </tbody>
     </table>
   </div>
@@ -1487,7 +1487,7 @@ LANDING_COMPONENTES = f'''
   <p>A ordem não é negociável enquanto o pipeline for de um componente por vez. Cada um destes
   começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
   <div class="cards" style="margin-top:18px">
-    {card('icon-button', 'Icon button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_SOON, soon=True)}
+    {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_SOON, soon=True)}
     {card('icon', 'Icon', 'Traz junto a escala de ícone, que o Button hoje resolve com um valor provisório de 16px.', TH_SOON, soon=True)}
     {card('badge', 'Badge / Tag', 'Rótulo curto de status ou contagem, sem ação associada.', TH_SOON, soon=True)}
     {card('avatar', 'Avatar', 'Identidade visual de uma pessoa ou entidade, com recurso a iniciais.', TH_SOON, soon=True)}
@@ -1586,7 +1586,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <span class="nav-chev" aria-hidden="true">{CARET}</span></a>
       <div class="nav-sub" id="sub-componentes" hidden>
         <a href="#/button" data-page="button">Button</a>
-        <a class="soon" aria-disabled="true">Icon button</a>
+        <a class="soon" aria-disabled="true">Icon Button</a>
         <a class="soon" aria-disabled="true">Icon</a>
         <a class="soon" aria-disabled="true">Badge / Tag</a>
         <a class="soon" aria-disabled="true">Avatar</a>

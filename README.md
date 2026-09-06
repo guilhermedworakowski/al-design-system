@@ -92,7 +92,7 @@ Em CSS, a camada de componente não tem bloco de tema — e não precisa. O tema
 
 Coisas deliberadamente não construídas, anotadas para não voltarem como dúvida:
 
-- **Escala de ícone** — o Button usa 16px e o `Button Icon` usa 20px, mas a escala pertence ao componente `Icon`, do Tier 1. Fica em `pending` no `tokens.json` do Button.
+- **Escala de ícone** — o Button usa 16px e o `Icon Button` usa 20px, mas a escala pertence ao componente `Icon`, do Tier 1. Fica em `pending` no `tokens.json` do Button.
 - **Escala de motion** — as durações no `button.css` são literais e aparecem no relatório do `check.py` como exceção consciente.
 - **Unidade de tipografia** — a escala é em `px`. Atende o critério 1.4.4 (zoom do navegador escala `px`), mas não acompanha a preferência de tamanho de fonte do usuário. Migrar para `rem` é decisão de Foundation, não de componente.
 
