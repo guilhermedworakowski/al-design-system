@@ -214,7 +214,9 @@ def run():
     out = {
         'meta': {
             'component': 'Button',
-            'version': '0.1.0',
+            # 0.1.1: icon-size deixou de ser literal pendente e virou alias de
+            # iconSize.16. Valor renderizado identico, entao PATCH, nao MINOR.
+            'version': '0.1.1',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '23:123',
             'variants': list(COLOR),

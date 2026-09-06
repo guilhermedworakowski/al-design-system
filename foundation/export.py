@@ -14,7 +14,7 @@ SHADOW_RGB = "24, 24, 24"   # neutral-950 acromatico -> sombra cinza, sem tingim
 
 TOKENS = {
   "meta": {
-    "name": "AL Design System", "version": "0.2.0", "license": "MIT",
+    "name": "AL Design System", "version": "0.3.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },

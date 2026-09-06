@@ -3,7 +3,7 @@
 Design system open source, do Figma ao código. Construído em público, uma camada de cada vez.
 
 - **Licença:** MIT
-- **Versão:** `0.2.0`
+- **Versão:** `0.3.0`
 - **Figma:** biblioteca privada por enquanto — primitivas, semânticos e tokens de componente documentados abaixo
 
 ## Estado atual

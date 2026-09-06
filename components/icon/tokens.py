@@ -156,8 +156,25 @@ def write_css(alias):
 
 
 def write_json(alias, resolved):
-    out = {'component': 'icon', 'defaultBox': DEFAULT_BOX,
-           'alias': alias, 'resolved': resolved, 'pending': {}}
+    out = {
+        'meta': {
+            'component': 'Icon',
+            'version': '0.1.0',
+            'foundation': FOUND['meta']['version'],
+            'figmaNode': '127:341',
+            'family': 'lucide',
+            'grid': 24,
+            'strokeWidth': 2,
+            'boxes': list(BOX),
+            'inks': list(INK),
+            'nota': 'A cor padrao do componente nao e nenhum dos icon-ink-*: e '
+                    'currentColor. Os quatro tokens sao a saida explicita.',
+        },
+        'defaultBox': DEFAULT_BOX,
+        'alias': alias,
+        'resolved': resolved,
+        'pending': {},
+    }
     path = os.path.join(HERE, 'tokens.json')
     json.dump(out, open(path, 'w'), indent=2, ensure_ascii=False)
     print('components/icon/tokens.json escrito')
