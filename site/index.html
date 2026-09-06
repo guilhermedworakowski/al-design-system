@@ -861,7 +861,7 @@
  *     .al-icon--16  .al-icon--20  .al-icon--32
  *   Qualquer outro tamanho entra pela propria custom property, sem classe nova
  *   e sem esperar a escala crescer:
- *     <svg class="al-icon" style="--al-icon-box: 40px">
+ *     <svg class="al-icon" style="--al-icon-box: 40px" aria-hidden="true" focusable="false">
  *   O portao de CSS literal vale para o CSS do design system, nao para a
  *   aplicacao que o consome. Este e o escape, e ele e de propósito.
  *
@@ -887,7 +887,8 @@
  *   inline entra nela sozinho em alguns navegadores).
  *   Botao so-icone e o caso limite: o nome acessivel vai no BOTAO, nunca no
  *   svg - e o Icon Button que resolve isso, nao este componente.
- *   A verificacao formal disso e do portao de a11y, na etapa 7.
+ *   Quem cobra isso e o a11y.py ao lado: ele le o HTML que o site emite e
+ *   reprova todo .al-icon sem contrato. Nao e regra escrita, e regra medida.
  *
  * NOTA DE GEOMETRIA
  *   Este arquivo define cor e caixa, e nao define `stroke-width`. Nao e
@@ -1762,7 +1763,7 @@ footer code{background:none; padding:0}
     Button já faz isso.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-icon" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Ícones</h1><p class="lede">70 ícones no grid de 24, com o traço vetorizado. Não há escala fixa: o mesmo componente serve em 16 ou em 96, e o peso da linha acompanha em vez de ficar para trás.</p><div class="meta"><span class="badge on">70 ícones</span><span class="badge">Grid 24 · traço 2</span><span class="badge">8 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Ícones"><button role="tab" id="t-icon-overview" aria-controls="p-icon-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-icon-specs" aria-controls="p-icon-specs" aria-selected="false" tabindex=-1>Especificações</button></div><div class="panel" id="p-icon-overview" role="tabpanel" aria-labelledby="t-icon-overview" tabindex="0">
+<div class="page" id="pg-icon" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Ícones</h1><p class="lede">70 ícones no grid de 24, com o traço vetorizado. Não há escala fixa: o mesmo componente serve em 16 ou em 96, e o peso da linha acompanha em vez de ficar para trás.</p><div class="meta"><span class="badge on">70 ícones</span><span class="badge">Grid 24 · traço 2</span><span class="badge">8 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Ícones"><button role="tab" id="t-icon-overview" aria-controls="p-icon-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-icon-specs" aria-controls="p-icon-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-icon-a11y" aria-controls="p-icon-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-icon-overview" role="tabpanel" aria-labelledby="t-icon-overview" tabindex="0">
 <section>
   <h2>Playground</h2>
   <div class="pg">
@@ -2069,6 +2070,101 @@ footer code{background:none; padding:0}
     <b>O <code>stroke-width</code> não está no CSS, e isso é intencional</b>
     <p>A espessura do traço — 2 no grid de 24 — é parte do desenho e viaja dentro do próprio
     arquivo <code>.svg</code>. Cor e caixa mudam com o contexto e com o tema; o desenho, não.</p>
+  </div>
+</section></div><div class="panel" id="p-icon-a11y" role="tabpanel" aria-labelledby="t-icon-a11y" tabindex="0" hidden>
+<section>
+  <h2>O critério é outro</h2>
+  <p>Ícone não é texto. O piso dele é o <b>3:1</b> do WCAG 1.4.11 — contraste não-textual — e não
+  o 4,5:1 que vale para rótulo. É a mesma cor medida contra um mínimo diferente, e isso tem uma
+  consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
+  normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
+  <div class="stats">
+    <div class="stat hl"><b>124</b><span>verificações</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+    <div class="stat"><b>82</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tinta explícita contra a superfície</h2>
+  <p>Cada tinta é medida só onde ela faz sentido: <code>on-brand</code> contra a tela seria um
+  cenário que o design system não produz. O <code>disabled</code> aparece medido e isento — o WCAG
+  dispensa componente inativo, e subir esse contraste faria o desabilitado parecer clicável.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">light</td><td class="name">default · bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#292929 / #FFFFFF</td><td class="num strong">14.55:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">default · bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#292929 / #F7F7F7</td><td class="num strong">13.58:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">default · bg-subtle</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">#292929 / #EEEEEE</td><td class="num strong">12.54:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-brand · bg-brand</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">#FFFFFF / #FC5000</td><td class="num strong">3.34:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-brand · bg-brand-hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">#FFFFFF / #C53900</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-brand · bg-brand-active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#992700"></span></td><td class="tok dim">#FFFFFF / #992700</td><td class="num strong">7.94:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-solid · bg-danger</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#A00E27"></span></td><td class="tok dim">#FFFFFF / #A00E27</td><td class="num strong">8.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-solid · bg-danger-hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#780014"></span></td><td class="tok dim">#FFFFFF / #780014</td><td class="num strong">11.61:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-solid · bg-danger-active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#550007"></span></td><td class="tok dim">#FFFFFF / #550007</td><td class="num strong">15.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">disabled · bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#B3B3B3 / #FFFFFF</td><td class="num strong">2.10:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">disabled · bg-disabled</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">#B3B3B3 / #E0E0E0</td><td class="num strong">1.59:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">default · bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#F7F7F7 / #181818</td><td class="num strong">16.57:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">default · bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#F7F7F7 / #292929</td><td class="num strong">13.58:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">default · bg-subtle</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">#F7F7F7 / #3E3E3E</td><td class="num strong">9.98:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-brand · bg-brand</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">#FFFFFF / #FC5000</td><td class="num strong">3.34:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-brand · bg-brand-hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#EA4900"></span></td><td class="tok dim">#FFFFFF / #EA4900</td><td class="num strong">3.85:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-brand · bg-brand-active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">#FFFFFF / #C53900</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-solid · bg-danger</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#F84F5D"></span></td><td class="tok dim">#181818 / #F84F5D</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-solid · bg-danger-hover</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#FF8D91"></span></td><td class="tok dim">#181818 / #FF8D91</td><td class="num strong">8.01:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-solid · bg-danger-active</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#FFBABB"></span></td><td class="tok dim">#181818 / #FFBABB</td><td class="num strong">10.99:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">disabled · bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#717171 / #181818</td><td class="num strong">3.64:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">disabled · bg-disabled</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">#717171 / #3E3E3E</td><td class="num strong">2.19:1</td><td><span class="exc">isento</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Tinta herdada dentro do Button</h2>
+  <p>O padrão do componente é <code>currentColor</code>, então dentro de um acionável o ícone veste
+  a cor do rótulo. Vale aqui a mesma lógica que o Button já usa: variante sem preenchimento herda a
+  tela, então Ghost e Secondary são medidos contra a <b>tela</b>, nunca contra "transparente".</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">light</td><td class="name">primary · default</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">#FFFFFF / #FC5000</td><td class="num strong">3.34:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">primary · hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">#FFFFFF / #C53900</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">primary · active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#992700"></span></td><td class="tok dim">#FFFFFF / #992700</td><td class="num strong">7.94:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">secondary · default</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#292929 / #FFFFFF</td><td class="num strong">14.55:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">secondary · hover</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">#292929 / #EEEEEE</td><td class="num strong">12.54:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">secondary · active</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">#292929 / #E0E0E0</td><td class="num strong">11.02:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">ghost · default</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#292929 / #FFFFFF</td><td class="num strong">14.55:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">ghost · hover</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">#292929 / #EEEEEE</td><td class="num strong">12.54:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">ghost · active</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">#292929 / #E0E0E0</td><td class="num strong">11.02:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">danger · default</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#A00E27"></span></td><td class="tok dim">#FFFFFF / #A00E27</td><td class="num strong">8.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">danger · hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#780014"></span></td><td class="tok dim">#FFFFFF / #780014</td><td class="num strong">11.61:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">danger · active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#550007"></span></td><td class="tok dim">#FFFFFF / #550007</td><td class="num strong">15.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">primary · default</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">#FFFFFF / #FC5000</td><td class="num strong">3.34:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">primary · hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#EA4900"></span></td><td class="tok dim">#FFFFFF / #EA4900</td><td class="num strong">3.85:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">primary · active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">#FFFFFF / #C53900</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">secondary · default</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#F7F7F7 / #181818</td><td class="num strong">16.57:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">secondary · hover</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">#F7F7F7 / #3E3E3E</td><td class="num strong">9.98:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">secondary · active</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">#F7F7F7 / #565656</td><td class="num strong">6.85:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">ghost · default</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#F7F7F7 / #181818</td><td class="num strong">16.57:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">ghost · hover</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">#F7F7F7 / #3E3E3E</td><td class="num strong">9.98:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">ghost · active</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">#F7F7F7 / #565656</td><td class="num strong">6.85:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">danger · default</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#F84F5D"></span></td><td class="tok dim">#181818 / #F84F5D</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">danger · hover</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#FF8D91"></span></td><td class="tok dim">#181818 / #FF8D91</td><td class="num strong">8.01:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">danger · active</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#FFBABB"></span></td><td class="tok dim">#181818 / #FFBABB</td><td class="num strong">10.99:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Contrato de marcação, medido</h2>
+  <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
+  O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
+  <code>.al-icon</code>: 82 elementos nesta página, nenhum fora.
+  Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
+  <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
+  porque o rótulo nunca seria lido.</p>
+  <div class="note" style="margin-top:20px">
+    <b>Por que medir no HTML e não na folha de estilo</b>
+    <p>Contraste se prova no token; marcação, não. Um contrato de <code>aria-*</code> só existe
+    quando alguém escreve o atributo — então o único lugar onde ele pode ser verificado é a saída
+    renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
   </div>
 </section></div></div>
 <div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">1 publicado</span><span class="badge">4 no Tier 1</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">

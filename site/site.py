@@ -45,6 +45,7 @@ ICON_TOKENS = open(os.path.join(ROOT, 'components', 'icon', 'al-icon-tokens.css'
 ICON_CSS = open(os.path.join(ROOT, 'components', 'icon', 'icon.css')).read()
 ICON_MANIFEST = json.load(open(os.path.join(ROOT, 'components', 'icon', 'icons.json')))
 ICON_TOK = json.load(open(os.path.join(ROOT, 'components', 'icon', 'tokens.json')))
+ICON_A11Y = json.load(open(os.path.join(ROOT, 'components', 'icon', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -1626,6 +1627,78 @@ ICON_OVERVIEW = f'''
   <div style="margin-top:24px">{icon_library()}</div>
 </section>'''
 
+def icon_a11y_rows(group):
+    out = []
+    for r in ICON_A11Y['rows']:
+        if r['group'] != group:
+            continue
+        if r['exempt']:
+            verdict = '<span class="exc">isento</span>'
+        else:
+            verdict = '<span class="pass">passa</span>'
+        out.append(
+            f'<tr><td class="tok dim">{r["theme"]}</td><td class="name">{r["label"]}</td>'
+            f'<td class="chipcell"><span class="chip sm" style="background:{r["fg"]}"></span>'
+            f'<span class="chip sm" style="background:{r["bg"]}"></span></td>'
+            f'<td class="tok dim">{r["fg"]} / {r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+ICON_A11Y_TAB = f'''
+<section>
+  <h2>O critério é outro</h2>
+  <p>Ícone não é texto. O piso dele é o <b>3:1</b> do WCAG 1.4.11 — contraste não-textual — e não
+  o 4,5:1 que vale para rótulo. É a mesma cor medida contra um mínimo diferente, e isso tem uma
+  consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
+  normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{len([r for r in ICON_A11Y['rows'] if not r['exempt']]) + ICON_A11Y['markupChecked']}</b><span>verificações</span></div>
+    <div class="stat"><b>{ICON_A11Y['fails']}</b><span>reprovas</span></div>
+    <div class="stat"><b>{ICON_A11Y['markupChecked']}</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>{ICON_A11Y['floor']}:1</b><span>piso não-textual</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tinta explícita contra a superfície</h2>
+  <p>Cada tinta é medida só onde ela faz sentido: <code>on-brand</code> contra a tela seria um
+  cenário que o design system não produz. O <code>disabled</code> aparece medido e isento — o WCAG
+  dispensa componente inativo, e subir esse contraste faria o desabilitado parecer clicável.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{icon_a11y_rows('tinta')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Tinta herdada dentro do Button</h2>
+  <p>O padrão do componente é <code>currentColor</code>, então dentro de um acionável o ícone veste
+  a cor do rótulo. Vale aqui a mesma lógica que o Button já usa: variante sem preenchimento herda a
+  tela, então Ghost e Secondary são medidos contra a <b>tela</b>, nunca contra "transparente".</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{icon_a11y_rows('herda')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Contrato de marcação, medido</h2>
+  <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
+  O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
+  <code>.al-icon</code>: {ICON_A11Y['markupChecked']} elementos nesta página, nenhum fora.
+  Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
+  <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
+  porque o rótulo nunca seria lido.</p>
+  <div class="note" style="margin-top:20px">
+    <b>Por que medir no HTML e não na folha de estilo</b>
+    <p>Contraste se prova no token; marcação, não. Um contrato de <code>aria-*</code> só existe
+    quando alguém escreve o atributo — então o único lugar onde ele pode ser verificado é a saída
+    renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
+  </div>
+</section>'''
+
+
 ICON_SPECS = f'''
 <section>
   <h2>Sem escala fixa</h2>
@@ -1783,7 +1856,8 @@ PAGES = [
         'componente serve em 16 ou em 96, e o peso da linha acompanha em vez de ficar para trás.',
         [(f'{N_ICONS} ícones', True), ('Grid 24 · traço 2', False),
          (f'{len(ICON_TOK["alias"])} tokens', False), ('0 valores soltos', False)],
-        [('overview', 'Visão geral', ICON_OVERVIEW), ('specs', 'Especificações', ICON_SPECS)])),
+        [('overview', 'Visão geral', ICON_OVERVIEW), ('specs', 'Especificações', ICON_SPECS),
+         ('a11y', 'Acessibilidade', ICON_A11Y_TAB)])),
 
     ('componentes', 'Componentes', simple_page(
         'componentes', 'Componentes', 'Componentes',

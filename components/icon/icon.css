@@ -20,7 +20,7 @@
  *     .al-icon--16  .al-icon--20  .al-icon--32
  *   Qualquer outro tamanho entra pela propria custom property, sem classe nova
  *   e sem esperar a escala crescer:
- *     <svg class="al-icon" style="--al-icon-box: 40px">
+ *     <svg class="al-icon" style="--al-icon-box: 40px" aria-hidden="true" focusable="false">
  *   O portao de CSS literal vale para o CSS do design system, nao para a
  *   aplicacao que o consome. Este e o escape, e ele e de propósito.
  *
@@ -46,7 +46,8 @@
  *   inline entra nela sozinho em alguns navegadores).
  *   Botao so-icone e o caso limite: o nome acessivel vai no BOTAO, nunca no
  *   svg - e o Icon Button que resolve isso, nao este componente.
- *   A verificacao formal disso e do portao de a11y, na etapa 7.
+ *   Quem cobra isso e o a11y.py ao lado: ele le o HTML que o site emite e
+ *   reprova todo .al-icon sem contrato. Nao e regra escrita, e regra medida.
  *
  * NOTA DE GEOMETRIA
  *   Este arquivo define cor e caixa, e nao define `stroke-width`. Nao e
