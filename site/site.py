@@ -1487,8 +1487,9 @@ LANDING_COMPONENTES = f'''
   <p>A ordem não é negociável enquanto o pipeline for de um componente por vez. Cada um destes
   começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
   <div class="cards" style="margin-top:18px">
+    {card('icon-button', 'Icon button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_SOON, soon=True)}
     {card('icon', 'Icon', 'Traz junto a escala de ícone, que o Button hoje resolve com um valor provisório de 16px.', TH_SOON, soon=True)}
-    {card('badge', 'Badge', 'Rótulo curto de status ou contagem, sem ação associada.', TH_SOON, soon=True)}
+    {card('badge', 'Badge / Tag', 'Rótulo curto de status ou contagem, sem ação associada.', TH_SOON, soon=True)}
     {card('avatar', 'Avatar', 'Identidade visual de uma pessoa ou entidade, com recurso a iniciais.', TH_SOON, soon=True)}
   </div>
 </section>'''
@@ -1546,7 +1547,7 @@ PAGES = [
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [('1 publicado', True), ('3 no Tier 1', False), ('8 etapas por componente', False)],
+        [('1 publicado', True), ('5 no Tier 1', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
@@ -1585,8 +1586,9 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <span class="nav-chev" aria-hidden="true">{CARET}</span></a>
       <div class="nav-sub" id="sub-componentes" hidden>
         <a href="#/button" data-page="button">Button</a>
+        <a class="soon" aria-disabled="true">Icon button</a>
         <a class="soon" aria-disabled="true">Icon</a>
-        <a class="soon" aria-disabled="true">Badge</a>
+        <a class="soon" aria-disabled="true">Badge / Tag</a>
         <a class="soon" aria-disabled="true">Avatar</a>
       </div>
     </div>
