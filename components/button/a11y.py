@@ -15,7 +15,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-FOUND = json.load(open(os.path.join(ROOT, 'foundation', 'tokens.json')))
+FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))
 BTN = json.load(open(os.path.join(HERE, 'tokens.json')))
 
 SEM = FOUND['color']['semantic']

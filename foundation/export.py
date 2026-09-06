@@ -1,6 +1,13 @@
 from color import *
 from build import SEM, PAIRS, EXCEPTIONS, HARD_FLOOR
-import json
+import json, os
+
+# Caminho ancorado no proprio arquivo, nunca no diretorio de onde se roda:
+# tokens.json e a fonte unica da verdade e mora na raiz. Antes daqui o destino
+# dependia do cwd, e rodar de dentro de foundation/ criava uma segunda copia
+# que os portoes liam sem ninguem perceber.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+TOKENS_PATH = os.path.join(ROOT, 'tokens.json')
 
 P = build()
 SHADOW_RGB = "24, 24, 24"   # neutral-950 acromatico -> sombra cinza, sem tingimento de hue
@@ -94,7 +101,7 @@ if fails:
 
 TOKENS["contrastReport"] = report
 
-json.dump(TOKENS, open('tokens.json','w'), indent=2, ensure_ascii=False)
+json.dump(TOKENS, open(TOKENS_PATH,'w'), indent=2, ensure_ascii=False)
 n_prim = sum(len(v) for v in P.values()) + 1
 print(f"tokens.json escrito")
 print(f"  primitivas de cor : {n_prim}  ({len(P)} familias x 11 steps + orange-550)")

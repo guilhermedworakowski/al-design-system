@@ -15,10 +15,12 @@ import json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 sys.path.insert(0, os.path.join(ROOT, 'foundation'))
-os.chdir(os.path.join(ROOT, 'foundation'))
 
 from build import SEM                     # noqa: E402
-FOUND = json.load(open('tokens.json'))    # noqa: E402
+
+# Fonte unica, na raiz. O chdir que existia aqui apontava para uma copia em
+# foundation/, e era ela - nao a raiz - que os portoes liam.
+FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))   # noqa: E402
 
 TRANSPARENT = 'transparent'   # ausencia de cor, nao uma escolha de cor
 

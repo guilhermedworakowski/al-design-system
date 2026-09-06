@@ -11,10 +11,13 @@ Rodar: python3 css.py     (escreve al-foundation.css, nao redirecionar stdout)
 import json, os, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-os.chdir(HERE)
-T = json.load(open('tokens.json'))
+ROOT = os.path.dirname(HERE)
 
-OUT = 'al-foundation.css'
+# Le a fonte unica na raiz e escreve ao lado da fonte. Sem chdir: caminho
+# ancorado no arquivo faz o script dar o mesmo resultado de qualquer pasta.
+T = json.load(open(os.path.join(ROOT, 'tokens.json')))
+
+OUT = os.path.join(HERE, 'al-foundation.css')
 L = []
 w = L.append
 
