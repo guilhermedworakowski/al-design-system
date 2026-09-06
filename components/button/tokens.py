@@ -97,7 +97,7 @@ SHARED = {
 }
 
 # Pendencia consciente: o Button usa icone de 16 nos dois tamanhos, e o set
-# irmao Button Icon usa 20. Nao existe escala de icone na Foundation ainda.
+# irmao Icon Button usa 20. Nao existe escala de icone na Foundation ainda.
 # Nao invento uma aqui - ela nasce com o componente Icon, no Tier 1.
 PENDING = {'icon-size': {'sm': 16, 'md': 16, 'nota': 'aguarda escala de icone na Foundation'}}
 
