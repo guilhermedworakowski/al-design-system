@@ -49,6 +49,17 @@ TOKENS = {
   },
   "space": {str(v): v for v in [0,2,4,8,12,16,20,24,32,40,48,64,80,96]},
   "radius": {"none":0,"xs":2,"sm":4,"md":6,"lg":8,"xl":12,"2xl":16,"3xl":24,"full":9999},
+  # Escala de tamanho de icone. Os degraus sao nomeados pelo proprio valor,
+  # como o espacamento - e de proposito: nome de camiseta (sm/md/lg) obriga a
+  # renomear quando um degrau entra no meio, e esta e a escala que mais cresce.
+  # Assim um degrau novo custa uma linha e nada existente muda de nome.
+  #
+  # A escala NAO prende o componente Icon. O desenho e de 24 com o traco
+  # vetorizado em preenchimento, entao a instancia vale em qualquer tamanho.
+  # Isto aqui nomeia os tamanhos recorrentes para que a decisao seja tomada
+  # uma vez e mudavel num lugar so - e para que o portao de CSS literal tenha
+  # contra o que validar.
+  "iconSize": {"16":16, "20":20, "24":24, "32":32},
   "border": {"width": {"0":0,"1":1,"2":2,"focus":2}, "focusOffset": 2},
   "focusRing": {
     # Duas camadas na mesma sombra, sem offset:
@@ -107,10 +118,10 @@ print(f"tokens.json escrito")
 print(f"  primitivas de cor : {n_prim}  ({len(P)} familias x 11 steps + orange-550)")
 print(f"  semanticos de cor : {len(SEM)} x 2 temas = {len(SEM)*2}")
 print(f"  estilos de texto  : {len(TOKENS['type']['styles'])}")
-print(f"  espacamento       : {len(TOKENS['space'])}   radius: {len(TOKENS['radius'])}   elevacao: 6")
+print(f"  espacamento       : {len(TOKENS['space'])}   radius: {len(TOKENS['radius'])}   icon-size: {len(TOKENS['iconSize'])}   elevacao: 6")
 n_exc = sum(1 for r in report if r['exception'])
 print(f"  pares validados   : {len(report)}  |  AA pleno: {len(report)-n_exc}  |  excecoes de marca: {n_exc}  |  reprovas: {sum(1 for r in report if not r['pass'])}")
 TOKENS['meta']['brandLabel'] = 'light'
 TOKENS['meta']['exceptions'] = [{'theme':r['theme'],'label':r['label'],'ratio':r['ratio']} for r in report if r['exception']]
-total = n_prim + len(SEM)*2 + len(TOKENS['type']['styles']) + len(TOKENS['space']) + len(TOKENS['radius']) + 6 + 4
+total = n_prim + len(SEM)*2 + len(TOKENS['type']['styles']) + len(TOKENS['space']) + len(TOKENS['radius']) + len(TOKENS['iconSize']) + 6 + 4
 print(f"  TOTAL             : ~{total} tokens")

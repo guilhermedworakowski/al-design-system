@@ -194,6 +194,13 @@
   --al-border-width-focus: 2px;
   --al-border-focus-offset: 2px;
 
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
+
   /* elevacao - TEMA CLARO */
   --al-elevation-0: none;
   --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
@@ -464,7 +471,7 @@
   /* compartilhado */
   --al-button-radius: var(--al-radius-full);
   --al-button-border-width: var(--al-border-width-1);
-  --al-button-icon-size: 16px;  /* aguarda escala de icone na Foundation */
+  --al-button-icon-size: var(--al-icon-size-16);
 }
 
 /* AL Design System - tokens do Button
@@ -546,7 +553,7 @@
   /* compartilhado */
   --al-button-radius: var(--al-radius-full);
   --al-button-border-width: var(--al-border-width-1);
-  --al-button-icon-size: 16px;  /* aguarda escala de icone na Foundation */
+  --al-button-icon-size: var(--al-icon-size-16);
 }
 
 /* AL Design System - Button
@@ -1610,12 +1617,12 @@ footer code{background:none; padding:0}
   começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
   <div class="cards" style="margin-top:18px">
     <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Icon Button</span><span class="card-desc">O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.</span><span class="card-soon">Em breve</span></div></div>
-    <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Icon</span><span class="card-desc">Traz junto a escala de ícone, que o Button hoje resolve com um valor provisório de 16px.</span><span class="card-soon">Em breve</span></div></div>
+    <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Icon</span><span class="card-desc">Um só componente, sem escala fixa: o traço é vetorizado, então a mesma instância serve de 16 a 32 e além.</span><span class="card-soon">Em breve</span></div></div>
     <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Badge / Tag</span><span class="card-desc">Rótulo curto de status ou contagem, sem ação associada.</span><span class="card-soon">Em breve</span></div></div>
     <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Avatar</span><span class="card-desc">Identidade visual de uma pessoa ou entidade, com recurso a iniciais.</span><span class="card-soon">Em breve</span></div></div>
   </div>
 </section></div></div>
-<div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">46 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
+<div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">47 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
 <section>
   <h2>Playground</h2>
   <div class="pg">

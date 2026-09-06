@@ -77,5 +77,5 @@
   /* compartilhado */
   --al-button-radius: var(--al-radius-full);
   --al-button-border-width: var(--al-border-width-1);
-  --al-button-icon-size: 16px;  /* aguarda escala de icone na Foundation */
+  --al-button-icon-size: var(--al-icon-size-16);
 }

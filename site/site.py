@@ -1488,7 +1488,7 @@ LANDING_COMPONENTES = f'''
   começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
   <div class="cards" style="margin-top:18px">
     {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_SOON, soon=True)}
-    {card('icon', 'Icon', 'Traz junto a escala de ícone, que o Button hoje resolve com um valor provisório de 16px.', TH_SOON, soon=True)}
+    {card('icon', 'Icon', 'Um só componente, sem escala fixa: o traço é vetorizado, então a mesma instância serve de 16 a 32 e além.', TH_SOON, soon=True)}
     {card('badge', 'Badge / Tag', 'Rótulo curto de status ou contagem, sem ação associada.', TH_SOON, soon=True)}
     {card('avatar', 'Avatar', 'Identidade visual de uma pessoa ou entidade, com recurso a iniciais.', TH_SOON, soon=True)}
   </div>

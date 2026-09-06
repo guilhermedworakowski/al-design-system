@@ -94,12 +94,21 @@ SIZE = {
 SHARED = {
   'radius':       'radius.full',
   'border-width': 'border.width.1',
+  'icon-size':    'iconSize.16',
 }
 
-# Pendencia consciente: o Button usa icone de 16 nos dois tamanhos, e o set
-# irmao Icon Button usa 20. Nao existe escala de icone na Foundation ainda.
-# Nao invento uma aqui - ela nasce com o componente Icon, no Tier 1.
-PENDING = {'icon-size': {'sm': 16, 'md': 16, 'nota': 'aguarda escala de icone na Foundation'}}
+# Resolvida em 06/09/2026: a escala de icone nasceu na Foundation junto com o
+# componente Icon, e o icon-size do Button virou alias puro (iconSize.16), la
+# em cima no SHARED. O valor renderizado nao mudou - eram 16px literais, sao
+# 16px por token.
+#
+# O que ficou de fora de proposito: o Button usa 16 nos dois tamanhos e o set
+# irmao Icon Button usa 20. Se o md deve subir para 20 e decisao de desenho,
+# nao de tokenizacao - ela pertence ao PR de migracao do Button.
+#
+# O mecanismo fica de pe, vazio. Pendencia some do relatorio quando some de
+# verdade, nunca por esquecimento.
+PENDING = {}
 
 
 # ---------------------------------------------------------------- portao
@@ -184,7 +193,11 @@ def run():
         print(f'  {name:<34} {tag}')
     print('-' * 70)
     print(f'altura derivada: sm {heights["sm"]}px   md {heights["md"]}px  (padding-y x2 + entrelinha)')
-    print(f'pendente: icon-size {PENDING["icon-size"]["sm"]}/{PENDING["icon-size"]["md"]} - {PENDING["icon-size"]["nota"]}')
+    if PENDING:
+        for k, v in PENDING.items():
+            print(f'pendente: {k} - {v}')
+    else:
+        print('pendencias: nenhuma')
     print('-' * 70)
 
     if problems:
@@ -233,6 +246,8 @@ def css_ref(ref):
         return f'var(--al-radius-{ref.split(".")[1]})'
     if ref.startswith('border.width.'):
         return f'var(--al-border-width-{ref.split(".")[2]})'
+    if ref.startswith('iconSize.'):
+        return f'var(--al-icon-size-{ref.split(".")[1]})'
     return f'var(--al-{ref})'          # semantico de cor
 
 
@@ -279,8 +294,6 @@ def write_css(alias, heights):
     w('  /* compartilhado */')
     for role, ref in SHARED.items():
         w(f'  --al-button-{role}: {css_ref(ref)};')
-    w(f'  --al-button-icon-size: {PENDING["icon-size"]["sm"]}px;  '
-      f'/* {PENDING["icon-size"]["nota"]} */')
     w('}')
     w('')
 
