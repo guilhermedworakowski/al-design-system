@@ -250,7 +250,7 @@ def write_css(alias, heights):
     w(' * Cuidado: substituicao de custom property acontece no elemento onde ela e')
     w(' * DECLARADA, nao no ponto de uso. Um alias declarado aqui desce ja resolvido.')
     w(' * Por isso tematizar um container solto (e nao o :root) exige re-declarar')
-    w(' * esta camada dentro do bloco daquele container - ver site/build.py.')
+    w(' * esta camada dentro do bloco daquele container - ver site/site.py.')
     w(' */')
     w('')
     w(':root {')

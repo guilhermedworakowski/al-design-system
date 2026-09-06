@@ -30,7 +30,6 @@ foundation/
   build.py       # camada semântica + portão de contraste (WCAG 2.1 AA)
   export.py      # gera tokens.json a partir de color.py + build.py
   css.py         # gera al-foundation.css a partir de tokens.json
-  page.py        # gera foundation.html a partir de tokens.json
   tune.py        # scripts de calibração da rampa neutra
 
 components/button/
@@ -41,25 +40,28 @@ components/button/
 
 site/
   site.py        # gera index.html: o site — Foundation + componentes, navegação e playground
-  build.py       # gera button.html: a página isolada do Button, mantida como referência
 ```
 
-Arquivos `tokens.json`, `*.css` gerados, `foundation.html`, `site/index.html` e `site/button.html` são saída — versionados para consulta, mas nunca editados à mão.
+Arquivos `tokens.json`, `*.css` gerados e `site/index.html` são saída — versionados para consulta, mas nunca editados à mão.
 
-O `site/index.html` é o site: ele lê o `tokens.json` e embute o `al-foundation.css`, os tokens do Button e o `button.css` reais, então nenhuma contagem e nenhum componente ali é uma cópia. As páginas anteriores (`foundation.html` e `site/button.html`) continuam versionadas como referência do formato.
+Todo script resolve caminho a partir de si mesmo, nunca do diretório de onde é chamado: rodar da raiz ou de dentro da própria pasta dá exatamente o mesmo resultado. Existe **um** `tokens.json`, na raiz, e ele é a fonte da verdade de toda a cadeia.
+
+O `site/index.html` é o site: ele lê o `tokens.json` e embute o `al-foundation.css`, os tokens do Button e o `button.css` reais, então nenhuma contagem e nenhum componente ali é uma cópia — se um componente quebrar, a página quebra junto.
+
+> As páginas avulsas que existiram antes (`foundation/page.py` → `foundation.html` e `site/build.py` → `site/button.html`) foram removidas quando o site as absorveu. Elas continuam recuperáveis na tag `v0.2.0`, mas os números da prosa daquelas páginas estavam desatualizados — não use como referência.
 
 ## Rodando localmente
 
 ```bash
 python3 foundation/export.py       # tokens.json + portão de contraste
 python3 foundation/css.py          # al-foundation.css
-python3 foundation/page.py         # foundation.html
 python3 components/button/tokens.py  # tokens do Button + portão de alias + CSS
 python3 components/button/check.py   # portão do CSS do componente
 python3 components/button/a11y.py    # QA de acessibilidade
-python3 site/build.py              # página isolada do Button (referência)
 python3 site/site.py               # o site: Foundation + componentes
 ```
+
+Nesta ordem, e de qualquer diretório.
 
 ## Os portões
 
@@ -82,7 +84,7 @@ Três camadas, cada uma com um trabalho:
 
 Em CSS, a camada de componente não tem bloco de tema — e não precisa. O tema troca no `:root`, que é o mesmo elemento onde os alias são declarados, então o `:root` re-substitui todos de uma vez.
 
-> Substituição de custom property acontece no elemento onde ela é **declarada**, não no ponto de uso. Um alias declarado no `:root` desce já resolvido. Tematizar um container solto — e não o `:root` — exige re-declarar a camada dentro dele; é o que `site/build.py` faz para o playground.
+> Substituição de custom property acontece no elemento onde ela é **declarada**, não no ponto de uso. Um alias declarado no `:root` desce já resolvido. Tematizar um container solto — e não o `:root` — exige re-declarar a camada dentro dele; é o que `site/site.py` faz para o playground.
 
 **Nomenclatura:** o nome do token separa níveis com hífen (`bg-brand`, `button-primary-bg-hover`). No Figma, a mesma coisa vive em pasta dentro da collection do componente (`primary/bg-hover` na collection `4. Button`) — a barra é o mecanismo de agrupamento do painel de variáveis, não parte do nome do token.
 
