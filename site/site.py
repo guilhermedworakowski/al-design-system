@@ -2,8 +2,8 @@
 Monta o site do AL Design System: Foundation e componentes numa pagina so.
 
 Substitui os dois HTML separados que existiam antes (foundation/page.py e
-site/build.py, que seguem no repositorio como referencia). A diferenca de fundo
-nao e visual:
+site/build.py, removidos - o git guarda os dois na tag v0.2.0). A diferenca de
+fundo nao era visual:
 
   - o conteudo da Foundation era prosa com numeros escritos a mao, e eles
     envelheceram (a pagina antiga anunciava 72 pares e 46 semanticos quando o
