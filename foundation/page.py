@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-import json
+import json, os
 from color import cr, hex_to_oklch, lum
 
-T = json.load(open('tokens.json'))
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+
+T = json.load(open(os.path.join(ROOT, 'tokens.json')))
 P, SEM = T['color']['primitive'], T['color']['semantic']
 N, O = P['neutral'], P['orange']
 STEPS = ['50','100','200','300','400','500','600','700','800','900','950']
@@ -546,5 +549,5 @@ HTML = f'''<title>AL Design System Foundation</title>
 </footer>
 </div>
 '''
-open('foundation.html','w').write(HTML)
+open(os.path.join(HERE, 'foundation.html'),'w').write(HTML)
 print("foundation.html:", len(HTML), "bytes")
