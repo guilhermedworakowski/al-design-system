@@ -1,5 +1,5 @@
 /* AL Design System - Foundation
- * v0.2.0 - MIT
+ * v0.3.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -186,6 +186,13 @@
   --al-border-width-2: 2px;
   --al-border-width-focus: 2px;
   --al-border-focus-offset: 2px;
+
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
 
   /* elevacao - TEMA CLARO */
   --al-elevation-0: none;

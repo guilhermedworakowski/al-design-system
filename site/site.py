@@ -41,6 +41,11 @@ BTN = json.load(open(os.path.join(ROOT, 'components', 'button', 'tokens.json')))
 FOUND_CSS = open(os.path.join(ROOT, 'foundation', 'al-foundation.css')).read()
 BTN_TOKENS = open(os.path.join(ROOT, 'components', 'button', 'al-button-tokens.css')).read()
 BTN_CSS = open(os.path.join(ROOT, 'components', 'button', 'button.css')).read()
+ICON_TOKENS = open(os.path.join(ROOT, 'components', 'icon', 'al-icon-tokens.css')).read()
+ICON_CSS = open(os.path.join(ROOT, 'components', 'icon', 'icon.css')).read()
+ICON_MANIFEST = json.load(open(os.path.join(ROOT, 'components', 'icon', 'icons.json')))
+ICON_TOK = json.load(open(os.path.join(ROOT, 'components', 'icon', 'tokens.json')))
+ICON_A11Y = json.load(open(os.path.join(ROOT, 'components', 'icon', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -62,7 +67,7 @@ assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria 
 
 
 # ════════════════════════════════════════════════════════════ tema no palco
-def scope_themes(found_css, btn_tokens):
+def scope_themes(found_css, *token_blocks):
     """
     Producao troca o tema no :root, e ai a cadeia de alias resolve sozinha.
     Aqui nao: o playground troca o tema so no palco, e substituicao de custom
@@ -71,7 +76,7 @@ def scope_themes(found_css, btn_tokens):
 
     Entao, para o container tematizado funcionar, tudo que aponta para um
     semantico precisa ser re-declarado dentro do bloco de tema: os aneis de
-    foco compostos e a camada inteira do Button.
+    foco compostos e a camada inteira de cada componente - Button e Icon.
     """
     css = found_css.replace(':root[data-theme="dark"] {', '[data-theme="dark"] {')
     m = re.search(r':root\s*\{(.*?)\n\}', css, re.S)
@@ -82,8 +87,12 @@ def scope_themes(found_css, btn_tokens):
                     r'success|warning|info)|shadow|elevation)', l))
     rings = '\n'.join(l for l in root.split('\n') if '--al-focus-ring' in l or
                       (l.strip().startswith('0 0 0') and l.strip().endswith((',', ';'))))
-    mb = re.search(r':root\s*\{(.*?)\n\}', btn_tokens, re.S)
-    btn = mb.group(1) if mb else ''
+    comps = []
+    for block in token_blocks:
+        mb = re.search(r':root\s*\{(.*?)\n\}', block, re.S)
+        if mb:
+            comps.append(mb.group(1))
+    btn = '\n'.join(comps)
 
     css += '\n[data-theme="light"] {\n' + semantic_light + '\n}\n'
     css += ('\n/* Re-declaracao para container tematizado - so o playground precisa. */\n'
@@ -91,7 +100,47 @@ def scope_themes(found_css, btn_tokens):
     return css
 
 
-CSS_REAL = scope_themes(FOUND_CSS, BTN_TOKENS) + '\n' + BTN_TOKENS + '\n' + BTN_CSS
+CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS)
+            + '\n' + BTN_TOKENS + '\n' + BTN_CSS
+            + '\n' + ICON_TOKENS + '\n' + ICON_CSS)
+
+
+# ─────────────────────────────────────────────────────────────────── os icones
+ICON_DIR = os.path.join(ROOT, 'components', 'icon', 'icons')
+ICON_NAMES = ICON_MANIFEST['icons']
+
+
+def al_icon(name, cls='al-icon', extra=''):
+    """Devolve o SVG real do repositorio, com a classe e o contrato decorativo.
+
+    A pagina nunca redesenha um icone: ela le components/icon/icons/<nome>.svg.
+    """
+    raw = open(os.path.join(ICON_DIR, name + '.svg')).read()
+    body = raw[raw.find('<svg'):].strip()
+    return body.replace('<svg ', f'<svg class="{cls}" aria-hidden="true" '
+                                 f'focusable="false"{extra} ', 1)
+
+
+# a mesma ordem e o mesmo agrupamento do component set no Figma
+ICON_GROUPS = [
+    ('Direção e navegação', ['chevron-up', 'chevron-down', 'chevron-left', 'chevron-right',
+        'chevrons-left', 'chevrons-right', 'arrow-up', 'arrow-down', 'arrow-left', 'arrow-right',
+        'arrow-up-right', 'menu', 'ellipsis', 'ellipsis-vertical', 'external-link', 'house']),
+    ('Ação', ['plus', 'minus', 'x', 'check', 'search', 'pencil', 'trash', 'copy', 'download',
+        'upload', 'share-2', 'link', 'refresh-cw', 'send']),
+    ('Status', ['info', 'circle-check', 'circle-alert', 'triangle-alert', 'circle-x',
+        'circle-help', 'loader-circle']),
+    ('Formulário e dados', ['eye', 'eye-off', 'calendar', 'clock', 'filter', 'arrow-up-down']),
+    ('Sistema e conta', ['settings', 'user', 'users', 'log-out', 'log-in', 'lock', 'bell',
+        'shield-check']),
+    ('Conteúdo', ['file-text', 'folder', 'image', 'paperclip', 'bookmark', 'star', 'heart',
+        'mail', 'phone']),
+    ('Mídia', ['play', 'pause', 'skip-forward', 'volume-2', 'maximize']),
+    ('Comércio e local', ['shopping-cart', 'credit-card', 'chart-column', 'map-pin', 'globe']),
+]
+_grouped = [n for _, g in ICON_GROUPS for n in g]
+assert sorted(_grouped) == sorted(ICON_NAMES), 'grupos fora de sincronia com icons.json'
+N_ICONS = len(ICON_NAMES)
 
 
 def ink(bg):
@@ -879,6 +928,10 @@ TH_ESPACO = ('<div class="th-bars">'
              + '</div>')
 TH_BUTTON = ('<button type="button" class="al-btn al-btn--primary al-btn--sm" tabindex="-1">'
              '<span class="al-btn__label">Publicar</span></button>')
+TH_ICON = ('<div class="th-icons">'
+           + ''.join(al_icon(n) for n in
+                     ['search', 'heart', 'settings', 'bell', 'star', 'trash'])
+           + '</div>')
 TH_SOON = '<div class="th-soon"></div>'
 
 ICO_FUNDACAO = ('<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">'
@@ -1461,16 +1514,272 @@ BTN_A11Y = '''
 </section>'''
 
 
+# ═══════════════════════════════════════════════════════════════ Icon · abas
+ICON_BOXES = [('16', '16'), ('20', '20'), ('24', '24'), ('32', '32'), ('free', 'Livre')]
+ICON_INKS = [('inherit', 'Herda'), ('default', 'default'), ('on-brand', 'on-brand'),
+             ('on-solid', 'on-solid'), ('disabled', 'disabled')]
+
+
+def icon_options():
+    """O select do playground, agrupado igual ao component set do Figma."""
+    out = []
+    for title, names in ICON_GROUPS:
+        out.append(f'<optgroup label="{title}">')
+        for n in names:
+            on = ' selected' if n == 'settings' else ''
+            out.append(f'<option value="{n}"{on}>{n}</option>')
+        out.append('</optgroup>')
+    return '\n'.join(out)
+
+
+def icon_library():
+    """Os 70, lidos do repositorio. O playground clona daqui - nao ha segunda copia."""
+    out = []
+    for title, names in ICON_GROUPS:
+        cells = '\n'.join(
+            f'<button type="button" class="icon-tile" data-name="{n}">'
+            f'{al_icon(n)}<span>{n}</span></button>' for n in names)
+        out.append(f'<h3 class="sub">{title}<span class="count">{len(names)}</span></h3>'
+                   f'<div class="icon-grid">{cells}</div>')
+    return '\n'.join(out)
+
+
+def icon_token_rows():
+    rows = []
+    for name in sorted(ICON_TOK['alias']):
+        ref = ICON_TOK['alias'][name]
+        res = ICON_TOK['resolved'].get(name)
+        if isinstance(res, dict):
+            val = f'{res["light"]} / {res["dark"]}'
+            chip = (f'<span class="chip sm" style="background:{res["light"]}"></span>'
+                    f'<span class="chip sm" style="background:{res["dark"]}"></span>')
+        else:
+            val = f'{res}px'
+            chip = ''
+        rows.append(f'<tr><td class="tok">--al-{name}</td><td class="tok dim">{ref}</td>'
+                    f'<td class="tok dim">{chip}{val}</td></tr>')
+    return '\n'.join(rows)
+
+
+ICON_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="icon-stage">
+      <span id="icon-slot">{al_icon('settings')}</span>
+    </div>
+
+    <div class="controls">
+      <div class="ctl"><label for="icon-name">Ícone</label>
+        <select class="txt" id="icon-name">{icon_options()}</select></div>
+      <div class="ctl"><span class="ctl-name">Caixa</span>{seg('iconbox', ICON_BOXES, '24')}</div>
+      <div class="ctl"><label for="icon-free">Livre</label>
+        <input class="txt" id="icon-free" type="number" min="8" max="160" step="1" value="40"
+               style="max-width:120px" disabled></div>
+      <div class="ctl"><span class="ctl-name">Tinta</span>{seg('iconink', ICON_INKS, 'inherit')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('icontheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="icon-copy">Copiar</button></div>
+      <pre><code id="icon-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Escolha <b>Livre</b> na caixa e digite qualquer número: 40, 96, 17. Nada quebra, e o traço
+    engrossa junto — é a diferença entre escala fixa e escala nomeada. As tintas
+    <code>on-brand</code> e <code>on-solid</code> trocam o fundo do palco, porque elas só existem
+    sobre preenchimento.
+  </p>
+</section>
+
+<section>
+  <h2>Dentro de um acionável</h2>
+  <p>O caso que importa, e o motivo de o padrão ser <code>currentColor</code>: nenhum ícone abaixo
+  declara cor. Eles herdam a do rótulo, e é por isso que acertam os quatro estados do Button sem
+  uma linha a mais. No Figma isso precisa da collection <code>3. Icon ink</code> com quatro modes,
+  porque o Figma não tem essa palavra-chave.</p>
+  <div class="pb-row" style="margin-top:18px">
+    <button type="button" class="al-btn al-btn--primary al-btn--md">
+      <span class="al-btn__icon al-btn__icon--leading">{al_icon('check')}</span>
+      <span class="al-btn__label">Salvar</span></button>
+    <button type="button" class="al-btn al-btn--secondary al-btn--md">
+      <span class="al-btn__icon al-btn__icon--leading">{al_icon('download')}</span>
+      <span class="al-btn__label">Exportar</span></button>
+    <button type="button" class="al-btn al-btn--ghost al-btn--md">
+      <span class="al-btn__icon al-btn__icon--leading">{al_icon('filter')}</span>
+      <span class="al-btn__label">Filtrar</span></button>
+    <button type="button" class="al-btn al-btn--danger al-btn--md">
+      <span class="al-btn__icon al-btn__icon--leading">{al_icon('trash')}</span>
+      <span class="al-btn__label">Excluir</span></button>
+    <button type="button" class="al-btn al-btn--primary al-btn--md" aria-disabled="true">
+      <span class="al-btn__icon al-btn__icon--leading">{al_icon('lock')}</span>
+      <span class="al-btn__label">Indisponível</span></button>
+  </div>
+</section>
+
+<section>
+  <h2>A biblioteca · {N_ICONS} ícones</h2>
+  <p>Desenho Lucide, grid de 24, traço de 2, cantos e junções redondos. O portão
+  <code>icons.py</code> recusa qualquer arquivo que fuja disso — o risco desta pasta não é um valor
+  errado, é um ícone de outra família entrando sem ninguém ver. Clique para copiar o nome.</p>
+  <div style="margin-top:24px">{icon_library()}</div>
+</section>'''
+
+def icon_a11y_rows(group):
+    out = []
+    for r in ICON_A11Y['rows']:
+        if r['group'] != group:
+            continue
+        if r['exempt']:
+            verdict = '<span class="exc">isento</span>'
+        else:
+            verdict = '<span class="pass">passa</span>'
+        out.append(
+            f'<tr><td class="tok dim">{r["theme"]}</td><td class="name">{r["label"]}</td>'
+            f'<td class="chipcell"><span class="chip sm" style="background:{r["fg"]}"></span>'
+            f'<span class="chip sm" style="background:{r["bg"]}"></span></td>'
+            f'<td class="tok dim">{r["fg"]} / {r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+ICON_A11Y_TAB = f'''
+<section>
+  <h2>O critério é outro</h2>
+  <p>Ícone não é texto. O piso dele é o <b>3:1</b> do WCAG 1.4.11 — contraste não-textual — e não
+  o 4,5:1 que vale para rótulo. É a mesma cor medida contra um mínimo diferente, e isso tem uma
+  consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
+  normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{len([r for r in ICON_A11Y['rows'] if not r['exempt']]) + ICON_A11Y['markupChecked']}</b><span>verificações</span></div>
+    <div class="stat"><b>{ICON_A11Y['fails']}</b><span>reprovas</span></div>
+    <div class="stat"><b>{ICON_A11Y['markupChecked']}</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>{ICON_A11Y['floor']}:1</b><span>piso não-textual</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tinta explícita contra a superfície</h2>
+  <p>Cada tinta é medida só onde ela faz sentido: <code>on-brand</code> contra a tela seria um
+  cenário que o design system não produz. O <code>disabled</code> aparece medido e isento — o WCAG
+  dispensa componente inativo, e subir esse contraste faria o desabilitado parecer clicável.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{icon_a11y_rows('tinta')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Tinta herdada dentro do Button</h2>
+  <p>O padrão do componente é <code>currentColor</code>, então dentro de um acionável o ícone veste
+  a cor do rótulo. Vale aqui a mesma lógica que o Button já usa: variante sem preenchimento herda a
+  tela, então Ghost e Secondary são medidos contra a <b>tela</b>, nunca contra "transparente".</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{icon_a11y_rows('herda')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Contrato de marcação, medido</h2>
+  <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
+  O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
+  <code>.al-icon</code>: {ICON_A11Y['markupChecked']} elementos nesta página, nenhum fora.
+  Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
+  <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
+  porque o rótulo nunca seria lido.</p>
+  <div class="note" style="margin-top:20px">
+    <b>Por que medir no HTML e não na folha de estilo</b>
+    <p>Contraste se prova no token; marcação, não. Um contrato de <code>aria-*</code> só existe
+    quando alguém escreve o atributo — então o único lugar onde ele pode ser verificado é a saída
+    renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
+  </div>
+</section>'''
+
+
+ICON_SPECS = f'''
+<section>
+  <h2>Sem escala fixa</h2>
+  <p>O desenho é vetorizado no grid de 24, então a mesma marcação vale em qualquer tamanho e o
+  traço escala junto. Os quatro degraus abaixo são os recorrentes, não um teto.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Como escrever</th><th>Caixa</th><th>Onde costuma aparecer</th></tr></thead>
+    <tbody>
+      <tr><td class="tok">.al-icon--16</td><td class="num">16px</td><td>dentro do Button, em rótulo de 14</td></tr>
+      <tr><td class="tok">.al-icon--20</td><td class="num">20px</td><td>Icon Button, item de navegação</td></tr>
+      <tr><td class="tok">.al-icon (padrão)</td><td class="num">24px</td><td>ícone solto, ação de cabeçalho</td></tr>
+      <tr><td class="tok">.al-icon--32</td><td class="num">32px</td><td>estado vazio, destaque</td></tr>
+      <tr><td class="tok">style="--al-icon-box: 40px"</td><td class="num dim">qualquer</td><td>fora da escala, sem classe nova</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note" style="margin-top:20px">
+    <b>Por que a caixa se chama <code>box</code> e não <code>size</code></b>
+    <p><code>--al-icon-size-16</code> já existe e é a primitiva da Foundation. Se o token do
+    componente tivesse o mesmo nome, ele apontaria para si mesmo e a custom property morreria em
+    ciclo. <code>box</code> é o papel dentro do componente; <code>size</code> é o degrau na escala.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Os {len(ICON_TOK['alias'])} tokens</h2>
+  <p>Todos alias, nenhum valor próprio. As quatro tintas espelham uma a uma as modes da collection
+  <code>3. Icon ink</code> do Figma — mas o padrão do componente não é nenhuma delas, é
+  <code>currentColor</code>. Elas são a saída explícita, para ícone que não tenha de quem herdar.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve em claro / escuro</th></tr></thead>
+    <tbody>{icon_token_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Contrato de marcação</h2>
+  <p>Ícone do AL vive dentro de acionável, e nesse lugar ele é quase sempre decorativo: quem carrega
+  o sentido é o rótulo. Ícone decorativo anunciado por leitor de tela vira ruído duplicado.</p>
+  <h3 class="sub">Decorativo — o caso padrão</h3>
+  <pre><code>&lt;svg class="al-icon al-icon--16" aria-hidden="true" focusable="false"&gt;…&lt;/svg&gt;</code></pre>
+  <p style="margin-top:12px">Os dois atributos fazem coisas diferentes:
+  <code>aria-hidden</code> tira do leitor de tela, <code>focusable="false"</code> tira da ordem de
+  tabulação — SVG inline entra nela sozinho em alguns navegadores.</p>
+  <h3 class="sub">Quando o ícone carrega o sentido</h3>
+  <pre><code>&lt;svg class="al-icon" role="img" aria-label="Erro de validação"&gt;…&lt;/svg&gt;</code></pre>
+  <p style="margin-top:12px">Botão só de ícone é o caso limite e não é este: ali o nome acessível
+  vai no <code>&lt;button&gt;</code>, nunca no <code>svg</code>. Quem resolve isso é o Icon Button.</p>
+</section>
+
+<section>
+  <h2>Arquivos e portões</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Arquivo</th><th>O que faz</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr><td class="tok">icons/*.svg</td><td>{N_ICONS} desenhos · Lucide · ISC</td><td><span class="pass">70/70</span></td></tr>
+      <tr><td class="tok">icon.css</td><td>o componente: caixa e tinta, escrito à mão</td><td><span class="pass">0 literais</span></td></tr>
+      <tr><td class="tok">tokens.py</td><td>portão de alias · gera al-icon-tokens.css</td><td><span class="pass">0 valores soltos</span></td></tr>
+      <tr><td class="tok">check.py</td><td>portão de CSS literal</td><td><span class="pass">0 pendências</span></td></tr>
+      <tr><td class="tok">icons.py</td><td>portão de desenho · recusa ícone fora da família</td><td><span class="pass">70/70</span></td></tr>
+      <tr><td class="tok">NOTICE</td><td>ISC do Lucide — o resto do AL segue {META['license']}</td><td></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note" style="margin-top:20px">
+    <b>O <code>stroke-width</code> não está no CSS, e isso é intencional</b>
+    <p>A espessura do traço — 2 no grid de 24 — é parte do desenho e viaja dentro do próprio
+    arquivo <code>.svg</code>. Cor e caixa mudam com o contexto e com o tema; o desenho, não.</p>
+  </div>
+</section>'''
+
+
 # ═══════════════════════════════════════════════════════════════════ páginas
 LANDING_FUNDACAO = f'''
 <section>
-  <h2>Os cinco assuntos da Fundação</h2>
+  <h2>Os seis assuntos da Fundação</h2>
   <div class="cards">
     {card('principios', 'Princípios', 'As cinco decisões que travam o resto, o pipeline de oito etapas e os quatro portões de build.', TH_PRINCIPIOS)}
     {card('prova', 'A prova', 'Os mesmos tokens montados nos dois temas, lado a lado: botões, campos, foco e avisos.', TH_PROVA)}
     {card('cor', 'Cor', f'{N_PRIM} primitivas em OKLCH, {N_SEM} semânticos com dois temas e os {N_PAIRS} pares medidos do portão de contraste.', TH_COR)}
     {card('tipografia', 'Tipografia', f'Inter e JetBrains Mono em {len(T["type"]["styles"])} estilos fechados de tamanho, entrelinha, peso e tracking.', TH_TIPO)}
     {card('espacamento', 'Espaçamento e medidas', f'Base 4 com ritmo de 8, {len(T["radius"])} raios, 6 elevações e o anel de foco de duas camadas.', TH_ESPACO)}
+    {card('icon', 'Ícones', f'{N_ICONS} ícones no grid de 24, sem escala fixa: o mesmo componente serve de 16 a 96 e o traço acompanha.', TH_ICON)}
   </div>
 </section>'''
 
@@ -1488,7 +1797,6 @@ LANDING_COMPONENTES = f'''
   começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
   <div class="cards" style="margin-top:18px">
     {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_SOON, soon=True)}
-    {card('icon', 'Icon', 'Traz junto a escala de ícone, que o Button hoje resolve com um valor provisório de 16px.', TH_SOON, soon=True)}
     {card('badge', 'Badge / Tag', 'Rótulo curto de status ou contagem, sem ação associada.', TH_SOON, soon=True)}
     {card('avatar', 'Avatar', 'Identidade visual de uma pessoa ou entidade, com recurso a iniciais.', TH_SOON, soon=True)}
   </div>
@@ -1539,15 +1847,24 @@ PAGES = [
         'pelo mesmo portão de contraste que as cores.',
         [(f'{len(T["space"])} degraus de espaço', True), (f'{len(T["radius"])} raios', False),
          ('6 elevações', False)],
-        [('espaco', 'Espaçamento', TAB_ESPACO), ('radius', 'Radius e borda', TAB_RADIUS),
+         [('espaco', 'Espaçamento', TAB_ESPACO), ('radius', 'Radius e borda', TAB_RADIUS),
          ('elevacao', 'Elevação', TAB_ELEVACAO), ('foco', 'Foco', TAB_FOCO)])),
+
+    ('icon', 'Fundação', page(
+        'icon', 'Fundação', 'Ícones',
+        f'{N_ICONS} ícones no grid de 24, com o traço vetorizado. Não há escala fixa: o mesmo '
+        'componente serve em 16 ou em 96, e o peso da linha acompanha em vez de ficar para trás.',
+        [(f'{N_ICONS} ícones', True), ('Grid 24 · traço 2', False),
+         (f'{len(ICON_TOK["alias"])} tokens', False), ('0 valores soltos', False)],
+        [('overview', 'Visão geral', ICON_OVERVIEW), ('specs', 'Especificações', ICON_SPECS),
+         ('a11y', 'Acessibilidade', ICON_A11Y_TAB)])),
 
     ('componentes', 'Componentes', simple_page(
         'componentes', 'Componentes', 'Componentes',
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [('1 publicado', True), ('5 no Tier 1', False), ('8 etapas por componente', False)],
+        [('1 publicado', True), ('4 no Tier 1', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
@@ -1577,6 +1894,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/cor" data-page="cor">Cor</a>
         <a href="#/tipografia" data-page="tipografia">Tipografia</a>
         <a href="#/espacamento" data-page="espacamento">Espaçamento</a>
+        <a href="#/icon" data-page="icon">Ícones</a>
       </div>
     </div>
     <div class="nav-group" id="g-componentes">
@@ -1587,7 +1905,6 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
       <div class="nav-sub" id="sub-componentes" hidden>
         <a href="#/button" data-page="button">Button</a>
         <a class="soon" aria-disabled="true">Icon Button</a>
-        <a class="soon" aria-disabled="true">Icon</a>
         <a class="soon" aria-disabled="true">Badge / Tag</a>
         <a class="soon" aria-disabled="true">Avatar</a>
       </div>
@@ -1857,6 +2174,120 @@ JS = r"""
 })();
 """
 
+JS_ICON = r"""
+(function () {
+  // ── playground do Icon ──
+  var stage = document.getElementById('icon-stage');
+  if (!stage) return;
+
+  var slot = document.getElementById('icon-slot');
+  var code = document.getElementById('icon-code');
+  var sel = document.getElementById('icon-name');
+  var free = document.getElementById('icon-free');
+  var copyBtn = document.getElementById('icon-copy');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function render() {
+    var name = sel.value;
+    var box = pick('iconbox');
+    var ink = pick('iconink');
+    var theme = pick('icontheme');
+
+    free.disabled = box !== 'free';
+
+    // clona o SVG da biblioteca desta mesma pagina: nao existe segunda copia
+    var src = document.querySelector('.icon-tile[data-name="' + name + '"] svg');
+    if (!src) return;
+    var svg = src.cloneNode(true);
+
+    var cls = 'al-icon';
+    if (box !== 'free' && box !== '24') cls += ' al-icon--' + box;
+    if (ink !== 'inherit') cls += ' al-icon--ink-' + ink;
+    svg.setAttribute('class', cls);
+
+    var style = '';
+    if (box === 'free') {
+      var v = parseInt(free.value, 10);
+      if (!v || v < 8 || v > 160) v = 40;
+      style = '--al-icon-box: ' + v + 'px';
+      svg.setAttribute('style', style);
+    }
+
+    slot.innerHTML = '';
+    slot.appendChild(svg);
+
+    if (ink === 'on-brand' || ink === 'on-solid') stage.setAttribute('data-ink', ink);
+    else stage.removeAttribute('data-ink');
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var attrs = ' class="' + cls + '"';
+    if (style) attrs += ' style="' + style + '"';
+    code.textContent = '<svg' + attrs + ' aria-hidden="true" focusable="false">\n'
+      + '  <!-- ' + name + ' \u00b7 components/icon/icons/' + name + '.svg -->\n'
+      + '</svg>';
+  }
+
+  sel.addEventListener('change', render);
+  free.addEventListener('input', render);
+  document.querySelectorAll('input[name="iconbox"], input[name="iconink"], input[name="icontheme"]')
+    .forEach(function (el) { el.addEventListener('change', render); });
+
+  // clicar num icone da biblioteca leva ele para o palco e copia o nome
+  document.querySelectorAll('.icon-tile').forEach(function (t) {
+    t.addEventListener('click', function () {
+      sel.value = t.dataset.name;
+      render();
+      if (navigator.clipboard) navigator.clipboard.writeText(t.dataset.name).catch(function () {});
+      t.classList.add('is-copied');
+      setTimeout(function () { t.classList.remove('is-copied'); }, 900);
+    });
+  });
+
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function () {
+      if (navigator.clipboard) navigator.clipboard.writeText(code.textContent);
+      copyBtn.textContent = 'Copiado';
+      setTimeout(function () { copyBtn.textContent = 'Copiar'; }, 1200);
+    });
+  }
+
+  render();
+})();
+"""
+
+
+CHROME_ICON = """
+/* ── biblioteca de ícones ──
+   Casca do site. O componente em si é o .al-icon, que vem do icon.css real. */
+.th-icons{display:flex; gap:11px; color:var(--al-text-primary)}
+.icon-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:4px;
+  margin-bottom:6px}
+.icon-tile{
+  appearance:none; border:0; background:none; font:inherit; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:11px;
+  padding:18px 8px 13px; border-radius:10px; color:var(--al-text-primary);
+}
+.icon-tile:hover{background:var(--al-bg-hover)}
+.icon-tile:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:-2px}
+.icon-tile.is-copied{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+.icon-tile span{
+  font-family:var(--al-font-mono); font-size:10.5px; line-height:14px;
+  color:var(--al-text-secondary); text-align:center; word-break:break-word;
+}
+.icon-tile.is-copied span{color:var(--al-text-brand)}
+/* as duas tintas que só existem sobre preenchimento levam o palco junto */
+#icon-stage[data-ink="on-brand"]{background-color:var(--al-bg-brand)}
+#icon-stage[data-ink="on-solid"]{background-color:var(--al-bg-danger)}
+#icon-slot{display:grid; place-items:center; min-height:96px}
+"""
+
+
 HTML = (
     '<title>AL Design System</title>\n'
     '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
@@ -1865,10 +2296,10 @@ HTML = (
     'family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">\n\n'
     '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
-    '\n/* ═══ Chrome do site ═══ */\n' + CHROME + '</style>\n\n'
+    '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
-    '\n</div></main>\n</div>\n\n<script>' + JS + '</script>\n'
+    '\n</div></main>\n</div>\n\n<script>' + JS + JS_ICON + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w').write(HTML)
@@ -1879,4 +2310,5 @@ print(f'  primitivas        : {N_PRIM}')
 print(f'  semânticos        : {N_SEM} × 2 temas')
 print(f'  pares de contraste: {N_PAIRS} — {N_AA} em AA pleno, {N_EXC} exceções, {N_FAIL} reprovas')
 print(f'  tokens do Button  : {N_BTN_TOKENS}')
-print(f'  CSS inline        : foundation + tokens do Button + button.css (os reais)')
+print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
+print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

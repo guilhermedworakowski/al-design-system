@@ -6,7 +6,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.2.0 - MIT
+ * v0.3.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -193,6 +193,13 @@
   --al-border-width-2: 2px;
   --al-border-width-focus: 2px;
   --al-border-focus-offset: 2px;
+
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
 
   /* elevacao - TEMA CLARO */
   --al-elevation-0: none;
@@ -464,7 +471,20 @@
   /* compartilhado */
   --al-button-radius: var(--al-radius-full);
   --al-button-border-width: var(--al-border-width-1);
-  --al-button-icon-size: 16px;  /* aguarda escala de icone na Foundation */
+  --al-button-icon-size: var(--al-icon-size-16);
+
+
+  /* caixa - degrau recorrente, nao teto */
+  --al-icon-box-16: var(--al-icon-size-16);
+  --al-icon-box-20: var(--al-icon-size-20);
+  --al-icon-box-24: var(--al-icon-size-24);
+  --al-icon-box-32: var(--al-icon-size-32);
+
+  /* tinta - saida explicita. O default do componente e currentColor. */
+  --al-icon-ink-default: var(--al-text-primary);
+  --al-icon-ink-on-brand: var(--al-text-on-brand);
+  --al-icon-ink-on-solid: var(--al-text-on-solid);
+  --al-icon-ink-disabled: var(--al-text-disabled);
 }
 
 /* AL Design System - tokens do Button
@@ -546,7 +566,7 @@
   /* compartilhado */
   --al-button-radius: var(--al-radius-full);
   --al-button-border-width: var(--al-border-width-1);
-  --al-button-icon-size: 16px;  /* aguarda escala de icone na Foundation */
+  --al-button-icon-size: var(--al-icon-size-16);
 }
 
 /* AL Design System - Button
@@ -795,6 +815,129 @@
     border-color: GrayText;
   }
 }
+
+/* AL Design System - tokens do Icon
+ * GERADO por components/icon/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada tinta aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados. Entao o
+ * :root re-substitui todos eles de uma vez.
+ */
+
+:root {
+
+  /* caixa - degrau recorrente, nao teto */
+  --al-icon-box-16: var(--al-icon-size-16);
+  --al-icon-box-20: var(--al-icon-size-20);
+  --al-icon-box-24: var(--al-icon-size-24);
+  --al-icon-box-32: var(--al-icon-size-32);
+
+  /* tinta - saida explicita. O default do componente e currentColor. */
+  --al-icon-ink-default: var(--al-text-primary);
+  --al-icon-ink-on-brand: var(--al-text-on-brand);
+  --al-icon-ink-on-solid: var(--al-text-on-solid);
+  --al-icon-ink-disabled: var(--al-text-disabled);
+}
+
+/* AL Design System - Icon
+ *
+ * Depende de: foundation/al-foundation.css + components/icon/al-icon-tokens.css
+ *
+ * ANATOMIA
+ *   A classe vai no proprio <svg>, nao num involucro. O arquivo do icone mora
+ *   em components/icon/icons/ e e inserido inline no HTML - inline porque so
+ *   assim o traco herda a cor do texto ao redor, que e o mecanismo inteiro
+ *   deste componente. <img> nao herda cor; background-image tambem nao.
+ *
+ *     <svg class="al-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…</svg>
+ *
+ * TAMANHO
+ *   Nao existe escala fixa. O desenho e vetorizado no grid de 24, entao a mesma
+ *   marcacao serve em qualquer tamanho, e o traco engrossa junto porque o
+ *   viewBox escala o desenho inteiro - e por isso que a caixa e a unica coisa
+ *   que este CSS precisa definir.
+ *
+ *   Padrao 24. Os degraus recorrentes tem modificador:
+ *     .al-icon--16  .al-icon--20  .al-icon--32
+ *   Qualquer outro tamanho entra pela propria custom property, sem classe nova
+ *   e sem esperar a escala crescer:
+ *     <svg class="al-icon" style="--al-icon-box: 40px" aria-hidden="true" focusable="false">
+ *   O portao de CSS literal vale para o CSS do design system, nao para a
+ *   aplicacao que o consome. Este e o escape, e ele e de propósito.
+ *
+ * COR
+ *   Padrao e `currentColor`: o icone herda a cor de quem o contem. E por isso
+ *   que dentro do Button ele acerta os quatro estados sem uma linha a mais - o
+ *   rotulo ja resolveu a cor, e o icone segue. A collection `3. Icon ink` do
+ *   Figma existe com quatro modes justamente porque o Figma nao tem essa
+ *   palavra-chave; aqui ela substitui a collection inteira.
+ *   Para icone que vive fora de um acionavel e nao tem de quem herdar, os
+ *   quatro modificadores `--ink-*` dizem a cor explicitamente.
+ *
+ * ACESSIBILIDADE - contrato de marcacao
+ *   Icone do AL vive dentro de acionavel, e nesse lugar ele e quase sempre
+ *   DECORATIVO: quem carrega o sentido e o rotulo do botao. Icone decorativo
+ *   anunciado por leitor de tela vira ruido duplicado.
+ *
+ *     decorativo (padrao)  aria-hidden="true" focusable="false"
+ *     carrega o sentido    role="img" + aria-label="…"
+ *
+ *   Os dois atributos do caso decorativo fazem coisas diferentes: aria-hidden
+ *   tira do leitor de tela, focusable="false" tira da ordem de tabulacao (SVG
+ *   inline entra nela sozinho em alguns navegadores).
+ *   Botao so-icone e o caso limite: o nome acessivel vai no BOTAO, nunca no
+ *   svg - e o Icon Button que resolve isso, nao este componente.
+ *   Quem cobra isso e o a11y.py ao lado: ele le o HTML que o site emite e
+ *   reprova todo .al-icon sem contrato. Nao e regra escrita, e regra medida.
+ *
+ * NOTA DE GEOMETRIA
+ *   Este arquivo define cor e caixa, e nao define `stroke-width`. Nao e
+ *   esquecimento: a espessura do traco (2 no grid de 24) e parte do DESENHO e
+ *   viaja dentro do proprio arquivo .svg. Cor e caixa mudam com o contexto e
+ *   com o tema; o desenho, nao.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+.al-icon {
+  display: inline-block;
+
+  /* nunca encolhe: dentro de um flex apertado o icone e a ultima coisa que
+     deve ceder espaco - deformar o icone e pior do que quebrar o rotulo */
+  flex: none;
+
+  /* a caixa. Sem valor definido, cai no degrau padrao. */
+  inline-size: var(--al-icon-box, var(--al-icon-box-24));
+  block-size: var(--al-icon-box, var(--al-icon-box-24));
+
+  /* alinha ao centro da linha quando o icone aparece solto no meio de texto.
+     Dentro de um flex (o caso do Button) quem alinha e o container, e esta
+     declaracao nao atrapalha. */
+  vertical-align: middle;
+
+  /* o mecanismo: a cor vem de quem contem */
+  color: inherit;
+  fill: none;
+  stroke: currentColor;
+}
+
+/* ---------------------------------------------------------------- caixa
+   Degraus recorrentes. Vem depois da base de proposito: mesma especificidade,
+   entao quem vence e a ordem do arquivo. */
+
+.al-icon--16 { --al-icon-box: var(--al-icon-box-16); }
+.al-icon--20 { --al-icon-box: var(--al-icon-box-20); }
+.al-icon--24 { --al-icon-box: var(--al-icon-box-24); }
+.al-icon--32 { --al-icon-box: var(--al-icon-box-32); }
+
+/* ---------------------------------------------------------------- tinta
+   Saida explicita, para icone sem quem herdar. Dentro de um acionavel nao se
+   usa nenhuma destas: o padrao ja acerta. */
+
+.al-icon--ink-default  { color: var(--al-icon-ink-default); }
+.al-icon--ink-on-brand { color: var(--al-icon-ink-on-brand); }
+.al-icon--ink-on-solid { color: var(--al-icon-ink-on-solid); }
+.al-icon--ink-disabled { color: var(--al-icon-ink-disabled); }
 
 /* ═══ Chrome do site ═══ */
 
@@ -1208,13 +1351,36 @@ footer code{background:none; padding:0}
 .spec-cell{display:flex; flex-direction:column; gap:8px; align-items:flex-start}
 .spec-label{font-family:var(--al-font-mono); font-size:9.5px; letter-spacing:.1em;
   text-transform:uppercase; color:var(--al-text-secondary)}
+
+/* ── biblioteca de ícones ──
+   Casca do site. O componente em si é o .al-icon, que vem do icon.css real. */
+.th-icons{display:flex; gap:11px; color:var(--al-text-primary)}
+.icon-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:4px;
+  margin-bottom:6px}
+.icon-tile{
+  appearance:none; border:0; background:none; font:inherit; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:11px;
+  padding:18px 8px 13px; border-radius:10px; color:var(--al-text-primary);
+}
+.icon-tile:hover{background:var(--al-bg-hover)}
+.icon-tile:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:-2px}
+.icon-tile.is-copied{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+.icon-tile span{
+  font-family:var(--al-font-mono); font-size:10.5px; line-height:14px;
+  color:var(--al-text-secondary); text-align:center; word-break:break-word;
+}
+.icon-tile.is-copied span{color:var(--al-text-brand)}
+/* as duas tintas que só existem sobre preenchimento levam o palco junto */
+#icon-stage[data-ink="on-brand"]{background-color:var(--al-bg-brand)}
+#icon-stage[data-ink="on-solid"]{background-color:var(--al-bg-danger)}
+#icon-slot{display:grid; place-items:center; min-height:96px}
 </style>
 
 <div class="shell">
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.2.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.3.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -1228,6 +1394,7 @@ footer code{background:none; padding:0}
         <a href="#/cor" data-page="cor">Cor</a>
         <a href="#/tipografia" data-page="tipografia">Tipografia</a>
         <a href="#/espacamento" data-page="espacamento">Espaçamento</a>
+        <a href="#/icon" data-page="icon">Ícones</a>
       </div>
     </div>
     <div class="nav-group" id="g-componentes">
@@ -1238,7 +1405,6 @@ footer code{background:none; padding:0}
       <div class="nav-sub" id="sub-componentes" hidden>
         <a href="#/button" data-page="button">Button</a>
         <a class="soon" aria-disabled="true">Icon Button</a>
-        <a class="soon" aria-disabled="true">Icon</a>
         <a class="soon" aria-disabled="true">Badge / Tag</a>
         <a class="soon" aria-disabled="true">Avatar</a>
       </div>
@@ -1260,13 +1426,14 @@ footer code{background:none; padding:0}
   <div class="stat hl"><b>77 / 80</b><span>pares em AA pleno · 3 exceções de marca</span></div>
 </div>
 <section>
-  <h2>Os cinco assuntos da Fundação</h2>
+  <h2>Os seis assuntos da Fundação</h2>
   <div class="cards">
     <a class="card" href="#/principios" data-page="principios"><div class="card-thumb"><span class="th-anchor">#FC5000</span></div><div class="card-body"><span class="card-title">Princípios</span><span class="card-desc">As cinco decisões que travam o resto, o pipeline de oito etapas e os quatro portões de build.</span></div></a>
     <a class="card" href="#/prova" data-page="prova"><div class="card-thumb"><div class="th-split"><div style="background:#FFFFFF"><b style="background:#FC5000"></b></div><div style="background:#181818"><b style="background:#FC5000"></b></div></div></div><div class="card-body"><span class="card-title">A prova</span><span class="card-desc">Os mesmos tokens montados nos dois temas, lado a lado: botões, campos, foco e avisos.</span></div></a>
     <a class="card" href="#/cor" data-page="cor"><div class="card-thumb"><div class="th-ramp"><span style="background:#FFF5F0"></span><span style="background:#FFEADE"></span><span style="background:#FFD7C4"></span><span style="background:#FFBDA0"></span><span style="background:#FF9267"></span><span style="background:#FC5000"></span><span style="background:#C53900"></span><span style="background:#992700"></span><span style="background:#6C2100"></span><span style="background:#4A1700"></span><span style="background:#2D0D00"></span></div></div><div class="card-body"><span class="card-title">Cor</span><span class="card-desc">66 primitivas em OKLCH, 49 semânticos com dois temas e os 80 pares medidos do portão de contraste.</span></div></a>
     <a class="card" href="#/tipografia" data-page="tipografia"><div class="card-thumb"><div class="th-aa">Aa<small>Inter · 14 estilos</small></div></div><div class="card-body"><span class="card-title">Tipografia</span><span class="card-desc">Inter e JetBrains Mono em 14 estilos fechados de tamanho, entrelinha, peso e tracking.</span></div></a>
     <a class="card" href="#/espacamento" data-page="espacamento"><div class="card-thumb"><div class="th-bars"><i style="width:14%"></i><i style="width:26%"></i><i style="width:48%"></i><i style="width:84%"></i></div></div><div class="card-body"><span class="card-title">Espaçamento e medidas</span><span class="card-desc">Base 4 com ritmo de 8, 9 raios, 6 elevações e o anel de foco de duas camadas.</span></div></a>
+    <a class="card" href="#/icon" data-page="icon"><div class="card-thumb"><div class="th-icons"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.268 21a2 2 0 0 0 3.464 0" /><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg></div></div><div class="card-body"><span class="card-title">Ícones</span><span class="card-desc">70 ícones no grid de 24, sem escala fixa: o mesmo componente serve de 16 a 96 e o traço acompanha.</span></div></a>
   </div>
 </section></div></div>
 <div class="page" id="pg-principios" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Princípios</h1><p class="lede">O que está decidido antes dos valores: as cinco escolhas que sustentam o sistema, as oito etapas que um componente percorre e os quatro portões que recusam o que não passa.</p><div class="meta"><span class="badge on">5 decisões</span><span class="badge">8 etapas</span><span class="badge">4 portões</span></div></header><div class="panel">
@@ -1357,7 +1524,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.2.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.3.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -1387,7 +1554,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.2.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.3.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -1596,7 +1763,411 @@ footer code{background:none; padding:0}
     Button já faz isso.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">1 publicado</span><span class="badge">5 no Tier 1</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
+<div class="page" id="pg-icon" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Ícones</h1><p class="lede">70 ícones no grid de 24, com o traço vetorizado. Não há escala fixa: o mesmo componente serve em 16 ou em 96, e o peso da linha acompanha em vez de ficar para trás.</p><div class="meta"><span class="badge on">70 ícones</span><span class="badge">Grid 24 · traço 2</span><span class="badge">8 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Ícones"><button role="tab" id="t-icon-overview" aria-controls="p-icon-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-icon-specs" aria-controls="p-icon-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-icon-a11y" aria-controls="p-icon-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-icon-overview" role="tabpanel" aria-labelledby="t-icon-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="icon-stage">
+      <span id="icon-slot"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg></span>
+    </div>
+
+    <div class="controls">
+      <div class="ctl"><label for="icon-name">Ícone</label>
+        <select class="txt" id="icon-name"><optgroup label="Direção e navegação">
+<option value="chevron-up">chevron-up</option>
+<option value="chevron-down">chevron-down</option>
+<option value="chevron-left">chevron-left</option>
+<option value="chevron-right">chevron-right</option>
+<option value="chevrons-left">chevrons-left</option>
+<option value="chevrons-right">chevrons-right</option>
+<option value="arrow-up">arrow-up</option>
+<option value="arrow-down">arrow-down</option>
+<option value="arrow-left">arrow-left</option>
+<option value="arrow-right">arrow-right</option>
+<option value="arrow-up-right">arrow-up-right</option>
+<option value="menu">menu</option>
+<option value="ellipsis">ellipsis</option>
+<option value="ellipsis-vertical">ellipsis-vertical</option>
+<option value="external-link">external-link</option>
+<option value="house">house</option>
+</optgroup>
+<optgroup label="Ação">
+<option value="plus">plus</option>
+<option value="minus">minus</option>
+<option value="x">x</option>
+<option value="check">check</option>
+<option value="search">search</option>
+<option value="pencil">pencil</option>
+<option value="trash">trash</option>
+<option value="copy">copy</option>
+<option value="download">download</option>
+<option value="upload">upload</option>
+<option value="share-2">share-2</option>
+<option value="link">link</option>
+<option value="refresh-cw">refresh-cw</option>
+<option value="send">send</option>
+</optgroup>
+<optgroup label="Status">
+<option value="info">info</option>
+<option value="circle-check">circle-check</option>
+<option value="circle-alert">circle-alert</option>
+<option value="triangle-alert">triangle-alert</option>
+<option value="circle-x">circle-x</option>
+<option value="circle-help">circle-help</option>
+<option value="loader-circle">loader-circle</option>
+</optgroup>
+<optgroup label="Formulário e dados">
+<option value="eye">eye</option>
+<option value="eye-off">eye-off</option>
+<option value="calendar">calendar</option>
+<option value="clock">clock</option>
+<option value="filter">filter</option>
+<option value="arrow-up-down">arrow-up-down</option>
+</optgroup>
+<optgroup label="Sistema e conta">
+<option value="settings" selected>settings</option>
+<option value="user">user</option>
+<option value="users">users</option>
+<option value="log-out">log-out</option>
+<option value="log-in">log-in</option>
+<option value="lock">lock</option>
+<option value="bell">bell</option>
+<option value="shield-check">shield-check</option>
+</optgroup>
+<optgroup label="Conteúdo">
+<option value="file-text">file-text</option>
+<option value="folder">folder</option>
+<option value="image">image</option>
+<option value="paperclip">paperclip</option>
+<option value="bookmark">bookmark</option>
+<option value="star">star</option>
+<option value="heart">heart</option>
+<option value="mail">mail</option>
+<option value="phone">phone</option>
+</optgroup>
+<optgroup label="Mídia">
+<option value="play">play</option>
+<option value="pause">pause</option>
+<option value="skip-forward">skip-forward</option>
+<option value="volume-2">volume-2</option>
+<option value="maximize">maximize</option>
+</optgroup>
+<optgroup label="Comércio e local">
+<option value="shopping-cart">shopping-cart</option>
+<option value="credit-card">credit-card</option>
+<option value="chart-column">chart-column</option>
+<option value="map-pin">map-pin</option>
+<option value="globe">globe</option>
+</optgroup></select></div>
+      <div class="ctl"><span class="ctl-name">Caixa</span><div class="seg" role="radiogroup" aria-label="iconbox">
+<input type="radio" id="iconbox-16" name="iconbox" value="16"><label for="iconbox-16">16</label>
+<input type="radio" id="iconbox-20" name="iconbox" value="20"><label for="iconbox-20">20</label>
+<input type="radio" id="iconbox-24" name="iconbox" value="24" checked><label for="iconbox-24">24</label>
+<input type="radio" id="iconbox-32" name="iconbox" value="32"><label for="iconbox-32">32</label>
+<input type="radio" id="iconbox-free" name="iconbox" value="free"><label for="iconbox-free">Livre</label>
+</div></div>
+      <div class="ctl"><label for="icon-free">Livre</label>
+        <input class="txt" id="icon-free" type="number" min="8" max="160" step="1" value="40"
+               style="max-width:120px" disabled></div>
+      <div class="ctl"><span class="ctl-name">Tinta</span><div class="seg" role="radiogroup" aria-label="iconink">
+<input type="radio" id="iconink-inherit" name="iconink" value="inherit" checked><label for="iconink-inherit">Herda</label>
+<input type="radio" id="iconink-default" name="iconink" value="default"><label for="iconink-default">default</label>
+<input type="radio" id="iconink-on-brand" name="iconink" value="on-brand"><label for="iconink-on-brand">on-brand</label>
+<input type="radio" id="iconink-on-solid" name="iconink" value="on-solid"><label for="iconink-on-solid">on-solid</label>
+<input type="radio" id="iconink-disabled" name="iconink" value="disabled"><label for="iconink-disabled">disabled</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="icontheme">
+<input type="radio" id="icontheme-auto" name="icontheme" value="auto" checked><label for="icontheme-auto">Do sistema</label>
+<input type="radio" id="icontheme-light" name="icontheme" value="light"><label for="icontheme-light">Claro</label>
+<input type="radio" id="icontheme-dark" name="icontheme" value="dark"><label for="icontheme-dark">Escuro</label>
+</div></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="icon-copy">Copiar</button></div>
+      <pre><code id="icon-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Escolha <b>Livre</b> na caixa e digite qualquer número: 40, 96, 17. Nada quebra, e o traço
+    engrossa junto — é a diferença entre escala fixa e escala nomeada. As tintas
+    <code>on-brand</code> e <code>on-solid</code> trocam o fundo do palco, porque elas só existem
+    sobre preenchimento.
+  </p>
+</section>
+
+<section>
+  <h2>Dentro de um acionável</h2>
+  <p>O caso que importa, e o motivo de o padrão ser <code>currentColor</code>: nenhum ícone abaixo
+  declara cor. Eles herdam a do rótulo, e é por isso que acertam os quatro estados do Button sem
+  uma linha a mais. No Figma isso precisa da collection <code>3. Icon ink</code> com quatro modes,
+  porque o Figma não tem essa palavra-chave.</p>
+  <div class="pb-row" style="margin-top:18px">
+    <button type="button" class="al-btn al-btn--primary al-btn--md">
+      <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg></span>
+      <span class="al-btn__label">Salvar</span></button>
+    <button type="button" class="al-btn al-btn--secondary al-btn--md">
+      <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></svg></span>
+      <span class="al-btn__label">Exportar</span></button>
+    <button type="button" class="al-btn al-btn--ghost al-btn--md">
+      <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z" /></svg></span>
+      <span class="al-btn__label">Filtrar</span></button>
+    <button type="button" class="al-btn al-btn--danger al-btn--md">
+      <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg></span>
+      <span class="al-btn__label">Excluir</span></button>
+    <button type="button" class="al-btn al-btn--primary al-btn--md" aria-disabled="true">
+      <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></span>
+      <span class="al-btn__label">Indisponível</span></button>
+  </div>
+</section>
+
+<section>
+  <h2>A biblioteca · 70 ícones</h2>
+  <p>Desenho Lucide, grid de 24, traço de 2, cantos e junções redondos. O portão
+  <code>icons.py</code> recusa qualquer arquivo que fuja disso — o risco desta pasta não é um valor
+  errado, é um ícone de outra família entrando sem ninguém ver. Clique para copiar o nome.</p>
+  <div style="margin-top:24px"><h3 class="sub">Direção e navegação<span class="count">16</span></h3><div class="icon-grid"><button type="button" class="icon-tile" data-name="chevron-up"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m18 15-6-6-6 6" /></svg><span>chevron-up</span></button>
+<button type="button" class="icon-tile" data-name="chevron-down"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg><span>chevron-down</span></button>
+<button type="button" class="icon-tile" data-name="chevron-left"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m15 18-6-6 6-6" /></svg><span>chevron-left</span></button>
+<button type="button" class="icon-tile" data-name="chevron-right"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg><span>chevron-right</span></button>
+<button type="button" class="icon-tile" data-name="chevrons-left"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m11 17-5-5 5-5" /><path d="m18 17-5-5 5-5" /></svg><span>chevrons-left</span></button>
+<button type="button" class="icon-tile" data-name="chevrons-right"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 17 5-5-5-5" /><path d="m13 17 5-5-5-5" /></svg><span>chevrons-right</span></button>
+<button type="button" class="icon-tile" data-name="arrow-up"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg><span>arrow-up</span></button>
+<button type="button" class="icon-tile" data-name="arrow-down"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 5v14" /><path d="m19 12-7 7-7-7" /></svg><span>arrow-down</span></button>
+<button type="button" class="icon-tile" data-name="arrow-left"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg><span>arrow-left</span></button>
+<button type="button" class="icon-tile" data-name="arrow-right"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg><span>arrow-right</span></button>
+<button type="button" class="icon-tile" data-name="arrow-up-right"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M7 7h10v10" /><path d="M7 17 17 7" /></svg><span>arrow-up-right</span></button>
+<button type="button" class="icon-tile" data-name="menu"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M4 5h16" /><path d="M4 12h16" /><path d="M4 19h16" /></svg><span>menu</span></button>
+<button type="button" class="icon-tile" data-name="ellipsis"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="1" /><circle cx="19" cy="12" r="1" /><circle cx="5" cy="12" r="1" /></svg><span>ellipsis</span></button>
+<button type="button" class="icon-tile" data-name="ellipsis-vertical"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg><span>ellipsis-vertical</span></button>
+<button type="button" class="icon-tile" data-name="external-link"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg><span>external-link</span></button>
+<button type="button" class="icon-tile" data-name="house"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" /><path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg><span>house</span></button></div>
+<h3 class="sub">Ação<span class="count">14</span></h3><div class="icon-grid"><button type="button" class="icon-tile" data-name="plus"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /><path d="M12 5v14" /></svg><span>plus</span></button>
+<button type="button" class="icon-tile" data-name="minus"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg><span>minus</span></button>
+<button type="button" class="icon-tile" data-name="x"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg><span>x</span></button>
+<button type="button" class="icon-tile" data-name="check"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><span>check</span></button>
+<button type="button" class="icon-tile" data-name="search"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><span>search</span></button>
+<button type="button" class="icon-tile" data-name="pencil"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></svg><span>pencil</span></button>
+<button type="button" class="icon-tile" data-name="trash"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg><span>trash</span></button>
+<button type="button" class="icon-tile" data-name="copy"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect width="14" height="14" x="8" y="8" rx="2" ry="2" /><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" /></svg><span>copy</span></button>
+<button type="button" class="icon-tile" data-name="download"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></svg><span>download</span></button>
+<button type="button" class="icon-tile" data-name="upload"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 3v12" /><path d="m17 8-5-5-5 5" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /></svg><span>upload</span></button>
+<button type="button" class="icon-tile" data-name="share-2"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" x2="15.42" y1="13.51" y2="17.49" /><line x1="15.41" x2="8.59" y1="6.51" y2="10.49" /></svg><span>share-2</span></button>
+<button type="button" class="icon-tile" data-name="link"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg><span>link</span></button>
+<button type="button" class="icon-tile" data-name="refresh-cw"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" /><path d="M21 3v5h-5" /><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" /><path d="M8 16H3v5" /></svg><span>refresh-cw</span></button>
+<button type="button" class="icon-tile" data-name="send"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" /><path d="m21.854 2.147-10.94 10.939" /></svg><span>send</span></button></div>
+<h3 class="sub">Status<span class="count">7</span></h3><div class="icon-grid"><button type="button" class="icon-tile" data-name="info"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><span>info</span></button>
+<button type="button" class="icon-tile" data-name="circle-check"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><span>circle-check</span></button>
+<button type="button" class="icon-tile" data-name="circle-alert"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><span>circle-alert</span></button>
+<button type="button" class="icon-tile" data-name="triangle-alert"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><span>triangle-alert</span></button>
+<button type="button" class="icon-tile" data-name="circle-x"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg><span>circle-x</span></button>
+<button type="button" class="icon-tile" data-name="circle-help"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg><span>circle-help</span></button>
+<button type="button" class="icon-tile" data-name="loader-circle"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21 12a9 9 0 1 1-6.219-8.56" /></svg><span>loader-circle</span></button></div>
+<h3 class="sub">Formulário e dados<span class="count">6</span></h3><div class="icon-grid"><button type="button" class="icon-tile" data-name="eye"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><span>eye</span></button>
+<button type="button" class="icon-tile" data-name="eye-off"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg><span>eye-off</span></button>
+<button type="button" class="icon-tile" data-name="calendar"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M8 2v3" /><path d="M16 2v3" /><rect x="3" y="3" width="18" height="18" rx="2" /><path d="M3 9h18" /></svg><span>calendar</span></button>
+<button type="button" class="icon-tile" data-name="clock"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg><span>clock</span></button>
+<button type="button" class="icon-tile" data-name="filter"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z" /></svg><span>filter</span></button>
+<button type="button" class="icon-tile" data-name="arrow-up-down"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 16-4 4-4-4" /><path d="M17 20V4" /><path d="m3 8 4-4 4 4" /><path d="M7 4v16" /></svg><span>arrow-up-down</span></button></div>
+<h3 class="sub">Sistema e conta<span class="count">8</span></h3><div class="icon-grid"><button type="button" class="icon-tile" data-name="settings"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg><span>settings</span></button>
+<button type="button" class="icon-tile" data-name="user"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg><span>user</span></button>
+<button type="button" class="icon-tile" data-name="users"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><path d="M16 3.128a4 4 0 0 1 0 7.744" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><circle cx="9" cy="7" r="4" /></svg><span>users</span></button>
+<button type="button" class="icon-tile" data-name="log-out"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m16 17 5-5-5-5" /><path d="M21 12H9" /><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /></svg><span>log-out</span></button>
+<button type="button" class="icon-tile" data-name="log-in"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m10 17 5-5-5-5" /><path d="M15 12H3" /><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" /></svg><span>log-in</span></button>
+<button type="button" class="icon-tile" data-name="lock"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg><span>lock</span></button>
+<button type="button" class="icon-tile" data-name="bell"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.268 21a2 2 0 0 0 3.464 0" /><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></svg><span>bell</span></button>
+<button type="button" class="icon-tile" data-name="shield-check"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg><span>shield-check</span></button></div>
+<h3 class="sub">Conteúdo<span class="count">9</span></h3><div class="icon-grid"><button type="button" class="icon-tile" data-name="file-text"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z" /><path d="M14 2v5a1 1 0 0 0 1 1h5" /><path d="M10 9H8" /><path d="M16 13H8" /><path d="M16 17H8" /></svg><span>file-text</span></button>
+<button type="button" class="icon-tile" data-name="folder"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z" /></svg><span>folder</span></button>
+<button type="button" class="icon-tile" data-name="image"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg><span>image</span></button>
+<button type="button" class="icon-tile" data-name="paperclip"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551" /></svg><span>paperclip</span></button>
+<button type="button" class="icon-tile" data-name="bookmark"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z" /></svg><span>bookmark</span></button>
+<button type="button" class="icon-tile" data-name="star"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /></svg><span>star</span></button>
+<button type="button" class="icon-tile" data-name="heart"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><span>heart</span></button>
+<button type="button" class="icon-tile" data-name="mail"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /><rect x="2" y="4" width="20" height="16" rx="2" /></svg><span>mail</span></button>
+<button type="button" class="icon-tile" data-name="phone"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>phone</span></button></div>
+<h3 class="sub">Mídia<span class="count">5</span></h3><div class="icon-grid"><button type="button" class="icon-tile" data-name="play"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z" /></svg><span>play</span></button>
+<button type="button" class="icon-tile" data-name="pause"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect x="14" y="3" width="5" height="18" rx="1" /><rect x="5" y="3" width="5" height="18" rx="1" /></svg><span>pause</span></button>
+<button type="button" class="icon-tile" data-name="skip-forward"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21 4v16" /><path d="M6.029 4.285A2 2 0 0 0 3 6v12a2 2 0 0 0 3.029 1.715l9.997-5.998a2 2 0 0 0 .003-3.432z" /></svg><span>skip-forward</span></button>
+<button type="button" class="icon-tile" data-name="volume-2"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z" /><path d="M16 9a5 5 0 0 1 0 6" /><path d="M19.364 18.364a9 9 0 0 0 0-12.728" /></svg><span>volume-2</span></button>
+<button type="button" class="icon-tile" data-name="maximize"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M8 3H5a2 2 0 0 0-2 2v3" /><path d="M21 8V5a2 2 0 0 0-2-2h-3" /><path d="M3 16v3a2 2 0 0 0 2 2h3" /><path d="M16 21h3a2 2 0 0 0 2-2v-3" /></svg><span>maximize</span></button></div>
+<h3 class="sub">Comércio e local<span class="count">5</span></h3><div class="icon-grid"><button type="button" class="icon-tile" data-name="shopping-cart"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m2.05 2.05 1.099-.028a1 1 0 0 1 1.008.815l2.69 14.347A1 1 0 0 0 7.83 18H18" /><path d="M4.563 5h16.435a1 1 0 0 1 .981 1.204l-1.026 6.226A2 2 0 0 1 18.962 14H6.25" /><circle cx="18" cy="20" r="2" /><circle cx="8" cy="20" r="2" /></svg><span>shopping-cart</span></button>
+<button type="button" class="icon-tile" data-name="credit-card"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg><span>credit-card</span></button>
+<button type="button" class="icon-tile" data-name="chart-column"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 3v16a2 2 0 0 0 2 2h16" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" /></svg><span>chart-column</span></button>
+<button type="button" class="icon-tile" data-name="map-pin"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0" /><circle cx="12" cy="10" r="3" /></svg><span>map-pin</span></button>
+<button type="button" class="icon-tile" data-name="globe"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" /><path d="M2 12h20" /></svg><span>globe</span></button></div></div>
+</section></div><div class="panel" id="p-icon-specs" role="tabpanel" aria-labelledby="t-icon-specs" tabindex="0" hidden>
+<section>
+  <h2>Sem escala fixa</h2>
+  <p>O desenho é vetorizado no grid de 24, então a mesma marcação vale em qualquer tamanho e o
+  traço escala junto. Os quatro degraus abaixo são os recorrentes, não um teto.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Como escrever</th><th>Caixa</th><th>Onde costuma aparecer</th></tr></thead>
+    <tbody>
+      <tr><td class="tok">.al-icon--16</td><td class="num">16px</td><td>dentro do Button, em rótulo de 14</td></tr>
+      <tr><td class="tok">.al-icon--20</td><td class="num">20px</td><td>Icon Button, item de navegação</td></tr>
+      <tr><td class="tok">.al-icon (padrão)</td><td class="num">24px</td><td>ícone solto, ação de cabeçalho</td></tr>
+      <tr><td class="tok">.al-icon--32</td><td class="num">32px</td><td>estado vazio, destaque</td></tr>
+      <tr><td class="tok">style="--al-icon-box: 40px"</td><td class="num dim">qualquer</td><td>fora da escala, sem classe nova</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note" style="margin-top:20px">
+    <b>Por que a caixa se chama <code>box</code> e não <code>size</code></b>
+    <p><code>--al-icon-size-16</code> já existe e é a primitiva da Foundation. Se o token do
+    componente tivesse o mesmo nome, ele apontaria para si mesmo e a custom property morreria em
+    ciclo. <code>box</code> é o papel dentro do componente; <code>size</code> é o degrau na escala.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Os 8 tokens</h2>
+  <p>Todos alias, nenhum valor próprio. As quatro tintas espelham uma a uma as modes da collection
+  <code>3. Icon ink</code> do Figma — mas o padrão do componente não é nenhuma delas, é
+  <code>currentColor</code>. Elas são a saída explícita, para ícone que não tenha de quem herdar.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve em claro / escuro</th></tr></thead>
+    <tbody><tr><td class="tok">--al-icon-box-16</td><td class="tok dim">iconSize.16</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-icon-box-20</td><td class="tok dim">iconSize.20</td><td class="tok dim">20px</td></tr>
+<tr><td class="tok">--al-icon-box-24</td><td class="tok dim">iconSize.24</td><td class="tok dim">24px</td></tr>
+<tr><td class="tok">--al-icon-box-32</td><td class="tok dim">iconSize.32</td><td class="tok dim">32px</td></tr>
+<tr><td class="tok">--al-icon-ink-default</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span>#292929 / #F7F7F7</td></tr>
+<tr><td class="tok">--al-icon-ink-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#717171"></span>#B3B3B3 / #717171</td></tr>
+<tr><td class="tok">--al-icon-ink-on-brand</td><td class="tok dim">text-on-brand</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF / #FFFFFF</td></tr>
+<tr><td class="tok">--al-icon-ink-on-solid</td><td class="tok dim">text-on-solid</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#181818"></span>#FFFFFF / #181818</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Contrato de marcação</h2>
+  <p>Ícone do AL vive dentro de acionável, e nesse lugar ele é quase sempre decorativo: quem carrega
+  o sentido é o rótulo. Ícone decorativo anunciado por leitor de tela vira ruído duplicado.</p>
+  <h3 class="sub">Decorativo — o caso padrão</h3>
+  <pre><code>&lt;svg class="al-icon al-icon--16" aria-hidden="true" focusable="false"&gt;…&lt;/svg&gt;</code></pre>
+  <p style="margin-top:12px">Os dois atributos fazem coisas diferentes:
+  <code>aria-hidden</code> tira do leitor de tela, <code>focusable="false"</code> tira da ordem de
+  tabulação — SVG inline entra nela sozinho em alguns navegadores.</p>
+  <h3 class="sub">Quando o ícone carrega o sentido</h3>
+  <pre><code>&lt;svg class="al-icon" role="img" aria-label="Erro de validação"&gt;…&lt;/svg&gt;</code></pre>
+  <p style="margin-top:12px">Botão só de ícone é o caso limite e não é este: ali o nome acessível
+  vai no <code>&lt;button&gt;</code>, nunca no <code>svg</code>. Quem resolve isso é o Icon Button.</p>
+</section>
+
+<section>
+  <h2>Arquivos e portões</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Arquivo</th><th>O que faz</th><th>Resultado</th></tr></thead>
+    <tbody>
+      <tr><td class="tok">icons/*.svg</td><td>70 desenhos · Lucide · ISC</td><td><span class="pass">70/70</span></td></tr>
+      <tr><td class="tok">icon.css</td><td>o componente: caixa e tinta, escrito à mão</td><td><span class="pass">0 literais</span></td></tr>
+      <tr><td class="tok">tokens.py</td><td>portão de alias · gera al-icon-tokens.css</td><td><span class="pass">0 valores soltos</span></td></tr>
+      <tr><td class="tok">check.py</td><td>portão de CSS literal</td><td><span class="pass">0 pendências</span></td></tr>
+      <tr><td class="tok">icons.py</td><td>portão de desenho · recusa ícone fora da família</td><td><span class="pass">70/70</span></td></tr>
+      <tr><td class="tok">NOTICE</td><td>ISC do Lucide — o resto do AL segue MIT</td><td></td></tr>
+    </tbody>
+  </table></div>
+  <div class="note" style="margin-top:20px">
+    <b>O <code>stroke-width</code> não está no CSS, e isso é intencional</b>
+    <p>A espessura do traço — 2 no grid de 24 — é parte do desenho e viaja dentro do próprio
+    arquivo <code>.svg</code>. Cor e caixa mudam com o contexto e com o tema; o desenho, não.</p>
+  </div>
+</section></div><div class="panel" id="p-icon-a11y" role="tabpanel" aria-labelledby="t-icon-a11y" tabindex="0" hidden>
+<section>
+  <h2>O critério é outro</h2>
+  <p>Ícone não é texto. O piso dele é o <b>3:1</b> do WCAG 1.4.11 — contraste não-textual — e não
+  o 4,5:1 que vale para rótulo. É a mesma cor medida contra um mínimo diferente, e isso tem uma
+  consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
+  normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
+  <div class="stats">
+    <div class="stat hl"><b>124</b><span>verificações</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+    <div class="stat"><b>82</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tinta explícita contra a superfície</h2>
+  <p>Cada tinta é medida só onde ela faz sentido: <code>on-brand</code> contra a tela seria um
+  cenário que o design system não produz. O <code>disabled</code> aparece medido e isento — o WCAG
+  dispensa componente inativo, e subir esse contraste faria o desabilitado parecer clicável.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">light</td><td class="name">default · bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#292929 / #FFFFFF</td><td class="num strong">14.55:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">default · bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#292929 / #F7F7F7</td><td class="num strong">13.58:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">default · bg-subtle</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">#292929 / #EEEEEE</td><td class="num strong">12.54:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-brand · bg-brand</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">#FFFFFF / #FC5000</td><td class="num strong">3.34:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-brand · bg-brand-hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">#FFFFFF / #C53900</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-brand · bg-brand-active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#992700"></span></td><td class="tok dim">#FFFFFF / #992700</td><td class="num strong">7.94:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-solid · bg-danger</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#A00E27"></span></td><td class="tok dim">#FFFFFF / #A00E27</td><td class="num strong">8.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-solid · bg-danger-hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#780014"></span></td><td class="tok dim">#FFFFFF / #780014</td><td class="num strong">11.61:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">on-solid · bg-danger-active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#550007"></span></td><td class="tok dim">#FFFFFF / #550007</td><td class="num strong">15.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">disabled · bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#B3B3B3 / #FFFFFF</td><td class="num strong">2.10:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">disabled · bg-disabled</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">#B3B3B3 / #E0E0E0</td><td class="num strong">1.59:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">default · bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#F7F7F7 / #181818</td><td class="num strong">16.57:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">default · bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#F7F7F7 / #292929</td><td class="num strong">13.58:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">default · bg-subtle</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">#F7F7F7 / #3E3E3E</td><td class="num strong">9.98:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-brand · bg-brand</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">#FFFFFF / #FC5000</td><td class="num strong">3.34:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-brand · bg-brand-hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#EA4900"></span></td><td class="tok dim">#FFFFFF / #EA4900</td><td class="num strong">3.85:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-brand · bg-brand-active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">#FFFFFF / #C53900</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-solid · bg-danger</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#F84F5D"></span></td><td class="tok dim">#181818 / #F84F5D</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-solid · bg-danger-hover</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#FF8D91"></span></td><td class="tok dim">#181818 / #FF8D91</td><td class="num strong">8.01:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">on-solid · bg-danger-active</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#FFBABB"></span></td><td class="tok dim">#181818 / #FFBABB</td><td class="num strong">10.99:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">disabled · bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#717171 / #181818</td><td class="num strong">3.64:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">disabled · bg-disabled</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">#717171 / #3E3E3E</td><td class="num strong">2.19:1</td><td><span class="exc">isento</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Tinta herdada dentro do Button</h2>
+  <p>O padrão do componente é <code>currentColor</code>, então dentro de um acionável o ícone veste
+  a cor do rótulo. Vale aqui a mesma lógica que o Button já usa: variante sem preenchimento herda a
+  tela, então Ghost e Secondary são medidos contra a <b>tela</b>, nunca contra "transparente".</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">light</td><td class="name">primary · default</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">#FFFFFF / #FC5000</td><td class="num strong">3.34:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">primary · hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">#FFFFFF / #C53900</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">primary · active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#992700"></span></td><td class="tok dim">#FFFFFF / #992700</td><td class="num strong">7.94:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">secondary · default</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#292929 / #FFFFFF</td><td class="num strong">14.55:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">secondary · hover</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">#292929 / #EEEEEE</td><td class="num strong">12.54:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">secondary · active</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">#292929 / #E0E0E0</td><td class="num strong">11.02:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">ghost · default</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#292929 / #FFFFFF</td><td class="num strong">14.55:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">ghost · hover</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">#292929 / #EEEEEE</td><td class="num strong">12.54:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">ghost · active</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">#292929 / #E0E0E0</td><td class="num strong">11.02:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">danger · default</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#A00E27"></span></td><td class="tok dim">#FFFFFF / #A00E27</td><td class="num strong">8.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">danger · hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#780014"></span></td><td class="tok dim">#FFFFFF / #780014</td><td class="num strong">11.61:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">light</td><td class="name">danger · active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#550007"></span></td><td class="tok dim">#FFFFFF / #550007</td><td class="num strong">15.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">primary · default</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">#FFFFFF / #FC5000</td><td class="num strong">3.34:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">primary · hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#EA4900"></span></td><td class="tok dim">#FFFFFF / #EA4900</td><td class="num strong">3.85:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">primary · active</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">#FFFFFF / #C53900</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">secondary · default</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#F7F7F7 / #181818</td><td class="num strong">16.57:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">secondary · hover</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">#F7F7F7 / #3E3E3E</td><td class="num strong">9.98:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">secondary · active</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">#F7F7F7 / #565656</td><td class="num strong">6.85:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">ghost · default</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#F7F7F7 / #181818</td><td class="num strong">16.57:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">ghost · hover</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">#F7F7F7 / #3E3E3E</td><td class="num strong">9.98:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">ghost · active</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">#F7F7F7 / #565656</td><td class="num strong">6.85:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">danger · default</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#F84F5D"></span></td><td class="tok dim">#181818 / #F84F5D</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">danger · hover</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#FF8D91"></span></td><td class="tok dim">#181818 / #FF8D91</td><td class="num strong">8.01:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">dark</td><td class="name">danger · active</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#FFBABB"></span></td><td class="tok dim">#181818 / #FFBABB</td><td class="num strong">10.99:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Contrato de marcação, medido</h2>
+  <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
+  O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
+  <code>.al-icon</code>: 82 elementos nesta página, nenhum fora.
+  Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
+  <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
+  porque o rótulo nunca seria lido.</p>
+  <div class="note" style="margin-top:20px">
+    <b>Por que medir no HTML e não na folha de estilo</b>
+    <p>Contraste se prova no token; marcação, não. Um contrato de <code>aria-*</code> só existe
+    quando alguém escreve o atributo — então o único lugar onde ele pode ser verificado é a saída
+    renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
+  </div>
+</section></div></div>
+<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">1 publicado</span><span class="badge">4 no Tier 1</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
 <section>
   <h2>Publicados</h2>
   <div class="cards">
@@ -1610,12 +2181,11 @@ footer code{background:none; padding:0}
   começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
   <div class="cards" style="margin-top:18px">
     <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Icon Button</span><span class="card-desc">O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.</span><span class="card-soon">Em breve</span></div></div>
-    <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Icon</span><span class="card-desc">Traz junto a escala de ícone, que o Button hoje resolve com um valor provisório de 16px.</span><span class="card-soon">Em breve</span></div></div>
     <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Badge / Tag</span><span class="card-desc">Rótulo curto de status ou contagem, sem ação associada.</span><span class="card-soon">Em breve</span></div></div>
     <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Avatar</span><span class="card-desc">Identidade visual de uma pessoa ou entidade, com recurso a iniciais.</span><span class="card-soon">Em breve</span></div></div>
   </div>
 </section></div></div>
-<div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">46 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
+<div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">47 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
 <section>
   <h2>Playground</h2>
   <div class="pg">
@@ -1950,7 +2520,7 @@ footer code{background:none; padding:0}
   <p style="margin-top:14px"><code>type="button"</code> não é opcional: dentro de <code>&lt;form&gt;</code>, o padrão do HTML é <code>submit</code>. E o rótulo visível é o nome acessível — não coloque um <code>aria-label</code> dizendo outra coisa, ou o comando de voz para de funcionar.</p>
 </section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.2.0</span>
+  <span><b>AL Design System</b> · v0.3.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -2203,5 +2773,90 @@ footer code{background:none; padding:0}
 
   render();
   fromHash();
+})();
+
+(function () {
+  // ── playground do Icon ──
+  var stage = document.getElementById('icon-stage');
+  if (!stage) return;
+
+  var slot = document.getElementById('icon-slot');
+  var code = document.getElementById('icon-code');
+  var sel = document.getElementById('icon-name');
+  var free = document.getElementById('icon-free');
+  var copyBtn = document.getElementById('icon-copy');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function render() {
+    var name = sel.value;
+    var box = pick('iconbox');
+    var ink = pick('iconink');
+    var theme = pick('icontheme');
+
+    free.disabled = box !== 'free';
+
+    // clona o SVG da biblioteca desta mesma pagina: nao existe segunda copia
+    var src = document.querySelector('.icon-tile[data-name="' + name + '"] svg');
+    if (!src) return;
+    var svg = src.cloneNode(true);
+
+    var cls = 'al-icon';
+    if (box !== 'free' && box !== '24') cls += ' al-icon--' + box;
+    if (ink !== 'inherit') cls += ' al-icon--ink-' + ink;
+    svg.setAttribute('class', cls);
+
+    var style = '';
+    if (box === 'free') {
+      var v = parseInt(free.value, 10);
+      if (!v || v < 8 || v > 160) v = 40;
+      style = '--al-icon-box: ' + v + 'px';
+      svg.setAttribute('style', style);
+    }
+
+    slot.innerHTML = '';
+    slot.appendChild(svg);
+
+    if (ink === 'on-brand' || ink === 'on-solid') stage.setAttribute('data-ink', ink);
+    else stage.removeAttribute('data-ink');
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var attrs = ' class="' + cls + '"';
+    if (style) attrs += ' style="' + style + '"';
+    code.textContent = '<svg' + attrs + ' aria-hidden="true" focusable="false">\n'
+      + '  <!-- ' + name + ' \u00b7 components/icon/icons/' + name + '.svg -->\n'
+      + '</svg>';
+  }
+
+  sel.addEventListener('change', render);
+  free.addEventListener('input', render);
+  document.querySelectorAll('input[name="iconbox"], input[name="iconink"], input[name="icontheme"]')
+    .forEach(function (el) { el.addEventListener('change', render); });
+
+  // clicar num icone da biblioteca leva ele para o palco e copia o nome
+  document.querySelectorAll('.icon-tile').forEach(function (t) {
+    t.addEventListener('click', function () {
+      sel.value = t.dataset.name;
+      render();
+      if (navigator.clipboard) navigator.clipboard.writeText(t.dataset.name).catch(function () {});
+      t.classList.add('is-copied');
+      setTimeout(function () { t.classList.remove('is-copied'); }, 900);
+    });
+  });
+
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function () {
+      if (navigator.clipboard) navigator.clipboard.writeText(code.textContent);
+      copyBtn.textContent = 'Copiado';
+      setTimeout(function () { copyBtn.textContent = 'Copiar'; }, 1200);
+    });
+  }
+
+  render();
 })();
 </script>

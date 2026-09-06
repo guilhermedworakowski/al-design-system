@@ -73,6 +73,11 @@ for k, v in T['border']['width'].items():
     w(f'  --al-border-width-{k}: {v}px;')
 w(f'  --al-border-focus-offset: {T["border"]["focusOffset"]}px;')
 
+block('tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon\n'
+      '     nao tem escala fixa: isto nomeia os tamanhos recorrentes.')
+for k, v in T['iconSize'].items():
+    w(f'  --al-icon-size-{k}: {v}px;')
+
 # ---------------- elevacao ----------------
 block('elevacao - TEMA CLARO')
 for k, v in T['elevation'].items():
@@ -125,5 +130,6 @@ n_sem = sum(1 for v in T['color']['semantic'].values() if v is not None)
 print(f'{OUT} escrito')
 print(f'  primitivas de cor : {n_prim}')
 print(f'  semanticos de cor : {n_sem} x 2 temas')
+print(f'  tamanhos de icone : {len(T["iconSize"])}')
 print(f'  aneis de foco     : 2 (compostos, resolvem sozinhos no tema)')
 print(f'  bytes             : {os.path.getsize(OUT)}')

@@ -3,14 +3,16 @@
 Design system open source, do Figma ao código. Construído em público, uma camada de cada vez.
 
 - **Licença:** MIT
-- **Versão:** `0.2.0`
+- **Versão:** `0.3.0`
 - **Figma:** biblioteca privada por enquanto — primitivas, semânticos e tokens de componente documentados abaixo
 
 ## Estado atual
 
-A **Foundation** está fechada: primitivas de cor, camada semântica (dois temas), tipografia, espaçamento, radius, elevação e anel de foco — tudo gerado por código, nada digitado à mão no Figma ou na página de referência.
+A **Foundation** está fechada: primitivas de cor, camada semântica (dois temas), tipografia, espaçamento, radius, tamanho de ícone, elevação e anel de foco — tudo gerado por código, nada digitado à mão no Figma ou na página de referência.
 
 O **Button** é o primeiro componente a fechar as oito etapas do pipeline: auditado, tokenizado, documentado, codado, com playground e QA de acessibilidade.
+
+O **Icon** fechou sete das oito, pulando a documentação por decisão: ícone do AL vive dentro de acionável e quem carrega o sentido é o rótulo. O contrato de acessibilidade não foi pulado junto — ele virou portão, medido no HTML emitido, em vez de regra escrita.
 
 | | |
 |---|---|
@@ -18,7 +20,8 @@ O **Button** é o primeiro componente a fechar as oito etapas do pipeline: audit
 | Tokens semânticos | 49 × 2 temas |
 | Pares de contraste validados | 80 — 77 em AA pleno, 3 exceções de marca nomeadas, 0 abaixo do piso |
 | Componentes prontos | 1 (Button) |
-| Tokens do Button | 46 — 38 alias, 8 transparentes, 0 valores soltos |
+| Ícones | 70 — Lucide, grid 24, sem escala fixa |
+| Tokens do Button | 47 — 39 alias, 8 transparentes, 0 valores soltos |
 
 O plano de evolução completo — divisão de trabalho, pipeline por componente e roadmap em tiers — está no [playbook](https://claude.ai/code/artifact/18a0c1ed-949c-4c8d-8906-93c21ed560a3).
 
@@ -37,6 +40,14 @@ components/button/
   button.css     # o componente, escrito à mão
   check.py       # portão do CSS: recusa valor literal em button.css
   a11y.py        # QA de acessibilidade por combinação renderizada
+
+components/icon/
+  icons/*.svg    # os 70 desenhos — Lucide, ISC (ver NOTICE); o resto do repo é MIT
+  tokens.py      # camada de alias do Icon + portão de alias, gera tokens.json e o CSS
+  icon.css       # o componente, escrito à mão — só caixa e tinta
+  check.py       # portão do CSS: recusa valor literal em icon.css
+  icons.py       # portão do desenho: recusa SVG fora da família, gera icons.json
+  a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
 
 site/
   site.py        # gera index.html: o site — Foundation + componentes, navegação e playground
@@ -58,10 +69,20 @@ python3 foundation/css.py          # al-foundation.css
 python3 components/button/tokens.py  # tokens do Button + portão de alias + CSS
 python3 components/button/check.py   # portão do CSS do componente
 python3 components/button/a11y.py    # QA de acessibilidade
+python3 components/icon/tokens.py    # tokens do Icon + portão de alias + CSS
+python3 components/icon/check.py     # portão do CSS do Icon
+python3 components/icon/icons.py     # portão do desenho + manifesto
 python3 site/site.py               # o site: Foundation + componentes
+python3 components/icon/a11y.py      # QA do Icon — depois do site, ver abaixo
 ```
 
 Nesta ordem, e de qualquer diretório.
+
+O `a11y.py` do Icon é o único que roda **depois** do site, e por um motivo: além do
+contraste, ele confere o contrato de marcação (`aria-hidden` versus `role="img"`) no HTML
+que o site realmente emite — contraste se prova no token, marcação só existe na saída
+renderizada. Ele escreve `a11y.json`, que o site lê na próxima geração para montar a aba de
+acessibilidade. As duas gerações convergem numa passada; não há loop.
 
 ## Os portões
 
@@ -71,8 +92,10 @@ Validação é parte do build, não checagem opcional. Cada camada tem o seu, e 
 |---|---|---|
 | Contraste | `foundation/export.py` | Qualquer par de cor abaixo do mínimo WCAG. Exceções de marca são nomeadas uma a uma e nunca descem de 3:1. |
 | Alias | `components/button/tokens.py` | Token de componente com valor próprio — hex, px, ou nome semântico inexistente. |
-| CSS literal | `components/button/check.py` | Cor, comprimento ou peso literal dentro de `button.css`. |
-| Acessibilidade | `components/button/a11y.py` | Combinação renderizada (variante × estado × tema) fora do mínimo, medida contra o fundo efetivo. |
+| CSS literal | `components/<c>/check.py` | Cor, comprimento ou peso literal dentro do CSS do componente. |
+| Acessibilidade | `components/<c>/a11y.py` | Combinação renderizada (variante × estado × tema) fora do mínimo, medida contra o fundo efetivo. |
+| Desenho | `components/icon/icons.py` | SVG fora da família: outro grid, outra espessura, cor cravada, ou `class` própria. O risco daquela pasta não é um valor errado — é um ícone de outra biblioteca entrando sem ninguém ver. |
+| Marcação | `components/icon/a11y.py` | `.al-icon` no HTML emitido sem contrato de acessibilidade, ou com `aria-hidden` junto de um rótulo. |
 
 ## Arquitetura de tokens
 
@@ -88,11 +111,12 @@ Em CSS, a camada de componente não tem bloco de tema — e não precisa. O tema
 
 **Nomenclatura:** o nome do token separa níveis com hífen (`bg-brand`, `button-primary-bg-hover`). No Figma, a mesma coisa vive em pasta dentro da collection do componente (`primary/bg-hover` na collection `4. Button`) — a barra é o mecanismo de agrupamento do painel de variáveis, não parte do nome do token.
 
+**Escala de ícone:** `icon-size` tem os degraus 16, 20, 24 e 32, nomeados pelo próprio valor — como o espaçamento, e pelo mesmo motivo: nome de camiseta obriga a renomear quando um degrau entra no meio. A escala nomeia os tamanhos recorrentes; ela não limita o componente `Icon`, que é vetorizado e vale em qualquer tamanho. O portão de CSS literal valida contra ela, então um tamanho novo dentro do DS é uma decisão consciente de uma linha.
+
 ## Pendências registradas
 
 Coisas deliberadamente não construídas, anotadas para não voltarem como dúvida:
 
-- **Escala de ícone** — o Button usa 16px e o `Icon Button` usa 20px, mas a escala pertence ao componente `Icon`, do Tier 1. Fica em `pending` no `tokens.json` do Button.
 - **Escala de motion** — as durações no `button.css` são literais e aparecem no relatório do `check.py` como exceção consciente.
 - **Unidade de tipografia** — a escala é em `px`. Atende o critério 1.4.4 (zoom do navegador escala `px`), mas não acompanha a preferência de tamanho de fonte do usuário. Migrar para `rem` é decisão de Foundation, não de componente.
 

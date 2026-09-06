@@ -1,0 +1,22 @@
+/* AL Design System - tokens do Icon
+ * GERADO por components/icon/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada tinta aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados. Entao o
+ * :root re-substitui todos eles de uma vez.
+ */
+
+:root {
+
+  /* caixa - degrau recorrente, nao teto */
+  --al-icon-box-16: var(--al-icon-size-16);
+  --al-icon-box-20: var(--al-icon-size-20);
+  --al-icon-box-24: var(--al-icon-size-24);
+  --al-icon-box-32: var(--al-icon-size-32);
+
+  /* tinta - saida explicita. O default do componente e currentColor. */
+  --al-icon-ink-default: var(--al-text-primary);
+  --al-icon-ink-on-brand: var(--al-text-on-brand);
+  --al-icon-ink-on-solid: var(--al-text-on-solid);
+  --al-icon-ink-disabled: var(--al-text-disabled);
+}
