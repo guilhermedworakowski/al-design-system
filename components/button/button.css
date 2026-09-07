@@ -8,15 +8,27 @@
  *
  *   <button type="button" class="al-btn al-btn--primary al-btn--md">
  *     <span class="al-btn__spinner" aria-hidden="true"></span>
- *     <span class="al-btn__icon al-btn__icon--leading" aria-hidden="true"><svg …></svg></span>
+ *     <span class="al-btn__icon al-btn__icon--leading">
+ *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *     </span>
  *     <span class="al-btn__label">Publicar</span>
- *     <span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true"><svg …></svg></span>
+ *     <span class="al-btn__icon al-btn__icon--trailing">
+ *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *     </span>
  *   </button>
  *
  *   variante : --primary | --secondary | --ghost | --danger
  *   tamanho  : --sm | --md
  *
  *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *
+ * O ICONE
+ *   O desenho vem do componente Icon da Fundacao - o Button nao inventa icone.
+ *   O svg entra inline, com a classe .al-icon, e o contrato decorativo
+ *   (aria-hidden + focusable="false") vai NO SVG, nao no span: quem carrega o
+ *   sentido aqui e o rotulo, e o icone anunciado seria ruido duplicado.
+ *   O tamanho nao e escolha de quem consome: o Button impoe a caixa pelo
+ *   tamanho do botao, e o .al-icon obedece. Nao ponha .al-icon--20 aqui.
  *
  * CARREGANDO
  *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
@@ -128,6 +140,7 @@
   --_font-size: var(--al-button-sm-font-size);
   --_line-height: var(--al-button-sm-line-height);
   --_font-weight: var(--al-button-sm-font-weight);
+  --_icon-size: var(--al-button-sm-icon-size);
 }
 
 .al-btn--md {
@@ -137,6 +150,7 @@
   --_font-size: var(--al-button-md-font-size);
   --_line-height: var(--al-button-md-line-height);
   --_font-weight: var(--al-button-md-font-weight);
+  --_icon-size: var(--al-button-md-icon-size);
 }
 
 /* ---------------------------------------------------------------- estados */
@@ -171,13 +185,22 @@
 }
 
 /* ---------------------------------------------------------------- conteudo */
+/* A caixa do icone e a entrelinha do rotulo: 20 no sm, 24 no md. Por isso
+   ligar o icone nao muda a altura do botao - ele ocupa a mesma faixa vertical
+   que a linha de texto ja ocupava. */
 .al-btn__icon {
   display: block;
   flex: none;
-  width: var(--al-button-icon-size);
-  height: var(--al-button-icon-size);
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+
+  /* o .al-icon la dentro le a propria caixa desta variavel. Sem isso ele cairia
+     no degrau padrao dele (24) e brigaria com o span no sm. Quem manda no
+     tamanho e o botao, nao o icone. */
+  --al-icon-box: var(--_icon-size);
 }
 
+/* rede de seguranca para svg que nao seja do componente Icon */
 .al-btn__icon svg {
   display: block;
   width: 100%;
@@ -189,12 +212,14 @@
 }
 
 /* ---------------------------------------------------------------- carregando */
+/* mesma caixa do icone que ele substitui - se fosse menor, a largura do botao
+   pularia no instante em que o carregamento comeca */
 .al-btn__spinner {
   display: none;
   flex: none;
   box-sizing: border-box;
-  width: var(--al-button-icon-size);
-  height: var(--al-button-icon-size);
+  width: var(--_icon-size);
+  height: var(--_icon-size);
   border: var(--al-border-width-2) solid currentColor;
   border-top-color: transparent;
   border-radius: var(--al-radius-full);

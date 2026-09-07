@@ -393,12 +393,13 @@ STATES = [('default', 'Default'), ('hover', 'Hover'), ('active', 'Pressed'),
           ('focus', 'Focus'), ('disabled', 'Disabled'), ('busy', 'Loading')]
 ICONS = [('none', 'Sem ícone'), ('leading', 'À esquerda'), ('trailing', 'À direita')]
 
-ICON_SVG = ('<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">'
-            '<path d="M8 2v9m0 0 3.5-3.5M8 11 4.5 7.5M2.5 13.5h11" stroke="currentColor" '
-            'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>')
-ARROW_SVG = ('<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">'
-             '<path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.5" '
-             'stroke-linecap="round" stroke-linejoin="round"/></svg>')
+# Ate a versao 0.1.1 estes dois eram svg de 16 desenhados na unha aqui dentro -
+# a ultima sobra dos icones antigos no codigo. Agora saem da biblioteca, lidos
+# de components/icon/icons/, e o Button deixa de inventar desenho.
+BTN_ICON_LEADING = 'download'
+BTN_ICON_TRAILING = 'chevron-right'
+ICON_SVG = al_icon(BTN_ICON_LEADING)
+ARROW_SVG = al_icon(BTN_ICON_TRAILING)
 
 
 def seg(name, options, checked):
@@ -1283,9 +1284,9 @@ BTN_OVERVIEW = f'''
     <div class="stage" id="stage">
       <button type="button" class="al-btn al-btn--primary al-btn--md" id="demo">
         <span class="al-btn__spinner" aria-hidden="true"></span>
-        <span class="al-btn__icon al-btn__icon--leading" aria-hidden="true" hidden>{ICON_SVG}</span>
+        <span class="al-btn__icon al-btn__icon--leading" hidden>{ICON_SVG}</span>
         <span class="al-btn__label">Publicar</span>
-        <span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true" hidden>{ARROW_SVG}</span>
+        <span class="al-btn__icon al-btn__icon--trailing" hidden>{ARROW_SVG}</span>
       </button>
     </div>
 
@@ -1707,9 +1708,9 @@ ICON_SPECS = f'''
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Como escrever</th><th>Caixa</th><th>Onde costuma aparecer</th></tr></thead>
     <tbody>
-      <tr><td class="tok">.al-icon--16</td><td class="num">16px</td><td>dentro do Button, em rótulo de 14</td></tr>
-      <tr><td class="tok">.al-icon--20</td><td class="num">20px</td><td>Icon Button, item de navegação</td></tr>
-      <tr><td class="tok">.al-icon (padrão)</td><td class="num">24px</td><td>ícone solto, ação de cabeçalho</td></tr>
+      <tr><td class="tok">.al-icon--16</td><td class="num">16px</td><td>rótulo auxiliar, texto de 12</td></tr>
+      <tr><td class="tok">.al-icon--20</td><td class="num">20px</td><td>Button <code>sm</code>, Icon Button, item de navegação</td></tr>
+      <tr><td class="tok">.al-icon (padrão)</td><td class="num">24px</td><td>Button <code>md</code>, ícone solto, ação de cabeçalho</td></tr>
       <tr><td class="tok">.al-icon--32</td><td class="num">32px</td><td>estado vazio, destaque</td></tr>
       <tr><td class="tok">style="--al-icon-box: 40px"</td><td class="num dim">qualquer</td><td>fora da escala, sem classe nova</td></tr>
     </tbody>
@@ -2127,11 +2128,15 @@ JS = r"""
     var lines = ['&lt;button type="button" class="' + cls + '"' + attrs + '&gt;'];
     if (state === 'busy') lines.push('  &lt;span class="al-btn__spinner" aria-hidden="true"&gt;&lt;/span&gt;');
     if (icon === 'leading' && state !== 'busy')
-      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading" aria-hidden="true"&gt;&lt;svg …&gt;&lt;/svg&gt;&lt;/span&gt;');
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading"&gt;')
+      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- LEADING --&gt;&lt;/svg&gt;')
+      lines.push('  &lt;/span&gt;');
     lines.push('  &lt;span class="al-btn__label"&gt;' +
       (input.value || 'Button').replace(/&/g, '&amp;').replace(/</g, '&lt;') + '&lt;/span&gt;');
     if (icon === 'trailing')
-      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true"&gt;&lt;svg …&gt;&lt;/svg&gt;&lt;/span&gt;');
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing"&gt;')
+      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- TRAILING --&gt;&lt;/svg&gt;')
+      lines.push('  &lt;/span&gt;');
     lines.push('&lt;/button&gt;');
     code.innerHTML = lines.join('\n');
   }

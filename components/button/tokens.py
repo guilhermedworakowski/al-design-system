@@ -84,27 +84,34 @@ RING = {
 # Nao existe token de altura. A altura e consequencia: padding-y x2 mais a
 # entrelinha do rotulo. sm = 8+20+8 = 36. md = 12+24+12 = 48. Criar um
 # token de altura seria fixar em dois lugares a mesma decisao.
+#
+# O icone tambem entra aqui, e nao no SHARED, porque ele nao tem tamanho
+# proprio: ele tem a ALTURA DA LINHA do rotulo. sm usa label-md, entrelinha 20;
+# md usa label-lg, entrelinha 24. E por isso que ligar o icone nao mexe na
+# altura do botao - ele ocupa exatamente a caixa que a linha de texto ja ocupa.
 SIZE = {
   'sm': {'padding-x': 'space.12', 'padding-y': 'space.8',
-         'gap': 'space.8', 'font': 'type.styles.label-md'},
+         'gap': 'space.8', 'font': 'type.styles.label-md',
+         'icon-size': 'iconSize.20'},
   'md': {'padding-x': 'space.16', 'padding-y': 'space.12',
-         'gap': 'space.8', 'font': 'type.styles.label-lg'},
+         'gap': 'space.8', 'font': 'type.styles.label-lg',
+         'icon-size': 'iconSize.24'},
 }
 
 SHARED = {
   'radius':       'radius.full',
   'border-width': 'border.width.1',
-  'icon-size':    'iconSize.16',
 }
 
 # Resolvida em 06/09/2026: a escala de icone nasceu na Foundation junto com o
-# componente Icon, e o icon-size do Button virou alias puro (iconSize.16), la
-# em cima no SHARED. O valor renderizado nao mudou - eram 16px literais, sao
-# 16px por token.
+# componente Icon, e o icon-size do Button virou alias puro. O valor renderizado
+# nao mudou naquele momento - eram 16px literais, viraram 16px por token.
 #
-# O que ficou de fora de proposito: o Button usa 16 nos dois tamanhos e o set
-# irmao Icon Button usa 20. Se o md deve subir para 20 e decisao de desenho,
-# nao de tokenizacao - ela pertence ao PR de migracao do Button.
+# Resolvida em 07/09/2026, no PR de migracao: o desenho subiu o icone para 20 no
+# sm e 24 no md, colando na entrelinha do rotulo. Com isso o token deixou de ser
+# um so (button-icon-size) e virou um por tamanho - por isso saiu do SHARED e
+# entrou no SIZE. O Icon Button, que usa 20 nos dois, deixa de ser referencia
+# aqui: la o icone e o conteudo inteiro, aqui ele acompanha uma linha de texto.
 #
 # O mecanismo fica de pe, vazio. Pendencia some do relatorio quando some de
 # verdade, nunca por esquecimento.
@@ -193,6 +200,13 @@ def run():
         print(f'  {name:<34} {tag}')
     print('-' * 70)
     print(f'altura derivada: sm {heights["sm"]}px   md {heights["md"]}px  (padding-y x2 + entrelinha)')
+    # conferencia, nao portao: o icone deve bater com a entrelinha do rotulo -
+    # e o que faz ligar o icone nao mexer na altura do botao
+    for size in SIZE:
+        box = resolve_foundation(SIZE[size]['icon-size'])
+        lead = resolve_foundation(SIZE[size]['font'])[2]
+        sinal = '=' if box == lead else 'DIFERE DE'
+        print(f'icone {size}: {box}px {sinal} entrelinha {lead}px')
     if PENDING:
         for k, v in PENDING.items():
             print(f'pendente: {k} - {v}')
@@ -214,9 +228,10 @@ def run():
     out = {
         'meta': {
             'component': 'Button',
-            # 0.1.1: icon-size deixou de ser literal pendente e virou alias de
-            # iconSize.16. Valor renderizado identico, entao PATCH, nao MINOR.
-            'version': '0.1.1',
+            # 0.2.0: o icone passou a ter um token por tamanho (20 no sm, 24 no
+            # md). O token button-icon-size deixou de existir e o valor
+            # renderizado mudou - entao MINOR, nao PATCH.
+            'version': '0.2.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '23:123',
             'variants': list(COLOR),

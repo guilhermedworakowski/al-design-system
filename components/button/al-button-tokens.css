@@ -65,6 +65,7 @@
   --al-button-sm-font-size: var(--al-font-size-sm);
   --al-button-sm-line-height: var(--al-line-height-sm);
   --al-button-sm-font-weight: var(--al-font-weight-medium);
+  --al-button-sm-icon-size: var(--al-icon-size-20);
 
   /* tamanho md - altura resultante: 48px */
   --al-button-md-padding-x: var(--al-space-16);
@@ -73,9 +74,9 @@
   --al-button-md-font-size: var(--al-font-size-md);
   --al-button-md-line-height: var(--al-line-height-md);
   --al-button-md-font-weight: var(--al-font-weight-medium);
+  --al-button-md-icon-size: var(--al-icon-size-24);
 
   /* compartilhado */
   --al-button-radius: var(--al-radius-full);
   --al-button-border-width: var(--al-border-width-1);
-  --al-button-icon-size: var(--al-icon-size-16);
 }
