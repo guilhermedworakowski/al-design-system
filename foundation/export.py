@@ -14,7 +14,10 @@ SHADOW_RGB = "24, 24, 24"   # neutral-950 acromatico -> sombra cinza, sem tingim
 
 TOKENS = {
   "meta": {
-    "name": "AL Design System", "version": "0.3.0", "license": "MIT",
+    # Terceira casa = release. Atualizacao numa fundacao ou num componente que
+    # ja existe entra aqui; casa do meio fica para camada nova. 0.3.1: o Button
+    # subiu o icone para a entrelinha do rotulo (0.1.1 -> 0.2.0).
+    "name": "AL Design System", "version": "0.3.1", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },

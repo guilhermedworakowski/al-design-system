@@ -6,7 +6,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.3.0 - MIT
+ * v0.3.1 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -459,6 +459,7 @@
   --al-button-sm-font-size: var(--al-font-size-sm);
   --al-button-sm-line-height: var(--al-line-height-sm);
   --al-button-sm-font-weight: var(--al-font-weight-medium);
+  --al-button-sm-icon-size: var(--al-icon-size-20);
 
   /* tamanho md - altura resultante: 48px */
   --al-button-md-padding-x: var(--al-space-16);
@@ -467,11 +468,11 @@
   --al-button-md-font-size: var(--al-font-size-md);
   --al-button-md-line-height: var(--al-line-height-md);
   --al-button-md-font-weight: var(--al-font-weight-medium);
+  --al-button-md-icon-size: var(--al-icon-size-24);
 
   /* compartilhado */
   --al-button-radius: var(--al-radius-full);
   --al-button-border-width: var(--al-border-width-1);
-  --al-button-icon-size: var(--al-icon-size-16);
 
 
   /* caixa - degrau recorrente, nao teto */
@@ -554,6 +555,7 @@
   --al-button-sm-font-size: var(--al-font-size-sm);
   --al-button-sm-line-height: var(--al-line-height-sm);
   --al-button-sm-font-weight: var(--al-font-weight-medium);
+  --al-button-sm-icon-size: var(--al-icon-size-20);
 
   /* tamanho md - altura resultante: 48px */
   --al-button-md-padding-x: var(--al-space-16);
@@ -562,11 +564,11 @@
   --al-button-md-font-size: var(--al-font-size-md);
   --al-button-md-line-height: var(--al-line-height-md);
   --al-button-md-font-weight: var(--al-font-weight-medium);
+  --al-button-md-icon-size: var(--al-icon-size-24);
 
   /* compartilhado */
   --al-button-radius: var(--al-radius-full);
   --al-button-border-width: var(--al-border-width-1);
-  --al-button-icon-size: var(--al-icon-size-16);
 }
 
 /* AL Design System - Button
@@ -579,15 +581,27 @@
  *
  *   <button type="button" class="al-btn al-btn--primary al-btn--md">
  *     <span class="al-btn__spinner" aria-hidden="true"></span>
- *     <span class="al-btn__icon al-btn__icon--leading" aria-hidden="true"><svg …></svg></span>
+ *     <span class="al-btn__icon al-btn__icon--leading">
+ *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *     </span>
  *     <span class="al-btn__label">Publicar</span>
- *     <span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true"><svg …></svg></span>
+ *     <span class="al-btn__icon al-btn__icon--trailing">
+ *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *     </span>
  *   </button>
  *
  *   variante : --primary | --secondary | --ghost | --danger
  *   tamanho  : --sm | --md
  *
  *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *
+ * O ICONE
+ *   O desenho vem do componente Icon da Fundacao - o Button nao inventa icone.
+ *   O svg entra inline, com a classe .al-icon, e o contrato decorativo
+ *   (aria-hidden + focusable="false") vai NO SVG, nao no span: quem carrega o
+ *   sentido aqui e o rotulo, e o icone anunciado seria ruido duplicado.
+ *   O tamanho nao e escolha de quem consome: o Button impoe a caixa pelo
+ *   tamanho do botao, e o .al-icon obedece. Nao ponha .al-icon--20 aqui.
  *
  * CARREGANDO
  *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
@@ -699,6 +713,7 @@
   --_font-size: var(--al-button-sm-font-size);
   --_line-height: var(--al-button-sm-line-height);
   --_font-weight: var(--al-button-sm-font-weight);
+  --_icon-size: var(--al-button-sm-icon-size);
 }
 
 .al-btn--md {
@@ -708,6 +723,7 @@
   --_font-size: var(--al-button-md-font-size);
   --_line-height: var(--al-button-md-line-height);
   --_font-weight: var(--al-button-md-font-weight);
+  --_icon-size: var(--al-button-md-icon-size);
 }
 
 /* ---------------------------------------------------------------- estados */
@@ -742,13 +758,22 @@
 }
 
 /* ---------------------------------------------------------------- conteudo */
+/* A caixa do icone e a entrelinha do rotulo: 20 no sm, 24 no md. Por isso
+   ligar o icone nao muda a altura do botao - ele ocupa a mesma faixa vertical
+   que a linha de texto ja ocupava. */
 .al-btn__icon {
   display: block;
   flex: none;
-  width: var(--al-button-icon-size);
-  height: var(--al-button-icon-size);
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+
+  /* o .al-icon la dentro le a propria caixa desta variavel. Sem isso ele cairia
+     no degrau padrao dele (24) e brigaria com o span no sm. Quem manda no
+     tamanho e o botao, nao o icone. */
+  --al-icon-box: var(--_icon-size);
 }
 
+/* rede de seguranca para svg que nao seja do componente Icon */
 .al-btn__icon svg {
   display: block;
   width: 100%;
@@ -760,12 +785,14 @@
 }
 
 /* ---------------------------------------------------------------- carregando */
+/* mesma caixa do icone que ele substitui - se fosse menor, a largura do botao
+   pularia no instante em que o carregamento comeca */
 .al-btn__spinner {
   display: none;
   flex: none;
   box-sizing: border-box;
-  width: var(--al-button-icon-size);
-  height: var(--al-button-icon-size);
+  width: var(--_icon-size);
+  height: var(--_icon-size);
   border: var(--al-border-width-2) solid currentColor;
   border-top-color: transparent;
   border-radius: var(--al-radius-full);
@@ -1380,7 +1407,7 @@ footer code{background:none; padding:0}
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.3.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.3.1 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -1524,7 +1551,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.3.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.3.1 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -1554,7 +1581,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.3.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.3.1 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -2005,9 +2032,9 @@ footer code{background:none; padding:0}
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Como escrever</th><th>Caixa</th><th>Onde costuma aparecer</th></tr></thead>
     <tbody>
-      <tr><td class="tok">.al-icon--16</td><td class="num">16px</td><td>dentro do Button, em rótulo de 14</td></tr>
-      <tr><td class="tok">.al-icon--20</td><td class="num">20px</td><td>Icon Button, item de navegação</td></tr>
-      <tr><td class="tok">.al-icon (padrão)</td><td class="num">24px</td><td>ícone solto, ação de cabeçalho</td></tr>
+      <tr><td class="tok">.al-icon--16</td><td class="num">16px</td><td>rótulo auxiliar, texto de 12</td></tr>
+      <tr><td class="tok">.al-icon--20</td><td class="num">20px</td><td>Button <code>sm</code>, Icon Button, item de navegação</td></tr>
+      <tr><td class="tok">.al-icon (padrão)</td><td class="num">24px</td><td>Button <code>md</code>, ícone solto, ação de cabeçalho</td></tr>
       <tr><td class="tok">.al-icon--32</td><td class="num">32px</td><td>estado vazio, destaque</td></tr>
       <tr><td class="tok">style="--al-icon-box: 40px"</td><td class="num dim">qualquer</td><td>fora da escala, sem classe nova</td></tr>
     </tbody>
@@ -2079,9 +2106,9 @@ footer code{background:none; padding:0}
   consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
   normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
   <div class="stats">
-    <div class="stat hl"><b>124</b><span>verificações</span></div>
+    <div class="stat hl"><b>126</b><span>verificações</span></div>
     <div class="stat"><b>0</b><span>reprovas</span></div>
-    <div class="stat"><b>82</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>84</b><span>elementos com contrato conferido</span></div>
     <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
   </div>
 </section>
@@ -2156,7 +2183,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
   O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
-  <code>.al-icon</code>: 82 elementos nesta página, nenhum fora.
+  <code>.al-icon</code>: 84 elementos nesta página, nenhum fora.
   Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
   <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
   porque o rótulo nunca seria lido.</p>
@@ -2185,16 +2212,16 @@ footer code{background:none; padding:0}
     <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Avatar</span><span class="card-desc">Identidade visual de uma pessoa ou entidade, com recurso a iniciais.</span><span class="card-soon">Em breve</span></div></div>
   </div>
 </section></div></div>
-<div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">47 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
+<div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">48 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
 <section>
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage" id="stage">
       <button type="button" class="al-btn al-btn--primary al-btn--md" id="demo">
         <span class="al-btn__spinner" aria-hidden="true"></span>
-        <span class="al-btn__icon al-btn__icon--leading" aria-hidden="true" hidden><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 2v9m0 0 3.5-3.5M8 11 4.5 7.5M2.5 13.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="al-btn__icon al-btn__icon--leading" hidden><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 15V3" /><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /></svg></span>
         <span class="al-btn__label">Publicar</span>
-        <span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true" hidden><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="al-btn__icon al-btn__icon--trailing" hidden><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></span>
       </button>
     </div>
 
@@ -2520,7 +2547,7 @@ footer code{background:none; padding:0}
   <p style="margin-top:14px"><code>type="button"</code> não é opcional: dentro de <code>&lt;form&gt;</code>, o padrão do HTML é <code>submit</code>. E o rótulo visível é o nome acessível — não coloque um <code>aria-label</code> dizendo outra coisa, ou o comando de voz para de funcionar.</p>
 </section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.3.0</span>
+  <span><b>AL Design System</b> · v0.3.1</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -2729,11 +2756,15 @@ footer code{background:none; padding:0}
     var lines = ['&lt;button type="button" class="' + cls + '"' + attrs + '&gt;'];
     if (state === 'busy') lines.push('  &lt;span class="al-btn__spinner" aria-hidden="true"&gt;&lt;/span&gt;');
     if (icon === 'leading' && state !== 'busy')
-      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading" aria-hidden="true"&gt;&lt;svg …&gt;&lt;/svg&gt;&lt;/span&gt;');
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading"&gt;')
+      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- LEADING --&gt;&lt;/svg&gt;')
+      lines.push('  &lt;/span&gt;');
     lines.push('  &lt;span class="al-btn__label"&gt;' +
       (input.value || 'Button').replace(/&/g, '&amp;').replace(/</g, '&lt;') + '&lt;/span&gt;');
     if (icon === 'trailing')
-      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing" aria-hidden="true"&gt;&lt;svg …&gt;&lt;/svg&gt;&lt;/span&gt;');
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing"&gt;')
+      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- TRAILING --&gt;&lt;/svg&gt;')
+      lines.push('  &lt;/span&gt;');
     lines.push('&lt;/button&gt;');
     code.innerHTML = lines.join('\n');
   }
