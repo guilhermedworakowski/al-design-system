@@ -17,7 +17,10 @@ TOKENS = {
     # Terceira casa = release. Atualizacao numa fundacao ou num componente que
     # ja existe entra aqui; casa do meio fica para camada nova. 0.3.1: o Button
     # subiu o icone para a entrelinha do rotulo (0.1.1 -> 0.2.0).
-    "name": "AL Design System", "version": "0.3.1", "license": "MIT",
+    # 0.4.0: o Icon Button entrou inteiro - componente novo e camada nova, entao
+    # casa do meio. Trouxe collection propria no Figma, 42 tokens, CSS, dois
+    # portoes e pagina no site.
+    "name": "AL Design System", "version": "0.4.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },

@@ -1,0 +1,70 @@
+/* AL Design System - tokens do Icon Button
+ * GERADO por components/icon-button/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez.
+ *
+ * Cuidado: substituicao de custom property acontece no elemento onde ela e
+ * DECLARADA, nao no ponto de uso. Tematizar um container solto exige
+ * re-declarar esta camada dentro dele - ver site/site.py.
+ */
+
+:root {
+
+  /* primary */
+  --al-icon-button-primary-bg: var(--al-bg-brand);
+  --al-icon-button-primary-bg-hover: var(--al-bg-brand-hover);
+  --al-icon-button-primary-bg-active: var(--al-bg-brand-active);
+  --al-icon-button-primary-bg-disabled: var(--al-bg-disabled);
+  --al-icon-button-primary-ink: var(--al-text-on-brand);
+  --al-icon-button-primary-ink-disabled: var(--al-text-disabled);
+  --al-icon-button-primary-border: transparent;
+  --al-icon-button-primary-border-disabled: var(--al-border-subtle);
+  --al-icon-button-primary-ring: var(--al-focus-ring-default);
+
+  /* secondary */
+  --al-icon-button-secondary-bg: transparent;
+  --al-icon-button-secondary-bg-hover: var(--al-bg-hover);
+  --al-icon-button-secondary-bg-active: var(--al-bg-active);
+  --al-icon-button-secondary-bg-disabled: transparent;
+  --al-icon-button-secondary-ink: var(--al-text-primary);
+  --al-icon-button-secondary-ink-disabled: var(--al-text-disabled);
+  --al-icon-button-secondary-border: var(--al-border-strong);
+  --al-icon-button-secondary-border-disabled: var(--al-border-subtle);
+  --al-icon-button-secondary-ring: var(--al-focus-ring-default);
+
+  /* ghost */
+  --al-icon-button-ghost-bg: transparent;
+  --al-icon-button-ghost-bg-hover: var(--al-bg-hover);
+  --al-icon-button-ghost-bg-active: var(--al-bg-active);
+  --al-icon-button-ghost-bg-disabled: transparent;
+  --al-icon-button-ghost-ink: var(--al-text-primary);
+  --al-icon-button-ghost-ink-disabled: var(--al-text-disabled);
+  --al-icon-button-ghost-border: transparent;
+  --al-icon-button-ghost-border-disabled: transparent;
+  --al-icon-button-ghost-ring: var(--al-focus-ring-default);
+
+  /* danger */
+  --al-icon-button-danger-bg: var(--al-bg-danger);
+  --al-icon-button-danger-bg-hover: var(--al-bg-danger-hover);
+  --al-icon-button-danger-bg-active: var(--al-bg-danger-active);
+  --al-icon-button-danger-bg-disabled: var(--al-bg-disabled);
+  --al-icon-button-danger-ink: var(--al-text-on-solid);
+  --al-icon-button-danger-ink-disabled: var(--al-text-disabled);
+  --al-icon-button-danger-border: transparent;
+  --al-icon-button-danger-border-disabled: var(--al-border-subtle);
+  --al-icon-button-danger-ring: var(--al-focus-ring-error);
+
+  /* tamanho sm - caixa resultante: 36x36px */
+  --al-icon-button-sm-padding: var(--al-space-8);
+  --al-icon-button-sm-icon-size: var(--al-icon-size-20);
+
+  /* tamanho md - caixa resultante: 48x48px */
+  --al-icon-button-md-padding: var(--al-space-12);
+  --al-icon-button-md-icon-size: var(--al-icon-size-24);
+
+  /* compartilhado */
+  --al-icon-button-radius: var(--al-radius-full);
+  --al-icon-button-border-width: var(--al-border-width-1);
+}

@@ -1,0 +1,262 @@
+/* AL Design System - Icon Button
+ * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css, icon.css e
+ * al-icon-button-tokens.css, nesta ordem.
+ *
+ * Nenhum valor aqui e literal: toda cor, espaco e raio entra por
+ * var(--al-icon-button-*) ou por um token da Foundation. O check.py ao lado
+ * recusa o arquivo se algum escapar - com uma excecao nomeada, no fim.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   <button type="button"
+ *           class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"
+ *           aria-label="Buscar">
+ *     <span class="al-icon-btn__spinner" aria-hidden="true"></span>
+ *     <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *   </button>
+ *
+ *   variante : --primary | --secondary | --ghost | --danger
+ *   tamanho  : --sm | --md
+ *
+ *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *
+ * O NOME ACESSIVEL
+ *   aria-label e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
+ *   contrato deste componente que nao tem alternativa. Ele descreve a ACAO,
+ *   nao o desenho: "Buscar", nunca "Lupa".
+ *   O nome vai no BOTAO, nunca no svg. O svg e decorativo aqui pelo mesmo
+ *   motivo de sempre - aria-hidden tira do leitor de tela, focusable="false"
+ *   tira da ordem de tabulacao - e anunciar os dois seria ruido duplicado.
+ *
+ * O ICONE
+ *   O desenho vem do componente Icon da Fundacao. O tamanho nao e escolha de
+ *   quem consome: o botao impoe a caixa por --al-icon-box, e o .al-icon
+ *   obedece. Nao ponha .al-icon--20 aqui.
+ *
+ * A CAIXA
+ *   Nao ha width nem height. O botao e quadrado por consequencia: padding x2
+ *   mais a caixa do icone. sm = 8+20+8 = 36. md = 12+24+12 = 48 - as mesmas
+ *   alturas do Button, que e o que faz os dois conviverem numa toolbar.
+ *   Fixar a medida aqui seria cravar em dois lugares a mesma decisao.
+ *
+ * CARREGANDO
+ *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
+ *   o handler no JS. Nao use o atributo disabled: ele tira o botao da ordem de
+ *   foco no meio da interacao e nada e anunciado.
+ *
+ *   Diferenca em relacao ao Button, e ela importa: la o spinner toma o lugar do
+ *   icone da esquerda e a largura pode pular, por isso a orientacao e trocar o
+ *   rotulo junto ("Publicar" -> "Publicando…"). AQUI NAO EXISTE ROTULO PARA
+ *   TROCAR. O spinner ocupa exatamente a caixa do icone, entao a geometria nao
+ *   se mexe - mas em compensacao a regiao viva deixa de ser complemento e passa
+ *   a ser o UNICO canal que informa que algo comecou:
+ *
+ *     <p role="status" aria-live="polite" class="visually-hidden">Buscando…</p>
+ *
+ * DESABILITADO
+ *   Prefira aria-disabled="true" ao atributo disabled: o botao continua focavel
+ *   e um tooltip pode dizer o motivo. Com aria-disabled o clique AINDA dispara -
+ *   a trava e no JS.
+ *
+ * ALVO DE TOQUE
+ *   O sm tem 36x36. Passa o WCAG 2.5.8 (minimo 24) e fica abaixo dos 44
+ *   recomendados pelo Carbon. Decisao consciente: nao ha expansao de area por
+ *   pseudo-elemento. A regra de uso que decorre disso e nao usar sm em
+ *   interface primariamente de toque.
+ */
+
+/* ---------------------------------------------------------------- base */
+.al-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  margin: 0;
+  /* A borda entra no calculo da caixa: toda variante tem 1px, transparente ou
+     nao, entao descontar aqui mantem 36 e 48 exatos e impede o botao de pular
+     1px quando o disabled acrescenta borda visivel. */
+  padding: calc(var(--_pad) - var(--al-icon-button-border-width));
+  border: var(--al-icon-button-border-width) solid var(--_border);
+  border-radius: var(--al-icon-button-radius);
+
+  background-color: var(--_bg);
+  color: var(--_ink);
+
+  /* quem manda no tamanho do icone e o botao. O .al-icon la dentro le esta
+     propriedade herdada; sem ela cairia no degrau padrao dele (24) e brigaria
+     com a caixa no sm. */
+  --al-icon-box: var(--_icon-size);
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* ---------------------------------------------------------------- variantes */
+.al-icon-btn--primary {
+  --_bg: var(--al-icon-button-primary-bg);
+  --_bg-hover: var(--al-icon-button-primary-bg-hover);
+  --_bg-active: var(--al-icon-button-primary-bg-active);
+  --_bg-disabled: var(--al-icon-button-primary-bg-disabled);
+  --_ink: var(--al-icon-button-primary-ink);
+  --_ink-disabled: var(--al-icon-button-primary-ink-disabled);
+  --_border: var(--al-icon-button-primary-border);
+  --_border-disabled: var(--al-icon-button-primary-border-disabled);
+  --_ring: var(--al-icon-button-primary-ring);
+}
+
+.al-icon-btn--secondary {
+  --_bg: var(--al-icon-button-secondary-bg);
+  --_bg-hover: var(--al-icon-button-secondary-bg-hover);
+  --_bg-active: var(--al-icon-button-secondary-bg-active);
+  --_bg-disabled: var(--al-icon-button-secondary-bg-disabled);
+  --_ink: var(--al-icon-button-secondary-ink);
+  --_ink-disabled: var(--al-icon-button-secondary-ink-disabled);
+  --_border: var(--al-icon-button-secondary-border);
+  --_border-disabled: var(--al-icon-button-secondary-border-disabled);
+  --_ring: var(--al-icon-button-secondary-ring);
+}
+
+.al-icon-btn--ghost {
+  --_bg: var(--al-icon-button-ghost-bg);
+  --_bg-hover: var(--al-icon-button-ghost-bg-hover);
+  --_bg-active: var(--al-icon-button-ghost-bg-active);
+  --_bg-disabled: var(--al-icon-button-ghost-bg-disabled);
+  --_ink: var(--al-icon-button-ghost-ink);
+  --_ink-disabled: var(--al-icon-button-ghost-ink-disabled);
+  --_border: var(--al-icon-button-ghost-border);
+  --_border-disabled: var(--al-icon-button-ghost-border-disabled);
+  --_ring: var(--al-icon-button-ghost-ring);
+}
+
+.al-icon-btn--danger {
+  --_bg: var(--al-icon-button-danger-bg);
+  --_bg-hover: var(--al-icon-button-danger-bg-hover);
+  --_bg-active: var(--al-icon-button-danger-bg-active);
+  --_bg-disabled: var(--al-icon-button-danger-bg-disabled);
+  --_ink: var(--al-icon-button-danger-ink);
+  --_ink-disabled: var(--al-icon-button-danger-ink-disabled);
+  --_border: var(--al-icon-button-danger-border);
+  --_border-disabled: var(--al-icon-button-danger-border-disabled);
+  --_ring: var(--al-icon-button-danger-ring);
+}
+
+/* ---------------------------------------------------------------- tamanhos */
+/* Um padding so por tamanho, nos quatro lados - o botao e quadrado. E por isso
+   que aqui nao ha padding-x e padding-y como no Button. */
+.al-icon-btn--sm {
+  --_pad: var(--al-icon-button-sm-padding);
+  --_icon-size: var(--al-icon-button-sm-icon-size);
+}
+
+.al-icon-btn--md {
+  --_pad: var(--al-icon-button-md-padding);
+  --_icon-size: var(--al-icon-button-md-icon-size);
+}
+
+/* ---------------------------------------------------------------- estados */
+/* hover e pressed nunca valem quando o botao esta fora de acao */
+.al-icon-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-hover);
+}
+
+.al-icon-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-active);
+}
+
+/* :focus-visible, nao :focus - o anel aparece no teclado, nao no clique.
+   O anel e sombra, entao nao empurra layout e acompanha o raio do circulo. */
+.al-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--_ring);
+}
+
+.al-icon-btn:disabled,
+.al-icon-btn[aria-disabled="true"] {
+  background-color: var(--_bg-disabled);
+  color: var(--_ink-disabled);
+  border-color: var(--_border-disabled);
+  cursor: not-allowed;
+}
+
+/* o anel continua valendo em cima do desabilitado: aria-disabled permanece
+   focavel de proposito, e quem chega nele de teclado precisa ver onde esta */
+.al-icon-btn[aria-disabled="true"]:focus-visible {
+  box-shadow: var(--_ring);
+}
+
+/* ---------------------------------------------------------------- conteudo */
+/* rede de seguranca para svg que nao seja do componente Icon */
+.al-icon-btn > svg {
+  display: block;
+  flex: none;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+}
+
+/* ---------------------------------------------------------------- carregando */
+/* Mesma caixa do icone que ele substitui. Aqui isso e mais do que higiene de
+   layout: como nao ha rotulo, o spinner e a unica coisa visivel no botao
+   durante o carregamento - se ele fosse menor, o desenho encolheria no
+   instante em que a acao comeca. */
+.al-icon-btn__spinner {
+  display: none;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  border: var(--al-border-width-2) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--al-radius-full);
+  animation: al-icon-btn-spin 700ms linear infinite;
+}
+
+.al-icon-btn[aria-busy="true"] .al-icon-btn__spinner {
+  display: block;
+}
+
+/* o spinner ocupa o lugar do unico icone - a caixa e a mesma, nada se move */
+.al-icon-btn[aria-busy="true"] > svg {
+  display: none;
+}
+
+@keyframes al-icon-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------------- ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-icon-btn {
+    transition: none;
+  }
+  /* o spinner nao para: sem rotulo, ele e a unica pista visual de que algo
+     esta acontecendo. Desacelera ate deixar de ser movimento agressivo. */
+  .al-icon-btn__spinner {
+    animation-duration: 2400ms;
+  }
+}
+
+/* No alto contraste do sistema a sombra e descartada - o anel some junto.
+   Aqui o foco volta como outline nativo, que o modo respeita. */
+@media (forced-colors: active) {
+  .al-icon-btn {
+    border-color: currentColor;
+  }
+  .al-icon-btn:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+  .al-icon-btn:disabled,
+  .al-icon-btn[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+}
