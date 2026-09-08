@@ -46,6 +46,11 @@ ICON_CSS = open(os.path.join(ROOT, 'components', 'icon', 'icon.css')).read()
 ICON_MANIFEST = json.load(open(os.path.join(ROOT, 'components', 'icon', 'icons.json')))
 ICON_TOK = json.load(open(os.path.join(ROOT, 'components', 'icon', 'tokens.json')))
 ICON_A11Y = json.load(open(os.path.join(ROOT, 'components', 'icon', 'a11y.json')))
+IB = json.load(open(os.path.join(ROOT, 'components', 'icon-button', 'tokens.json')))
+IB_TOKENS = open(os.path.join(ROOT, 'components', 'icon-button',
+                              'al-icon-button-tokens.css')).read()
+IB_CSS = open(os.path.join(ROOT, 'components', 'icon-button', 'icon-button.css')).read()
+IB_A11Y = json.load(open(os.path.join(ROOT, 'components', 'icon-button', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -62,6 +67,7 @@ N_EXC = sum(1 for r in T['contrastReport'] if r.get('exception'))
 N_AA = N_PAIRS - N_EXC
 N_FAIL = sum(1 for r in T['contrastReport'] if not r.get('pass', True))
 N_BTN_TOKENS = len(BTN['alias'])
+N_IB_TOKENS = len(IB['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -100,9 +106,10 @@ def scope_themes(found_css, *token_blocks):
     return css
 
 
-CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS)
+CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
-            + '\n' + ICON_TOKENS + '\n' + ICON_CSS)
+            + '\n' + ICON_TOKENS + '\n' + ICON_CSS
+            + '\n' + IB_TOKENS + '\n' + IB_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -859,6 +866,14 @@ th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
 .al-btn.is-active{background-color:var(--_bg-active)}
 .al-btn.is-focus{box-shadow:var(--_ring); outline:none}
 
+/* O mesmo andaime para o Icon Button. Estas três pseudo-classes só acendem com
+   ponteiro ou teclado, e a folha de espécimes precisa mostrar os seis estados
+   ao mesmo tempo. Cada linha repete a declaração do icon-button.css - nenhuma
+   inventa valor. */
+.al-icon-btn.is-hover{background-color:var(--_bg-hover)}
+.al-icon-btn.is-active{background-color:var(--_bg-active)}
+.al-icon-btn.is-focus{box-shadow:var(--_ring); outline:none}
+
 footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--al-border-subtle);
   color:var(--al-text-secondary); font-size:12.5px; display:flex; flex-wrap:wrap; gap:8px 20px}
 footer code{background:none; padding:0}
@@ -929,6 +944,16 @@ TH_ESPACO = ('<div class="th-bars">'
              + '</div>')
 TH_BUTTON = ('<button type="button" class="al-btn al-btn--primary al-btn--sm" tabindex="-1">'
              '<span class="al-btn__label">Publicar</span></button>')
+TH_ICONBUTTON = ('<div class="th-icons">'
+                 + ''.join(
+                     f'<button type="button" class="al-icon-btn al-icon-btn--{v} al-icon-btn--sm"'
+                     f' aria-label="{lab}" tabindex="-1">'
+                     f'<span class="al-icon-btn__spinner" aria-hidden="true"></span>'
+                     f'{al_icon(ic)}</button>'
+                     for v, ic, lab in (('primary', 'search', 'Buscar'),
+                                        ('secondary', 'pencil', 'Editar'),
+                                        ('ghost', 'ellipsis-vertical', 'Mais opções')))
+                 + '</div>')
 TH_ICON = ('<div class="th-icons">'
            + ''.join(al_icon(n) for n in
                      ['search', 'heart', 'settings', 'bell', 'star', 'trash'])
@@ -1784,11 +1809,491 @@ LANDING_FUNDACAO = f'''
   </div>
 </section>'''
 
+# ═════════════════════════════════════════════════════════ ICON BUTTON · abas
+# Reaproveita VARIANTS e STATES do Button de propósito: o recorte é o mesmo, e
+# duplicar as listas seria abrir espaço para elas divergirem sem ninguém ver.
+IB_SIZES = [('sm', 'sm · 36px'), ('md', 'md · 48px')]
+IB_ICON_CHOICES = [('search', 'Buscar'), ('x', 'Fechar'),
+                   ('trash', 'Excluir'), ('ellipsis-vertical', 'Mais opções')]
+IB_ROLES = ['bg', 'bg-hover', 'bg-active', 'bg-disabled', 'ink',
+            'ink-disabled', 'border', 'border-disabled', 'ring']
+
+
+def ib(variant, size, label, name, extra='', cls=''):
+    """Um Icon Button real. O aria-label nunca é opcional - nem numa vitrine."""
+    return (f'<button type="button" class="al-icon-btn al-icon-btn--{variant} '
+            f'al-icon-btn--{size}{cls}" aria-label="{label}" tabindex="-1"{extra}>'
+            f'<span class="al-icon-btn__spinner" aria-hidden="true"></span>'
+            f'{al_icon(name)}</button>')
+
+
+def ib_token_rows():
+    rows = []
+    for v, _ in VARIANTS:
+        for role in IB_ROLES:
+            name = f'icon-button-{v}-{role}'
+            ref = IB['alias'][name]
+            res = IB['resolved'][name]
+            lt = res['light'] if isinstance(res, dict) else res
+            sw = (f'<span class="chip sm" style="background:{lt}"></span>'
+                  if isinstance(lt, str) and lt.startswith('#') else '')
+            rows.append(f'<tr data-variant="{v}"><td class="tok">--al-{name}</td>'
+                        f'<td class="tok dim">{"transparente" if ref == "transparent" else ref}</td>'
+                        f'<td class="tok">{sw}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+def ib_geo_rows():
+    rows = []
+    for s, _ in IB_SIZES:
+        for role in ['padding', 'icon-size']:
+            name = f'icon-button-{s}-{role}'
+            rows.append(f'<tr><td class="name">{s}</td><td class="tok">--al-{name}</td>'
+                        f'<td class="tok dim">{IB["alias"][name]}</td>'
+                        f'<td class="num">{IB["resolved"][name]}</td></tr>')
+    for role in ['radius', 'border-width']:
+        name = f'icon-button-{role}'
+        rows.append(f'<tr><td class="name">ambos</td><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{IB["alias"][name]}</td>'
+                    f'<td class="num">{IB["resolved"][name]}</td></tr>')
+    return '\n'.join(rows)
+
+
+def ib_specimen_grid():
+    out = []
+    for v, vlabel in VARIANTS:
+        out.append(f'<div class="spec-row"><div class="spec-name">{vlabel}</div>'
+                   f'<div class="spec-cells">')
+        for state, slabel in STATES:
+            cls, attrs = '', ''
+            if state in ('hover', 'active', 'focus'):
+                cls = f' is-{state}'
+            elif state == 'disabled':
+                attrs = ' aria-disabled="true"'
+            elif state == 'busy':
+                attrs = ' aria-busy="true" aria-disabled="true"'
+            out.append(f'<div class="spec-cell"><span class="spec-label">{slabel}</span>'
+                       + ib(v, 'md', f'{vlabel} {slabel}', 'search', attrs, cls) + '</div>')
+        out.append('</div></div>')
+    return '\n'.join(out)
+
+
+def ib_a11y_rows(group):
+    out = []
+    for r in IB_A11Y['rows']:
+        if r['group'] != group:
+            continue
+        verdict = ('<span class="exc">isento</span>' if r['exempt']
+                   else '<span class="pass">passa</span>')
+        chips = ''
+        if str(r['fg']).startswith('#'):
+            chips = (f'<span class="chip sm" style="background:{r["fg"]}"></span>'
+                     f'<span class="chip sm" style="background:{r["bg"]}"></span>')
+        out.append(
+            f'<tr><td class="tok dim">{r["theme"]}</td><td class="name">{r["label"]}</td>'
+            f'<td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["fg"]} / {r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+N_IB_MEDIDAS = len([r for r in IB_A11Y['rows'] if not r['exempt']])
+
+IB_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="ib-stage">
+      <button type="button" class="al-icon-btn al-icon-btn--primary al-icon-btn--md"
+              id="ib-demo" aria-label="Buscar">
+        <span class="al-icon-btn__spinner" aria-hidden="true"></span>
+        {al_icon('search')}
+      </button>
+    </div>
+
+    <div class="controls" id="ib-controls">
+      <div class="ctl"><span class="ctl-name">Variante</span>{seg('ibvariant', VARIANTS, 'primary')}</div>
+      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('ibsize', IB_SIZES, 'md')}</div>
+      <div class="ctl"><span class="ctl-name">Estado</span>{seg('ibstate', STATES, 'default')}</div>
+      <div class="ctl"><span class="ctl-name">Ícone</span>{seg('ibicon', IB_ICON_CHOICES, 'search')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('ibtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="ib-copy">Copiar</button></div>
+      <pre><code id="ib-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O botão acima é o componente real: esta página carrega o mesmo
+    <code>icon-button.css</code> que vai para produção. Hover, pressed e focus são forçados por
+    classe, porque não dá para simular ponteiro — as declarações são as mesmas. Repare que o
+    <code>aria-label</code> acompanha o ícone escolhido: sem ele, o botão fica mudo.
+  </p>
+</section>
+
+<section>
+  <h2>O que muda em relação ao Button</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Mesma barra, mesma altura</span>
+      <div class="stage2">
+        {ib('ghost', 'md', 'Editar', 'pencil')}
+        {ib('ghost', 'md', 'Duplicar', 'copy')}
+        {ib('ghost', 'md', 'Excluir', 'trash')}
+        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
+      </div>
+      <p class="cap">48px nos dois. É o que faz Icon Button e Button conviverem numa toolbar sem
+      desalinhar — e a razão de o <code>md</code> usar ícone 24 com padding 12.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">O carregando não move nada</span>
+      <div class="stage2">
+        {ib('primary', 'md', 'Salvar', 'refresh-cw')}
+        {ib('primary', 'md', 'Salvando', 'refresh-cw', ' aria-busy="true" aria-disabled="true"')}
+      </div>
+      <p class="cap">O spinner ocupa a caixa exata do ícone. No Button a largura pode pular e o
+      rótulo muda junto; aqui não há rótulo para trocar.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As quatro variantes</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Barra de ferramentas</span>
+      <div class="stage2">
+        {ib('ghost', 'md', 'Buscar', 'search')}
+        {ib('ghost', 'md', 'Filtrar', 'filter')}
+        {ib('ghost', 'md', 'Mais opções', 'ellipsis-vertical')}
+      </div>
+      <p class="cap">Ghost é o padrão em grupo denso: uma variante só para o grupo inteiro.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Ação destrutiva em contexto</span>
+      <div class="stage2">
+        {ib('secondary', 'md', 'Editar linha', 'pencil')}
+        {ib('danger', 'md', 'Excluir linha', 'trash')}
+      </div>
+      <p class="cap">Danger só quando a linha ou o card ao redor já diz <b>o quê</b> está sendo
+      excluído — o ícone sozinho não identifica o alvo.</p>
+    </div>
+  </div>
+</section>'''
+
+IB_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Contêiner</b><span>Círculo. Raio total, borda de 1px sempre presente — transparente quando a variante não tem borda.</span></div>
+    <div><b>Spinner</b><span>A mesma caixa do ícone, {IB['resolved']['icon-button-sm-icon-size']}px no <code>sm</code> e {IB['resolved']['icon-button-md-icon-size']}px no <code>md</code>. Entra com <code>aria-busy</code>.</span></div>
+    <div><b>Ícone</b><span>Obrigatório e único. Sempre <code>aria-hidden</code>: quem carrega o sentido é o nome acessível.</span></div>
+    <div><b>Nome acessível</b><span><code>aria-label</code> no botão. Não é opcional — é o contrato do componente.</span></div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Não há rótulo, e é isso que muda tudo</b>
+    O Button tem cinco partes; este tem três. A que falta — o rótulo — é justamente a que
+    carregava o sentido, o nome acessível e o piso de contraste de 4,5:1. Sem ela, esses três
+    papéis se mudam de lugar: sentido vai para o ícone, nome vai para o <code>aria-label</code>,
+    e o piso cai para 3:1 porque o portador deixou de ser texto.
+  </div>
+</section>
+
+<section>
+  <h2>Todos os estados</h2>
+  {ib_specimen_grid()}
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+      <tbody>{ib_geo_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Não existe token de caixa</b>
+    A caixa é consequência: <code>padding</code> × 2 mais o ícone. Dá
+    {IB['derived']['box']['sm']}×{IB['derived']['box']['sm']}px no <code>sm</code> e
+    {IB['derived']['box']['md']}×{IB['derived']['box']['md']}px no <code>md</code> — exatamente as
+    alturas do Button. E é um padding só por tamanho, nos quatro lados: o botão é quadrado, então
+    separar <code>padding-x</code> de <code>padding-y</code> fixaria a mesma decisão duas vezes.
+  </div>
+</section>
+
+<section>
+  <h2>Tokens de cor</h2>
+  <div class="ctl" style="margin-bottom:14px"><span class="ctl-name">Filtrar</span>
+    {seg('ibtokfilter', [('all', 'Todas')] + VARIANTS, 'all')}</div>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Icon Button</th><th>Aponta para</th><th>Resolve em (claro)</th></tr></thead>
+      <tbody id="ibtokbody">{ib_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>{N_IB_TOKENS} tokens no código, 28 variáveis no Figma</b>
+    A diferença não é esquecimento. As oito tintas vêm da collection <code>3. Icon ink</code>, que
+    resolve por <b>modo</b> — um mecanismo que o CSS não tem, e por isso no código cada tinta
+    precisa ser uma custom property concreta. Os quatro anéis são <i>effect styles</i>, porque
+    sombra não pode ser variável no Figma. E os dois <code>icon-size</code> ligam direto à
+    Fundação, como no Button.
+  </div>
+</section>'''
+
+IB_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="dd">
+    <div class="cell do"><span class="lab">Faça</span>
+      <div class="stage2">
+        {ib('ghost', 'md', 'Buscar', 'search')}
+        {ib('ghost', 'md', 'Fechar', 'x')}
+        {ib('ghost', 'md', 'Mais opções', 'ellipsis-vertical')}
+      </div>
+      <p class="cap">Buscar, fechar, mais opções — reconhecíveis <b>sem legenda</b>.</p>
+    </div>
+    <div class="cell no"><span class="lab">Não faça</span>
+      <div class="stage2">
+        {ib('ghost', 'md', 'Filtrar por status', 'filter')}
+        {ib('ghost', 'md', 'Exportar relatório', 'share-2')}
+        {ib('ghost', 'md', 'Arquivar conversa', 'bookmark')}
+      </div>
+      <p class="cap">Filtrar, exportar, arquivar: o desenho não resolve sozinho. Estes pedem Button
+      com rótulo.</p>
+    </div>
+  </div>
+  <div class="rule"><div class="rn">01</div><div>
+    <h3>Só para ações universalmente reconhecíveis</h3>
+    <p>Aqui o ícone é o único portador do sentido: se ele não for reconhecido, a ação não fica
+    difícil — ela some. A NN/G é direta em dizer que ícones raramente substituem rótulos, e que o
+    usuário só internaliza o desenho depois de uso repetido.</p>
+  </div></div>
+  <div class="rule"><div class="rn">02</div><div>
+    <h3>Nunca na ação principal da tela</h3>
+    <p>Ação primária pede Button com rótulo visível. O Polaris manda dar texto sempre que
+    possível e tratar o rótulo acessível como recurso, não como padrão.</p>
+  </div></div>
+  <div class="rule"><div class="rn">03</div><div>
+    <h3>Não use quando a ação depende do rótulo para identificar o alvo</h3>
+    <p>“Excluir” só funciona quando a linha ou o card ao redor já diz <i>o quê</i>. Sem isso o
+    <code>aria-label</code> teria que carregar o alvo inteiro — “Excluir pedido 4471” — e passa do
+    tamanho que um tooltip comporta, na definição do Spectrum.</p>
+  </div></div>
+</section>
+
+<section>
+  <h2>Hierarquia</h2>
+  <div class="dd">
+    <div class="cell do"><span class="lab">Faça</span>
+      <div class="stage2">
+        {ib('ghost', 'sm', 'Editar', 'pencil')}
+        {ib('ghost', 'sm', 'Duplicar', 'copy')}
+        {ib('ghost', 'sm', 'Excluir', 'trash')}
+      </div>
+      <p class="cap">Uma variante para o grupo inteiro.</p>
+    </div>
+    <div class="cell no"><span class="lab">Não faça</span>
+      <div class="stage2">
+        {ib('primary', 'sm', 'Editar', 'pencil')}
+        {ib('secondary', 'sm', 'Duplicar', 'copy')}
+        {ib('danger', 'sm', 'Excluir', 'trash')}
+      </div>
+      <p class="cap">Três variantes sugerem uma hierarquia que não existe entre três ações irmãs.</p>
+    </div>
+  </div>
+  <div class="rule"><div class="rn">04</div><div>
+    <h3>Um grupo, uma variante</h3>
+    <p>A diferença entre os botões vem da posição e do ícone, não da variante. É assim que o
+    Primer monta seus grupos de icon button.</p>
+  </div></div>
+  <div class="rule"><div class="rn">05</div><div>
+    <h3>No máximo um Primary por região</h3>
+    <p>A conta é por região, não por componente: um Primary entre Icon Buttons e Buttons somados.</p>
+  </div></div>
+</section>
+
+<section>
+  <h2>O nome acessível</h2>
+  <div class="dd">
+    <div class="cell do"><span class="lab">Faça</span>
+      <div class="stage2">{ib('secondary', 'md', 'Buscar', 'search')}</div>
+      <p class="cap"><code>aria-label="Buscar"</code> — a <b>ação</b>.</p>
+    </div>
+    <div class="cell no"><span class="lab">Não faça</span>
+      <div class="stage2">{ib('secondary', 'md', 'Lupa', 'search')}</div>
+      <p class="cap"><code>aria-label="Lupa"</code> — o desenho. Quem ouve precisa saber o que vai
+      acontecer, não o que está na tela.</p>
+    </div>
+  </div>
+  <div class="rule"><div class="rn">06</div><div>
+    <h3>O rótulo descreve a ação, nunca o ícone</h3>
+    <p>“Buscar”, nunca “Lupa”. “Fechar”, nunca “X”. A formulação é literalmente a do Primer.</p>
+  </div></div>
+  <div class="rule"><div class="rn">07</div><div>
+    <h3>Tooltip com o mesmo texto, quando existir</h3>
+    <p>Idêntico, não parecido: divergência entre rótulo visível e programático quebra comando de
+    voz — quem fala “clicar em Buscar” não ativa um botão rotulado de outro jeito. O Polaris é
+    explícito nisso.</p>
+  </div></div>
+  <div class="rule"><div class="rn">08</div><div>
+    <h3>Divergência consciente: o tooltip ainda não existe aqui</h3>
+    <p>Primer sempre renderiza um, Polaris diz que deve ser fornecido, e o Spectrum define o
+    tooltip justamente como o lugar de mostrar o rótulo de um botão só de ícone. Como o
+    componente ainda não existe no AL, o <code>aria-label</code> vai sozinho: <b>ele atende o
+    leitor de tela, mas não o usuário vidente que não reconhece o ícone</b>. É por isso que a
+    regra 01 é restritiva — enquanto não há tooltip, o reconhecimento é a única rede.</p>
+  </div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>O quê</th><th>Situação</th><th>Se aparecer demanda</th></tr></thead>
+      <tbody>
+        <tr><td class="name">Tamanho lg</td><td>Não existe</td><td>Fechado em dois tamanhos, como o Button.</td></tr>
+        <tr><td class="name">Danger contornado</td><td>Não existe</td><td>Mesma ausência deliberada do Button.</td></tr>
+        <tr><td class="name">Selecionado / toggle</td><td>Não existe</td><td>Componente novo, não variante: precisa de <code>aria-pressed</code> e contrato de estado próprio. Primer e Spectrum tratam como separado.</td></tr>
+        <tr><td class="name">Com rótulo visível</td><td>Set irmão</td><td><code>Button</code>, que já resolve ícone à esquerda e à direita.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>'''
+
+IB_A11Y = f'''
+<section>
+  <h2>O piso é 3:1, não 4,5:1</h2>
+  <p>Esta é a única diferença conceitual entre o Icon Button e o Button, e ela explica quase tudo
+  nesta aba. Lá o portador do sentido é um rótulo de <b>texto</b>: critério 1.4.3, piso 4,5:1.
+  Aqui é um <b>ícone</b>, conteúdo não-textual: critério 1.4.11, piso 3:1.</p>
+  <p style="margin-top:12px">A consequência é concreta. Branco sobre a marca dá 3,34:1 — no Button
+  isso é uma <b>exceção de marca nomeada</b>; aqui é <b>aprovação</b>. Por isso este componente
+  tem zero exceções de marca, e o laranja do Primary ficou como está.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_IB_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{IB_A11Y['fails']}</b><span>reprovas</span></div>
+    <div class="stat"><b>0</b><span>exceções de marca</span></div>
+    <div class="stat"><b>{IB_A11Y['floor']}:1</b><span>piso não-textual</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tinta do ícone contra o fundo efetivo</h2>
+  <p>Variante sem preenchimento encosta na <b>tela</b>, nunca em “transparente” — por isso Ghost e
+  Secondary são medidos contra o fundo que aparece por trás deles. O <code>disabled</code> entra
+  medido e isento: o WCAG dispensa componente inativo, e subir esse contraste faria o desabilitado
+  parecer clicável.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{ib_a11y_rows('tinta')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O limite do componente</h2>
+  <p>No Button, a variante sem preenchimento e sem borda não precisa de limite próprio: ela é
+  texto, e vale como texto. <b>Aqui essa frase seria falsa</b> — não existe texto. No Ghost, o
+  próprio ícone é o limite visível do componente, e é ele que o portão mede contra a tela.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Variante</th><th></th><th>Frente / tela</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{ib_a11y_rows('limite')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Foco</h2>
+  <p>O anel tem duas camadas: 2px de respiro na cor do fundo e 2px na cor do foco. O respiro é o
+  que impede o anel de encostar no preenchimento — sem ele, laranja sobre laranja daria 1,00:1.
+  Danger usa o anel de erro, para o foco não brigar com o vermelho.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel padrão</span>
+      <div class="stage2">
+        {ib('primary', 'md', 'Buscar', 'search', '', ' is-focus')}
+        {ib('secondary', 'md', 'Editar', 'pencil', '', ' is-focus')}
+        {ib('ghost', 'md', 'Mais opções', 'ellipsis-vertical', '', ' is-focus')}
+      </div>
+      <p class="cap">Aparece no <code>:focus-visible</code> — teclado sim, clique de mouse não.</p>
+    </div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel de erro</span>
+      <div class="stage2">{ib('danger', 'md', 'Excluir', 'trash', '', ' is-focus')}</div>
+      <p class="cap">Danger aponta para <code>focusRing.error</code>, não para o padrão.</p>
+    </div>
+  </div>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Variante</th><th></th><th>Anel / tela</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{ib_a11y_rows('foco')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Estados que enganam</h2>
+  <div class="rule"><div class="rn">09</div><div>
+    <h3>Carregando: <code>aria-busy</code>, não <code>disabled</code></h3>
+    <p>Marque <code>aria-busy="true"</code> e <code>aria-disabled="true"</code>, e trave o handler
+    no JS. O atributo <code>disabled</code> tiraria o botão da ordem de foco no meio da interação,
+    sem anunciar nada.</p>
+  </div></div>
+  <div class="rule"><div class="rn">10</div><div>
+    <h3>O progresso se anuncia fora do botão</h3>
+    <p>No Button, trocar o rótulo de “Publicar” para “Publicando…” já dá o aviso.
+    <b>Aqui não existe rótulo para trocar</b>, então a região viva
+    (<code>role="status"</code>, <code>aria-live="polite"</code>) deixa de ser complemento e passa
+    a ser o único canal que informa que algo começou.</p>
+  </div></div>
+  <div class="rule"><div class="rn">11</div><div>
+    <h3>O contraste baixo do desabilitado é intencional</h3>
+    <p>O WCAG isenta componente inativo do 1.4.3 — não é reprova, é sinal. Subir esse contraste
+    faz o desabilitado parecer clicável.</p>
+  </div></div>
+  <div class="rule"><div class="rn">12</div><div>
+    <h3>Alvo de toque</h3>
+    <p>Os dois passam o mínimo do WCAG 2.5.8 (24×24px):
+    {IB_A11Y['targets'][0]['box']}px no <code>sm</code> e {IB_A11Y['targets'][1]['box']}px no
+    <code>md</code>. Só o <code>md</code> alcança os 44 que o Carbon recomenda para alvo de ícone —
+    por decisão registrada não há expansão de área por CSS, e a contrapartida é a regra de uso: o
+    <code>sm</code> só entra em densidade alta, nunca em interface primariamente de toque.</p>
+  </div></div>
+  <div class="rule"><div class="rn">13</div><div>
+    <h3>Alto contraste do sistema</h3>
+    <p>O modo de alto contraste descarta <code>box-shadow</code> — o anel sumiria junto. O
+    componente devolve o foco como <code>outline</code> nativo dentro de
+    <code>@media (forced-colors: active)</code>.</p>
+  </div></div>
+</section>
+
+<section>
+  <h2>Contrato de marcação, medido</h2>
+  <p>O <code>aria-label</code> não vive no CSS, então o portão de literal não alcança. Ele vive na
+  marcação — e é aqui que o <code>a11y.py</code> o cobra, lendo o HTML que este site emite:
+  <b>{IB_A11Y['markupChecked'] or 0} elementos</b> <code>.al-icon-btn</code> nesta página, nenhum
+  fora do contrato. Ele reprova quatro coisas: botão sem <code>aria-label</code>,
+  <code>aria-hidden</code> no próprio botão, <code>aria-busy</code> sem
+  <code>aria-disabled</code>, e o atributo <code>disabled</code> no lugar de
+  <code>aria-disabled</code>.</p>
+  <pre style="margin-top:20px"><code>&lt;button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"
+        aria-label="Buscar"&gt;
+  &lt;span class="al-icon-btn__spinner" aria-hidden="true"&gt;&lt;/span&gt;
+  &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;…&lt;/svg&gt;
+&lt;/button&gt;</code></pre>
+  <div class="note" style="margin-top:20px">
+    <b>Os dois atributos do svg fazem coisas diferentes</b>
+    <p><code>aria-hidden</code> tira o ícone do leitor de tela; <code>focusable="false"</code> tira
+    da ordem de tabulação, porque SVG inline entra nela sozinho em alguns navegadores. O nome vai
+    no <b>botão</b>, nunca no svg — anunciar os dois seria ruído duplicado.</p>
+  </div>
+</section>'''
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
   <div class="cards">
     {card('button', 'Button', 'Quatro variantes, dois tamanhos, cinco estados — com playground que instancia o CSS real.', TH_BUTTON)}
+    {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_ICONBUTTON)}
   </div>
 </section>
 
@@ -1797,7 +2302,6 @@ LANDING_COMPONENTES = f'''
   <p>A ordem não é negociável enquanto o pipeline for de um componente por vez. Cada um destes
   começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
   <div class="cards" style="margin-top:18px">
-    {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_SOON, soon=True)}
     {card('badge', 'Badge / Tag', 'Rótulo curto de status ou contagem, sem ação associada.', TH_SOON, soon=True)}
     {card('avatar', 'Avatar', 'Identidade visual de uma pessoa ou entidade, com recurso a iniciais.', TH_SOON, soon=True)}
   </div>
@@ -1865,7 +2369,7 @@ PAGES = [
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [('1 publicado', True), ('4 no Tier 1', False), ('8 etapas por componente', False)],
+        [('2 publicados', True), ('4 no Tier 1', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
@@ -1876,6 +2380,15 @@ PAGES = [
          ('0 valores soltos', False)],
         [('overview', 'Visão geral', BTN_OVERVIEW), ('specs', 'Especificações', BTN_SPECS),
          ('guide', 'Diretrizes', BTN_GUIDE), ('a11y', 'Acessibilidade', BTN_A11Y)])),
+
+    ('icon-button', 'Componentes', page(
+        'icon-button', 'Componentes', 'Icon Button',
+        'A mesma ação do Button, sem rótulo visível. O ícone passa a ser o único portador do '
+        'sentido — e é daí que vêm o nome acessível obrigatório e o piso de contraste de 3:1.',
+        [('Estável', True), ('40 variantes no Figma', False), (f'{N_IB_TOKENS} tokens', False),
+         ('0 exceções de marca', False)],
+        [('overview', 'Visão geral', IB_OVERVIEW), ('specs', 'Especificações', IB_SPECS),
+         ('guide', 'Diretrizes', IB_GUIDE), ('a11y', 'Acessibilidade', IB_A11Y)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -1905,7 +2418,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <span class="nav-chev" aria-hidden="true">{CARET}</span></a>
       <div class="nav-sub" id="sub-componentes" hidden>
         <a href="#/button" data-page="button">Button</a>
-        <a class="soon" aria-disabled="true">Icon Button</a>
+        <a href="#/icon-button" data-page="icon-button">Icon Button</a>
         <a class="soon" aria-disabled="true">Badge / Tag</a>
         <a class="soon" aria-disabled="true">Avatar</a>
       </div>
@@ -2267,6 +2780,121 @@ JS_ICON = r"""
 """
 
 
+# Os rótulos saem da mesma lista que monta os controles - uma fonte só, senão o
+# aria-label do playground e o texto do botão podem divergir sem ninguém ver.
+JS_IB_DATA = ('var ROTULOS = '
+              + json.dumps([[v, l] for v, l in IB_ICON_CHOICES], ensure_ascii=False) + ';\n')
+
+JS_ICONBUTTON = r"""
+(function () {
+  // ── playground do Icon Button ──
+  var demo = document.getElementById('ib-demo');
+  if (!demo) return;
+
+  var stage = document.getElementById('ib-stage');
+  var code = document.getElementById('ib-code');
+
+  // Os desenhos saem da própria página: o playground clona o svg que já está
+  // nas Diretrizes, em vez de carregar uma segunda cópia de cada ícone.
+  var SVG = {};
+  ROTULOS.forEach(function (par) {
+    var achado = document.querySelector('.al-icon-btn[aria-label="' + par[1] + '"] svg');
+    if (achado) SVG[par[0]] = achado.outerHTML;
+  });
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function rotulo(nome) {
+    for (var i = 0; i < ROTULOS.length; i++) {
+      if (ROTULOS[i][0] === nome) return ROTULOS[i][1];
+    }
+    return nome;
+  }
+
+  function render() {
+    var variant = pick('ibvariant'), size = pick('ibsize');
+    var state = pick('ibstate'), icone = pick('ibicon'), theme = pick('ibtheme');
+    var rot = rotulo(icone);
+
+    demo.className = 'al-icon-btn al-icon-btn--' + variant + ' al-icon-btn--' + size
+      + (state === 'hover' || state === 'active' || state === 'focus' ? ' is-' + state : '');
+
+    // O nome acessível acompanha o ícone. Não é enfeite do playground: um
+    // Icon Button com aria-label de outro desenho é exatamente o erro que a
+    // regra 06 descreve, e a vitrine não pode ensinar isso.
+    demo.setAttribute('aria-label', rot);
+
+    demo.removeAttribute('aria-disabled');
+    demo.removeAttribute('aria-busy');
+    if (state === 'disabled') demo.setAttribute('aria-disabled', 'true');
+    if (state === 'busy') {
+      demo.setAttribute('aria-busy', 'true');
+      demo.setAttribute('aria-disabled', 'true');
+    }
+
+    var svg = demo.querySelector('svg');
+    if (svg && SVG[icone]) svg.outerHTML = SVG[icone];
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var cls = 'al-icon-btn al-icon-btn--' + variant + ' al-icon-btn--' + size;
+    var attrs = '';
+    if (state === 'disabled') attrs = ' aria-disabled="true"';
+    if (state === 'busy') attrs = ' aria-busy="true" aria-disabled="true"';
+    var lines = [
+      '&lt;button type="button" class="' + cls + '"',
+      '        aria-label="' + rot + '"' + attrs + '&gt;',
+      '  &lt;span class="al-icon-btn__spinner" aria-hidden="true"&gt;&lt;/span&gt;',
+      '  &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- ' +
+        icone.toUpperCase() + ' --&gt;&lt;/svg&gt;',
+      '&lt;/button&gt;'
+    ];
+    if (state === 'busy') {
+      lines.push('');
+      lines.push('&lt;!-- sem rótulo para trocar: o aviso vai aqui --&gt;');
+      lines.push('&lt;p role="status" aria-live="polite" class="vh"&gt;' + rot + '…&lt;/p&gt;');
+    }
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('#ib-controls input').forEach(function (el) {
+    el.addEventListener('change', render);
+  });
+
+  document.querySelectorAll('input[name="ibtokfilter"]').forEach(function (el) {
+    el.addEventListener('change', function () {
+      var v = pick('ibtokfilter');
+      document.querySelectorAll('#ibtokbody tr').forEach(function (tr) {
+        tr.hidden = (v !== 'all' && tr.getAttribute('data-variant') !== v);
+      });
+    });
+  });
+
+  document.getElementById('ib-copy').addEventListener('click', function () {
+    var btn = this;
+    var text = code.textContent;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { btn.textContent = 'Não deu'; });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Não deu'; }
+      document.body.removeChild(ta);
+    }
+  });
+
+  render();
+})();
+"""
+
 CHROME_ICON = """
 /* ── biblioteca de ícones ──
    Casca do site. O componente em si é o .al-icon, que vem do icon.css real. */
@@ -2304,7 +2932,8 @@ HTML = (
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
-    '\n</div></main>\n</div>\n\n<script>' + JS + JS_ICON + '</script>\n'
+    '\n</div></main>\n</div>\n\n<script>'
+    + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w').write(HTML)
@@ -2315,5 +2944,6 @@ print(f'  primitivas        : {N_PRIM}')
 print(f'  semânticos        : {N_SEM} × 2 temas')
 print(f'  pares de contraste: {N_PAIRS} — {N_AA} em AA pleno, {N_EXC} exceções, {N_FAIL} reprovas')
 print(f'  tokens do Button  : {N_BTN_TOKENS}')
+print(f'  tokens do IconBtn : {N_IB_TOKENS}')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

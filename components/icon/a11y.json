@@ -2,7 +2,7 @@
   "component": "icon",
   "criterion": "WCAG 1.4.11 nao-textual",
   "floor": 3.0,
-  "markupChecked": 84,
+  "markupChecked": 140,
   "fails": 0,
   "brandPairs": [
     {
