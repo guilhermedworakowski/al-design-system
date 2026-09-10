@@ -6,8 +6,8 @@
     "nonText": 3.0
   },
   "markupSource": "site/index.html",
-  "markupChecked": null,
-  "markupPending": true,
+  "markupChecked": 38,
+  "markupPending": false,
   "fails": 0,
   "targets": [
     {

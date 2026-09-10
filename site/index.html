@@ -543,6 +543,64 @@
   /* compartilhado */
   --al-icon-button-radius: var(--al-radius-full);
   --al-icon-button-border-width: var(--al-border-width-1);
+
+
+  /* filled */
+  --al-tag-filled-success-bg: var(--al-bg-success);
+  --al-tag-filled-success-label: var(--al-text-on-solid);
+  --al-tag-filled-success-border: transparent;
+  --al-tag-filled-warning-bg: var(--al-bg-warning);
+  --al-tag-filled-warning-label: var(--al-text-on-solid);
+  --al-tag-filled-warning-border: transparent;
+  --al-tag-filled-error-bg: var(--al-bg-danger);
+  --al-tag-filled-error-label: var(--al-text-on-solid);
+  --al-tag-filled-error-border: transparent;
+  --al-tag-filled-info-bg: var(--al-bg-info);
+  --al-tag-filled-info-label: var(--al-text-on-solid);
+  --al-tag-filled-info-border: transparent;
+  --al-tag-filled-neutral-bg: var(--al-bg-active);
+  --al-tag-filled-neutral-label: var(--al-text-primary);
+  --al-tag-filled-neutral-border: transparent;
+
+  /* outlined */
+  --al-tag-outlined-bg: transparent;
+  --al-tag-outlined-success-label: var(--al-text-success);
+  --al-tag-outlined-success-border: var(--al-border-success);
+  --al-tag-outlined-warning-label: var(--al-text-warning);
+  --al-tag-outlined-warning-border: var(--al-border-warning);
+  --al-tag-outlined-error-label: var(--al-text-danger);
+  --al-tag-outlined-error-border: var(--al-border-danger);
+  --al-tag-outlined-info-label: var(--al-text-info);
+  --al-tag-outlined-info-border: var(--al-border-info);
+  --al-tag-outlined-neutral-label: var(--al-text-primary);
+  --al-tag-outlined-neutral-border: var(--al-border-strong);
+
+  /* dismiss - so o X e focavel; a tag em si nunca recebe foco */
+  --al-tag-dismiss-ring: var(--al-focus-ring-default);
+
+  /* tamanho sm - altura resultante: 20px */
+  --al-tag-sm-padding-x: var(--al-space-8);
+  --al-tag-sm-padding-y: var(--al-space-2);
+  --al-tag-sm-gap: var(--al-space-8);
+  --al-tag-sm-font-size: var(--al-font-size-xs);
+  --al-tag-sm-line-height: var(--al-line-height-xs);
+  --al-tag-sm-font-weight: var(--al-font-weight-medium);
+  --al-tag-sm-tracking: 0.01em;
+  --al-tag-sm-icon-size: var(--al-icon-size-16);
+
+  /* tamanho md - altura resultante: 28px */
+  --al-tag-md-padding-x: var(--al-space-12);
+  --al-tag-md-padding-y: var(--al-space-4);
+  --al-tag-md-gap: var(--al-space-8);
+  --al-tag-md-font-size: var(--al-font-size-sm);
+  --al-tag-md-line-height: var(--al-line-height-sm);
+  --al-tag-md-font-weight: var(--al-font-weight-medium);
+  --al-tag-md-tracking: 0em;
+  --al-tag-md-icon-size: var(--al-icon-size-20);
+
+  /* compartilhado */
+  --al-tag-radius: var(--al-radius-full);
+  --al-tag-border-width: var(--al-border-width-1);
 }
 
 /* AL Design System - tokens do Button
@@ -1357,6 +1415,328 @@
   }
 }
 
+/* AL Design System - tokens do Tag
+ * GERADO por components/tag/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez.
+ *
+ * O tipo vem antes do status no nome porque e o tipo que decide quais
+ * papeis existem; o status so troca a cor de cada papel.
+ */
+
+:root {
+
+  /* filled */
+  --al-tag-filled-success-bg: var(--al-bg-success);
+  --al-tag-filled-success-label: var(--al-text-on-solid);
+  --al-tag-filled-success-border: transparent;
+  --al-tag-filled-warning-bg: var(--al-bg-warning);
+  --al-tag-filled-warning-label: var(--al-text-on-solid);
+  --al-tag-filled-warning-border: transparent;
+  --al-tag-filled-error-bg: var(--al-bg-danger);
+  --al-tag-filled-error-label: var(--al-text-on-solid);
+  --al-tag-filled-error-border: transparent;
+  --al-tag-filled-info-bg: var(--al-bg-info);
+  --al-tag-filled-info-label: var(--al-text-on-solid);
+  --al-tag-filled-info-border: transparent;
+  --al-tag-filled-neutral-bg: var(--al-bg-active);
+  --al-tag-filled-neutral-label: var(--al-text-primary);
+  --al-tag-filled-neutral-border: transparent;
+
+  /* outlined */
+  --al-tag-outlined-bg: transparent;
+  --al-tag-outlined-success-label: var(--al-text-success);
+  --al-tag-outlined-success-border: var(--al-border-success);
+  --al-tag-outlined-warning-label: var(--al-text-warning);
+  --al-tag-outlined-warning-border: var(--al-border-warning);
+  --al-tag-outlined-error-label: var(--al-text-danger);
+  --al-tag-outlined-error-border: var(--al-border-danger);
+  --al-tag-outlined-info-label: var(--al-text-info);
+  --al-tag-outlined-info-border: var(--al-border-info);
+  --al-tag-outlined-neutral-label: var(--al-text-primary);
+  --al-tag-outlined-neutral-border: var(--al-border-strong);
+
+  /* dismiss - so o X e focavel; a tag em si nunca recebe foco */
+  --al-tag-dismiss-ring: var(--al-focus-ring-default);
+
+  /* tamanho sm - altura resultante: 20px */
+  --al-tag-sm-padding-x: var(--al-space-8);
+  --al-tag-sm-padding-y: var(--al-space-2);
+  --al-tag-sm-gap: var(--al-space-8);
+  --al-tag-sm-font-size: var(--al-font-size-xs);
+  --al-tag-sm-line-height: var(--al-line-height-xs);
+  --al-tag-sm-font-weight: var(--al-font-weight-medium);
+  --al-tag-sm-tracking: 0.01em;
+  --al-tag-sm-icon-size: var(--al-icon-size-16);
+
+  /* tamanho md - altura resultante: 28px */
+  --al-tag-md-padding-x: var(--al-space-12);
+  --al-tag-md-padding-y: var(--al-space-4);
+  --al-tag-md-gap: var(--al-space-8);
+  --al-tag-md-font-size: var(--al-font-size-sm);
+  --al-tag-md-line-height: var(--al-line-height-sm);
+  --al-tag-md-font-weight: var(--al-font-weight-medium);
+  --al-tag-md-tracking: 0em;
+  --al-tag-md-icon-size: var(--al-icon-size-20);
+
+  /* compartilhado */
+  --al-tag-radius: var(--al-radius-full);
+  --al-tag-border-width: var(--al-border-width-1);
+}
+
+/* AL Design System - Tag
+ * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css, icon.css e
+ * al-tag-tokens.css, nesta ordem.
+ *
+ * Nenhum valor aqui e literal: toda cor, espaco, raio e medida de texto entra
+ * por var(--al-tag-*) ou por um token da Foundation. O check.py ao lado recusa
+ * o arquivo se algum escapar.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   read-only (o padrao):
+ *     <span class="al-tag al-tag--filled al-tag--success al-tag--md">Pago</span>
+ *
+ *   dismissivel:
+ *     <span class="al-tag al-tag--outlined al-tag--info al-tag--md">
+ *       Livros
+ *       <button type="button" class="al-tag__dismiss" aria-label="Remover Livros">
+ *         <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *       </button>
+ *     </span>
+ *
+ *   tipo   : --filled | --outlined
+ *   status : --success | --warning | --error | --info | --neutral
+ *   tamanho: --sm | --md
+ *
+ * POR QUE <span> E NAO <div> OU <button>
+ *   A tag e conteudo, nao controle. Ela nao entra na ordem de tabulacao e nao
+ *   recebe foco - so o X recebe. E a mesma regra do Carbon para a read-only, e
+ *   e o motivo de a tag inteira nao ser clicavel: clicar no rotulo nao faz nada.
+ *   <span> tambem e o que permite a tag viver dentro de uma frase sem quebrar
+ *   o fluxo do texto.
+ *
+ * O ROTULO CARREGA O SENTIDO, A COR NAO
+ *   Este e o contrato de acessibilidade do componente, e ele nao vive no CSS -
+ *   vive no texto que quem consome escreve. Uma tag vermelha escrita "Pagamento"
+ *   nao comunica nada a quem nao distingue as cores nem a quem usa leitor de
+ *   tela. Escreva "Pagamento recusado". Nenhum portao consegue medir isso; e
+ *   regra de uso, e esta escrita aqui para nao se perder.
+ *
+ * O NOME ACESSIVEL DO X
+ *   aria-label OBRIGATORIO, e ele precisa incluir o rotulo da tag: "Remover
+ *   Livros", nunca so "Remover". Numa lista de seis filtros, seis botoes
+ *   chamados "Remover" sao indistinguiveis por leitor de tela. Herda o contrato
+ *   do Icon Button. O nome vai no BOTAO, nunca no svg, que e decorativo.
+ *
+ * DEPOIS DE REMOVER, O FOCO
+ *   Ao remover uma tag de um grupo, mova o foco para a tag anterior. Sem isso o
+ *   foco cai no <body> e quem navega por teclado se perde no meio da lista.
+ *   Isso e JS - o CSS nao alcanca. Precedente: Primer, na acessibilidade do Token.
+ *
+ * A CAIXA
+ *   Nao ha width nem height. A altura e consequencia: padding-y x2 mais a
+ *   entrelinha. sm = 2+16+2 = 20. md = 4+20+4 = 28.
+ *   A borda de 1px existe nos DOIS tipos - transparente no filled - e o padding
+ *   desconta a espessura. E isso que faz filled e outlined ocuparem exatamente
+ *   a mesma caixa: trocar o tipo de uma tag nunca move o que esta em volta.
+ *
+ * ALVO DE TOQUE DO X
+ *   16px no sm, 20px no md - abaixo dos 24 do WCAG 2.5.8. Decisao consciente,
+ *   sem expansao de area por pseudo-elemento, igual ao sm do Button. A regra de
+ *   uso que decorre disso: sm dismissivel so em interface de ponteiro.
+ *
+ * SEM HOVER, POR DECISAO
+ *   O Carbon muda o fundo do icone de fechar no hover. Aqui nao: o unico
+ *   retorno e o cursor. Divergencia consciente, nao esquecimento - e por isso
+ *   este arquivo nao tem nenhuma transicao, nenhuma animacao e, em consequencia,
+ *   nenhuma duracao literal aguardando a escala de motion da Foundation.
+ */
+
+/* ---------------------------------------------------------------- base */
+.al-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  /* A borda entra no calculo da caixa nos dois tipos, entao descontar aqui
+     mantem 20 e 28 exatos e impede o filled e o outlined de divergirem 1px. */
+  padding:
+    calc(var(--_pad-y) - var(--al-tag-border-width))
+    calc(var(--_pad-x) - var(--al-tag-border-width));
+  border: var(--al-tag-border-width) solid var(--_border);
+  border-radius: var(--al-tag-radius);
+
+  background-color: var(--_bg);
+  color: var(--_label);
+
+  font-family: var(--al-font-sans);
+  font-size: var(--_font-size);
+  line-height: var(--_line-height);
+  font-weight: var(--_font-weight);
+  letter-spacing: var(--_tracking);
+
+  /* Nao quebrar em duas linhas: isso deforma o pill e desalinha o grupo.
+     Como o AL ainda nao tem Tooltip, nao ha truncamento - a tag cresce, e
+     rotulo longo se resolve na origem. Precedente: Carbon. */
+  white-space: nowrap;
+  /* a tag costuma viver dentro de uma frase ou de uma celula de tabela */
+  vertical-align: middle;
+
+  /* quem manda no tamanho do X e a tag. O .al-icon la dentro le esta
+     propriedade herdada; sem ela cairia no degrau padrao dele (24). */
+  --al-icon-box: var(--_icon-size);
+}
+
+/* ---------------------------------------------------------------- tipos x status */
+/* O tipo decide QUAIS papeis existem, o status decide QUAL COR entra em cada um.
+   Por isso o seletor e composto: as duas dimensoes precisam estar presentes. */
+
+.al-tag--filled.al-tag--success {
+  --_bg: var(--al-tag-filled-success-bg);
+  --_label: var(--al-tag-filled-success-label);
+  --_border: var(--al-tag-filled-success-border);
+}
+
+.al-tag--filled.al-tag--warning {
+  --_bg: var(--al-tag-filled-warning-bg);
+  --_label: var(--al-tag-filled-warning-label);
+  --_border: var(--al-tag-filled-warning-border);
+}
+
+.al-tag--filled.al-tag--error {
+  --_bg: var(--al-tag-filled-error-bg);
+  --_label: var(--al-tag-filled-error-label);
+  --_border: var(--al-tag-filled-error-border);
+}
+
+.al-tag--filled.al-tag--info {
+  --_bg: var(--al-tag-filled-info-bg);
+  --_label: var(--al-tag-filled-info-label);
+  --_border: var(--al-tag-filled-info-border);
+}
+
+.al-tag--filled.al-tag--neutral {
+  --_bg: var(--al-tag-filled-neutral-bg);
+  --_label: var(--al-tag-filled-neutral-label);
+  --_border: var(--al-tag-filled-neutral-border);
+}
+
+/* o fundo do outlined nao varia por status - um token so, no tipo */
+.al-tag--outlined {
+  --_bg: var(--al-tag-outlined-bg);
+}
+
+.al-tag--outlined.al-tag--success {
+  --_label: var(--al-tag-outlined-success-label);
+  --_border: var(--al-tag-outlined-success-border);
+}
+
+.al-tag--outlined.al-tag--warning {
+  --_label: var(--al-tag-outlined-warning-label);
+  --_border: var(--al-tag-outlined-warning-border);
+}
+
+.al-tag--outlined.al-tag--error {
+  --_label: var(--al-tag-outlined-error-label);
+  --_border: var(--al-tag-outlined-error-border);
+}
+
+.al-tag--outlined.al-tag--info {
+  --_label: var(--al-tag-outlined-info-label);
+  --_border: var(--al-tag-outlined-info-border);
+}
+
+.al-tag--outlined.al-tag--neutral {
+  --_label: var(--al-tag-outlined-neutral-label);
+  --_border: var(--al-tag-outlined-neutral-border);
+}
+
+/* ---------------------------------------------------------------- tamanhos */
+.al-tag--sm {
+  --_pad-x: var(--al-tag-sm-padding-x);
+  --_pad-y: var(--al-tag-sm-padding-y);
+  --_gap: var(--al-tag-sm-gap);
+  --_font-size: var(--al-tag-sm-font-size);
+  --_line-height: var(--al-tag-sm-line-height);
+  --_font-weight: var(--al-tag-sm-font-weight);
+  --_tracking: var(--al-tag-sm-tracking);
+  --_icon-size: var(--al-tag-sm-icon-size);
+}
+
+.al-tag--md {
+  --_pad-x: var(--al-tag-md-padding-x);
+  --_pad-y: var(--al-tag-md-padding-y);
+  --_gap: var(--al-tag-md-gap);
+  --_font-size: var(--al-tag-md-font-size);
+  --_line-height: var(--al-tag-md-line-height);
+  --_font-weight: var(--al-tag-md-font-weight);
+  --_tracking: var(--al-tag-md-tracking);
+  --_icon-size: var(--al-tag-md-icon-size);
+}
+
+/* ---------------------------------------------------------------- o X */
+/* Sem tinta propria: currentColor resolve para o --_label do tipo e do status
+   em que a tag esta. Dez tokens para reproduzir dez valores que o CSS ja herda
+   sozinho seriam ruido - mesma decisao do spinner do Icon Button. */
+.al-tag__dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+
+  box-sizing: border-box;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--al-radius-full);
+
+  background: none;
+  color: currentColor;
+
+  /* o unico retorno de hover que este componente tem, por decisao */
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* :focus-visible, nao :focus - o anel aparece no teclado, nao no clique.
+   O anel e sombra: nao empurra layout e acompanha o raio do circulo. Sem
+   transicao, de proposito - anel de foco nunca anima. */
+.al-tag__dismiss:focus-visible {
+  outline: none;
+  box-shadow: var(--al-tag-dismiss-ring);
+}
+
+/* rede de seguranca para svg que nao seja do componente Icon */
+.al-tag__dismiss > svg {
+  display: block;
+  flex: none;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+}
+
+/* ---------------------------------------------------------------- ambiente */
+/* No alto contraste do sistema a sombra e descartada - o anel some junto.
+   Aqui o foco volta como outline nativo, que o modo respeita. E a borda do
+   filled, que e transparente, precisa reaparecer: sem fundo pintado, ela vira
+   o unico limite visivel da tag. */
+@media (forced-colors: active) {
+  .al-tag {
+    border-color: currentColor;
+  }
+  .al-tag__dismiss:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -1754,6 +2134,11 @@ th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
 .al-icon-btn.is-hover{background-color:var(--_bg-hover)}
 .al-icon-btn.is-active{background-color:var(--_bg-active)}
 .al-icon-btn.is-focus{box-shadow:var(--_ring); outline:none}
+/* O anel do Tag mora no X, nao na tag - entao o especime forca o filho. */
+.al-tag.is-focus .al-tag__dismiss{box-shadow:var(--al-tag-dismiss-ring); outline:none}
+/* faixa de especimes de tag: o .stage2 ja da o fundo, aqui so o ritmo */
+.tagrow{display:flex; flex-wrap:wrap; gap:9px; align-items:center}
+.tagrow + .tagrow{margin-top:11px}
 
 footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--al-border-subtle);
   color:var(--al-text-secondary); font-size:12.5px; display:flex; flex-wrap:wrap; gap:8px 20px}
@@ -1831,7 +2216,7 @@ footer code{background:none; padding:0}
       <div class="nav-sub" id="sub-componentes" hidden>
         <a href="#/button" data-page="button">Button</a>
         <a href="#/icon-button" data-page="icon-button">Icon Button</a>
-        <a class="soon" aria-disabled="true">Badge / Tag</a>
+        <a href="#/tag" data-page="tag">Tag</a>
         <a class="soon" aria-disabled="true">Avatar</a>
       </div>
     </div>
@@ -2593,12 +2978,13 @@ footer code{background:none; padding:0}
     renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">2 publicados</span><span class="badge">4 no Tier 1</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
+<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">3 publicados</span><span class="badge">4 no Tier 1</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
 <section>
   <h2>Publicados</h2>
   <div class="cards">
     <a class="card" href="#/button" data-page="button"><div class="card-thumb"><button type="button" class="al-btn al-btn--primary al-btn--sm" tabindex="-1"><span class="al-btn__label">Publicar</span></button></div><div class="card-body"><span class="card-title">Button</span><span class="card-desc">Quatro variantes, dois tamanhos, cinco estados — com playground que instancia o CSS real.</span></div></a>
     <a class="card" href="#/icon-button" data-page="icon-button"><div class="card-thumb"><div class="th-icons"><button type="button" class="al-icon-btn al-icon-btn--primary al-icon-btn--sm" aria-label="Buscar" tabindex="-1"><span class="al-icon-btn__spinner" aria-hidden="true"></span><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg></button><button type="button" class="al-icon-btn al-icon-btn--secondary al-icon-btn--sm" aria-label="Editar" tabindex="-1"><span class="al-icon-btn__spinner" aria-hidden="true"></span><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></svg></button><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" aria-label="Mais opções" tabindex="-1"><span class="al-icon-btn__spinner" aria-hidden="true"></span><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg></button></div></div><div class="card-body"><span class="card-title">Icon Button</span><span class="card-desc">O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.</span></div></a>
+    <a class="card" href="#/tag" data-page="tag"><div class="card-thumb"><div class="th-icons"><span class="al-tag al-tag--filled al-tag--success al-tag--sm">Pago</span><span class="al-tag al-tag--outlined al-tag--info al-tag--sm">Novo</span></div></div><div class="card-body"><span class="card-title">Tag</span><span class="card-desc">Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.</span></div></a>
   </div>
 </section>
 
@@ -2607,7 +2993,6 @@ footer code{background:none; padding:0}
   <p>A ordem não é negociável enquanto o pipeline for de um componente por vez. Cada um destes
   começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
   <div class="cards" style="margin-top:18px">
-    <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Badge / Tag</span><span class="card-desc">Rótulo curto de status ou contagem, sem ação associada.</span><span class="card-soon">Em breve</span></div></div>
     <div class="card is-soon"><div class="card-thumb"><div class="th-soon"></div></div><div class="card-body"><span class="card-title">Avatar</span><span class="card-desc">Identidade visual de uma pessoa ou entidade, com recurso a iniciais.</span><span class="card-soon">Em breve</span></div></div>
   </div>
 </section></div></div>
@@ -3472,6 +3857,471 @@ footer code{background:none; padding:0}
     no <b>botão</b>, nunca no svg — anunciar os dois seria ruído duplicado.</p>
   </div>
 </section></div></div>
+<div class="page" id="pg-tag" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Tag</h1><p class="lede">Rótulo curto de estado ou categoria. Não dispara nada: é conteúdo, fica fora da ordem de tabulação, e quem carrega o sentido é o texto — a cor apenas reforça.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">20 variantes no Figma</span><span class="badge">39 tokens</span><span class="badge">0 exceções</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Tag"><button role="tab" id="t-tag-overview" aria-controls="p-tag-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-tag-specs" aria-controls="p-tag-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-tag-guide" aria-controls="p-tag-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-tag-a11y" aria-controls="p-tag-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-tag-overview" role="tabpanel" aria-labelledby="t-tag-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="tag-stage"><span class="al-tag al-tag--filled al-tag--success al-tag--md">Pago</span></div>
+
+    <div class="controls" id="tag-controls">
+      <div class="ctl"><span class="ctl-name">Tipo</span><div class="seg" role="radiogroup" aria-label="tagtype">
+<input type="radio" id="tagtype-filled" name="tagtype" value="filled" checked><label for="tagtype-filled">Filled</label>
+<input type="radio" id="tagtype-outlined" name="tagtype" value="outlined"><label for="tagtype-outlined">Outlined</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Status</span><div class="seg" role="radiogroup" aria-label="tagstatus">
+<input type="radio" id="tagstatus-success" name="tagstatus" value="success" checked><label for="tagstatus-success">Success</label>
+<input type="radio" id="tagstatus-warning" name="tagstatus" value="warning"><label for="tagstatus-warning">Warning</label>
+<input type="radio" id="tagstatus-error" name="tagstatus" value="error"><label for="tagstatus-error">Error</label>
+<input type="radio" id="tagstatus-info" name="tagstatus" value="info"><label for="tagstatus-info">Info</label>
+<input type="radio" id="tagstatus-neutral" name="tagstatus" value="neutral"><label for="tagstatus-neutral">Neutral</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tamanho</span><div class="seg" role="radiogroup" aria-label="tagsize">
+<input type="radio" id="tagsize-sm" name="tagsize" value="sm"><label for="tagsize-sm">sm · 20px</label>
+<input type="radio" id="tagsize-md" name="tagsize" value="md" checked><label for="tagsize-md">md · 28px</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Dismissible</span><div class="seg" role="radiogroup" aria-label="tagdis">
+<input type="radio" id="tagdis-no" name="tagdis" value="no" checked><label for="tagdis-no">Só leitura</label>
+<input type="radio" id="tagdis-yes" name="tagdis" value="yes"><label for="tagdis-yes">Com X</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="tagtheme">
+<input type="radio" id="tagtheme-auto" name="tagtheme" value="auto" checked><label for="tagtheme-auto">Do sistema</label>
+<input type="radio" id="tagtheme-light" name="tagtheme" value="light"><label for="tagtheme-light">Claro</label>
+<input type="radio" id="tagtheme-dark" name="tagtheme" value="dark"><label for="tagtheme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><label for="tag-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="tag-label" type="text" value="Pago" maxlength="28"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="tag-copy">Copiar</button></div>
+      <pre><code id="tag-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    A tag acima é o componente real: esta página carrega o mesmo <code>tag.css</code> que vai
+    para produção. Repare que o <code>aria-label</code> do X acompanha o rótulo — sem isso,
+    numa lista de seis filtros, seis botões chamados “Remover” são indistinguíveis por leitor
+    de tela.
+  </p>
+</section>
+
+<section>
+  <h2>Os dois tipos</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Uma entidade, um estado</span>
+      <div class="stage2"><span class="al-tag al-tag--filled al-tag--success al-tag--md">Pago</span><span class="al-tag al-tag--filled al-tag--error al-tag--md">Recusado</span></div>
+      <p class="cap"><b>Filled</b> quando a tag é o único indicador de estado de algo — status
+      de pedido numa linha de tabela. É o preenchimento que faz ela ser notada sem depender do
+      que está em volta. Precedente: Spectrum, o único dos cinco com sólido como padrão.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Três ou mais, juntas</span>
+      <div class="stage2"><span class="al-tag al-tag--outlined al-tag--info al-tag--md">Livros<button type="button" class="al-tag__dismiss" aria-label="Remover Livros"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span><span class="al-tag al-tag--outlined al-tag--neutral al-tag--md">Usados<button type="button" class="al-tag__dismiss" aria-label="Remover Usados"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span><span class="al-tag al-tag--outlined al-tag--warning al-tag--md">Em estoque<button type="button" class="al-tag__dismiss" aria-label="Remover Em estoque"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span></div>
+      <p class="cap"><b>Outlined</b> em grupo: cinco preenchimentos saturados lado a lado
+      competem entre si e nenhum ganha. Precedente: Carbon, Primer e Polaris usam baixa ênfase
+      como padrão, porque tag quase sempre aparece em grupo.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Onde ela vive</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Dentro de uma frase</span>
+      <div class="stage2">
+        <span>O pedido <b>#48213</b> está <span class="al-tag al-tag--filled al-tag--success al-tag--sm">Pago</span> desde ontem.</span>
+      </div>
+      <p class="cap">O <code>sm</code> existe para isto: espaço condensado e inline. Precedente:
+      Carbon. A tag alinha pelo meio da linha, não pela base.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Numa barra de filtros</span>
+      <div class="stage2"><span class="al-tag al-tag--outlined al-tag--neutral al-tag--md">Últimos 30 dias<button type="button" class="al-tag__dismiss" aria-label="Remover Últimos 30 dias"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span><span class="al-tag al-tag--outlined al-tag--neutral al-tag--md">Pagos<button type="button" class="al-tag__dismiss" aria-label="Remover Pagos"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span></div>
+      <p class="cap">Filtro aplicado é o caso canônico do <code>Dismissible</code>: remover tem
+      efeito real e o usuário consegue aplicar de novo. Precedente: Carbon.</p>
+    </div>
+  </div>
+</section></div><div class="panel" id="p-tag-specs" role="tabpanel" aria-labelledby="t-tag-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Contêiner</b><span><code>span</code>, não <code>div</code> nem <code>button</code>. Pílula de raio total, borda de 1px sempre presente — transparente no <code>filled</code>.</span></div>
+    <div><b>Rótulo</b><span>Texto direto, sem elemento próprio. É ele que carrega o sentido; a cor apenas reforça.</span></div>
+    <div><b>X</b><span>Opcional, 16px no <code>sm</code> e 20px no <code>md</code>. É o único filho focável, e o único acionável.</span></div>
+    <div><b>Nome acessível do X</b><span><code>aria-label</code> que <b>inclui o rótulo</b>: “Remover Pago”, nunca só “Remover”.</span></div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>A tag é conteúdo, não controle</b>
+    Ela fica fora da ordem de tabulação e não recebe foco — é a mesma regra do Carbon para a
+    read-only, e é por isso que clicar no rótulo não faz nada. Quando o <code>Dismissible</code>
+    liga, quem entra na ordem de tabulação é só o X. <code>span</code> também é o que deixa a
+    tag viver dentro de uma frase sem quebrar o fluxo do texto.
+  </div>
+</section>
+
+<section>
+  <h2>As vinte combinações</h2>
+  <div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Filled</span><div class="stage2" style="display:block"><div class="tagrow"><span class="al-tag al-tag--filled al-tag--success al-tag--sm">Pago</span><span class="al-tag al-tag--filled al-tag--warning al-tag--sm">Pendente</span><span class="al-tag al-tag--filled al-tag--error al-tag--sm">Recusado</span><span class="al-tag al-tag--filled al-tag--info al-tag--sm">Processando</span><span class="al-tag al-tag--filled al-tag--neutral al-tag--sm">Rascunho</span></div><div class="tagrow"><span class="al-tag al-tag--filled al-tag--success al-tag--md">Pago</span><span class="al-tag al-tag--filled al-tag--warning al-tag--md">Pendente</span><span class="al-tag al-tag--filled al-tag--error al-tag--md">Recusado</span><span class="al-tag al-tag--filled al-tag--info al-tag--md">Processando</span><span class="al-tag al-tag--filled al-tag--neutral al-tag--md">Rascunho</span></div></div><p class="cap">Acima <code>sm</code>, abaixo <code>md</code>. As duas linhas do Filled têm a mesma altura das do outro tipo — a borda não cresce a caixa.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Outlined</span><div class="stage2" style="display:block"><div class="tagrow"><span class="al-tag al-tag--outlined al-tag--success al-tag--sm">Pago</span><span class="al-tag al-tag--outlined al-tag--warning al-tag--sm">Pendente</span><span class="al-tag al-tag--outlined al-tag--error al-tag--sm">Recusado</span><span class="al-tag al-tag--outlined al-tag--info al-tag--sm">Processando</span><span class="al-tag al-tag--outlined al-tag--neutral al-tag--sm">Rascunho</span></div><div class="tagrow"><span class="al-tag al-tag--outlined al-tag--success al-tag--md">Pago</span><span class="al-tag al-tag--outlined al-tag--warning al-tag--md">Pendente</span><span class="al-tag al-tag--outlined al-tag--error al-tag--md">Recusado</span><span class="al-tag al-tag--outlined al-tag--info al-tag--md">Processando</span><span class="al-tag al-tag--outlined al-tag--neutral al-tag--md">Rascunho</span></div></div><p class="cap">Acima <code>sm</code>, abaixo <code>md</code>. As duas linhas do Outlined têm a mesma altura das do outro tipo — a borda não cresce a caixa.</p></div></div>
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+      <tbody><tr><td class="tok dim">sm</td><td class="tok">--al-tag-sm-padding-x</td><td class="tok dim">space.8</td><td class="num">8px</td></tr>
+<tr><td class="tok dim">sm</td><td class="tok">--al-tag-sm-padding-y</td><td class="tok dim">space.2</td><td class="num">2px</td></tr>
+<tr><td class="tok dim">sm</td><td class="tok">--al-tag-sm-gap</td><td class="tok dim">space.8</td><td class="num">8px</td></tr>
+<tr><td class="tok dim">sm</td><td class="tok">--al-tag-sm-font</td><td class="tok dim">type.styles.label-sm</td><td class="num">12/16 · peso 500</td></tr>
+<tr><td class="tok dim">sm</td><td class="tok">--al-tag-sm-icon-size</td><td class="tok dim">iconSize.16</td><td class="num">16px</td></tr>
+<tr><td class="tok dim">md</td><td class="tok">--al-tag-md-padding-x</td><td class="tok dim">space.12</td><td class="num">12px</td></tr>
+<tr><td class="tok dim">md</td><td class="tok">--al-tag-md-padding-y</td><td class="tok dim">space.4</td><td class="num">4px</td></tr>
+<tr><td class="tok dim">md</td><td class="tok">--al-tag-md-gap</td><td class="tok dim">space.8</td><td class="num">8px</td></tr>
+<tr><td class="tok dim">md</td><td class="tok">--al-tag-md-font</td><td class="tok dim">type.styles.label-md</td><td class="num">14/20 · peso 500</td></tr>
+<tr><td class="tok dim">md</td><td class="tok">--al-tag-md-icon-size</td><td class="tok dim">iconSize.20</td><td class="num">20px</td></tr>
+<tr><td class="tok dim">ambos</td><td class="tok">--al-tag-radius</td><td class="tok dim">radius.full</td><td class="num">9999px</td></tr>
+<tr><td class="tok dim">ambos</td><td class="tok">--al-tag-border-width</td><td class="tok dim">border.width.1</td><td class="num">1px</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Não existe token de altura</b>
+    Ela é consequência: <code>padding-y</code> × 2 mais a entrelinha. Dá
+    20px no <code>sm</code> e 28px no
+    <code>md</code>. A borda de 1px existe nos dois tipos e o padding desconta a espessura —
+    <code>calc(padding − border-width)</code> — e é isso que faz <code>filled</code> e
+    <code>outlined</code> ocuparem a mesma caixa. Trocar o tipo de uma tag nunca move o que
+    está em volta.
+  </div>
+</section>
+
+<section>
+  <h2>Tokens de cor</h2>
+  <div class="ctl" style="margin-bottom:14px"><span class="ctl-name">Filtrar</span>
+    <div class="seg" role="radiogroup" aria-label="tagtokfilter">
+<input type="radio" id="tagtokfilter-all" name="tagtokfilter" value="all" checked><label for="tagtokfilter-all">Todos</label>
+<input type="radio" id="tagtokfilter-filled" name="tagtokfilter" value="filled"><label for="tagtokfilter-filled">Filled</label>
+<input type="radio" id="tagtokfilter-outlined" name="tagtokfilter" value="outlined"><label for="tagtokfilter-outlined">Outlined</label>
+</div></div>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Tag</th><th>Aponta para</th><th>Resolve em (claro)</th></tr></thead>
+      <tbody id="tagtokbody"><tr data-type="filled"><td class="tok">--al-tag-filled-success-bg</td><td class="tok dim">bg-success</td><td class="tok dim"><span class="chip sm" style="background:#006911"></span>#006911</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-success-label</td><td class="tok dim">text-on-solid</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-success-border</td><td class="tok dim">transparent</td><td class="tok dim">transparent</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-warning-bg</td><td class="tok dim">bg-warning</td><td class="tok dim"><span class="chip sm" style="background:#704F00"></span>#704F00</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-warning-label</td><td class="tok dim">text-on-solid</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-warning-border</td><td class="tok dim">transparent</td><td class="tok dim">transparent</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-error-bg</td><td class="tok dim">bg-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-error-label</td><td class="tok dim">text-on-solid</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-error-border</td><td class="tok dim">transparent</td><td class="tok dim">transparent</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-info-bg</td><td class="tok dim">bg-info</td><td class="tok dim"><span class="chip sm" style="background:#0055A3"></span>#0055A3</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-info-label</td><td class="tok dim">text-on-solid</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-info-border</td><td class="tok dim">transparent</td><td class="tok dim">transparent</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-neutral-bg</td><td class="tok dim">bg-active</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-neutral-label</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr data-type="filled"><td class="tok">--al-tag-filled-neutral-border</td><td class="tok dim">transparent</td><td class="tok dim">transparent</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-success-label</td><td class="tok dim">text-success</td><td class="tok dim"><span class="chip sm" style="background:#006911"></span>#006911</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-success-border</td><td class="tok dim">border-success</td><td class="tok dim"><span class="chip sm" style="background:#008A2A"></span>#008A2A</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-warning-label</td><td class="tok dim">text-warning</td><td class="tok dim"><span class="chip sm" style="background:#704F00"></span>#704F00</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-warning-border</td><td class="tok dim">border-warning</td><td class="tok dim"><span class="chip sm" style="background:#916A00"></span>#916A00</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-error-label</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-error-border</td><td class="tok dim">border-danger</td><td class="tok dim"><span class="chip sm" style="background:#CA293F"></span>#CA293F</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-info-label</td><td class="tok dim">text-info</td><td class="tok dim"><span class="chip sm" style="background:#0055A3"></span>#0055A3</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-info-border</td><td class="tok dim">border-info</td><td class="tok dim"><span class="chip sm" style="background:#0071D0"></span>#0071D0</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-neutral-label</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-neutral-border</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr data-type="outlined"><td class="tok">--al-tag-outlined-bg</td><td class="tok dim">transparent</td><td class="tok dim">transparent</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>39 tokens no código, 34 variáveis no Figma</b>
+    A diferença é deliberada, e é a mesma regra do Icon Button. As duas fontes são
+    <i>estilos de texto</i> (<code>Label/sm</code> e <code>Label/md</code>), o anel do X reusa o
+    <i>effect style</i> <code>Focus-ring/Default</code> porque sombra não pode ser variável no
+    Figma, e os dois <code>icon-size</code> ligam direto à Fundação.
+  </div>
+  <div class="note">
+    <b>O tipo vem antes do status no nome</b>
+    Não é estilo, é a estrutura da decisão. O tipo define <b>quais papéis existem</b> — o
+    <code>filled</code> tem preenchimento, o <code>outlined</code> tem borda colorida — e o
+    status define <b>qual cor entra em cada papel</b>. É o mesmo lugar que
+    <code>primary</code> e <code>ghost</code> ocupam no Button. O único token que vive só no
+    tipo é <code>--al-tag-outlined-bg</code>, que não varia por status: cinco tokens idênticos
+    seriam cinco lugares para errar a mesma coisa.
+  </div>
+</section></div><div class="panel" id="p-tag-guide" role="tabpanel" aria-labelledby="t-tag-guide" tabindex="0" hidden>
+<section>
+  <h2>Quando usar</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Estado ou categoria</span>
+      <div class="stage2"><span class="al-tag al-tag--filled al-tag--success al-tag--md">Pago</span><span class="al-tag al-tag--outlined al-tag--neutral al-tag--md">Interno</span></div>
+      <p class="cap">Rotular o estado de uma entidade, ou etiquetá-la sem carga de estado.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Ação</span>
+      <div class="stage2"><button type="button" class="al-btn al-btn--secondary al-btn--sm" tabindex="-1"><span class="al-btn__label">Ver detalhes</span></button></div>
+      <p class="cap">Se clicar faz algo além de remover a própria tag, é <b>Button</b>.
+      Precedente: Spectrum — badges não são interativos; se precisar de interação, use botão,
+      tag ou link.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>O rótulo carrega o sentido</h2>
+  <p>Esta é a regra mais importante do componente, e é o critério que mais reprova este tipo de
+  peça em qualquer sistema. A diferença entre os status é <b>puramente visual</b>: ela não chega
+  a quem não distingue as cores, e não chega a leitor de tela nenhum.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell no">
+      <span class="lab">A cor fazendo o trabalho</span>
+      <div class="stage2"><span class="al-tag al-tag--filled al-tag--error al-tag--md">Pagamento</span></div>
+      <p class="cap">Vermelho escrito “Pagamento” não comunica nada sozinho.</p>
+    </div>
+    <div class="cell do">
+      <span class="lab">O texto fazendo o trabalho</span>
+      <div class="stage2"><span class="al-tag al-tag--filled al-tag--error al-tag--md">Pagamento recusado</span></div>
+      <p class="cap">Precedente: Primer — se você lista sucessos e falhas, prefixe cada rótulo
+      em vez de confiar no esquema de cor.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+
+  <div class="rule"><div class="rn">01</div><div>
+    <h3>Sentence case, uma palavra</h3>
+    <p>Duas só quando o estado for composto e uma não resolver — “Reembolsado parcialmente”.
+    Precedente: Polaris, literalmente essa regra.</p></div></div>
+
+  <div class="rule"><div class="rn">02</div><div>
+    <h3>Passado para concluído, gerúndio para processo</h3>
+    <p>“Pago”, “Enviado”, “Cancelado” contra “Processando”, “Enviando”. Precedente: Polaris.</p></div></div>
+
+  <div class="rule"><div class="rn">03</div><div>
+    <h3>Rótulo longo se resolve na origem, não no truncamento</h3>
+    <p>O Carbon trunca e revela o texto completo por tooltip. <b>Aqui não</b>: o Tooltip ainda
+    não existe no AL, e truncar esconderia informação sem devolver caminho para recuperá-la.
+    Então a regra é o passo anterior — encurte antes de chegar na tag. Quando o Tooltip
+    existir, esta regra é revisitada.</p></div></div>
+
+  <div class="rule"><div class="rn">04</div><div>
+    <h3>Não misture os dois tipos no mesmo grupo</h3>
+    <p>A diferença de tratamento vira uma hierarquia que ninguém quis criar: o olho lê o sólido
+    como mais importante. Escolha um tipo por grupo.</p></div></div>
+
+  <div class="rule"><div class="rn">05</div><div>
+    <h3>Uma tag de status por entidade</h3>
+    <p>Se um pedido é “Pago” e “Enviado”, isso são dois campos. Duas tags lado a lado disputam
+    qual é o estado real.</p></div></div>
+
+  <div class="rule"><div class="rn">06</div><div>
+    <h3>Tag não substitui banner</h3>
+    <p>Um erro que exige ação precisa de um lugar onde caiba a explicação e o próximo passo.
+    Precedente: Polaris — não use badge vermelho como única forma de comunicar estado crítico.</p></div></div>
+
+  <div class="rule"><div class="rn">07</div><div>
+    <h3><code>sm</code> dismissível só em interface de ponteiro</h3>
+    <p>O X do <code>sm</code> tem 16px de alvo, contra os 24 mínimos do WCAG 2.5.8.
+    Em contexto de toque, use <code>md</code>. É a mesma família de decisão do <code>sm</code>
+    do Button — 36px contra os 44 recomendados pelo Carbon — e a saída é a mesma: regra de uso,
+    não geometria.</p></div></div>
+
+  <div class="rule"><div class="rn">08</div><div>
+    <h3>Depois de remover, o foco vai para a tag anterior</h3>
+    <p>Sem isso o foco cai no <code>body</code> e quem navega por teclado se perde no meio da
+    lista. Precedente: Primer, na acessibilidade do Token. Isso é JS — o CSS não alcança.</p></div></div>
+
+  <div class="rule"><div class="rn">09</div><div>
+    <h3>Prefira <code>Outlined</code> para a tag dismissível</h3>
+    <p>A borda sinaliza “isto responde a interação” antes de o usuário passar o mouse.
+    Precedente: o Carbon dá borda de contêiner às variantes selectable e operational
+    exatamente para indicar interatividade aumentada, e deixa a read-only sem borda.</p></div></div>
+
+  <div class="rule"><div class="rn">10</div><div>
+    <h3>Sem hover no X — só o cursor muda</h3>
+    <p><b>Divergência consciente</b>: o Carbon muda o fundo do ícone de fechar no hover. Aqui
+    não. A consequência a assumir é que, em tela de toque, não há hover nenhum — e aí o alvo
+    pequeno da regra 07 fica sem qualquer reforço. É também por isso que este componente não
+    tem transição nem animação alguma, e é o único do AL sem pendência de escala de motion.</p></div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Status brand</b><span>Marca não é status, e branco sobre <code>bg-brand</code> dá 3,34:1 — abaixo do piso de texto. Se voltar, é v2, com <code>bg-brand-strong</code>.</span></div>
+    <div><b>Selectable · operational</b><span>Tag que filtra ao clicar é outro componente, não uma variante deste.</span></div>
+    <div><b>Desabilitado</b><span>Tag é conteúdo. Conteúdo não desabilita.</span></div>
+    <div><b>Tamanho lg</b><span>O Carbon tem três. O AL tem dois, mesma decisão do Button.</span></div>
+    <div><b>Ícone à esquerda</b><span>Spectrum e Polaris têm. Aqui o único slot é o X, à direita.</span></div>
+  </div>
+</section></div><div class="panel" id="p-tag-a11y" role="tabpanel" aria-labelledby="t-tag-a11y" tabindex="0" hidden>
+<section>
+  <h2>O piso é 4,5:1, não 3:1</h2>
+  <p>Esta é a diferença conceitual entre o Tag e o Icon Button, e ela explica quase tudo nesta
+  aba. Lá o portador do sentido é um <b>ícone</b>, conteúdo não-textual: critério 1.4.11, piso
+  3:1. Aqui é um <b>rótulo de texto</b>: critério 1.4.3, piso 4,5:1.</p>
+  <p style="margin-top:12px">A consequência foi concreta e mudou o escopo. Branco sobre a marca
+  dá 3,34:1 — no Icon Button isso é <b>aprovação</b>; aqui seria <b>reprova</b>. Foi por isso que
+  o status Brand ficou de fora desta versão, e é por isso que este componente tem
+  <b>zero exceções</b> — o primeiro do AL a fechar em zero carregando texto.</p>
+  <div class="stats">
+    <div class="stat hl"><b>34</b><span>combinações medidas</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+    <div class="stat"><b>40</b><span>isentas medidas</span></div>
+    <div class="stat"><b>4.5:1</b><span>piso do rótulo</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo contra o fundo efetivo</h2>
+  <p>O <code>outlined</code> não tem preenchimento, então o rótulo não está sobre um sólido —
+  está sobre a tela. Por isso ele é medido contra os <b>dois</b> fundos: a tela e a superfície,
+  porque tag quase sempre vive dentro de card, tabela ou painel. O <code>filled</code> cobre o
+  fundo, e uma medição basta.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Rótulo / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">filled success · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#006911"></span></td><td class="tok dim">#FFFFFF / #006911</td><td class="num strong">6.93:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled warning · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#704F00"></span></td><td class="tok dim">#FFFFFF / #704F00</td><td class="num strong">7.48:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled error · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#A00E27"></span></td><td class="tok dim">#FFFFFF / #A00E27</td><td class="num strong">8.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled info · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#0055A3"></span></td><td class="tok dim">#FFFFFF / #0055A3</td><td class="num strong">7.43:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled neutral · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">#292929 / #E0E0E0</td><td class="num strong">11.02:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined success · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#006911"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#006911 / #FFFFFF</td><td class="num strong">6.93:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined success · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#006911"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#006911 / #F7F7F7</td><td class="num strong">6.47:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined warning · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#704F00"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#704F00 / #FFFFFF</td><td class="num strong">7.48:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined warning · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#704F00"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#704F00 / #F7F7F7</td><td class="num strong">6.98:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined error · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#A00E27 / #FFFFFF</td><td class="num strong">8.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined error · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#A00E27 / #F7F7F7</td><td class="num strong">7.58:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined info · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#0055A3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#0055A3 / #FFFFFF</td><td class="num strong">7.43:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined info · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#0055A3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#0055A3 / #F7F7F7</td><td class="num strong">6.93:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined neutral · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#292929 / #FFFFFF</td><td class="num strong">14.55:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined neutral · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#292929 / #F7F7F7</td><td class="num strong">13.58:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled success · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#1BB14B"></span></td><td class="tok dim">#181818 / #1BB14B</td><td class="num strong">6.29:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled warning · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#DCAC2E"></span></td><td class="tok dim">#181818 / #DCAC2E</td><td class="num strong">8.44:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled error · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#F84F5D"></span></td><td class="tok dim">#181818 / #F84F5D</td><td class="num strong">5.30:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled info · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#2696FF"></span></td><td class="tok dim">#181818 / #2696FF</td><td class="num strong">5.82:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled neutral · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">#F7F7F7 / #565656</td><td class="num strong">6.85:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined success · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#6ACD7C"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#6ACD7C / #181818</td><td class="num strong">8.99:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined success · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#6ACD7C"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#6ACD7C / #292929</td><td class="num strong">7.37:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined warning · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#EBCA7E"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#EBCA7E / #181818</td><td class="num strong">11.23:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined warning · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#EBCA7E"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#EBCA7E / #292929</td><td class="num strong">9.20:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined error · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#FF8D91 / #181818</td><td class="num strong">8.01:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined error · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#FF8D91 / #292929</td><td class="num strong">6.56:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined info · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#76B8FF"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#76B8FF / #181818</td><td class="num strong">8.51:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined info · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#76B8FF"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#76B8FF / #292929</td><td class="num strong">6.98:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined neutral · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#F7F7F7 / #181818</td><td class="num strong">16.57:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined neutral · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#F7F7F7 / #292929</td><td class="num strong">13.58:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O limite do pill</h2>
+  <p>Medido e listado, mas <b>isento</b> — e a razão importa. O 1.4.11 cobra contraste de
+  elemento gráfico <b>necessário para entender o conteúdo</b>. No Icon Button o desenho é a única
+  coisa que informa que existe um acionável ali, então o limite é portão. Aqui quem informa é o
+  texto, e o contorno é decoração. É o que faz o <code>filled neutral</code> aparecer em 1,32:1
+  sem reprovar — e ele fica medido para ninguém “corrigir” achando que escapou.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Limite / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">filled success · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#006911"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#006911 / #FFFFFF</td><td class="num strong">6.93:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled success · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#006911"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#006911 / #F7F7F7</td><td class="num strong">6.47:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled warning · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#704F00"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#704F00 / #FFFFFF</td><td class="num strong">7.48:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled warning · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#704F00"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#704F00 / #F7F7F7</td><td class="num strong">6.98:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled error · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#A00E27 / #FFFFFF</td><td class="num strong">8.12:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled error · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#A00E27 / #F7F7F7</td><td class="num strong">7.58:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled info · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#0055A3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#0055A3 / #FFFFFF</td><td class="num strong">7.43:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled info · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#0055A3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#0055A3 / #F7F7F7</td><td class="num strong">6.93:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled neutral · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#E0E0E0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#E0E0E0 / #FFFFFF</td><td class="num strong">1.32:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">filled neutral · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#E0E0E0"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#E0E0E0 / #F7F7F7</td><td class="num strong">1.23:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined success · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#008A2A"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#008A2A / #FFFFFF</td><td class="num strong">4.50:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined success · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#008A2A"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#008A2A / #F7F7F7</td><td class="num strong">4.20:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined warning · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#916A00"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#916A00 / #FFFFFF</td><td class="num strong">4.92:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined warning · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#916A00"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#916A00 / #F7F7F7</td><td class="num strong">4.60:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined error · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#CA293F / #FFFFFF</td><td class="num strong">5.38:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined error · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#CA293F / #F7F7F7</td><td class="num strong">5.03:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined info · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#0071D0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#0071D0 / #FFFFFF</td><td class="num strong">4.91:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined info · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#0071D0"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#0071D0 / #F7F7F7</td><td class="num strong">4.59:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined neutral · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#717171 / #FFFFFF</td><td class="num strong">4.88:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">outlined neutral · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#717171 / #F7F7F7</td><td class="num strong">4.56:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled success · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#1BB14B / #181818</td><td class="num strong">6.29:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled success · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#1BB14B / #292929</td><td class="num strong">5.15:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled warning · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#DCAC2E / #181818</td><td class="num strong">8.44:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled warning · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#DCAC2E / #292929</td><td class="num strong">6.92:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled error · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#F84F5D / #181818</td><td class="num strong">5.30:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled error · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#F84F5D / #292929</td><td class="num strong">4.34:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled info · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#2696FF / #181818</td><td class="num strong">5.82:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled info · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#2696FF / #292929</td><td class="num strong">4.77:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled neutral · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#565656 / #181818</td><td class="num strong">2.42:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">filled neutral · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#565656 / #292929</td><td class="num strong">1.98:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined success · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#1BB14B / #181818</td><td class="num strong">6.29:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined success · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#1BB14B / #292929</td><td class="num strong">5.15:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined warning · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#DCAC2E / #181818</td><td class="num strong">8.44:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined warning · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#DCAC2E / #292929</td><td class="num strong">6.92:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined error · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#F84F5D / #181818</td><td class="num strong">5.30:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined error · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#F84F5D / #292929</td><td class="num strong">4.34:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined info · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#2696FF / #181818</td><td class="num strong">5.82:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined info · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#2696FF / #292929</td><td class="num strong">4.77:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined neutral · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#949494 / #181818</td><td class="num strong">5.85:1</td><td><span class="exc">isento</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">outlined neutral · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#949494 / #292929</td><td class="num strong">4.80:1</td><td><span class="exc">isento</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Foco</h2>
+  <p>Só o X recebe foco — a tag é conteúdo, não controle. O anel tem duas camadas: 2px de
+  respiro na cor do fundo e 2px na cor do foco, e é o respiro que impede o anel de encostar no
+  preenchimento. Ele é sombra, então não empurra layout, e não anima.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel no X</span>
+      <div class="stage2">
+        <span class="al-tag al-tag--filled al-tag--success al-tag--md is-focus">Pago<button type="button" class="al-tag__dismiss" tabindex="-1" aria-label="Remover Pago"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+        <span class="al-tag al-tag--outlined al-tag--info al-tag--md is-focus">Processando<button type="button" class="al-tag__dismiss" tabindex="-1" aria-label="Remover Processando"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span>
+      </div>
+      <p class="cap">Aparece no <code>:focus-visible</code> — teclado sim, clique de mouse não.
+      Aqui está forçado por classe, para dar para ver parado.</p>
+    </div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">O que não existe</span>
+      <div class="stage2"><span class="al-tag al-tag--outlined al-tag--neutral al-tag--md">Interno<button type="button" class="al-tag__dismiss" aria-label="Remover Interno"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></span></div>
+      <p class="cap">Sem hover no X e sem estado na tag. <b>Nenhuma transição neste
+      componente</b> — é o único do AL sem duração literal esperando a escala de motion.</p>
+    </div>
+  </div>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Anel / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">anel do X · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">#FC5000 / #FFFFFF</td><td class="num strong">3.34:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">anel do X · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">#FC5000 / #F7F7F7</td><td class="num strong">3.12:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">anel do X · sobre bg-canvas</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">#FF9267 / #181818</td><td class="num strong">8.08:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">anel do X · sobre bg-surface</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">#FF9267 / #292929</td><td class="num strong">6.62:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Dois contratos deste componente não vivem no CSS, então o portão de literal não os alcança.
+  O primeiro não tem portão possível — <b>o rótulo carregar o sentido</b> é regra de uso, e está
+  nas Diretrizes. O segundo é verificável de verdade, e é aqui que o <code>a11y.py</code> o
+  cobra, lendo o HTML que este site emite: <b>38 elementos</b>
+  <code>.al-tag</code> nesta página, nenhum fora.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Sem foco na tag</b><span>Nada de <code>button</code>, <code>role="button"</code> ou <code>tabindex</code> no <code>.al-tag</code>.</span></div>
+    <div><b>aria-label com o rótulo</b><span>O portão extrai o texto da tag e confere se ele aparece dentro do <code>aria-label</code> do X.</span></div>
+    <div><b>type="button"</b><span>Dentro de <code>form</code>, o padrão do HTML é submit.</span></div>
+    <div><b>svg decorativo</b><span><code>aria-hidden</code> no desenho: o nome vive no botão, anunciar os dois é ruído duplicado.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Alvo de toque</h2>
+  <p>O X tem <b>16px</b> no <code>sm</code> e <b>20px</b> no <code>md</code>,
+  contra os 24 mínimos do WCAG 2.5.8. Exceção consciente, sem expansão de área por
+  pseudo-elemento — a mesma decisão do <code>sm</code> do Button, 36px contra os 44 recomendados
+  pelo Carbon. A saída é a regra 07, não geometria.</p>
+</section></div></div>
 <footer>
   <span><b>AL Design System</b> · v0.4.0</span>
   <span>Licença MIT</span>
@@ -3907,6 +4757,86 @@ var ROTULOS = [["search", "Buscar"], ["x", "Fechar"], ["trash", "Excluir"], ["el
   });
 
   document.getElementById('ib-copy').addEventListener('click', function () {
+    var btn = this;
+    var text = code.textContent;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { btn.textContent = 'Não deu'; });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Não deu'; }
+      document.body.removeChild(ta);
+    }
+  });
+
+  render();
+})();
+var TAG_X = "<svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /></svg>";
+
+(function () {
+  // ── playground do Tag ──
+  var stage = document.getElementById('tag-stage');
+  if (!stage) return;
+  var code = document.getElementById('tag-code');
+  var labelInput = document.getElementById('tag-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function render() {
+    var tipo = pick('tagtype'), status = pick('tagstatus'), size = pick('tagsize');
+    var dis = pick('tagdis') === 'yes', theme = pick('tagtheme');
+    var texto = (labelInput.value || '').trim() || 'Tag';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var cls = 'al-tag al-tag--' + tipo + ' al-tag--' + status + ' al-tag--' + size;
+
+    // O nome acessível do X inclui o rótulo. Não é enfeite do playground: é a
+    // regra 08 das Diretrizes, e a vitrine não pode ensinar o contrário.
+    // tabindex="-1" porque esta é uma vitrine — a tag do playground não deve
+    // virar uma parada de tab no meio da leitura da página.
+    var x = dis
+      ? '<button type="button" class="al-tag__dismiss" aria-label="Remover ' + texto +
+        '" tabindex="-1">' + TAG_X + '</button>'
+      : '';
+    stage.innerHTML = '<span class="' + cls + '">' + texto + x + '</span>';
+
+    var lines = dis
+      ? ['&lt;span class="' + cls + '"&gt;',
+         '  ' + texto,
+         '  &lt;button type="button" class="al-tag__dismiss"',
+         '          aria-label="Remover ' + texto + '"&gt;',
+         '    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- X --&gt;&lt;/svg&gt;',
+         '  &lt;/button&gt;',
+         '&lt;/span&gt;',
+         '',
+         '&lt;!-- ao remover, mova o foco para a tag anterior do grupo --&gt;']
+      : ['&lt;span class="' + cls + '"&gt;' + texto + '&lt;/span&gt;'];
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('#tag-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+
+  document.querySelectorAll('input[name="tagtokfilter"]').forEach(function (i) {
+    i.addEventListener('change', function () {
+      var v = pick('tagtokfilter');
+      document.querySelectorAll('#tagtokbody tr').forEach(function (tr) {
+        tr.hidden = (v !== 'all' && tr.getAttribute('data-type') !== v);
+      });
+    });
+  });
+
+  document.getElementById('tag-copy').addEventListener('click', function () {
     var btn = this;
     var text = code.textContent;
     var done = function () {

@@ -14,6 +14,8 @@ O **Button** é o primeiro componente a fechar as oito etapas do pipeline: audit
 
 O **Icon Button** é o segundo, e fechou as oito no mesmo formato. Ele é o Button sem rótulo visível — e essa ausência muda mais do que parece: o ícone passa a ser o único portador do sentido, o nome acessível vira contrato obrigatório em vez de recurso, e o piso de contraste desce de 4,5:1 para 3:1, porque o critério que vale é o 1.4.11 (não-textual) e não o 1.4.3. A consequência prática é que ele não tem nenhuma exceção de marca, enquanto o Button tem três — é a mesma cor medida contra um mínimo diferente.
 
+O **Tag** é o terceiro, e é o primeiro do AL a fechar em **zero exceções de contraste carregando texto**. O Icon Button já fechava em zero, mas contra o piso de 3:1 do critério 1.4.11 — o portador do sentido dele é um ícone. Aqui o portador é um rótulo, então o piso é o 4,5:1 do 1.4.3, e a consequência mudou o escopo: o status Brand ficou de fora, porque branco sobre o laranja da marca dá 3,34:1 — o mesmo par que no Icon Button é aprovação. Ele também é o único componente sem nenhuma transição, e por isso o único sem pendência de escala de motion.
+
 O **Icon** fechou sete das oito, pulando a documentação por decisão: ícone do AL vive dentro de acionável e quem carrega o sentido é o rótulo. O contrato de acessibilidade não foi pulado junto — ele virou portão, medido no HTML emitido, em vez de regra escrita.
 
 | | |
@@ -21,10 +23,11 @@ O **Icon** fechou sete das oito, pulando a documentação por decisão: ícone d
 | Primitivas de cor | 66 (6 famílias × 11 degraus) |
 | Tokens semânticos | 49 × 2 temas |
 | Pares de contraste validados | 80 — 77 em AA pleno, 3 exceções de marca nomeadas, 0 abaixo do piso |
-| Componentes prontos | 2 (Button, Icon Button) |
+| Componentes prontos | 3 (Button, Icon Button, Tag) |
 | Ícones | 70 — Lucide, grid 24, sem escala fixa |
 | Tokens do Button | 48 — 40 alias, 8 transparentes, 0 valores soltos |
 | Tokens do Icon Button | 42 — 34 alias, 8 transparentes, 0 valores soltos |
+| Tokens do Tag | 39 — 33 alias, 6 transparentes, 0 valores soltos |
 
 O plano de evolução completo — divisão de trabalho, pipeline por componente e roadmap em tiers — está no [playbook](https://claude.ai/code/artifact/18a0c1ed-949c-4c8d-8906-93c21ed560a3).
 
@@ -58,6 +61,12 @@ components/icon-button/
   check.py       # portão do CSS: recusa valor literal em icon-button.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
 
+components/tag/
+  tokens.py      # camada de alias do Tag + portão de alias + portão de contraste, gera tokens.json e o CSS
+  tag.css        # o componente, escrito à mão
+  check.py       # portão do CSS: recusa valor literal em tag.css
+  a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
+
 site/
   site.py        # gera index.html: o site — Foundation + componentes, navegação e playground
 ```
@@ -83,19 +92,24 @@ python3 components/icon/check.py     # portão do CSS do Icon
 python3 components/icon/icons.py     # portão do desenho + manifesto
 python3 components/icon-button/tokens.py  # tokens do Icon Button + portão de alias + CSS
 python3 components/icon-button/check.py   # portão do CSS do Icon Button
+python3 components/tag/tokens.py     # tokens do Tag + portão de alias + portão de contraste + CSS
+python3 components/tag/check.py      # portão do CSS do Tag
 python3 site/site.py               # o site: Foundation + componentes
 python3 components/icon/a11y.py      # QA do Icon — depois do site, ver abaixo
 python3 components/icon-button/a11y.py    # QA do Icon Button — idem
+python3 components/tag/a11y.py       # QA do Tag — idem
 ```
 
 Nesta ordem, e de qualquer diretório.
 
-Os dois `a11y.py` são os únicos que rodam **depois** do site, e pelo mesmo motivo: além do
+Os três `a11y.py` são os únicos que rodam **depois** do site, e pelo mesmo motivo: além do
 contraste, eles conferem o contrato de marcação no HTML que o site realmente emite —
 contraste se prova no token, marcação só existe na saída renderizada. O do Icon cobra
 `aria-hidden` versus `role="img"`; o do Icon Button cobra o `aria-label` obrigatório,
-`aria-busy` sempre acompanhado de `aria-disabled`, e a ausência do atributo `disabled`.
-Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar a aba de
+`aria-busy` sempre acompanhado de `aria-disabled`, e a ausência do atributo `disabled`; o do
+Tag cobra que a tag não seja focável nem acionável e que o `aria-label` do X **inclua o rótulo**
+— numa lista de seis filtros, seis botões chamados "Remover" são indistinguíveis por leitor de
+tela. Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar a aba de
 acessibilidade. As duas gerações convergem numa passada; não há loop.
 
 ## Os portões
@@ -110,6 +124,7 @@ Validação é parte do build, não checagem opcional. Cada camada tem o seu, e 
 | Acessibilidade | `components/<c>/a11y.py` | Combinação renderizada (variante × estado × tema) fora do mínimo, medida contra o fundo efetivo. |
 | Desenho | `components/icon/icons.py` | SVG fora da família: outro grid, outra espessura, cor cravada, ou `class` própria. O risco daquela pasta não é um valor errado — é um ícone de outra biblioteca entrando sem ninguém ver. |
 | Marcação · Icon | `components/icon/a11y.py` | `.al-icon` no HTML emitido sem contrato de acessibilidade, ou com `aria-hidden` junto de um rótulo. |
+| Marcação · Tag | `components/tag/a11y.py` | `.al-tag` no HTML emitido que seja `<button>`, tenha `role="button"` ou `tabindex`, ou cujo X esteja sem `type="button"`, sem `aria-label`, ou com um `aria-label` que não contenha o rótulo da tag. |
 | Marcação · Icon Button | `components/icon-button/a11y.py` | `.al-icon-btn` no HTML emitido sem `aria-label`, com `aria-hidden` no próprio botão, com `aria-busy` solto sem `aria-disabled`, ou usando o atributo `disabled`. Esse contrato não vive no CSS, então o portão de literal não alcança — é aqui que ele é cobrado. |
 
 ## Arquitetura de tokens
@@ -134,9 +149,10 @@ Em CSS, a camada de componente não tem bloco de tema — e não precisa. O tema
 
 Coisas deliberadamente não construídas, anotadas para não voltarem como dúvida:
 
-- **Escala de motion** — as durações no `button.css` e no `icon-button.css` são literais e aparecem no relatório do `check.py` como exceção consciente.
+- **Escala de motion** — as durações no `button.css` e no `icon-button.css` são literais e aparecem no relatório do `check.py` como exceção consciente. O `tag.css` não entra nessa lista: ele não tem transição nem animação, porque o X não tem hover — por decisão.
 - **Tooltip** — os cinco sistemas de referência pedem tooltip para botão só de ícone (o Primer sempre renderiza um; o Polaris diz que deve ser fornecido; o Spectrum define o tooltip justamente como o lugar do rótulo). Como o componente ainda não existe aqui, o `aria-label` vai sozinho: atende o leitor de tela, mas não o usuário vidente que não reconhece o ícone. É por isso que a regra de uso do Icon Button restringe o componente a ações universalmente reconhecíveis.
 - **Alvo de toque do `sm`** — 36×36 passa o mínimo do WCAG 2.5.8 (24) e fica abaixo dos 44 que o Carbon recomenda. Não há expansão de área por pseudo-elemento, por decisão; a contrapartida é a regra de uso, que reserva o `sm` para densidade alta em interface de ponteiro.
+- **Alvo de toque do X do Tag** — 16px no `sm` e 20px no `md`, abaixo dos 24 do WCAG 2.5.8. Mesma família de decisão do `sm` do Button, e mesma saída: regra de uso, não geometria — `sm` dismissível só em interface de ponteiro. O `a11y.py` do Tag mede e reporta, nunca reprova.
 - **Unidade de tipografia** — a escala é em `px`. Atende o critério 1.4.4 (zoom do navegador escala `px`), mas não acompanha a preferência de tamanho de fonte do usuário. Migrar para `rem` é decisão de Foundation, não de componente.
 
 ## Contribuindo
