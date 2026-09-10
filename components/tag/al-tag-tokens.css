@@ -1,0 +1,70 @@
+/* AL Design System - tokens do Tag
+ * GERADO por components/tag/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez.
+ *
+ * O tipo vem antes do status no nome porque e o tipo que decide quais
+ * papeis existem; o status so troca a cor de cada papel.
+ */
+
+:root {
+
+  /* filled */
+  --al-tag-filled-success-bg: var(--al-bg-success);
+  --al-tag-filled-success-label: var(--al-text-on-solid);
+  --al-tag-filled-success-border: transparent;
+  --al-tag-filled-warning-bg: var(--al-bg-warning);
+  --al-tag-filled-warning-label: var(--al-text-on-solid);
+  --al-tag-filled-warning-border: transparent;
+  --al-tag-filled-error-bg: var(--al-bg-danger);
+  --al-tag-filled-error-label: var(--al-text-on-solid);
+  --al-tag-filled-error-border: transparent;
+  --al-tag-filled-info-bg: var(--al-bg-info);
+  --al-tag-filled-info-label: var(--al-text-on-solid);
+  --al-tag-filled-info-border: transparent;
+  --al-tag-filled-neutral-bg: var(--al-bg-active);
+  --al-tag-filled-neutral-label: var(--al-text-primary);
+  --al-tag-filled-neutral-border: transparent;
+
+  /* outlined */
+  --al-tag-outlined-bg: transparent;
+  --al-tag-outlined-success-label: var(--al-text-success);
+  --al-tag-outlined-success-border: var(--al-border-success);
+  --al-tag-outlined-warning-label: var(--al-text-warning);
+  --al-tag-outlined-warning-border: var(--al-border-warning);
+  --al-tag-outlined-error-label: var(--al-text-danger);
+  --al-tag-outlined-error-border: var(--al-border-danger);
+  --al-tag-outlined-info-label: var(--al-text-info);
+  --al-tag-outlined-info-border: var(--al-border-info);
+  --al-tag-outlined-neutral-label: var(--al-text-primary);
+  --al-tag-outlined-neutral-border: var(--al-border-strong);
+
+  /* dismiss - so o X e focavel; a tag em si nunca recebe foco */
+  --al-tag-dismiss-ring: var(--al-focus-ring-default);
+
+  /* tamanho sm - altura resultante: 20px */
+  --al-tag-sm-padding-x: var(--al-space-8);
+  --al-tag-sm-padding-y: var(--al-space-2);
+  --al-tag-sm-gap: var(--al-space-8);
+  --al-tag-sm-font-size: var(--al-font-size-xs);
+  --al-tag-sm-line-height: var(--al-line-height-xs);
+  --al-tag-sm-font-weight: var(--al-font-weight-medium);
+  --al-tag-sm-tracking: 0.01em;
+  --al-tag-sm-icon-size: var(--al-icon-size-16);
+
+  /* tamanho md - altura resultante: 28px */
+  --al-tag-md-padding-x: var(--al-space-12);
+  --al-tag-md-padding-y: var(--al-space-4);
+  --al-tag-md-gap: var(--al-space-8);
+  --al-tag-md-font-size: var(--al-font-size-sm);
+  --al-tag-md-line-height: var(--al-line-height-sm);
+  --al-tag-md-font-weight: var(--al-font-weight-medium);
+  --al-tag-md-tracking: 0em;
+  --al-tag-md-icon-size: var(--al-icon-size-20);
+
+  /* compartilhado */
+  --al-tag-radius: var(--al-radius-full);
+  --al-tag-border-width: var(--al-border-width-1);
+}

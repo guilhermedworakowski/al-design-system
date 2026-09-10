@@ -52,6 +52,11 @@ IB_TOKENS = open(os.path.join(ROOT, 'components', 'icon-button',
 IB_CSS = open(os.path.join(ROOT, 'components', 'icon-button', 'icon-button.css')).read()
 IB_A11Y = json.load(open(os.path.join(ROOT, 'components', 'icon-button', 'a11y.json')))
 
+TAG = json.load(open(os.path.join(ROOT, 'components', 'tag', 'tokens.json')))
+TAG_TOKENS = open(os.path.join(ROOT, 'components', 'tag', 'al-tag-tokens.css')).read()
+TAG_CSS = open(os.path.join(ROOT, 'components', 'tag', 'tag.css')).read()
+TAG_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tag', 'a11y.json')))
+
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
 N, O = P['neutral'], P['orange']
@@ -68,6 +73,7 @@ N_AA = N_PAIRS - N_EXC
 N_FAIL = sum(1 for r in T['contrastReport'] if not r.get('pass', True))
 N_BTN_TOKENS = len(BTN['alias'])
 N_IB_TOKENS = len(IB['alias'])
+N_TAG_TOKENS = len(TAG['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -106,10 +112,11 @@ def scope_themes(found_css, *token_blocks):
     return css
 
 
-CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS)
+CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
-            + '\n' + IB_TOKENS + '\n' + IB_CSS)
+            + '\n' + IB_TOKENS + '\n' + IB_CSS
+            + '\n' + TAG_TOKENS + '\n' + TAG_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -873,6 +880,11 @@ th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
 .al-icon-btn.is-hover{background-color:var(--_bg-hover)}
 .al-icon-btn.is-active{background-color:var(--_bg-active)}
 .al-icon-btn.is-focus{box-shadow:var(--_ring); outline:none}
+/* O anel do Tag mora no X, nao na tag - entao o especime forca o filho. */
+.al-tag.is-focus .al-tag__dismiss{box-shadow:var(--al-tag-dismiss-ring); outline:none}
+/* faixa de especimes de tag: o .stage2 ja da o fundo, aqui so o ritmo */
+.tagrow{display:flex; flex-wrap:wrap; gap:9px; align-items:center}
+.tagrow + .tagrow{margin-top:11px}
 
 footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--al-border-subtle);
   color:var(--al-text-secondary); font-size:12.5px; display:flex; flex-wrap:wrap; gap:8px 20px}
@@ -958,6 +970,10 @@ TH_ICON = ('<div class="th-icons">'
            + ''.join(al_icon(n) for n in
                      ['search', 'heart', 'settings', 'bell', 'star', 'trash'])
            + '</div>')
+TH_TAG = ('<div class="th-icons">'
+          '<span class="al-tag al-tag--filled al-tag--success al-tag--sm">Pago</span>'
+          '<span class="al-tag al-tag--outlined al-tag--info al-tag--sm">Novo</span>'
+          '</div>')
 TH_SOON = '<div class="th-soon"></div>'
 
 ICO_FUNDACAO = ('<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">'
@@ -2288,12 +2304,457 @@ IB_A11Y = f'''
 </section>'''
 
 
+# ═══════════════════════════════════════════════════════════════════════ TAG
+TAG_TYPES = [('filled', 'Filled'), ('outlined', 'Outlined')]
+TAG_STATUSES = [('success', 'Success'), ('warning', 'Warning'), ('error', 'Error'),
+                ('info', 'Info'), ('neutral', 'Neutral')]
+TAG_SIZES = [('sm', 'sm · 20px'), ('md', 'md · 28px')]
+TAG_LABELS = {'success': 'Pago', 'warning': 'Pendente', 'error': 'Recusado',
+              'info': 'Processando', 'neutral': 'Rascunho'}
+TAG_ROLES = ['bg', 'label', 'border']
+
+
+def tg(tipo, status, size='md', label=None, x=False, cls=''):
+    """Uma Tag real.
+
+    `cls=' is-focus'` congela o anel para o especime - e ai o X sai da ordem de
+    tabulacao com tabindex="-1", porque especime nao pode virar parada de tab de
+    mentira. Mesmo cuidado dos especimes de Button.
+    """
+    label = TAG_LABELS[status] if label is None else label
+    c = f'al-tag al-tag--{tipo} al-tag--{status} al-tag--{size}{cls}'
+    if not x:
+        return f'<span class="{c}">{label}</span>'
+    ti = ' tabindex="-1"' if 'is-focus' in cls else ''
+    return (f'<span class="{c}">{label}<button type="button" class="al-tag__dismiss"'
+            f'{ti} aria-label="Remover {label}">{al_icon("x")}</button></span>')
+
+
+def tag_specimens():
+    """Os dois tipos, os cinco status, os dois tamanhos - parados, lado a lado."""
+    cells = []
+    for tipo, nome in TAG_TYPES:
+        linhas = ''.join(
+            '<div class="tagrow">'
+            + ''.join(tg(tipo, st, size) for st, _ in TAG_STATUSES)
+            + '</div>'
+            for size, _ in TAG_SIZES)
+        cells.append(
+            f'<div class="cell"><span class="lab" style="color:var(--al-text-secondary)">'
+            f'{nome}</span><div class="stage2" style="display:block">{linhas}</div>'
+            f'<p class="cap">Acima <code>sm</code>, abaixo <code>md</code>. As duas linhas '
+            f'do {nome} têm a mesma altura das do outro tipo — a borda não cresce a caixa.</p>'
+            f'</div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def tag_geo_rows():
+    rows = []
+    for size, _ in TAG_SIZES:
+        for role in ['padding-x', 'padding-y', 'gap', 'font', 'icon-size']:
+            name = f'tag-{size}-{role}'
+            res = TAG['resolved'][name]
+            val = f'{res[1]}/{res[2]} · peso {res[3]}' if isinstance(res, list) else f'{res}px'
+            rows.append(f'<tr><td class="tok dim">{size}</td><td class="tok">--al-{name}</td>'
+                        f'<td class="tok dim">{TAG["alias"][name]}</td>'
+                        f'<td class="num">{val}</td></tr>')
+    for role in ['radius', 'border-width']:
+        name = f'tag-{role}'
+        rows.append(f'<tr><td class="tok dim">ambos</td><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{TAG["alias"][name]}</td>'
+                    f'<td class="num">{TAG["resolved"][name]}px</td></tr>')
+    return '\n'.join(rows)
+
+
+def tag_token_rows():
+    rows = []
+    for tipo, _ in TAG_TYPES:
+        nomes = [n for n in TAG['alias'] if n.startswith(f'tag-{tipo}-')]
+        for name in nomes:
+            ref = TAG['alias'][name]
+            res = TAG['resolved'][name]
+            lt = res['light'] if isinstance(res, dict) else res
+            sw = (f'<span class="chip sm" style="background:{lt}"></span>'
+                  if isinstance(lt, str) and lt.startswith('#') else '')
+            rows.append(f'<tr data-type="{tipo}"><td class="tok">--al-{name}</td>'
+                        f'<td class="tok dim">{ref}</td>'
+                        f'<td class="tok dim">{sw}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+def tag_a11y_rows(group):
+    out = []
+    for r in TAG_A11Y['rows']:
+        if r['group'] != group:
+            continue
+        verdict = ('<span class="exc">isento</span>' if r['exempt']
+                   else '<span class="pass">passa</span>')
+        chips = (f'<span class="chip sm" style="background:{r["fg"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bg"]}"></span>')
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{r["label"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["fg"]} / {r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+N_TAG_MEDIDAS = len([r for r in TAG_A11Y['rows'] if not r['exempt']])
+N_TAG_ISENTAS = len(TAG_A11Y['rows']) - N_TAG_MEDIDAS
+TAG_SM_BOX = TAG_A11Y['targets'][0]['box']
+TAG_MD_BOX = TAG_A11Y['targets'][1]['box']
+
+TAG_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="tag-stage">{tg('filled', 'success')}</div>
+
+    <div class="controls" id="tag-controls">
+      <div class="ctl"><span class="ctl-name">Tipo</span>{seg('tagtype', TAG_TYPES, 'filled')}</div>
+      <div class="ctl"><span class="ctl-name">Status</span>{seg('tagstatus', TAG_STATUSES, 'success')}</div>
+      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('tagsize', TAG_SIZES, 'md')}</div>
+      <div class="ctl"><span class="ctl-name">Dismissible</span>{seg('tagdis', [('no', 'Só leitura'), ('yes', 'Com X')], 'no')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tagtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><label for="tag-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="tag-label" type="text" value="Pago" maxlength="28"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="tag-copy">Copiar</button></div>
+      <pre><code id="tag-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    A tag acima é o componente real: esta página carrega o mesmo <code>tag.css</code> que vai
+    para produção. Repare que o <code>aria-label</code> do X acompanha o rótulo — sem isso,
+    numa lista de seis filtros, seis botões chamados “Remover” são indistinguíveis por leitor
+    de tela.
+  </p>
+</section>
+
+<section>
+  <h2>Os dois tipos</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Uma entidade, um estado</span>
+      <div class="stage2">{tg('filled', 'success')}{tg('filled', 'error')}</div>
+      <p class="cap"><b>Filled</b> quando a tag é o único indicador de estado de algo — status
+      de pedido numa linha de tabela. É o preenchimento que faz ela ser notada sem depender do
+      que está em volta. Precedente: Spectrum, o único dos cinco com sólido como padrão.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Três ou mais, juntas</span>
+      <div class="stage2">{tg('outlined', 'info', 'md', 'Livros', True)}{tg('outlined', 'neutral', 'md', 'Usados', True)}{tg('outlined', 'warning', 'md', 'Em estoque', True)}</div>
+      <p class="cap"><b>Outlined</b> em grupo: cinco preenchimentos saturados lado a lado
+      competem entre si e nenhum ganha. Precedente: Carbon, Primer e Polaris usam baixa ênfase
+      como padrão, porque tag quase sempre aparece em grupo.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Onde ela vive</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Dentro de uma frase</span>
+      <div class="stage2">
+        <span>O pedido <b>#48213</b> está {tg('filled', 'success', 'sm')} desde ontem.</span>
+      </div>
+      <p class="cap">O <code>sm</code> existe para isto: espaço condensado e inline. Precedente:
+      Carbon. A tag alinha pelo meio da linha, não pela base.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Numa barra de filtros</span>
+      <div class="stage2">{tg('outlined', 'neutral', 'md', 'Últimos 30 dias', True)}{tg('outlined', 'neutral', 'md', 'Pagos', True)}</div>
+      <p class="cap">Filtro aplicado é o caso canônico do <code>Dismissible</code>: remover tem
+      efeito real e o usuário consegue aplicar de novo. Precedente: Carbon.</p>
+    </div>
+  </div>
+</section>'''
+
+TAG_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Contêiner</b><span><code>span</code>, não <code>div</code> nem <code>button</code>. Pílula de raio total, borda de 1px sempre presente — transparente no <code>filled</code>.</span></div>
+    <div><b>Rótulo</b><span>Texto direto, sem elemento próprio. É ele que carrega o sentido; a cor apenas reforça.</span></div>
+    <div><b>X</b><span>Opcional, {TAG_SM_BOX}px no <code>sm</code> e {TAG_MD_BOX}px no <code>md</code>. É o único filho focável, e o único acionável.</span></div>
+    <div><b>Nome acessível do X</b><span><code>aria-label</code> que <b>inclui o rótulo</b>: “Remover Pago”, nunca só “Remover”.</span></div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>A tag é conteúdo, não controle</b>
+    Ela fica fora da ordem de tabulação e não recebe foco — é a mesma regra do Carbon para a
+    read-only, e é por isso que clicar no rótulo não faz nada. Quando o <code>Dismissible</code>
+    liga, quem entra na ordem de tabulação é só o X. <code>span</code> também é o que deixa a
+    tag viver dentro de uma frase sem quebrar o fluxo do texto.
+  </div>
+</section>
+
+<section>
+  <h2>As vinte combinações</h2>
+  {tag_specimens()}
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+      <tbody>{tag_geo_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Não existe token de altura</b>
+    Ela é consequência: <code>padding-y</code> × 2 mais a entrelinha. Dá
+    {TAG['derived']['height']['sm']}px no <code>sm</code> e {TAG['derived']['height']['md']}px no
+    <code>md</code>. A borda de 1px existe nos dois tipos e o padding desconta a espessura —
+    <code>calc(padding − border-width)</code> — e é isso que faz <code>filled</code> e
+    <code>outlined</code> ocuparem a mesma caixa. Trocar o tipo de uma tag nunca move o que
+    está em volta.
+  </div>
+</section>
+
+<section>
+  <h2>Tokens de cor</h2>
+  <div class="ctl" style="margin-bottom:14px"><span class="ctl-name">Filtrar</span>
+    {seg('tagtokfilter', [('all', 'Todos')] + TAG_TYPES, 'all')}</div>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Tag</th><th>Aponta para</th><th>Resolve em (claro)</th></tr></thead>
+      <tbody id="tagtokbody">{tag_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>{N_TAG_TOKENS} tokens no código, 34 variáveis no Figma</b>
+    A diferença é deliberada, e é a mesma regra do Icon Button. As duas fontes são
+    <i>estilos de texto</i> (<code>Label/sm</code> e <code>Label/md</code>), o anel do X reusa o
+    <i>effect style</i> <code>Focus-ring/Default</code> porque sombra não pode ser variável no
+    Figma, e os dois <code>icon-size</code> ligam direto à Fundação.
+  </div>
+  <div class="note">
+    <b>O tipo vem antes do status no nome</b>
+    Não é estilo, é a estrutura da decisão. O tipo define <b>quais papéis existem</b> — o
+    <code>filled</code> tem preenchimento, o <code>outlined</code> tem borda colorida — e o
+    status define <b>qual cor entra em cada papel</b>. É o mesmo lugar que
+    <code>primary</code> e <code>ghost</code> ocupam no Button. O único token que vive só no
+    tipo é <code>--al-tag-outlined-bg</code>, que não varia por status: cinco tokens idênticos
+    seriam cinco lugares para errar a mesma coisa.
+  </div>
+</section>'''
+
+TAG_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Estado ou categoria</span>
+      <div class="stage2">{tg('filled', 'success')}{tg('outlined', 'neutral', 'md', 'Interno')}</div>
+      <p class="cap">Rotular o estado de uma entidade, ou etiquetá-la sem carga de estado.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Ação</span>
+      <div class="stage2"><button type="button" class="al-btn al-btn--secondary al-btn--sm" tabindex="-1"><span class="al-btn__label">Ver detalhes</span></button></div>
+      <p class="cap">Se clicar faz algo além de remover a própria tag, é <b>Button</b>.
+      Precedente: Spectrum — badges não são interativos; se precisar de interação, use botão,
+      tag ou link.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>O rótulo carrega o sentido</h2>
+  <p>Esta é a regra mais importante do componente, e é o critério que mais reprova este tipo de
+  peça em qualquer sistema. A diferença entre os status é <b>puramente visual</b>: ela não chega
+  a quem não distingue as cores, e não chega a leitor de tela nenhum.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell no">
+      <span class="lab">A cor fazendo o trabalho</span>
+      <div class="stage2">{tg('filled', 'error', 'md', 'Pagamento')}</div>
+      <p class="cap">Vermelho escrito “Pagamento” não comunica nada sozinho.</p>
+    </div>
+    <div class="cell do">
+      <span class="lab">O texto fazendo o trabalho</span>
+      <div class="stage2">{tg('filled', 'error', 'md', 'Pagamento recusado')}</div>
+      <p class="cap">Precedente: Primer — se você lista sucessos e falhas, prefixe cada rótulo
+      em vez de confiar no esquema de cor.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+
+  <div class="rule"><div class="rn">01</div><div>
+    <h3>Sentence case, uma palavra</h3>
+    <p>Duas só quando o estado for composto e uma não resolver — “Reembolsado parcialmente”.
+    Precedente: Polaris, literalmente essa regra.</p></div></div>
+
+  <div class="rule"><div class="rn">02</div><div>
+    <h3>Passado para concluído, gerúndio para processo</h3>
+    <p>“Pago”, “Enviado”, “Cancelado” contra “Processando”, “Enviando”. Precedente: Polaris.</p></div></div>
+
+  <div class="rule"><div class="rn">03</div><div>
+    <h3>Rótulo longo se resolve na origem, não no truncamento</h3>
+    <p>O Carbon trunca e revela o texto completo por tooltip. <b>Aqui não</b>: o Tooltip ainda
+    não existe no AL, e truncar esconderia informação sem devolver caminho para recuperá-la.
+    Então a regra é o passo anterior — encurte antes de chegar na tag. Quando o Tooltip
+    existir, esta regra é revisitada.</p></div></div>
+
+  <div class="rule"><div class="rn">04</div><div>
+    <h3>Não misture os dois tipos no mesmo grupo</h3>
+    <p>A diferença de tratamento vira uma hierarquia que ninguém quis criar: o olho lê o sólido
+    como mais importante. Escolha um tipo por grupo.</p></div></div>
+
+  <div class="rule"><div class="rn">05</div><div>
+    <h3>Uma tag de status por entidade</h3>
+    <p>Se um pedido é “Pago” e “Enviado”, isso são dois campos. Duas tags lado a lado disputam
+    qual é o estado real.</p></div></div>
+
+  <div class="rule"><div class="rn">06</div><div>
+    <h3>Tag não substitui banner</h3>
+    <p>Um erro que exige ação precisa de um lugar onde caiba a explicação e o próximo passo.
+    Precedente: Polaris — não use badge vermelho como única forma de comunicar estado crítico.</p></div></div>
+
+  <div class="rule"><div class="rn">07</div><div>
+    <h3><code>sm</code> dismissível só em interface de ponteiro</h3>
+    <p>O X do <code>sm</code> tem {TAG_SM_BOX}px de alvo, contra os 24 mínimos do WCAG 2.5.8.
+    Em contexto de toque, use <code>md</code>. É a mesma família de decisão do <code>sm</code>
+    do Button — 36px contra os 44 recomendados pelo Carbon — e a saída é a mesma: regra de uso,
+    não geometria.</p></div></div>
+
+  <div class="rule"><div class="rn">08</div><div>
+    <h3>Depois de remover, o foco vai para a tag anterior</h3>
+    <p>Sem isso o foco cai no <code>body</code> e quem navega por teclado se perde no meio da
+    lista. Precedente: Primer, na acessibilidade do Token. Isso é JS — o CSS não alcança.</p></div></div>
+
+  <div class="rule"><div class="rn">09</div><div>
+    <h3>Prefira <code>Outlined</code> para a tag dismissível</h3>
+    <p>A borda sinaliza “isto responde a interação” antes de o usuário passar o mouse.
+    Precedente: o Carbon dá borda de contêiner às variantes selectable e operational
+    exatamente para indicar interatividade aumentada, e deixa a read-only sem borda.</p></div></div>
+
+  <div class="rule"><div class="rn">10</div><div>
+    <h3>Sem hover no X — só o cursor muda</h3>
+    <p><b>Divergência consciente</b>: o Carbon muda o fundo do ícone de fechar no hover. Aqui
+    não. A consequência a assumir é que, em tela de toque, não há hover nenhum — e aí o alvo
+    pequeno da regra 07 fica sem qualquer reforço. É também por isso que este componente não
+    tem transição nem animação alguma, e é o único do AL sem pendência de escala de motion.</p></div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Status brand</b><span>Marca não é status, e branco sobre <code>bg-brand</code> dá 3,34:1 — abaixo do piso de texto. Se voltar, é v2, com <code>bg-brand-strong</code>.</span></div>
+    <div><b>Selectable · operational</b><span>Tag que filtra ao clicar é outro componente, não uma variante deste.</span></div>
+    <div><b>Desabilitado</b><span>Tag é conteúdo. Conteúdo não desabilita.</span></div>
+    <div><b>Tamanho lg</b><span>O Carbon tem três. O AL tem dois, mesma decisão do Button.</span></div>
+    <div><b>Ícone à esquerda</b><span>Spectrum e Polaris têm. Aqui o único slot é o X, à direita.</span></div>
+  </div>
+</section>'''
+
+TAG_A11Y_TAB = f'''
+<section>
+  <h2>O piso é 4,5:1, não 3:1</h2>
+  <p>Esta é a diferença conceitual entre o Tag e o Icon Button, e ela explica quase tudo nesta
+  aba. Lá o portador do sentido é um <b>ícone</b>, conteúdo não-textual: critério 1.4.11, piso
+  3:1. Aqui é um <b>rótulo de texto</b>: critério 1.4.3, piso 4,5:1.</p>
+  <p style="margin-top:12px">A consequência foi concreta e mudou o escopo. Branco sobre a marca
+  dá 3,34:1 — no Icon Button isso é <b>aprovação</b>; aqui seria <b>reprova</b>. Foi por isso que
+  o status Brand ficou de fora desta versão, e é por isso que este componente tem
+  <b>zero exceções</b> — o primeiro do AL a fechar em zero carregando texto.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_TAG_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{TAG_A11Y['fails']}</b><span>reprovas</span></div>
+    <div class="stat"><b>{N_TAG_ISENTAS}</b><span>isentas medidas</span></div>
+    <div class="stat"><b>{TAG_A11Y['floors']['text']}:1</b><span>piso do rótulo</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo contra o fundo efetivo</h2>
+  <p>O <code>outlined</code> não tem preenchimento, então o rótulo não está sobre um sólido —
+  está sobre a tela. Por isso ele é medido contra os <b>dois</b> fundos: a tela e a superfície,
+  porque tag quase sempre vive dentro de card, tabela ou painel. O <code>filled</code> cobre o
+  fundo, e uma medição basta.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Rótulo / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{tag_a11y_rows('rotulo')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O limite do pill</h2>
+  <p>Medido e listado, mas <b>isento</b> — e a razão importa. O 1.4.11 cobra contraste de
+  elemento gráfico <b>necessário para entender o conteúdo</b>. No Icon Button o desenho é a única
+  coisa que informa que existe um acionável ali, então o limite é portão. Aqui quem informa é o
+  texto, e o contorno é decoração. É o que faz o <code>filled neutral</code> aparecer em 1,32:1
+  sem reprovar — e ele fica medido para ninguém “corrigir” achando que escapou.</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Limite / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{tag_a11y_rows('limite')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Foco</h2>
+  <p>Só o X recebe foco — a tag é conteúdo, não controle. O anel tem duas camadas: 2px de
+  respiro na cor do fundo e 2px na cor do foco, e é o respiro que impede o anel de encostar no
+  preenchimento. Ele é sombra, então não empurra layout, e não anima.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel no X</span>
+      <div class="stage2">
+        {tg('filled', 'success', 'md', None, True, ' is-focus')}
+        {tg('outlined', 'info', 'md', None, True, ' is-focus')}
+      </div>
+      <p class="cap">Aparece no <code>:focus-visible</code> — teclado sim, clique de mouse não.
+      Aqui está forçado por classe, para dar para ver parado.</p>
+    </div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">O que não existe</span>
+      <div class="stage2">{tg('outlined', 'neutral', 'md', 'Interno', True)}</div>
+      <p class="cap">Sem hover no X e sem estado na tag. <b>Nenhuma transição neste
+      componente</b> — é o único do AL sem duração literal esperando a escala de motion.</p>
+    </div>
+  </div>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Anel / fundo</th><th>Razão</th><th></th></tr></thead>
+    <tbody>{tag_a11y_rows('foco')}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Dois contratos deste componente não vivem no CSS, então o portão de literal não os alcança.
+  O primeiro não tem portão possível — <b>o rótulo carregar o sentido</b> é regra de uso, e está
+  nas Diretrizes. O segundo é verificável de verdade, e é aqui que o <code>a11y.py</code> o
+  cobra, lendo o HTML que este site emite: <b>{TAG_A11Y['markupChecked'] or 0} elementos</b>
+  <code>.al-tag</code> nesta página, nenhum fora.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Sem foco na tag</b><span>Nada de <code>button</code>, <code>role="button"</code> ou <code>tabindex</code> no <code>.al-tag</code>.</span></div>
+    <div><b>aria-label com o rótulo</b><span>O portão extrai o texto da tag e confere se ele aparece dentro do <code>aria-label</code> do X.</span></div>
+    <div><b>type="button"</b><span>Dentro de <code>form</code>, o padrão do HTML é submit.</span></div>
+    <div><b>svg decorativo</b><span><code>aria-hidden</code> no desenho: o nome vive no botão, anunciar os dois é ruído duplicado.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Alvo de toque</h2>
+  <p>O X tem <b>{TAG_SM_BOX}px</b> no <code>sm</code> e <b>{TAG_MD_BOX}px</b> no <code>md</code>,
+  contra os 24 mínimos do WCAG 2.5.8. Exceção consciente, sem expansão de área por
+  pseudo-elemento — a mesma decisão do <code>sm</code> do Button, 36px contra os 44 recomendados
+  pelo Carbon. A saída é a regra 07, não geometria.</p>
+</section>'''
+
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
   <div class="cards">
     {card('button', 'Button', 'Quatro variantes, dois tamanhos, cinco estados — com playground que instancia o CSS real.', TH_BUTTON)}
     {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_ICONBUTTON)}
+    {card('tag', 'Tag', 'Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.', TH_TAG)}
   </div>
 </section>
 
@@ -2302,7 +2763,6 @@ LANDING_COMPONENTES = f'''
   <p>A ordem não é negociável enquanto o pipeline for de um componente por vez. Cada um destes
   começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
   <div class="cards" style="margin-top:18px">
-    {card('badge', 'Badge / Tag', 'Rótulo curto de status ou contagem, sem ação associada.', TH_SOON, soon=True)}
     {card('avatar', 'Avatar', 'Identidade visual de uma pessoa ou entidade, com recurso a iniciais.', TH_SOON, soon=True)}
   </div>
 </section>'''
@@ -2369,7 +2829,7 @@ PAGES = [
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [('2 publicados', True), ('4 no Tier 1', False), ('8 etapas por componente', False)],
+        [('3 publicados', True), ('4 no Tier 1', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
@@ -2389,6 +2849,15 @@ PAGES = [
          ('0 exceções de marca', False)],
         [('overview', 'Visão geral', IB_OVERVIEW), ('specs', 'Especificações', IB_SPECS),
          ('guide', 'Diretrizes', IB_GUIDE), ('a11y', 'Acessibilidade', IB_A11Y)])),
+
+    ('tag', 'Componentes', page(
+        'tag', 'Componentes', 'Tag',
+        'Rótulo curto de estado ou categoria. Não dispara nada: é conteúdo, fica fora da ordem '
+        'de tabulação, e quem carrega o sentido é o texto — a cor apenas reforça.',
+        [('Estável', True), ('20 variantes no Figma', False), (f'{N_TAG_TOKENS} tokens', False),
+         ('0 exceções', False)],
+        [('overview', 'Visão geral', TAG_OVERVIEW), ('specs', 'Especificações', TAG_SPECS),
+         ('guide', 'Diretrizes', TAG_GUIDE), ('a11y', 'Acessibilidade', TAG_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -2419,7 +2888,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
       <div class="nav-sub" id="sub-componentes" hidden>
         <a href="#/button" data-page="button">Button</a>
         <a href="#/icon-button" data-page="icon-button">Icon Button</a>
-        <a class="soon" aria-disabled="true">Badge / Tag</a>
+        <a href="#/tag" data-page="tag">Tag</a>
         <a class="soon" aria-disabled="true">Avatar</a>
       </div>
     </div>
@@ -2895,6 +3364,90 @@ JS_ICONBUTTON = r"""
 })();
 """
 
+JS_TAG_DATA = ('var TAG_X = ' + json.dumps(al_icon('x')) + ';\n')
+
+JS_TAG = r"""
+(function () {
+  // ── playground do Tag ──
+  var stage = document.getElementById('tag-stage');
+  if (!stage) return;
+  var code = document.getElementById('tag-code');
+  var labelInput = document.getElementById('tag-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function render() {
+    var tipo = pick('tagtype'), status = pick('tagstatus'), size = pick('tagsize');
+    var dis = pick('tagdis') === 'yes', theme = pick('tagtheme');
+    var texto = (labelInput.value || '').trim() || 'Tag';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var cls = 'al-tag al-tag--' + tipo + ' al-tag--' + status + ' al-tag--' + size;
+
+    // O nome acessível do X inclui o rótulo. Não é enfeite do playground: é a
+    // regra 08 das Diretrizes, e a vitrine não pode ensinar o contrário.
+    // tabindex="-1" porque esta é uma vitrine — a tag do playground não deve
+    // virar uma parada de tab no meio da leitura da página.
+    var x = dis
+      ? '<button type="button" class="al-tag__dismiss" aria-label="Remover ' + texto +
+        '" tabindex="-1">' + TAG_X + '</button>'
+      : '';
+    stage.innerHTML = '<span class="' + cls + '">' + texto + x + '</span>';
+
+    var lines = dis
+      ? ['&lt;span class="' + cls + '"&gt;',
+         '  ' + texto,
+         '  &lt;button type="button" class="al-tag__dismiss"',
+         '          aria-label="Remover ' + texto + '"&gt;',
+         '    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- X --&gt;&lt;/svg&gt;',
+         '  &lt;/button&gt;',
+         '&lt;/span&gt;',
+         '',
+         '&lt;!-- ao remover, mova o foco para a tag anterior do grupo --&gt;']
+      : ['&lt;span class="' + cls + '"&gt;' + texto + '&lt;/span&gt;'];
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('#tag-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+
+  document.querySelectorAll('input[name="tagtokfilter"]').forEach(function (i) {
+    i.addEventListener('change', function () {
+      var v = pick('tagtokfilter');
+      document.querySelectorAll('#tagtokbody tr').forEach(function (tr) {
+        tr.hidden = (v !== 'all' && tr.getAttribute('data-type') !== v);
+      });
+    });
+  });
+
+  document.getElementById('tag-copy').addEventListener('click', function () {
+    var btn = this;
+    var text = code.textContent;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { btn.textContent = 'Não deu'; });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Não deu'; }
+      document.body.removeChild(ta);
+    }
+  });
+
+  render();
+})();
+"""
+
+
 CHROME_ICON = """
 /* ── biblioteca de ícones ──
    Casca do site. O componente em si é o .al-icon, que vem do icon.css real. */
@@ -2933,7 +3486,7 @@ HTML = (
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n\n<script>'
-    + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + '</script>\n'
+    + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w').write(HTML)
@@ -2945,5 +3498,7 @@ print(f'  semânticos        : {N_SEM} × 2 temas')
 print(f'  pares de contraste: {N_PAIRS} — {N_AA} em AA pleno, {N_EXC} exceções, {N_FAIL} reprovas')
 print(f'  tokens do Button  : {N_BTN_TOKENS}')
 print(f'  tokens do IconBtn : {N_IB_TOKENS}')
+print(f'  tokens do Tag     : {N_TAG_TOKENS}  '
+      f'({N_TAG_MEDIDAS} combinacoes medidas, {TAG_A11Y["fails"]} reprovas, 0 excecoes)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
