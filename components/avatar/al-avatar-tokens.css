@@ -1,0 +1,45 @@
+/* AL Design System - tokens do Avatar
+ * GERADO por components/avatar/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez.
+ *
+ * Cor e compartilhada pelos tres tamanhos: o tamanho nao muda fundo nem
+ * tinta, so geometria.
+ */
+
+:root {
+
+  /* cor - compartilhada pelos tres tamanhos */
+  --al-avatar-bg: var(--al-bg-subtle);
+  --al-avatar-label: var(--al-text-primary);
+  --al-avatar-icon: var(--al-text-primary);
+
+  /* tamanho sm - diametro resultante: 32px */
+  --al-avatar-sm-padding: var(--al-space-8);
+  --al-avatar-sm-icon-size: var(--al-icon-size-16);
+  --al-avatar-sm-font-size: var(--al-font-size-xs);
+  --al-avatar-sm-line-height: var(--al-line-height-xs);
+  --al-avatar-sm-font-weight: 500;
+  --al-avatar-sm-tracking: 0.01em;
+
+  /* tamanho md - diametro resultante: 48px */
+  --al-avatar-md-padding: var(--al-space-12);
+  --al-avatar-md-icon-size: var(--al-icon-size-24);
+  --al-avatar-md-font-size: var(--al-font-size-xl);
+  --al-avatar-md-line-height: var(--al-line-height-xl);
+  --al-avatar-md-font-weight: 600;
+  --al-avatar-md-tracking: -0.01em;
+
+  /* tamanho lg - diametro resultante: 64px */
+  --al-avatar-lg-padding: var(--al-space-16);
+  --al-avatar-lg-icon-size: var(--al-icon-size-32);
+  --al-avatar-lg-font-size: var(--al-font-size-2xl);
+  --al-avatar-lg-line-height: var(--al-line-height-2xl);
+  --al-avatar-lg-font-weight: 600;
+  --al-avatar-lg-tracking: -0.01em;
+
+  /* compartilhado */
+  --al-avatar-radius: var(--al-radius-full);
+}
