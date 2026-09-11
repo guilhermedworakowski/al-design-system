@@ -27,7 +27,7 @@ do AL - o Icon e o Switch ainda nao existem, e so nascem depois do Figma.
 
 Rodar: python3 site/site.py     (escreve site/index.html)
 """
-import json, os, re, sys
+import base64, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HERE = os.path.join(ROOT, 'site')
@@ -57,6 +57,11 @@ TAG_TOKENS = open(os.path.join(ROOT, 'components', 'tag', 'al-tag-tokens.css')).
 TAG_CSS = open(os.path.join(ROOT, 'components', 'tag', 'tag.css')).read()
 TAG_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tag', 'a11y.json')))
 
+AVATAR = json.load(open(os.path.join(ROOT, 'components', 'avatar', 'tokens.json')))
+AVATAR_TOKENS = open(os.path.join(ROOT, 'components', 'avatar', 'al-avatar-tokens.css')).read()
+AVATAR_CSS = open(os.path.join(ROOT, 'components', 'avatar', 'avatar.css')).read()
+AVATAR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'avatar', 'a11y.json')))
+
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
 N, O = P['neutral'], P['orange']
@@ -74,6 +79,7 @@ N_FAIL = sum(1 for r in T['contrastReport'] if not r.get('pass', True))
 N_BTN_TOKENS = len(BTN['alias'])
 N_IB_TOKENS = len(IB['alias'])
 N_TAG_TOKENS = len(TAG['alias'])
+N_AVATAR_TOKENS = len(AVATAR['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -112,11 +118,13 @@ def scope_themes(found_css, *token_blocks):
     return css
 
 
-CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS)
+CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
+                         AVATAR_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
-            + '\n' + TAG_TOKENS + '\n' + TAG_CSS)
+            + '\n' + TAG_TOKENS + '\n' + TAG_CSS
+            + '\n' + AVATAR_TOKENS + '\n' + AVATAR_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -160,6 +168,69 @@ N_ICONS = len(ICON_NAMES)
 def ink(bg):
     """Texto legivel sobre um swatch, escolhido por contraste real."""
     return N['950'] if cr(bg, N['950']) >= cr(bg, '#FFFFFF') else '#FFFFFF'
+
+
+# ── retratos de demonstracao ──────────────────────────────────────────────
+# Casca do site, nao asset do componente. Sao ILUSTRACOES, nao fotos de gente
+# de verdade - demonstrar recorte nao justifica publicar o rosto de ninguem.
+#
+# A moldura e 160x120, DEITADA, de proposito: o `object-fit: cover` do
+# avatar.css so tem o que provar se a origem nao for quadrada. Se um dia o
+# recorte quebrar, estes dois retratos entortam na hora.
+#
+# O fundo sai da propria rampa do sistema - o retrato de demonstracao tambem
+# nao inventa cor.
+def portrait(bg1, bg2, skin, hair, squarish=False):
+    cabelo = ('M48 50 Q50 8 80 10 Q112 8 112 52 L104 52 Q108 22 80 22 Q52 22 56 52 Z'
+              if squarish else 'M50 44 Q80 6 110 44 Q112 20 80 16 Q48 20 50 44 Z')
+    svg = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120">'
+        '<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">'
+        f'<stop offset="0" stop-color="{bg1}"/><stop offset="1" stop-color="{bg2}"/>'
+        '</linearGradient></defs>'
+        '<rect width="160" height="120" fill="url(#g)"/>'
+        f'<circle cx="80" cy="78" r="46" fill="{skin}"/>'
+        f'<circle cx="80" cy="48" r="30" fill="{skin}"/>'
+        f'<path d="{cabelo}" fill="{hair}"/>'
+        '</svg>')
+    return 'data:image/svg+xml;base64,' + base64.b64encode(svg.encode()).decode()
+
+
+PHOTO_A = portrait(O['100'], O['200'], '#E8B08C', '#3E2417')
+PHOTO_B = portrait(P['blue']['100'], P['blue']['200'], '#D9A579', N['950'], True)
+
+
+def iniciais(nome):
+    """Duas letras, maiusculas. E a regra 08 das Diretrizes morando no gerador:
+    a pagina nao pode ensinar um contrato que ela mesma nao cumpre."""
+    partes = [x for x in re.split(r'\s+', nome.strip()) if x]
+    if not partes:
+        return '?'
+    return (partes[0][0] + (partes[-1][0] if len(partes) > 1 else '')).upper()
+
+
+def av(tipo, size='md', nome='Maria Silva', foto=None, decorativo=True):
+    """Um Avatar real.
+
+    O contrato de a11y entra AQUI, e nao no chamador, porque ele e a parte
+    deste componente que mais se erra: decorativo leva `aria-hidden`, sozinho
+    leva `role="img"` + `aria-label`. O a11y.py confere cada um deles no HTML
+    que esta pagina emite - entao o gerador tem que acertar sempre.
+    """
+    a11y = 'aria-hidden="true"' if decorativo else f'role="img" aria-label="{nome}"'
+    if tipo == 'photo':
+        filho = f'<img class="al-avatar__photo" src="{foto or PHOTO_A}" alt="">'
+    elif tipo == 'icon':
+        filho = al_icon('user')
+    else:
+        filho = f'<span class="al-avatar__initials">{iniciais(nome)}</span>'
+    return f'<span class="al-avatar al-avatar--{size}" {a11y}>{filho}</span>'
+
+
+def av_person(tipo, size, nome, papel, foto=None):
+    """Avatar ao lado do nome escrito - o uso mais comum, e o caso decorativo."""
+    return (f'<span class="av-person">{av(tipo, size, nome, foto)}'
+            f'<span class="av-who"><b>{nome}</b><i>{papel}</i></span></span>')
 
 
 # ════════════════════════════════════════════════════════════ FOUNDATION · cor
@@ -974,6 +1045,11 @@ TH_TAG = ('<div class="th-icons">'
           '<span class="al-tag al-tag--filled al-tag--success al-tag--sm">Pago</span>'
           '<span class="al-tag al-tag--outlined al-tag--info al-tag--sm">Novo</span>'
           '</div>')
+TH_AVATAR = ('<div class="th-icons">'
+             + av('photo', 'sm', 'Maria Silva')
+             + av('initials', 'sm', 'Diego Costa')
+             + av('icon', 'sm')
+             + '</div>')
 TH_SOON = '<div class="th-soon"></div>'
 
 ICO_FUNDACAO = ('<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">'
@@ -2748,6 +2824,447 @@ TAG_A11Y_TAB = f'''
 
 
 
+# ══════════════════════════════════════════════════════════ COMPONENTE · Avatar
+AVATAR_TYPES = [('initials', 'Initials'), ('icon', 'Icon'), ('photo', 'Photo')]
+AVATAR_SIZES = [('sm', 'sm'), ('md', 'md'), ('lg', 'lg')]
+
+AVATAR_DIAM = AVATAR['derived']['diameter']
+N_AV_MEDIDAS = len(AVATAR_A11Y['rows'])
+
+
+def avatar_specimens():
+    """As nove combinacoes, paradas, na mesma grade do Figma."""
+    linhas = []
+    for tipo, nome in AVATAR_TYPES:
+        celulas = ''.join(
+            f'<div class="av-cell">{av(tipo, size, "Maria Silva" if tipo != "photo" else "Maria Silva", PHOTO_A if size != "md" else PHOTO_B)}'
+            f'<span>{size} · {AVATAR_DIAM[size]}px</span></div>'
+            for size, _ in AVATAR_SIZES)
+        linhas.append(f'<div class="av-grid-row"><div class="av-grid-name">{nome}</div>'
+                      f'<div class="av-grid-cells">{celulas}</div></div>')
+    return '<div class="av-grid">' + ''.join(linhas) + '</div>'
+
+
+def avatar_geo_rows():
+    rows = []
+    for size, _ in AVATAR_SIZES:
+        for role in ['padding', 'icon-size', 'font']:
+            name = f'avatar-{size}-{role}'
+            res = AVATAR['resolved'][name]
+            val = (f'{res[1]}/{res[2]} · peso {res[3]}' if isinstance(res, list)
+                   else f'{res}px')
+            rows.append(f'<tr><td class="tok dim">{size}</td><td class="tok">--al-{name}</td>'
+                        f'<td class="tok dim">{AVATAR["alias"][name]}</td>'
+                        f'<td class="num">{val}</td></tr>')
+    name = 'avatar-radius'
+    rows.append(f'<tr><td class="tok dim">os três</td><td class="tok">--al-{name}</td>'
+                f'<td class="tok dim">{AVATAR["alias"][name]}</td>'
+                f'<td class="num">{AVATAR["resolved"][name]}px</td></tr>')
+    return '\n'.join(rows)
+
+
+def avatar_token_rows():
+    rows = []
+    for role in ['bg', 'label', 'icon']:
+        name = f'avatar-{role}'
+        res = AVATAR['resolved'][name]
+        rows.append(
+            f'<tr><td class="tok">--al-{name}</td>'
+            f'<td class="tok dim">{AVATAR["alias"][name]}</td>'
+            f'<td class="tok dim"><span class="chip sm" style="background:{res["light"]}"></span>'
+            f'{res["light"]}</td>'
+            f'<td class="tok dim"><span class="chip sm" style="background:{res["dark"]}"></span>'
+            f'{res["dark"]}</td></tr>')
+    return '\n'.join(rows)
+
+
+def avatar_a11y_rows():
+    out = []
+    papel = {'label': 'Iniciais · texto', 'icon': 'Ícone · não-textual'}
+    for r in AVATAR_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fg"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bg"]}"></span>')
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{papel[r["what"]]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["fg"]} / {r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td>'
+            f'<td><span class="pass">passa</span></td></tr>')
+    return '\n'.join(out)
+
+
+
+AVATAR_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="avatar-stage">{av_person('initials', 'md', 'Maria Silva', 'Comentou há 2 horas')}</div>
+
+    <div class="controls" id="avatar-controls">
+      <div class="ctl"><span class="ctl-name">Tipo</span>{seg('avtype', AVATAR_TYPES, 'initials')}</div>
+      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('avsize', AVATAR_SIZES, 'md')}</div>
+      <div class="ctl"><span class="ctl-name">Contexto</span>{seg('avctx', [('deco', 'Ao lado do nome'), ('solo', 'Sozinho')], 'deco')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('avtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><label for="avatar-name" class="ctl-name">Nome</label>
+        <input class="txt" id="avatar-name" type="text" value="Maria Silva" maxlength="40"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="avatar-copy">Copiar</button></div>
+      <pre><code id="avatar-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Troque o <b>Contexto</b> e veja a marcação mudar: ao lado de um nome escrito o avatar sai
+    da árvore de acessibilidade (<code>aria-hidden</code>); sozinho, ele vira a informação e
+    precisa de <code>role="img"</code> com o nome. É o mesmo componente — muda o contrato, não
+    o CSS. As iniciais saem do nome que você digitar, cortadas em duas letras maiúsculas.
+  </p>
+</section>
+
+<section>
+  <h2>Os três tipos são uma cadeia, não um menu</h2>
+  <p>Esta é a diferença entre o Avatar e todo o resto do sistema. No Button você <b>escolhe</b>
+  a variante; aqui você não escolhe o tipo — ele é o primeiro da fila que tem material para
+  existir. Foto se houver foto; iniciais se houver nome; ícone quando não há nem um nem outro.</p>
+  <div class="av-chain">
+    <div class="av-chain-step">
+      {av('photo', 'lg', 'Maria Silva')}
+      <b>Photo</b>
+      <span>Tem foto. É a opção mais informativa, e nenhum sistema promove as outras duas
+      havendo foto. <i>Polaris, Material.</i></span>
+    </div>
+    <div class="av-chain-arrow" aria-hidden="true">{CARET}</div>
+    <div class="av-chain-step">
+      {av('initials', 'lg', 'Diego Costa')}
+      <b>Iniciais</b>
+      <span>Sem foto, nome conhecido. A imagem falhou, demorou ou nunca existiu.
+      <i>Polaris: a URL cai para iniciais se a imagem não carregar.</i></span>
+    </div>
+    <div class="av-chain-arrow" aria-hidden="true">{CARET}</div>
+    <div class="av-chain-step">
+      {av('icon', 'lg')}
+      <b>Icon</b>
+      <span>Nem foto nem nome: anônimo, convidado, usuário removido. O fim da fila —
+      nunca uma caixa vazia. <i>Material: “never leave the avatar blank”.</i></span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Onde ele vive</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Linha de lista · sm</span>
+      <div class="stage2" style="display:block">
+        <div class="av-list">
+          <div>{av_person('photo', 'sm', 'Maria Silva', 'Aprovou o orçamento')}</div>
+          <div>{av_person('initials', 'sm', 'Diego Costa', 'Pediu revisão')}</div>
+          <div>{av_person('icon', 'sm', 'Usuário removido', 'Comentário arquivado')}</div>
+        </div>
+      </div>
+      <p class="cap">O <code>sm</code> existe para isto: lista, tabela, comentário — onde o
+      avatar acompanha texto denso e não pode roubar a linha. Precedente: Polaris usa o menor
+      quando “o médio é grande demais para o layout”.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Topo de perfil · lg</span>
+      <div class="stage2" style="display:block">
+        <div class="av-profile">
+          {av('photo', 'lg', 'Maria Silva', PHOTO_B, decorativo=False)}
+          <div><b>Maria Silva</b><span>Design Ops · São Paulo</span></div>
+        </div>
+      </div>
+      <p class="cap">Aqui o avatar é o foco, não o acompanhante. Precedente: Material usa
+      64–96px em cabeçalho de perfil; o Primer fecha a escala dele em 64.</p>
+    </div>
+  </div>
+</section>'''
+
+
+AVATAR_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Involucro</b><span><code>span</code>, nunca <code>button</code>. Círculo de raio total, tamanho fixo nos dois eixos, <code>overflow:hidden</code> para recortar a foto.</span></div>
+    <div><b>Filho único</b><span>Um <code>img.al-avatar__photo</code>, um <code>span.al-avatar__initials</code> ou um <code>svg.al-icon</code>. É ele que define o tipo — não há classe de tipo.</span></div>
+    <div><b>Iniciais</b><span>Duas letras, maiúsculas. O CSS força <code>text-transform</code> como rede de segurança da regra de conteúdo.</span></div>
+    <div><b>Nome acessível</b><span>Mora no involucro. A foto leva <code>alt=""</code> sempre, e o ícone leva <code>aria-hidden</code> sempre.</span></div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O tipo não tem classe modificadora</b>
+    Isso não é economia de CSS, é a cadeia de fallback virando código. A foto se posiciona
+    sobre a caixa inteira por conta própria (<code>position:absolute; inset:0</code>), ignorando
+    o padding do involucro — então ela não precisa de um <code>--photo</code> zerando padding.
+    A consequência: cair de Photo para Iniciais é <b>trocar um nó filho</b>, com o involucro
+    parado. Quem implementa o <code>onerror</code> da imagem substitui um elemento e mais nada.
+  </div>
+</section>
+
+<section>
+  <h2>As nove combinações</h2>
+  {avatar_specimens()}
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+      <tbody>{avatar_geo_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Não existe token de diâmetro</b>
+    Ele é consequência: <code>padding × 2 + icon-size</code>. Dá {AVATAR_DIAM['sm']}px no
+    <code>sm</code>, {AVATAR_DIAM['md']}px no <code>md</code> e {AVATAR_DIAM['lg']}px no
+    <code>lg</code> — a mesma conta nos três tipos, porque os três ocupam a mesma caixa quadrada.
+  </div>
+  <div class="note">
+    <b>Por que o <code>icon-size</code> é a âncora, e não a entrelinha</b>
+    Aqui o Avatar diverge do Button e do Tag, onde a altura nasce da tipografia. Se o diâmetro
+    derivasse do texto, o <code>Initials md</code> fecharia em 12+28+12 = <b>52px</b> e o
+    <code>Icon md</code> em <b>48px</b> — dois tipos do mesmo tamanho com caixas diferentes,
+    e, com raio total, uma caixa não-quadrada deixa de ser círculo. O <code>icon-size</code> é
+    o único token de conteúdo com valor fixo por tamanho, então é ele que ancora.
+  </div>
+</section>
+
+<section>
+  <h2>Tokens de cor</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Avatar</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{avatar_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Três tokens de cor, não nove</b>
+    O tamanho não muda cor nenhuma — os três tamanhos usam o mesmo fundo e a mesma tinta.
+    Nove tokens repetindo o mesmo valor seriam nove lugares para o mesmo valor divergir por
+    engano.
+  </div>
+  <div class="note">
+    <b><code>avatar-label</code> e <code>avatar-icon</code> resolvem igual, e mesmo assim são
+    dois tokens</b>
+    Os dois apontam para <code>text-primary</code> hoje, então ficam idênticos na tela. Mas são
+    papéis diferentes — um é texto, o outro é tinta de vetor — e foi exatamente por colapsar
+    essa distinção que a tinta do ícone tinha ficado presa num token de <i>fundo</i>
+    (<code>bg-inverse</code>) até a auditoria pegar. Nomes separados são o que impede a mesma
+    armadilha de voltar.
+  </div>
+  <div class="note">
+    <b>{N_AVATAR_TOKENS} tokens no código, 10 variáveis no Figma</b>
+    A diferença são as três fontes, que são <i>estilos de texto</i>
+    (<code>Label/sm</code>, <code>Heading/xs</code>, <code>Heading/sm</code>) e não variáveis —
+    a mesma regra do Icon Button e do Tag.
+  </div>
+</section>'''
+
+
+AVATAR_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Identidade de uma pessoa</span>
+      <div class="stage2">{av_person('photo', 'md', 'Maria Silva', 'Autora')}</div>
+      <p class="cap">Dizer <b>quem</b> — autor de um comentário, dono de uma tarefa,
+      participante de uma conversa.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Decoração ao lado de qualquer coisa</span>
+      <div class="stage2">{av('icon', 'md')}</div>
+      <p class="cap">Avatar sem pessoa por trás é um ícone com fundo redondo. Se não há
+      identidade, o componente certo é o <b>Icon</b>.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>A cadeia decide, você não</h2>
+  <p>A regra mais importante do componente, e a que mais some numa implementação apressada: o
+  tipo do avatar não é uma preferência de tela, é o resultado de quanto material existe sobre
+  aquela pessoa. Invertendo a ordem, a interface fica mostrando um ícone genérico para alguém
+  que tem foto.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell no">
+      <span class="lab">Ícone porque é mais discreto</span>
+      <div class="stage2">{av_person('icon', 'md', 'Maria Silva', 'Tem foto no perfil')}</div>
+      <p class="cap">Escolher o tipo pelo gosto visual joga fora informação que existia.</p>
+    </div>
+    <div class="cell do">
+      <span class="lab">Foto porque existe foto</span>
+      <div class="stage2">{av_person('photo', 'md', 'Maria Silva', 'Tem foto no perfil')}</div>
+      <p class="cap">E se ela falhar ao carregar, cai sozinha para <b>MS</b> — não para vazio.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+
+  <div class="rule"><div class="rn">01</div><div>
+    <h3>Photo sempre que existir foto real</h3>
+    <p>É a opção mais informativa das três. Precedente: Polaris e Material — nenhum promove
+    iniciais ou ícone havendo foto.</p></div></div>
+
+  <div class="rule"><div class="rn">02</div><div>
+    <h3>Iniciais quando não há foto mas o nome é conhecido</h3>
+    <p>Nunca deixar o avatar vazio: as iniciais preservam a estrutura da interface mesmo sem
+    imagem. Precedente: Material, literalmente “never leave the avatar blank”.</p></div></div>
+
+  <div class="rule"><div class="rn">03</div><div>
+    <h3>Icon como último recurso — sem foto e sem nome</h3>
+    <p>Anônimo, convidado, usuário removido, placeholder de sistema. Precedente: Polaris usa
+    esse padrão exato.</p></div></div>
+
+  <div class="rule"><div class="rn">04</div><div>
+    <h3>A cadeia é fixa: Photo → Iniciais → Icon, sem pular etapa</h3>
+    <p>Imagem que falha ou demora cai para Iniciais; ausência de nome cai para Icon. Precedente:
+    Polaris — a URL cai para iniciais se a imagem falhar ou demorar a carregar. No código isso
+    é uma troca de nó filho, com o involucro parado.</p></div></div>
+
+  <div class="rule"><div class="rn">05</div><div>
+    <h3>Um tamanho só por grupo</h3>
+    <p>Lista, tabela ou empilhamento usam tamanho fixo do início ao fim. O tamanho descreve o
+    contexto, não a importância de cada pessoa.</p></div></div>
+
+  <div class="rule"><div class="rn">06</div><div>
+    <h3>Stack e indicador de presença não são variantes</h3>
+    <p>Ficaram fora desta versão. Quando vierem, cada um é uma composição <b>sobre</b> o Avatar
+    — anel de contorno na cor da tela para o stack, badge para presença — nunca uma variante do
+    componente. Precedente: Primer, no AvatarStack.</p></div></div>
+
+  <div class="rule"><div class="rn">07</div><div>
+    <h3>O tamanho sai do papel na tela, nunca do gosto</h3>
+    <p><code>sm</code> em linha (tabela, lista, comentário), <code>md</code> como padrão (card,
+    navegação), <code>lg</code> para destaque (topo de perfil). Precedentes: Polaris para o
+    menor e o padrão, Material e Primer para o maior.</p></div></div>
+
+  <div class="rule"><div class="rn">08</div><div>
+    <h3>Iniciais: no máximo 2 caracteres, maiúsculas</h3>
+    <p>Nome e sobrenome, ou as duas primeiras letras se só houver um nome. Nunca minúscula,
+    número solto ou emoji. Se o cálculo produzir mais de duas, corte para as duas relevantes —
+    contar com o recorte da caixa não é regra de conteúdo.</p></div></div>
+
+  <div class="rule"><div class="rn">09</div><div>
+    <h3>O glifo do tipo Icon é fixo em <code>user</code></h3>
+    <p>Diferente do Button e do Icon Button, que aceitam qualquer ícone da biblioteca, aqui o
+    papel é único: “pessoa sem informação”. Nenhum sistema de referência trata o glifo do avatar
+    como escolha livre.</p></div></div>
+
+  <div class="rule"><div class="rn">10</div><div>
+    <h3>Imagem quebrada cai para Iniciais ou Icon — nunca para caixa vazia</h3>
+    <p>É comportamento de quem implementa, não geometria: o Figma só modela os três tipos
+    finais, e esta regra é o que os amarra em sequência. O fundo <code>avatar-bg</code> é o chão
+    enquanto a imagem carrega, então nunca há um buraco na interface.</p></div></div>
+
+  <div class="rule"><div class="rn">11</div><div>
+    <h3>Sem estado de carregamento nesta versão</h3>
+    <p>Sem skeleton, sem shimmer — consequência de o Avatar ser estático. Se carregamento
+    assíncrono virar necessidade real, é escopo novo a auditar, não algo a improvisar no
+    código.</p></div></div>
+
+  <div class="rule"><div class="rn">12</div><div>
+    <h3>Avatar clicável é um acionável por fora</h3>
+    <p>Ele nunca entra na ordem de tabulação e nunca ganha <code>tabindex</code> ou
+    <code>role="button"</code> por conta própria. Quem precisa de avatar clicável embrulha num
+    elemento acionável que já tem anel de foco — Icon Button ou link. Sem essa regra escrita,
+    alguém cola o avatar dentro de um <code>button</code> e o anel simplesmente não existe.</p>
+    </div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Forma quadrada</b><span><b>Divergência consciente do Primer</b>, onde círculo é pessoa e quadrado é organização, time ou bot. O AL não tem conceito de organização em lugar nenhum — criar a forma antes do conceito inventa um estado que nada usa.</span></div>
+    <div><b>Stack (+N)</b><span>Composição sobre o Avatar, não variante dele. Precisa de um anel na cor da tela para separar avatares vizinhos — um token a mais, quando a hora chegar.</span></div>
+    <div><b>Indicador de presença</b><span>A bolinha de online/offline é um badge sobreposto, e badge posicionado é outro componente.</span></div>
+    <div><b>Cor de fundo por pessoa</b><span>Vários sistemas derivam uma cor do nome. Aqui o fundo é um só: cor derivada de string escapa do portão de contraste por definição.</span></div>
+    <div><b>Avatar interativo</b><span>Sem hover, sem foco, sem disabled. Avatar é conteúdo; conteúdo não desabilita — a mesma decisão do Tag.</span></div>
+  </div>
+</section>'''
+
+
+AVATAR_A11Y_TAB = f'''
+<section>
+  <h2>Dois pisos, no mesmo par de cor</h2>
+  <p>As iniciais são <b>texto</b>: critério 1.4.3, piso 4,5:1. O glifo do tipo Icon é
+  <b>não-textual</b>: critério 1.4.11, piso 3:1. Os dois resolvem no mesmo hex hoje, porque os
+  dois apontam para <code>text-primary</code> — mas cada um é medido contra o piso que é dele,
+  nunca contra o mais fácil.</p>
+  <p style="margin-top:12px">O resultado é o portão mais curto do sistema até agora: o fundo do
+  Avatar <b>não varia</b>. É sempre <code>avatar-bg</code>, sólido, nos três tipos — inclusive
+  no Photo, onde ele é o chão enquanto a imagem carrega. Sem tipo × status a multiplicar,
+  sobram quatro medições.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_AV_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{AVATAR_A11Y['fails']}</b><span>reprovas</span></div>
+    <div class="stat"><b>0</b><span>exceções</span></div>
+    <div class="stat"><b>9,98:1</b><span>pior margem</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Papel</th><th></th><th>Cor / fundo</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{avatar_a11y_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Este é o coração da acessibilidade do Avatar, e é o que nenhum portão de CSS alcança — ele
+  vive na marcação que quem consome escreve. O <code>a11y.py</code> o cobra lendo o HTML que
+  este site emite: <b>{AVATAR_A11Y['markupChecked'] or 0} elementos</b> <code>.al-avatar</code>
+  nesta página, nenhum fora do contrato.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Ao lado do nome → decorativo</span>
+      <div class="stage2">{av_person('photo', 'md', 'Maria Silva', 'Comentou há 2 horas')}</div>
+      <p class="cap"><code>aria-hidden="true"</code> no involucro. O nome já está escrito na
+      tela: anunciá-lo de novo pelo avatar é ruído duplicado. Precedente: PatternFly — imagem é
+      decorativa se puder sair sem afetar a informação da página; o Spectrum tem um
+      <code>is-decorative</code> explícito para isso.</p>
+    </div>
+    <div class="cell do">
+      <span class="lab">Sozinho → carrega o sentido</span>
+      <div class="stage2">{av('photo', 'md', 'Maria Silva', PHOTO_B, decorativo=False)}</div>
+      <p class="cap"><code>role="img"</code> + <code>aria-label="Maria Silva"</code>. Sem nome
+      escrito ao lado, o avatar É a informação. Precedente: o Carbon levou issue de
+      acessibilidade exatamente por avatar de usuário sem alternativa textual.</p>
+    </div>
+  </div>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Um dos dois, nunca os dois</b><span><code>aria-hidden</code> e <code>role="img"</code> juntos são contraditórios, e nenhum dos dois deixa o avatar mudo. O portão reprova os dois casos.</span></div>
+    <div><b><code>alt=""</code> sempre na foto</b><span>O nome mora no involucro. Um <code>alt</code> preenchido faria o leitor de tela anunciar a pessoa duas vezes.</span></div>
+    <div><b>Ícone sempre decorativo</b><span><code>aria-hidden</code> e <code>focusable="false"</code> no <code>svg</code>: o sentido, se houver, está no involucro — nunca no glifo.</span></div>
+    <div><b>Sem nome inventado no Icon</b><span>O tipo Icon nunca recebe nome de pessoa. Ou é decorativo, ou leva um rótulo genérico como “Usuário sem foto”.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O que não existe aqui, e por quê</h2>
+  <p>Duas seções que todo outro componente acionável do AL tem estão <b>declaradamente vazias</b>
+  no portão deste — e isso é resultado, não esquecimento.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Sem anel de foco</b><span>O Avatar nunca recebe foco, então não há anel para medir. Quem recebe é o acionável que o embrulha, e o anel é dele.</span></div>
+    <div><b>Sem alvo de toque</b><span>O piso de 24px do WCAG 2.5.8 vale para controle. O Avatar não é um — não há o que medir.</span></div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Alto contraste forçado: decisão em aberto, registrada</b>
+    No modo de alto contraste do sistema operacional o fundo é substituído, e o círculo perde o
+    limite visível. O Tag recolore uma borda que <b>já existia</b>; o Avatar não tem borda em
+    variante nenhuma, e acrescentar uma só nesse modo seria inventar geometria fora do Figma.
+    Fica medido e anotado aqui em vez de resolvido às pressas.
+  </div>
+</section>'''
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -2755,16 +3272,16 @@ LANDING_COMPONENTES = f'''
     {card('button', 'Button', 'Quatro variantes, dois tamanhos, cinco estados — com playground que instancia o CSS real.', TH_BUTTON)}
     {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_ICONBUTTON)}
     {card('tag', 'Tag', 'Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.', TH_TAG)}
+    {card('avatar', 'Avatar', 'Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.', TH_AVATAR)}
   </div>
 </section>
 
 <section>
-  <h2>Tier 1, ainda não abertos</h2>
-  <p>A ordem não é negociável enquanto o pipeline for de um componente por vez. Cada um destes
-  começa pela etapa 1 — definir e auditar — e só entra na lista de cima depois das oito.</p>
-  <div class="cards" style="margin-top:18px">
-    {card('avatar', 'Avatar', 'Identidade visual de uma pessoa ou entidade, com recurso a iniciais.', TH_SOON, soon=True)}
-  </div>
+  <h2>O Tier 1 fechou</h2>
+  <p>Os quatro primitivos atravessaram as oito etapas, um de cada vez — e a disciplina de fechar
+  um antes de abrir o outro é a resposta à dívida de “componente pronto sem documentação”. O
+  próximo tier é o de <b>formulário</b>, e ele começa como todos os outros: pela etapa 1,
+  definir e auditar.</p>
 </section>'''
 
 PAGES = [
@@ -2829,7 +3346,7 @@ PAGES = [
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [('3 publicados', True), ('4 no Tier 1', False), ('8 etapas por componente', False)],
+        [('4 publicados', True), ('Tier 1 fechado', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
@@ -2858,6 +3375,15 @@ PAGES = [
          ('0 exceções', False)],
         [('overview', 'Visão geral', TAG_OVERVIEW), ('specs', 'Especificações', TAG_SPECS),
          ('guide', 'Diretrizes', TAG_GUIDE), ('a11y', 'Acessibilidade', TAG_A11Y_TAB)])),
+
+    ('avatar', 'Componentes', page(
+        'avatar', 'Componentes', 'Avatar',
+        'Diz quem é a pessoa. Os três tipos não são um menu: são uma cadeia — foto, iniciais, '
+        'ícone — e o tipo é o primeiro da fila que tem material para existir.',
+        [('Estável', True), ('9 variantes no Figma', False),
+         (f'{N_AVATAR_TOKENS} tokens', False), ('0 exceções', False)],
+        [('overview', 'Visão geral', AVATAR_OVERVIEW), ('specs', 'Especificações', AVATAR_SPECS),
+         ('guide', 'Diretrizes', AVATAR_GUIDE), ('a11y', 'Acessibilidade', AVATAR_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -2889,7 +3415,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/button" data-page="button">Button</a>
         <a href="#/icon-button" data-page="icon-button">Icon Button</a>
         <a href="#/tag" data-page="tag">Tag</a>
-        <a class="soon" aria-disabled="true">Avatar</a>
+        <a href="#/avatar" data-page="avatar">Avatar</a>
       </div>
     </div>
   </div>
@@ -3474,6 +4000,142 @@ CHROME_ICON = """
 """
 
 
+JS_AVATAR_DATA = ('var AV_ICON = ' + json.dumps(al_icon('user')) + ';\n'
+                  'var AV_PHOTO = ' + json.dumps(PHOTO_A) + ';\n')
+
+JS_AVATAR = r"""
+(function () {
+  // ── playground do Avatar ──
+  var stage = document.getElementById('avatar-stage');
+  if (!stage) return;
+  var code = document.getElementById('avatar-code');
+  var nameInput = document.getElementById('avatar-name');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  // A regra 08 das Diretrizes, do lado do JS: duas letras, maiúsculas. A
+  // vitrine não pode ensinar um contrato que ela mesma não cumpre.
+  function iniciais(nome) {
+    var partes = nome.split(/\s+/).filter(Boolean);
+    if (!partes.length) return '?';
+    var duas = partes[0].charAt(0) + (partes.length > 1 ? partes[partes.length - 1].charAt(0) : '');
+    return duas.toUpperCase();
+  }
+
+  function render() {
+    var tipo = pick('avtype'), size = pick('avsize');
+    var solo = pick('avctx') === 'solo', theme = pick('avtheme');
+    var nome = (nameInput.value || '').trim() || 'Maria Silva';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var cls = 'al-avatar al-avatar--' + size;
+
+    // O contrato inteiro do componente mora nestas duas linhas: sozinho o
+    // avatar É a informação e precisa de nome; ao lado do nome escrito ele
+    // sai da árvore de acessibilidade.
+    var a11y = solo ? 'role="img" aria-label="' + nome + '"' : 'aria-hidden="true"';
+
+    var filho, filhoCode;
+    if (tipo === 'photo') {
+      filho = '<img class="al-avatar__photo" src="' + AV_PHOTO + '" alt="">';
+      filhoCode = '&lt;img class="al-avatar__photo" src="…" alt=""&gt;';
+    } else if (tipo === 'icon') {
+      filho = AV_ICON;
+      filhoCode = '&lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;'
+                + '&lt;!-- user --&gt;&lt;/svg&gt;';
+    } else {
+      filho = '<span class="al-avatar__initials">' + iniciais(nome) + '</span>';
+      filhoCode = '&lt;span class="al-avatar__initials"&gt;' + iniciais(nome) + '&lt;/span&gt;';
+    }
+
+    var avatar = '<span class="' + cls + '" ' + a11y + '>' + filho + '</span>';
+    stage.innerHTML = solo
+      ? avatar
+      : '<span class="av-person">' + avatar +
+        '<span class="av-who"><b>' + nome + '</b><i>Comentou há 2 horas</i></span></span>';
+
+    var a11yCode = solo
+      ? 'role="img" aria-label="' + nome + '"'
+      : 'aria-hidden="true"';
+    var lines = ['&lt;span class="' + cls + '" ' + a11yCode + '&gt;',
+                 '  ' + filhoCode,
+                 '&lt;/span&gt;'];
+    if (!solo) {
+      lines.push('&lt;!-- o nome está escrito ao lado, então o avatar é decorativo --&gt;');
+    }
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('#avatar-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+
+  document.getElementById('avatar-copy').addEventListener('click', function () {
+    var btn = this;
+    var text = code.textContent;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1600);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function () { btn.textContent = 'Não deu'; });
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Não deu'; }
+      document.body.removeChild(ta);
+    }
+  });
+
+  render();
+})();
+"""
+
+
+CHROME_AVATAR = """
+/* ── páginas do Avatar ──
+   Casca do site. O componente em si é o .al-avatar, que vem do avatar.css real. */
+.av-person{display:inline-flex; align-items:center; gap:12px}
+.av-who{display:flex; flex-direction:column; line-height:1.3}
+.av-who b{font-size:14px; font-weight:500; color:var(--al-text-primary)}
+.av-who i{font-size:12px; font-style:normal; color:var(--al-text-secondary)}
+
+.av-list{display:flex; flex-direction:column; gap:14px; align-items:flex-start}
+.av-profile{display:flex; align-items:center; gap:16px}
+.av-profile b{display:block; font-size:18px; font-weight:600; color:var(--al-text-primary)}
+.av-profile span{font-size:13px; color:var(--al-text-secondary)}
+
+.av-chain{display:flex; align-items:flex-start; gap:10px; flex-wrap:wrap; margin-top:18px}
+.av-chain-step{
+  flex:1 1 190px; display:flex; flex-direction:column; align-items:center; gap:10px;
+  padding:22px 16px; border-radius:12px; background:var(--al-bg-surface); text-align:center;
+}
+.av-chain-step b{font-size:14px; font-weight:600}
+.av-chain-step span{font-size:12.5px; line-height:18px; color:var(--al-text-secondary)}
+.av-chain-step i{font-style:normal; color:var(--al-text-placeholder)}
+.av-chain-arrow{
+  align-self:center; display:grid; place-items:center; width:22px; height:22px;
+  color:var(--al-text-placeholder); transform:rotate(-90deg); flex:none;
+}
+.av-chain-arrow svg{width:16px; height:16px}
+
+.av-grid{display:flex; flex-direction:column; gap:6px}
+.av-grid-row{display:flex; align-items:center; gap:18px; padding:14px 0;
+  border-bottom:1px solid var(--al-border-subtle)}
+.av-grid-row:last-child{border-bottom:0}
+.av-grid-name{width:80px; flex:none; font-size:13px; font-weight:500;
+  color:var(--al-text-secondary)}
+.av-grid-cells{display:flex; align-items:flex-end; gap:28px; flex-wrap:wrap}
+.av-cell{display:flex; flex-direction:column; align-items:center; gap:8px}
+.av-cell span{font-family:var(--al-font-mono); font-size:10.5px;
+  color:var(--al-text-secondary)}
+"""
+
 HTML = (
     '<title>AL Design System</title>\n'
     '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
@@ -3482,11 +4144,13 @@ HTML = (
     'family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">\n\n'
     '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
-    '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + '</style>\n\n'
+    '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR
+    + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n\n<script>'
-    + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG + '</script>\n'
+    + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
+    + JS_AVATAR_DATA + JS_AVATAR + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w').write(HTML)
@@ -3500,5 +4164,7 @@ print(f'  tokens do Button  : {N_BTN_TOKENS}')
 print(f'  tokens do IconBtn : {N_IB_TOKENS}')
 print(f'  tokens do Tag     : {N_TAG_TOKENS}  '
       f'({N_TAG_MEDIDAS} combinacoes medidas, {TAG_A11Y["fails"]} reprovas, 0 excecoes)')
+print(f'  tokens do Avatar  : {N_AVATAR_TOKENS}  '
+      f'({N_AV_MEDIDAS} combinacoes medidas, {AVATAR_A11Y["fails"]} reprovas, 0 excecoes)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

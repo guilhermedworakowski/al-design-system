@@ -6,8 +6,8 @@
     "nonText": 3.0
   },
   "markupSource": "site/index.html",
-  "markupChecked": null,
-  "markupPending": true,
+  "markupChecked": 26,
+  "markupPending": false,
   "fails": 0,
   "noFocusRing": "o avatar nunca recebe foco (achado 8, etapa 1) - sem secao de anel",
   "noTouchTarget": "o avatar nao e acionavel - o piso do 2.5.8 nao se aplica",
