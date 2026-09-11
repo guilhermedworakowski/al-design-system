@@ -20,7 +20,12 @@ TOKENS = {
     # 0.4.0: o Icon Button entrou inteiro - componente novo e camada nova, entao
     # casa do meio. Trouxe collection propria no Figma, 42 tokens, CSS, dois
     # portoes e pagina no site.
-    "name": "AL Design System", "version": "0.5.0", "license": "MIT",
+    # 0.5.0: o Tag - primeiro componente do AL a fechar em zero excecoes
+    # carregando texto (piso 4.5:1, nao os 3:1 do Icon Button).
+    # 0.6.0: o Avatar - componente novo, casa do meio. Fecha o Tier 1. Nao
+    # cria par de contraste novo (zero excecoes), e o menor portao de a11y do
+    # sistema ate agora: o fundo nunca varia por tipo, so por tema.
+    "name": "AL Design System", "version": "0.6.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },

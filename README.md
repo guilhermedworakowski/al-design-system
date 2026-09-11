@@ -3,7 +3,7 @@
 Design system open source, do Figma ao código. Construído em público, uma camada de cada vez.
 
 - **Licença:** MIT
-- **Versão:** `0.5.0`
+- **Versão:** `0.6.0`
 - **Figma:** biblioteca privada por enquanto — primitivas, semânticos e tokens de componente documentados abaixo
 
 ## Estado atual
@@ -18,16 +18,19 @@ O **Tag** é o terceiro, e é o primeiro do AL a fechar em **zero exceções de 
 
 O **Icon** fechou sete das oito, pulando a documentação por decisão: ícone do AL vive dentro de acionável e quem carrega o sentido é o rótulo. O contrato de acessibilidade não foi pulado junto — ele virou portão, medido no HTML emitido, em vez de regra escrita.
 
+O **Avatar** é o quarto, e fecha o Tier 1. Diferente dos outros três, os tipos dele não são uma escolha de variante — são uma cadeia: Photo se houver foto, Iniciais se houver nome, Icon como último recurso, nessa ordem, nunca uma caixa vazia. É também o menor portão de acessibilidade do sistema até agora: o fundo não varia por tipo nem por status, só por tema, então sobram quatro medições — e, como o Tag, fecha em zero exceções de contraste.
+
 | | |
 |---|---|
 | Primitivas de cor | 66 (6 famílias × 11 degraus) |
 | Tokens semânticos | 49 × 2 temas |
 | Pares de contraste validados | 80 — 77 em AA pleno, 3 exceções de marca nomeadas, 0 abaixo do piso |
-| Componentes prontos | 3 (Button, Icon Button, Tag) |
+| Componentes prontos | 4 (Button, Icon Button, Tag, Avatar) |
 | Ícones | 70 — Lucide, grid 24, sem escala fixa |
 | Tokens do Button | 48 — 40 alias, 8 transparentes, 0 valores soltos |
 | Tokens do Icon Button | 42 — 34 alias, 8 transparentes, 0 valores soltos |
 | Tokens do Tag | 39 — 33 alias, 6 transparentes, 0 valores soltos |
+| Tokens do Avatar | 13 — 13 alias, 0 transparentes, 0 valores soltos |
 
 O plano de evolução completo — divisão de trabalho, pipeline por componente e roadmap em tiers — está no [playbook](https://claude.ai/code/artifact/18a0c1ed-949c-4c8d-8906-93c21ed560a3).
 
@@ -67,6 +70,12 @@ components/tag/
   check.py       # portão do CSS: recusa valor literal em tag.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
 
+components/avatar/
+  tokens.py      # camada de alias do Avatar + portão de alias + portão de contraste, gera tokens.json e o CSS
+  avatar.css     # o componente, escrito à mão
+  check.py       # portão do CSS: recusa valor literal em avatar.css
+  a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
+
 site/
   site.py        # gera index.html: o site — Foundation + componentes, navegação e playground
 ```
@@ -94,23 +103,28 @@ python3 components/icon-button/tokens.py  # tokens do Icon Button + portão de a
 python3 components/icon-button/check.py   # portão do CSS do Icon Button
 python3 components/tag/tokens.py     # tokens do Tag + portão de alias + portão de contraste + CSS
 python3 components/tag/check.py      # portão do CSS do Tag
+python3 components/avatar/tokens.py  # tokens do Avatar + portão de alias + portão de contraste + CSS
+python3 components/avatar/check.py   # portão do CSS do Avatar
 python3 site/site.py               # o site: Foundation + componentes
 python3 components/icon/a11y.py      # QA do Icon — depois do site, ver abaixo
 python3 components/icon-button/a11y.py    # QA do Icon Button — idem
 python3 components/tag/a11y.py       # QA do Tag — idem
+python3 components/avatar/a11y.py    # QA do Avatar — idem
 ```
 
 Nesta ordem, e de qualquer diretório.
 
-Os três `a11y.py` são os únicos que rodam **depois** do site, e pelo mesmo motivo: além do
+Os quatro `a11y.py` são os únicos que rodam **depois** do site, e pelo mesmo motivo: além do
 contraste, eles conferem o contrato de marcação no HTML que o site realmente emite —
 contraste se prova no token, marcação só existe na saída renderizada. O do Icon cobra
 `aria-hidden` versus `role="img"`; o do Icon Button cobra o `aria-label` obrigatório,
 `aria-busy` sempre acompanhado de `aria-disabled`, e a ausência do atributo `disabled`; o do
 Tag cobra que a tag não seja focável nem acionável e que o `aria-label` do X **inclua o rótulo**
 — numa lista de seis filtros, seis botões chamados "Remover" são indistinguíveis por leitor de
-tela. Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar a aba de
-acessibilidade. As duas gerações convergem numa passada; não há loop.
+tela; o do Avatar cobra que o invólucro seja `aria-hidden` OU `role="img"` com `aria-label`
+(nunca os dois, nunca nenhum), que a foto tenha `alt=""` sempre, e que o ícone interno seja
+sempre decorativo. Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar
+a aba de acessibilidade. As duas gerações convergem numa passada; não há loop.
 
 ## Os portões
 
@@ -126,6 +140,7 @@ Validação é parte do build, não checagem opcional. Cada camada tem o seu, e 
 | Marcação · Icon | `components/icon/a11y.py` | `.al-icon` no HTML emitido sem contrato de acessibilidade, ou com `aria-hidden` junto de um rótulo. |
 | Marcação · Tag | `components/tag/a11y.py` | `.al-tag` no HTML emitido que seja `<button>`, tenha `role="button"` ou `tabindex`, ou cujo X esteja sem `type="button"`, sem `aria-label`, ou com um `aria-label` que não contenha o rótulo da tag. |
 | Marcação · Icon Button | `components/icon-button/a11y.py` | `.al-icon-btn` no HTML emitido sem `aria-label`, com `aria-hidden` no próprio botão, com `aria-busy` solto sem `aria-disabled`, ou usando o atributo `disabled`. Esse contrato não vive no CSS, então o portão de literal não alcança — é aqui que ele é cobrado. |
+| Marcação · Avatar | `components/avatar/a11y.py` | `.al-avatar` no HTML emitido com `aria-hidden` e `role="img"` juntos, ou nenhum dos dois; `role="img"` sem `aria-label`; a foto interna sem `alt=""`; ou o ícone interno sem `aria-hidden`/`focusable="false"`. |
 
 ## Arquitetura de tokens
 
@@ -141,7 +156,7 @@ Em CSS, a camada de componente não tem bloco de tema — e não precisa. O tema
 
 **Nomenclatura:** o nome do token separa níveis com hífen (`bg-brand`, `button-primary-bg-hover`). No Figma, a mesma coisa vive em pasta dentro da collection do componente (`primary/bg-hover` na collection `4. Button`) — a barra é o mecanismo de agrupamento do painel de variáveis, não parte do nome do token.
 
-**Nem todo token de código vira variável no Figma.** O Icon Button tem 42 tokens e 28 variáveis na collection `5. Icon Button`, e a diferença é deliberada. As oito tintas saem da collection `3. Icon ink`, que resolve por **modo** — um mecanismo que o CSS não tem, e por isso lá cada tinta precisa ser uma custom property concreta. Os quatro anéis de foco são *effect styles*, porque sombra não pode ser variável. E os dois `icon-size` apontam direto para a Foundation. O Button segue a mesma regra: 48 tokens, 40 variáveis.
+**Nem todo token de código vira variável no Figma.** O Icon Button tem 42 tokens e 28 variáveis na collection `5. Icon Button`, e a diferença é deliberada. As oito tintas saem da collection `3. Icon ink`, que resolve por **modo** — um mecanismo que o CSS não tem, e por isso lá cada tinta precisa ser uma custom property concreta. Os quatro anéis de foco são *effect styles*, porque sombra não pode ser variável. E os dois `icon-size` apontam direto para a Foundation. O Button segue a mesma regra: 48 tokens, 40 variáveis. O Avatar tem 13 tokens e 10 variáveis na collection `7. Avatar` — a diferença são as três fontes (`Label/sm`, `Heading/xs`, `Heading/sm`), que são estilos de texto e não variáveis, mesma regra do Tag.
 
 **Escala de ícone:** `icon-size` tem os degraus 16, 20, 24 e 32, nomeados pelo próprio valor — como o espaçamento, e pelo mesmo motivo: nome de camiseta obriga a renomear quando um degrau entra no meio. A escala nomeia os tamanhos recorrentes; ela não limita o componente `Icon`, que é vetorizado e vale em qualquer tamanho. O portão de CSS literal valida contra ela, então um tamanho novo dentro do DS é uma decisão consciente de uma linha.
 
@@ -154,6 +169,7 @@ Coisas deliberadamente não construídas, anotadas para não voltarem como dúvi
 - **Alvo de toque do `sm`** — 36×36 passa o mínimo do WCAG 2.5.8 (24) e fica abaixo dos 44 que o Carbon recomenda. Não há expansão de área por pseudo-elemento, por decisão; a contrapartida é a regra de uso, que reserva o `sm` para densidade alta em interface de ponteiro.
 - **Alvo de toque do X do Tag** — 16px no `sm` e 20px no `md`, abaixo dos 24 do WCAG 2.5.8. Mesma família de decisão do `sm` do Button, e mesma saída: regra de uso, não geometria — `sm` dismissível só em interface de ponteiro. O `a11y.py` do Tag mede e reporta, nunca reprova.
 - **Unidade de tipografia** — a escala é em `px`. Atende o critério 1.4.4 (zoom do navegador escala `px`), mas não acompanha a preferência de tamanho de fonte do usuário. Migrar para `rem` é decisão de Foundation, não de componente.
+- **Alto contraste forçado no Avatar** — no modo de alto contraste do sistema operacional o fundo é substituído e o círculo perde o limite visível. O Tag recolore uma borda que já existia; o Avatar não tem borda em variante nenhuma, e acrescentar uma só nesse modo seria inventar geometria fora do Figma. Medido e anotado, não resolvido às pressas.
 
 ## Contribuindo
 
