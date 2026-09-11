@@ -1,0 +1,52 @@
+{
+  "component": "avatar",
+  "criterion": "WCAG 1.4.3 texto (iniciais) + 1.4.11 nao-textual (icone)",
+  "floors": {
+    "text": 4.5,
+    "nonText": 3.0
+  },
+  "markupSource": "site/index.html",
+  "markupChecked": null,
+  "markupPending": true,
+  "fails": 0,
+  "noFocusRing": "o avatar nunca recebe foco (achado 8, etapa 1) - sem secao de anel",
+  "noTouchTarget": "o avatar nao e acionavel - o piso do 2.5.8 nao se aplica",
+  "rows": [
+    {
+      "theme": "light",
+      "what": "label",
+      "fg": "#292929",
+      "bg": "#EEEEEE",
+      "ratio": 12.54,
+      "floor": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "light",
+      "what": "icon",
+      "fg": "#292929",
+      "bg": "#EEEEEE",
+      "ratio": 12.54,
+      "floor": 3.0,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "what": "label",
+      "fg": "#F7F7F7",
+      "bg": "#3E3E3E",
+      "ratio": 9.98,
+      "floor": 4.5,
+      "pass": true
+    },
+    {
+      "theme": "dark",
+      "what": "icon",
+      "fg": "#F7F7F7",
+      "bg": "#3E3E3E",
+      "ratio": 9.98,
+      "floor": 3.0,
+      "pass": true
+    }
+  ]
+}
