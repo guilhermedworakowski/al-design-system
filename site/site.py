@@ -62,6 +62,12 @@ AVATAR_TOKENS = open(os.path.join(ROOT, 'components', 'avatar', 'al-avatar-token
 AVATAR_CSS = open(os.path.join(ROOT, 'components', 'avatar', 'avatar.css')).read()
 AVATAR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'avatar', 'a11y.json')))
 
+SELECT = json.load(open(os.path.join(ROOT, 'components', 'select', 'tokens.json')))
+SELECT_TOKENS = open(os.path.join(ROOT, 'components', 'select',
+                                  'al-select-tokens.css')).read()
+SELECT_CSS = open(os.path.join(ROOT, 'components', 'select', 'select.css')).read()
+SELECT_A11Y = json.load(open(os.path.join(ROOT, 'components', 'select', 'a11y.json')))
+
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
 N, O = P['neutral'], P['orange']
@@ -80,6 +86,7 @@ N_BTN_TOKENS = len(BTN['alias'])
 N_IB_TOKENS = len(IB['alias'])
 N_TAG_TOKENS = len(TAG['alias'])
 N_AVATAR_TOKENS = len(AVATAR['alias'])
+N_SELECT_TOKENS = len(SELECT['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -119,12 +126,13 @@ def scope_themes(found_css, *token_blocks):
 
 
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
-                         AVATAR_TOKENS)
+                         AVATAR_TOKENS, SELECT_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
             + '\n' + TAG_TOKENS + '\n' + TAG_CSS
-            + '\n' + AVATAR_TOKENS + '\n' + AVATAR_CSS)
+            + '\n' + AVATAR_TOKENS + '\n' + AVATAR_CSS
+            + '\n' + SELECT_TOKENS + '\n' + SELECT_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -3265,6 +3273,473 @@ AVATAR_A11Y_TAB = f'''
 </section>'''
 
 
+# ═══════════════════════════════════════════════════════════════ Select · abas
+# 7 estados, um tamanho, sem variante. O que varia e quase sempre so a borda -
+# por isso a tabela de token nao tem coluna de variante, diferente do Tag.
+SELECT_STATES = [
+    ('default', 'Default'), ('hover', 'Hover'), ('active', 'Active'),
+    ('focus', 'Focus'), ('error', 'Error'), ('focus-error', 'Focus + Error'),
+    ('disabled', 'Disabled'),
+]
+
+SELECT_UFS = ['Acre', 'Bahia', 'Ceará', 'Minas Gerais', 'Paraná', 'São Paulo']
+
+SELECT_CHEVRON = al_icon('chevron-down', cls='al-icon al-select__chevron')
+
+
+def sel(cid, rotulo='Estado', *, opcional=False, apoio=None, erro=None,
+        disabled=False, valor=None, sim=None, placeholder='Selecione o estado'):
+    """Um Select real. `sim` escreve na MESMA variavel privada que o select.css
+    usa para hover e active - nao e estilo paralelo, e o mecanismo do
+    componente. So existe porque esses dois estados so vivem sob o ponteiro."""
+    attrs = [f'id="{cid}"', 'class="al-select__field"']
+    if erro:
+        attrs.append('aria-invalid="true"')
+    if disabled:
+        attrs.append('disabled')
+    if apoio or erro:
+        attrs.append(f'aria-describedby="{cid}-help"')
+    if sim:
+        attrs.append(f'style="--_border-state: var(--al-select-border-{sim})"')
+
+    opcoes = [f'<option value="" disabled{"" if valor else " selected"}>{placeholder}</option>']
+    for uf in SELECT_UFS:
+        opcoes.append(f'<option value="{uf}"{" selected" if valor == uf else ""}>{uf}</option>')
+
+    marca = '<span class="al-select__optional">(Opcional)</span>' if opcional else ''
+    msg = erro or apoio
+    linha = f'<p class="al-select__help" id="{cid}-help">{msg}</p>' if msg else ''
+
+    return (f'<div class="al-select">'
+            f'<div class="al-select__labelrow">'
+            f'<label class="al-select__label" for="{cid}">{rotulo}</label>{marca}</div>'
+            f'<div class="al-select__control">'
+            f'<select {" ".join(attrs)}>{"".join(opcoes)}</select>{SELECT_CHEVRON}</div>'
+            f'{linha}</div>')
+
+
+def select_specimens():
+    """Os sete estados parados, lado a lado. Hover e Active levam a nota de que
+    sao escritos direto - a vitrine nao pode fingir que o ponteiro esta la."""
+    cells = []
+    for i, (slug, nome) in enumerate(SELECT_STATES):
+        kw = dict(cid=f'sp-{slug}', rotulo='Estado')
+        if slug in ('hover', 'active'):
+            kw['sim'] = slug
+        if slug in ('error', 'focus-error'):
+            kw['erro'] = 'Escolha um estado para continuar'
+        if slug == 'disabled':
+            kw['disabled'] = True
+            kw['opcional'] = True
+        nota = {
+            'default': 'O repouso. A borda aqui é a exceção de contraste declarada.',
+            'hover': 'Só existe sob o ponteiro: a variável privada foi escrita direto.',
+            'active': 'Só o instante do botão pressionado — mesma escrita direta.',
+            'focus': 'Tabule até o campo: o anel aparece. Por clique também, ver Acessibilidade.',
+            'error': 'Vem de <code>aria-invalid="true"</code>, nunca de uma classe.',
+            'focus-error': 'Focado, o anel troca para vinho — <code>focusRing.error</code>.',
+            'disabled': 'Atributo nativo <code>disabled</code>: o Tab pula sozinho.',
+        }[slug]
+        cells.append(f'<div class="cell"><span class="lab" '
+                     f'style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2" style="display:block">{sel(**kw)}</div>'
+                     f'<p class="cap">{nota}</p></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def select_token_rows():
+    """So os tokens de cor. Um estado por linha, sem coluna de variante."""
+    rows = []
+    for name in SELECT['alias']:
+        res = SELECT['resolved'].get(name)
+        if not isinstance(res, dict) or 'light' not in res:
+            continue
+        lt = res['light']
+        sw = (f'<span class="chip sm" style="background:{lt}"></span>'
+              if isinstance(lt, str) and lt.startswith('#') else '')
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{SELECT["alias"][name]}</td>'
+                    f'<td class="tok dim">{sw}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+def select_geo_rows():
+    rows = []
+    for role in ['padding-x', 'padding-y', 'gap', 'radius', 'border-width', 'icon-size']:
+        name = f'select-{role}'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{SELECT["alias"][name]}</td>'
+                    f'<td class="num">{SELECT["resolved"][name]}px</td></tr>')
+    for role in ['font', 'label-font', 'optional-font', 'help-font']:
+        name = f'select-{role}'
+        res = SELECT['resolved'][name]
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{SELECT["alias"][name]}</td>'
+                    f'<td class="num">{res[1]}/{res[2]} · peso {res[3]}</td></tr>')
+    return '\n'.join(rows)
+
+
+def select_a11y_rows(papeis):
+    """Uma linha por medicao, filtrada pelo papel. Excecao declarada aparece
+    como excecao, nunca como reprova e nunca escondida."""
+    out = []
+    for r in SELECT_A11Y['rows']:
+        if r['papel'] not in papeis:
+            continue
+        if r['pass']:
+            verdict = '<span class="pass">passa</span>'
+        elif r['exc']:
+            verdict = '<span class="exc">exceção</span>'
+        else:
+            verdict = '<span class="fail">reprova</span>'
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{r["state"]}</td>'
+            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">--al-{r["token"]}</td>'
+            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+N_SEL_MEDIDAS = len(SELECT_A11Y['rows'])
+N_SEL_EXC = sum(SELECT_A11Y['exceptions'].values())
+N_SEL_PASSA = N_SEL_MEDIDAS - N_SEL_EXC
+SEL_LAYER = {d['theme']: d for d in SELECT_A11Y['layerEffect']}
+
+TH_SELECT = ('<div class="th-select" aria-hidden="true">'
+             '<span class="th-select__field">Selecione a opção'
+             + al_icon('chevron-down') + '</span></div>')
+
+SELECT_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="select-stage">{sel('pg-select')}</div>
+
+    <div class="controls" id="select-controls">
+      <div class="ctl"><span class="ctl-name">Estado</span>{seg('selstate', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}</div>
+      <div class="ctl"><span class="ctl-name">Valor</span>{seg('selvalue', [('none', 'Placeholder'), ('picked', 'Escolhido')], 'none')}</div>
+      <div class="ctl"><span class="ctl-name">Obrigatoriedade</span>{seg('selopt', [('req', 'Obrigatório'), ('opt', 'Opcional')], 'req')}</div>
+      <div class="ctl"><span class="ctl-name">Texto de apoio</span>{seg('selhelp', [('off', 'Sem'), ('on', 'Com')], 'off')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('seltheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><label for="select-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="select-label" type="text" value="Estado" maxlength="28"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="select-copy">Copiar</button></div>
+      <pre><code id="select-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O campo acima é o componente real: esta página carrega o mesmo
+    <code>select.css</code> que vai para produção. Tabule até ele para ver o anel, e repare que
+    o estado de erro nasce de <code>aria-invalid</code> na marcação — não há classe de erro
+    neste componente, de propósito: se a cor viesse de uma classe, ela poderia divergir do que
+    o leitor de tela anuncia.
+  </p>
+</section>
+
+<section>
+  <h2>É o nativo, e isso é uma decisão</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">O que entregamos</span>
+      <div class="stage2" style="display:block">{sel('ov-nativo', 'Estado', apoio='Onde a nota será emitida')}</div>
+      <p class="cap">O gatilho fechado. A lista aberta é desenhada pelo navegador e pelo sistema
+      operacional — por isso não há token de painel, de opção nem de item selecionado. Precedente:
+      é a distinção que o <b>Carbon</b> faz entre <i>Select</i> (nativo) e
+      <i>Dropdown</i>/<i>ComboBox</i> (desenhados).</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">O que isso compra</span>
+      <div class="stage2" style="display:block">{sel('ov-mobile', 'Transportadora', opcional=True)}</div>
+      <p class="cap">Teclado, leitor de tela e o seletor nativo do celular, sem uma linha de
+      JavaScript. O preço é não controlar a lista aberta — e o Carbon recomenda exatamente esse
+      troco quando a experiência é de formulário e muito usada em mobile.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Os sete estados</h2>
+  {select_specimens()}
+</section>
+
+<section>
+  <h2>Num formulário de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <div class="stage2" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; align-items:start">
+      {sel('fm-uf', 'Estado', apoio='Onde a nota será emitida')}
+      {sel('fm-frete', 'Tipo de frete', opcional=True)}
+      {sel('fm-transp', 'Transportadora', erro='Escolha uma transportadora para continuar')}
+      {sel('fm-cidade', 'Cidade', disabled=True)}
+    </div>
+    <p class="cap">Quatro campos lado a lado, do jeito que o componente vai viver. Tabule por
+    eles: o <b>Cidade</b> é pulado sozinho, sem <code>tabindex</code> — é o atributo nativo
+    <code>disabled</code> fazendo o trabalho.</p>
+  </div>
+</section>'''
+
+SELECT_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Rótulo</b><span><code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Sempre visível — e a regra que sustenta a exceção de contraste da borda.</span></div>
+    <div><b>Marca “(Opcional)”</b><span>Uma entrelinha menor que o rótulo, em <code>text-secondary</code>. O AL marca o <b>opcional</b>: quem não tem a marca é obrigatório.</span></div>
+    <div><b>Campo</b><span><code>&lt;select&gt;</code> nativo com <code>appearance: none</code>, para a seta do navegador sair e a nossa entrar.</span></div>
+    <div><b>Seta</b><span>Irmã do campo, não filha: <code>&lt;select&gt;</code> só aceita <code>&lt;option&gt;</code>. Posicionada por cima, com <code>pointer-events: none</code> devolvendo o clique.</span></div>
+    <div><b>Texto de apoio</b><span>Opcional, e o mesmo slot da mensagem de erro — no erro um substitui o outro, e volta quando o erro é resolvido.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A altura é consequência</h2>
+  <p>Não existe <code>height</code> neste componente. O campo fecha em
+  <b>{SELECT['derived']['field-height']}px</b> porque é <code>padding-y</code> × 2 mais a
+  entrelinha do texto, com a borda de 1px descontada do padding — a mesma convenção do Button e
+  do Tag. A caixa inteira soma <b>{SELECT['derived']['total-height']}px</b>, e
+  <b>{SELECT['derived']['total-height-with-help']}px</b> quando o texto de apoio aparece.</p>
+  <p style="margin-top:12px">Tokenizar a altura seria guardar a mesma decisão em dois lugares,
+  com duas chances de divergir. E a borda existe em <b>todos</b> os estados — por isso o campo
+  nunca “pula” quando um estado troca a cor dela.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_SELECT_TOKENS}</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>7</b><span>estados</span></div>
+    <div class="stat"><b>1</b><span>tamanho, por escolha</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody>{select_token_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>A seta não herda a cor do texto — e é o único componente assim</b>
+    No Button e no Tag o ícone é <code>currentColor</code> e acerta todos os estados sozinho.
+    Aqui não dá: no repouso o texto do campo é <code>text-placeholder</code> e a seta é
+    <code>text-primary</code>, duas cores na mesma caixa. Daí existirem
+    <code>select-icon</code> e <code>select-icon-disabled</code>.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody>{select_geo_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Precedência por variável, não por especificidade</h2>
+  <p>A borda é <code>var(--_border-force, var(--_border-state))</code>. Os estados de interação
+  escrevem em <code>--_border-state</code>; erro e desabilitado escrevem em
+  <code>--_border-force</code>, que vence sempre por ser <b>outra propriedade</b> — não por ter
+  seletor mais pesado.</p>
+  <p style="margin-top:12px">Sem isso haveria um bug silencioso:
+  <code>:hover:not(:disabled)</code> pesa (0,3,0) e <code>[aria-invalid="true"]</code> pesa
+  (0,2,0), então o campo reprovado ficaria cinza ao passar o mouse. Entre erro e desabilitado
+  decide a ordem do arquivo — desabilitado vem depois e ganha, que é o correto.</p>
+</section>'''
+
+SELECT_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>A partir de 4 opções</b><span>Com 3 ou menos, radio: o Select esconde as opções atrás de um clique, e abaixo de 4 o custo de esconder é maior que o de mostrar. <i>Polaris fixa 4+; Carbon desaconselha dropdown com duas.</i></span></div>
+    <div><b>Escolha única</b><span>Não há múltipla escolha no AL. <i>Carbon separa Select de Dropdown e ComboBox.</i></span></div>
+    <div><b>Nunca para disparar ação</b><span>Ele coleta um dado num formulário. Menu que executa, filtra ou ordena é outro componente. <i>Carbon.</i></span></div>
+    <div><b>Acima de ~15 opções, atrapalha</b><span>O nativo não tem busca. Não é impedimento, é limite conhecido: essa demanda abre ComboBox, não estica o Select.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo e a marca de opcional</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block">{sel('gd-ok', 'Estado', opcional=True)}</div>
+      <p class="cap">Rótulo visível sempre, curto, em sentence case, descrevendo <b>o dado</b> —
+      “Estado”, não “Selecione o estado”. A instrução de escolher já está no placeholder.
+      A marca “(Opcional)” assinala a minoria: quem não tem a marca é obrigatório.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block">{sel('gd-bad', 'Estado', placeholder='Estado')}</div>
+      <p class="cap">Usar o placeholder como rótulo. Ele desaparece no instante em que alguém
+      escolhe algo, e quem voltar ao formulário perdeu a única pista do que o campo pede.
+      <i>Polaris exige o label mesmo quando visualmente oculto.</i></p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O AL marca o opcional, não o obrigatório</b>
+    É a escola oposta à do asterisco do Polaris, e ela ganha quando a maioria dos campos de um
+    formulário é obrigatória — marca-se a minoria. Consequência: <b>não existe token nem estilo
+    de “obrigatório”</b>, porque a ausência da marca é o obrigatório, e ausência não se tokeniza.
+  </div>
+</section>
+
+<section>
+  <h2>Placeholder e opção padrão</h2>
+  <div class="anat">
+    <div><b>Havendo um padrão que serve à maioria, ele já vem selecionado</b><span>Sem placeholder. Placeholder obrigatório força todo mundo a um clique que a maioria não precisaria dar. <i>NN/g.</i></span></div>
+    <div><b>Sem padrão bom, descreva</b><span>“Selecione o estado”, não “Selecione…”.</span></div>
+    <div><b>É uma <code>&lt;option&gt;</code>, não um atributo</b><span><code>value=""</code>, <code>disabled</code> e <code>selected</code> — <code>&lt;select&gt;</code> não tem placeholder nativo. É também o que aciona a troca de cor do texto.</span></div>
+    <div><b><code>optgroup</code> pode</b><span>O nativo agrupa de graça e não há nada para desenhar do nosso lado.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Apoio e erro dividem o mesmo slot</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Sem erro</span>
+      <div class="stage2" style="display:block">{sel('gd-help', 'Estado', apoio='Onde a nota será emitida')}</div>
+      <p class="cap">O apoio explica o campo.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Com erro</span>
+      <div class="stage2" style="display:block">{sel('gd-err', 'Estado', erro='Escolha um estado para emitir a nota')}</div>
+      <p class="cap">O erro <b>substitui</b> o apoio, e volta quando for resolvido.
+      <i>Spectrum documenta exatamente esse comportamento.</i> Por isso os dois textos precisam
+      carregar a mesma informação essencial — senão a instrução some justamente na hora em que
+      a pessoa mais precisa dela.</p>
+    </div>
+  </div>
+  <div class="anat" style="margin-top:16px">
+    <div><b>O erro diz como corrigir</b><span>“Escolha um estado para continuar”, não “Campo inválido”. <i>Spectrum.</i></span></div>
+    <div><b>O erro aparece depois</b><span>Depois do envio ou de a pessoa sair do campo — nunca enquanto ela ainda escolhe. Marcar de vermelho um campo que ela não terminou de preencher é acusá-la de um erro que não cometeu.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Múltipla escolha, busca e filtro</b><span>Abre ComboBox, não estica o Select.</span></div>
+    <div><b>Um tamanho só (48px)</b><span>Escolha declarada, como o <code>lg</code> que ficou de fora do Button.</span></div>
+    <div><b>Ícone à esquerda e read-only</b><span>Não foram desenhados. Campo que precisa ser lido mas não editado usa <code>disabled</code> hoje, com a limitação conhecida de que o valor não pode ser copiado. <i>Spectrum resolve com read-only; o AL ainda não tem.</i></span></div>
+    <div><b>A lista aberta</b><span>É do navegador. Não estilizar <code>&lt;option&gt;</code>, altura de item nem scroll: varia por sistema operacional e quebra sem avisar.</span></div>
+  </div>
+</section>'''
+
+SELECT_A11Y_TAB = f'''
+<section>
+  <h2>O fundo efetivo muda com a camada</h2>
+  <p>O portão mede <b>combinação renderizada</b> — cada papel contra o fundo que ele realmente
+  tem na tela, não contra um par de token no vácuo. Duas consequências que a camada de tokens
+  não podia enxergar sozinha:</p>
+  <p style="margin-top:12px"><b>A borda troca de vizinho quando o campo recebe foco.</b> Em
+  repouso ela toca a página — que pode ser <code>bg-canvas</code> ou
+  <code>bg-surface-raised</code>, se o campo estiver dentro de um card, e o portão mede a pior
+  das duas. Com foco, o anel desenha um respiro de 2px em <code>bg-canvas</code> colado nela, e
+  a vizinha externa passa a ser sempre <code>bg-canvas</code>.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Borda em repouso</th><th>Borda com foco</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num">{SEL_LAYER['light']['rest']:.2f}:1</td><td class="num strong">{SEL_LAYER['light']['focused']:.2f}:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num">{SEL_LAYER['dark']['rest']:.2f}:1</td><td class="num strong">{SEL_LAYER['dark']['focused']:.2f}:1</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">Ou seja: no momento em que o campo está em uso, a borda passa dos
+  3:1 sozinha. A exceção declarada vale só para o repouso.</p>
+  <p style="margin-top:12px"><b>A cor do anel sai do próprio <code>box-shadow</code>.</b> O
+  portão lê o último hex da sombra composta — a cor que de fato pinta o anel. Não há definição
+  paralela para divergir do CSS.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_SEL_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_SEL_PASSA}</b><span>passam</span></div>
+    <div class="stat"><b>{N_SEL_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{SELECT_A11Y['fails']}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda em repouso abaixo de 3:1 — decisão consciente</b>
+    <code>border-default</code> dá {SEL_LAYER['light']['rest']:.2f}:1 no claro e
+    {SEL_LAYER['dark']['rest']:.2f}:1 no escuro, abaixo do piso do 1.4.11. O critério não falha
+    quando a borda não é o único meio de perceber o componente — e aqui não é: o campo tem
+    rótulo visível acima e texto dentro. Hover, active, foco e erro passam todos. <b>É por isso
+    que “nunca use o Select sem rótulo visível” é regra de uso, e não sugestão:</b> é ela que
+    sustenta esta exceção.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Disabled abaixo de AA — isenção do 1.4.3</b>
+    Rótulo, texto e seta ficam entre 1,59:1 e 2,19:1. O WCAG 1.4.3 isenta componente inativo, e
+    subir esse contraste faz o desabilitado parecer clicável. Mesma exceção permanente que o
+    Button e o Tag já carregam.
+  </div>
+</section>
+
+<section>
+  <h2>Borda e anel — o não-textual, piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{select_a11y_rows(['borda', 'anel de foco', 'seta'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{select_a11y_rows(['rotulo', 'marca opcional', 'placeholder', 'valor', 'apoio', 'texto'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Num campo de formulário quase tudo que dá errado é <b>marcação</b>, não estilo — e
+  marcação só existe na saída renderizada. Por isso estas cinco regras não estão escritas numa
+  página: elas são medidas por <code>components/select/a11y.py</code> no HTML que este site
+  emite, e quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code>, e existe um <code>&lt;label for&gt;</code> apontando para ele.</span></div>
+    <div><b>Erro descrito</b><span>Campo com <code>aria-invalid="true"</code> tem <code>aria-describedby</code>, e o id apontado existe de verdade no documento.</span></div>
+    <div><b>Placeholder de verdade</b><span>É a primeira <code>&lt;option value=""&gt;</code> e ela está <code>selected</code>.</span></div>
+    <div><b>Seta decorativa</b><span><code>aria-hidden="true"</code> e <code>focusable="false"</code> na própria tag — o sentido mora no rótulo.</span></div>
+    <div><b>Sem <code>aria-label</code> redundante</b><span>Havendo rótulo visível, o nome anunciado tem que ser ele.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>{SELECT_A11Y['markupChecked']}</b><span>campos conferidos no HTML</span></div>
+    <div class="stat"><b>5</b><span>regras por campo</span></div>
+    <div class="stat"><b>{'pendente' if SELECT_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
+  </div>
+  <p style="margin-top:12px; font-size:13.5px; color:var(--al-text-secondary)">
+    O portão remove <code>&lt;style&gt;</code> e <code>&lt;script&gt;</code> antes de procurar
+    marcação. Sem isso ele media o <code>&lt;select&gt;</code> de exemplo que vive no comentário
+    de anatomia do <code>select.css</code> como se fosse um campo de verdade — e
+    <b>passava</b>, porque o exemplo está correto. Portão que aprova lendo comentário também
+    reprova lendo comentário.
+  </p>
+</section>
+
+<section>
+  <h2>Active e foco: a leitura que caiu na medição</h2>
+  <p>A auditoria da etapa 1 fechou que “active é o clique e foco é a chegada por Tab”. A etapa 6
+  derrubou isso <b>medindo</b>: cliquei no campo pelo navegador e li o estado computado — o
+  Chromium casa <code>:focus-visible</code> num <code>&lt;select&gt;</code> clicado com o mouse,
+  porque a plataforma o trata como controle que recebe teclado depois de aberto. O anel aparece
+  no clique.</p>
+  <p style="margin-top:12px">Não existe seletor de “foco só por teclado” além do próprio
+  <code>:focus-visible</code>, e forçar por JavaScript tornaria condicional justamente o
+  indicador de foco — a última coisa que se deve condicionar. A leitura foi reinterpretada, sem
+  mexer em código: <b>active é o instante em que o botão do mouse está pressionado; foco é o
+  estado que permanece</b> enquanto o campo estiver focado, tenha chegado como tiver chegado.
+  É o que Carbon, Material e Polaris já usam, e o que sobrevive em qualquer navegador.</p>
+</section>'''
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -3273,6 +3748,7 @@ LANDING_COMPONENTES = f'''
     {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_ICONBUTTON)}
     {card('tag', 'Tag', 'Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.', TH_TAG)}
     {card('avatar', 'Avatar', 'Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.', TH_AVATAR)}
+    {card('select', 'Select', 'Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.', TH_SELECT)}
   </div>
 </section>
 
@@ -3384,6 +3860,15 @@ PAGES = [
          (f'{N_AVATAR_TOKENS} tokens', False), ('0 exceções', False)],
         [('overview', 'Visão geral', AVATAR_OVERVIEW), ('specs', 'Especificações', AVATAR_SPECS),
          ('guide', 'Diretrizes', AVATAR_GUIDE), ('a11y', 'Acessibilidade', AVATAR_A11Y_TAB)])),
+    ('select', 'Componentes', page(
+        'select', 'Componentes', 'Select',
+        'Escolha única dentro de um formulário. É o <code>&lt;select&gt;</code> nativo: a lista '
+        'aberta é desenhada pelo navegador, e o componente entrega o gatilho fechado — que é o '
+        'que compra teclado, leitor de tela e comportamento mobile sem uma linha de JavaScript.',
+        [('Estável', True), ('7 estados no Figma', False),
+         (f'{N_SELECT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', SELECT_OVERVIEW), ('specs', 'Especificações', SELECT_SPECS),
+         ('guide', 'Diretrizes', SELECT_GUIDE), ('a11y', 'Acessibilidade', SELECT_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -3416,6 +3901,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/icon-button" data-page="icon-button">Icon Button</a>
         <a href="#/tag" data-page="tag">Tag</a>
         <a href="#/avatar" data-page="avatar">Avatar</a>
+        <a href="#/select" data-page="select">Select</a>
       </div>
     </div>
   </div>
@@ -4136,6 +4622,135 @@ CHROME_AVATAR = """
   color:var(--al-text-secondary)}
 """
 
+CHROME_SELECT = """
+/* ── miniatura do card do Select ── */
+.th-select{display:flex; justify-content:center; width:100%}
+.th-select__field{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  width:100%; max-width:200px;
+  padding:8px 10px;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-lg);
+  background:var(--al-bg-surface-raised);
+  color:var(--al-text-placeholder);
+  font-size:12.5px; line-height:16px;
+}
+.th-select__field .al-icon{--al-icon-box:16px; color:var(--al-text-primary)}
+/* o palco do playground precisa de largura: o campo ocupa 100% do contêiner */
+#select-stage{display:block; padding-inline:8px}
+#select-stage .al-select{max-width:360px; margin-inline:auto}
+"""
+
+JS_SELECT_DATA = ('var SEL_CHEVRON = ' + json.dumps(SELECT_CHEVRON) + ';\n'
+                  'var SEL_UFS = ' + json.dumps(SELECT_UFS) + ';\n')
+
+JS_SELECT = r"""
+(function () {
+  // ── playground do Select ──
+  var stage = document.getElementById('select-stage');
+  if (!stage) return;
+  var code = document.getElementById('select-code');
+  var labelInput = document.getElementById('select-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function render() {
+    var estado = pick('selstate');
+    var comValor = pick('selvalue') === 'picked';
+    var opcional = pick('selopt') === 'opt';
+    var comApoio = pick('selhelp') === 'on';
+    var theme = pick('seltheme');
+    var rotulo = (labelInput.value || '').trim() || 'Estado';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var erro = estado === 'error';
+    var off = estado === 'disabled';
+    // O erro SUBSTITUI o apoio, nunca empilha - regra do Spectrum, e a mesma
+    // razao de haver um unico slot no componente.
+    var msg = erro ? 'Escolha um estado para continuar'
+                   : (comApoio ? 'Onde a nota será emitida' : null);
+
+    var attrs = ['id="pg-select"', 'class="al-select__field"'];
+    if (erro) attrs.push('aria-invalid="true"');
+    if (off) attrs.push('disabled');
+    if (msg) attrs.push('aria-describedby="pg-select-help"');
+
+    var opts = ['<option value="" disabled' + (comValor ? '' : ' selected')
+                + '>Selecione o estado</option>'];
+    SEL_UFS.forEach(function (uf) {
+      opts.push('<option value="' + uf + '"'
+                + (comValor && uf === 'Bahia' ? ' selected' : '') + '>' + uf + '</option>');
+    });
+
+    var marca = opcional ? '<span class="al-select__optional">(Opcional)</span>' : '';
+    var linha = msg ? '<p class="al-select__help" id="pg-select-help">' + msg + '</p>' : '';
+
+    stage.innerHTML =
+      '<div class="al-select">'
+      + '<div class="al-select__labelrow">'
+      + '<label class="al-select__label" for="pg-select">' + esc(rotulo) + '</label>'
+      + marca + '</div>'
+      + '<div class="al-select__control">'
+      + '<select ' + attrs.join(' ') + '>' + opts.join('') + '</select>'
+      + SEL_CHEVRON + '</div>'
+      + linha + '</div>';
+
+    // A marcação mostrada é a que importa: o que muda entre estados é atributo,
+    // nunca classe. Se um dia aparecer uma classe de erro aqui, é regressão.
+    var lines = ['&lt;div class="al-select"&gt;',
+                 '  &lt;div class="al-select__labelrow"&gt;',
+                 '    &lt;label class="al-select__label" for="uf"&gt;' + esc(rotulo) + '&lt;/label&gt;'];
+    if (opcional) lines.push('    &lt;span class="al-select__optional"&gt;(Opcional)&lt;/span&gt;');
+    lines.push('  &lt;/div&gt;');
+    lines.push('  &lt;div class="al-select__control"&gt;');
+    var sattrs = 'class="al-select__field" id="uf"';
+    if (erro) sattrs += ' aria-invalid="true"';
+    if (off) sattrs += ' disabled';
+    if (msg) sattrs += ' aria-describedby="uf-help"';
+    lines.push('    &lt;select ' + sattrs + '&gt;');
+    lines.push('      &lt;option value="" disabled' + (comValor ? '' : ' selected')
+               + '&gt;Selecione o estado&lt;/option&gt;');
+    lines.push('      &lt;!-- … --&gt;');
+    lines.push('    &lt;/select&gt;');
+    lines.push('    &lt;svg class="al-icon al-select__chevron" aria-hidden="true" '
+               + 'focusable="false"&gt;&lt;!-- chevron-down --&gt;&lt;/svg&gt;');
+    lines.push('  &lt;/div&gt;');
+    if (msg) {
+      lines.push('  &lt;p class="al-select__help" id="uf-help"&gt;' + msg + '&lt;/p&gt;');
+    }
+    lines.push('&lt;/div&gt;');
+    if (erro) {
+      lines.push('&lt;!-- o erro vem de aria-invalid, nunca de uma classe --&gt;');
+    }
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('#select-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+
+  document.getElementById('select-copy').addEventListener('click', function () {
+    var btn = this;
+    var text = code.textContent;
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    });
+  });
+
+  render();
+})();
+"""
+
+
 HTML = (
     '<title>AL Design System</title>\n'
     '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
@@ -4144,13 +4759,13 @@ HTML = (
     'family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">\n\n'
     '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
-    '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR
+    '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n\n<script>'
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
-    + JS_AVATAR_DATA + JS_AVATAR + '</script>\n'
+    + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w').write(HTML)
@@ -4166,5 +4781,8 @@ print(f'  tokens do Tag     : {N_TAG_TOKENS}  '
       f'({N_TAG_MEDIDAS} combinacoes medidas, {TAG_A11Y["fails"]} reprovas, 0 excecoes)')
 print(f'  tokens do Avatar  : {N_AVATAR_TOKENS}  '
       f'({N_AV_MEDIDAS} combinacoes medidas, {AVATAR_A11Y["fails"]} reprovas, 0 excecoes)')
+print(f'  tokens do Select  : {N_SELECT_TOKENS}  '
+      f'({len(SELECT_A11Y["rows"])} combinacoes medidas, {SELECT_A11Y["fails"]} reprovas, '
+      f'{sum(SELECT_A11Y["exceptions"].values())} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

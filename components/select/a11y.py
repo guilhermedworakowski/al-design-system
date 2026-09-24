@@ -46,8 +46,16 @@ O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
 
   Regra escrita numa pagina envelhece; regra medida quebra o build.
 
+ORDEM DE EXECUCAO - este portao roda DEPOIS do site.py
+
+  Mesmo arranjo que o Icon ja usa, e pela mesma razao mecanica: o portao
+  precisa do HTML emitido para cobrar marcacao, e o site precisa do `a11y.json`
+  que este portao escreve para montar a aba de Acessibilidade. As duas geracoes
+  convergem numa passada - nao ha loop. Enquanto o site ainda nao tiver Select,
+  o JSON sai com `markupPending: true` e o portao diz isso em voz alta.
+
 Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede site/select-qa.html (a visualizacao da etapa 6)
+       sem argumento, mede site/index.html
 """
 import json
 import os
@@ -66,7 +74,8 @@ THEMES = (('light', 0), ('dark', 1))
 TEXT_FLOOR = 4.5          # 1.4.3
 NON_TEXT_FLOOR = 3.0      # 1.4.11
 
-DEFAULT_HTML = os.path.join(ROOT, 'site', 'select-qa.html')
+DEFAULT_HTML = os.path.join(ROOT, 'site', 'index.html')
+OUT_JSON = os.path.join(HERE, 'a11y.json')
 
 # Onde o campo pode ser colocado. A borda em repouso tem que se virar contra as
 # duas: pagina nua e superficie elevada (card, modal).
@@ -141,9 +150,13 @@ def medir():
             else:
                 fora = paginas
                 nota_fora = 'pagina (pior de canvas / surface-raised)'
-            ratio, _ = pior(tok(cfg['border'], theme), fora + [surface])
+            fg_hex = tok(cfg['border'], theme)
+            ratio, bg_hex = pior(fg_hex, fora + [surface])
             linhas.append(dict(
                 state=state, theme=theme, papel='borda', ratio=ratio,
+                token=f'select-{cfg["border"].split("select-")[-1]}'
+                      if cfg['border'].startswith('select-') else cfg['border'],
+                fgHex=fg_hex, bgHex=bg_hex,
                 floor=NON_TEXT_FLOOR, contra=f'{nota_fora} + preenchimento',
                 exc='borda-abaixo-de-3-1' if cfg['border'] in
                     ('select-border', 'select-border-disabled') else None))
@@ -152,9 +165,10 @@ def medir():
             #    bg-canvas, por fora a pagina.
             if cfg['ring']:
                 ink = ring_ink(cfg['ring'], theme)
-                ratio, _ = pior(ink, [sem('bg-canvas', theme)] + paginas)
+                ratio, bg_hex = pior(ink, [sem('bg-canvas', theme)] + paginas)
                 linhas.append(dict(
                     state=state, theme=theme, papel='anel de foco', ratio=ratio,
+                    token=cfg['ring'], fgHex=ink, bgHex=bg_hex,
                     floor=NON_TEXT_FLOOR, contra='respiro + pagina', exc=None))
 
             # 3. o que vive DENTRO do campo, contra o preenchimento dele
@@ -165,10 +179,12 @@ def medir():
                 dentro = [('placeholder', 'select-text-placeholder', TEXT_FLOOR, None),
                           ('valor', 'select-text-value', TEXT_FLOOR, None),
                           ('seta', 'select-icon', NON_TEXT_FLOOR, None)]
-            for papel, token, floor, exc in dentro:
+            for papel, token_nome, floor, exc in dentro:
+                fg_hex = tok(token_nome, theme)
                 linhas.append(dict(
                     state=state, theme=theme, papel=papel,
-                    ratio=cr(tok(token, theme), surface),
+                    token=token_nome, fgHex=fg_hex, bgHex=surface,
+                    ratio=cr(fg_hex, surface),
                     floor=floor, contra='preenchimento do campo', exc=exc))
 
             # 4. o que vive FORA do campo, contra a pagina (pior caso)
@@ -183,10 +199,12 @@ def medir():
                 fora_campo = [('rotulo', 'select-label', None),
                               ('marca opcional', 'select-optional', None),
                               ('apoio', 'select-help', None)]
-            for papel, token, exc in fora_campo:
-                ratio, _ = pior(tok(token, theme), paginas)
+            for papel, token_nome, exc in fora_campo:
+                fg_hex = tok(token_nome, theme)
+                ratio, bg_hex = pior(fg_hex, paginas)
                 linhas.append(dict(
-                    state=state, theme=theme, papel=papel, ratio=ratio,
+                    state=state, theme=theme, papel=papel,
+                    token=token_nome, fgHex=fg_hex, bgHex=bg_hex, ratio=ratio,
                     floor=TEXT_FLOOR, contra='pagina (pior caso)', exc=exc))
 
     for l in linhas:
@@ -304,8 +322,43 @@ def run():
     if achados:
         for a in achados:
             print('   ', a)
+    elif n_campos == 0:
+        # zero campo nao e zero problema: e nada medido. Dizer "passa" aqui
+        # seria a pior mentira que um portao pode contar.
+        print('    PENDENTE - nenhum campo neste HTML. Rodar site/site.py e chamar')
+        print('    este portao de novo (ver ORDEM DE EXECUCAO no cabecalho).')
     else:
         print('    as cinco regras passam em todos os campos')
+    print('-' * 78)
+
+    # O site le este arquivo para montar a aba de Acessibilidade.
+    json.dump({
+        'component': 'select',
+        'criterion': 'WCAG 1.4.3 texto (rotulo, marca, valor, apoio) + '
+                     '1.4.11 nao-textual (borda, seta, anel)',
+        'floors': {'text': TEXT_FLOOR, 'nonText': NON_TEXT_FLOOR},
+        'markupSource': os.path.relpath(path, ROOT),
+        'markupChecked': n_campos,
+        'markupPending': n_campos == 0,
+        'markupRules': [
+            'todo campo tem id e um <label for> apontando para ele',
+            'campo em erro tem aria-invalid="true" e aria-describedby que existe',
+            'o placeholder e a primeira <option value=""> selecionada',
+            'a seta e decorativa: aria-hidden="true" e focusable="false"',
+            'nenhum campo usa aria-label havendo rotulo visivel',
+        ],
+        'fails': len(reprovas),
+        'exceptions': {k: len([l for l in excecoes if l['exc'] == k]) for k in PENDING},
+        'layerEffect': [
+            {'theme': theme,
+             'rest': next(l['ratio'] for l in linhas if l['state'] == 'default'
+                          and l['theme'] == theme and l['papel'] == 'borda'),
+             'focused': next(l['ratio'] for l in linhas if l['state'] == 'focus'
+                             and l['theme'] == theme and l['papel'] == 'borda')}
+            for theme, _ in THEMES],
+        'rows': linhas,
+    }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
+    print(f'components/select/a11y.json escrito ({len(linhas)} medicoes)')
     print('-' * 78)
 
     if reprovas:
@@ -315,9 +368,16 @@ def run():
                   f'(contra {l["contra"]})')
         return 1
     if achados:
+        if n_campos == 0:
+            print('contrato de marcacao PENDENTE - o site ainda nao emite Select.')
+            print('Rodar site/site.py e chamar este portao de novo (ver ORDEM no cabecalho).')
+            return 0
         print(f'{len(achados)} QUEBRA(S) DE CONTRATO DE MARCACAO - PORTAO REPROVA.')
         return 1
 
+    if n_campos == 0:
+        print('contraste renderizado: em ordem. Marcacao: PENDENTE, nada medido ainda.')
+        return 0
     print('contraste renderizado e contrato de marcacao: tudo em ordem.')
     return 0
 
