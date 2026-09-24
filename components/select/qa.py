@@ -140,7 +140,8 @@ def build():
     n_contraste = len(SELECT['contrast'])
     n_exc = len([r for r in SELECT['contrast'] if not r['pass']])
 
-    return f'''<title>AL Select QA</title>
+    return f'''<meta charset="utf-8">
+<title>AL Select QA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">

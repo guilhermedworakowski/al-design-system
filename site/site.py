@@ -6030,6 +6030,7 @@ JS_RADIO = r"""
 
 
 HTML = (
+    '<meta charset="utf-8">\n'
     '<title>AL Design System</title>\n'
     '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
     '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
@@ -6048,7 +6049,7 @@ HTML = (
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + '</script>\n'
 )
 
-open(os.path.join(HERE, 'index.html'), 'w').write(HTML)
+open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
 
 print(f'site/index.html escrito ({len(HTML):,} bytes)')
 print(f'  páginas no trilho : {len(PAGES)} — ' + ', '.join(p[0] for p in PAGES))

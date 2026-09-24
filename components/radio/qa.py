@@ -157,7 +157,8 @@ def build():
     f_tema = pergunta('f-origem', 'Como conheceu o AL (opcional)', [
         ('i', 'Indicação', {}), ('b', 'Busca', {}), ('r', 'Redes sociais', {})])
 
-    return f'''<title>AL Radio QA</title>
+    return f'''<meta charset="utf-8">
+<title>AL Radio QA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
