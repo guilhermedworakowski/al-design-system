@@ -206,8 +206,14 @@
   --_border-state: var(--al-select-border-active);
 }
 
-/* a chegada por Tab. `:focus-visible` e nao `:focus` de proposito: sao dois
-   estados distintos por decisao, e e o navegador que separa clique de teclado. */
+/* o campo esta focado - por Tab OU por clique.
+   MEDIDO no Chromium em 23/09/2026: um <select> clicado com o mouse CASA
+   `:focus-visible`, porque a plataforma trata select como controle que recebe
+   teclado depois de aberto. Entao o anel aparece no clique tambem, e nao ha
+   seletor de "foco so por teclado" alem deste. A leitura que vale e a que
+   sobrevive em qualquer navegador: `active` e o instante em que o botao do
+   mouse esta pressionado; `focus` e o estado que PERMANECE enquanto o campo
+   estiver focado, tenha chegado como tiver chegado. */
 .al-select__field:focus-visible {
   --_border-state: var(--al-select-border-focus);
   box-shadow: var(--_ring-force, var(--al-select-ring));

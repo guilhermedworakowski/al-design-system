@@ -28,8 +28,11 @@ A BORDA E O EIXO QUE CARREGA O ESTADO
 
 `border-active` E `border-focus` APONTAM PRO MESMO ALIAS, E SAO DOIS TOKENS
 
-  Gui fechou na etapa 1 que active (clique que abre a lista) e foco (chegada
-  por Tab) sao estados distintos. Hoje os dois resolvem em `border-brand` e
+  Active e o INSTANTE em que o botao do mouse esta pressionado; focus e o
+  estado que PERMANECE enquanto o campo estiver focado, por Tab ou por clique.
+  A leitura original ("focus e a chegada por Tab") caiu na etapa 6, medida:
+  o Chromium casa `:focus-visible` num <select> clicado com o mouse.
+  Hoje os dois resolvem em `border-brand` e
   ficam pixel-identicos. Manter dois nomes e o que permite um divergir do
   outro depois sem virar mudanca quebrada - e o que impede alguem de ler o
   CSS e concluir que os dois estados sao a mesma coisa.
