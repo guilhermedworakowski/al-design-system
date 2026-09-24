@@ -1,0 +1,71 @@
+/* AL Design System - tokens do Select
+ * GERADO por components/select/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez.
+ *
+ * Altura do campo: 48px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo - so o disabled muda */
+  --al-select-bg: var(--al-bg-surface-raised);
+  --al-select-bg-disabled: var(--al-bg-disabled);
+
+  /* borda - o eixo que carrega o estado */
+  --al-select-border: var(--al-border-default);
+  --al-select-border-hover: var(--al-border-strong);
+  --al-select-border-active: var(--al-border-brand);
+  --al-select-border-focus: var(--al-border-brand);
+  --al-select-border-error: var(--al-border-danger);
+  --al-select-border-disabled: var(--al-border-default);
+
+  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */
+  --al-select-text-placeholder: var(--al-text-placeholder);
+  --al-select-text-value: var(--al-text-primary);
+  --al-select-text-disabled: var(--al-text-disabled);
+
+  /* rotulo, marca de opcional e apoio - vivem fora do campo, sobre a tela */
+  --al-select-label: var(--al-text-primary);
+  --al-select-label-error: var(--al-text-danger);
+  --al-select-label-disabled: var(--al-text-disabled);
+  --al-select-optional: var(--al-text-secondary);
+  --al-select-help: var(--al-text-secondary);
+  --al-select-help-error: var(--al-text-danger);
+
+  /* seta - nao herda a cor do texto, ver cabecalho do tokens.py */
+  --al-select-icon: var(--al-text-primary);
+  --al-select-icon-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-select-ring: var(--al-focus-ring-default);
+  --al-select-ring-error: var(--al-focus-ring-error);
+
+  /* geometria */
+  --al-select-padding-x: var(--al-space-12);
+  --al-select-padding-y: var(--al-space-12);
+  --al-select-gap: var(--al-space-8);
+  --al-select-radius: var(--al-radius-lg);
+  --al-select-border-width: var(--al-border-width-1);
+  --al-select-icon-size: var(--al-icon-size-24);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-select-font-size: var(--al-font-size-md);
+  --al-select-line-height: var(--al-line-height-md);
+  --al-select-font-weight: 400;
+  --al-select-tracking: 0em;
+  --al-select-label-font-size: var(--al-font-size-md);
+  --al-select-label-line-height: var(--al-line-height-md);
+  --al-select-label-font-weight: 400;
+  --al-select-label-tracking: 0em;
+  --al-select-optional-font-size: var(--al-font-size-sm);
+  --al-select-optional-line-height: var(--al-line-height-sm);
+  --al-select-optional-font-weight: 400;
+  --al-select-optional-tracking: 0em;
+  --al-select-help-font-size: var(--al-font-size-xs);
+  --al-select-help-line-height: var(--al-line-height-xs);
+  --al-select-help-font-weight: 400;
+  --al-select-help-tracking: 0.01em;
+}

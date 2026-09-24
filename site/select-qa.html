@@ -1,0 +1,1296 @@
+<title>AL Select QA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ================= foundation ================= */
+/* AL Design System - Foundation
+ * v0.6.0 - MIT
+ * GERADO por foundation/css.py. Nao editar a mao: rode o script.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* primitivas de cor - a rampa crua. Nao consumir direto num componente. */
+  --al-color-neutral-50: #F7F7F7;
+  --al-color-neutral-100: #EEEEEE;
+  --al-color-neutral-200: #E0E0E0;
+  --al-color-neutral-300: #CECECE;
+  --al-color-neutral-400: #B3B3B3;
+  --al-color-neutral-500: #949494;
+  --al-color-neutral-600: #717171;
+  --al-color-neutral-700: #565656;
+  --al-color-neutral-800: #3E3E3E;
+  --al-color-neutral-900: #292929;
+  --al-color-neutral-950: #181818;
+  --al-color-orange-50: #FFF5F0;
+  --al-color-orange-100: #FFEADE;
+  --al-color-orange-200: #FFD7C4;
+  --al-color-orange-300: #FFBDA0;
+  --al-color-orange-400: #FF9267;
+  --al-color-orange-500: #FC5000;
+  --al-color-orange-600: #C53900;
+  --al-color-orange-700: #992700;
+  --al-color-orange-800: #6C2100;
+  --al-color-orange-900: #4A1700;
+  --al-color-orange-950: #2D0D00;
+  --al-color-red-50: #FFF5F5;
+  --al-color-red-100: #FFE8E9;
+  --al-color-red-200: #FFD5D5;
+  --al-color-red-300: #FFBABB;
+  --al-color-red-400: #FF8D91;
+  --al-color-red-500: #F84F5D;
+  --al-color-red-600: #CA293F;
+  --al-color-red-700: #A00E27;
+  --al-color-red-800: #780014;
+  --al-color-red-900: #550007;
+  --al-color-red-950: #360001;
+  --al-color-amber-50: #FBF7EC;
+  --al-color-amber-100: #F7EED5;
+  --al-color-amber-200: #F2DFB0;
+  --al-color-amber-300: #EBCA7E;
+  --al-color-amber-400: #DCAC2E;
+  --al-color-amber-500: #BA8C00;
+  --al-color-amber-600: #916A00;
+  --al-color-amber-700: #704F00;
+  --al-color-amber-800: #523800;
+  --al-color-amber-900: #392500;
+  --al-color-amber-950: #221500;
+  --al-color-green-50: #EFFBF2;
+  --al-color-green-100: #DEF6E4;
+  --al-color-green-200: #C1EECA;
+  --al-color-green-300: #9DE2A9;
+  --al-color-green-400: #6ACD7C;
+  --al-color-green-500: #1BB14B;
+  --al-color-green-600: #008A2A;
+  --al-color-green-700: #006911;
+  --al-color-green-800: #004C03;
+  --al-color-green-900: #013400;
+  --al-color-green-950: #001F00;
+  --al-color-blue-50: #F1F8FF;
+  --al-color-blue-100: #E2F1FF;
+  --al-color-blue-200: #CAE4FF;
+  --al-color-blue-300: #A9D3FF;
+  --al-color-blue-400: #76B8FF;
+  --al-color-blue-500: #2696FF;
+  --al-color-blue-600: #0071D0;
+  --al-color-blue-700: #0055A3;
+  --al-color-blue-800: #003C7A;
+  --al-color-blue-900: #002858;
+  --al-color-blue-950: #001639;
+
+  /* semanticos de cor - TEMA CLARO. E aqui que o tema e resolvido. */
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+
+  /* tipografia */
+  --al-font-sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --al-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-font-weight-regular: 400;
+  --al-font-weight-medium: 500;
+  --al-font-weight-semibold: 600;
+  --al-font-weight-bold: 700;
+  --al-font-size-xs: 12px;
+  --al-font-size-sm: 14px;
+  --al-font-size-md: 16px;
+  --al-font-size-lg: 18px;
+  --al-font-size-xl: 20px;
+  --al-font-size-2xl: 24px;
+  --al-font-size-3xl: 30px;
+  --al-font-size-4xl: 36px;
+  --al-font-size-5xl: 48px;
+  --al-font-size-6xl: 60px;
+  --al-line-height-xs: 16px;
+  --al-line-height-sm: 20px;
+  --al-line-height-md: 24px;
+  --al-line-height-lg: 28px;
+  --al-line-height-xl: 28px;
+  --al-line-height-2xl: 32px;
+  --al-line-height-3xl: 36px;
+  --al-line-height-4xl: 44px;
+  --al-line-height-5xl: 56px;
+  --al-line-height-6xl: 68px;
+
+  /* espacamento */
+  --al-space-0: 0px;
+  --al-space-2: 2px;
+  --al-space-4: 4px;
+  --al-space-8: 8px;
+  --al-space-12: 12px;
+  --al-space-16: 16px;
+  --al-space-20: 20px;
+  --al-space-24: 24px;
+  --al-space-32: 32px;
+  --al-space-40: 40px;
+  --al-space-48: 48px;
+  --al-space-64: 64px;
+  --al-space-80: 80px;
+  --al-space-96: 96px;
+
+  /* raio */
+  --al-radius-none: 0px;
+  --al-radius-xs: 2px;
+  --al-radius-sm: 4px;
+  --al-radius-md: 6px;
+  --al-radius-lg: 8px;
+  --al-radius-xl: 12px;
+  --al-radius-2xl: 16px;
+  --al-radius-3xl: 24px;
+  --al-radius-full: 9999px;
+
+  /* borda */
+  --al-border-width-0: 0px;
+  --al-border-width-1: 1px;
+  --al-border-width-2: 2px;
+  --al-border-width-focus: 2px;
+  --al-border-focus-offset: 2px;
+
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
+
+  /* elevacao - TEMA CLARO */
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+
+  /* anel de foco - composto uma vez, acompanha o tema sozinho.
+     Duas camadas: respiro na cor do fundo, depois o anel na cor do foco. */
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+}
+
+/* TEMA ESCURO. Tres estados, nao dois: sem carimbo no root, so o
+ * prefers-color-scheme separa; com carimbo, a escolha explicita vence. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --al-bg-canvas: #181818;
+    --al-bg-surface: #292929;
+    --al-bg-surface-raised: #3E3E3E;
+    --al-bg-subtle: #3E3E3E;
+    --al-bg-hover: #3E3E3E;
+    --al-bg-active: #565656;
+    --al-bg-disabled: #3E3E3E;
+    --al-bg-inverse: #F7F7F7;
+    --al-bg-brand: #FC5000;
+    --al-bg-brand-hover: #EA4900;
+    --al-bg-brand-active: #C53900;
+    --al-bg-brand-subtle: #2D0D00;
+    --al-bg-brand-strong: #992700;
+    --al-bg-danger: #F84F5D;
+    --al-bg-danger-hover: #FF8D91;
+    --al-bg-danger-active: #FFBABB;
+    --al-bg-danger-subtle: #360001;
+    --al-bg-success: #1BB14B;
+    --al-bg-success-hover: #6ACD7C;
+    --al-bg-success-subtle: #001F00;
+    --al-bg-warning: #DCAC2E;
+    --al-bg-warning-hover: #EBCA7E;
+    --al-bg-warning-subtle: #221500;
+    --al-bg-info: #2696FF;
+    --al-bg-info-hover: #76B8FF;
+    --al-bg-info-subtle: #001639;
+    --al-text-primary: #F7F7F7;
+    --al-text-secondary: #B3B3B3;
+    --al-text-placeholder: #B3B3B3;
+    --al-text-disabled: #717171;
+    --al-text-inverse: #292929;
+    --al-text-on-brand: #FFFFFF;
+    --al-text-on-solid: #181818;
+    --al-text-brand: #FF9267;
+    --al-text-danger: #FF8D91;
+    --al-text-success: #6ACD7C;
+    --al-text-warning: #EBCA7E;
+    --al-text-info: #76B8FF;
+    --al-border-subtle: #3E3E3E;
+    --al-border-default: #565656;
+    --al-border-strong: #949494;
+    --al-border-brand: #FC5000;
+    --al-border-focus: #FF9267;
+    --al-border-danger: #F84F5D;
+    --al-border-success: #1BB14B;
+    --al-border-warning: #DCAC2E;
+    --al-border-info: #2696FF;
+    --al-shadow-focus-default: #FF9267;
+    --al-shadow-focus-error: #FF8D91;
+    --al-elevation-0: none;
+    --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+    --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+    --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+    --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+    --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+  }
+}
+
+:root[data-theme="dark"] {
+  --al-bg-canvas: #181818;
+  --al-bg-surface: #292929;
+  --al-bg-surface-raised: #3E3E3E;
+  --al-bg-subtle: #3E3E3E;
+  --al-bg-hover: #3E3E3E;
+  --al-bg-active: #565656;
+  --al-bg-disabled: #3E3E3E;
+  --al-bg-inverse: #F7F7F7;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #EA4900;
+  --al-bg-brand-active: #C53900;
+  --al-bg-brand-subtle: #2D0D00;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #F84F5D;
+  --al-bg-danger-hover: #FF8D91;
+  --al-bg-danger-active: #FFBABB;
+  --al-bg-danger-subtle: #360001;
+  --al-bg-success: #1BB14B;
+  --al-bg-success-hover: #6ACD7C;
+  --al-bg-success-subtle: #001F00;
+  --al-bg-warning: #DCAC2E;
+  --al-bg-warning-hover: #EBCA7E;
+  --al-bg-warning-subtle: #221500;
+  --al-bg-info: #2696FF;
+  --al-bg-info-hover: #76B8FF;
+  --al-bg-info-subtle: #001639;
+  --al-text-primary: #F7F7F7;
+  --al-text-secondary: #B3B3B3;
+  --al-text-placeholder: #B3B3B3;
+  --al-text-disabled: #717171;
+  --al-text-inverse: #292929;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #181818;
+  --al-text-brand: #FF9267;
+  --al-text-danger: #FF8D91;
+  --al-text-success: #6ACD7C;
+  --al-text-warning: #EBCA7E;
+  --al-text-info: #76B8FF;
+  --al-border-subtle: #3E3E3E;
+  --al-border-default: #565656;
+  --al-border-strong: #949494;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FF9267;
+  --al-border-danger: #F84F5D;
+  --al-border-success: #1BB14B;
+  --al-border-warning: #DCAC2E;
+  --al-border-info: #2696FF;
+  --al-shadow-focus-default: #FF9267;
+  --al-shadow-focus-error: #FF8D91;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+  --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+  --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+  --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+  --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+}
+
+/* ================= icon - tokens ================= */
+/* AL Design System - tokens do Icon
+ * GERADO por components/icon/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada tinta aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados. Entao o
+ * :root re-substitui todos eles de uma vez.
+ */
+
+:root {
+
+  /* caixa - degrau recorrente, nao teto */
+  --al-icon-box-16: var(--al-icon-size-16);
+  --al-icon-box-20: var(--al-icon-size-20);
+  --al-icon-box-24: var(--al-icon-size-24);
+  --al-icon-box-32: var(--al-icon-size-32);
+
+  /* tinta - saida explicita. O default do componente e currentColor. */
+  --al-icon-ink-default: var(--al-text-primary);
+  --al-icon-ink-on-brand: var(--al-text-on-brand);
+  --al-icon-ink-on-solid: var(--al-text-on-solid);
+  --al-icon-ink-disabled: var(--al-text-disabled);
+}
+
+/* ================= icon ================= */
+/* AL Design System - Icon
+ *
+ * Depende de: foundation/al-foundation.css + components/icon/al-icon-tokens.css
+ *
+ * ANATOMIA
+ *   A classe vai no proprio <svg>, nao num involucro. O arquivo do icone mora
+ *   em components/icon/icons/ e e inserido inline no HTML - inline porque so
+ *   assim o traco herda a cor do texto ao redor, que e o mecanismo inteiro
+ *   deste componente. <img> nao herda cor; background-image tambem nao.
+ *
+ *     <svg class="al-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…</svg>
+ *
+ * TAMANHO
+ *   Nao existe escala fixa. O desenho e vetorizado no grid de 24, entao a mesma
+ *   marcacao serve em qualquer tamanho, e o traco engrossa junto porque o
+ *   viewBox escala o desenho inteiro - e por isso que a caixa e a unica coisa
+ *   que este CSS precisa definir.
+ *
+ *   Padrao 24. Os degraus recorrentes tem modificador:
+ *     .al-icon--16  .al-icon--20  .al-icon--32
+ *   Qualquer outro tamanho entra pela propria custom property, sem classe nova
+ *   e sem esperar a escala crescer:
+ *     <svg class="al-icon" style="--al-icon-box: 40px" aria-hidden="true" focusable="false">
+ *   O portao de CSS literal vale para o CSS do design system, nao para a
+ *   aplicacao que o consome. Este e o escape, e ele e de propósito.
+ *
+ * COR
+ *   Padrao e `currentColor`: o icone herda a cor de quem o contem. E por isso
+ *   que dentro do Button ele acerta os quatro estados sem uma linha a mais - o
+ *   rotulo ja resolveu a cor, e o icone segue. A collection `3. Icon ink` do
+ *   Figma existe com quatro modes justamente porque o Figma nao tem essa
+ *   palavra-chave; aqui ela substitui a collection inteira.
+ *   Para icone que vive fora de um acionavel e nao tem de quem herdar, os
+ *   quatro modificadores `--ink-*` dizem a cor explicitamente.
+ *
+ * ACESSIBILIDADE - contrato de marcacao
+ *   Icone do AL vive dentro de acionavel, e nesse lugar ele e quase sempre
+ *   DECORATIVO: quem carrega o sentido e o rotulo do botao. Icone decorativo
+ *   anunciado por leitor de tela vira ruido duplicado.
+ *
+ *     decorativo (padrao)  aria-hidden="true" focusable="false"
+ *     carrega o sentido    role="img" + aria-label="…"
+ *
+ *   Os dois atributos do caso decorativo fazem coisas diferentes: aria-hidden
+ *   tira do leitor de tela, focusable="false" tira da ordem de tabulacao (SVG
+ *   inline entra nela sozinho em alguns navegadores).
+ *   Botao so-icone e o caso limite: o nome acessivel vai no BOTAO, nunca no
+ *   svg - e o Icon Button que resolve isso, nao este componente.
+ *   Quem cobra isso e o a11y.py ao lado: ele le o HTML que o site emite e
+ *   reprova todo .al-icon sem contrato. Nao e regra escrita, e regra medida.
+ *
+ * NOTA DE GEOMETRIA
+ *   Este arquivo define cor e caixa, e nao define `stroke-width`. Nao e
+ *   esquecimento: a espessura do traco (2 no grid de 24) e parte do DESENHO e
+ *   viaja dentro do proprio arquivo .svg. Cor e caixa mudam com o contexto e
+ *   com o tema; o desenho, nao.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+.al-icon {
+  display: inline-block;
+
+  /* nunca encolhe: dentro de um flex apertado o icone e a ultima coisa que
+     deve ceder espaco - deformar o icone e pior do que quebrar o rotulo */
+  flex: none;
+
+  /* a caixa. Sem valor definido, cai no degrau padrao. */
+  inline-size: var(--al-icon-box, var(--al-icon-box-24));
+  block-size: var(--al-icon-box, var(--al-icon-box-24));
+
+  /* alinha ao centro da linha quando o icone aparece solto no meio de texto.
+     Dentro de um flex (o caso do Button) quem alinha e o container, e esta
+     declaracao nao atrapalha. */
+  vertical-align: middle;
+
+  /* o mecanismo: a cor vem de quem contem */
+  color: inherit;
+  fill: none;
+  stroke: currentColor;
+}
+
+/* ---------------------------------------------------------------- caixa
+   Degraus recorrentes. Vem depois da base de proposito: mesma especificidade,
+   entao quem vence e a ordem do arquivo. */
+
+.al-icon--16 { --al-icon-box: var(--al-icon-box-16); }
+.al-icon--20 { --al-icon-box: var(--al-icon-box-20); }
+.al-icon--24 { --al-icon-box: var(--al-icon-box-24); }
+.al-icon--32 { --al-icon-box: var(--al-icon-box-32); }
+
+/* ---------------------------------------------------------------- tinta
+   Saida explicita, para icone sem quem herdar. Dentro de um acionavel nao se
+   usa nenhuma destas: o padrao ja acerta. */
+
+.al-icon--ink-default  { color: var(--al-icon-ink-default); }
+.al-icon--ink-on-brand { color: var(--al-icon-ink-on-brand); }
+.al-icon--ink-on-solid { color: var(--al-icon-ink-on-solid); }
+.al-icon--ink-disabled { color: var(--al-icon-ink-disabled); }
+
+/* ================= select - tokens ================= */
+/* AL Design System - tokens do Select
+ * GERADO por components/select/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez.
+ *
+ * Altura do campo: 48px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo - so o disabled muda */
+  --al-select-bg: var(--al-bg-surface-raised);
+  --al-select-bg-disabled: var(--al-bg-disabled);
+
+  /* borda - o eixo que carrega o estado */
+  --al-select-border: var(--al-border-default);
+  --al-select-border-hover: var(--al-border-strong);
+  --al-select-border-active: var(--al-border-brand);
+  --al-select-border-focus: var(--al-border-brand);
+  --al-select-border-error: var(--al-border-danger);
+  --al-select-border-disabled: var(--al-border-default);
+
+  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */
+  --al-select-text-placeholder: var(--al-text-placeholder);
+  --al-select-text-value: var(--al-text-primary);
+  --al-select-text-disabled: var(--al-text-disabled);
+
+  /* rotulo, marca de opcional e apoio - vivem fora do campo, sobre a tela */
+  --al-select-label: var(--al-text-primary);
+  --al-select-label-error: var(--al-text-danger);
+  --al-select-label-disabled: var(--al-text-disabled);
+  --al-select-optional: var(--al-text-secondary);
+  --al-select-help: var(--al-text-secondary);
+  --al-select-help-error: var(--al-text-danger);
+
+  /* seta - nao herda a cor do texto, ver cabecalho do tokens.py */
+  --al-select-icon: var(--al-text-primary);
+  --al-select-icon-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-select-ring: var(--al-focus-ring-default);
+  --al-select-ring-error: var(--al-focus-ring-error);
+
+  /* geometria */
+  --al-select-padding-x: var(--al-space-12);
+  --al-select-padding-y: var(--al-space-12);
+  --al-select-gap: var(--al-space-8);
+  --al-select-radius: var(--al-radius-lg);
+  --al-select-border-width: var(--al-border-width-1);
+  --al-select-icon-size: var(--al-icon-size-24);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-select-font-size: var(--al-font-size-md);
+  --al-select-line-height: var(--al-line-height-md);
+  --al-select-font-weight: 400;
+  --al-select-tracking: 0em;
+  --al-select-label-font-size: var(--al-font-size-md);
+  --al-select-label-line-height: var(--al-line-height-md);
+  --al-select-label-font-weight: 400;
+  --al-select-label-tracking: 0em;
+  --al-select-optional-font-size: var(--al-font-size-sm);
+  --al-select-optional-line-height: var(--al-line-height-sm);
+  --al-select-optional-font-weight: 400;
+  --al-select-optional-tracking: 0em;
+  --al-select-help-font-size: var(--al-font-size-xs);
+  --al-select-help-line-height: var(--al-line-height-xs);
+  --al-select-help-font-weight: 400;
+  --al-select-help-tracking: 0.01em;
+}
+
+/* ================= select ================= */
+/* AL Design System - Select
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/select/al-select-tokens.css
+ *           + components/icon/al-icon-tokens.css + components/icon/icon.css
+ *
+ * E O <select> NATIVO
+ *   A lista de opcoes e desenhada pelo navegador e pelo sistema operacional.
+ *   Este arquivo estiliza o GATILHO fechado e nada mais - nao ha painel, item
+ *   de opcao nem item selecionado para pintar, e tentar estilizar <option>
+ *   varia por sistema operacional e quebra sem avisar. O que se compra com
+ *   isso: teclado, leitor de tela e comportamento mobile de graca.
+ *
+ * ANATOMIA
+ *   <div class="al-select">
+ *     <div class="al-select__labelrow">
+ *       <label class="al-select__label" for="uf">Estado</label>
+ *       <span class="al-select__optional">(Opcional)</span>
+ *     </div>
+ *     <div class="al-select__control">
+ *       <select class="al-select__field" id="uf" aria-describedby="uf-help">
+ *         <option value="" disabled selected>Selecione o estado</option>
+ *         …
+ *       </select>
+ *       <svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false">…</svg>
+ *     </div>
+ *     <p class="al-select__help" id="uf-help">Texto de apoio</p>
+ *   </div>
+ *
+ *   O `__control` existe por uma razao so: <select> nao aceita filho que nao
+ *   seja <option>, entao a seta nao pode morar dentro dele. Ela e irma,
+ *   posicionada por cima, e `pointer-events: none` devolve o clique ao campo.
+ *
+ * A SETA NAO HERDA A COR DO TEXTO - E ESTE E O UNICO COMPONENTE ASSIM
+ *   No Button e no Tag o icone e `currentColor` e acerta todos os estados sem
+ *   uma linha a mais. Aqui nao: no repouso o texto do campo e
+ *   `text-placeholder` e a seta e `text-primary`, duas cores na mesma caixa.
+ *   Por isso `.al-select__chevron` declara `color` explicitamente, e por isso
+ *   existem os tokens `select-icon` e `select-icon-disabled`.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Erro le `aria-invalid="true"`; desabilitado le `:disabled`; placeholder le
+ *   `:has(option[value=""]:checked)`. Nao ha `.al-select--error`. O motivo e o
+ *   mesmo do contrato de marcacao do Icon: se a cor viesse de uma classe, ela
+ *   poderia divergir do que o leitor de tela anuncia - campo vermelho sem
+ *   `aria-invalid`, ou o contrario. Amarrando os dois na mesma fonte, um nao
+ *   existe sem o outro.
+ *
+ *   Degradacao se `:has()` faltar: o texto do placeholder fica na cor do
+ *   valor (mais escuro). Perde-se a distincao, nao a legibilidade.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE
+ *   `border-color: var(--_border-force, var(--_border-state))`. Os estados de
+ *   interacao escrevem em `--_border-state`; erro e desabilitado escrevem em
+ *   `--_border-force`, que vence sempre por ser outra propriedade - nao por
+ *   ter seletor mais pesado. Sem isso, `:hover:not(:disabled)` (0,3,0) venceria
+ *   `[aria-invalid="true"]` (0,2,0) e o campo reprovado ficaria cinza ao passar
+ *   o mouse. Entre erro e desabilitado decide a ordem do arquivo: desabilitado
+ *   vem depois, e desabilitado ganha.
+ *
+ * ALTURA E CONSEQUENCIA, NAO `height`
+ *   48 = padding-y x2 + entrelinha, com a borda descontada do padding - a
+ *   mesma convencao do Button e do Tag. A borda de 1px existe em todos os
+ *   estados, entao o campo nunca "pula" quando o estado troca a cor dela.
+ *
+ * LARGURA
+ *   O campo ocupa 100% do conteiner. Formulario decide largura; componente
+ *   nao. Nao ha token nem valor de largura aqui.
+ *
+ * O TEXTO DE APOIO E A MARCA "(OPCIONAL)" SAO MARCACAO, NAO CLASSE
+ *   Nao ha modificador para liga-los: quem nao quer o apoio nao escreve o <p>,
+ *   e quem tem campo obrigatorio nao escreve o <span>. O AL marca o OPCIONAL,
+ *   nao o obrigatorio - nao existe estilo de "obrigatorio" porque a ausencia
+ *   da marca E o obrigatorio.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
+ *   escala de motion. Mesma pendencia do Button e do Icon Button; aparece
+ *   nomeada no relatorio do check.py, nunca como reprova silenciosa.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-select-gap);
+}
+
+/* ------------------------------------------------------------ rotulo */
+/* baseline, nao center: o rotulo tem entrelinha 24 e a marca 20, e alinhar
+   pelo centro deixaria as duas palavras visivelmente desencontradas. */
+.al-select__labelrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--al-select-gap);
+}
+
+.al-select__label {
+  color: var(--al-select-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-label-font-size);
+  line-height: var(--al-select-label-line-height);
+  font-weight: var(--al-select-label-font-weight);
+  letter-spacing: var(--al-select-label-tracking);
+}
+
+/* uma entrelinha abaixo do rotulo, de proposito: marca o campo sem competir
+   com o nome dele. */
+.al-select__optional {
+  color: var(--al-select-optional);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-optional-font-size);
+  line-height: var(--al-select-optional-line-height);
+  font-weight: var(--al-select-optional-font-weight);
+  letter-spacing: var(--al-select-optional-tracking);
+}
+
+/* ------------------------------------------------------------- campo */
+.al-select__control {
+  position: relative;
+  display: block;
+}
+
+.al-select__field {
+  --_border-state: var(--al-select-border);
+  --_text-state: var(--al-select-text-value);
+
+  box-sizing: border-box;
+  width: 100%;
+  display: block;
+
+  /* A borda entra no calculo da caixa, entao descontar aqui fecha 48 exatos.
+     A direita abre espaco para a seta: padding + caixa do icone + respiro. */
+  padding: calc(var(--al-select-padding-y) - var(--al-select-border-width))
+           calc(var(--al-select-padding-x) + var(--al-select-icon-size)
+                + var(--al-select-gap) - var(--al-select-border-width))
+           calc(var(--al-select-padding-y) - var(--al-select-border-width))
+           calc(var(--al-select-padding-x) - var(--al-select-border-width));
+
+  border: var(--al-select-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-select-radius);
+  background-color: var(--al-select-bg);
+  color: var(--_text-force, var(--_text-state));
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-font-size);
+  line-height: var(--al-select-line-height);
+  font-weight: var(--al-select-font-weight);
+  letter-spacing: var(--al-select-tracking);
+
+  /* tira a seta que o navegador desenha - a nossa entra por cima */
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o raio do campo */
+.al-select__field:focus {
+  outline: none;
+}
+
+/* ----------------------------------------------------------- a seta */
+.al-select__chevron {
+  position: absolute;
+  right: var(--al-select-padding-x);
+  top: 50%;
+  transform: translateY(-50%);
+  /* devolve o clique ao campo que esta embaixo */
+  pointer-events: none;
+  color: var(--al-select-icon);
+  --al-icon-box: var(--al-select-icon-size);
+}
+
+/* -------------------------------------------------------- texto de apoio */
+.al-select__help {
+  color: var(--al-select-help);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-help-font-size);
+  line-height: var(--al-select-help-line-height);
+  font-weight: var(--al-select-help-font-weight);
+  letter-spacing: var(--al-select-help-tracking);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- estados */
+/* placeholder: a primeira <option> vazia continua escolhida. Nao e atributo -
+   <select> nao tem placeholder nativo. */
+.al-select__field:has(option[value=""]:checked) {
+  --_text-state: var(--al-select-text-placeholder);
+}
+
+.al-select__field:hover:not(:disabled) {
+  --_border-state: var(--al-select-border-hover);
+}
+
+/* o clique que abre a lista */
+.al-select__field:active:not(:disabled) {
+  --_border-state: var(--al-select-border-active);
+}
+
+/* o campo esta focado - por Tab OU por clique.
+   MEDIDO no Chromium em 23/09/2026: um <select> clicado com o mouse CASA
+   `:focus-visible`, porque a plataforma trata select como controle que recebe
+   teclado depois de aberto. Entao o anel aparece no clique tambem, e nao ha
+   seletor de "foco so por teclado" alem deste. A leitura que vale e a que
+   sobrevive em qualquer navegador: `active` e o instante em que o botao do
+   mouse esta pressionado; `focus` e o estado que PERMANECE enquanto o campo
+   estiver focado, tenha chegado como tiver chegado. */
+.al-select__field:focus-visible {
+  --_border-state: var(--al-select-border-focus);
+  box-shadow: var(--_ring-force, var(--al-select-ring));
+}
+
+/* erro - vence hover e active por escrever noutra propriedade, ver cabecalho */
+.al-select__field[aria-invalid="true"] {
+  --_border-force: var(--al-select-border-error);
+  --_ring-force: var(--al-select-ring-error);
+}
+
+.al-select:has(.al-select__field[aria-invalid="true"]) .al-select__label {
+  color: var(--al-select-label-error);
+}
+
+.al-select:has(.al-select__field[aria-invalid="true"]) .al-select__help {
+  color: var(--al-select-help-error);
+}
+
+/* desabilitado - depois do erro, porque desabilitado ganha dos dois */
+.al-select__field:disabled {
+  --_border-force: var(--al-select-border-disabled);
+  --_text-force: var(--al-select-text-disabled);
+  background-color: var(--al-select-bg-disabled);
+  cursor: not-allowed;
+}
+
+.al-select:has(.al-select__field:disabled) .al-select__label,
+.al-select:has(.al-select__field:disabled) .al-select__optional {
+  color: var(--al-select-label-disabled);
+}
+
+.al-select:has(.al-select__field:disabled) .al-select__chevron {
+  color: var(--al-select-icon-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-select__field {
+    transition: none;
+  }
+}
+
+
+/* ================= cromo da pagina de QA =================
+   Usa os proprios tokens do AL. Nao ha paleta paralela aqui de proposito:
+   se a Foundation mudar, esta pagina muda junto - inclusive errado, se for o
+   caso, que e exatamente o que se quer ver num QA. */
+html, body { background: var(--al-bg-canvas); }
+body {
+  margin: 0;
+  color: var(--al-text-primary);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-font-size-md);
+  line-height: var(--al-line-height-md);
+}
+.qa-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-inline: var(--al-space-16);
+  padding-block: var(--al-space-32) var(--al-space-64);
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-space-48);
+}
+.qa-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; gap: var(--al-space-16);
+  border-bottom: 1px solid var(--al-border-subtle);
+  padding-bottom: var(--al-space-16);
+}
+.qa-head h1 {
+  margin: 0; font-size: var(--al-font-size-3xl); line-height: var(--al-line-height-3xl);
+  font-weight: 600; letter-spacing: -0.02em; text-wrap: balance;
+}
+.qa-sub { margin: var(--al-space-4) 0 0; color: var(--al-text-secondary); font-size: var(--al-font-size-sm); }
+.qa-theme {
+  display: inline-flex; align-items: center; gap: var(--al-space-8);
+  padding: var(--al-space-8) var(--al-space-12);
+  border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-full);
+  background: var(--al-bg-surface-raised); color: var(--al-text-primary);
+  font: inherit; font-size: var(--al-font-size-sm); cursor: pointer;
+}
+.qa-theme:focus-visible { outline: none; box-shadow: var(--al-focus-ring-default); }
+section h2 {
+  margin: 0 0 var(--al-space-4);
+  font-size: var(--al-font-size-xl); line-height: var(--al-line-height-xl);
+  font-weight: 600; letter-spacing: -0.01em;
+}
+section > p.qa-lede { margin: 0 0 var(--al-space-20); color: var(--al-text-secondary); max-width: 62ch; }
+.qa-grid {
+  display: grid; gap: var(--al-space-20);
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+.qa-card {
+  display: flex; flex-direction: column; gap: var(--al-space-12);
+  padding: var(--al-space-20);
+  border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface);
+}
+.qa-card__head { display: flex; align-items: center; justify-content: space-between; gap: var(--al-space-8); }
+.qa-card__title { margin: 0; font-size: var(--al-font-size-sm); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.qa-card__note { margin: 0; color: var(--al-text-secondary); font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); }
+.qa-tag {
+  font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs);
+  padding: 2px var(--al-space-8); border-radius: var(--al-radius-full);
+  border: 1px solid var(--al-border-default); color: var(--al-text-secondary);
+}
+.qa-tag--real { border-color: var(--al-border-success); color: var(--al-text-success); }
+.qa-form {
+  display: grid; gap: var(--al-space-20);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  padding: var(--al-space-24);
+  border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface-raised);
+}
+.qa-checks { margin: 0; padding-left: var(--al-space-20); display: grid; gap: var(--al-space-8); max-width: 68ch; }
+.qa-checks li { color: var(--al-text-secondary); }
+.qa-checks strong { color: var(--al-text-primary); font-weight: 500; }
+.qa-tablewrap { overflow-x: auto; }
+table.qa-measure { border-collapse: collapse; width: 100%; font-size: var(--al-font-size-sm); font-variant-numeric: tabular-nums; }
+table.qa-measure th, table.qa-measure td { text-align: left; padding: var(--al-space-8) var(--al-space-12); border-bottom: 1px solid var(--al-border-subtle); white-space: nowrap; }
+table.qa-measure th { font-weight: 600; font-size: var(--al-font-size-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--al-text-secondary); }
+.qa-verdict { font-weight: 600; }
+.qa-verdict--ok { color: var(--al-text-success); }
+.qa-verdict--exc { color: var(--al-text-warning); }
+.qa-verdict--bad { color: var(--al-text-danger); }
+.qa-foot { color: var(--al-text-secondary); font-size: var(--al-font-size-sm); border-top: 1px solid var(--al-border-subtle); padding-top: var(--al-space-16); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="qa-wrap">
+  <header class="qa-head">
+    <div>
+      <h1>Select — QA da etapa 6</h1>
+      <p class="qa-sub">AL Design System 0.6.0 · componente 0.1.0 ·
+      &lt;select&gt; nativo · 38 medições de contraste, 10 exceções declaradas, 0 reprovas</p>
+    </div>
+    <button type="button" class="qa-theme" id="theme-toggle" aria-pressed="false">
+      <span id="theme-label">Tema claro</span>
+    </button>
+  </header>
+
+  <section>
+    <h2>O que testar</h2>
+    <ol class="qa-checks">
+      <li><strong>Tabule pelo formulário.</strong> Todos os campos devem receber foco na ordem visual, e o <strong>Cidade</strong> (desabilitado) deve ser pulado.</li>
+      <li><strong>O anel só aparece no teclado.</strong> Chegue por Tab: anel laranja. Clique com o mouse: borda laranja de active, <em>sem</em> anel. Se o anel aparecer no clique, é o achado que a etapa 1 deixou agendado.</li>
+      <li><strong>Campo em erro focado</strong> deve mostrar anel vinho, não laranja.</li>
+      <li><strong>Escolha uma opção</strong> em qualquer campo: o texto passa de cinza para escuro sozinho, sem classe nenhuma.</li>
+      <li><strong>Troque o tema</strong> no botão acima e refaça os itens 2 e 3.</li>
+      <li><strong>Reduza a janela</strong> até a largura de telefone: os campos esticam, nada corta.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Os sete estados</h2>
+    <p class="qa-lede">Hover e Active só existem enquanto o ponteiro age, então esses dois cartões
+    escrevem direto na variável privada que o próprio <code>select.css</code> usa — é o mecanismo do
+    componente, não um estilo paralelo. Os outros cinco são reais: interaja neles.</p>
+    <div class="qa-grid">
+        <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Default</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="st-default">Estado</label>
+      </div>
+      <div class="al-select__control">
+        <select id="st-default" class="al-select__field">
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+      <p class="qa-card__note">o repouso. A borda aqui e a excecao de contraste declarada.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Hover</h3>
+        <span class="qa-tag qa-tag--simulado">simulado</span>
+      </header>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="st-hover">Estado</label>
+      </div>
+      <div class="al-select__control">
+        <select id="st-hover" class="al-select__field" style="--_border-state: var(--al-select-border-hover)">
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+      <p class="qa-card__note">so existe sob o ponteiro, entao a variavel privada do componente foi escrita direto.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Active</h3>
+        <span class="qa-tag qa-tag--simulado">simulado</span>
+      </header>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="st-active">Estado</label>
+      </div>
+      <div class="al-select__control">
+        <select id="st-active" class="al-select__field" style="--_border-state: var(--al-select-border-active)">
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+      <p class="qa-card__note">so existe no instante em que o botao do mouse esta pressionado - mesma escrita direta.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Focus</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="st-focus">Estado</label>
+      </div>
+      <div class="al-select__control">
+        <select id="st-focus" class="al-select__field">
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+      <p class="qa-card__note">o anel laranja aparece por Tab E por clique - medido no Chromium na etapa 6. Focus e o estado que permanece; active e so o instante do botao pressionado.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Error</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="st-error">Estado</label>
+      </div>
+      <div class="al-select__control">
+        <select id="st-error" class="al-select__field" aria-invalid="true" aria-describedby="st-error-help">
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <p class="al-select__help" id="st-error-help">Escolha um estado para continuar</p>
+    </div>
+      <p class="qa-card__note">vem de aria-invalid="true" na marcacao, nunca de uma classe.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Focus + Error</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="st-focuserror">Estado</label>
+      </div>
+      <div class="al-select__control">
+        <select id="st-focuserror" class="al-select__field" aria-invalid="true" aria-describedby="st-focuserror-help">
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <p class="al-select__help" id="st-focuserror-help">Escolha um estado para continuar</p>
+    </div>
+      <p class="qa-card__note">tabule ate aqui: o anel tem que vir vinho, nao laranja.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Disabled</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="st-disabled">Estado</label>
+        <span class="al-select__optional">(Opcional)</span>
+      </div>
+      <div class="al-select__control">
+        <select id="st-disabled" class="al-select__field" disabled>
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+      <p class="qa-card__note">atributo disabled nativo: o Tab pula este campo sozinho, sem tabindex.</p>
+    </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Formulário real</h2>
+    <p class="qa-lede">Quatro campos numa mesma tela, do jeito que o componente vai viver: um com
+    texto de apoio, um opcional, um reprovado e um desabilitado. É aqui que a ordem de tabulação
+    se prova.</p>
+    <form class="qa-form" id="qa-form" onsubmit="return false">
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="f-uf">Estado</label>
+      </div>
+      <div class="al-select__control">
+        <select id="f-uf" class="al-select__field" aria-describedby="f-uf-help">
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <p class="al-select__help" id="f-uf-help">Onde a nota sera emitida</p>
+    </div>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="f-tipo">Tipo de frete</label>
+        <span class="al-select__optional">(Opcional)</span>
+      </div>
+      <div class="al-select__control">
+        <select id="f-tipo" class="al-select__field">
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="f-erro">Transportadora</label>
+      </div>
+      <div class="al-select__control">
+        <select id="f-erro" class="al-select__field" aria-invalid="true" aria-describedby="f-erro-help">
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+      <p class="al-select__help" id="f-erro-help">Escolha uma transportadora para continuar</p>
+    </div>
+      <div class="al-select">
+      <div class="al-select__labelrow">
+        <label class="al-select__label" for="f-off">Cidade</label>
+      </div>
+      <div class="al-select__control">
+        <select id="f-off" class="al-select__field" disabled>
+          <option value="" disabled selected>Selecione o estado</option>
+          <option value="Acre">Acre</option>
+          <option value="Bahia">Bahia</option>
+          <option value="Ceara">Ceara</option>
+          <option value="Minas Gerais">Minas Gerais</option>
+          <option value="Parana">Parana</option>
+          <option value="Sao Paulo">Sao Paulo</option>
+        </select>
+        <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+      </div>
+    </div>
+    </form>
+  </section>
+
+  <section>
+    <h2>Contraste medido no navegador</h2>
+    <p class="qa-lede">Não são os números do <code>tokens.json</code>: o script lê a cor que o
+    navegador realmente pintou, com <code>getComputedStyle</code>, depois de esperar a transição
+    terminar. Se divergir do portão, o portão está medindo a coisa errada.</p>
+    <div class="qa-tablewrap">
+      <table class="qa-measure">
+        <thead><tr><th>papel</th><th>frente</th><th>fundo</th><th>medido</th><th>piso</th><th>veredito</th></tr></thead>
+        <tbody id="measure-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="qa-foot">Gerado por <code>components/select/qa.py</code> a partir do CSS commitado em
+  <code>dev</code>. Os arquivos <code>foundation/al-foundation.css</code>, <code>icon.css</code>,
+  <code>al-select-tokens.css</code> e <code>select.css</code> estão embutidos nesta página como
+  estão no repositório.</p>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var label = document.getElementById('theme-label');
+
+  function escuro() {
+    if (root.dataset.theme) return root.dataset.theme === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function pintarBotao() {
+    var d = escuro();
+    label.textContent = d ? 'Tema escuro' : 'Tema claro';
+    btn.setAttribute('aria-pressed', String(d));
+  }
+  btn.addEventListener('click', function () {
+    root.dataset.theme = escuro() ? 'light' : 'dark';
+    pintarBotao();
+    // 350ms de folga para a transicao de 120ms terminar: ler antes disso
+    // devolve a cor do meio do caminho, que e ruido, nao bug.
+    setTimeout(medir, 350);
+  });
+  pintarBotao();
+
+  // ---------------------------------------------------------- contraste
+  function rgb(str) {
+    var m = str.match(/-?[\d.]+/g);
+    return m ? [ +m[0], +m[1], +m[2] ] : null;
+  }
+  function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(c) { return 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); }
+  function cr(a, b) {
+    var la = lum(a), lb = lum(b);
+    var hi = Math.max(la, lb), lo = Math.min(la, lb);
+    return (hi + 0.05) / (lo + 0.05);
+  }
+  function corDe(el, prop) { return rgb(getComputedStyle(el)[prop]); }
+
+  var PISO_TEXTO = 4.5, PISO_GRAFICO = 3.0;
+
+  function alvos() {
+    var pagina = corDe(document.body, 'backgroundColor');
+    var campoOk = document.getElementById('f-uf');
+    var campoErro = document.getElementById('f-erro');
+    var campoOff = document.getElementById('f-off');
+    var fundoCampo = corDe(campoOk, 'backgroundColor');
+    var fundoOff = corDe(campoOff, 'backgroundColor');
+    var rotulo = document.querySelector('label[for="f-uf"]');
+    var rotuloErro = document.querySelector('label[for="f-erro"]');
+    var marca = document.querySelector('#qa-form .al-select__optional');
+    var apoio = document.getElementById('f-uf-help');
+    var apoioErro = document.getElementById('f-erro-help');
+    var seta = document.querySelector('#qa-form .al-select__chevron');
+
+    return [
+      ['rótulo',            corDe(rotulo, 'color'),        pagina,     PISO_TEXTO,    false],
+      ['rótulo em erro',    corDe(rotuloErro, 'color'),    pagina,     PISO_TEXTO,    false],
+      ['marca (Opcional)',  corDe(marca, 'color'),         pagina,     PISO_TEXTO,    false],
+      ['texto de apoio',    corDe(apoio, 'color'),         pagina,     PISO_TEXTO,    false],
+      ['mensagem de erro',  corDe(apoioErro, 'color'),     pagina,     PISO_TEXTO,    false],
+      ['placeholder',       corDe(campoOk, 'color'),       fundoCampo, PISO_TEXTO,    false],
+      ['seta',              corDe(seta, 'color'),          fundoCampo, PISO_GRAFICO,  false],
+      ['borda em repouso',  corDe(campoOk, 'borderTopColor'),   pagina, PISO_GRAFICO, true],
+      ['borda em erro',     corDe(campoErro, 'borderTopColor'), pagina, PISO_GRAFICO, false],
+      ['texto desabilitado', corDe(campoOff, 'color'),     fundoOff,   PISO_TEXTO,    true],
+    ];
+  }
+
+  function medir() {
+    var corpo = document.getElementById('measure-body');
+    corpo.textContent = '';
+    alvos().forEach(function (linha) {
+      var nome = linha[0], fg = linha[1], bg = linha[2], piso = linha[3], excecao = linha[4];
+      if (!fg || !bg) return;
+      var razao = cr(fg, bg);
+      var passa = razao >= piso;
+      var classe = passa ? 'ok' : (excecao ? 'exc' : 'bad');
+      var texto = passa ? 'passa' : (excecao ? 'exceção declarada' : 'REPROVA');
+      var tr = document.createElement('tr');
+      [nome,
+       'rgb(' + fg.join(', ') + ')',
+       'rgb(' + bg.join(', ') + ')',
+       razao.toFixed(2) + ':1',
+       piso.toFixed(1) + ':1'
+      ].forEach(function (v) {
+        var td = document.createElement('td');
+        td.textContent = v;
+        tr.appendChild(td);
+      });
+      var td = document.createElement('td');
+      td.textContent = texto;
+      td.className = 'qa-verdict qa-verdict--' + classe;
+      tr.appendChild(td);
+      corpo.appendChild(tr);
+    });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { setTimeout(medir, 50); });
+  } else {
+    setTimeout(medir, 200);
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+    pintarBotao(); setTimeout(medir, 350);
+  });
+})();
+</script>

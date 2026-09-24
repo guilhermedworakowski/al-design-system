@@ -1,0 +1,258 @@
+/* AL Design System - Select
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/select/al-select-tokens.css
+ *           + components/icon/al-icon-tokens.css + components/icon/icon.css
+ *
+ * E O <select> NATIVO
+ *   A lista de opcoes e desenhada pelo navegador e pelo sistema operacional.
+ *   Este arquivo estiliza o GATILHO fechado e nada mais - nao ha painel, item
+ *   de opcao nem item selecionado para pintar, e tentar estilizar <option>
+ *   varia por sistema operacional e quebra sem avisar. O que se compra com
+ *   isso: teclado, leitor de tela e comportamento mobile de graca.
+ *
+ * ANATOMIA
+ *   <div class="al-select">
+ *     <div class="al-select__labelrow">
+ *       <label class="al-select__label" for="uf">Estado</label>
+ *       <span class="al-select__optional">(Opcional)</span>
+ *     </div>
+ *     <div class="al-select__control">
+ *       <select class="al-select__field" id="uf" aria-describedby="uf-help">
+ *         <option value="" disabled selected>Selecione o estado</option>
+ *         …
+ *       </select>
+ *       <svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false">…</svg>
+ *     </div>
+ *     <p class="al-select__help" id="uf-help">Texto de apoio</p>
+ *   </div>
+ *
+ *   O `__control` existe por uma razao so: <select> nao aceita filho que nao
+ *   seja <option>, entao a seta nao pode morar dentro dele. Ela e irma,
+ *   posicionada por cima, e `pointer-events: none` devolve o clique ao campo.
+ *
+ * A SETA NAO HERDA A COR DO TEXTO - E ESTE E O UNICO COMPONENTE ASSIM
+ *   No Button e no Tag o icone e `currentColor` e acerta todos os estados sem
+ *   uma linha a mais. Aqui nao: no repouso o texto do campo e
+ *   `text-placeholder` e a seta e `text-primary`, duas cores na mesma caixa.
+ *   Por isso `.al-select__chevron` declara `color` explicitamente, e por isso
+ *   existem os tokens `select-icon` e `select-icon-disabled`.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Erro le `aria-invalid="true"`; desabilitado le `:disabled`; placeholder le
+ *   `:has(option[value=""]:checked)`. Nao ha `.al-select--error`. O motivo e o
+ *   mesmo do contrato de marcacao do Icon: se a cor viesse de uma classe, ela
+ *   poderia divergir do que o leitor de tela anuncia - campo vermelho sem
+ *   `aria-invalid`, ou o contrario. Amarrando os dois na mesma fonte, um nao
+ *   existe sem o outro.
+ *
+ *   Degradacao se `:has()` faltar: o texto do placeholder fica na cor do
+ *   valor (mais escuro). Perde-se a distincao, nao a legibilidade.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE
+ *   `border-color: var(--_border-force, var(--_border-state))`. Os estados de
+ *   interacao escrevem em `--_border-state`; erro e desabilitado escrevem em
+ *   `--_border-force`, que vence sempre por ser outra propriedade - nao por
+ *   ter seletor mais pesado. Sem isso, `:hover:not(:disabled)` (0,3,0) venceria
+ *   `[aria-invalid="true"]` (0,2,0) e o campo reprovado ficaria cinza ao passar
+ *   o mouse. Entre erro e desabilitado decide a ordem do arquivo: desabilitado
+ *   vem depois, e desabilitado ganha.
+ *
+ * ALTURA E CONSEQUENCIA, NAO `height`
+ *   48 = padding-y x2 + entrelinha, com a borda descontada do padding - a
+ *   mesma convencao do Button e do Tag. A borda de 1px existe em todos os
+ *   estados, entao o campo nunca "pula" quando o estado troca a cor dela.
+ *
+ * LARGURA
+ *   O campo ocupa 100% do conteiner. Formulario decide largura; componente
+ *   nao. Nao ha token nem valor de largura aqui.
+ *
+ * O TEXTO DE APOIO E A MARCA "(OPCIONAL)" SAO MARCACAO, NAO CLASSE
+ *   Nao ha modificador para liga-los: quem nao quer o apoio nao escreve o <p>,
+ *   e quem tem campo obrigatorio nao escreve o <span>. O AL marca o OPCIONAL,
+ *   nao o obrigatorio - nao existe estilo de "obrigatorio" porque a ausencia
+ *   da marca E o obrigatorio.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
+ *   escala de motion. Mesma pendencia do Button e do Icon Button; aparece
+ *   nomeada no relatorio do check.py, nunca como reprova silenciosa.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-select-gap);
+}
+
+/* ------------------------------------------------------------ rotulo */
+/* baseline, nao center: o rotulo tem entrelinha 24 e a marca 20, e alinhar
+   pelo centro deixaria as duas palavras visivelmente desencontradas. */
+.al-select__labelrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--al-select-gap);
+}
+
+.al-select__label {
+  color: var(--al-select-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-label-font-size);
+  line-height: var(--al-select-label-line-height);
+  font-weight: var(--al-select-label-font-weight);
+  letter-spacing: var(--al-select-label-tracking);
+}
+
+/* uma entrelinha abaixo do rotulo, de proposito: marca o campo sem competir
+   com o nome dele. */
+.al-select__optional {
+  color: var(--al-select-optional);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-optional-font-size);
+  line-height: var(--al-select-optional-line-height);
+  font-weight: var(--al-select-optional-font-weight);
+  letter-spacing: var(--al-select-optional-tracking);
+}
+
+/* ------------------------------------------------------------- campo */
+.al-select__control {
+  position: relative;
+  display: block;
+}
+
+.al-select__field {
+  --_border-state: var(--al-select-border);
+  --_text-state: var(--al-select-text-value);
+
+  box-sizing: border-box;
+  width: 100%;
+  display: block;
+
+  /* A borda entra no calculo da caixa, entao descontar aqui fecha 48 exatos.
+     A direita abre espaco para a seta: padding + caixa do icone + respiro. */
+  padding: calc(var(--al-select-padding-y) - var(--al-select-border-width))
+           calc(var(--al-select-padding-x) + var(--al-select-icon-size)
+                + var(--al-select-gap) - var(--al-select-border-width))
+           calc(var(--al-select-padding-y) - var(--al-select-border-width))
+           calc(var(--al-select-padding-x) - var(--al-select-border-width));
+
+  border: var(--al-select-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-select-radius);
+  background-color: var(--al-select-bg);
+  color: var(--_text-force, var(--_text-state));
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-font-size);
+  line-height: var(--al-select-line-height);
+  font-weight: var(--al-select-font-weight);
+  letter-spacing: var(--al-select-tracking);
+
+  /* tira a seta que o navegador desenha - a nossa entra por cima */
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o raio do campo */
+.al-select__field:focus {
+  outline: none;
+}
+
+/* ----------------------------------------------------------- a seta */
+.al-select__chevron {
+  position: absolute;
+  right: var(--al-select-padding-x);
+  top: 50%;
+  transform: translateY(-50%);
+  /* devolve o clique ao campo que esta embaixo */
+  pointer-events: none;
+  color: var(--al-select-icon);
+  --al-icon-box: var(--al-select-icon-size);
+}
+
+/* -------------------------------------------------------- texto de apoio */
+.al-select__help {
+  color: var(--al-select-help);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-help-font-size);
+  line-height: var(--al-select-help-line-height);
+  font-weight: var(--al-select-help-font-weight);
+  letter-spacing: var(--al-select-help-tracking);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- estados */
+/* placeholder: a primeira <option> vazia continua escolhida. Nao e atributo -
+   <select> nao tem placeholder nativo. */
+.al-select__field:has(option[value=""]:checked) {
+  --_text-state: var(--al-select-text-placeholder);
+}
+
+.al-select__field:hover:not(:disabled) {
+  --_border-state: var(--al-select-border-hover);
+}
+
+/* o clique que abre a lista */
+.al-select__field:active:not(:disabled) {
+  --_border-state: var(--al-select-border-active);
+}
+
+/* o campo esta focado - por Tab OU por clique.
+   MEDIDO no Chromium em 23/09/2026: um <select> clicado com o mouse CASA
+   `:focus-visible`, porque a plataforma trata select como controle que recebe
+   teclado depois de aberto. Entao o anel aparece no clique tambem, e nao ha
+   seletor de "foco so por teclado" alem deste. A leitura que vale e a que
+   sobrevive em qualquer navegador: `active` e o instante em que o botao do
+   mouse esta pressionado; `focus` e o estado que PERMANECE enquanto o campo
+   estiver focado, tenha chegado como tiver chegado. */
+.al-select__field:focus-visible {
+  --_border-state: var(--al-select-border-focus);
+  box-shadow: var(--_ring-force, var(--al-select-ring));
+}
+
+/* erro - vence hover e active por escrever noutra propriedade, ver cabecalho */
+.al-select__field[aria-invalid="true"] {
+  --_border-force: var(--al-select-border-error);
+  --_ring-force: var(--al-select-ring-error);
+}
+
+.al-select:has(.al-select__field[aria-invalid="true"]) .al-select__label {
+  color: var(--al-select-label-error);
+}
+
+.al-select:has(.al-select__field[aria-invalid="true"]) .al-select__help {
+  color: var(--al-select-help-error);
+}
+
+/* desabilitado - depois do erro, porque desabilitado ganha dos dois */
+.al-select__field:disabled {
+  --_border-force: var(--al-select-border-disabled);
+  --_text-force: var(--al-select-text-disabled);
+  background-color: var(--al-select-bg-disabled);
+  cursor: not-allowed;
+}
+
+.al-select:has(.al-select__field:disabled) .al-select__label,
+.al-select:has(.al-select__field:disabled) .al-select__optional {
+  color: var(--al-select-label-disabled);
+}
+
+.al-select:has(.al-select__field:disabled) .al-select__chevron {
+  color: var(--al-select-icon-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-select__field {
+    transition: none;
+  }
+}

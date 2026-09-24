@@ -6,7 +6,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.6.0 - MIT
+ * v0.7.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -634,6 +634,66 @@
 
   /* compartilhado */
   --al-avatar-radius: var(--al-radius-full);
+
+
+  /* fundo - so o disabled muda */
+  --al-select-bg: var(--al-bg-surface-raised);
+  --al-select-bg-disabled: var(--al-bg-disabled);
+
+  /* borda - o eixo que carrega o estado */
+  --al-select-border: var(--al-border-default);
+  --al-select-border-hover: var(--al-border-strong);
+  --al-select-border-active: var(--al-border-brand);
+  --al-select-border-focus: var(--al-border-brand);
+  --al-select-border-error: var(--al-border-danger);
+  --al-select-border-disabled: var(--al-border-default);
+
+  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */
+  --al-select-text-placeholder: var(--al-text-placeholder);
+  --al-select-text-value: var(--al-text-primary);
+  --al-select-text-disabled: var(--al-text-disabled);
+
+  /* rotulo, marca de opcional e apoio - vivem fora do campo, sobre a tela */
+  --al-select-label: var(--al-text-primary);
+  --al-select-label-error: var(--al-text-danger);
+  --al-select-label-disabled: var(--al-text-disabled);
+  --al-select-optional: var(--al-text-secondary);
+  --al-select-help: var(--al-text-secondary);
+  --al-select-help-error: var(--al-text-danger);
+
+  /* seta - nao herda a cor do texto, ver cabecalho do tokens.py */
+  --al-select-icon: var(--al-text-primary);
+  --al-select-icon-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-select-ring: var(--al-focus-ring-default);
+  --al-select-ring-error: var(--al-focus-ring-error);
+
+  /* geometria */
+  --al-select-padding-x: var(--al-space-12);
+  --al-select-padding-y: var(--al-space-12);
+  --al-select-gap: var(--al-space-8);
+  --al-select-radius: var(--al-radius-lg);
+  --al-select-border-width: var(--al-border-width-1);
+  --al-select-icon-size: var(--al-icon-size-24);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-select-font-size: var(--al-font-size-md);
+  --al-select-line-height: var(--al-line-height-md);
+  --al-select-font-weight: 400;
+  --al-select-tracking: 0em;
+  --al-select-label-font-size: var(--al-font-size-md);
+  --al-select-label-line-height: var(--al-line-height-md);
+  --al-select-label-font-weight: 400;
+  --al-select-label-tracking: 0em;
+  --al-select-optional-font-size: var(--al-font-size-sm);
+  --al-select-optional-line-height: var(--al-line-height-sm);
+  --al-select-optional-font-weight: 400;
+  --al-select-optional-tracking: 0em;
+  --al-select-help-font-size: var(--al-font-size-xs);
+  --al-select-help-line-height: var(--al-line-height-xs);
+  --al-select-help-font-weight: 400;
+  --al-select-help-tracking: 0.01em;
 }
 
 /* AL Design System - tokens do Button
@@ -2010,6 +2070,337 @@
   color: var(--al-avatar-icon);
 }
 
+/* AL Design System - tokens do Select
+ * GERADO por components/select/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez.
+ *
+ * Altura do campo: 48px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo - so o disabled muda */
+  --al-select-bg: var(--al-bg-surface-raised);
+  --al-select-bg-disabled: var(--al-bg-disabled);
+
+  /* borda - o eixo que carrega o estado */
+  --al-select-border: var(--al-border-default);
+  --al-select-border-hover: var(--al-border-strong);
+  --al-select-border-active: var(--al-border-brand);
+  --al-select-border-focus: var(--al-border-brand);
+  --al-select-border-error: var(--al-border-danger);
+  --al-select-border-disabled: var(--al-border-default);
+
+  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */
+  --al-select-text-placeholder: var(--al-text-placeholder);
+  --al-select-text-value: var(--al-text-primary);
+  --al-select-text-disabled: var(--al-text-disabled);
+
+  /* rotulo, marca de opcional e apoio - vivem fora do campo, sobre a tela */
+  --al-select-label: var(--al-text-primary);
+  --al-select-label-error: var(--al-text-danger);
+  --al-select-label-disabled: var(--al-text-disabled);
+  --al-select-optional: var(--al-text-secondary);
+  --al-select-help: var(--al-text-secondary);
+  --al-select-help-error: var(--al-text-danger);
+
+  /* seta - nao herda a cor do texto, ver cabecalho do tokens.py */
+  --al-select-icon: var(--al-text-primary);
+  --al-select-icon-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-select-ring: var(--al-focus-ring-default);
+  --al-select-ring-error: var(--al-focus-ring-error);
+
+  /* geometria */
+  --al-select-padding-x: var(--al-space-12);
+  --al-select-padding-y: var(--al-space-12);
+  --al-select-gap: var(--al-space-8);
+  --al-select-radius: var(--al-radius-lg);
+  --al-select-border-width: var(--al-border-width-1);
+  --al-select-icon-size: var(--al-icon-size-24);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-select-font-size: var(--al-font-size-md);
+  --al-select-line-height: var(--al-line-height-md);
+  --al-select-font-weight: 400;
+  --al-select-tracking: 0em;
+  --al-select-label-font-size: var(--al-font-size-md);
+  --al-select-label-line-height: var(--al-line-height-md);
+  --al-select-label-font-weight: 400;
+  --al-select-label-tracking: 0em;
+  --al-select-optional-font-size: var(--al-font-size-sm);
+  --al-select-optional-line-height: var(--al-line-height-sm);
+  --al-select-optional-font-weight: 400;
+  --al-select-optional-tracking: 0em;
+  --al-select-help-font-size: var(--al-font-size-xs);
+  --al-select-help-line-height: var(--al-line-height-xs);
+  --al-select-help-font-weight: 400;
+  --al-select-help-tracking: 0.01em;
+}
+
+/* AL Design System - Select
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/select/al-select-tokens.css
+ *           + components/icon/al-icon-tokens.css + components/icon/icon.css
+ *
+ * E O <select> NATIVO
+ *   A lista de opcoes e desenhada pelo navegador e pelo sistema operacional.
+ *   Este arquivo estiliza o GATILHO fechado e nada mais - nao ha painel, item
+ *   de opcao nem item selecionado para pintar, e tentar estilizar <option>
+ *   varia por sistema operacional e quebra sem avisar. O que se compra com
+ *   isso: teclado, leitor de tela e comportamento mobile de graca.
+ *
+ * ANATOMIA
+ *   <div class="al-select">
+ *     <div class="al-select__labelrow">
+ *       <label class="al-select__label" for="uf">Estado</label>
+ *       <span class="al-select__optional">(Opcional)</span>
+ *     </div>
+ *     <div class="al-select__control">
+ *       <select class="al-select__field" id="uf" aria-describedby="uf-help">
+ *         <option value="" disabled selected>Selecione o estado</option>
+ *         …
+ *       </select>
+ *       <svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false">…</svg>
+ *     </div>
+ *     <p class="al-select__help" id="uf-help">Texto de apoio</p>
+ *   </div>
+ *
+ *   O `__control` existe por uma razao so: <select> nao aceita filho que nao
+ *   seja <option>, entao a seta nao pode morar dentro dele. Ela e irma,
+ *   posicionada por cima, e `pointer-events: none` devolve o clique ao campo.
+ *
+ * A SETA NAO HERDA A COR DO TEXTO - E ESTE E O UNICO COMPONENTE ASSIM
+ *   No Button e no Tag o icone e `currentColor` e acerta todos os estados sem
+ *   uma linha a mais. Aqui nao: no repouso o texto do campo e
+ *   `text-placeholder` e a seta e `text-primary`, duas cores na mesma caixa.
+ *   Por isso `.al-select__chevron` declara `color` explicitamente, e por isso
+ *   existem os tokens `select-icon` e `select-icon-disabled`.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Erro le `aria-invalid="true"`; desabilitado le `:disabled`; placeholder le
+ *   `:has(option[value=""]:checked)`. Nao ha `.al-select--error`. O motivo e o
+ *   mesmo do contrato de marcacao do Icon: se a cor viesse de uma classe, ela
+ *   poderia divergir do que o leitor de tela anuncia - campo vermelho sem
+ *   `aria-invalid`, ou o contrario. Amarrando os dois na mesma fonte, um nao
+ *   existe sem o outro.
+ *
+ *   Degradacao se `:has()` faltar: o texto do placeholder fica na cor do
+ *   valor (mais escuro). Perde-se a distincao, nao a legibilidade.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE
+ *   `border-color: var(--_border-force, var(--_border-state))`. Os estados de
+ *   interacao escrevem em `--_border-state`; erro e desabilitado escrevem em
+ *   `--_border-force`, que vence sempre por ser outra propriedade - nao por
+ *   ter seletor mais pesado. Sem isso, `:hover:not(:disabled)` (0,3,0) venceria
+ *   `[aria-invalid="true"]` (0,2,0) e o campo reprovado ficaria cinza ao passar
+ *   o mouse. Entre erro e desabilitado decide a ordem do arquivo: desabilitado
+ *   vem depois, e desabilitado ganha.
+ *
+ * ALTURA E CONSEQUENCIA, NAO `height`
+ *   48 = padding-y x2 + entrelinha, com a borda descontada do padding - a
+ *   mesma convencao do Button e do Tag. A borda de 1px existe em todos os
+ *   estados, entao o campo nunca "pula" quando o estado troca a cor dela.
+ *
+ * LARGURA
+ *   O campo ocupa 100% do conteiner. Formulario decide largura; componente
+ *   nao. Nao ha token nem valor de largura aqui.
+ *
+ * O TEXTO DE APOIO E A MARCA "(OPCIONAL)" SAO MARCACAO, NAO CLASSE
+ *   Nao ha modificador para liga-los: quem nao quer o apoio nao escreve o <p>,
+ *   e quem tem campo obrigatorio nao escreve o <span>. O AL marca o OPCIONAL,
+ *   nao o obrigatorio - nao existe estilo de "obrigatorio" porque a ausencia
+ *   da marca E o obrigatorio.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
+ *   escala de motion. Mesma pendencia do Button e do Icon Button; aparece
+ *   nomeada no relatorio do check.py, nunca como reprova silenciosa.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-select {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-select-gap);
+}
+
+/* ------------------------------------------------------------ rotulo */
+/* baseline, nao center: o rotulo tem entrelinha 24 e a marca 20, e alinhar
+   pelo centro deixaria as duas palavras visivelmente desencontradas. */
+.al-select__labelrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--al-select-gap);
+}
+
+.al-select__label {
+  color: var(--al-select-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-label-font-size);
+  line-height: var(--al-select-label-line-height);
+  font-weight: var(--al-select-label-font-weight);
+  letter-spacing: var(--al-select-label-tracking);
+}
+
+/* uma entrelinha abaixo do rotulo, de proposito: marca o campo sem competir
+   com o nome dele. */
+.al-select__optional {
+  color: var(--al-select-optional);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-optional-font-size);
+  line-height: var(--al-select-optional-line-height);
+  font-weight: var(--al-select-optional-font-weight);
+  letter-spacing: var(--al-select-optional-tracking);
+}
+
+/* ------------------------------------------------------------- campo */
+.al-select__control {
+  position: relative;
+  display: block;
+}
+
+.al-select__field {
+  --_border-state: var(--al-select-border);
+  --_text-state: var(--al-select-text-value);
+
+  box-sizing: border-box;
+  width: 100%;
+  display: block;
+
+  /* A borda entra no calculo da caixa, entao descontar aqui fecha 48 exatos.
+     A direita abre espaco para a seta: padding + caixa do icone + respiro. */
+  padding: calc(var(--al-select-padding-y) - var(--al-select-border-width))
+           calc(var(--al-select-padding-x) + var(--al-select-icon-size)
+                + var(--al-select-gap) - var(--al-select-border-width))
+           calc(var(--al-select-padding-y) - var(--al-select-border-width))
+           calc(var(--al-select-padding-x) - var(--al-select-border-width));
+
+  border: var(--al-select-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-select-radius);
+  background-color: var(--al-select-bg);
+  color: var(--_text-force, var(--_text-state));
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-font-size);
+  line-height: var(--al-select-line-height);
+  font-weight: var(--al-select-font-weight);
+  letter-spacing: var(--al-select-tracking);
+
+  /* tira a seta que o navegador desenha - a nossa entra por cima */
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o raio do campo */
+.al-select__field:focus {
+  outline: none;
+}
+
+/* ----------------------------------------------------------- a seta */
+.al-select__chevron {
+  position: absolute;
+  right: var(--al-select-padding-x);
+  top: 50%;
+  transform: translateY(-50%);
+  /* devolve o clique ao campo que esta embaixo */
+  pointer-events: none;
+  color: var(--al-select-icon);
+  --al-icon-box: var(--al-select-icon-size);
+}
+
+/* -------------------------------------------------------- texto de apoio */
+.al-select__help {
+  color: var(--al-select-help);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-select-help-font-size);
+  line-height: var(--al-select-help-line-height);
+  font-weight: var(--al-select-help-font-weight);
+  letter-spacing: var(--al-select-help-tracking);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- estados */
+/* placeholder: a primeira <option> vazia continua escolhida. Nao e atributo -
+   <select> nao tem placeholder nativo. */
+.al-select__field:has(option[value=""]:checked) {
+  --_text-state: var(--al-select-text-placeholder);
+}
+
+.al-select__field:hover:not(:disabled) {
+  --_border-state: var(--al-select-border-hover);
+}
+
+/* o clique que abre a lista */
+.al-select__field:active:not(:disabled) {
+  --_border-state: var(--al-select-border-active);
+}
+
+/* o campo esta focado - por Tab OU por clique.
+   MEDIDO no Chromium em 23/09/2026: um <select> clicado com o mouse CASA
+   `:focus-visible`, porque a plataforma trata select como controle que recebe
+   teclado depois de aberto. Entao o anel aparece no clique tambem, e nao ha
+   seletor de "foco so por teclado" alem deste. A leitura que vale e a que
+   sobrevive em qualquer navegador: `active` e o instante em que o botao do
+   mouse esta pressionado; `focus` e o estado que PERMANECE enquanto o campo
+   estiver focado, tenha chegado como tiver chegado. */
+.al-select__field:focus-visible {
+  --_border-state: var(--al-select-border-focus);
+  box-shadow: var(--_ring-force, var(--al-select-ring));
+}
+
+/* erro - vence hover e active por escrever noutra propriedade, ver cabecalho */
+.al-select__field[aria-invalid="true"] {
+  --_border-force: var(--al-select-border-error);
+  --_ring-force: var(--al-select-ring-error);
+}
+
+.al-select:has(.al-select__field[aria-invalid="true"]) .al-select__label {
+  color: var(--al-select-label-error);
+}
+
+.al-select:has(.al-select__field[aria-invalid="true"]) .al-select__help {
+  color: var(--al-select-help-error);
+}
+
+/* desabilitado - depois do erro, porque desabilitado ganha dos dois */
+.al-select__field:disabled {
+  --_border-force: var(--al-select-border-disabled);
+  --_text-force: var(--al-select-text-disabled);
+  background-color: var(--al-select-bg-disabled);
+  cursor: not-allowed;
+}
+
+.al-select:has(.al-select__field:disabled) .al-select__label,
+.al-select:has(.al-select__field:disabled) .al-select__optional {
+  color: var(--al-select-label-disabled);
+}
+
+.al-select:has(.al-select__field:disabled) .al-select__chevron {
+  color: var(--al-select-icon-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-select__field {
+    transition: none;
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -2495,13 +2886,29 @@ footer code{background:none; padding:0}
 .av-cell{display:flex; flex-direction:column; align-items:center; gap:8px}
 .av-cell span{font-family:var(--al-font-mono); font-size:10.5px;
   color:var(--al-text-secondary)}
+
+/* ── miniatura do card do Select ── */
+.th-select{display:flex; justify-content:center; width:100%}
+.th-select__field{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  width:100%; max-width:200px;
+  padding:8px 10px;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-lg);
+  background:var(--al-bg-surface-raised);
+  color:var(--al-text-placeholder);
+  font-size:12.5px; line-height:16px;
+}
+.th-select__field .al-icon{--al-icon-box:16px; color:var(--al-text-primary)}
+/* o palco do playground precisa de largura: o campo ocupa 100% do contêiner */
+#select-stage{display:block; padding-inline:8px}
+#select-stage .al-select{max-width:360px; margin-inline:auto}
 </style>
 
 <div class="shell">
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.6.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.7.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -2528,6 +2935,7 @@ footer code{background:none; padding:0}
         <a href="#/icon-button" data-page="icon-button">Icon Button</a>
         <a href="#/tag" data-page="tag">Tag</a>
         <a href="#/avatar" data-page="avatar">Avatar</a>
+        <a href="#/select" data-page="select">Select</a>
       </div>
     </div>
   </div>
@@ -2645,7 +3053,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.6.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.7.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -2675,7 +3083,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.6.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.7.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -3200,9 +3608,9 @@ footer code{background:none; padding:0}
   consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
   normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
   <div class="stats">
-    <div class="stat hl"><b>198</b><span>verificações</span></div>
+    <div class="stat hl"><b>217</b><span>verificações</span></div>
     <div class="stat"><b>0</b><span>reprovas</span></div>
-    <div class="stat"><b>156</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>175</b><span>elementos com contrato conferido</span></div>
     <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
   </div>
 </section>
@@ -3277,7 +3685,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
   O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
-  <code>.al-icon</code>: 156 elementos nesta página, nenhum fora.
+  <code>.al-icon</code>: 175 elementos nesta página, nenhum fora.
   Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
   <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
   porque o rótulo nunca seria lido.</p>
@@ -3296,6 +3704,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/icon-button" data-page="icon-button"><div class="card-thumb"><div class="th-icons"><button type="button" class="al-icon-btn al-icon-btn--primary al-icon-btn--sm" aria-label="Buscar" tabindex="-1"><span class="al-icon-btn__spinner" aria-hidden="true"></span><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg></button><button type="button" class="al-icon-btn al-icon-btn--secondary al-icon-btn--sm" aria-label="Editar" tabindex="-1"><span class="al-icon-btn__spinner" aria-hidden="true"></span><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" /><path d="m15 5 4 4" /></svg></button><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" aria-label="Mais opções" tabindex="-1"><span class="al-icon-btn__spinner" aria-hidden="true"></span><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="1" /><circle cx="12" cy="5" r="1" /><circle cx="12" cy="19" r="1" /></svg></button></div></div><div class="card-body"><span class="card-title">Icon Button</span><span class="card-desc">O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.</span></div></a>
     <a class="card" href="#/tag" data-page="tag"><div class="card-thumb"><div class="th-icons"><span class="al-tag al-tag--filled al-tag--success al-tag--sm">Pago</span><span class="al-tag al-tag--outlined al-tag--info al-tag--sm">Novo</span></div></div><div class="card-body"><span class="card-title">Tag</span><span class="card-desc">Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.</span></div></a>
     <a class="card" href="#/avatar" data-page="avatar"><div class="card-thumb"><div class="th-icons"><span class="al-avatar al-avatar--sm" aria-hidden="true"><img class="al-avatar__photo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTIwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGRkVBREUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkQ3QzQiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTYwIiBoZWlnaHQ9IjEyMCIgZmlsbD0idXJsKCNnKSIvPjxjaXJjbGUgY3g9IjgwIiBjeT0iNzgiIHI9IjQ2IiBmaWxsPSIjRThCMDhDIi8+PGNpcmNsZSBjeD0iODAiIGN5PSI0OCIgcj0iMzAiIGZpbGw9IiNFOEIwOEMiLz48cGF0aCBkPSJNNTAgNDQgUTgwIDYgMTEwIDQ0IFExMTIgMjAgODAgMTYgUTQ4IDIwIDUwIDQ0IFoiIGZpbGw9IiMzRTI0MTciLz48L3N2Zz4=" alt=""></span><span class="al-avatar al-avatar--sm" aria-hidden="true"><span class="al-avatar__initials">DC</span></span><span class="al-avatar al-avatar--sm" aria-hidden="true"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg></span></div></div><div class="card-body"><span class="card-title">Avatar</span><span class="card-desc">Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.</span></div></a>
+    <a class="card" href="#/select" data-page="select"><div class="card-thumb"><div class="th-select" aria-hidden="true"><span class="th-select__field">Selecione a opção<svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></span></div></div><div class="card-body"><span class="card-title">Select</span><span class="card-desc">Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.</span></div></a>
   </div>
 </section>
 
@@ -5020,8 +5429,468 @@ footer code{background:none; padding:0}
     Fica medido e anotado aqui em vez de resolvido às pressas.
   </div>
 </section></div></div>
+<div class="page" id="pg-select" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Select</h1><p class="lede">Escolha única dentro de um formulário. É o <code>&lt;select&gt;</code> nativo: a lista aberta é desenhada pelo navegador, e o componente entrega o gatilho fechado — que é o que compra teclado, leitor de tela e comportamento mobile sem uma linha de JavaScript.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">7 estados no Figma</span><span class="badge">31 tokens</span><span class="badge">2 exceções declaradas</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Select"><button role="tab" id="t-select-overview" aria-controls="p-select-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-select-specs" aria-controls="p-select-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-select-guide" aria-controls="p-select-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-select-a11y" aria-controls="p-select-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-select-overview" role="tabpanel" aria-labelledby="t-select-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="select-stage"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="pg-select">Estado</label></div><div class="al-select__control"><select id="pg-select" class="al-select__field"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div>
+
+    <div class="controls" id="select-controls">
+      <div class="ctl"><span class="ctl-name">Estado</span><div class="seg" role="radiogroup" aria-label="selstate">
+<input type="radio" id="selstate-rest" name="selstate" value="rest" checked><label for="selstate-rest">Repouso</label>
+<input type="radio" id="selstate-error" name="selstate" value="error"><label for="selstate-error">Erro</label>
+<input type="radio" id="selstate-disabled" name="selstate" value="disabled"><label for="selstate-disabled">Desabilitado</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Valor</span><div class="seg" role="radiogroup" aria-label="selvalue">
+<input type="radio" id="selvalue-none" name="selvalue" value="none" checked><label for="selvalue-none">Placeholder</label>
+<input type="radio" id="selvalue-picked" name="selvalue" value="picked"><label for="selvalue-picked">Escolhido</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Obrigatoriedade</span><div class="seg" role="radiogroup" aria-label="selopt">
+<input type="radio" id="selopt-req" name="selopt" value="req" checked><label for="selopt-req">Obrigatório</label>
+<input type="radio" id="selopt-opt" name="selopt" value="opt"><label for="selopt-opt">Opcional</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Texto de apoio</span><div class="seg" role="radiogroup" aria-label="selhelp">
+<input type="radio" id="selhelp-off" name="selhelp" value="off" checked><label for="selhelp-off">Sem</label>
+<input type="radio" id="selhelp-on" name="selhelp" value="on"><label for="selhelp-on">Com</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="seltheme">
+<input type="radio" id="seltheme-auto" name="seltheme" value="auto" checked><label for="seltheme-auto">Do sistema</label>
+<input type="radio" id="seltheme-light" name="seltheme" value="light"><label for="seltheme-light">Claro</label>
+<input type="radio" id="seltheme-dark" name="seltheme" value="dark"><label for="seltheme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><label for="select-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="select-label" type="text" value="Estado" maxlength="28"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="select-copy">Copiar</button></div>
+      <pre><code id="select-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O campo acima é o componente real: esta página carrega o mesmo
+    <code>select.css</code> que vai para produção. Tabule até ele para ver o anel, e repare que
+    o estado de erro nasce de <code>aria-invalid</code> na marcação — não há classe de erro
+    neste componente, de propósito: se a cor viesse de uma classe, ela poderia divergir do que
+    o leitor de tela anuncia.
+  </p>
+</section>
+
+<section>
+  <h2>É o nativo, e isso é uma decisão</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">O que entregamos</span>
+      <div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="ov-nativo">Estado</label></div><div class="al-select__control"><select id="ov-nativo" class="al-select__field" aria-describedby="ov-nativo-help"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div><p class="al-select__help" id="ov-nativo-help">Onde a nota será emitida</p></div></div>
+      <p class="cap">O gatilho fechado. A lista aberta é desenhada pelo navegador e pelo sistema
+      operacional — por isso não há token de painel, de opção nem de item selecionado. Precedente:
+      é a distinção que o <b>Carbon</b> faz entre <i>Select</i> (nativo) e
+      <i>Dropdown</i>/<i>ComboBox</i> (desenhados).</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">O que isso compra</span>
+      <div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="ov-mobile">Transportadora</label><span class="al-select__optional">(Opcional)</span></div><div class="al-select__control"><select id="ov-mobile" class="al-select__field"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div>
+      <p class="cap">Teclado, leitor de tela e o seletor nativo do celular, sem uma linha de
+      JavaScript. O preço é não controlar a lista aberta — e o Carbon recomenda exatamente esse
+      troco quando a experiência é de formulário e muito usada em mobile.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Os sete estados</h2>
+  <div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Default</span><div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="sp-default">Estado</label></div><div class="al-select__control"><select id="sp-default" class="al-select__field"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div><p class="cap">O repouso. A borda aqui é a exceção de contraste declarada.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Hover</span><div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="sp-hover">Estado</label></div><div class="al-select__control"><select id="sp-hover" class="al-select__field" style="--_border-state: var(--al-select-border-hover)"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div><p class="cap">Só existe sob o ponteiro: a variável privada foi escrita direto.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Active</span><div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="sp-active">Estado</label></div><div class="al-select__control"><select id="sp-active" class="al-select__field" style="--_border-state: var(--al-select-border-active)"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div><p class="cap">Só o instante do botão pressionado — mesma escrita direta.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Focus</span><div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="sp-focus">Estado</label></div><div class="al-select__control"><select id="sp-focus" class="al-select__field"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div><p class="cap">Tabule até o campo: o anel aparece. Por clique também, ver Acessibilidade.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Error</span><div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="sp-error">Estado</label></div><div class="al-select__control"><select id="sp-error" class="al-select__field" aria-invalid="true" aria-describedby="sp-error-help"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div><p class="al-select__help" id="sp-error-help">Escolha um estado para continuar</p></div></div><p class="cap">Vem de <code>aria-invalid="true"</code>, nunca de uma classe.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Focus + Error</span><div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="sp-focus-error">Estado</label></div><div class="al-select__control"><select id="sp-focus-error" class="al-select__field" aria-invalid="true" aria-describedby="sp-focus-error-help"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div><p class="al-select__help" id="sp-focus-error-help">Escolha um estado para continuar</p></div></div><p class="cap">Focado, o anel troca para vinho — <code>focusRing.error</code>.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Disabled</span><div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="sp-disabled">Estado</label><span class="al-select__optional">(Opcional)</span></div><div class="al-select__control"><select id="sp-disabled" class="al-select__field" disabled><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div><p class="cap">Atributo nativo <code>disabled</code>: o Tab pula sozinho.</p></div></div>
+</section>
+
+<section>
+  <h2>Num formulário de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <div class="stage2" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; align-items:start">
+      <div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="fm-uf">Estado</label></div><div class="al-select__control"><select id="fm-uf" class="al-select__field" aria-describedby="fm-uf-help"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div><p class="al-select__help" id="fm-uf-help">Onde a nota será emitida</p></div>
+      <div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="fm-frete">Tipo de frete</label><span class="al-select__optional">(Opcional)</span></div><div class="al-select__control"><select id="fm-frete" class="al-select__field"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div>
+      <div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="fm-transp">Transportadora</label></div><div class="al-select__control"><select id="fm-transp" class="al-select__field" aria-invalid="true" aria-describedby="fm-transp-help"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div><p class="al-select__help" id="fm-transp-help">Escolha uma transportadora para continuar</p></div>
+      <div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="fm-cidade">Cidade</label></div><div class="al-select__control"><select id="fm-cidade" class="al-select__field" disabled><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div>
+    </div>
+    <p class="cap">Quatro campos lado a lado, do jeito que o componente vai viver. Tabule por
+    eles: o <b>Cidade</b> é pulado sozinho, sem <code>tabindex</code> — é o atributo nativo
+    <code>disabled</code> fazendo o trabalho.</p>
+  </div>
+</section></div><div class="panel" id="p-select-specs" role="tabpanel" aria-labelledby="t-select-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Rótulo</b><span><code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Sempre visível — e a regra que sustenta a exceção de contraste da borda.</span></div>
+    <div><b>Marca “(Opcional)”</b><span>Uma entrelinha menor que o rótulo, em <code>text-secondary</code>. O AL marca o <b>opcional</b>: quem não tem a marca é obrigatório.</span></div>
+    <div><b>Campo</b><span><code>&lt;select&gt;</code> nativo com <code>appearance: none</code>, para a seta do navegador sair e a nossa entrar.</span></div>
+    <div><b>Seta</b><span>Irmã do campo, não filha: <code>&lt;select&gt;</code> só aceita <code>&lt;option&gt;</code>. Posicionada por cima, com <code>pointer-events: none</code> devolvendo o clique.</span></div>
+    <div><b>Texto de apoio</b><span>Opcional, e o mesmo slot da mensagem de erro — no erro um substitui o outro, e volta quando o erro é resolvido.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A altura é consequência</h2>
+  <p>Não existe <code>height</code> neste componente. O campo fecha em
+  <b>48px</b> porque é <code>padding-y</code> × 2 mais a
+  entrelinha do texto, com a borda de 1px descontada do padding — a mesma convenção do Button e
+  do Tag. A caixa inteira soma <b>80px</b>, e
+  <b>104px</b> quando o texto de apoio aparece.</p>
+  <p style="margin-top:12px">Tokenizar a altura seria guardar a mesma decisão em dois lugares,
+  com duas chances de divergir. E a borda existe em <b>todos</b> os estados — por isso o campo
+  nunca “pula” quando um estado troca a cor dela.</p>
+  <div class="stats">
+    <div class="stat hl"><b>31</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>7</b><span>estados</span></div>
+    <div class="stat"><b>1</b><span>tamanho, por escolha</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody><tr><td class="tok">--al-select-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr><td class="tok">--al-select-bg-disabled</td><td class="tok dim">bg-disabled</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr><td class="tok">--al-select-border</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-select-border-hover</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-select-border-active</td><td class="tok dim">border-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-select-border-focus</td><td class="tok dim">border-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-select-border-error</td><td class="tok dim">border-danger</td><td class="tok dim"><span class="chip sm" style="background:#CA293F"></span>#CA293F</td></tr>
+<tr><td class="tok">--al-select-border-disabled</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-select-text-placeholder</td><td class="tok dim">text-placeholder</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-select-text-value</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-select-text-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-select-label</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-select-label-error</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr><td class="tok">--al-select-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-select-help</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-select-help-error</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr><td class="tok">--al-select-optional</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-select-icon</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-select-icon-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-select-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr>
+<tr><td class="tok">--al-select-ring-error</td><td class="tok dim">focusRing.error</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #A00E27</td></tr></tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>A seta não herda a cor do texto — e é o único componente assim</b>
+    No Button e no Tag o ícone é <code>currentColor</code> e acerta todos os estados sozinho.
+    Aqui não dá: no repouso o texto do campo é <code>text-placeholder</code> e a seta é
+    <code>text-primary</code>, duas cores na mesma caixa. Daí existirem
+    <code>select-icon</code> e <code>select-icon-disabled</code>.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody><tr><td class="tok">--al-select-padding-x</td><td class="tok dim">space.12</td><td class="num">12px</td></tr>
+<tr><td class="tok">--al-select-padding-y</td><td class="tok dim">space.12</td><td class="num">12px</td></tr>
+<tr><td class="tok">--al-select-gap</td><td class="tok dim">space.8</td><td class="num">8px</td></tr>
+<tr><td class="tok">--al-select-radius</td><td class="tok dim">radius.lg</td><td class="num">8px</td></tr>
+<tr><td class="tok">--al-select-border-width</td><td class="tok dim">border.width.1</td><td class="num">1px</td></tr>
+<tr><td class="tok">--al-select-icon-size</td><td class="tok dim">iconSize.24</td><td class="num">24px</td></tr>
+<tr><td class="tok">--al-select-font</td><td class="tok dim">type.styles.body-md</td><td class="num">16/24 · peso 400</td></tr>
+<tr><td class="tok">--al-select-label-font</td><td class="tok dim">type.styles.body-md</td><td class="num">16/24 · peso 400</td></tr>
+<tr><td class="tok">--al-select-optional-font</td><td class="tok dim">type.styles.body-sm</td><td class="num">14/20 · peso 400</td></tr>
+<tr><td class="tok">--al-select-help-font</td><td class="tok dim">type.styles.caption</td><td class="num">12/16 · peso 400</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Precedência por variável, não por especificidade</h2>
+  <p>A borda é <code>var(--_border-force, var(--_border-state))</code>. Os estados de interação
+  escrevem em <code>--_border-state</code>; erro e desabilitado escrevem em
+  <code>--_border-force</code>, que vence sempre por ser <b>outra propriedade</b> — não por ter
+  seletor mais pesado.</p>
+  <p style="margin-top:12px">Sem isso haveria um bug silencioso:
+  <code>:hover:not(:disabled)</code> pesa (0,3,0) e <code>[aria-invalid="true"]</code> pesa
+  (0,2,0), então o campo reprovado ficaria cinza ao passar o mouse. Entre erro e desabilitado
+  decide a ordem do arquivo — desabilitado vem depois e ganha, que é o correto.</p>
+</section></div><div class="panel" id="p-select-guide" role="tabpanel" aria-labelledby="t-select-guide" tabindex="0" hidden>
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>A partir de 4 opções</b><span>Com 3 ou menos, radio: o Select esconde as opções atrás de um clique, e abaixo de 4 o custo de esconder é maior que o de mostrar. <i>Polaris fixa 4+; Carbon desaconselha dropdown com duas.</i></span></div>
+    <div><b>Escolha única</b><span>Não há múltipla escolha no AL. <i>Carbon separa Select de Dropdown e ComboBox.</i></span></div>
+    <div><b>Nunca para disparar ação</b><span>Ele coleta um dado num formulário. Menu que executa, filtra ou ordena é outro componente. <i>Carbon.</i></span></div>
+    <div><b>Acima de ~15 opções, atrapalha</b><span>O nativo não tem busca. Não é impedimento, é limite conhecido: essa demanda abre ComboBox, não estica o Select.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo e a marca de opcional</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="gd-ok">Estado</label><span class="al-select__optional">(Opcional)</span></div><div class="al-select__control"><select id="gd-ok" class="al-select__field"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div>
+      <p class="cap">Rótulo visível sempre, curto, em sentence case, descrevendo <b>o dado</b> —
+      “Estado”, não “Selecione o estado”. A instrução de escolher já está no placeholder.
+      A marca “(Opcional)” assinala a minoria: quem não tem a marca é obrigatório.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="gd-bad">Estado</label></div><div class="al-select__control"><select id="gd-bad" class="al-select__field"><option value="" disabled selected>Estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div>
+      <p class="cap">Usar o placeholder como rótulo. Ele desaparece no instante em que alguém
+      escolhe algo, e quem voltar ao formulário perdeu a única pista do que o campo pede.
+      <i>Polaris exige o label mesmo quando visualmente oculto.</i></p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O AL marca o opcional, não o obrigatório</b>
+    É a escola oposta à do asterisco do Polaris, e ela ganha quando a maioria dos campos de um
+    formulário é obrigatória — marca-se a minoria. Consequência: <b>não existe token nem estilo
+    de “obrigatório”</b>, porque a ausência da marca é o obrigatório, e ausência não se tokeniza.
+  </div>
+</section>
+
+<section>
+  <h2>Placeholder e opção padrão</h2>
+  <div class="anat">
+    <div><b>Havendo um padrão que serve à maioria, ele já vem selecionado</b><span>Sem placeholder. Placeholder obrigatório força todo mundo a um clique que a maioria não precisaria dar. <i>NN/g.</i></span></div>
+    <div><b>Sem padrão bom, descreva</b><span>“Selecione o estado”, não “Selecione…”.</span></div>
+    <div><b>É uma <code>&lt;option&gt;</code>, não um atributo</b><span><code>value=""</code>, <code>disabled</code> e <code>selected</code> — <code>&lt;select&gt;</code> não tem placeholder nativo. É também o que aciona a troca de cor do texto.</span></div>
+    <div><b><code>optgroup</code> pode</b><span>O nativo agrupa de graça e não há nada para desenhar do nosso lado.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Apoio e erro dividem o mesmo slot</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Sem erro</span>
+      <div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="gd-help">Estado</label></div><div class="al-select__control"><select id="gd-help" class="al-select__field" aria-describedby="gd-help-help"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div><p class="al-select__help" id="gd-help-help">Onde a nota será emitida</p></div></div>
+      <p class="cap">O apoio explica o campo.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Com erro</span>
+      <div class="stage2" style="display:block"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="gd-err">Estado</label></div><div class="al-select__control"><select id="gd-err" class="al-select__field" aria-invalid="true" aria-describedby="gd-err-help"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div><p class="al-select__help" id="gd-err-help">Escolha um estado para emitir a nota</p></div></div>
+      <p class="cap">O erro <b>substitui</b> o apoio, e volta quando for resolvido.
+      <i>Spectrum documenta exatamente esse comportamento.</i> Por isso os dois textos precisam
+      carregar a mesma informação essencial — senão a instrução some justamente na hora em que
+      a pessoa mais precisa dela.</p>
+    </div>
+  </div>
+  <div class="anat" style="margin-top:16px">
+    <div><b>O erro diz como corrigir</b><span>“Escolha um estado para continuar”, não “Campo inválido”. <i>Spectrum.</i></span></div>
+    <div><b>O erro aparece depois</b><span>Depois do envio ou de a pessoa sair do campo — nunca enquanto ela ainda escolhe. Marcar de vermelho um campo que ela não terminou de preencher é acusá-la de um erro que não cometeu.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Múltipla escolha, busca e filtro</b><span>Abre ComboBox, não estica o Select.</span></div>
+    <div><b>Um tamanho só (48px)</b><span>Escolha declarada, como o <code>lg</code> que ficou de fora do Button.</span></div>
+    <div><b>Ícone à esquerda e read-only</b><span>Não foram desenhados. Campo que precisa ser lido mas não editado usa <code>disabled</code> hoje, com a limitação conhecida de que o valor não pode ser copiado. <i>Spectrum resolve com read-only; o AL ainda não tem.</i></span></div>
+    <div><b>A lista aberta</b><span>É do navegador. Não estilizar <code>&lt;option&gt;</code>, altura de item nem scroll: varia por sistema operacional e quebra sem avisar.</span></div>
+  </div>
+</section></div><div class="panel" id="p-select-a11y" role="tabpanel" aria-labelledby="t-select-a11y" tabindex="0" hidden>
+<section>
+  <h2>O fundo efetivo muda com a camada</h2>
+  <p>O portão mede <b>combinação renderizada</b> — cada papel contra o fundo que ele realmente
+  tem na tela, não contra um par de token no vácuo. Duas consequências que a camada de tokens
+  não podia enxergar sozinha:</p>
+  <p style="margin-top:12px"><b>A borda troca de vizinho quando o campo recebe foco.</b> Em
+  repouso ela toca a página — que pode ser <code>bg-canvas</code> ou
+  <code>bg-surface-raised</code>, se o campo estiver dentro de um card, e o portão mede a pior
+  das duas. Com foco, o anel desenha um respiro de 2px em <code>bg-canvas</code> colado nela, e
+  a vizinha externa passa a ser sempre <code>bg-canvas</code>.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Borda em repouso</th><th>Borda com foco</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num">1.57:1</td><td class="num strong">3.34:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num">1.46:1</td><td class="num strong">3.20:1</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">Ou seja: no momento em que o campo está em uso, a borda passa dos
+  3:1 sozinha. A exceção declarada vale só para o repouso.</p>
+  <p style="margin-top:12px"><b>A cor do anel sai do próprio <code>box-shadow</code>.</b> O
+  portão lê o último hex da sombra composta — a cor que de fato pinta o anel. Não há definição
+  paralela para divergir do CSS.</p>
+  <div class="stats">
+    <div class="stat hl"><b>98</b><span>combinações medidas</span></div>
+    <div class="stat"><b>86</b><span>passam</span></div>
+    <div class="stat"><b>12</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda em repouso abaixo de 3:1 — decisão consciente</b>
+    <code>border-default</code> dá 1.57:1 no claro e
+    1.46:1 no escuro, abaixo do piso do 1.4.11. O critério não falha
+    quando a borda não é o único meio de perceber o componente — e aqui não é: o campo tem
+    rótulo visível acima e texto dentro. Hover, active, foco e erro passam todos. <b>É por isso
+    que “nunca use o Select sem rótulo visível” é regra de uso, e não sugestão:</b> é ela que
+    sustenta esta exceção.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Disabled abaixo de AA — isenção do 1.4.3</b>
+    Rótulo, texto e seta ficam entre 1,59:1 e 2,19:1. O WCAG 1.4.3 isenta componente inativo, e
+    subir esse contraste faz o desabilitado parecer clicável. Mesma exceção permanente que o
+    Button e o Tag já carregam.
+  </div>
+</section>
+
+<section>
+  <h2>Borda e anel — o não-textual, piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-border</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.57:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-border</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-border-hover</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">4.88:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-border-hover</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">3.53:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">active</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-border-active</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">active</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">active</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-border-active</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">active</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-border-error</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">5.38:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-border-error</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">5.38:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-ring-error</td><td class="tok dim">respiro + pagina</td><td class="num strong">8.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-ring-error</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.82:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-select-border-disabled</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-select-icon-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">1.59:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-border-disabled</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">seta</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-icon-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">2.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">active</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">active</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">active</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">active</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">active</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">active</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">active</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">active</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">active</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">active</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">texto</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-select-text-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">1.59:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.10:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-select-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.10:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">texto</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-text-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-select-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Num campo de formulário quase tudo que dá errado é <b>marcação</b>, não estilo — e
+  marcação só existe na saída renderizada. Por isso estas cinco regras não estão escritas numa
+  página: elas são medidas por <code>components/select/a11y.py</code> no HTML que este site
+  emite, e quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code>, e existe um <code>&lt;label for&gt;</code> apontando para ele.</span></div>
+    <div><b>Erro descrito</b><span>Campo com <code>aria-invalid="true"</code> tem <code>aria-describedby</code>, e o id apontado existe de verdade no documento.</span></div>
+    <div><b>Placeholder de verdade</b><span>É a primeira <code>&lt;option value=""&gt;</code> e ela está <code>selected</code>.</span></div>
+    <div><b>Seta decorativa</b><span><code>aria-hidden="true"</code> e <code>focusable="false"</code> na própria tag — o sentido mora no rótulo.</span></div>
+    <div><b>Sem <code>aria-label</code> redundante</b><span>Havendo rótulo visível, o nome anunciado tem que ser ele.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>18</b><span>campos conferidos no HTML</span></div>
+    <div class="stat"><b>5</b><span>regras por campo</span></div>
+    <div class="stat"><b>medido</b><span>estado do contrato</span></div>
+  </div>
+  <p style="margin-top:12px; font-size:13.5px; color:var(--al-text-secondary)">
+    O portão remove <code>&lt;style&gt;</code> e <code>&lt;script&gt;</code> antes de procurar
+    marcação. Sem isso ele media o <code>&lt;select&gt;</code> de exemplo que vive no comentário
+    de anatomia do <code>select.css</code> como se fosse um campo de verdade — e
+    <b>passava</b>, porque o exemplo está correto. Portão que aprova lendo comentário também
+    reprova lendo comentário.
+  </p>
+</section>
+
+<section>
+  <h2>Active e foco: a leitura que caiu na medição</h2>
+  <p>A auditoria da etapa 1 fechou que “active é o clique e foco é a chegada por Tab”. A etapa 6
+  derrubou isso <b>medindo</b>: cliquei no campo pelo navegador e li o estado computado — o
+  Chromium casa <code>:focus-visible</code> num <code>&lt;select&gt;</code> clicado com o mouse,
+  porque a plataforma o trata como controle que recebe teclado depois de aberto. O anel aparece
+  no clique.</p>
+  <p style="margin-top:12px">Não existe seletor de “foco só por teclado” além do próprio
+  <code>:focus-visible</code>, e forçar por JavaScript tornaria condicional justamente o
+  indicador de foco — a última coisa que se deve condicionar. A leitura foi reinterpretada, sem
+  mexer em código: <b>active é o instante em que o botão do mouse está pressionado; foco é o
+  estado que permanece</b> enquanto o campo estiver focado, tenha chegado como tiver chegado.
+  É o que Carbon, Material e Polaris já usam, e o que sobrevive em qualquer navegador.</p>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.6.0</span>
+  <span><b>AL Design System</b> · v0.7.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -5642,6 +6511,113 @@ var AV_PHOTO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcm
       try { document.execCommand('copy'); done(); } catch (e) { btn.textContent = 'Não deu'; }
       document.body.removeChild(ta);
     }
+  });
+
+  render();
+})();
+var SEL_CHEVRON = "<svg class=\"al-icon al-select__chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m6 9 6 6 6-6\" /></svg>";
+var SEL_UFS = ["Acre", "Bahia", "Cear\u00e1", "Minas Gerais", "Paran\u00e1", "S\u00e3o Paulo"];
+
+(function () {
+  // ── playground do Select ──
+  var stage = document.getElementById('select-stage');
+  if (!stage) return;
+  var code = document.getElementById('select-code');
+  var labelInput = document.getElementById('select-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function render() {
+    var estado = pick('selstate');
+    var comValor = pick('selvalue') === 'picked';
+    var opcional = pick('selopt') === 'opt';
+    var comApoio = pick('selhelp') === 'on';
+    var theme = pick('seltheme');
+    var rotulo = (labelInput.value || '').trim() || 'Estado';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var erro = estado === 'error';
+    var off = estado === 'disabled';
+    // O erro SUBSTITUI o apoio, nunca empilha - regra do Spectrum, e a mesma
+    // razao de haver um unico slot no componente.
+    var msg = erro ? 'Escolha um estado para continuar'
+                   : (comApoio ? 'Onde a nota será emitida' : null);
+
+    var attrs = ['id="pg-select"', 'class="al-select__field"'];
+    if (erro) attrs.push('aria-invalid="true"');
+    if (off) attrs.push('disabled');
+    if (msg) attrs.push('aria-describedby="pg-select-help"');
+
+    var opts = ['<option value="" disabled' + (comValor ? '' : ' selected')
+                + '>Selecione o estado</option>'];
+    SEL_UFS.forEach(function (uf) {
+      opts.push('<option value="' + uf + '"'
+                + (comValor && uf === 'Bahia' ? ' selected' : '') + '>' + uf + '</option>');
+    });
+
+    var marca = opcional ? '<span class="al-select__optional">(Opcional)</span>' : '';
+    var linha = msg ? '<p class="al-select__help" id="pg-select-help">' + msg + '</p>' : '';
+
+    stage.innerHTML =
+      '<div class="al-select">'
+      + '<div class="al-select__labelrow">'
+      + '<label class="al-select__label" for="pg-select">' + esc(rotulo) + '</label>'
+      + marca + '</div>'
+      + '<div class="al-select__control">'
+      + '<select ' + attrs.join(' ') + '>' + opts.join('') + '</select>'
+      + SEL_CHEVRON + '</div>'
+      + linha + '</div>';
+
+    // A marcação mostrada é a que importa: o que muda entre estados é atributo,
+    // nunca classe. Se um dia aparecer uma classe de erro aqui, é regressão.
+    var lines = ['&lt;div class="al-select"&gt;',
+                 '  &lt;div class="al-select__labelrow"&gt;',
+                 '    &lt;label class="al-select__label" for="uf"&gt;' + esc(rotulo) + '&lt;/label&gt;'];
+    if (opcional) lines.push('    &lt;span class="al-select__optional"&gt;(Opcional)&lt;/span&gt;');
+    lines.push('  &lt;/div&gt;');
+    lines.push('  &lt;div class="al-select__control"&gt;');
+    var sattrs = 'class="al-select__field" id="uf"';
+    if (erro) sattrs += ' aria-invalid="true"';
+    if (off) sattrs += ' disabled';
+    if (msg) sattrs += ' aria-describedby="uf-help"';
+    lines.push('    &lt;select ' + sattrs + '&gt;');
+    lines.push('      &lt;option value="" disabled' + (comValor ? '' : ' selected')
+               + '&gt;Selecione o estado&lt;/option&gt;');
+    lines.push('      &lt;!-- … --&gt;');
+    lines.push('    &lt;/select&gt;');
+    lines.push('    &lt;svg class="al-icon al-select__chevron" aria-hidden="true" '
+               + 'focusable="false"&gt;&lt;!-- chevron-down --&gt;&lt;/svg&gt;');
+    lines.push('  &lt;/div&gt;');
+    if (msg) {
+      lines.push('  &lt;p class="al-select__help" id="uf-help"&gt;' + msg + '&lt;/p&gt;');
+    }
+    lines.push('&lt;/div&gt;');
+    if (erro) {
+      lines.push('&lt;!-- o erro vem de aria-invalid, nunca de uma classe --&gt;');
+    }
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('#select-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+
+  document.getElementById('select-copy').addEventListener('click', function () {
+    var btn = this;
+    var text = code.textContent;
+    navigator.clipboard.writeText(text).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    });
   });
 
   render();
