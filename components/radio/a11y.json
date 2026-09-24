@@ -10,8 +10,8 @@
     "bg-surface",
     "bg-surface-raised"
   ],
-  "markupSource": "site/radio-qa.html",
-  "markupChecked": 29,
+  "markupSource": "site/index.html",
+  "markupChecked": 39,
   "markupPending": false,
   "markupRules": [
     "input type=\"radio\" nativo dentro de <label class=\"al-radio\">, sem role=\"radio\"",

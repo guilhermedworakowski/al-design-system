@@ -73,6 +73,10 @@ CHECKBOX_TOKENS = open(os.path.join(ROOT, 'components', 'checkbox',
                                     'al-checkbox-tokens.css')).read()
 CHECKBOX_CSS = open(os.path.join(ROOT, 'components', 'checkbox', 'checkbox.css')).read()
 CHECKBOX_A11Y = json.load(open(os.path.join(ROOT, 'components', 'checkbox', 'a11y.json')))
+RADIO = json.load(open(os.path.join(ROOT, 'components', 'radio', 'tokens.json')))
+RADIO_TOKENS = open(os.path.join(ROOT, 'components', 'radio', 'al-radio-tokens.css')).read()
+RADIO_CSS = open(os.path.join(ROOT, 'components', 'radio', 'radio.css')).read()
+RADIO_A11Y = json.load(open(os.path.join(ROOT, 'components', 'radio', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -94,6 +98,7 @@ N_TAG_TOKENS = len(TAG['alias'])
 N_AVATAR_TOKENS = len(AVATAR['alias'])
 N_SELECT_TOKENS = len(SELECT['alias'])
 N_CHECKBOX_TOKENS = len(CHECKBOX['alias'])
+N_RADIO_TOKENS = len(RADIO['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -133,14 +138,15 @@ def scope_themes(found_css, *token_blocks):
 
 
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
-                         AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS)
+                         AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
             + '\n' + TAG_TOKENS + '\n' + TAG_CSS
             + '\n' + AVATAR_TOKENS + '\n' + AVATAR_CSS
             + '\n' + SELECT_TOKENS + '\n' + SELECT_CSS
-            + '\n' + CHECKBOX_TOKENS + '\n' + CHECKBOX_CSS)
+            + '\n' + CHECKBOX_TOKENS + '\n' + CHECKBOX_CSS
+            + '\n' + RADIO_TOKENS + '\n' + RADIO_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -4214,6 +4220,515 @@ CHECKBOX_A11Y_TAB = f'''
 </section>'''
 
 
+# ═══════════════════════════════════════════════════════════════ Radio · abas
+# 6 estados no Figma, num eixo so. Radio sozinho nao existe (regra 3): todo
+# exemplo desta pagina e uma PERGUNTA - <fieldset> + <legend> + duas opcoes ou
+# mais com o mesmo `name`. E o que o components/radio/a11y.py cobra no HTML.
+# O erro e da pergunta: `aria-invalid` vai no fieldset, nunca no radio (regra 26).
+def rd(rid, nome, valor, rotulo, *, checked=False, disabled=False, sim=None, extra=''):
+    """Um Radio real. `sim` escreve nas MESMAS variaveis privadas que o radio.css
+    usa: 'hover' (so vive sob o ponteiro) e 'error' (so para o "Nao faca": o
+    visual do erro SEM aria-invalid, porque o exemplo e um erro nao descrito)."""
+    attrs = [f'id="{rid}"', 'class="al-radio__input"', 'type="radio"',
+             f'name="{nome}"', f'value="{valor}"']
+    if checked:
+        attrs.append('checked')
+    if disabled:
+        attrs.append('disabled')
+    lab_style = ''
+    if sim == 'hover':
+        attrs.append('style="--_bg-state: var(--al-radio-bg-hover); '
+                     '--_border-state: var(--al-radio-border-hover)"')
+    if sim == 'error':
+        if not checked:
+            attrs.append('style="--_border-force: var(--al-radio-border-error)"')
+        lab_style = ' style="color: var(--al-radio-label-error)"'
+    if extra:
+        attrs.append(extra)
+    return (f'<label class="al-radio">'
+            f'<span class="al-radio__control"><input {" ".join(attrs)}>'
+            f'<span class="al-radio__dot" aria-hidden="true"></span></span>'
+            f'<span class="al-radio__label"{lab_style}>{rotulo}</span></label>')
+
+
+def rq(nome, legenda, opcoes, *, erro=None, sim=None, horizontal=False, attrs=''):
+    """Uma pergunta: o <fieldset> que a APLICACAO monta (regra 6). `opcoes` =
+    [(valor, rotulo, kwargs)]. `erro` = id da mensagem do formulario."""
+    abre = f'<fieldset class="rd-group{" rd-group--row" if horizontal else ""}"'
+    if erro:
+        abre += f' aria-invalid="true" aria-describedby="{erro}"'
+    if attrs:
+        abre += ' ' + attrs
+    corpo = ''.join(rd(f'{nome}-{i}', nome, v, r, **{'sim': sim, **kw})
+                    for i, (v, r, kw) in enumerate(opcoes))
+    return f'{abre}><legend>{legenda}</legend><div class="rd-opts">{corpo}</div></fieldset>'
+
+
+def rd_msg(mid, texto):
+    """A mensagem de erro e do FORMULARIO, nao do componente (regra 22)."""
+    return f'<p class="rd-formerror" id="{mid}">{texto}</p>'
+
+
+RD_COBRANCA = [('mensal', 'Mensal', {}), ('anual', 'Anual', {})]
+
+RD_STATES = [
+    ('default', 'Default', 'O repouso. A borda aqui é a exceção de contraste declarada.',
+     'Cobrança', [('mensal', 'Mensal', {}), ('anual', 'Anual', {})], {}),
+    ('hover', 'Hover', 'Só existe sob o ponteiro: a variável privada foi escrita direto na primeira '
+     'opção. O real vale na linha inteira — passe o mouse na segunda.',
+     'Cobrança', [('mensal', 'Mensal', dict(sim='hover')), ('anual', 'Anual', {})], {}),
+    ('active', 'Active (marcado)', 'Anel laranja com ponto de 14px. Passar o mouse no marcado '
+     'não muda nada: ele não desmarca com clique.',
+     'Cobrança', [('mensal', 'Mensal', dict(checked=True)), ('anual', 'Anual', {})], {}),
+    ('focus', 'Focus', 'Tabule até aqui e use as setas: foco e escolha andam juntos. '
+     'Pelo mouse o anel não aparece.', 'Cobrança', RD_COBRANCA, {}),
+    ('error', 'Error', 'Vem de <code>aria-invalid="true"</code> no <code>fieldset</code>: acende '
+     'as duas opções de uma vez. A mensagem é do formulário.',
+     'Forma de pagamento', [('pix', 'Pix', {}), ('boleto', 'Boleto', {})],
+     dict(erro='sp-rd-error-msg')),
+    ('disabled', 'Disabled', 'Atributo nativo <code>disabled</code>: setas e Tab pulam a opção.',
+     'Cobrança', [('mensal', 'Mensal', {}), ('empresa', 'Empresarial', dict(disabled=True))], {}),
+]
+
+RD_COMBOS = [
+    ('dischk', 'Marcado + disabled', 'Círculo cinza, ponto em <code>dot-disabled</code> — o único '
+     'token sem variante no Figma.', 'Plano atual',
+     [('empresa', 'Empresarial', dict(checked=True, disabled=True)),
+      ('mensal', 'Mensal', dict(disabled=True))], {}),
+    ('errchk', 'Erro + marcado', 'O marcado segue laranja e só o rótulo avisa; a vizinha vazia '
+     'fica com borda vermelha.', 'Forma de pagamento',
+     [('pix', 'Pix', dict(checked=True)), ('boleto', 'Boleto', {})],
+     dict(erro='sp-rd-errchk-msg')),
+    ('chkfoc', 'Marcado + foco', 'O anel aparece por cima do anel laranja — ele não depende do '
+     'estado.', 'Cobrança', [('mensal', 'Mensal', dict(checked=True)), ('anual', 'Anual', {})], {}),
+]
+
+RD_MSGS = {'sp-rd-error-msg': 'Escolha uma forma de pagamento.',
+           'sp-rd-errchk-msg': 'Pix indisponível para este valor. Escolha outra forma.'}
+
+
+def radio_specimens(lista):
+    cells = []
+    for slug, nome, nota, legenda, opcoes, kw in lista:
+        corpo = rq(f'sp-rd-{slug}', legenda, opcoes, **kw)
+        if kw.get('erro'):
+            corpo += rd_msg(kw['erro'], RD_MSGS[kw['erro']])
+        cells.append(f'<div class="cell"><span class="lab" '
+                     f'style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2 rd-stage">{corpo}</div>'
+                     f'<p class="cap">{nota}</p></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def radio_token_rows():
+    rows = []
+    for name in RADIO['alias']:
+        res = RADIO['resolved'].get(name)
+        if not isinstance(res, dict) or 'light' not in res:
+            continue
+        lt = res['light']
+        sw = (f'<span class="chip sm" style="background:{lt}"></span>'
+              if isinstance(lt, str) and lt.startswith('#') else '')
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{RADIO["alias"][name]}</td>'
+                    f'<td class="tok dim">{sw}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+def radio_geo_rows():
+    rows = []
+    for role in ['box-size', 'padding', 'gap', 'radius', 'border-width']:
+        name = f'radio-{role}'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{RADIO["alias"][name]}</td>'
+                    f'<td class="num">{RADIO["resolved"][name]}px</td></tr>')
+    res = RADIO['resolved']['radio-label-font']
+    rows.append(f'<tr><td class="tok">--al-radio-label-font</td>'
+                f'<td class="tok dim">{RADIO["alias"]["radio-label-font"]}</td>'
+                f'<td class="num">{res[1]}/{res[2]} · peso {res[3]}</td></tr>')
+    return '\n'.join(rows)
+
+
+def radio_a11y_rows(papeis):
+    out = []
+    for r in RADIO_A11Y['rows']:
+        if r['papel'] not in papeis:
+            continue
+        if r['pass']:
+            verdict = '<span class="pass">passa</span>'
+        elif r['exc']:
+            verdict = '<span class="exc">exceção</span>'
+        else:
+            verdict = '<span class="fail">reprova</span>'
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['soNoCodigo'] else '')
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{estado}</td>'
+            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">--al-{r["token"]}</td>'
+            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+N_RD_MEDIDAS = len(RADIO_A11Y['rows'])
+N_RD_EXC = sum(RADIO_A11Y['exceptions'].values())
+N_RD_PASSA = N_RD_MEDIDAS - N_RD_EXC
+
+
+def _rd_borda(state, theme):
+    return next(r['ratio'] for r in RADIO_A11Y['rows']
+                if r['state'] == state and r['theme'] == theme and r['papel'] == 'borda')
+
+
+RD_LAYER = {t: {'rest': _rd_borda('default', t), 'focused': _rd_borda('focus', t)}
+            for t in ('light', 'dark')}
+RD_DERIVED = RADIO['derived']
+RD_PIOR = min((r for r in RADIO_A11Y['rows'] if r['pass']), key=lambda r: r['ratio'] / r['floor'])
+
+TH_RADIO = ('<div class="th-rd" aria-hidden="true">'
+            '<span class="th-rd__row"><span class="th-rd__dot is-on"></span>Mensal</span>'
+            '<span class="th-rd__row"><span class="th-rd__dot"></span>Anual</span>'
+            '<span class="th-rd__row"><span class="th-rd__dot"></span>Empresarial</span></div>')
+
+RADIO_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="rd-stage">{rq('pg-rd', 'Cobrança', [('mensal', 'Mensal', dict(checked=True)), ('anual', 'Anual', {}), ('empresa', 'Empresarial', {})])}</div>
+
+    <div class="controls" id="rd-controls">
+      <div class="ctl"><span class="ctl-name">Seleção inicial</span>{seg('rdvalue', [('first', 'Primeira marcada'), ('none', 'Nenhuma')], 'first')}</div>
+      <div class="ctl"><span class="ctl-name">Estado</span>{seg('rdstate', [('rest', 'Normal'), ('error', 'Erro'), ('disabled', 'Uma desabilitada')], 'rest')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('rdtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><label for="rd-legend" class="ctl-name">Pergunta</label>
+        <input class="txt" id="rd-legend" type="text" value="Cobrança" maxlength="60"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="rd-copy">Copiar</button></div>
+      <pre><code id="rd-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Os radios acima são o componente real: esta página carrega o mesmo <code>radio.css</code> que
+    vai para produção. Tabule até eles e use as setas — foco e escolha andam juntos. O
+    <code>fieldset</code> e o <code>legend</code> <b>não fazem parte do componente</b>: são a
+    pergunta, que a aplicação monta. No erro, o <code>aria-invalid</code> vai nela, e a mensagem
+    em vermelho é o formulário descrevendo o erro em texto.
+  </p>
+</section>
+
+<section>
+  <h2>Uma pergunta de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <form class="rd-form" id="rd-form" novalidate>
+      <p class="rd-summary" id="rd-form-erro" hidden>Escolha uma forma de pagamento para assinar.</p>
+      {rq('ov-rd-pag', 'Forma de pagamento da assinatura', [('cartao', 'Cartão de crédito', dict(extra='required')), ('pix', 'Pix', dict(extra='required')), ('boleto', 'Boleto', dict(disabled=True, extra='required'))])}
+      <div class="rd-actions">
+        <button type="submit" class="al-btn al-btn--primary al-btn--sm" id="rd-form-enviar"><span class="al-btn__label">Assinar</span></button>
+        <p class="rd-ok" id="rd-form-ok" role="status"></p>
+      </div>
+    </form>
+    <p class="cap">Envie sem escolher: as opções ficam vermelhas <b>juntas</b>, porque o erro é da
+    pergunta e não de uma opção, e o erro aparece em texto no topo. Escolha uma e tudo volta. Não há
+    pré-seleção aqui de propósito: forma de pagamento tem custo, e a escolha precisa ser consciente.
+    <i>Primer, Spectrum, Carbon e Polaris põem o erro no grupo.</i></p>
+  </div>
+</section>
+
+<section>
+  <h2>Os seis estados do Figma</h2>
+  {radio_specimens(RD_STATES)}
+</section>
+
+<section>
+  <h2>O que só existe no código</h2>
+  <p>O Figma tem um eixo só de estado. O navegador produz combinações que ele não desenha — e
+  elas foram decididas na etapa 3, pintadas pelos mesmos tokens, sem nenhum a mais além do
+  ponto desabilitado.</p>
+  <div style="margin-top:16px">{radio_specimens(RD_COMBOS)}</div>
+</section>'''
+
+RADIO_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b><code>&lt;label class="al-radio"&gt;</code></b><span>Envolve tudo. É o que faz clicar no texto marcar a opção, e o que transforma a linha inteira em área de clique — também é onde mora o hover.</span></div>
+    <div><b>Círculo</b><span><code>&lt;input type="radio"&gt;</code> nativo com <code>appearance: none</code>: o círculo do navegador sai e o do AL entra. Setas, Tab e “marcar um desmarca o outro” continuam do navegador.</span></div>
+    <div><b>Ponto</b><span>Um <code>&lt;span&gt;</code> irmão do input, com <code>aria-hidden</code> — <code>&lt;input&gt;</code> não tem filho, e pseudo-elemento em input não é garantido em todo navegador. <code>pointer-events: none</code> devolve o clique.</span></div>
+    <div><b>Rótulo</b><span>Sempre visível, à direita. É a regra que sustenta a exceção de contraste da borda.</span></div>
+    <div><b>A pergunta — fora do componente</b><span><code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code>, montados pela aplicação. Todos os radios dela dividem o mesmo <code>name</code>. O AL não tem componente de grupo, de propósito.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A geometria é consequência</h2>
+  <p>O círculo é <code>box-size</code>: <b>24px</b>, a mesma caixa do Checkbox e a mesma
+  entrelinha do rótulo — é isso que alinha o círculo com a primeira linha do texto quando ele
+  quebra. O ponto não tem token: são <b>{RD_DERIVED['dot-size']}px</b>, círculo − 2 × borda −
+  2 × respiro, e a conta está escrita no CSS em vez de um número.</p>
+  <p style="margin-top:12px">O respiro é <code>space-4</code>, não o <code>space-2</code> do
+  Checkbox. Com 18px o ponto enchia o círculo, e o marcado desabilitado virava um disco cinza igual
+  ao desmarcado desabilitado. A borda de 1px existe em todos os estados, então o círculo nunca
+  “pula” quando o estado troca a cor dela.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_RADIO_TOKENS}</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>6</b><span>estados no Figma</span></div>
+    <div class="stat"><b>1</b><span>tamanho — regra do Tier 2</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody>{radio_token_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Marcado não pinta o fundo — a diferença para o Checkbox</b>
+    No Checkbox, marcado é a caixa laranja. No Radio, marcado é borda laranja + ponto laranja, e o
+    fundo continua <code>radio-bg</code>: o anel branco entre os dois <i>é</i> o fundo. Por isso não
+    existe <code>bg-checked</code>, e existem <code>dot</code> e <code>dot-disabled</code>.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody>{radio_geo_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Quem ganha quando dois estados acontecem juntos</h2>
+  <p>A mesma técnica do Checkbox: fundo e borda são
+  <code>var(--_*-force, var(--_*-state))</code>. Hover e foco escrevem em
+  <code>--_*-state</code>; marcado, erro e desabilitado escrevem em <code>--_*-force</code>,
+  que vence por ser <b>outra propriedade</b>, não por ter seletor mais pesado.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Marcado + hover</b><span>Nada muda: o marcado força o fundo de volta a <code>radio-bg</code>. Radio marcado não desmarca com clique, e o hover prometeria uma ação que não existe.</span></div>
+    <div><b>Marcado + foco</b><span>O anel aparece por cima do anel laranja.</span></div>
+    <div><b>Erro + marcado</b><span>Borda e ponto laranja, rótulo vermelho — a borda de erro só vale no círculo vazio, que é onde o erro mora.</span></div>
+    <div><b>Erro + foco</b><span>Anel padrão: não há anel de erro desenhado para este componente.</span></div>
+    <div><b>Desabilitado</b><span>Vem por último no arquivo e ganha de todos. Marcado e desabilitado mostra o ponto em <code>dot-disabled</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O erro é lido da pergunta</h2>
+  <p>O <code>radio.css</code> não procura <code>aria-invalid</code> no radio: procura em
+  qualquer elemento <b>acima</b> dele — na prática, o <code>fieldset</code>. Marcar a pergunta uma
+  vez acende todas as opções, e não há como esquecer uma. Foi um achado da etapa 6: a primeira
+  versão lia o erro no próprio radio, copiando o Checkbox, e o portão de marcação reprovou.</p>
+</section>'''
+
+RADIO_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Uma única opção de uma lista curta</b><span>Todas visíveis, para a pessoa comparar antes de escolher. <i>Primer, Spectrum, Material.</i></span></div>
+    <div><b>Até cinco ou seis opções</b><span>Acima disso, use o Select. <i>Material (5), Primer e Spectrum (6).</i></span></div>
+    <div><b>Nunca para várias escolhas, nunca sozinho</b><span>Várias escolhas é Checkbox. Uma pergunta tem sempre duas opções ou mais; um sim/não de aceite isolado também é Checkbox. <i>Polaris, Carbon.</i></span></div>
+    <div><b>Nunca para ação imediata</b><span>A escolha só vale quando a pessoa envia ou salva — as setas mudam a escolha enquanto ela navega. Ação imediata pede Switch, que o AL ainda não tem. <i>Primer, Material.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A pergunta</h2>
+  <div class="anat">
+    <div><b>Mesmo <code>name</code> em todas as opções</b><span>É o que faz marcar uma desmarcar a outra, e as setas andarem entre elas.</span></div>
+    <div><b><code>fieldset</code> + <code>legend</code>, montados pela aplicação</b><span>Sem eles o leitor de tela anuncia “Mensal, botão de opção” sem dizer qual é a pergunta. <i>Carbon, Polaris, Primer.</i></span></div>
+    <div><b>Uma por linha, na vertical</b><span>Horizontal só com duas ou três opções curtas, e com o espaço entre uma e outra claramente maior que os 8px entre círculo e rótulo. <i>Spectrum.</i></span></div>
+    <div><b>Ordem lógica</b><span>A mais comum primeiro, crescente, ou a ordem natural — não alfabética sem motivo. <i>Polaris, Spectrum.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Seleção inicial</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Marque de início</span>
+      <div class="stage2 rd-stage">{rq('gd-rd-resumo', 'Resumo das vendas por e-mail', [('semanal', 'Semanal', dict(checked=True)), ('mensal', 'Mensal', {}), ('nenhum', 'Nenhum', {})])}</div>
+      <p class="cap">Quando há uma resposta segura e mais provável, e ela vem primeiro. Como
+      radio marcado não desmarca, “nenhum” vira uma opção. <i>Spectrum, Polaris; Carbon para o
+      “Nenhum”.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Não marque nada</span>
+      <div class="stage2 rd-stage">{rq('gd-rd-plano', 'Plano da assinatura', [('basico', 'Básico — R$ 49/mês', {}), ('pro', 'Pro — R$ 129/mês', {})])}</div>
+      <p class="cap">Quando a escolha precisa ser consciente: dado sensível, consentimento, algo
+      com custo. <i>Carbon, que hoje recomenda nenhuma pré-seleção.</i> As referências divergem, e
+      o AL decide pelo contexto.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 rd-stage">{rq('gd-rd-ok', 'Funcionários', [('p', '1 a 5', dict(checked=True)), ('m', '6 a 20', {}), ('g', 'Mais de 20', {})])}</div>
+      <p class="cap">Curto, só a primeira letra maiúscula, sem ponto final. As opções têm a mesma
+      estrutura e não se sobrepõem. <i>Polaris.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 rd-stage">{rq('gd-rd-bad', 'Funcionários', [('p', '1 a 5', {}), ('m', '5 a 20', {}), ('g', 'Uma empresa grande.', {})])}</div>
+      <p class="cap">Quem tem 5 funcionários cabe em duas opções — as faixas se sobrepõem. E a
+      terceira quebra o paralelo: frase com ponto, sem número. <i>Polaris.</i></p>
+    </div>
+  </div>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo longo quebra alinhado ao topo</b><span>O círculo fica na altura da primeira linha. <i>Carbon.</i> No AL sai de graça: círculo e entrelinha medem os mesmos 24px.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Estados</h2>
+  <div class="anat">
+    <div><b>A forma diferencia, não só a cor</b><span>Marcado é anel com ponto; vazio é anel sem ponto. Foi por isso que o ponto diminuiu para 14px na etapa 1.</span></div>
+    <div><b>Desabilitado só quando depende de outra escolha na mesma tela</b><span>Se nunca vai estar disponível, esconda. Se todas ficariam desabilitadas, repense a pergunta.</span></div>
+    <div><b>O desabilitado fica abaixo de AA de propósito</b><span>O WCAG isenta controle inativo, e subir esse contraste faz a opção parecer clicável.</span></div>
+    <div><b>Marcado e desabilitado existe</b><span>Círculo cinza, ponto apagado — aparece em qualquer plano travado, então existe no código mesmo sem variante no Figma.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Erro — é da pergunta, e o componente não tem mensagem</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 rd-stage">{rq('gd-rd-err', 'Forma de pagamento', [('pix', 'Pix', {}), ('boleto', 'Boleto', {})], erro='gd-rd-err-msg')}{rd_msg('gd-rd-err-msg', 'Escolha uma forma de pagamento.')}</div>
+      <p class="cap">O erro vai no <code>fieldset</code> e acende todas as opções juntas. O
+      formulário descreve o erro em texto, e a pergunta aponta para ele com
+      <code>aria-describedby</code>. <i>Primer, Carbon, Polaris.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 rd-stage">{rq('gd-rd-nomsg', 'Forma de pagamento', [('pix', 'Pix', {}), ('boleto', 'Boleto', {})], sim='error')}</div>
+      <p class="cap">Só bordas e rótulos vermelhos. Isso é <b>só cor</b>, e o WCAG exige o erro
+      descrito em texto (3.3.1) e não comunicado só por cor (1.4.1).</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Divergência consciente</b>
+    Carbon, Polaris e Primer colocam a mensagem no grupo. O AL não tem componente de grupo e
+    deixa o texto para o formulário — por isso esta regra é obrigatória, não sugestão. O rótulo
+    vermelho também é escolha nossa, coerente com o Select, o Checkbox e o Material. A
+    obrigatoriedade se indica na pergunta, e o AL marca o opcional: “(opcional)” no
+    <code>legend</code>. O erro aparece <b>depois do envio</b>, nunca enquanto a pessoa escolhe.
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Um tamanho só</b><span>Regra de todo input do Tier 2.</span></div>
+    <div><b>Componente de grupo</b><span>Nem agora nem no roadmap: a pergunta é <code>fieldset</code> + <code>legend</code> nativos.</span></div>
+    <div><b>Texto de apoio e mensagem de erro</b><span>Não fazem parte do componente — são do formulário.</span></div>
+    <div><b>Variantes combinadas no Figma</b><span>Cobertas pelo código com os mesmos tokens.</span></div>
+    <div><b>Radio em card, Switch e read-only</b><span>Outros componentes, ainda não abertos.</span></div>
+  </div>
+</section>'''
+
+RADIO_A11Y_TAB = f'''
+<section>
+  <h2>No Radio, quem desenha o limite é sempre a borda</h2>
+  <p>O portão mede <b>combinação renderizada</b>. No Checkbox marcado, o limite passava a ser o
+  preenchimento inteiro; aqui não: o marcado não pinta o fundo, então a borda laranja fica entre
+  a página por fora e o anel branco por dentro, e é medida contra os dois. O ponto é medido contra
+  o anel que o cerca.</p>
+  <p style="margin-top:12px">E a página não é uma só: o portão mede contra tela, faixa de seção e
+  card, e guarda a pior. A menor margem entre as que passam é
+  <b>{RD_PIOR['papel']}</b> em <code>{RD_PIOR['state']}</code>, {RD_PIOR['ratio']:.2f}:1 contra o
+  piso de {RD_PIOR['floor']}:1 — na faixa cinza, que a etapa 3 não conseguia ver.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_RD_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_RD_PASSA}</b><span>passam</span></div>
+    <div class="stat"><b>{N_RD_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{RADIO_A11Y['fails']}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Com foco, a borda passa sozinha</h2>
+  <p>O anel desenha um respiro de 2px em <code>bg-canvas</code> colado no círculo, e a vizinha
+  externa da borda passa a ser ele — independente de onde o radio foi colocado.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Borda em repouso</th><th>Borda com foco</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num">{RD_LAYER['light']['rest']:.2f}:1</td><td class="num strong">{RD_LAYER['light']['focused']:.2f}:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num">{RD_LAYER['dark']['rest']:.2f}:1</td><td class="num strong">{RD_LAYER['dark']['focused']:.2f}:1</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">A borda fraca existe só em repouso, nunca durante a navegação por
+  teclado. No teclado, o Tab entra na pergunta uma vez só — na opção marcada, ou na primeira se
+  nenhuma estiver — e as setas movem foco e escolha juntos, pulando a desabilitada.</p>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda em repouso abaixo de 3:1 — decisão consciente</b>
+    <code>border-default</code> fica em {RD_LAYER['light']['rest']:.2f}:1 no claro e
+    {RD_LAYER['dark']['rest']:.2f}:1 no escuro, no pior fundo — a mesma decisão do Checkbox, para
+    seguir o padrão dos inputs do AL. A borda é o único desenho do radio vazio; o que sustenta a
+    exceção é o rótulo visível ao lado, e por isso “nunca sem rótulo visível” é regra de uso.
+    Hover, foco, marcado e erro passam todos.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Desabilitado abaixo de AA — isenção do 1.4.3</b>
+    Rótulo, borda e ponto desabilitados ficam abaixo do piso. O WCAG isenta componente inativo, e
+    subir esse contraste faz a opção parecer clicável. No tema escuro o círculo desabilitado e o
+    normal chegam a ser idênticos (<code>#3E3E3E</code>): só o rótulo apagado diferencia.
+  </div>
+</section>
+
+<section>
+  <h2>Não-textual — piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{radio_a11y_rows(['borda', 'anel de foco', 'ponto'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{radio_a11y_rows(['rotulo'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Estas seis regras não estão escritas numa página: elas são medidas por
+  <code>components/radio/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="radio"&gt;</code> dentro de <code>&lt;label class="al-radio"&gt;</code>. Nenhum <code>role="radio"</code> na página.</span></div>
+    <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-radio__label</code>, e nada de <code>aria-label</code>.</span></div>
+    <div><b>Duas opções ou mais</b><span>Todo radio tem <code>name</code>, e cada <code>name</code> junta duas opções ou mais.</span></div>
+    <div><b>A pergunta existe</b><span>As opções de um <code>name</code> moram num só <code>fieldset</code>, com <code>legend</code> visível.</span></div>
+    <div><b>Erro na pergunta, descrito</b><span><code>aria-invalid="true"</code> no <code>fieldset</code>, com <code>aria-describedby</code> para um id que existe — e nunca no radio.</span></div>
+    <div><b>Ponto decorativo</b><span><code>aria-hidden="true"</code> — o estado quem anuncia é o input.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>{RADIO_A11Y['markupChecked']}</b><span>radios conferidos no HTML</span></div>
+    <div class="stat"><b>6</b><span>regras por radio</span></div>
+    <div class="stat"><b>{'pendente' if RADIO_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
+  </div>
+</section>'''
+
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -4224,6 +4739,7 @@ LANDING_COMPONENTES = f'''
     {card('avatar', 'Avatar', 'Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.', TH_AVATAR)}
     {card('select', 'Select', 'Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.', TH_SELECT)}
     {card('checkbox', 'Checkbox', 'Várias opções, ou uma que só vale depois de confirmar. Input nativo com a caixa do AL pintada por cima — com o estado misto para o checkbox pai.', TH_CHECKBOX)}
+    {card('radio', 'Radio', 'Uma opção de uma lista curta. Input nativo com o círculo do AL pintado por cima — e o erro é da pergunta, não da opção.', TH_RADIO)}
   </div>
 </section>
 
@@ -4353,6 +4869,15 @@ PAGES = [
          (f'{N_CHECKBOX_TOKENS} tokens', False), ('2 exceções declaradas', False)],
         [('overview', 'Visão geral', CHECKBOX_OVERVIEW), ('specs', 'Especificações', CHECKBOX_SPECS),
          ('guide', 'Diretrizes', CHECKBOX_GUIDE), ('a11y', 'Acessibilidade', CHECKBOX_A11Y_TAB)])),
+    ('radio', 'Componentes', page(
+        'radio', 'Componentes', 'Radio',
+        'Uma única opção de uma lista curta, com todas à vista para comparar. É o '
+        '<code>&lt;input type="radio"&gt;</code> nativo com o círculo do AL pintado por cima — '
+        'setas, Tab e “marcar um desmarca o outro” vêm do navegador. A pergunta em volta é da aplicação.',
+        [('Estável', True), ('6 estados no Figma', False),
+         (f'{N_RADIO_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', RADIO_OVERVIEW), ('specs', 'Especificações', RADIO_SPECS),
+         ('guide', 'Diretrizes', RADIO_GUIDE), ('a11y', 'Acessibilidade', RADIO_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -4387,6 +4912,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/avatar" data-page="avatar">Avatar</a>
         <a href="#/select" data-page="select">Select</a>
         <a href="#/checkbox" data-page="checkbox">Checkbox</a>
+        <a href="#/radio" data-page="radio">Radio</a>
       </div>
     </div>
   </div>
@@ -5363,6 +5889,145 @@ JS_CHECKBOX = r"""
 """
 
 
+CHROME_RADIO = """
+/* ── miniatura do card do Radio ── */
+.th-rd{display:flex; flex-direction:column; gap:8px; font-size:12.5px; line-height:16px;
+  color:var(--al-text-primary)}
+.th-rd__row{display:flex; align-items:center; gap:8px}
+.th-rd__dot{position:relative; width:16px; height:16px; box-sizing:border-box;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-full);
+  background:var(--al-bg-surface-raised)}
+.th-rd__dot.is-on{border-color:var(--al-border-brand)}
+.th-rd__dot.is-on::after{content:""; position:absolute; inset:3px; border-radius:inherit;
+  background:var(--al-bg-brand)}
+/* a pergunta: fieldset nativo, montado pela aplicacao (regra 6) */
+.rd-stage{display:flex !important; flex-direction:column; align-items:flex-start; gap:8px}
+#rd-stage{display:flex; flex-direction:column; align-items:center; gap:8px; padding-inline:16px}
+.rd-group{margin:0; padding:0; border:0; min-width:0}
+.rd-group legend{padding:0; margin-bottom:12px; font-weight:600}
+.rd-opts{display:flex; flex-direction:column; gap:12px}
+.rd-group--row .rd-opts{flex-direction:row; flex-wrap:wrap; column-gap:32px}
+.rd-formerror{margin:0; color:var(--al-text-danger); font-size:13.5px; line-height:20px}
+.rd-form{display:flex; flex-direction:column; gap:20px; align-items:flex-start}
+.rd-summary{margin:0; padding:12px 16px; border-radius:var(--al-radius-md);
+  background:var(--al-bg-danger-subtle); color:var(--al-text-danger); font-size:13.5px; line-height:20px}
+.rd-actions{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+.rd-ok{margin:0; color:var(--al-text-success); font-size:13.5px}
+"""
+
+JS_RADIO = r"""
+(function () {
+  // ── Radio: a pergunta de verdade da Visao geral (regras 21, 22, 26) ──
+  // O erro e da pergunta: o fieldset leva aria-invalid e aria-describedby.
+  var form = document.getElementById('rd-form');
+  if (form) {
+    var fs = form.querySelector('fieldset');
+    var opcoes = [].slice.call(fs.querySelectorAll('.al-radio__input'));
+    var resumo = document.getElementById('rd-form-erro');
+    var ok = document.getElementById('rd-form-ok');
+    var marcar = function (sim) {
+      if (sim) {
+        fs.setAttribute('aria-invalid', 'true');
+        fs.setAttribute('aria-describedby', 'rd-form-erro');
+      } else {
+        fs.removeAttribute('aria-invalid');
+        fs.removeAttribute('aria-describedby');
+      }
+      resumo.hidden = !sim;
+    };
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      ok.textContent = '';
+      if (!opcoes.some(function (o) { return o.checked; })) {
+        marcar(true);
+        opcoes.filter(function (o) { return !o.disabled; })[0].focus();
+        return;
+      }
+      marcar(false);
+      ok.textContent = 'Assinatura enviada.';
+    });
+    opcoes.forEach(function (o) { o.addEventListener('change', function () { marcar(false); }); });
+  }
+
+  // ── playground ──
+  var stage = document.getElementById('rd-stage');
+  if (!stage) return;
+  var code = document.getElementById('rd-code');
+  var legendInput = document.getElementById('rd-legend');
+  var OPCOES = [['mensal', 'Mensal'], ['anual', 'Anual'], ['empresa', 'Empresarial']];
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function render() {
+    var valor = pick('rdvalue');
+    var estado = pick('rdstate');
+    var theme = pick('rdtheme');
+    var pergunta = (legendInput.value || '').trim() || 'Cobrança';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var erro = estado === 'error';
+    var fsAttrs = 'class="rd-group"' + (erro ? ' aria-invalid="true" aria-describedby="pg-rd-erro"' : '');
+    var html = '<fieldset ' + fsAttrs + '><legend>' + esc(pergunta) + '</legend><div class="rd-opts">';
+    var linhas = [];
+    if (erro) {
+      linhas.push('&lt;!-- o erro e da PERGUNTA: aria-invalid no fieldset, nunca no radio --&gt;');
+      linhas.push('&lt;fieldset aria-invalid="true" aria-describedby="cobranca-erro"&gt;');
+    } else {
+      linhas.push('&lt;fieldset&gt;');
+    }
+    linhas.push('  &lt;legend&gt;' + esc(pergunta) + '&lt;/legend&gt;');
+    OPCOES.forEach(function (o, i) {
+      var marcado = valor === 'first' && i === 0;
+      var off = estado === 'disabled' && i === OPCOES.length - 1;
+      var a = 'class="al-radio__input" type="radio" name="pg-rd" value="' + o[0] + '"'
+        + (marcado ? ' checked' : '') + (off ? ' disabled' : '');
+      html += '<label class="al-radio"><span class="al-radio__control"><input id="pg-rd-' + i + '" ' + a + '>'
+        + '<span class="al-radio__dot" aria-hidden="true"></span></span>'
+        + '<span class="al-radio__label">' + o[1] + '</span></label>';
+      var ia = 'class="al-radio__input" type="radio" name="cobranca" value="' + o[0] + '"'
+        + (marcado ? ' checked' : '') + (off ? ' disabled' : '');
+      linhas.push('  &lt;label class="al-radio"&gt;');
+      linhas.push('    &lt;span class="al-radio__control"&gt;');
+      linhas.push('      &lt;input ' + ia + '&gt;');
+      linhas.push('      &lt;span class="al-radio__dot" aria-hidden="true"&gt;&lt;/span&gt;');
+      linhas.push('    &lt;/span&gt;');
+      linhas.push('    &lt;span class="al-radio__label"&gt;' + o[1] + '&lt;/span&gt;');
+      linhas.push('  &lt;/label&gt;');
+    });
+    html += '</div></fieldset>';
+    linhas.push('&lt;/fieldset&gt;');
+    if (erro) {
+      html += '<p class="rd-formerror" id="pg-rd-erro">Escolha uma forma de cobrança.</p>';
+      linhas.push('&lt;!-- a mensagem e do FORMULARIO, nao do componente --&gt;');
+      linhas.push('&lt;p id="cobranca-erro"&gt;Escolha uma forma de cobrança.&lt;/p&gt;');
+    }
+    stage.innerHTML = html;
+    code.innerHTML = linhas.join('\n');
+  }
+
+  document.querySelectorAll('#rd-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('rd-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+"""
+
+
 
 HTML = (
     '<title>AL Design System</title>\n'
@@ -5373,14 +6038,14 @@ HTML = (
     '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
-    + CHROME_CHECKBOX
+    + CHROME_CHECKBOX + CHROME_RADIO
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n\n<script>'
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
-    + JS_CHECKBOX_DATA + JS_CHECKBOX + '</script>\n'
+    + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w').write(HTML)
@@ -5402,5 +6067,8 @@ print(f'  tokens do Select  : {N_SELECT_TOKENS}  '
 print(f'  tokens do Checkbox: {N_CHECKBOX_TOKENS}  '
       f'({len(CHECKBOX_A11Y["rows"])} combinacoes medidas, {CHECKBOX_A11Y["fails"]} reprovas, '
       f'{sum(CHECKBOX_A11Y["exceptions"].values())} medicoes em excecao declarada)')
+print(f'  tokens do Radio   : {N_RADIO_TOKENS}  '
+      f'({len(RADIO_A11Y["rows"])} combinacoes medidas, {RADIO_A11Y["fails"]} reprovas, '
+      f'{sum(RADIO_A11Y["exceptions"].values())} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
