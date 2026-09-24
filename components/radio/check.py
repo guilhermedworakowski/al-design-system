@@ -35,7 +35,7 @@ CONTRATOS_FORA_DO_CSS = [
     'input nativo type="radio" - nunca <div role="radio">',
     'mesmo `name` em todos os radios da pergunta, dentro de <fieldset> + <legend>',
     'ponto com aria-hidden="true"',
-    'erro: aria-invalid="true" em TODOS os radios da pergunta + aria-describedby no fieldset para a mensagem QUE O FORMULARIO mostra',
+    'erro: aria-invalid="true" + aria-describedby no FIELDSET (nunca no radio) para a mensagem QUE O FORMULARIO mostra',
 ]
 
 

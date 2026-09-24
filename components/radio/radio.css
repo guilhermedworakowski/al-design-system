@@ -42,7 +42,8 @@
  *   (regra 6). O erro tambem e da pergunta - ver ERRO abaixo.
  *
  * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
- *   Marcado le `:checked`; erro le `aria-invalid="true"`; desabilitado le
+ *   Marcado le `:checked`; erro le `aria-invalid="true"` na pergunta (ver ERRO
+ *   abaixo); desabilitado le
  *   `:disabled`. Nao existe `.al-radio--error`: cor e anuncio saem da mesma
  *   fonte e nao divergem.
  *
@@ -81,10 +82,14 @@
  *   ajuste porque o circulo (24) e a entrelinha do rotulo (24) sao o mesmo numero.
  *
  * ERRO - E DA PERGUNTA, E SEM MENSAGEM NO COMPONENTE
- *   O `aria-invalid="true"` que pinta o erro vai em TODOS os radios da pergunta
- *   ao mesmo tempo (regra 21) - e o que faz o erro acender na pergunta inteira.
- *   Quem monta o formulario escreve o erro em texto junto da pergunta e liga o
- *   `fieldset` a ele com `aria-describedby` (regras 22 e 26, WCAG 3.3.1 / 1.4.1).
+ *   O erro e lido de um ANCESTRAL com `aria-invalid="true"` - na pratica o
+ *   `fieldset` da pergunta -, nunca do radio: a ARIA nao preve `aria-invalid`
+ *   num radio sozinho (Carbon, Spectrum, Polaris; regra 26). Consequencia boa:
+ *   marcar o fieldset uma vez acende TODOS os radios da pergunta (regra 21), e
+ *   nao ha como esquecer um. Quem monta o formulario escreve o erro em texto
+ *   junto da pergunta e liga o `fieldset` a ele com `aria-describedby`
+ *   (regras 22 e 26, WCAG 3.3.1 / 1.4.1). Achado da etapa 6: a primeira versao
+ *   lia o erro no proprio radio, copiando o Checkbox.
  *
  * EXCECAO CONSCIENTE - DURACAO LITERAL
  *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
@@ -193,12 +198,13 @@
   --_border-force: var(--al-radio-border-checked);
 }
 
-/* erro so no circulo VAZIO; marcado, ele segue laranja e so o rotulo avisa */
-.al-radio__input[aria-invalid="true"]:not(:checked) {
+/* erro: lido da PERGUNTA (o fieldset), nunca do radio - ver ERRO no cabecalho.
+   So no circulo VAZIO; marcado, ele segue laranja e so o rotulo avisa. */
+[aria-invalid="true"] .al-radio__input:not(:checked) {
   --_border-force: var(--al-radio-border-error);
 }
 
-.al-radio:has(.al-radio__input[aria-invalid="true"]) .al-radio__label {
+[aria-invalid="true"] .al-radio__label {
   color: var(--al-radio-label-error);
 }
 
