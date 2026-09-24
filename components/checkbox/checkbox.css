@@ -1,0 +1,210 @@
+/* AL Design System - Checkbox
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/checkbox/al-checkbox-tokens.css
+ *           + components/icon/al-icon-tokens.css + components/icon/icon.css
+ *
+ * E O <input type="checkbox"> NATIVO
+ *   O controle e do navegador: Espaco marca, o leitor de tela anuncia
+ *   "marcado / nao marcado / misto", o formulario envia o valor. Este arquivo
+ *   so tira a caixa que o navegador desenha (`appearance: none`) e pinta a do
+ *   AL no lugar. Nada de <div role="checkbox"> - primeira regra da ARIA.
+ *
+ * ANATOMIA
+ *   <label class="al-checkbox">
+ *     <span class="al-checkbox__control">
+ *       <input class="al-checkbox__input" type="checkbox" name="news">
+ *       <svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…check…</svg>
+ *       <svg class="al-icon al-checkbox__dash"  viewBox="0 0 24 24" aria-hidden="true" focusable="false">…minus…</svg>
+ *     </span>
+ *     <span class="al-checkbox__label">Receber novidades por e-mail</span>
+ *   </label>
+ *
+ *   O <label> envolve tudo: clicar no texto marca a caixa, e a area clicavel
+ *   passa a ser a linha inteira (WCAG 2.5.8). Nao ha `for`/`id` a sincronizar.
+ *
+ *   O `__control` existe pela mesma razao do Select: <input> nao tem filho, entao
+ *   o glifo nao pode morar dentro dele. Ele e irmao, posicionado por cima, e
+ *   `pointer-events: none` devolve o clique ao input. Os dois glifos sao os
+ *   icones `check` e `minus` da Foundation, inline - nunca um SVG proprio.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Marcado le `:checked`; indeterminado le `:indeterminate` (so existe por JS:
+ *   `input.indeterminate = true`, nao ha atributo HTML); erro le
+ *   `aria-invalid="true"`; desabilitado le `:disabled`. Nao existe
+ *   `.al-checkbox--error`: cor e anuncio saem da mesma fonte e nao divergem.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - mesma tecnica do Select
+ *   Hover e foco escrevem em `--_*-state`; marcado, erro e desabilitado escrevem
+ *   em `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
+ *   todas decididas na etapa 3:
+ *     marcado + hover     -> a caixa laranja nao muda (o force vence o hover)
+ *     marcado + foco      -> anel por cima da caixa laranja
+ *     erro + foco         -> anel padrao (nao ha anel de erro desenhado)
+ *     erro + marcado      -> caixa laranja, rotulo vermelho: o force de erro so
+ *                            vale na caixa VAZIA, que e onde o erro mora
+ *     marcado + disabled  -> caixa cinza, glifo em `icon-disabled`
+ *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ *
+ * O FIGMA TEM UM EIXO SO DE ESTADO
+ *   Sete variantes; as combinacoes acima nao tem variante e sao cobertas pelos
+ *   mesmos tokens. `icon-disabled` e o unico token sem variante no Figma.
+ *
+ * GEOMETRIA DERIVADA
+ *   Caixa 24 = `box-size`. O glifo nao tem token: 18 = caixa - 2 x borda
+ *   - 2 x padding, e a conta esta escrita abaixo em vez de um numero.
+ *   `box-sizing: border-box` poe a borda DENTRO dos 24, entao a caixa nunca
+ *   "pula" quando o estado troca a cor dela.
+ *
+ * ALINHAMENTO AO TOPO
+ *   `align-items: flex-start`, nao `center`: rotulo longo quebra linha e a caixa
+ *   fica na altura da primeira linha (Carbon). Funciona sem ajuste porque a
+ *   caixa (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ *
+ * SEM TEXTO DE APOIO E SEM MENSAGEM DE ERRO - DE PROPOSITO
+ *   Decisao A/D da etapa 1. O erro aqui e so cor (borda + rotulo), e quem monta
+ *   o formulario tem que descreve-lo em texto noutro lugar (WCAG 3.3.1 / 1.4.1)
+ *   e ligar com `aria-describedby`. Regra 19 das regras de uso.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
+ *   de motion. Mesma pendencia do Button, do Icon Button e do Select.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--al-checkbox-gap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ------------------------------------------------------------- caixa */
+.al-checkbox__control {
+  position: relative;
+  display: block;
+  flex: none;
+  inline-size: var(--al-checkbox-box-size);
+  block-size: var(--al-checkbox-box-size);
+}
+
+.al-checkbox__input {
+  --_bg-state: var(--al-checkbox-bg);
+  --_border-state: var(--al-checkbox-border);
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  inline-size: var(--al-checkbox-box-size);
+  block-size: var(--al-checkbox-box-size);
+
+  border: var(--al-checkbox-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-checkbox-radius);
+  background-color: var(--_bg-force, var(--_bg-state));
+  cursor: inherit;
+
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o raio da caixa */
+.al-checkbox__input:focus {
+  outline: none;
+}
+
+/* ------------------------------------------------------------- glifos */
+/* Ficam dentro da borda e do padding: 24 - 2x1 - 2x2 = 18, como no Figma. */
+.al-checkbox__check,
+.al-checkbox__dash {
+  --al-icon-box: calc(var(--al-checkbox-box-size)
+                      - 2 * var(--al-checkbox-border-width)
+                      - 2 * var(--al-checkbox-padding));
+  position: absolute;
+  inset-block-start: calc(var(--al-checkbox-border-width) + var(--al-checkbox-padding));
+  inset-inline-start: calc(var(--al-checkbox-border-width) + var(--al-checkbox-padding));
+  /* devolve o clique ao input que esta embaixo */
+  pointer-events: none;
+  color: var(--al-checkbox-icon);
+  visibility: hidden;
+}
+
+/* check so no marcado que nao e misto; traco so no misto. Um input pode estar
+   `checked` e `indeterminate` ao mesmo tempo - o misto vence, como no nativo. */
+.al-checkbox__input:checked:not(:indeterminate) ~ .al-checkbox__check,
+.al-checkbox__input:indeterminate ~ .al-checkbox__dash {
+  visibility: visible;
+}
+
+/* ------------------------------------------------------------- rotulo */
+.al-checkbox__label {
+  color: var(--al-checkbox-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-checkbox-label-font-size);
+  line-height: var(--al-checkbox-label-line-height);
+  font-weight: var(--al-checkbox-label-font-weight);
+  letter-spacing: var(--al-checkbox-label-tracking);
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover na linha inteira, nao so na caixa: clicar no rotulo tambem marca,
+   entao o rotulo tambem precisa anunciar que e clicavel. Cobre a caixa, que
+   mora dentro do <label>. */
+.al-checkbox:hover .al-checkbox__input:not(:disabled) {
+  --_bg-state: var(--al-checkbox-bg-hover);
+  --_border-state: var(--al-checkbox-border-hover);
+}
+
+.al-checkbox__input:focus-visible {
+  --_border-state: var(--al-checkbox-border-focus);
+  box-shadow: var(--al-checkbox-ring);
+}
+
+/* marcado e indeterminado dividem a caixa - o glifo diferencia */
+.al-checkbox__input:checked,
+.al-checkbox__input:indeterminate {
+  --_bg-force: var(--al-checkbox-bg-checked);
+  --_border-force: var(--al-checkbox-border-checked);
+}
+
+/* erro so na caixa VAZIA; marcada, ela segue laranja e so o rotulo avisa */
+.al-checkbox__input[aria-invalid="true"]:not(:checked):not(:indeterminate) {
+  --_border-force: var(--al-checkbox-border-error);
+}
+
+.al-checkbox:has(.al-checkbox__input[aria-invalid="true"]) .al-checkbox__label {
+  color: var(--al-checkbox-label-error);
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-checkbox__input:disabled {
+  --_bg-force: var(--al-checkbox-bg-disabled);
+  --_border-force: var(--al-checkbox-border-disabled);
+}
+
+.al-checkbox__input:disabled ~ .al-checkbox__check,
+.al-checkbox__input:disabled ~ .al-checkbox__dash {
+  color: var(--al-checkbox-icon-disabled);
+}
+
+.al-checkbox:has(.al-checkbox__input:disabled) {
+  cursor: not-allowed;
+}
+
+.al-checkbox:has(.al-checkbox__input:disabled) .al-checkbox__label {
+  color: var(--al-checkbox-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-checkbox__input {
+    transition: none;
+  }
+}
