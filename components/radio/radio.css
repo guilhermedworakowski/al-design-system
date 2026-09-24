@@ -1,0 +1,228 @@
+/* AL Design System - Radio
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/radio/al-radio-tokens.css
+ *
+ * E O <input type="radio"> NATIVO
+ *   O controle e do navegador: as setas andam entre as opcoes e marcam, o Tab
+ *   entra na pergunta uma vez so, marcar um desmarca o outro, o leitor de tela
+ *   anuncia "2 de 3", o formulario envia o valor. Tudo isso depende de um so
+ *   requisito: os radios da mesma pergunta dividem o mesmo `name`. Este arquivo
+ *   so tira o circulo que o navegador desenha (`appearance: none`) e pinta o do
+ *   AL no lugar. Nada de <div role="radio"> - primeira regra da ARIA.
+ *
+ * ANATOMIA - UM RADIO
+ *   <label class="al-radio">
+ *     <span class="al-radio__control">
+ *       <input class="al-radio__input" type="radio" name="plano" value="mensal">
+ *       <span class="al-radio__dot" aria-hidden="true"></span>
+ *     </span>
+ *     <span class="al-radio__label">Mensal</span>
+ *   </label>
+ *
+ *   O <label> envolve tudo: clicar no texto marca, e a area clicavel passa a
+ *   ser a linha inteira (WCAG 2.5.8). Nao ha `for`/`id` a sincronizar.
+ *
+ *   O `__control` existe pela mesma razao do Checkbox: <input> nao tem filho,
+ *   entao o ponto nao pode morar dentro dele. Ele e irmao, posicionado por
+ *   cima, e `pointer-events: none` devolve o clique ao input. E um <span>, nao
+ *   pseudo-elemento do input: `::before` em <input> nao e garantido em todo
+ *   navegador.
+ *
+ * A PERGUNTA E DA APLICACAO - NAO HA COMPONENTE DE GRUPO
+ *   Decisao de Gui na etapa 1. Quem monta o formulario escreve:
+ *
+ *   <fieldset>
+ *     <legend>Cobranca</legend>
+ *     <label class="al-radio">…Mensal…</label>
+ *     <label class="al-radio">…Anual…</label>
+ *   </fieldset>
+ *
+ *   Sem `legend`, o leitor anuncia "Mensal, botao de opcao" sem a pergunta
+ *   (regra 6). O erro tambem e da pergunta - ver ERRO abaixo.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Marcado le `:checked`; erro le `aria-invalid="true"`; desabilitado le
+ *   `:disabled`. Nao existe `.al-radio--error`: cor e anuncio saem da mesma
+ *   fonte e nao divergem.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - mesma tecnica do Checkbox
+ *   Hover e foco escrevem em `--_*-state`; marcado, erro e desabilitado escrevem
+ *   em `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
+ *   todas decididas na etapa 3:
+ *     marcado + hover     -> nada muda: o marcado forca `bg` e `border-checked`,
+ *                            e o hover perde. Radio marcado nao desmarca com
+ *                            clique - o hover prometeria uma acao (regra 15)
+ *     marcado + foco      -> anel por cima do anel laranja
+ *     erro + foco         -> anel padrao (nao ha anel de erro desenhado)
+ *     erro + marcado      -> borda e ponto laranja, rotulo vermelho: o force de
+ *                            erro so vale no circulo VAZIO, que e onde o erro mora
+ *     marcado + disabled  -> circulo cinza, ponto em `dot-disabled`
+ *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ *
+ * MARCADO NAO PINTA O FUNDO - A DIFERENCA PARA O CHECKBOX
+ *   O marcado forca o fundo de volta para `bg`: o anel branco entre a borda
+ *   laranja e o ponto E o fundo. Sem esse force, o hover pintaria o anel de
+ *   cinza no radio marcado.
+ *
+ * O FIGMA TEM UM EIXO SO DE ESTADO
+ *   Seis variantes; as combinacoes acima nao tem variante e sao cobertas pelos
+ *   mesmos tokens. `dot-disabled` e o unico token sem variante no Figma.
+ *
+ * GEOMETRIA DERIVADA
+ *   Circulo 24 = `box-size`. O ponto nao tem token: 14 = circulo - 2 x borda
+ *   - 2 x padding, e a conta esta escrita abaixo em vez de um numero.
+ *   `box-sizing: border-box` poe a borda DENTRO dos 24, entao o circulo nunca
+ *   "pula" quando o estado troca a cor dela.
+ *
+ * ALINHAMENTO AO TOPO
+ *   `align-items: flex-start`, nao `center`: rotulo longo quebra linha e o
+ *   circulo fica na altura da primeira linha (Carbon, regra 13). Funciona sem
+ *   ajuste porque o circulo (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ *
+ * ERRO - E DA PERGUNTA, E SEM MENSAGEM NO COMPONENTE
+ *   O `aria-invalid="true"` que pinta o erro vai em TODOS os radios da pergunta
+ *   ao mesmo tempo (regra 21) - e o que faz o erro acender na pergunta inteira.
+ *   Quem monta o formulario escreve o erro em texto junto da pergunta e liga o
+ *   `fieldset` a ele com `aria-describedby` (regras 22 e 26, WCAG 3.3.1 / 1.4.1).
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
+ *   de motion. Mesma pendencia do Button, do Icon Button, do Select e do Checkbox.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-radio {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--al-radio-gap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ------------------------------------------------------------- circulo */
+.al-radio__control {
+  position: relative;
+  display: block;
+  flex: none;
+  inline-size: var(--al-radio-box-size);
+  block-size: var(--al-radio-box-size);
+}
+
+.al-radio__input {
+  --_bg-state: var(--al-radio-bg);
+  --_border-state: var(--al-radio-border);
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  inline-size: var(--al-radio-box-size);
+  block-size: var(--al-radio-box-size);
+
+  border: var(--al-radio-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-radio-radius);
+  background-color: var(--_bg-force, var(--_bg-state));
+  cursor: inherit;
+
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o circulo */
+.al-radio__input:focus {
+  outline: none;
+}
+
+/* --------------------------------------------------------------- ponto */
+/* Fica dentro da borda e do padding: 24 - 2x1 - 2x4 = 14, como no Figma. */
+.al-radio__dot {
+  position: absolute;
+  inset-block-start: calc(var(--al-radio-border-width) + var(--al-radio-padding));
+  inset-inline-start: calc(var(--al-radio-border-width) + var(--al-radio-padding));
+  inline-size: calc(var(--al-radio-box-size)
+                    - 2 * var(--al-radio-border-width)
+                    - 2 * var(--al-radio-padding));
+  block-size: calc(var(--al-radio-box-size)
+                   - 2 * var(--al-radio-border-width)
+                   - 2 * var(--al-radio-padding));
+  border-radius: var(--al-radio-radius);
+  background-color: var(--al-radio-dot);
+  /* devolve o clique ao input que esta embaixo */
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.al-radio__input:checked ~ .al-radio__dot {
+  visibility: visible;
+}
+
+/* ------------------------------------------------------------- rotulo */
+.al-radio__label {
+  color: var(--al-radio-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-radio-label-font-size);
+  line-height: var(--al-radio-label-line-height);
+  font-weight: var(--al-radio-label-font-weight);
+  letter-spacing: var(--al-radio-label-tracking);
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover na linha inteira, nao so no circulo: clicar no rotulo tambem marca,
+   entao o rotulo tambem precisa anunciar que e clicavel. No marcado o force
+   vence, e o hover nao aparece. */
+.al-radio:hover .al-radio__input:not(:disabled) {
+  --_bg-state: var(--al-radio-bg-hover);
+  --_border-state: var(--al-radio-border-hover);
+}
+
+.al-radio__input:focus-visible {
+  --_border-state: var(--al-radio-border-focus);
+  box-shadow: var(--al-radio-ring);
+}
+
+/* marcado: borda laranja, e o fundo forcado de volta ao `bg` - o anel branco */
+.al-radio__input:checked {
+  --_bg-force: var(--al-radio-bg);
+  --_border-force: var(--al-radio-border-checked);
+}
+
+/* erro so no circulo VAZIO; marcado, ele segue laranja e so o rotulo avisa */
+.al-radio__input[aria-invalid="true"]:not(:checked) {
+  --_border-force: var(--al-radio-border-error);
+}
+
+.al-radio:has(.al-radio__input[aria-invalid="true"]) .al-radio__label {
+  color: var(--al-radio-label-error);
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-radio__input:disabled {
+  --_bg-force: var(--al-radio-bg-disabled);
+  --_border-force: var(--al-radio-border-disabled);
+}
+
+.al-radio__input:disabled ~ .al-radio__dot {
+  background-color: var(--al-radio-dot-disabled);
+}
+
+.al-radio:has(.al-radio__input:disabled) {
+  cursor: not-allowed;
+}
+
+.al-radio:has(.al-radio__input:disabled) .al-radio__label {
+  color: var(--al-radio-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-radio__input {
+    transition: none;
+  }
+}

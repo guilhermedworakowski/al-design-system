@@ -1,0 +1,49 @@
+/* AL Design System - tokens do Radio
+ * GERADO por components/radio/tokens.py. Nao editar a mao.
+ *
+ * Sem bloco de tema: cada token aponta para um semantico, e o tema troca
+ * no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Ponto: 14px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo do circulo - o marcado continua em `bg`: e o anel branco */
+  --al-radio-bg: var(--al-bg-surface-raised);
+  --al-radio-bg-hover: var(--al-bg-hover);
+  --al-radio-bg-disabled: var(--al-bg-disabled);
+
+  /* borda do circulo */
+  --al-radio-border: var(--al-border-default);
+  --al-radio-border-hover: var(--al-border-strong);
+  --al-radio-border-focus: var(--al-border-strong);
+  --al-radio-border-checked: var(--al-border-brand);
+  --al-radio-border-error: var(--al-border-danger);
+  --al-radio-border-disabled: var(--al-border-default);
+
+  /* ponto do marcado */
+  --al-radio-dot: var(--al-bg-brand);
+  --al-radio-dot-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora do circulo, sobre a tela */
+  --al-radio-label: var(--al-text-primary);
+  --al-radio-label-error: var(--al-text-danger);
+  --al-radio-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-radio-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-radio-box-size: var(--al-icon-size-24);
+  --al-radio-padding: var(--al-space-4);
+  --al-radio-gap: var(--al-space-8);
+  --al-radio-radius: var(--al-radius-full);
+  --al-radio-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-radio-label-font-size: var(--al-font-size-md);
+  --al-radio-label-line-height: var(--al-line-height-md);
+  --al-radio-label-font-weight: 400;
+  --al-radio-label-tracking: 0em;
+}
