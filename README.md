@@ -3,7 +3,7 @@
 Design system open source, do Figma ao código. Construído em público, uma camada de cada vez.
 
 - **Licença:** MIT
-- **Versão:** `0.8.0`
+- **Versão:** `0.9.0`
 - **Figma:** biblioteca privada por enquanto — primitivas, semânticos e tokens de componente documentados abaixo
 
 ## Estado atual
@@ -24,6 +24,8 @@ O **Select** abre o Tier 2 (formulário). É o `<select>` nativo: a lista aberta
 
 O **Checkbox** é o segundo do Tier 2. É o `<input type="checkbox">` nativo com a caixa do AL pintada por cima, e o estado misto (indeterminado) só existe por JavaScript — não há atributo HTML. O Figma tem um eixo só de estado; as combinações que ele não desenha (marcado + foco, erro + marcado, marcado + desabilitado) são pintadas pelo código com os mesmos tokens. O componente não tem mensagem de erro de propósito: o formulário é obrigado a descrever o erro em texto, porque borda e rótulo vermelhos são só cor (WCAG 3.3.1 e 1.4.1). O portão dele mede contra três fundos — tela, faixa de seção e card — e mostra que, marcada, quem desenha a caixa é o preenchimento, não a borda.
 
+O **Radio** é o terceiro do Tier 2. É o `<input type="radio">` nativo com o círculo do AL pintado por cima: setas, Tab entrando na pergunta uma vez só e "marcar um desmarca o outro" vêm do navegador. A diferença estrutural para o Checkbox é que o marcado **não pinta o fundo** — é borda laranja + ponto de 14px, com o anel branco entre os dois —, então saem `bg-checked` e o ícone, e entram `dot` e `dot-disabled`. Não existe componente de grupo, de propósito: a pergunta é `<fieldset>` + `<legend>` nativos, montados pela aplicação. E o **erro é da pergunta, não da opção**, como no Primer, no Carbon, no Spectrum e no Polaris: o `radio.css` lê `aria-invalid` no `fieldset`, nunca no radio, e marcar a pergunta uma vez acende todas as opções. Mesmas duas exceções declaradas do Checkbox.
+
 Todo input do Tier 2 tem **um tamanho só**, por regra.
 
 | | |
@@ -31,7 +33,7 @@ Todo input do Tier 2 tem **um tamanho só**, por regra.
 | Primitivas de cor | 66 (6 famílias × 11 degraus) |
 | Tokens semânticos | 49 × 2 temas |
 | Pares de contraste validados | 80 — 77 em AA pleno, 3 exceções de marca nomeadas, 0 abaixo do piso |
-| Componentes prontos | 6 (Button, Icon Button, Tag, Avatar, Select, Checkbox) |
+| Componentes prontos | 7 (Button, Icon Button, Tag, Avatar, Select, Checkbox, Radio) |
 | Ícones | 70 — Lucide, grid 24, sem escala fixa |
 | Tokens do Button | 48 — 40 alias, 8 transparentes, 0 valores soltos |
 | Tokens do Icon Button | 42 — 34 alias, 8 transparentes, 0 valores soltos |
@@ -39,6 +41,7 @@ Todo input do Tier 2 tem **um tamanho só**, por regra.
 | Tokens do Avatar | 13 — 13 alias, 0 transparentes, 0 valores soltos |
 | Tokens do Select | 31 — 31 alias, 0 transparentes, 0 valores soltos |
 | Tokens do Checkbox | 22 — 22 alias, 0 transparentes, 0 valores soltos |
+| Tokens do Radio | 21 — 21 alias, 0 transparentes, 0 valores soltos |
 
 O plano de evolução completo — divisão de trabalho, pipeline por componente e roadmap em tiers — está no [playbook](https://claude.ai/code/artifact/18a0c1ed-949c-4c8d-8906-93c21ed560a3).
 
@@ -98,6 +101,13 @@ components/checkbox/
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
   qa.py          # gera site/checkbox-qa.html, a visualização da etapa 6
 
+components/radio/
+  tokens.py      # camada de alias do Radio + portão de alias + portão de contraste, gera tokens.json e o CSS
+  radio.css      # o componente, escrito à mão
+  check.py       # portão do CSS: recusa valor literal e token órfão em radio.css
+  a11y.py        # QA de acessibilidade + contrato de marcação da pergunta, gera a11y.json
+  qa.py          # gera site/radio-qa.html, a visualização da etapa 6
+
 site/
   site.py        # gera index.html: o site — Foundation + componentes, navegação e playground
 ```
@@ -131,6 +141,8 @@ python3 components/select/tokens.py  # tokens do Select + portão de alias + por
 python3 components/select/check.py   # portão do CSS do Select + token órfão
 python3 components/checkbox/tokens.py  # tokens do Checkbox + portão de alias + portão de contraste + CSS
 python3 components/checkbox/check.py   # portão do CSS do Checkbox + token órfão
+python3 components/radio/tokens.py  # tokens do Radio + portão de alias + portão de contraste + CSS
+python3 components/radio/check.py   # portão do CSS do Radio + token órfão
 python3 site/site.py               # o site: Foundation + componentes
 python3 components/icon/a11y.py      # QA do Icon — depois do site, ver abaixo
 python3 components/icon-button/a11y.py    # QA do Icon Button — idem
@@ -138,6 +150,7 @@ python3 components/tag/a11y.py       # QA do Tag — idem
 python3 components/avatar/a11y.py    # QA do Avatar — idem
 python3 components/select/a11y.py    # QA do Select — idem
 python3 components/checkbox/a11y.py  # QA do Checkbox — idem
+python3 components/radio/a11y.py     # QA do Radio — idem
 python3 site/site.py               # de novo, para o site ler os a11y.json atualizados
 ```
 
@@ -155,7 +168,8 @@ tela; o do Avatar cobra que o invólucro seja `aria-hidden` OU `role="img"` com 
 sempre decorativo; o do Select cobra `<label for>` ligado ao campo, `aria-describedby` que existe
 no erro e o placeholder como `<option value="">` selecionada; o do Checkbox cobra o input nativo
 dentro do `<label>`, rótulo visível sem `aria-label`, glifos decorativos e nenhum atributo
-`indeterminate` na marcação. Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar
+`indeterminate` na marcação; o do Radio cobra a pergunta — todo `name` com duas opções ou mais,
+dentro de um só `<fieldset>` com `<legend>` visível — e o erro no `fieldset`, nunca no radio. Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar
 a aba de acessibilidade. As duas gerações convergem numa passada; não há loop.
 
 ## Os portões
@@ -172,9 +186,10 @@ Validação é parte do build, não checagem opcional. Cada camada tem o seu, e 
 | Marcação · Icon | `components/icon/a11y.py` | `.al-icon` no HTML emitido sem contrato de acessibilidade, ou com `aria-hidden` junto de um rótulo. |
 | Marcação · Tag | `components/tag/a11y.py` | `.al-tag` no HTML emitido que seja `<button>`, tenha `role="button"` ou `tabindex`, ou cujo X esteja sem `type="button"`, sem `aria-label`, ou com um `aria-label` que não contenha o rótulo da tag. |
 | Marcação · Icon Button | `components/icon-button/a11y.py` | `.al-icon-btn` no HTML emitido sem `aria-label`, com `aria-hidden` no próprio botão, com `aria-busy` solto sem `aria-disabled`, ou usando o atributo `disabled`. Esse contrato não vive no CSS, então o portão de literal não alcança — é aqui que ele é cobrado. |
-| Token órfão | `components/select/check.py`, `components/checkbox/check.py` | Token declarado no `tokens.py` que o CSS do componente nunca consome — ou o CSS esqueceu de aplicar, ou o token não devia ter nascido. |
+| Token órfão | `components/select/check.py`, `components/checkbox/check.py`, `components/radio/check.py` | Token declarado no `tokens.py` que o CSS do componente nunca consome — ou o CSS esqueceu de aplicar, ou o token não devia ter nascido. |
 | Marcação · Select | `components/select/a11y.py` | Campo sem `<label for>` ligado ao `id`, erro sem `aria-describedby` que exista, placeholder que não seja a primeira `<option value="">` selecionada, seta sem contrato decorativo, ou `aria-label` havendo rótulo visível. |
 | Marcação · Checkbox | `components/checkbox/a11y.py` | Checkbox fora de `<label class="al-checkbox">` ou sem `type="checkbox"`, `role="checkbox"` em qualquer tag, rótulo vazio ou `aria-label`, erro sem `aria-describedby` que exista, glifo sem contrato decorativo, ou `indeterminate` escrito como atributo. |
+| Marcação · Radio | `components/radio/a11y.py` | Radio fora de `<label class="al-radio">` ou sem `type="radio"`, `role="radio"` em qualquer tag, rótulo vazio ou `aria-label`, radio sem `name` ou sozinho no seu `name`, pergunta fora de `<fieldset>` ou sem `<legend>`, `aria-invalid` no radio em vez do `fieldset`, erro sem `aria-describedby` que exista, ou ponto sem `aria-hidden`. |
 | Marcação · Avatar | `components/avatar/a11y.py` | `.al-avatar` no HTML emitido com `aria-hidden` e `role="img"` juntos, ou nenhum dos dois; `role="img"` sem `aria-label`; a foto interna sem `alt=""`; ou o ícone interno sem `aria-hidden`/`focusable="false"`. |
 
 ## Arquitetura de tokens
@@ -191,7 +206,7 @@ Em CSS, a camada de componente não tem bloco de tema — e não precisa. O tema
 
 **Nomenclatura:** o nome do token separa níveis com hífen (`bg-brand`, `button-primary-bg-hover`). No Figma, a mesma coisa vive em pasta dentro da collection do componente (`primary/bg-hover` na collection `4. Button`) — a barra é o mecanismo de agrupamento do painel de variáveis, não parte do nome do token.
 
-**Nem todo token de código vira variável no Figma.** O Icon Button tem 42 tokens e 28 variáveis na collection `5. Icon Button`, e a diferença é deliberada. As oito tintas saem da collection `3. Icon ink`, que resolve por **modo** — um mecanismo que o CSS não tem, e por isso lá cada tinta precisa ser uma custom property concreta. Os quatro anéis de foco são *effect styles*, porque sombra não pode ser variável. E os dois `icon-size` apontam direto para a Foundation. O Button segue a mesma regra: 48 tokens, 40 variáveis. O Avatar tem 13 tokens e 10 variáveis na collection `7. Avatar` — a diferença são as três fontes (`Label/sm`, `Heading/xs`, `Heading/sm`), que são estilos de texto e não variáveis, mesma regra do Tag. O Select tem 31 tokens e 25 variáveis na collection `8. Select`; o Checkbox, 22 tokens e 20 variáveis na collection `9. Checkbox` — nos dois a diferença são as fontes e os anéis de foco, que são estilos e não variáveis.
+**Nem todo token de código vira variável no Figma.** O Icon Button tem 42 tokens e 28 variáveis na collection `5. Icon Button`, e a diferença é deliberada. As oito tintas saem da collection `3. Icon ink`, que resolve por **modo** — um mecanismo que o CSS não tem, e por isso lá cada tinta precisa ser uma custom property concreta. Os quatro anéis de foco são *effect styles*, porque sombra não pode ser variável. E os dois `icon-size` apontam direto para a Foundation. O Button segue a mesma regra: 48 tokens, 40 variáveis. O Avatar tem 13 tokens e 10 variáveis na collection `7. Avatar` — a diferença são as três fontes (`Label/sm`, `Heading/xs`, `Heading/sm`), que são estilos de texto e não variáveis, mesma regra do Tag. O Select tem 31 tokens e 25 variáveis na collection `8. Select`; o Checkbox, 22 tokens e 20 variáveis na collection `9. Checkbox`; o Radio, 21 tokens e 19 variáveis na collection `10. Radio` — nos três a diferença são as fontes e os anéis de foco, que são estilos e não variáveis.
 
 **Escala de ícone:** `icon-size` tem os degraus 16, 20, 24 e 32, nomeados pelo próprio valor — como o espaçamento, e pelo mesmo motivo: nome de camiseta obriga a renomear quando um degrau entra no meio. A escala nomeia os tamanhos recorrentes; ela não limita o componente `Icon`, que é vetorizado e vale em qualquer tamanho. O portão de CSS literal valida contra ela, então um tamanho novo dentro do DS é uma decisão consciente de uma linha.
 

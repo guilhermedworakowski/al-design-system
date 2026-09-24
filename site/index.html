@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>AL Design System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -6,7 +7,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.8.0 - MIT
+ * v0.9.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -734,6 +735,45 @@
   --al-checkbox-label-line-height: var(--al-line-height-md);
   --al-checkbox-label-font-weight: 400;
   --al-checkbox-label-tracking: 0em;
+
+
+  /* fundo do circulo - o marcado continua em `bg`: e o anel branco */
+  --al-radio-bg: var(--al-bg-surface-raised);
+  --al-radio-bg-hover: var(--al-bg-hover);
+  --al-radio-bg-disabled: var(--al-bg-disabled);
+
+  /* borda do circulo */
+  --al-radio-border: var(--al-border-default);
+  --al-radio-border-hover: var(--al-border-strong);
+  --al-radio-border-focus: var(--al-border-strong);
+  --al-radio-border-checked: var(--al-border-brand);
+  --al-radio-border-error: var(--al-border-danger);
+  --al-radio-border-disabled: var(--al-border-default);
+
+  /* ponto do marcado */
+  --al-radio-dot: var(--al-bg-brand);
+  --al-radio-dot-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora do circulo, sobre a tela */
+  --al-radio-label: var(--al-text-primary);
+  --al-radio-label-error: var(--al-text-danger);
+  --al-radio-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-radio-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-radio-box-size: var(--al-icon-size-24);
+  --al-radio-padding: var(--al-space-4);
+  --al-radio-gap: var(--al-space-8);
+  --al-radio-radius: var(--al-radius-full);
+  --al-radio-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-radio-label-font-size: var(--al-font-size-md);
+  --al-radio-label-line-height: var(--al-line-height-md);
+  --al-radio-label-font-weight: 400;
+  --al-radio-label-tracking: 0em;
 }
 
 /* AL Design System - tokens do Button
@@ -2703,6 +2743,291 @@
   }
 }
 
+/* AL Design System - tokens do Radio
+ * GERADO por components/radio/tokens.py. Nao editar a mao.
+ *
+ * Sem bloco de tema: cada token aponta para um semantico, e o tema troca
+ * no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Ponto: 14px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo do circulo - o marcado continua em `bg`: e o anel branco */
+  --al-radio-bg: var(--al-bg-surface-raised);
+  --al-radio-bg-hover: var(--al-bg-hover);
+  --al-radio-bg-disabled: var(--al-bg-disabled);
+
+  /* borda do circulo */
+  --al-radio-border: var(--al-border-default);
+  --al-radio-border-hover: var(--al-border-strong);
+  --al-radio-border-focus: var(--al-border-strong);
+  --al-radio-border-checked: var(--al-border-brand);
+  --al-radio-border-error: var(--al-border-danger);
+  --al-radio-border-disabled: var(--al-border-default);
+
+  /* ponto do marcado */
+  --al-radio-dot: var(--al-bg-brand);
+  --al-radio-dot-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora do circulo, sobre a tela */
+  --al-radio-label: var(--al-text-primary);
+  --al-radio-label-error: var(--al-text-danger);
+  --al-radio-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-radio-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-radio-box-size: var(--al-icon-size-24);
+  --al-radio-padding: var(--al-space-4);
+  --al-radio-gap: var(--al-space-8);
+  --al-radio-radius: var(--al-radius-full);
+  --al-radio-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-radio-label-font-size: var(--al-font-size-md);
+  --al-radio-label-line-height: var(--al-line-height-md);
+  --al-radio-label-font-weight: 400;
+  --al-radio-label-tracking: 0em;
+}
+
+/* AL Design System - Radio
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/radio/al-radio-tokens.css
+ *
+ * E O <input type="radio"> NATIVO
+ *   O controle e do navegador: as setas andam entre as opcoes e marcam, o Tab
+ *   entra na pergunta uma vez so, marcar um desmarca o outro, o leitor de tela
+ *   anuncia "2 de 3", o formulario envia o valor. Tudo isso depende de um so
+ *   requisito: os radios da mesma pergunta dividem o mesmo `name`. Este arquivo
+ *   so tira o circulo que o navegador desenha (`appearance: none`) e pinta o do
+ *   AL no lugar. Nada de <div role="radio"> - primeira regra da ARIA.
+ *
+ * ANATOMIA - UM RADIO
+ *   <label class="al-radio">
+ *     <span class="al-radio__control">
+ *       <input class="al-radio__input" type="radio" name="plano" value="mensal">
+ *       <span class="al-radio__dot" aria-hidden="true"></span>
+ *     </span>
+ *     <span class="al-radio__label">Mensal</span>
+ *   </label>
+ *
+ *   O <label> envolve tudo: clicar no texto marca, e a area clicavel passa a
+ *   ser a linha inteira (WCAG 2.5.8). Nao ha `for`/`id` a sincronizar.
+ *
+ *   O `__control` existe pela mesma razao do Checkbox: <input> nao tem filho,
+ *   entao o ponto nao pode morar dentro dele. Ele e irmao, posicionado por
+ *   cima, e `pointer-events: none` devolve o clique ao input. E um <span>, nao
+ *   pseudo-elemento do input: `::before` em <input> nao e garantido em todo
+ *   navegador.
+ *
+ * A PERGUNTA E DA APLICACAO - NAO HA COMPONENTE DE GRUPO
+ *   Decisao de Gui na etapa 1. Quem monta o formulario escreve:
+ *
+ *   <fieldset>
+ *     <legend>Cobranca</legend>
+ *     <label class="al-radio">…Mensal…</label>
+ *     <label class="al-radio">…Anual…</label>
+ *   </fieldset>
+ *
+ *   Sem `legend`, o leitor anuncia "Mensal, botao de opcao" sem a pergunta
+ *   (regra 6). O erro tambem e da pergunta - ver ERRO abaixo.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Marcado le `:checked`; erro le `aria-invalid="true"` na pergunta (ver ERRO
+ *   abaixo); desabilitado le
+ *   `:disabled`. Nao existe `.al-radio--error`: cor e anuncio saem da mesma
+ *   fonte e nao divergem.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - mesma tecnica do Checkbox
+ *   Hover e foco escrevem em `--_*-state`; marcado, erro e desabilitado escrevem
+ *   em `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
+ *   todas decididas na etapa 3:
+ *     marcado + hover     -> nada muda: o marcado forca `bg` e `border-checked`,
+ *                            e o hover perde. Radio marcado nao desmarca com
+ *                            clique - o hover prometeria uma acao (regra 15)
+ *     marcado + foco      -> anel por cima do anel laranja
+ *     erro + foco         -> anel padrao (nao ha anel de erro desenhado)
+ *     erro + marcado      -> borda e ponto laranja, rotulo vermelho: o force de
+ *                            erro so vale no circulo VAZIO, que e onde o erro mora
+ *     marcado + disabled  -> circulo cinza, ponto em `dot-disabled`
+ *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ *
+ * MARCADO NAO PINTA O FUNDO - A DIFERENCA PARA O CHECKBOX
+ *   O marcado forca o fundo de volta para `bg`: o anel branco entre a borda
+ *   laranja e o ponto E o fundo. Sem esse force, o hover pintaria o anel de
+ *   cinza no radio marcado.
+ *
+ * O FIGMA TEM UM EIXO SO DE ESTADO
+ *   Seis variantes; as combinacoes acima nao tem variante e sao cobertas pelos
+ *   mesmos tokens. `dot-disabled` e o unico token sem variante no Figma.
+ *
+ * GEOMETRIA DERIVADA
+ *   Circulo 24 = `box-size`. O ponto nao tem token: 14 = circulo - 2 x borda
+ *   - 2 x padding, e a conta esta escrita abaixo em vez de um numero.
+ *   `box-sizing: border-box` poe a borda DENTRO dos 24, entao o circulo nunca
+ *   "pula" quando o estado troca a cor dela.
+ *
+ * ALINHAMENTO AO TOPO
+ *   `align-items: flex-start`, nao `center`: rotulo longo quebra linha e o
+ *   circulo fica na altura da primeira linha (Carbon, regra 13). Funciona sem
+ *   ajuste porque o circulo (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ *
+ * ERRO - E DA PERGUNTA, E SEM MENSAGEM NO COMPONENTE
+ *   O erro e lido de um ANCESTRAL com `aria-invalid="true"` - na pratica o
+ *   `fieldset` da pergunta -, nunca do radio: a ARIA nao preve `aria-invalid`
+ *   num radio sozinho (Carbon, Spectrum, Polaris; regra 26). Consequencia boa:
+ *   marcar o fieldset uma vez acende TODOS os radios da pergunta (regra 21), e
+ *   nao ha como esquecer um. Quem monta o formulario escreve o erro em texto
+ *   junto da pergunta e liga o `fieldset` a ele com `aria-describedby`
+ *   (regras 22 e 26, WCAG 3.3.1 / 1.4.1). Achado da etapa 6: a primeira versao
+ *   lia o erro no proprio radio, copiando o Checkbox.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
+ *   de motion. Mesma pendencia do Button, do Icon Button, do Select e do Checkbox.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-radio {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--al-radio-gap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ------------------------------------------------------------- circulo */
+.al-radio__control {
+  position: relative;
+  display: block;
+  flex: none;
+  inline-size: var(--al-radio-box-size);
+  block-size: var(--al-radio-box-size);
+}
+
+.al-radio__input {
+  --_bg-state: var(--al-radio-bg);
+  --_border-state: var(--al-radio-border);
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  inline-size: var(--al-radio-box-size);
+  block-size: var(--al-radio-box-size);
+
+  border: var(--al-radio-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-radio-radius);
+  background-color: var(--_bg-force, var(--_bg-state));
+  cursor: inherit;
+
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o circulo */
+.al-radio__input:focus {
+  outline: none;
+}
+
+/* --------------------------------------------------------------- ponto */
+/* Fica dentro da borda e do padding: 24 - 2x1 - 2x4 = 14, como no Figma. */
+.al-radio__dot {
+  position: absolute;
+  inset-block-start: calc(var(--al-radio-border-width) + var(--al-radio-padding));
+  inset-inline-start: calc(var(--al-radio-border-width) + var(--al-radio-padding));
+  inline-size: calc(var(--al-radio-box-size)
+                    - 2 * var(--al-radio-border-width)
+                    - 2 * var(--al-radio-padding));
+  block-size: calc(var(--al-radio-box-size)
+                   - 2 * var(--al-radio-border-width)
+                   - 2 * var(--al-radio-padding));
+  border-radius: var(--al-radio-radius);
+  background-color: var(--al-radio-dot);
+  /* devolve o clique ao input que esta embaixo */
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.al-radio__input:checked ~ .al-radio__dot {
+  visibility: visible;
+}
+
+/* ------------------------------------------------------------- rotulo */
+.al-radio__label {
+  color: var(--al-radio-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-radio-label-font-size);
+  line-height: var(--al-radio-label-line-height);
+  font-weight: var(--al-radio-label-font-weight);
+  letter-spacing: var(--al-radio-label-tracking);
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover na linha inteira, nao so no circulo: clicar no rotulo tambem marca,
+   entao o rotulo tambem precisa anunciar que e clicavel. No marcado o force
+   vence, e o hover nao aparece. */
+.al-radio:hover .al-radio__input:not(:disabled) {
+  --_bg-state: var(--al-radio-bg-hover);
+  --_border-state: var(--al-radio-border-hover);
+}
+
+.al-radio__input:focus-visible {
+  --_border-state: var(--al-radio-border-focus);
+  box-shadow: var(--al-radio-ring);
+}
+
+/* marcado: borda laranja, e o fundo forcado de volta ao `bg` - o anel branco */
+.al-radio__input:checked {
+  --_bg-force: var(--al-radio-bg);
+  --_border-force: var(--al-radio-border-checked);
+}
+
+/* erro: lido da PERGUNTA (o fieldset), nunca do radio - ver ERRO no cabecalho.
+   So no circulo VAZIO; marcado, ele segue laranja e so o rotulo avisa. */
+[aria-invalid="true"] .al-radio__input:not(:checked) {
+  --_border-force: var(--al-radio-border-error);
+}
+
+[aria-invalid="true"] .al-radio__label {
+  color: var(--al-radio-label-error);
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-radio__input:disabled {
+  --_bg-force: var(--al-radio-bg-disabled);
+  --_border-force: var(--al-radio-border-disabled);
+}
+
+.al-radio__input:disabled ~ .al-radio__dot {
+  background-color: var(--al-radio-dot-disabled);
+}
+
+.al-radio:has(.al-radio__input:disabled) {
+  cursor: not-allowed;
+}
+
+.al-radio:has(.al-radio__input:disabled) .al-radio__label {
+  color: var(--al-radio-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-radio__input {
+    transition: none;
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -3223,13 +3548,37 @@ footer code{background:none; padding:0}
 .cbx-group{display:flex; flex-direction:column; gap:12px; margin:0; padding:0; border:0; min-width:0}
 .cbx-group legend{padding:0; margin-bottom:12px; font-weight:600}
 .cbx-children{display:flex; flex-direction:column; gap:12px; padding-inline-start:32px}
+
+/* ── miniatura do card do Radio ── */
+.th-rd{display:flex; flex-direction:column; gap:8px; font-size:12.5px; line-height:16px;
+  color:var(--al-text-primary)}
+.th-rd__row{display:flex; align-items:center; gap:8px}
+.th-rd__dot{position:relative; width:16px; height:16px; box-sizing:border-box;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-full);
+  background:var(--al-bg-surface-raised)}
+.th-rd__dot.is-on{border-color:var(--al-border-brand)}
+.th-rd__dot.is-on::after{content:""; position:absolute; inset:3px; border-radius:inherit;
+  background:var(--al-bg-brand)}
+/* a pergunta: fieldset nativo, montado pela aplicacao (regra 6) */
+.rd-stage{display:flex !important; flex-direction:column; align-items:flex-start; gap:8px}
+#rd-stage{display:flex; flex-direction:column; align-items:center; gap:8px; padding-inline:16px}
+.rd-group{margin:0; padding:0; border:0; min-width:0}
+.rd-group legend{padding:0; margin-bottom:12px; font-weight:600}
+.rd-opts{display:flex; flex-direction:column; gap:12px}
+.rd-group--row .rd-opts{flex-direction:row; flex-wrap:wrap; column-gap:32px}
+.rd-formerror{margin:0; color:var(--al-text-danger); font-size:13.5px; line-height:20px}
+.rd-form{display:flex; flex-direction:column; gap:20px; align-items:flex-start}
+.rd-summary{margin:0; padding:12px 16px; border-radius:var(--al-radius-md);
+  background:var(--al-bg-danger-subtle); color:var(--al-text-danger); font-size:13.5px; line-height:20px}
+.rd-actions{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+.rd-ok{margin:0; color:var(--al-text-success); font-size:13.5px}
 </style>
 
 <div class="shell">
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.8.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.9.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -3258,6 +3607,7 @@ footer code{background:none; padding:0}
         <a href="#/avatar" data-page="avatar">Avatar</a>
         <a href="#/select" data-page="select">Select</a>
         <a href="#/checkbox" data-page="checkbox">Checkbox</a>
+        <a href="#/radio" data-page="radio">Radio</a>
       </div>
     </div>
   </div>
@@ -3375,7 +3725,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.8.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.9.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -3405,7 +3755,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.8.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.9.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -4028,6 +4378,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/avatar" data-page="avatar"><div class="card-thumb"><div class="th-icons"><span class="al-avatar al-avatar--sm" aria-hidden="true"><img class="al-avatar__photo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTIwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGRkVBREUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkQ3QzQiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTYwIiBoZWlnaHQ9IjEyMCIgZmlsbD0idXJsKCNnKSIvPjxjaXJjbGUgY3g9IjgwIiBjeT0iNzgiIHI9IjQ2IiBmaWxsPSIjRThCMDhDIi8+PGNpcmNsZSBjeD0iODAiIGN5PSI0OCIgcj0iMzAiIGZpbGw9IiNFOEIwOEMiLz48cGF0aCBkPSJNNTAgNDQgUTgwIDYgMTEwIDQ0IFExMTIgMjAgODAgMTYgUTQ4IDIwIDUwIDQ0IFoiIGZpbGw9IiMzRTI0MTciLz48L3N2Zz4=" alt=""></span><span class="al-avatar al-avatar--sm" aria-hidden="true"><span class="al-avatar__initials">DC</span></span><span class="al-avatar al-avatar--sm" aria-hidden="true"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg></span></div></div><div class="card-body"><span class="card-title">Avatar</span><span class="card-desc">Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.</span></div></a>
     <a class="card" href="#/select" data-page="select"><div class="card-thumb"><div class="th-select" aria-hidden="true"><span class="th-select__field">Selecione a opção<svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></span></div></div><div class="card-body"><span class="card-title">Select</span><span class="card-desc">Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.</span></div></a>
     <a class="card" href="#/checkbox" data-page="checkbox"><div class="card-thumb"><div class="th-cbx" aria-hidden="true"><span class="th-cbx__row"><span class="th-cbx__box is-on"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg></span>E-mail</span><span class="th-cbx__row"><span class="th-cbx__box is-on"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span>Notificações</span><span class="th-cbx__row"><span class="th-cbx__box"></span>SMS</span></div></div><div class="card-body"><span class="card-title">Checkbox</span><span class="card-desc">Várias opções, ou uma que só vale depois de confirmar. Input nativo com a caixa do AL pintada por cima — com o estado misto para o checkbox pai.</span></div></a>
+    <a class="card" href="#/radio" data-page="radio"><div class="card-thumb"><div class="th-rd" aria-hidden="true"><span class="th-rd__row"><span class="th-rd__dot is-on"></span>Mensal</span><span class="th-rd__row"><span class="th-rd__dot"></span>Anual</span><span class="th-rd__row"><span class="th-rd__dot"></span>Empresarial</span></div></div><div class="card-body"><span class="card-title">Radio</span><span class="card-desc">Uma opção de uma lista curta. Input nativo com o círculo do AL pintado por cima — e o erro é da pergunta, não da opção.</span></div></a>
   </div>
 </section>
 
@@ -6600,8 +6951,416 @@ footer code{background:none; padding:0}
     <div class="stat"><b>medido</b><span>estado do contrato</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-radio" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Radio</h1><p class="lede">Uma única opção de uma lista curta, com todas à vista para comparar. É o <code>&lt;input type="radio"&gt;</code> nativo com o círculo do AL pintado por cima — setas, Tab e “marcar um desmarca o outro” vêm do navegador. A pergunta em volta é da aplicação.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">6 estados no Figma</span><span class="badge">21 tokens</span><span class="badge">2 exceções declaradas</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Radio"><button role="tab" id="t-radio-overview" aria-controls="p-radio-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-radio-specs" aria-controls="p-radio-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-radio-guide" aria-controls="p-radio-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-radio-a11y" aria-controls="p-radio-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-radio-overview" role="tabpanel" aria-labelledby="t-radio-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="rd-stage"><fieldset class="rd-group"><legend>Cobrança</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="pg-rd-0" class="al-radio__input" type="radio" name="pg-rd" value="mensal" checked><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mensal</span></label><label class="al-radio"><span class="al-radio__control"><input id="pg-rd-1" class="al-radio__input" type="radio" name="pg-rd" value="anual"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Anual</span></label><label class="al-radio"><span class="al-radio__control"><input id="pg-rd-2" class="al-radio__input" type="radio" name="pg-rd" value="empresa"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Empresarial</span></label></div></fieldset></div>
+
+    <div class="controls" id="rd-controls">
+      <div class="ctl"><span class="ctl-name">Seleção inicial</span><div class="seg" role="radiogroup" aria-label="rdvalue">
+<input type="radio" id="rdvalue-first" name="rdvalue" value="first" checked><label for="rdvalue-first">Primeira marcada</label>
+<input type="radio" id="rdvalue-none" name="rdvalue" value="none"><label for="rdvalue-none">Nenhuma</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Estado</span><div class="seg" role="radiogroup" aria-label="rdstate">
+<input type="radio" id="rdstate-rest" name="rdstate" value="rest" checked><label for="rdstate-rest">Normal</label>
+<input type="radio" id="rdstate-error" name="rdstate" value="error"><label for="rdstate-error">Erro</label>
+<input type="radio" id="rdstate-disabled" name="rdstate" value="disabled"><label for="rdstate-disabled">Uma desabilitada</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="rdtheme">
+<input type="radio" id="rdtheme-auto" name="rdtheme" value="auto" checked><label for="rdtheme-auto">Do sistema</label>
+<input type="radio" id="rdtheme-light" name="rdtheme" value="light"><label for="rdtheme-light">Claro</label>
+<input type="radio" id="rdtheme-dark" name="rdtheme" value="dark"><label for="rdtheme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><label for="rd-legend" class="ctl-name">Pergunta</label>
+        <input class="txt" id="rd-legend" type="text" value="Cobrança" maxlength="60"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="rd-copy">Copiar</button></div>
+      <pre><code id="rd-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Os radios acima são o componente real: esta página carrega o mesmo <code>radio.css</code> que
+    vai para produção. Tabule até eles e use as setas — foco e escolha andam juntos. O
+    <code>fieldset</code> e o <code>legend</code> <b>não fazem parte do componente</b>: são a
+    pergunta, que a aplicação monta. No erro, o <code>aria-invalid</code> vai nela, e a mensagem
+    em vermelho é o formulário descrevendo o erro em texto.
+  </p>
+</section>
+
+<section>
+  <h2>Uma pergunta de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <form class="rd-form" id="rd-form" novalidate>
+      <p class="rd-summary" id="rd-form-erro" hidden>Escolha uma forma de pagamento para assinar.</p>
+      <fieldset class="rd-group"><legend>Forma de pagamento da assinatura</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="ov-rd-pag-0" class="al-radio__input" type="radio" name="ov-rd-pag" value="cartao" required><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Cartão de crédito</span></label><label class="al-radio"><span class="al-radio__control"><input id="ov-rd-pag-1" class="al-radio__input" type="radio" name="ov-rd-pag" value="pix" required><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Pix</span></label><label class="al-radio"><span class="al-radio__control"><input id="ov-rd-pag-2" class="al-radio__input" type="radio" name="ov-rd-pag" value="boleto" disabled required><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Boleto</span></label></div></fieldset>
+      <div class="rd-actions">
+        <button type="submit" class="al-btn al-btn--primary al-btn--sm" id="rd-form-enviar"><span class="al-btn__label">Assinar</span></button>
+        <p class="rd-ok" id="rd-form-ok" role="status"></p>
+      </div>
+    </form>
+    <p class="cap">Envie sem escolher: as opções ficam vermelhas <b>juntas</b>, porque o erro é da
+    pergunta e não de uma opção, e o erro aparece em texto no topo. Escolha uma e tudo volta. Não há
+    pré-seleção aqui de propósito: forma de pagamento tem custo, e a escolha precisa ser consciente.
+    <i>Primer, Spectrum, Carbon e Polaris põem o erro no grupo.</i></p>
+  </div>
+</section>
+
+<section>
+  <h2>Os seis estados do Figma</h2>
+  <div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Default</span><div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Cobrança</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-default-0" class="al-radio__input" type="radio" name="sp-rd-default" value="mensal"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mensal</span></label><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-default-1" class="al-radio__input" type="radio" name="sp-rd-default" value="anual"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Anual</span></label></div></fieldset></div><p class="cap">O repouso. A borda aqui é a exceção de contraste declarada.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Hover</span><div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Cobrança</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-hover-0" class="al-radio__input" type="radio" name="sp-rd-hover" value="mensal" style="--_bg-state: var(--al-radio-bg-hover); --_border-state: var(--al-radio-border-hover)"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mensal</span></label><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-hover-1" class="al-radio__input" type="radio" name="sp-rd-hover" value="anual"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Anual</span></label></div></fieldset></div><p class="cap">Só existe sob o ponteiro: a variável privada foi escrita direto na primeira opção. O real vale na linha inteira — passe o mouse na segunda.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Active (marcado)</span><div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Cobrança</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-active-0" class="al-radio__input" type="radio" name="sp-rd-active" value="mensal" checked><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mensal</span></label><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-active-1" class="al-radio__input" type="radio" name="sp-rd-active" value="anual"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Anual</span></label></div></fieldset></div><p class="cap">Anel laranja com ponto de 14px. Passar o mouse no marcado não muda nada: ele não desmarca com clique.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Focus</span><div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Cobrança</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-focus-0" class="al-radio__input" type="radio" name="sp-rd-focus" value="mensal"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mensal</span></label><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-focus-1" class="al-radio__input" type="radio" name="sp-rd-focus" value="anual"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Anual</span></label></div></fieldset></div><p class="cap">Tabule até aqui e use as setas: foco e escolha andam juntos. Pelo mouse o anel não aparece.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Error</span><div class="stage2 rd-stage"><fieldset class="rd-group" aria-invalid="true" aria-describedby="sp-rd-error-msg"><legend>Forma de pagamento</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-error-0" class="al-radio__input" type="radio" name="sp-rd-error" value="pix"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Pix</span></label><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-error-1" class="al-radio__input" type="radio" name="sp-rd-error" value="boleto"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Boleto</span></label></div></fieldset><p class="rd-formerror" id="sp-rd-error-msg">Escolha uma forma de pagamento.</p></div><p class="cap">Vem de <code>aria-invalid="true"</code> no <code>fieldset</code>: acende as duas opções de uma vez. A mensagem é do formulário.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Disabled</span><div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Cobrança</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-disabled-0" class="al-radio__input" type="radio" name="sp-rd-disabled" value="mensal"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mensal</span></label><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-disabled-1" class="al-radio__input" type="radio" name="sp-rd-disabled" value="empresa" disabled><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Empresarial</span></label></div></fieldset></div><p class="cap">Atributo nativo <code>disabled</code>: setas e Tab pulam a opção.</p></div></div>
+</section>
+
+<section>
+  <h2>O que só existe no código</h2>
+  <p>O Figma tem um eixo só de estado. O navegador produz combinações que ele não desenha — e
+  elas foram decididas na etapa 3, pintadas pelos mesmos tokens, sem nenhum a mais além do
+  ponto desabilitado.</p>
+  <div style="margin-top:16px"><div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Marcado + disabled</span><div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Plano atual</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-dischk-0" class="al-radio__input" type="radio" name="sp-rd-dischk" value="empresa" checked disabled><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Empresarial</span></label><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-dischk-1" class="al-radio__input" type="radio" name="sp-rd-dischk" value="mensal" disabled><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mensal</span></label></div></fieldset></div><p class="cap">Círculo cinza, ponto em <code>dot-disabled</code> — o único token sem variante no Figma.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Erro + marcado</span><div class="stage2 rd-stage"><fieldset class="rd-group" aria-invalid="true" aria-describedby="sp-rd-errchk-msg"><legend>Forma de pagamento</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-errchk-0" class="al-radio__input" type="radio" name="sp-rd-errchk" value="pix" checked><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Pix</span></label><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-errchk-1" class="al-radio__input" type="radio" name="sp-rd-errchk" value="boleto"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Boleto</span></label></div></fieldset><p class="rd-formerror" id="sp-rd-errchk-msg">Pix indisponível para este valor. Escolha outra forma.</p></div><p class="cap">O marcado segue laranja e só o rótulo avisa; a vizinha vazia fica com borda vermelha.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Marcado + foco</span><div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Cobrança</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-chkfoc-0" class="al-radio__input" type="radio" name="sp-rd-chkfoc" value="mensal" checked><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mensal</span></label><label class="al-radio"><span class="al-radio__control"><input id="sp-rd-chkfoc-1" class="al-radio__input" type="radio" name="sp-rd-chkfoc" value="anual"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Anual</span></label></div></fieldset></div><p class="cap">O anel aparece por cima do anel laranja — ele não depende do estado.</p></div></div></div>
+</section></div><div class="panel" id="p-radio-specs" role="tabpanel" aria-labelledby="t-radio-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b><code>&lt;label class="al-radio"&gt;</code></b><span>Envolve tudo. É o que faz clicar no texto marcar a opção, e o que transforma a linha inteira em área de clique — também é onde mora o hover.</span></div>
+    <div><b>Círculo</b><span><code>&lt;input type="radio"&gt;</code> nativo com <code>appearance: none</code>: o círculo do navegador sai e o do AL entra. Setas, Tab e “marcar um desmarca o outro” continuam do navegador.</span></div>
+    <div><b>Ponto</b><span>Um <code>&lt;span&gt;</code> irmão do input, com <code>aria-hidden</code> — <code>&lt;input&gt;</code> não tem filho, e pseudo-elemento em input não é garantido em todo navegador. <code>pointer-events: none</code> devolve o clique.</span></div>
+    <div><b>Rótulo</b><span>Sempre visível, à direita. É a regra que sustenta a exceção de contraste da borda.</span></div>
+    <div><b>A pergunta — fora do componente</b><span><code>&lt;fieldset&gt;</code> + <code>&lt;legend&gt;</code>, montados pela aplicação. Todos os radios dela dividem o mesmo <code>name</code>. O AL não tem componente de grupo, de propósito.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A geometria é consequência</h2>
+  <p>O círculo é <code>box-size</code>: <b>24px</b>, a mesma caixa do Checkbox e a mesma
+  entrelinha do rótulo — é isso que alinha o círculo com a primeira linha do texto quando ele
+  quebra. O ponto não tem token: são <b>14px</b>, círculo − 2 × borda −
+  2 × respiro, e a conta está escrita no CSS em vez de um número.</p>
+  <p style="margin-top:12px">O respiro é <code>space-4</code>, não o <code>space-2</code> do
+  Checkbox. Com 18px o ponto enchia o círculo, e o marcado desabilitado virava um disco cinza igual
+  ao desmarcado desabilitado. A borda de 1px existe em todos os estados, então o círculo nunca
+  “pula” quando o estado troca a cor dela.</p>
+  <div class="stats">
+    <div class="stat hl"><b>21</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>6</b><span>estados no Figma</span></div>
+    <div class="stat"><b>1</b><span>tamanho — regra do Tier 2</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody><tr><td class="tok">--al-radio-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr><td class="tok">--al-radio-bg-hover</td><td class="tok dim">bg-hover</td><td class="tok dim"><span class="chip sm" style="background:#EEEEEE"></span>#EEEEEE</td></tr>
+<tr><td class="tok">--al-radio-bg-disabled</td><td class="tok dim">bg-disabled</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr><td class="tok">--al-radio-border</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-radio-border-hover</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-radio-border-focus</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-radio-border-checked</td><td class="tok dim">border-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-radio-border-error</td><td class="tok dim">border-danger</td><td class="tok dim"><span class="chip sm" style="background:#CA293F"></span>#CA293F</td></tr>
+<tr><td class="tok">--al-radio-border-disabled</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-radio-dot</td><td class="tok dim">bg-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-radio-dot-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-radio-label</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-radio-label-error</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr><td class="tok">--al-radio-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-radio-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr></tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Marcado não pinta o fundo — a diferença para o Checkbox</b>
+    No Checkbox, marcado é a caixa laranja. No Radio, marcado é borda laranja + ponto laranja, e o
+    fundo continua <code>radio-bg</code>: o anel branco entre os dois <i>é</i> o fundo. Por isso não
+    existe <code>bg-checked</code>, e existem <code>dot</code> e <code>dot-disabled</code>.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody><tr><td class="tok">--al-radio-box-size</td><td class="tok dim">iconSize.24</td><td class="num">24px</td></tr>
+<tr><td class="tok">--al-radio-padding</td><td class="tok dim">space.4</td><td class="num">4px</td></tr>
+<tr><td class="tok">--al-radio-gap</td><td class="tok dim">space.8</td><td class="num">8px</td></tr>
+<tr><td class="tok">--al-radio-radius</td><td class="tok dim">radius.full</td><td class="num">9999px</td></tr>
+<tr><td class="tok">--al-radio-border-width</td><td class="tok dim">border.width.1</td><td class="num">1px</td></tr>
+<tr><td class="tok">--al-radio-label-font</td><td class="tok dim">type.styles.body-md</td><td class="num">16/24 · peso 400</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Quem ganha quando dois estados acontecem juntos</h2>
+  <p>A mesma técnica do Checkbox: fundo e borda são
+  <code>var(--_*-force, var(--_*-state))</code>. Hover e foco escrevem em
+  <code>--_*-state</code>; marcado, erro e desabilitado escrevem em <code>--_*-force</code>,
+  que vence por ser <b>outra propriedade</b>, não por ter seletor mais pesado.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Marcado + hover</b><span>Nada muda: o marcado força o fundo de volta a <code>radio-bg</code>. Radio marcado não desmarca com clique, e o hover prometeria uma ação que não existe.</span></div>
+    <div><b>Marcado + foco</b><span>O anel aparece por cima do anel laranja.</span></div>
+    <div><b>Erro + marcado</b><span>Borda e ponto laranja, rótulo vermelho — a borda de erro só vale no círculo vazio, que é onde o erro mora.</span></div>
+    <div><b>Erro + foco</b><span>Anel padrão: não há anel de erro desenhado para este componente.</span></div>
+    <div><b>Desabilitado</b><span>Vem por último no arquivo e ganha de todos. Marcado e desabilitado mostra o ponto em <code>dot-disabled</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O erro é lido da pergunta</h2>
+  <p>O <code>radio.css</code> não procura <code>aria-invalid</code> no radio: procura em
+  qualquer elemento <b>acima</b> dele — na prática, o <code>fieldset</code>. Marcar a pergunta uma
+  vez acende todas as opções, e não há como esquecer uma. Foi um achado da etapa 6: a primeira
+  versão lia o erro no próprio radio, copiando o Checkbox, e o portão de marcação reprovou.</p>
+</section></div><div class="panel" id="p-radio-guide" role="tabpanel" aria-labelledby="t-radio-guide" tabindex="0" hidden>
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Uma única opção de uma lista curta</b><span>Todas visíveis, para a pessoa comparar antes de escolher. <i>Primer, Spectrum, Material.</i></span></div>
+    <div><b>Até cinco ou seis opções</b><span>Acima disso, use o Select. <i>Material (5), Primer e Spectrum (6).</i></span></div>
+    <div><b>Nunca para várias escolhas, nunca sozinho</b><span>Várias escolhas é Checkbox. Uma pergunta tem sempre duas opções ou mais; um sim/não de aceite isolado também é Checkbox. <i>Polaris, Carbon.</i></span></div>
+    <div><b>Nunca para ação imediata</b><span>A escolha só vale quando a pessoa envia ou salva — as setas mudam a escolha enquanto ela navega. Ação imediata pede Switch, que o AL ainda não tem. <i>Primer, Material.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A pergunta</h2>
+  <div class="anat">
+    <div><b>Mesmo <code>name</code> em todas as opções</b><span>É o que faz marcar uma desmarcar a outra, e as setas andarem entre elas.</span></div>
+    <div><b><code>fieldset</code> + <code>legend</code>, montados pela aplicação</b><span>Sem eles o leitor de tela anuncia “Mensal, botão de opção” sem dizer qual é a pergunta. <i>Carbon, Polaris, Primer.</i></span></div>
+    <div><b>Uma por linha, na vertical</b><span>Horizontal só com duas ou três opções curtas, e com o espaço entre uma e outra claramente maior que os 8px entre círculo e rótulo. <i>Spectrum.</i></span></div>
+    <div><b>Ordem lógica</b><span>A mais comum primeiro, crescente, ou a ordem natural — não alfabética sem motivo. <i>Polaris, Spectrum.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Seleção inicial</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Marque de início</span>
+      <div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Resumo das vendas por e-mail</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-resumo-0" class="al-radio__input" type="radio" name="gd-rd-resumo" value="semanal" checked><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Semanal</span></label><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-resumo-1" class="al-radio__input" type="radio" name="gd-rd-resumo" value="mensal"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mensal</span></label><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-resumo-2" class="al-radio__input" type="radio" name="gd-rd-resumo" value="nenhum"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Nenhum</span></label></div></fieldset></div>
+      <p class="cap">Quando há uma resposta segura e mais provável, e ela vem primeiro. Como
+      radio marcado não desmarca, “nenhum” vira uma opção. <i>Spectrum, Polaris; Carbon para o
+      “Nenhum”.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Não marque nada</span>
+      <div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Plano da assinatura</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-plano-0" class="al-radio__input" type="radio" name="gd-rd-plano" value="basico"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Básico — R$ 49/mês</span></label><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-plano-1" class="al-radio__input" type="radio" name="gd-rd-plano" value="pro"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Pro — R$ 129/mês</span></label></div></fieldset></div>
+      <p class="cap">Quando a escolha precisa ser consciente: dado sensível, consentimento, algo
+      com custo. <i>Carbon, que hoje recomenda nenhuma pré-seleção.</i> As referências divergem, e
+      o AL decide pelo contexto.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Funcionários</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-ok-0" class="al-radio__input" type="radio" name="gd-rd-ok" value="p" checked><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">1 a 5</span></label><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-ok-1" class="al-radio__input" type="radio" name="gd-rd-ok" value="m"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">6 a 20</span></label><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-ok-2" class="al-radio__input" type="radio" name="gd-rd-ok" value="g"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Mais de 20</span></label></div></fieldset></div>
+      <p class="cap">Curto, só a primeira letra maiúscula, sem ponto final. As opções têm a mesma
+      estrutura e não se sobrepõem. <i>Polaris.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Funcionários</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-bad-0" class="al-radio__input" type="radio" name="gd-rd-bad" value="p"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">1 a 5</span></label><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-bad-1" class="al-radio__input" type="radio" name="gd-rd-bad" value="m"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">5 a 20</span></label><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-bad-2" class="al-radio__input" type="radio" name="gd-rd-bad" value="g"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Uma empresa grande.</span></label></div></fieldset></div>
+      <p class="cap">Quem tem 5 funcionários cabe em duas opções — as faixas se sobrepõem. E a
+      terceira quebra o paralelo: frase com ponto, sem número. <i>Polaris.</i></p>
+    </div>
+  </div>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo longo quebra alinhado ao topo</b><span>O círculo fica na altura da primeira linha. <i>Carbon.</i> No AL sai de graça: círculo e entrelinha medem os mesmos 24px.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Estados</h2>
+  <div class="anat">
+    <div><b>A forma diferencia, não só a cor</b><span>Marcado é anel com ponto; vazio é anel sem ponto. Foi por isso que o ponto diminuiu para 14px na etapa 1.</span></div>
+    <div><b>Desabilitado só quando depende de outra escolha na mesma tela</b><span>Se nunca vai estar disponível, esconda. Se todas ficariam desabilitadas, repense a pergunta.</span></div>
+    <div><b>O desabilitado fica abaixo de AA de propósito</b><span>O WCAG isenta controle inativo, e subir esse contraste faz a opção parecer clicável.</span></div>
+    <div><b>Marcado e desabilitado existe</b><span>Círculo cinza, ponto apagado — aparece em qualquer plano travado, então existe no código mesmo sem variante no Figma.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Erro — é da pergunta, e o componente não tem mensagem</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 rd-stage"><fieldset class="rd-group" aria-invalid="true" aria-describedby="gd-rd-err-msg"><legend>Forma de pagamento</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-err-0" class="al-radio__input" type="radio" name="gd-rd-err" value="pix"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Pix</span></label><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-err-1" class="al-radio__input" type="radio" name="gd-rd-err" value="boleto"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label">Boleto</span></label></div></fieldset><p class="rd-formerror" id="gd-rd-err-msg">Escolha uma forma de pagamento.</p></div>
+      <p class="cap">O erro vai no <code>fieldset</code> e acende todas as opções juntas. O
+      formulário descreve o erro em texto, e a pergunta aponta para ele com
+      <code>aria-describedby</code>. <i>Primer, Carbon, Polaris.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 rd-stage"><fieldset class="rd-group"><legend>Forma de pagamento</legend><div class="rd-opts"><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-nomsg-0" class="al-radio__input" type="radio" name="gd-rd-nomsg" value="pix" style="--_border-force: var(--al-radio-border-error)"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label" style="color: var(--al-radio-label-error)">Pix</span></label><label class="al-radio"><span class="al-radio__control"><input id="gd-rd-nomsg-1" class="al-radio__input" type="radio" name="gd-rd-nomsg" value="boleto" style="--_border-force: var(--al-radio-border-error)"><span class="al-radio__dot" aria-hidden="true"></span></span><span class="al-radio__label" style="color: var(--al-radio-label-error)">Boleto</span></label></div></fieldset></div>
+      <p class="cap">Só bordas e rótulos vermelhos. Isso é <b>só cor</b>, e o WCAG exige o erro
+      descrito em texto (3.3.1) e não comunicado só por cor (1.4.1).</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Divergência consciente</b>
+    Carbon, Polaris e Primer colocam a mensagem no grupo. O AL não tem componente de grupo e
+    deixa o texto para o formulário — por isso esta regra é obrigatória, não sugestão. O rótulo
+    vermelho também é escolha nossa, coerente com o Select, o Checkbox e o Material. A
+    obrigatoriedade se indica na pergunta, e o AL marca o opcional: “(opcional)” no
+    <code>legend</code>. O erro aparece <b>depois do envio</b>, nunca enquanto a pessoa escolhe.
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Um tamanho só</b><span>Regra de todo input do Tier 2.</span></div>
+    <div><b>Componente de grupo</b><span>Nem agora nem no roadmap: a pergunta é <code>fieldset</code> + <code>legend</code> nativos.</span></div>
+    <div><b>Texto de apoio e mensagem de erro</b><span>Não fazem parte do componente — são do formulário.</span></div>
+    <div><b>Variantes combinadas no Figma</b><span>Cobertas pelo código com os mesmos tokens.</span></div>
+    <div><b>Radio em card, Switch e read-only</b><span>Outros componentes, ainda não abertos.</span></div>
+  </div>
+</section></div><div class="panel" id="p-radio-a11y" role="tabpanel" aria-labelledby="t-radio-a11y" tabindex="0" hidden>
+<section>
+  <h2>No Radio, quem desenha o limite é sempre a borda</h2>
+  <p>O portão mede <b>combinação renderizada</b>. No Checkbox marcado, o limite passava a ser o
+  preenchimento inteiro; aqui não: o marcado não pinta o fundo, então a borda laranja fica entre
+  a página por fora e o anel branco por dentro, e é medida contra os dois. O ponto é medido contra
+  o anel que o cerca.</p>
+  <p style="margin-top:12px">E a página não é uma só: o portão mede contra tela, faixa de seção e
+  card, e guarda a pior. A menor margem entre as que passam é
+  <b>anel de foco</b> em <code>focus</code>, 3.12:1 contra o
+  piso de 3.0:1 — na faixa cinza, que a etapa 3 não conseguia ver.</p>
+  <div class="stats">
+    <div class="stat hl"><b>54</b><span>combinações medidas</span></div>
+    <div class="stat"><b>42</b><span>passam</span></div>
+    <div class="stat"><b>12</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Com foco, a borda passa sozinha</h2>
+  <p>O anel desenha um respiro de 2px em <code>bg-canvas</code> colado no círculo, e a vizinha
+  externa da borda passa a ser ele — independente de onde o radio foi colocado.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Borda em repouso</th><th>Borda com foco</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num">1.47:1</td><td class="num strong">4.88:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num">1.46:1</td><td class="num strong">3.53:1</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">A borda fraca existe só em repouso, nunca durante a navegação por
+  teclado. No teclado, o Tab entra na pergunta uma vez só — na opção marcada, ou na primeira se
+  nenhuma estiver — e as setas movem foco e escolha juntos, pulando a desabilitada.</p>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda em repouso abaixo de 3:1 — decisão consciente</b>
+    <code>border-default</code> fica em 1.47:1 no claro e
+    1.46:1 no escuro, no pior fundo — a mesma decisão do Checkbox, para
+    seguir o padrão dos inputs do AL. A borda é o único desenho do radio vazio; o que sustenta a
+    exceção é o rótulo visível ao lado, e por isso “nunca sem rótulo visível” é regra de uso.
+    Hover, foco, marcado e erro passam todos.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Desabilitado abaixo de AA — isenção do 1.4.3</b>
+    Rótulo, borda e ponto desabilitados ficam abaixo do piso. O WCAG isenta componente inativo, e
+    subir esse contraste faz a opção parecer clicável. No tema escuro o círculo desabilitado e o
+    normal chegam a ser idênticos (<code>#3E3E3E</code>): só o rótulo apagado diferencia.
+  </div>
+</section>
+
+<section>
+  <h2>Não-textual — piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-border</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">1.47:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">--al-radio-border-hover</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">4.21:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border-hover</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">3.53:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-radio-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + fundo do circulo</td><td class="num strong">4.88:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + fundo do circulo</td><td class="num strong">3.53:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-border-checked</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked</td><td class="tok dim">ponto</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-radio-dot</td><td class="tok dim">fundo do circulo</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border-checked</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked</td><td class="tok dim">ponto</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-dot</td><td class="tok dim">fundo do circulo</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-radio-border-checked</td><td class="tok dim">respiro do anel (bg-canvas) + fundo do circulo</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">ponto</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-radio-dot</td><td class="tok dim">fundo do circulo</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border-checked</td><td class="tok dim">respiro do anel (bg-canvas) + fundo do circulo</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">ponto</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-dot</td><td class="tok dim">fundo do circulo</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-border-error</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">5.03:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border-error</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-radio-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + fundo do circulo</td><td class="num strong">5.38:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + fundo do circulo</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-border-checked</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">ponto</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-radio-dot</td><td class="tok dim">fundo do circulo</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border-checked</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">ponto</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-dot</td><td class="tok dim">fundo do circulo</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-radio-border-disabled</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border-disabled</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-radio-border-disabled</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">ponto</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-radio-dot-disabled</td><td class="tok dim">fundo do circulo</td><td class="num strong">1.59:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-border-disabled</td><td class="tok dim">pagina (pior caso) + fundo do circulo</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">ponto</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-dot-disabled</td><td class="tok dim">fundo do circulo</td><td class="num strong">2.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">7.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">7.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">7.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">1.96:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-radio-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">1.96:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-radio-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Estas seis regras não estão escritas numa página: elas são medidas por
+  <code>components/radio/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="radio"&gt;</code> dentro de <code>&lt;label class="al-radio"&gt;</code>. Nenhum <code>role="radio"</code> na página.</span></div>
+    <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-radio__label</code>, e nada de <code>aria-label</code>.</span></div>
+    <div><b>Duas opções ou mais</b><span>Todo radio tem <code>name</code>, e cada <code>name</code> junta duas opções ou mais.</span></div>
+    <div><b>A pergunta existe</b><span>As opções de um <code>name</code> moram num só <code>fieldset</code>, com <code>legend</code> visível.</span></div>
+    <div><b>Erro na pergunta, descrito</b><span><code>aria-invalid="true"</code> no <code>fieldset</code>, com <code>aria-describedby</code> para um id que existe — e nunca no radio.</span></div>
+    <div><b>Ponto decorativo</b><span><code>aria-hidden="true"</code> — o estado quem anuncia é o input.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>39</b><span>radios conferidos no HTML</span></div>
+    <div class="stat"><b>6</b><span>regras por radio</span></div>
+    <div class="stat"><b>medido</b><span>estado do contrato</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.8.0</span>
+  <span><b>AL Design System</b> · v0.9.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -7427,6 +8186,116 @@ var CBX_DASH = "<svg class=\"al-icon al-checkbox__dash\" aria-hidden=\"true\" fo
     i.addEventListener('input', render);
   });
   document.getElementById('cbx-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+
+(function () {
+  // ── Radio: a pergunta de verdade da Visao geral (regras 21, 22, 26) ──
+  // O erro e da pergunta: o fieldset leva aria-invalid e aria-describedby.
+  var form = document.getElementById('rd-form');
+  if (form) {
+    var fs = form.querySelector('fieldset');
+    var opcoes = [].slice.call(fs.querySelectorAll('.al-radio__input'));
+    var resumo = document.getElementById('rd-form-erro');
+    var ok = document.getElementById('rd-form-ok');
+    var marcar = function (sim) {
+      if (sim) {
+        fs.setAttribute('aria-invalid', 'true');
+        fs.setAttribute('aria-describedby', 'rd-form-erro');
+      } else {
+        fs.removeAttribute('aria-invalid');
+        fs.removeAttribute('aria-describedby');
+      }
+      resumo.hidden = !sim;
+    };
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      ok.textContent = '';
+      if (!opcoes.some(function (o) { return o.checked; })) {
+        marcar(true);
+        opcoes.filter(function (o) { return !o.disabled; })[0].focus();
+        return;
+      }
+      marcar(false);
+      ok.textContent = 'Assinatura enviada.';
+    });
+    opcoes.forEach(function (o) { o.addEventListener('change', function () { marcar(false); }); });
+  }
+
+  // ── playground ──
+  var stage = document.getElementById('rd-stage');
+  if (!stage) return;
+  var code = document.getElementById('rd-code');
+  var legendInput = document.getElementById('rd-legend');
+  var OPCOES = [['mensal', 'Mensal'], ['anual', 'Anual'], ['empresa', 'Empresarial']];
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function render() {
+    var valor = pick('rdvalue');
+    var estado = pick('rdstate');
+    var theme = pick('rdtheme');
+    var pergunta = (legendInput.value || '').trim() || 'Cobrança';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var erro = estado === 'error';
+    var fsAttrs = 'class="rd-group"' + (erro ? ' aria-invalid="true" aria-describedby="pg-rd-erro"' : '');
+    var html = '<fieldset ' + fsAttrs + '><legend>' + esc(pergunta) + '</legend><div class="rd-opts">';
+    var linhas = [];
+    if (erro) {
+      linhas.push('&lt;!-- o erro e da PERGUNTA: aria-invalid no fieldset, nunca no radio --&gt;');
+      linhas.push('&lt;fieldset aria-invalid="true" aria-describedby="cobranca-erro"&gt;');
+    } else {
+      linhas.push('&lt;fieldset&gt;');
+    }
+    linhas.push('  &lt;legend&gt;' + esc(pergunta) + '&lt;/legend&gt;');
+    OPCOES.forEach(function (o, i) {
+      var marcado = valor === 'first' && i === 0;
+      var off = estado === 'disabled' && i === OPCOES.length - 1;
+      var a = 'class="al-radio__input" type="radio" name="pg-rd" value="' + o[0] + '"'
+        + (marcado ? ' checked' : '') + (off ? ' disabled' : '');
+      html += '<label class="al-radio"><span class="al-radio__control"><input id="pg-rd-' + i + '" ' + a + '>'
+        + '<span class="al-radio__dot" aria-hidden="true"></span></span>'
+        + '<span class="al-radio__label">' + o[1] + '</span></label>';
+      var ia = 'class="al-radio__input" type="radio" name="cobranca" value="' + o[0] + '"'
+        + (marcado ? ' checked' : '') + (off ? ' disabled' : '');
+      linhas.push('  &lt;label class="al-radio"&gt;');
+      linhas.push('    &lt;span class="al-radio__control"&gt;');
+      linhas.push('      &lt;input ' + ia + '&gt;');
+      linhas.push('      &lt;span class="al-radio__dot" aria-hidden="true"&gt;&lt;/span&gt;');
+      linhas.push('    &lt;/span&gt;');
+      linhas.push('    &lt;span class="al-radio__label"&gt;' + o[1] + '&lt;/span&gt;');
+      linhas.push('  &lt;/label&gt;');
+    });
+    html += '</div></fieldset>';
+    linhas.push('&lt;/fieldset&gt;');
+    if (erro) {
+      html += '<p class="rd-formerror" id="pg-rd-erro">Escolha uma forma de cobrança.</p>';
+      linhas.push('&lt;!-- a mensagem e do FORMULARIO, nao do componente --&gt;');
+      linhas.push('&lt;p id="cobranca-erro"&gt;Escolha uma forma de cobrança.&lt;/p&gt;');
+    }
+    stage.innerHTML = html;
+    code.innerHTML = linhas.join('\n');
+  }
+
+  document.querySelectorAll('#rd-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('rd-copy').addEventListener('click', function () {
     var btn = this;
     navigator.clipboard.writeText(code.textContent).then(function () {
       btn.textContent = 'Copiado';

@@ -1,10 +1,16 @@
 """
-Gera a visualizacao de QA do Checkbox (etapa 6) em site/checkbox-qa.html.
+Gera a visualizacao de QA do Radio (etapa 6) em site/radio-qa.html.
 
-Mesmo arranjo do Select: a pagina INLINA os arquivos de CSS reais do
-repositorio - foundation, icon, tokens do Checkbox e checkbox.css. Ela nao pode
-divergir do codigo porque ela E o codigo. Os dois glifos tambem nao sao
-copiados a mao: o `d` de cada path e lido de components/icon/icons/.
+Mesmo arranjo do Checkbox: a pagina INLINA os arquivos de CSS reais do
+repositorio - foundation, tokens do Radio e radio.css. Ela nao pode divergir
+do codigo porque ela E o codigo.
+
+TODO CARTAO E UMA PERGUNTA
+
+  Radio sozinho nao existe (regra 3). Entao cada cartao de estado e um
+  <fieldset> com <legend> e duas opcoes - a que mostra o estado e uma vizinha
+  em repouso. E o que o a11y.py cobra (regras c e d), e e o que faz as setas
+  funcionarem dentro de cada cartao.
 
 O a11y.py ao lado le o HTML que este script emite e cobra ali o contrato de
 marcacao.
@@ -17,98 +23,101 @@ import re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-OUT = os.path.join(ROOT, 'site', 'checkbox-qa.html')
+OUT = os.path.join(ROOT, 'site', 'radio-qa.html')
 
 FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))
-CHECKBOX = json.load(open(os.path.join(HERE, 'tokens.json')))
-ICONS = os.path.join(ROOT, 'components', 'icon', 'icons')
+RADIO = json.load(open(os.path.join(HERE, 'tokens.json')))
 
 CSS_FILES = [
     ('foundation', os.path.join(ROOT, 'foundation', 'al-foundation.css')),
-    ('icon - tokens', os.path.join(ROOT, 'components', 'icon', 'al-icon-tokens.css')),
-    ('icon', os.path.join(ROOT, 'components', 'icon', 'icon.css')),
-    ('checkbox - tokens', os.path.join(HERE, 'al-checkbox-tokens.css')),
-    ('checkbox', os.path.join(HERE, 'checkbox.css')),
+    ('radio - tokens', os.path.join(HERE, 'al-radio-tokens.css')),
+    ('radio', os.path.join(HERE, 'radio.css')),
 ]
 
-
-def glifo(nome, classe):
-    """SVG inline de um icone da Foundation, com o contrato decorativo."""
-    src = open(os.path.join(ICONS, f'{nome}.svg'), encoding='utf-8').read()
-    paths = ''.join(re.findall(r'<path\b[^>]*/>', src))
-    return (f'<svg class="al-icon {classe}" viewBox="0 0 24 24" fill="none" '
-            f'stroke="currentColor" stroke-width="2" stroke-linecap="round" '
-            f'stroke-linejoin="round" aria-hidden="true" focusable="false">{paths}</svg>')
+# O erro e da pergunta: so o fieldset leva aria-invalid (regra 26). Ficou em
+# True na primeira rodada da etapa 6, quando o radio.css ainda lia o erro no
+# proprio radio - o a11y.py reprovou, e o CSS foi corrigido. Nao religar.
+ERRO_NO_RADIO = False
 
 
-CHECK = glifo('check', 'al-checkbox__check')
-DASH = glifo('minus', 'al-checkbox__dash')
-
-
-def caixa(cid, rotulo, *, checked=False, indeterminate=False, disabled=False,
-          erro=None, sim=None, extra=''):
-    """Um Checkbox completo.
-
-    `indeterminate` NAO vira atributo - ele nao existe em HTML. Vira
-    `data-indeterminate`, e o script da pagina faz `el.indeterminate = true`,
-    exatamente como a regra 8 manda.
+def radio(rid, nome, valor, rotulo, *, checked=False, disabled=False,
+          erro=False, sim=None, extra=''):
+    """Um Radio completo.
 
     `sim` forca o hover, que so existe sob o ponteiro, escrevendo nas MESMAS
-    variaveis privadas que o checkbox.css usa - nao e estilo paralelo."""
-    attrs = [f'id="{cid}"', 'class="al-checkbox__input"', 'type="checkbox"', f'name="{cid}"']
+    variaveis privadas que o radio.css usa - nao e estilo paralelo."""
+    attrs = [f'id="{rid}"', 'class="al-radio__input"', 'type="radio"',
+             f'name="{nome}"', f'value="{valor}"']
     if checked:
         attrs.append('checked')
     if disabled:
         attrs.append('disabled')
-    if indeterminate:
-        attrs.append('data-indeterminate')
-    if erro:
+    if erro and ERRO_NO_RADIO:
         attrs.append('aria-invalid="true"')
-        attrs.append(f'aria-describedby="{erro}"')
     if sim == 'hover':
-        attrs.append('style="--_bg-state: var(--al-checkbox-bg-hover); '
-                     '--_border-state: var(--al-checkbox-border-hover)"')
+        attrs.append('style="--_bg-state: var(--al-radio-bg-hover); '
+                     '--_border-state: var(--al-radio-border-hover)"')
     if extra:
         attrs.append(extra)
-    return (f'<label class="al-checkbox">'
-            f'<span class="al-checkbox__control"><input {" ".join(attrs)}>{CHECK}{DASH}</span>'
-            f'<span class="al-checkbox__label">{rotulo}</span></label>')
+    return (f'<label class="al-radio">'
+            f'<span class="al-radio__control"><input {" ".join(attrs)}>'
+            f'<span class="al-radio__dot" aria-hidden="true"></span></span>'
+            f'<span class="al-radio__label">{rotulo}</span></label>')
 
+
+def pergunta(nome, legenda, opcoes, *, erro=None, classe='qa-q'):
+    """Um <fieldset> com <legend>: a pergunta que a aplicacao monta (regra 6).
+    `erro` e o id da mensagem - o fieldset leva aria-invalid e describedby."""
+    abre = f'<fieldset class="{classe}"'
+    if erro:
+        abre += f' aria-invalid="true" aria-describedby="{erro}"'
+    abre += '>'
+    corpo = ''.join(radio(f'{nome}-{i}', nome, v, r, erro=bool(erro), **kw)
+                    for i, (v, r, kw) in enumerate(opcoes))
+    return f'{abre}<legend>{legenda}</legend>{corpo}</fieldset>'
+
+
+PLANO = 'Cobrança'
 
 # (titulo, origem, nota, html do cartao)
 # origem: real = interaja; simulado = so existe sob o ponteiro; codigo = sem
-# variante no Figma, pintado pelo checkbox.css com os tokens aprovados na etapa 3.
+# variante no Figma, pintado pelo radio.css com os tokens aprovados na etapa 3.
 ESTADOS = [
     ('Default', 'real', 'o repouso. A borda aqui é a exceção de contraste declarada (1,57:1).',
-     caixa('st-default', 'Receber novidades por e-mail')),
-    ('Hover', 'simulado', 'só existe sob o ponteiro; a variável privada do componente foi escrita direto. '
-     'Passe o mouse nos outros cartões para ver o real — vale na linha inteira.',
-     caixa('st-hover', 'Receber novidades por e-mail', sim='hover')),
-    ('Active (marcado)', 'real', 'clique para desmarcar e marcar de novo. O check é o ícone check da Foundation.',
-     caixa('st-checked', 'Receber novidades por e-mail', checked=True)),
-    ('Indeterminate', 'real', 'aplicado por JavaScript (input.indeterminate = true) — não existe atributo HTML. '
-     'Clicar tira o misto, como no nativo.',
-     caixa('st-indet', 'Todas as notificações', indeterminate=True)),
-    ('Focus', 'real', 'tabule até aqui: anel laranja com respiro. Clique com o mouse: sem anel.',
-     caixa('st-focus', 'Receber novidades por e-mail')),
-    ('Error', 'real', 'vem de aria-invalid="true". A mensagem abaixo é do formulário, não do componente (regra 19).',
-     caixa('st-error', 'Li e aceito os termos de uso', erro='st-error-msg')
-     + '<p class="qa-formerror" id="st-error-msg">Aceite os termos para continuar.</p>'),
-    ('Disabled', 'real', 'atributo disabled nativo: o Tab pula sozinho. Contraste abaixo de AA de propósito.',
-     caixa('st-disabled', 'Receber novidades por e-mail', disabled=True)),
+     pergunta('st-default', PLANO, [('m', 'Mensal', {}), ('a', 'Anual', {})])),
+    ('Hover', 'simulado', 'só existe sob o ponteiro; a variável privada do componente foi escrita direto '
+     'na primeira opção. Passe o mouse na segunda para ver o real — vale na linha inteira.',
+     pergunta('st-hover', PLANO, [('m', 'Mensal', dict(sim='hover')), ('a', 'Anual', {})])),
+    ('Active (marcado)', 'real', 'anel laranja com ponto de 14px. Clique em Anual: a seleção muda, '
+     'e passar o mouse no marcado não muda nada (regra 15).',
+     pergunta('st-checked', PLANO, [('m', 'Mensal', dict(checked=True)), ('a', 'Anual', {})])),
+    ('Focus', 'real', 'tabule até aqui: anel laranja com respiro. Use as setas: foco e escolha andam juntos '
+     '(regra 17). Clique com o mouse: sem anel.',
+     pergunta('st-focus', PLANO, [('m', 'Mensal', {}), ('a', 'Anual', {})])),
+    ('Error', 'real', 'o erro acende nas duas opções ao mesmo tempo (regra 21). A mensagem abaixo é do '
+     'formulário, não do componente (regra 22).',
+     pergunta('st-error', 'Forma de pagamento', [('p', 'Pix', {}), ('b', 'Boleto', {})], erro='st-error-msg')
+     + '<p class="qa-formerror" id="st-error-msg">Escolha uma forma de pagamento.</p>'),
+    ('Disabled', 'real', 'atributo disabled nativo: as setas e o Tab pulam a opção. '
+     'Contraste abaixo de AA de propósito.',
+     pergunta('st-disabled', PLANO, [('m', 'Mensal', {}), ('e', 'Empresarial', dict(disabled=True))])),
 ]
 
 COMBINADOS = [
-    ('Marcado + disabled', 'codigo', 'caixa cinza, check em icon-disabled — o único token sem variante no Figma.',
-     caixa('cb-dischk', 'Alertas de segurança', checked=True, disabled=True)),
-    ('Erro + marcado', 'codigo', 'a caixa segue laranja; só o rótulo avisa. Desmarque: a borda fica vermelha.',
-     caixa('cb-errchk', 'Li e aceito os termos de uso', checked=True, erro='cb-errchk-msg')
-     + '<p class="qa-formerror" id="cb-errchk-msg">Revise o aceite antes de enviar.</p>'),
-    ('Marcado + foco', 'codigo', 'tabule até aqui: o anel aparece por cima da caixa laranja.',
-     caixa('cb-chkfoc', 'Receber novidades por e-mail', checked=True)),
-    ('Rótulo longo', 'real', 'o texto quebra alinhado ao topo da caixa, não centralizado nela (regra 11).',
-     caixa('cb-long', 'Quero receber o resumo semanal com as notas emitidas, os pagamentos '
-                      'recebidos e os lembretes de vencimento da semana seguinte')),
+    ('Marcado + disabled', 'codigo', 'círculo cinza, ponto em dot-disabled — o único token sem variante no Figma.',
+     pergunta('cb-dischk', 'Plano atual', [('e', 'Empresarial', dict(checked=True, disabled=True)),
+                                           ('m', 'Mensal', dict(disabled=True))])),
+    ('Erro + marcado', 'codigo', 'o marcado segue laranja; só o rótulo avisa. A vizinha vazia fica com borda vermelha.',
+     pergunta('cb-errchk', 'Forma de pagamento', [('p', 'Pix', dict(checked=True)), ('b', 'Boleto', {})],
+              erro='cb-errchk-msg')
+     + '<p class="qa-formerror" id="cb-errchk-msg">Pix indisponível para este valor. Escolha outra forma.</p>'),
+    ('Marcado + foco', 'codigo', 'tabule até aqui: o anel aparece por cima do anel laranja.',
+     pergunta('cb-chkfoc', PLANO, [('m', 'Mensal', dict(checked=True)), ('a', 'Anual', {})])),
+    ('Rótulo longo', 'real', 'o texto quebra alinhado ao topo do círculo, não centralizado nele (regra 13).',
+     pergunta('cb-long', 'Envio da nota fiscal', [
+         ('e', 'Enviar a nota fiscal por e-mail assim que o pagamento for confirmado, com cópia '
+               'para o contador cadastrado', dict(checked=True)),
+         ('n', 'Só disponibilizar no painel', {})])),
 ]
 
 
@@ -133,16 +142,23 @@ def build():
     cards = '\n    '.join(cartao(*e) for e in ESTADOS)
     combos = '\n    '.join(cartao(*e) for e in COMBINADOS)
 
-    filhos = [('f-mail', 'E-mail', True), ('f-sms', 'SMS', True), ('f-push', 'Notificação no celular', False)]
-    lista_filhos = '\n          '.join(
-        caixa(cid, rot, checked=chk, extra='data-filho') for cid, rot, chk in filhos)
-
-    meta = CHECKBOX['meta']
-    rows = CHECKBOX['contrast']
+    meta = RADIO['meta']
+    rows = RADIO['contrast']
     n_exc = len([r for r in rows if not r['pass']])
 
+    # formulario: uma pergunta pre-selecionada com opcao "Nenhum" (regras 9 e
+    # 10), uma sem pre-selecao porque envolve custo (regra 9), e uma opcional
+    # marcada como tal no legend (regra 23).
+    f_resumo = pergunta('f-resumo', 'Resumo das vendas por e-mail', [
+        ('s', 'Semanal', dict(checked=True)), ('m', 'Mensal', {}), ('n', 'Nenhum', {})])
+    f_pag = pergunta('f-pag', 'Forma de pagamento da assinatura', [
+        ('c', 'Cartão de crédito', dict(extra='required')), ('p', 'Pix', dict(extra='required')),
+        ('b', 'Boleto', dict(disabled=True, extra='required'))])
+    f_tema = pergunta('f-origem', 'Como conheceu o AL (opcional)', [
+        ('i', 'Indicação', {}), ('b', 'Busca', {}), ('r', 'Redes sociais', {})])
+
     return f'''<meta charset="utf-8">
-<title>AL Checkbox QA</title>
+<title>AL Radio QA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -217,16 +233,17 @@ section > p.qa-lede {{ margin: 0 0 var(--al-space-20); color: var(--al-text-seco
 .qa-tag--real {{ border-color: var(--al-border-success); color: var(--al-text-success); }}
 .qa-tag--codigo {{ border-color: var(--al-border-info); color: var(--al-text-info); }}
 .qa-formerror {{ margin: 0; color: var(--al-text-danger); font-size: var(--al-font-size-sm); line-height: var(--al-line-height-sm); }}
+/* a pergunta - fieldset nativo, montado pela aplicacao (regra 6) */
+fieldset.qa-q {{ margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: var(--al-space-12); }}
+fieldset.qa-q legend {{ padding: 0; margin-bottom: var(--al-space-12); font-size: var(--al-font-size-sm); line-height: var(--al-line-height-sm); font-weight: 600; }}
 .qa-form {{
-  display: flex; flex-direction: column; gap: var(--al-space-24);
+  display: flex; flex-direction: column; gap: var(--al-space-32);
   padding: var(--al-space-24);
   border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
   background: var(--al-bg-surface-raised);
   max-width: 560px;
 }}
-.qa-form fieldset {{ margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: var(--al-space-12); min-width: 0; }}
-.qa-form legend {{ padding: 0; margin-bottom: var(--al-space-12); font-weight: 600; }}
-.qa-children {{ display: flex; flex-direction: column; gap: var(--al-space-12); padding-inline-start: var(--al-space-32); }}
+.qa-form fieldset.qa-q legend {{ font-size: var(--al-font-size-md); line-height: var(--al-line-height-md); }}
 .qa-summary {{
   margin: 0; padding: var(--al-space-12) var(--al-space-16);
   border-radius: var(--al-radius-md);
@@ -254,9 +271,9 @@ code {{ font-family: var(--al-font-mono); font-size: 0.9em; }}
 <div class="qa-wrap">
   <header class="qa-head">
     <div>
-      <h1>Checkbox — QA da etapa 6</h1>
+      <h1>Radio — QA da etapa 6</h1>
       <p class="qa-sub">AL Design System {FOUND['meta']['version']} · componente {meta['version']} ·
-      &lt;input type="checkbox"&gt; nativo · {len(rows)} medições de token, {n_exc} exceções declaradas, 0 reprovas</p>
+      &lt;input type="radio"&gt; nativo · {len(rows)} medições de token, {n_exc} exceções declaradas, 0 reprovas</p>
     </div>
     <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">
       <span id="theme-label">Tema claro</span>
@@ -266,21 +283,21 @@ code {{ font-family: var(--al-font-mono); font-size: 0.9em; }}
   <section>
     <h2>O que testar</h2>
     <ol class="qa-checks">
-      <li><strong>Tabule pela página.</strong> Cada checkbox recebe foco na ordem visual; os desabilitados são pulados.</li>
-      <li><strong>Espaço marca e desmarca</strong> o checkbox focado. Enter não faz nada — é o comportamento nativo.</li>
+      <li><strong>Tabule pela página.</strong> O Tab entra em cada pergunta uma vez só — na opção marcada, ou na primeira se nenhuma estiver.</li>
+      <li><strong>Dentro da pergunta, use as setas.</strong> Elas movem o foco e a escolha juntos, e pulam a opção desabilitada. Espaço marca a opção focada que ainda não está marcada.</li>
       <li><strong>O anel só aparece no teclado.</strong> Chegue por Tab: anel laranja. Clique com o mouse: sem anel.</li>
-      <li><strong>Clique no texto, não na caixa:</strong> também marca, e o hover acende a linha inteira.</li>
-      <li><strong>No formulário, marque e desmarque os filhos</strong> e veja o pai passar por marcado, misto e vazio. Clique no pai misto: marca todos.</li>
-      <li><strong>Envie o formulário sem aceitar os termos:</strong> a caixa fica com borda vermelha, o rótulo vermelho, e o erro aparece em texto no topo. Marque o aceite: tudo volta.</li>
-      <li><strong>Troque o tema</strong> no botão acima e refaça os itens 3 e 6.</li>
+      <li><strong>Clique no texto, não no círculo:</strong> também marca, e o hover acende a linha inteira — menos no radio já marcado.</li>
+      <li><strong>Envie o formulário sem escolher a forma de pagamento:</strong> as opções da pergunta ficam vermelhas juntas e o erro aparece em texto no topo. Escolha uma: tudo volta.</li>
+      <li><strong>Na pergunta do resumo, tente desmarcar:</strong> não dá — é por isso que existe a opção “Nenhum” (regra 10).</li>
+      <li><strong>Troque o tema</strong> no botão acima e refaça os itens 3 e 5.</li>
       <li><strong>Reduza a janela</strong> até a largura de telefone: rótulo longo quebra, nada corta.</li>
     </ol>
   </section>
 
   <section>
-    <h2>Os sete estados do Figma</h2>
-    <p class="qa-lede">Um cartão por variante do component set. Só o Hover é simulado, porque só existe
-    enquanto o ponteiro está em cima — os outros seis são reais: interaja neles.</p>
+    <h2>Os seis estados do Figma</h2>
+    <p class="qa-lede">Um cartão por variante do component set, cada um montado como pergunta de verdade —
+    radio sozinho não existe. Só o Hover é simulado, porque só existe enquanto o ponteiro está em cima.</p>
     <div class="qa-grid">
     {cards}
     </div>
@@ -297,22 +314,16 @@ code {{ font-family: var(--al-font-mono); font-size: 0.9em; }}
 
   <section>
     <h2>Formulário real</h2>
-    <p class="qa-lede">Um grupo com pai e filhos (título em <code>fieldset</code> e <code>legend</code>
-    nativos, regra 6), uma opção travada pela empresa e um aceite obrigatório. É aqui que a ordem de
-    tabulação, o indeterminado e o erro em texto se provam.</p>
+    <p class="qa-lede">Três perguntas: uma com resposta segura já marcada e a opção “Nenhum”, uma sem
+    pré-seleção porque envolve custo, e uma opcional marcada como tal no título (regras 9, 10 e 23).
+    É aqui que a ordem de tabulação, as setas e o erro em texto se provam.</p>
     <form class="qa-form" id="qa-form" novalidate>
-      <p class="qa-summary" id="form-erro" hidden>Aceite os termos de uso para salvar as preferências.</p>
-      <fieldset>
-        <legend>Notificações</legend>
-        {caixa('f-todas', 'Todas as notificações', extra='data-pai')}
-        <div class="qa-children">
-          {lista_filhos}
-        </div>
-        {caixa('f-seguranca', 'Alertas de segurança', checked=True, disabled=True)}
-      </fieldset>
-      {caixa('f-termos', 'Li e aceito os termos de uso', extra='required')}
+      <p class="qa-summary" id="form-erro" hidden>Escolha uma forma de pagamento para assinar.</p>
+      {f_resumo}
+      {f_pag}
+      {f_tema}
       <div class="qa-actions">
-        <button type="submit" class="qa-btn qa-btn--primary" id="f-enviar">Salvar preferências</button>
+        <button type="submit" class="qa-btn qa-btn--primary" id="f-enviar">Assinar</button>
         <p class="qa-ok" id="form-ok" role="status"></p>
       </div>
     </form>
@@ -322,7 +333,7 @@ code {{ font-family: var(--al-font-mono); font-size: 0.9em; }}
     <h2>Contraste medido no navegador</h2>
     <p class="qa-lede">Não são os números do <code>tokens.json</code>: o script lê a cor que o navegador
     realmente pintou, com <code>getComputedStyle</code>, depois de esperar a transição terminar — contra o
-    fundo onde cada checkbox está de verdade (cartão em <code>bg-surface</code>).</p>
+    fundo onde cada radio está de verdade (cartão em <code>bg-surface</code>).</p>
     <div class="qa-tablewrap">
       <table class="qa-measure">
         <thead><tr><th>papel</th><th>frente</th><th>fundo</th><th>medido</th><th>piso</th><th>veredito</th></tr></thead>
@@ -331,63 +342,49 @@ code {{ font-family: var(--al-font-mono); font-size: 0.9em; }}
     </div>
   </section>
 
-  <p class="qa-foot">Gerado por <code>components/checkbox/qa.py</code> a partir do CSS commitado em
-  <code>dev</code>. <code>al-foundation.css</code>, <code>icon.css</code>, <code>al-checkbox-tokens.css</code>
-  e <code>checkbox.css</code> estão embutidos como estão no repositório; os glifos vêm de
-  <code>components/icon/icons/</code>.</p>
+  <p class="qa-foot">Gerado por <code>components/radio/qa.py</code> a partir do CSS commitado em
+  <code>dev</code>. <code>al-foundation.css</code>, <code>al-radio-tokens.css</code> e
+  <code>radio.css</code> estão embutidos como estão no repositório.</p>
 </div>
 
 <script>
 (function () {{
   var root = document.documentElement;
 
-  // ------------------------------------------------ indeterminado (regra 8)
-  // So existe por JS. A marcacao carrega data-indeterminate, nunca o atributo.
-  Array.prototype.forEach.call(document.querySelectorAll('[data-indeterminate]'), function (el) {{
-    el.indeterminate = true;
-  }});
-
-  // ------------------------------------------------------ pai e filhos (7, 8)
-  var pai = document.getElementById('f-todas');
-  var filhos = Array.prototype.slice.call(document.querySelectorAll('[data-filho]'));
-  function sincronizarPai() {{
-    var n = filhos.filter(function (f) {{ return f.checked; }}).length;
-    pai.checked = n === filhos.length;
-    pai.indeterminate = n > 0 && n < filhos.length;
-  }}
-  filhos.forEach(function (f) {{ f.addEventListener('change', sincronizarPai); }});
-  pai.addEventListener('change', function () {{
-    // clicar no pai misto marca todos: o navegador ja limpou o indeterminate e
-    // ligou o checked, entao basta propagar
-    filhos.forEach(function (f) {{ f.checked = pai.checked; }});
-    pai.indeterminate = false;
-  }});
-  sincronizarPai();
-
-  // ------------------------------------------------------ erro em texto (19)
+  // ------------------------------------------ erro em texto (regras 21, 22, 26)
+  // O erro e da pergunta: o fieldset leva aria-invalid e aria-describedby.
+  var ERRO_NO_RADIO = {'true' if ERRO_NO_RADIO else 'false'};
   var form = document.getElementById('qa-form');
-  var termos = document.getElementById('f-termos');
+  var pag = form.querySelector('input[name="f-pag"]').closest('fieldset');
+  var opcoes = Array.prototype.slice.call(pag.querySelectorAll('.al-radio__input'));
   var resumo = document.getElementById('form-erro');
   var ok = document.getElementById('form-ok');
-  function limparErro() {{
-    termos.setAttribute('aria-invalid', 'false');
-    termos.removeAttribute('aria-describedby');
-    resumo.hidden = true;
+  function marcarErro(sim) {{
+    if (sim) {{
+      pag.setAttribute('aria-invalid', 'true');
+      pag.setAttribute('aria-describedby', 'form-erro');
+    }} else {{
+      pag.removeAttribute('aria-invalid');
+      pag.removeAttribute('aria-describedby');
+    }}
+    if (ERRO_NO_RADIO) opcoes.forEach(function (o) {{
+      if (sim) o.setAttribute('aria-invalid', 'true'); else o.removeAttribute('aria-invalid');
+    }});
+    resumo.hidden = !sim;
   }}
   form.addEventListener('submit', function (e) {{
     e.preventDefault();
     ok.textContent = '';
-    if (!termos.checked) {{
-      termos.setAttribute('aria-invalid', 'true');
-      termos.setAttribute('aria-describedby', 'form-erro');
-      resumo.hidden = false;
-      termos.focus();
+    var escolhida = opcoes.some(function (o) {{ return o.checked; }});
+    if (!escolhida) {{
+      marcarErro(true);
+      opcoes.filter(function (o) {{ return !o.disabled; }})[0].focus();
       return;
     }}
-    limparErro();
-    ok.textContent = 'Preferências salvas.';
+    marcarErro(false);
+    ok.textContent = 'Assinatura enviada.';
   }});
-  termos.addEventListener('change', function () {{ if (termos.checked) limparErro(); }});
+  opcoes.forEach(function (o) {{ o.addEventListener('change', function () {{ marcarErro(false); }}); }});
 
   // ------------------------------------------------------------------ tema
   var btn = document.getElementById('theme-toggle');
@@ -421,23 +418,23 @@ code {{ font-family: var(--al-font-mono); font-size: 0.9em; }}
     return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
   }}
   function cor(el, prop) {{ return rgb(getComputedStyle(el)[prop]); }}
-  function caixaDe(id) {{ return document.getElementById(id); }}
-  function rotuloDe(id) {{ return caixaDe(id).closest('.al-checkbox').querySelector('.al-checkbox__label'); }}
-  function checkDe(id) {{ return caixaDe(id).parentNode.querySelector('.al-checkbox__check'); }}
-  function fundoDe(id) {{ return cor(caixaDe(id).closest('.qa-card'), 'backgroundColor'); }}
+  function r(id) {{ return document.getElementById(id); }}
+  function rotuloDe(id) {{ return r(id).closest('.al-radio').querySelector('.al-radio__label'); }}
+  function pontoDe(id) {{ return r(id).parentNode.querySelector('.al-radio__dot'); }}
+  function fundoDe(id) {{ return cor(r(id).closest('.qa-card'), 'backgroundColor'); }}
 
   var TXT = 4.5, GRA = 3.0;
 
   function alvos() {{
     return [
-      ['rótulo',                cor(rotuloDe('st-default'), 'color'),   fundoDe('st-default'), TXT, false],
-      ['rótulo em erro',        cor(rotuloDe('st-error'), 'color'),     fundoDe('st-error'),   TXT, false],
-      ['borda em repouso',      cor(caixaDe('st-default'), 'borderTopColor'), fundoDe('st-default'), GRA, true],
-      ['borda em erro',         cor(caixaDe('st-error'), 'borderTopColor'),   fundoDe('st-error'),   GRA, false],
-      ['caixa marcada',         cor(caixaDe('st-checked'), 'backgroundColor'), fundoDe('st-checked'), GRA, false],
-      ['check',                 cor(checkDe('st-checked'), 'color'), cor(caixaDe('st-checked'), 'backgroundColor'), GRA, false],
-      ['check desabilitado',    cor(checkDe('cb-dischk'), 'color'),  cor(caixaDe('cb-dischk'), 'backgroundColor'),  GRA, true],
-      ['rótulo desabilitado',   cor(rotuloDe('st-disabled'), 'color'), fundoDe('st-disabled'), TXT, true],
+      ['rótulo',              cor(rotuloDe('st-default-0'), 'color'),  fundoDe('st-default-0'), TXT, false],
+      ['rótulo em erro',      cor(rotuloDe('st-error-0'), 'color'),    fundoDe('st-error-0'),   TXT, false],
+      ['borda em repouso',    cor(r('st-default-0'), 'borderTopColor'), fundoDe('st-default-0'), GRA, true],
+      ['borda em erro',       cor(r('st-error-0'), 'borderTopColor'),   fundoDe('st-error-0'),   GRA, false],
+      ['borda marcada',       cor(r('st-checked-0'), 'borderTopColor'), fundoDe('st-checked-0'), GRA, false],
+      ['ponto',               cor(pontoDe('st-checked-0'), 'backgroundColor'), cor(r('st-checked-0'), 'backgroundColor'), GRA, false],
+      ['ponto desabilitado',  cor(pontoDe('cb-dischk-0'), 'backgroundColor'),  cor(r('cb-dischk-0'), 'backgroundColor'),  GRA, true],
+      ['rótulo desabilitado', cor(rotuloDe('st-disabled-1'), 'color'), fundoDe('st-disabled-1'), TXT, true],
     ];
   }}
 
@@ -447,13 +444,13 @@ code {{ font-family: var(--al-font-mono); font-size: 0.9em; }}
     alvos().forEach(function (l) {{
       var fg = l[1], bg = l[2];
       if (!fg || !bg) return;
-      var r = cr(fg, bg), passa = r >= l[3];
+      var v = cr(fg, bg), passa = v >= l[3];
       var classe = passa ? 'ok' : (l[4] ? 'exc' : 'bad');
       var texto = passa ? 'passa' : (l[4] ? 'exceção declarada' : 'REPROVA');
       var tr = document.createElement('tr');
       [l[0], 'rgb(' + fg.join(', ') + ')', 'rgb(' + bg.join(', ') + ')',
-       r.toFixed(2) + ':1', l[3].toFixed(1) + ':1'].forEach(function (v) {{
-        var td = document.createElement('td'); td.textContent = v; tr.appendChild(td);
+       v.toFixed(2) + ':1', l[3].toFixed(1) + ':1'].forEach(function (x) {{
+        var td = document.createElement('td'); td.textContent = x; tr.appendChild(td);
       }});
       var td = document.createElement('td');
       td.textContent = texto;
@@ -480,9 +477,9 @@ if __name__ == '__main__':
     html = build()
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     open(OUT, 'w', encoding='utf-8').write(html)
-    print(f'site/checkbox-qa.html escrito ({len(html)} bytes)')
+    print(f'site/radio-qa.html escrito ({len(html)} bytes)')
     print(f'  CSS embutido: {", ".join(n for n, _ in CSS_FILES)}')
     corpo = re.sub(r'<style\b[^>]*>.*?</style>', '', html, flags=re.S)
     corpo = re.sub(r'<script\b[^>]*>.*?</script>', '', corpo, flags=re.S)
-    n = len(re.findall(r'<input\b[^>]*al-checkbox__input', corpo))
-    print(f'  checkboxes de verdade no documento: {n}')
+    n = len(re.findall(r'<input\b[^>]*al-radio__input', corpo))
+    print(f'  radios de verdade no documento: {n}')
