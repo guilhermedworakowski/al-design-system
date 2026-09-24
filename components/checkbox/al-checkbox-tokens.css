@@ -1,0 +1,50 @@
+/* AL Design System - tokens do Checkbox
+ * GERADO por components/checkbox/tokens.py. Nao editar a mao.
+ *
+ * Sem bloco de tema: cada token aponta para um semantico, e o tema troca
+ * no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Glifo: 18px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo da caixa - marcado e indeterminado dividem o mesmo */
+  --al-checkbox-bg: var(--al-bg-surface-raised);
+  --al-checkbox-bg-hover: var(--al-bg-hover);
+  --al-checkbox-bg-checked: var(--al-bg-brand);
+  --al-checkbox-bg-disabled: var(--al-bg-disabled);
+
+  /* borda da caixa */
+  --al-checkbox-border: var(--al-border-default);
+  --al-checkbox-border-hover: var(--al-border-strong);
+  --al-checkbox-border-focus: var(--al-border-strong);
+  --al-checkbox-border-checked: var(--al-border-brand);
+  --al-checkbox-border-error: var(--al-border-danger);
+  --al-checkbox-border-disabled: var(--al-border-default);
+
+  /* check e traco - nao herdam a cor do rotulo */
+  --al-checkbox-icon: var(--al-text-on-brand);
+  --al-checkbox-icon-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora da caixa, sobre a tela */
+  --al-checkbox-label: var(--al-text-primary);
+  --al-checkbox-label-error: var(--al-text-danger);
+  --al-checkbox-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-checkbox-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-checkbox-box-size: var(--al-icon-size-24);
+  --al-checkbox-padding: var(--al-space-2);
+  --al-checkbox-gap: var(--al-space-8);
+  --al-checkbox-radius: var(--al-radius-sm);
+  --al-checkbox-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-checkbox-label-font-size: var(--al-font-size-md);
+  --al-checkbox-label-line-height: var(--al-line-height-md);
+  --al-checkbox-label-font-weight: 400;
+  --al-checkbox-label-tracking: 0em;
+}

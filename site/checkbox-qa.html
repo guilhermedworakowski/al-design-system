@@ -1,0 +1,1142 @@
+<title>AL Checkbox QA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ================= foundation ================= */
+/* AL Design System - Foundation
+ * v0.8.0 - MIT
+ * GERADO por foundation/css.py. Nao editar a mao: rode o script.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* primitivas de cor - a rampa crua. Nao consumir direto num componente. */
+  --al-color-neutral-50: #F7F7F7;
+  --al-color-neutral-100: #EEEEEE;
+  --al-color-neutral-200: #E0E0E0;
+  --al-color-neutral-300: #CECECE;
+  --al-color-neutral-400: #B3B3B3;
+  --al-color-neutral-500: #949494;
+  --al-color-neutral-600: #717171;
+  --al-color-neutral-700: #565656;
+  --al-color-neutral-800: #3E3E3E;
+  --al-color-neutral-900: #292929;
+  --al-color-neutral-950: #181818;
+  --al-color-orange-50: #FFF5F0;
+  --al-color-orange-100: #FFEADE;
+  --al-color-orange-200: #FFD7C4;
+  --al-color-orange-300: #FFBDA0;
+  --al-color-orange-400: #FF9267;
+  --al-color-orange-500: #FC5000;
+  --al-color-orange-600: #C53900;
+  --al-color-orange-700: #992700;
+  --al-color-orange-800: #6C2100;
+  --al-color-orange-900: #4A1700;
+  --al-color-orange-950: #2D0D00;
+  --al-color-red-50: #FFF5F5;
+  --al-color-red-100: #FFE8E9;
+  --al-color-red-200: #FFD5D5;
+  --al-color-red-300: #FFBABB;
+  --al-color-red-400: #FF8D91;
+  --al-color-red-500: #F84F5D;
+  --al-color-red-600: #CA293F;
+  --al-color-red-700: #A00E27;
+  --al-color-red-800: #780014;
+  --al-color-red-900: #550007;
+  --al-color-red-950: #360001;
+  --al-color-amber-50: #FBF7EC;
+  --al-color-amber-100: #F7EED5;
+  --al-color-amber-200: #F2DFB0;
+  --al-color-amber-300: #EBCA7E;
+  --al-color-amber-400: #DCAC2E;
+  --al-color-amber-500: #BA8C00;
+  --al-color-amber-600: #916A00;
+  --al-color-amber-700: #704F00;
+  --al-color-amber-800: #523800;
+  --al-color-amber-900: #392500;
+  --al-color-amber-950: #221500;
+  --al-color-green-50: #EFFBF2;
+  --al-color-green-100: #DEF6E4;
+  --al-color-green-200: #C1EECA;
+  --al-color-green-300: #9DE2A9;
+  --al-color-green-400: #6ACD7C;
+  --al-color-green-500: #1BB14B;
+  --al-color-green-600: #008A2A;
+  --al-color-green-700: #006911;
+  --al-color-green-800: #004C03;
+  --al-color-green-900: #013400;
+  --al-color-green-950: #001F00;
+  --al-color-blue-50: #F1F8FF;
+  --al-color-blue-100: #E2F1FF;
+  --al-color-blue-200: #CAE4FF;
+  --al-color-blue-300: #A9D3FF;
+  --al-color-blue-400: #76B8FF;
+  --al-color-blue-500: #2696FF;
+  --al-color-blue-600: #0071D0;
+  --al-color-blue-700: #0055A3;
+  --al-color-blue-800: #003C7A;
+  --al-color-blue-900: #002858;
+  --al-color-blue-950: #001639;
+
+  /* semanticos de cor - TEMA CLARO. E aqui que o tema e resolvido. */
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+
+  /* tipografia */
+  --al-font-sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --al-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-font-weight-regular: 400;
+  --al-font-weight-medium: 500;
+  --al-font-weight-semibold: 600;
+  --al-font-weight-bold: 700;
+  --al-font-size-xs: 12px;
+  --al-font-size-sm: 14px;
+  --al-font-size-md: 16px;
+  --al-font-size-lg: 18px;
+  --al-font-size-xl: 20px;
+  --al-font-size-2xl: 24px;
+  --al-font-size-3xl: 30px;
+  --al-font-size-4xl: 36px;
+  --al-font-size-5xl: 48px;
+  --al-font-size-6xl: 60px;
+  --al-line-height-xs: 16px;
+  --al-line-height-sm: 20px;
+  --al-line-height-md: 24px;
+  --al-line-height-lg: 28px;
+  --al-line-height-xl: 28px;
+  --al-line-height-2xl: 32px;
+  --al-line-height-3xl: 36px;
+  --al-line-height-4xl: 44px;
+  --al-line-height-5xl: 56px;
+  --al-line-height-6xl: 68px;
+
+  /* espacamento */
+  --al-space-0: 0px;
+  --al-space-2: 2px;
+  --al-space-4: 4px;
+  --al-space-8: 8px;
+  --al-space-12: 12px;
+  --al-space-16: 16px;
+  --al-space-20: 20px;
+  --al-space-24: 24px;
+  --al-space-32: 32px;
+  --al-space-40: 40px;
+  --al-space-48: 48px;
+  --al-space-64: 64px;
+  --al-space-80: 80px;
+  --al-space-96: 96px;
+
+  /* raio */
+  --al-radius-none: 0px;
+  --al-radius-xs: 2px;
+  --al-radius-sm: 4px;
+  --al-radius-md: 6px;
+  --al-radius-lg: 8px;
+  --al-radius-xl: 12px;
+  --al-radius-2xl: 16px;
+  --al-radius-3xl: 24px;
+  --al-radius-full: 9999px;
+
+  /* borda */
+  --al-border-width-0: 0px;
+  --al-border-width-1: 1px;
+  --al-border-width-2: 2px;
+  --al-border-width-focus: 2px;
+  --al-border-focus-offset: 2px;
+
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
+
+  /* elevacao - TEMA CLARO */
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+
+  /* anel de foco - composto uma vez, acompanha o tema sozinho.
+     Duas camadas: respiro na cor do fundo, depois o anel na cor do foco. */
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+}
+
+/* TEMA ESCURO. Tres estados, nao dois: sem carimbo no root, so o
+ * prefers-color-scheme separa; com carimbo, a escolha explicita vence. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --al-bg-canvas: #181818;
+    --al-bg-surface: #292929;
+    --al-bg-surface-raised: #3E3E3E;
+    --al-bg-subtle: #3E3E3E;
+    --al-bg-hover: #3E3E3E;
+    --al-bg-active: #565656;
+    --al-bg-disabled: #3E3E3E;
+    --al-bg-inverse: #F7F7F7;
+    --al-bg-brand: #FC5000;
+    --al-bg-brand-hover: #EA4900;
+    --al-bg-brand-active: #C53900;
+    --al-bg-brand-subtle: #2D0D00;
+    --al-bg-brand-strong: #992700;
+    --al-bg-danger: #F84F5D;
+    --al-bg-danger-hover: #FF8D91;
+    --al-bg-danger-active: #FFBABB;
+    --al-bg-danger-subtle: #360001;
+    --al-bg-success: #1BB14B;
+    --al-bg-success-hover: #6ACD7C;
+    --al-bg-success-subtle: #001F00;
+    --al-bg-warning: #DCAC2E;
+    --al-bg-warning-hover: #EBCA7E;
+    --al-bg-warning-subtle: #221500;
+    --al-bg-info: #2696FF;
+    --al-bg-info-hover: #76B8FF;
+    --al-bg-info-subtle: #001639;
+    --al-text-primary: #F7F7F7;
+    --al-text-secondary: #B3B3B3;
+    --al-text-placeholder: #B3B3B3;
+    --al-text-disabled: #717171;
+    --al-text-inverse: #292929;
+    --al-text-on-brand: #FFFFFF;
+    --al-text-on-solid: #181818;
+    --al-text-brand: #FF9267;
+    --al-text-danger: #FF8D91;
+    --al-text-success: #6ACD7C;
+    --al-text-warning: #EBCA7E;
+    --al-text-info: #76B8FF;
+    --al-border-subtle: #3E3E3E;
+    --al-border-default: #565656;
+    --al-border-strong: #949494;
+    --al-border-brand: #FC5000;
+    --al-border-focus: #FF9267;
+    --al-border-danger: #F84F5D;
+    --al-border-success: #1BB14B;
+    --al-border-warning: #DCAC2E;
+    --al-border-info: #2696FF;
+    --al-shadow-focus-default: #FF9267;
+    --al-shadow-focus-error: #FF8D91;
+    --al-elevation-0: none;
+    --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+    --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+    --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+    --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+    --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+  }
+}
+
+:root[data-theme="dark"] {
+  --al-bg-canvas: #181818;
+  --al-bg-surface: #292929;
+  --al-bg-surface-raised: #3E3E3E;
+  --al-bg-subtle: #3E3E3E;
+  --al-bg-hover: #3E3E3E;
+  --al-bg-active: #565656;
+  --al-bg-disabled: #3E3E3E;
+  --al-bg-inverse: #F7F7F7;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #EA4900;
+  --al-bg-brand-active: #C53900;
+  --al-bg-brand-subtle: #2D0D00;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #F84F5D;
+  --al-bg-danger-hover: #FF8D91;
+  --al-bg-danger-active: #FFBABB;
+  --al-bg-danger-subtle: #360001;
+  --al-bg-success: #1BB14B;
+  --al-bg-success-hover: #6ACD7C;
+  --al-bg-success-subtle: #001F00;
+  --al-bg-warning: #DCAC2E;
+  --al-bg-warning-hover: #EBCA7E;
+  --al-bg-warning-subtle: #221500;
+  --al-bg-info: #2696FF;
+  --al-bg-info-hover: #76B8FF;
+  --al-bg-info-subtle: #001639;
+  --al-text-primary: #F7F7F7;
+  --al-text-secondary: #B3B3B3;
+  --al-text-placeholder: #B3B3B3;
+  --al-text-disabled: #717171;
+  --al-text-inverse: #292929;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #181818;
+  --al-text-brand: #FF9267;
+  --al-text-danger: #FF8D91;
+  --al-text-success: #6ACD7C;
+  --al-text-warning: #EBCA7E;
+  --al-text-info: #76B8FF;
+  --al-border-subtle: #3E3E3E;
+  --al-border-default: #565656;
+  --al-border-strong: #949494;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FF9267;
+  --al-border-danger: #F84F5D;
+  --al-border-success: #1BB14B;
+  --al-border-warning: #DCAC2E;
+  --al-border-info: #2696FF;
+  --al-shadow-focus-default: #FF9267;
+  --al-shadow-focus-error: #FF8D91;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+  --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+  --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+  --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+  --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+}
+
+/* ================= icon - tokens ================= */
+/* AL Design System - tokens do Icon
+ * GERADO por components/icon/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada tinta aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados. Entao o
+ * :root re-substitui todos eles de uma vez.
+ */
+
+:root {
+
+  /* caixa - degrau recorrente, nao teto */
+  --al-icon-box-16: var(--al-icon-size-16);
+  --al-icon-box-20: var(--al-icon-size-20);
+  --al-icon-box-24: var(--al-icon-size-24);
+  --al-icon-box-32: var(--al-icon-size-32);
+
+  /* tinta - saida explicita. O default do componente e currentColor. */
+  --al-icon-ink-default: var(--al-text-primary);
+  --al-icon-ink-on-brand: var(--al-text-on-brand);
+  --al-icon-ink-on-solid: var(--al-text-on-solid);
+  --al-icon-ink-disabled: var(--al-text-disabled);
+}
+
+/* ================= icon ================= */
+/* AL Design System - Icon
+ *
+ * Depende de: foundation/al-foundation.css + components/icon/al-icon-tokens.css
+ *
+ * ANATOMIA
+ *   A classe vai no proprio <svg>, nao num involucro. O arquivo do icone mora
+ *   em components/icon/icons/ e e inserido inline no HTML - inline porque so
+ *   assim o traco herda a cor do texto ao redor, que e o mecanismo inteiro
+ *   deste componente. <img> nao herda cor; background-image tambem nao.
+ *
+ *     <svg class="al-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…</svg>
+ *
+ * TAMANHO
+ *   Nao existe escala fixa. O desenho e vetorizado no grid de 24, entao a mesma
+ *   marcacao serve em qualquer tamanho, e o traco engrossa junto porque o
+ *   viewBox escala o desenho inteiro - e por isso que a caixa e a unica coisa
+ *   que este CSS precisa definir.
+ *
+ *   Padrao 24. Os degraus recorrentes tem modificador:
+ *     .al-icon--16  .al-icon--20  .al-icon--32
+ *   Qualquer outro tamanho entra pela propria custom property, sem classe nova
+ *   e sem esperar a escala crescer:
+ *     <svg class="al-icon" style="--al-icon-box: 40px" aria-hidden="true" focusable="false">
+ *   O portao de CSS literal vale para o CSS do design system, nao para a
+ *   aplicacao que o consome. Este e o escape, e ele e de propósito.
+ *
+ * COR
+ *   Padrao e `currentColor`: o icone herda a cor de quem o contem. E por isso
+ *   que dentro do Button ele acerta os quatro estados sem uma linha a mais - o
+ *   rotulo ja resolveu a cor, e o icone segue. A collection `3. Icon ink` do
+ *   Figma existe com quatro modes justamente porque o Figma nao tem essa
+ *   palavra-chave; aqui ela substitui a collection inteira.
+ *   Para icone que vive fora de um acionavel e nao tem de quem herdar, os
+ *   quatro modificadores `--ink-*` dizem a cor explicitamente.
+ *
+ * ACESSIBILIDADE - contrato de marcacao
+ *   Icone do AL vive dentro de acionavel, e nesse lugar ele e quase sempre
+ *   DECORATIVO: quem carrega o sentido e o rotulo do botao. Icone decorativo
+ *   anunciado por leitor de tela vira ruido duplicado.
+ *
+ *     decorativo (padrao)  aria-hidden="true" focusable="false"
+ *     carrega o sentido    role="img" + aria-label="…"
+ *
+ *   Os dois atributos do caso decorativo fazem coisas diferentes: aria-hidden
+ *   tira do leitor de tela, focusable="false" tira da ordem de tabulacao (SVG
+ *   inline entra nela sozinho em alguns navegadores).
+ *   Botao so-icone e o caso limite: o nome acessivel vai no BOTAO, nunca no
+ *   svg - e o Icon Button que resolve isso, nao este componente.
+ *   Quem cobra isso e o a11y.py ao lado: ele le o HTML que o site emite e
+ *   reprova todo .al-icon sem contrato. Nao e regra escrita, e regra medida.
+ *
+ * NOTA DE GEOMETRIA
+ *   Este arquivo define cor e caixa, e nao define `stroke-width`. Nao e
+ *   esquecimento: a espessura do traco (2 no grid de 24) e parte do DESENHO e
+ *   viaja dentro do proprio arquivo .svg. Cor e caixa mudam com o contexto e
+ *   com o tema; o desenho, nao.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+.al-icon {
+  display: inline-block;
+
+  /* nunca encolhe: dentro de um flex apertado o icone e a ultima coisa que
+     deve ceder espaco - deformar o icone e pior do que quebrar o rotulo */
+  flex: none;
+
+  /* a caixa. Sem valor definido, cai no degrau padrao. */
+  inline-size: var(--al-icon-box, var(--al-icon-box-24));
+  block-size: var(--al-icon-box, var(--al-icon-box-24));
+
+  /* alinha ao centro da linha quando o icone aparece solto no meio de texto.
+     Dentro de um flex (o caso do Button) quem alinha e o container, e esta
+     declaracao nao atrapalha. */
+  vertical-align: middle;
+
+  /* o mecanismo: a cor vem de quem contem */
+  color: inherit;
+  fill: none;
+  stroke: currentColor;
+}
+
+/* ---------------------------------------------------------------- caixa
+   Degraus recorrentes. Vem depois da base de proposito: mesma especificidade,
+   entao quem vence e a ordem do arquivo. */
+
+.al-icon--16 { --al-icon-box: var(--al-icon-box-16); }
+.al-icon--20 { --al-icon-box: var(--al-icon-box-20); }
+.al-icon--24 { --al-icon-box: var(--al-icon-box-24); }
+.al-icon--32 { --al-icon-box: var(--al-icon-box-32); }
+
+/* ---------------------------------------------------------------- tinta
+   Saida explicita, para icone sem quem herdar. Dentro de um acionavel nao se
+   usa nenhuma destas: o padrao ja acerta. */
+
+.al-icon--ink-default  { color: var(--al-icon-ink-default); }
+.al-icon--ink-on-brand { color: var(--al-icon-ink-on-brand); }
+.al-icon--ink-on-solid { color: var(--al-icon-ink-on-solid); }
+.al-icon--ink-disabled { color: var(--al-icon-ink-disabled); }
+
+/* ================= checkbox - tokens ================= */
+/* AL Design System - tokens do Checkbox
+ * GERADO por components/checkbox/tokens.py. Nao editar a mao.
+ *
+ * Sem bloco de tema: cada token aponta para um semantico, e o tema troca
+ * no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Glifo: 18px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo da caixa - marcado e indeterminado dividem o mesmo */
+  --al-checkbox-bg: var(--al-bg-surface-raised);
+  --al-checkbox-bg-hover: var(--al-bg-hover);
+  --al-checkbox-bg-checked: var(--al-bg-brand);
+  --al-checkbox-bg-disabled: var(--al-bg-disabled);
+
+  /* borda da caixa */
+  --al-checkbox-border: var(--al-border-default);
+  --al-checkbox-border-hover: var(--al-border-strong);
+  --al-checkbox-border-focus: var(--al-border-strong);
+  --al-checkbox-border-checked: var(--al-border-brand);
+  --al-checkbox-border-error: var(--al-border-danger);
+  --al-checkbox-border-disabled: var(--al-border-default);
+
+  /* check e traco - nao herdam a cor do rotulo */
+  --al-checkbox-icon: var(--al-text-on-brand);
+  --al-checkbox-icon-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora da caixa, sobre a tela */
+  --al-checkbox-label: var(--al-text-primary);
+  --al-checkbox-label-error: var(--al-text-danger);
+  --al-checkbox-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-checkbox-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-checkbox-box-size: var(--al-icon-size-24);
+  --al-checkbox-padding: var(--al-space-2);
+  --al-checkbox-gap: var(--al-space-8);
+  --al-checkbox-radius: var(--al-radius-sm);
+  --al-checkbox-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-checkbox-label-font-size: var(--al-font-size-md);
+  --al-checkbox-label-line-height: var(--al-line-height-md);
+  --al-checkbox-label-font-weight: 400;
+  --al-checkbox-label-tracking: 0em;
+}
+
+/* ================= checkbox ================= */
+/* AL Design System - Checkbox
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/checkbox/al-checkbox-tokens.css
+ *           + components/icon/al-icon-tokens.css + components/icon/icon.css
+ *
+ * E O <input type="checkbox"> NATIVO
+ *   O controle e do navegador: Espaco marca, o leitor de tela anuncia
+ *   "marcado / nao marcado / misto", o formulario envia o valor. Este arquivo
+ *   so tira a caixa que o navegador desenha (`appearance: none`) e pinta a do
+ *   AL no lugar. Nada de <div role="checkbox"> - primeira regra da ARIA.
+ *
+ * ANATOMIA
+ *   <label class="al-checkbox">
+ *     <span class="al-checkbox__control">
+ *       <input class="al-checkbox__input" type="checkbox" name="news">
+ *       <svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…check…</svg>
+ *       <svg class="al-icon al-checkbox__dash"  viewBox="0 0 24 24" aria-hidden="true" focusable="false">…minus…</svg>
+ *     </span>
+ *     <span class="al-checkbox__label">Receber novidades por e-mail</span>
+ *   </label>
+ *
+ *   O <label> envolve tudo: clicar no texto marca a caixa, e a area clicavel
+ *   passa a ser a linha inteira (WCAG 2.5.8). Nao ha `for`/`id` a sincronizar.
+ *
+ *   O `__control` existe pela mesma razao do Select: <input> nao tem filho, entao
+ *   o glifo nao pode morar dentro dele. Ele e irmao, posicionado por cima, e
+ *   `pointer-events: none` devolve o clique ao input. Os dois glifos sao os
+ *   icones `check` e `minus` da Foundation, inline - nunca um SVG proprio.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Marcado le `:checked`; indeterminado le `:indeterminate` (so existe por JS:
+ *   `input.indeterminate = true`, nao ha atributo HTML); erro le
+ *   `aria-invalid="true"`; desabilitado le `:disabled`. Nao existe
+ *   `.al-checkbox--error`: cor e anuncio saem da mesma fonte e nao divergem.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - mesma tecnica do Select
+ *   Hover e foco escrevem em `--_*-state`; marcado, erro e desabilitado escrevem
+ *   em `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
+ *   todas decididas na etapa 3:
+ *     marcado + hover     -> a caixa laranja nao muda (o force vence o hover)
+ *     marcado + foco      -> anel por cima da caixa laranja
+ *     erro + foco         -> anel padrao (nao ha anel de erro desenhado)
+ *     erro + marcado      -> caixa laranja, rotulo vermelho: o force de erro so
+ *                            vale na caixa VAZIA, que e onde o erro mora
+ *     marcado + disabled  -> caixa cinza, glifo em `icon-disabled`
+ *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ *
+ * O FIGMA TEM UM EIXO SO DE ESTADO
+ *   Sete variantes; as combinacoes acima nao tem variante e sao cobertas pelos
+ *   mesmos tokens. `icon-disabled` e o unico token sem variante no Figma.
+ *
+ * GEOMETRIA DERIVADA
+ *   Caixa 24 = `box-size`. O glifo nao tem token: 18 = caixa - 2 x borda
+ *   - 2 x padding, e a conta esta escrita abaixo em vez de um numero.
+ *   `box-sizing: border-box` poe a borda DENTRO dos 24, entao a caixa nunca
+ *   "pula" quando o estado troca a cor dela.
+ *
+ * ALINHAMENTO AO TOPO
+ *   `align-items: flex-start`, nao `center`: rotulo longo quebra linha e a caixa
+ *   fica na altura da primeira linha (Carbon). Funciona sem ajuste porque a
+ *   caixa (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ *
+ * SEM TEXTO DE APOIO E SEM MENSAGEM DE ERRO - DE PROPOSITO
+ *   Decisao A/D da etapa 1. O erro aqui e so cor (borda + rotulo), e quem monta
+ *   o formulario tem que descreve-lo em texto noutro lugar (WCAG 3.3.1 / 1.4.1)
+ *   e ligar com `aria-describedby`. Regra 19 das regras de uso.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
+ *   de motion. Mesma pendencia do Button, do Icon Button e do Select.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--al-checkbox-gap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ------------------------------------------------------------- caixa */
+.al-checkbox__control {
+  position: relative;
+  display: block;
+  flex: none;
+  inline-size: var(--al-checkbox-box-size);
+  block-size: var(--al-checkbox-box-size);
+}
+
+.al-checkbox__input {
+  --_bg-state: var(--al-checkbox-bg);
+  --_border-state: var(--al-checkbox-border);
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  inline-size: var(--al-checkbox-box-size);
+  block-size: var(--al-checkbox-box-size);
+
+  border: var(--al-checkbox-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-checkbox-radius);
+  background-color: var(--_bg-force, var(--_bg-state));
+  cursor: inherit;
+
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o raio da caixa */
+.al-checkbox__input:focus {
+  outline: none;
+}
+
+/* ------------------------------------------------------------- glifos */
+/* Ficam dentro da borda e do padding: 24 - 2x1 - 2x2 = 18, como no Figma. */
+.al-checkbox__check,
+.al-checkbox__dash {
+  --al-icon-box: calc(var(--al-checkbox-box-size)
+                      - 2 * var(--al-checkbox-border-width)
+                      - 2 * var(--al-checkbox-padding));
+  position: absolute;
+  inset-block-start: calc(var(--al-checkbox-border-width) + var(--al-checkbox-padding));
+  inset-inline-start: calc(var(--al-checkbox-border-width) + var(--al-checkbox-padding));
+  /* devolve o clique ao input que esta embaixo */
+  pointer-events: none;
+  color: var(--al-checkbox-icon);
+  visibility: hidden;
+}
+
+/* check so no marcado que nao e misto; traco so no misto. Um input pode estar
+   `checked` e `indeterminate` ao mesmo tempo - o misto vence, como no nativo. */
+.al-checkbox__input:checked:not(:indeterminate) ~ .al-checkbox__check,
+.al-checkbox__input:indeterminate ~ .al-checkbox__dash {
+  visibility: visible;
+}
+
+/* ------------------------------------------------------------- rotulo */
+.al-checkbox__label {
+  color: var(--al-checkbox-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-checkbox-label-font-size);
+  line-height: var(--al-checkbox-label-line-height);
+  font-weight: var(--al-checkbox-label-font-weight);
+  letter-spacing: var(--al-checkbox-label-tracking);
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover na linha inteira, nao so na caixa: clicar no rotulo tambem marca,
+   entao o rotulo tambem precisa anunciar que e clicavel. Cobre a caixa, que
+   mora dentro do <label>. */
+.al-checkbox:hover .al-checkbox__input:not(:disabled) {
+  --_bg-state: var(--al-checkbox-bg-hover);
+  --_border-state: var(--al-checkbox-border-hover);
+}
+
+.al-checkbox__input:focus-visible {
+  --_border-state: var(--al-checkbox-border-focus);
+  box-shadow: var(--al-checkbox-ring);
+}
+
+/* marcado e indeterminado dividem a caixa - o glifo diferencia */
+.al-checkbox__input:checked,
+.al-checkbox__input:indeterminate {
+  --_bg-force: var(--al-checkbox-bg-checked);
+  --_border-force: var(--al-checkbox-border-checked);
+}
+
+/* erro so na caixa VAZIA; marcada, ela segue laranja e so o rotulo avisa */
+.al-checkbox__input[aria-invalid="true"]:not(:checked):not(:indeterminate) {
+  --_border-force: var(--al-checkbox-border-error);
+}
+
+.al-checkbox:has(.al-checkbox__input[aria-invalid="true"]) .al-checkbox__label {
+  color: var(--al-checkbox-label-error);
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-checkbox__input:disabled {
+  --_bg-force: var(--al-checkbox-bg-disabled);
+  --_border-force: var(--al-checkbox-border-disabled);
+}
+
+.al-checkbox__input:disabled ~ .al-checkbox__check,
+.al-checkbox__input:disabled ~ .al-checkbox__dash {
+  color: var(--al-checkbox-icon-disabled);
+}
+
+.al-checkbox:has(.al-checkbox__input:disabled) {
+  cursor: not-allowed;
+}
+
+.al-checkbox:has(.al-checkbox__input:disabled) .al-checkbox__label {
+  color: var(--al-checkbox-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-checkbox__input {
+    transition: none;
+  }
+}
+
+
+/* ================= cromo da pagina de QA =================
+   Usa os proprios tokens do AL. Nao ha paleta paralela aqui de proposito. */
+html, body { background: var(--al-bg-canvas); }
+body {
+  margin: 0;
+  color: var(--al-text-primary);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-font-size-md);
+  line-height: var(--al-line-height-md);
+}
+.qa-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-inline: var(--al-space-16);
+  padding-block: var(--al-space-32) var(--al-space-64);
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-space-48);
+}
+.qa-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; gap: var(--al-space-16);
+  border-bottom: 1px solid var(--al-border-subtle);
+  padding-bottom: var(--al-space-16);
+}
+.qa-head h1 {
+  margin: 0; font-size: var(--al-font-size-3xl); line-height: var(--al-line-height-3xl);
+  font-weight: 600; letter-spacing: -0.02em; text-wrap: balance;
+}
+.qa-sub { margin: var(--al-space-4) 0 0; color: var(--al-text-secondary); font-size: var(--al-font-size-sm); }
+.qa-btn {
+  display: inline-flex; align-items: center; gap: var(--al-space-8);
+  padding: var(--al-space-8) var(--al-space-16);
+  border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-full);
+  background: var(--al-bg-surface-raised); color: var(--al-text-primary);
+  font: inherit; font-size: var(--al-font-size-sm); cursor: pointer;
+}
+.qa-btn:focus-visible { outline: none; box-shadow: var(--al-focus-ring-default); }
+.qa-btn--primary { background: var(--al-bg-brand); border-color: var(--al-bg-brand); color: var(--al-text-on-brand); }
+section h2 {
+  margin: 0 0 var(--al-space-4);
+  font-size: var(--al-font-size-xl); line-height: var(--al-line-height-xl);
+  font-weight: 600; letter-spacing: -0.01em;
+}
+section > p.qa-lede { margin: 0 0 var(--al-space-20); color: var(--al-text-secondary); max-width: 62ch; }
+.qa-grid {
+  display: grid; gap: var(--al-space-20);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.qa-card {
+  display: flex; flex-direction: column; gap: var(--al-space-12);
+  padding: var(--al-space-20);
+  border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface);
+}
+.qa-card__head { display: flex; align-items: center; justify-content: space-between; gap: var(--al-space-8); }
+.qa-card__title { margin: 0; font-size: var(--al-font-size-sm); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.qa-card__stage { display: flex; flex-direction: column; gap: var(--al-space-8); min-height: var(--al-space-48); }
+.qa-card__note { margin: 0; margin-top: auto; color: var(--al-text-secondary); font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); }
+.qa-tag {
+  font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs);
+  padding: 2px var(--al-space-8); border-radius: var(--al-radius-full);
+  border: 1px solid var(--al-border-default); color: var(--al-text-secondary);
+  white-space: nowrap;
+}
+.qa-tag--real { border-color: var(--al-border-success); color: var(--al-text-success); }
+.qa-tag--codigo { border-color: var(--al-border-info); color: var(--al-text-info); }
+.qa-formerror { margin: 0; color: var(--al-text-danger); font-size: var(--al-font-size-sm); line-height: var(--al-line-height-sm); }
+.qa-form {
+  display: flex; flex-direction: column; gap: var(--al-space-24);
+  padding: var(--al-space-24);
+  border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface-raised);
+  max-width: 560px;
+}
+.qa-form fieldset { margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: var(--al-space-12); min-width: 0; }
+.qa-form legend { padding: 0; margin-bottom: var(--al-space-12); font-weight: 600; }
+.qa-children { display: flex; flex-direction: column; gap: var(--al-space-12); padding-inline-start: var(--al-space-32); }
+.qa-summary {
+  margin: 0; padding: var(--al-space-12) var(--al-space-16);
+  border-radius: var(--al-radius-md);
+  background: var(--al-bg-danger-subtle); color: var(--al-text-danger);
+  font-size: var(--al-font-size-sm); line-height: var(--al-line-height-sm);
+}
+.qa-ok { margin: 0; color: var(--al-text-success); font-size: var(--al-font-size-sm); }
+.qa-actions { display: flex; gap: var(--al-space-12); flex-wrap: wrap; align-items: center; }
+.qa-checks { margin: 0; padding-left: var(--al-space-20); display: grid; gap: var(--al-space-8); max-width: 68ch; }
+.qa-checks li { color: var(--al-text-secondary); }
+.qa-checks strong { color: var(--al-text-primary); font-weight: 500; }
+.qa-tablewrap { overflow-x: auto; }
+table.qa-measure { border-collapse: collapse; width: 100%; font-size: var(--al-font-size-sm); font-variant-numeric: tabular-nums; }
+table.qa-measure th, table.qa-measure td { text-align: left; padding: var(--al-space-8) var(--al-space-12); border-bottom: 1px solid var(--al-border-subtle); white-space: nowrap; }
+table.qa-measure th { font-weight: 600; font-size: var(--al-font-size-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--al-text-secondary); }
+.qa-verdict { font-weight: 600; }
+.qa-verdict--ok { color: var(--al-text-success); }
+.qa-verdict--exc { color: var(--al-text-warning); }
+.qa-verdict--bad { color: var(--al-text-danger); }
+.qa-foot { color: var(--al-text-secondary); font-size: var(--al-font-size-sm); border-top: 1px solid var(--al-border-subtle); padding-top: var(--al-space-16); }
+code { font-family: var(--al-font-mono); font-size: 0.9em; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="qa-wrap">
+  <header class="qa-head">
+    <div>
+      <h1>Checkbox — QA da etapa 6</h1>
+      <p class="qa-sub">AL Design System 0.8.0 · componente 0.1.0 ·
+      &lt;input type="checkbox"&gt; nativo · 24 medições de token, 8 exceções declaradas, 0 reprovas</p>
+    </div>
+    <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">
+      <span id="theme-label">Tema claro</span>
+    </button>
+  </header>
+
+  <section>
+    <h2>O que testar</h2>
+    <ol class="qa-checks">
+      <li><strong>Tabule pela página.</strong> Cada checkbox recebe foco na ordem visual; os desabilitados são pulados.</li>
+      <li><strong>Espaço marca e desmarca</strong> o checkbox focado. Enter não faz nada — é o comportamento nativo.</li>
+      <li><strong>O anel só aparece no teclado.</strong> Chegue por Tab: anel laranja. Clique com o mouse: sem anel.</li>
+      <li><strong>Clique no texto, não na caixa:</strong> também marca, e o hover acende a linha inteira.</li>
+      <li><strong>No formulário, marque e desmarque os filhos</strong> e veja o pai passar por marcado, misto e vazio. Clique no pai misto: marca todos.</li>
+      <li><strong>Envie o formulário sem aceitar os termos:</strong> a caixa fica com borda vermelha, o rótulo vermelho, e o erro aparece em texto no topo. Marque o aceite: tudo volta.</li>
+      <li><strong>Troque o tema</strong> no botão acima e refaça os itens 3 e 6.</li>
+      <li><strong>Reduza a janela</strong> até a largura de telefone: rótulo longo quebra, nada corta.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Os sete estados do Figma</h2>
+    <p class="qa-lede">Um cartão por variante do component set. Só o Hover é simulado, porque só existe
+    enquanto o ponteiro está em cima — os outros seis são reais: interaja neles.</p>
+    <div class="qa-grid">
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Default</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="st-default" class="al-checkbox__input" type="checkbox" name="st-default"><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div>
+      <p class="qa-card__note">o repouso. A borda aqui é a exceção de contraste declarada (1,57:1).</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Hover</h3>
+        <span class="qa-tag qa-tag--simulado">simulado</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="st-hover" class="al-checkbox__input" type="checkbox" name="st-hover" style="--_bg-state: var(--al-checkbox-bg-hover); --_border-state: var(--al-checkbox-border-hover)"><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div>
+      <p class="qa-card__note">só existe sob o ponteiro; a variável privada do componente foi escrita direto. Passe o mouse nos outros cartões para ver o real — vale na linha inteira.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Active (marcado)</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="st-checked" class="al-checkbox__input" type="checkbox" name="st-checked" checked><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div>
+      <p class="qa-card__note">clique para desmarcar e marcar de novo. O check é o ícone check da Foundation.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Indeterminate</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="st-indet" class="al-checkbox__input" type="checkbox" name="st-indet" data-indeterminate><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Todas as notificações</span></label></div>
+      <p class="qa-card__note">aplicado por JavaScript (input.indeterminate = true) — não existe atributo HTML. Clicar tira o misto, como no nativo.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Focus</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="st-focus" class="al-checkbox__input" type="checkbox" name="st-focus"><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div>
+      <p class="qa-card__note">tabule até aqui: anel laranja com respiro. Clique com o mouse: sem anel.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Error</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="st-error" class="al-checkbox__input" type="checkbox" name="st-error" aria-invalid="true" aria-describedby="st-error-msg"><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Li e aceito os termos de uso</span></label><p class="qa-formerror" id="st-error-msg">Aceite os termos para continuar.</p></div>
+      <p class="qa-card__note">vem de aria-invalid="true". A mensagem abaixo é do formulário, não do componente (regra 19).</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Disabled</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="st-disabled" class="al-checkbox__input" type="checkbox" name="st-disabled" disabled><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div>
+      <p class="qa-card__note">atributo disabled nativo: o Tab pula sozinho. Contraste abaixo de AA de propósito.</p>
+    </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Combinações que só existem no código</h2>
+    <p class="qa-lede">O Figma tem um eixo só de estado; o navegador produz combinações que ele não
+    desenha. Estas foram decididas na etapa 3 e são pintadas pelos mesmos tokens.</p>
+    <div class="qa-grid">
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Marcado + disabled</h3>
+        <span class="qa-tag qa-tag--codigo">codigo</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="cb-dischk" class="al-checkbox__input" type="checkbox" name="cb-dischk" checked disabled><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Alertas de segurança</span></label></div>
+      <p class="qa-card__note">caixa cinza, check em icon-disabled — o único token sem variante no Figma.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Erro + marcado</h3>
+        <span class="qa-tag qa-tag--codigo">codigo</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="cb-errchk" class="al-checkbox__input" type="checkbox" name="cb-errchk" checked aria-invalid="true" aria-describedby="cb-errchk-msg"><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Li e aceito os termos de uso</span></label><p class="qa-formerror" id="cb-errchk-msg">Revise o aceite antes de enviar.</p></div>
+      <p class="qa-card__note">a caixa segue laranja; só o rótulo avisa. Desmarque: a borda fica vermelha.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Marcado + foco</h3>
+        <span class="qa-tag qa-tag--codigo">codigo</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="cb-chkfoc" class="al-checkbox__input" type="checkbox" name="cb-chkfoc" checked><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div>
+      <p class="qa-card__note">tabule até aqui: o anel aparece por cima da caixa laranja.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Rótulo longo</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="cb-long" class="al-checkbox__input" type="checkbox" name="cb-long"><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Quero receber o resumo semanal com as notas emitidas, os pagamentos recebidos e os lembretes de vencimento da semana seguinte</span></label></div>
+      <p class="qa-card__note">o texto quebra alinhado ao topo da caixa, não centralizado nela (regra 11).</p>
+    </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Formulário real</h2>
+    <p class="qa-lede">Um grupo com pai e filhos (título em <code>fieldset</code> e <code>legend</code>
+    nativos, regra 6), uma opção travada pela empresa e um aceite obrigatório. É aqui que a ordem de
+    tabulação, o indeterminado e o erro em texto se provam.</p>
+    <form class="qa-form" id="qa-form" novalidate>
+      <p class="qa-summary" id="form-erro" hidden>Aceite os termos de uso para salvar as preferências.</p>
+      <fieldset>
+        <legend>Notificações</legend>
+        <label class="al-checkbox"><span class="al-checkbox__control"><input id="f-todas" class="al-checkbox__input" type="checkbox" name="f-todas" data-pai><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Todas as notificações</span></label>
+        <div class="qa-children">
+          <label class="al-checkbox"><span class="al-checkbox__control"><input id="f-mail" class="al-checkbox__input" type="checkbox" name="f-mail" checked data-filho><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">E-mail</span></label>
+          <label class="al-checkbox"><span class="al-checkbox__control"><input id="f-sms" class="al-checkbox__input" type="checkbox" name="f-sms" checked data-filho><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">SMS</span></label>
+          <label class="al-checkbox"><span class="al-checkbox__control"><input id="f-push" class="al-checkbox__input" type="checkbox" name="f-push" data-filho><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Notificação no celular</span></label>
+        </div>
+        <label class="al-checkbox"><span class="al-checkbox__control"><input id="f-seguranca" class="al-checkbox__input" type="checkbox" name="f-seguranca" checked disabled><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Alertas de segurança</span></label>
+      </fieldset>
+      <label class="al-checkbox"><span class="al-checkbox__control"><input id="f-termos" class="al-checkbox__input" type="checkbox" name="f-termos" required><svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Li e aceito os termos de uso</span></label>
+      <div class="qa-actions">
+        <button type="submit" class="qa-btn qa-btn--primary" id="f-enviar">Salvar preferências</button>
+        <p class="qa-ok" id="form-ok" role="status"></p>
+      </div>
+    </form>
+  </section>
+
+  <section>
+    <h2>Contraste medido no navegador</h2>
+    <p class="qa-lede">Não são os números do <code>tokens.json</code>: o script lê a cor que o navegador
+    realmente pintou, com <code>getComputedStyle</code>, depois de esperar a transição terminar — contra o
+    fundo onde cada checkbox está de verdade (cartão em <code>bg-surface</code>).</p>
+    <div class="qa-tablewrap">
+      <table class="qa-measure">
+        <thead><tr><th>papel</th><th>frente</th><th>fundo</th><th>medido</th><th>piso</th><th>veredito</th></tr></thead>
+        <tbody id="measure-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="qa-foot">Gerado por <code>components/checkbox/qa.py</code> a partir do CSS commitado em
+  <code>dev</code>. <code>al-foundation.css</code>, <code>icon.css</code>, <code>al-checkbox-tokens.css</code>
+  e <code>checkbox.css</code> estão embutidos como estão no repositório; os glifos vêm de
+  <code>components/icon/icons/</code>.</p>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+
+  // ------------------------------------------------ indeterminado (regra 8)
+  // So existe por JS. A marcacao carrega data-indeterminate, nunca o atributo.
+  Array.prototype.forEach.call(document.querySelectorAll('[data-indeterminate]'), function (el) {
+    el.indeterminate = true;
+  });
+
+  // ------------------------------------------------------ pai e filhos (7, 8)
+  var pai = document.getElementById('f-todas');
+  var filhos = Array.prototype.slice.call(document.querySelectorAll('[data-filho]'));
+  function sincronizarPai() {
+    var n = filhos.filter(function (f) { return f.checked; }).length;
+    pai.checked = n === filhos.length;
+    pai.indeterminate = n > 0 && n < filhos.length;
+  }
+  filhos.forEach(function (f) { f.addEventListener('change', sincronizarPai); });
+  pai.addEventListener('change', function () {
+    // clicar no pai misto marca todos: o navegador ja limpou o indeterminate e
+    // ligou o checked, entao basta propagar
+    filhos.forEach(function (f) { f.checked = pai.checked; });
+    pai.indeterminate = false;
+  });
+  sincronizarPai();
+
+  // ------------------------------------------------------ erro em texto (19)
+  var form = document.getElementById('qa-form');
+  var termos = document.getElementById('f-termos');
+  var resumo = document.getElementById('form-erro');
+  var ok = document.getElementById('form-ok');
+  function limparErro() {
+    termos.setAttribute('aria-invalid', 'false');
+    termos.removeAttribute('aria-describedby');
+    resumo.hidden = true;
+  }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    ok.textContent = '';
+    if (!termos.checked) {
+      termos.setAttribute('aria-invalid', 'true');
+      termos.setAttribute('aria-describedby', 'form-erro');
+      resumo.hidden = false;
+      termos.focus();
+      return;
+    }
+    limparErro();
+    ok.textContent = 'Preferências salvas.';
+  });
+  termos.addEventListener('change', function () { if (termos.checked) limparErro(); });
+
+  // ------------------------------------------------------------------ tema
+  var btn = document.getElementById('theme-toggle');
+  var label = document.getElementById('theme-label');
+  function escuro() {
+    if (root.dataset.theme) return root.dataset.theme === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function pintarBotao() {
+    var d = escuro();
+    label.textContent = d ? 'Tema escuro' : 'Tema claro';
+    btn.setAttribute('aria-pressed', String(d));
+  }
+  btn.addEventListener('click', function () {
+    root.dataset.theme = escuro() ? 'light' : 'dark';
+    pintarBotao();
+    // 350ms de folga para a transicao de 120ms terminar
+    setTimeout(medir, 350);
+  });
+  pintarBotao();
+
+  // ------------------------------------------------------------- contraste
+  function rgb(str) {
+    var m = str.match(/-?[\d.]+/g);
+    return m ? [ +m[0], +m[1], +m[2] ] : null;
+  }
+  function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(c) { return 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); }
+  function cr(a, b) {
+    var la = lum(a), lb = lum(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+  function cor(el, prop) { return rgb(getComputedStyle(el)[prop]); }
+  function caixaDe(id) { return document.getElementById(id); }
+  function rotuloDe(id) { return caixaDe(id).closest('.al-checkbox').querySelector('.al-checkbox__label'); }
+  function checkDe(id) { return caixaDe(id).parentNode.querySelector('.al-checkbox__check'); }
+  function fundoDe(id) { return cor(caixaDe(id).closest('.qa-card'), 'backgroundColor'); }
+
+  var TXT = 4.5, GRA = 3.0;
+
+  function alvos() {
+    return [
+      ['rótulo',                cor(rotuloDe('st-default'), 'color'),   fundoDe('st-default'), TXT, false],
+      ['rótulo em erro',        cor(rotuloDe('st-error'), 'color'),     fundoDe('st-error'),   TXT, false],
+      ['borda em repouso',      cor(caixaDe('st-default'), 'borderTopColor'), fundoDe('st-default'), GRA, true],
+      ['borda em erro',         cor(caixaDe('st-error'), 'borderTopColor'),   fundoDe('st-error'),   GRA, false],
+      ['caixa marcada',         cor(caixaDe('st-checked'), 'backgroundColor'), fundoDe('st-checked'), GRA, false],
+      ['check',                 cor(checkDe('st-checked'), 'color'), cor(caixaDe('st-checked'), 'backgroundColor'), GRA, false],
+      ['check desabilitado',    cor(checkDe('cb-dischk'), 'color'),  cor(caixaDe('cb-dischk'), 'backgroundColor'),  GRA, true],
+      ['rótulo desabilitado',   cor(rotuloDe('st-disabled'), 'color'), fundoDe('st-disabled'), TXT, true],
+    ];
+  }
+
+  function medir() {
+    var corpo = document.getElementById('measure-body');
+    corpo.textContent = '';
+    alvos().forEach(function (l) {
+      var fg = l[1], bg = l[2];
+      if (!fg || !bg) return;
+      var r = cr(fg, bg), passa = r >= l[3];
+      var classe = passa ? 'ok' : (l[4] ? 'exc' : 'bad');
+      var texto = passa ? 'passa' : (l[4] ? 'exceção declarada' : 'REPROVA');
+      var tr = document.createElement('tr');
+      [l[0], 'rgb(' + fg.join(', ') + ')', 'rgb(' + bg.join(', ') + ')',
+       r.toFixed(2) + ':1', l[3].toFixed(1) + ':1'].forEach(function (v) {
+        var td = document.createElement('td'); td.textContent = v; tr.appendChild(td);
+      });
+      var td = document.createElement('td');
+      td.textContent = texto;
+      td.className = 'qa-verdict qa-verdict--' + classe;
+      tr.appendChild(td);
+      corpo.appendChild(tr);
+    });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { setTimeout(medir, 350); });
+  } else {
+    setTimeout(medir, 350);
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+    pintarBotao(); setTimeout(medir, 350);
+  });
+})();
+</script>
