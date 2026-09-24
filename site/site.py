@@ -68,6 +68,12 @@ SELECT_TOKENS = open(os.path.join(ROOT, 'components', 'select',
 SELECT_CSS = open(os.path.join(ROOT, 'components', 'select', 'select.css')).read()
 SELECT_A11Y = json.load(open(os.path.join(ROOT, 'components', 'select', 'a11y.json')))
 
+CHECKBOX = json.load(open(os.path.join(ROOT, 'components', 'checkbox', 'tokens.json')))
+CHECKBOX_TOKENS = open(os.path.join(ROOT, 'components', 'checkbox',
+                                    'al-checkbox-tokens.css')).read()
+CHECKBOX_CSS = open(os.path.join(ROOT, 'components', 'checkbox', 'checkbox.css')).read()
+CHECKBOX_A11Y = json.load(open(os.path.join(ROOT, 'components', 'checkbox', 'a11y.json')))
+
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
 N, O = P['neutral'], P['orange']
@@ -87,6 +93,7 @@ N_IB_TOKENS = len(IB['alias'])
 N_TAG_TOKENS = len(TAG['alias'])
 N_AVATAR_TOKENS = len(AVATAR['alias'])
 N_SELECT_TOKENS = len(SELECT['alias'])
+N_CHECKBOX_TOKENS = len(CHECKBOX['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -126,13 +133,14 @@ def scope_themes(found_css, *token_blocks):
 
 
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
-                         AVATAR_TOKENS, SELECT_TOKENS)
+                         AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
             + '\n' + TAG_TOKENS + '\n' + TAG_CSS
             + '\n' + AVATAR_TOKENS + '\n' + AVATAR_CSS
-            + '\n' + SELECT_TOKENS + '\n' + SELECT_CSS)
+            + '\n' + SELECT_TOKENS + '\n' + SELECT_CSS
+            + '\n' + CHECKBOX_TOKENS + '\n' + CHECKBOX_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -3740,6 +3748,472 @@ SELECT_A11Y_TAB = f'''
 </section>'''
 
 
+# ═══════════════════════════════════════════════════════════════ Checkbox · abas
+# 7 estados no Figma, num eixo so. O input nativo produz combinacoes que o Figma
+# nao desenha (marcado + foco, marcado + disabled, erro + marcado) - a pagina as
+# mostra como o que sao: pintadas pelo codigo, com os tokens aprovados na etapa 3.
+CBX_CHECK = al_icon('check', cls='al-icon al-checkbox__check')
+CBX_DASH = al_icon('minus', cls='al-icon al-checkbox__dash')
+
+
+def cbx(cid, rotulo='Receber novidades por e-mail', *, checked=False, indeterminate=False,
+        disabled=False, erro=None, sim=None, extra=''):
+    """Um Checkbox real. `indeterminate` vira `data-indeterminate` e o JS da pagina
+    faz `el.indeterminate = true` - o atributo HTML nao existe (regra 8).
+    `sim` escreve nas MESMAS variaveis privadas que o checkbox.css usa para o
+    hover, o unico estado que so vive sob o ponteiro."""
+    attrs = [f'id="{cid}"', 'class="al-checkbox__input"', 'type="checkbox"']
+    if checked:
+        attrs.append('checked')
+    if disabled:
+        attrs.append('disabled')
+    if indeterminate:
+        attrs.append('data-indeterminate')
+    if erro:
+        attrs.append('aria-invalid="true"')
+        attrs.append(f'aria-describedby="{erro}"')
+    lab_style = ''
+    if sim == 'hover':
+        attrs.append('style="--_bg-state: var(--al-checkbox-bg-hover); '
+                     '--_border-state: var(--al-checkbox-border-hover)"')
+    if sim == 'error':
+        # so para o "Nao faca": o visual do erro SEM aria-invalid, porque o
+        # exemplo e justamente um erro que nao foi descrito em texto
+        attrs.append('style="--_border-force: var(--al-checkbox-border-error)"')
+        lab_style = ' style="color: var(--al-checkbox-label-error)"'
+    if extra:
+        attrs.append(extra)
+    return (f'<label class="al-checkbox">'
+            f'<span class="al-checkbox__control"><input {" ".join(attrs)}>{CBX_CHECK}{CBX_DASH}</span>'
+            f'<span class="al-checkbox__label"{lab_style}>{rotulo}</span></label>')
+
+
+def cbx_msg(mid, texto):
+    """A mensagem de erro e do FORMULARIO, nao do componente (regra 19)."""
+    return f'<p class="cbx-formerror" id="{mid}">{texto}</p>'
+
+
+CBX_STATES = [
+    ('default', 'Default', 'O repouso. A borda aqui é a exceção de contraste declarada.',
+     dict()),
+    ('hover', 'Hover', 'Só existe sob o ponteiro: a variável privada foi escrita direto. '
+     'O real vale na linha inteira — passe o mouse no texto dos outros.', dict(sim='hover')),
+    ('active', 'Active (marcado)', 'O check é o ícone <code>check</code> da Fundação.',
+     dict(checked=True)),
+    ('indeterminate', 'Indeterminate', 'Só por JavaScript: <code>input.indeterminate = true</code>. '
+     'Não existe atributo HTML.', dict(indeterminate=True, rotulo='Todas as notificações')),
+    ('focus', 'Focus', 'Tabule até aqui: anel laranja. Pelo mouse o anel não aparece.', dict()),
+    ('error', 'Error', 'Vem de <code>aria-invalid="true"</code>. A mensagem é do formulário, '
+     'não do componente.', dict(erro='sp-cbx-error-msg', rotulo='Li e aceito os termos de uso')),
+    ('disabled', 'Disabled', 'Atributo nativo <code>disabled</code>: o Tab pula sozinho.',
+     dict(disabled=True)),
+]
+
+CBX_COMBOS = [
+    ('dischk', 'Marcado + disabled', 'Caixa cinza, check em <code>icon-disabled</code> — o único '
+     'token sem variante no Figma.', dict(checked=True, disabled=True, rotulo='Alertas de segurança')),
+    ('errchk', 'Erro + marcado', 'A caixa segue laranja; só o rótulo avisa. Desmarque e a borda '
+     'fica vermelha.', dict(checked=True, erro='sp-cbx-errchk-msg', rotulo='Li e aceito os termos de uso')),
+    ('chkfoc', 'Marcado + foco', 'O anel aparece por cima da caixa laranja — ele não depende do '
+     'preenchimento.', dict(checked=True)),
+]
+
+
+def checkbox_specimens(lista):
+    cells = []
+    for slug, nome, nota, kw in lista:
+        kw = dict(kw)
+        corpo = cbx(f'sp-cbx-{slug}', **kw)
+        if kw.get('erro'):
+            corpo += cbx_msg(kw['erro'], 'Aceite os termos para continuar.')
+        cells.append(f'<div class="cell"><span class="lab" '
+                     f'style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2 cbx-stage">{corpo}</div>'
+                     f'<p class="cap">{nota}</p></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def checkbox_token_rows():
+    rows = []
+    for name in CHECKBOX['alias']:
+        res = CHECKBOX['resolved'].get(name)
+        if not isinstance(res, dict) or 'light' not in res:
+            continue
+        lt = res['light']
+        sw = (f'<span class="chip sm" style="background:{lt}"></span>'
+              if isinstance(lt, str) and lt.startswith('#') else '')
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{CHECKBOX["alias"][name]}</td>'
+                    f'<td class="tok dim">{sw}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+def checkbox_geo_rows():
+    rows = []
+    for role in ['box-size', 'padding', 'gap', 'radius', 'border-width']:
+        name = f'checkbox-{role}'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{CHECKBOX["alias"][name]}</td>'
+                    f'<td class="num">{CHECKBOX["resolved"][name]}px</td></tr>')
+    res = CHECKBOX['resolved']['checkbox-label-font']
+    rows.append(f'<tr><td class="tok">--al-checkbox-label-font</td>'
+                f'<td class="tok dim">{CHECKBOX["alias"]["checkbox-label-font"]}</td>'
+                f'<td class="num">{res[1]}/{res[2]} · peso {res[3]}</td></tr>')
+    return '\n'.join(rows)
+
+
+def checkbox_a11y_rows(papeis):
+    out = []
+    for r in CHECKBOX_A11Y['rows']:
+        if r['papel'] not in papeis:
+            continue
+        if r['pass']:
+            verdict = '<span class="pass">passa</span>'
+        elif r['exc']:
+            verdict = '<span class="exc">exceção</span>'
+        else:
+            verdict = '<span class="fail">reprova</span>'
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['soNoCodigo'] else '')
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{estado}</td>'
+            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">--al-{r["token"]}</td>'
+            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+N_CBX_MEDIDAS = len(CHECKBOX_A11Y['rows'])
+N_CBX_EXC = sum(CHECKBOX_A11Y['exceptions'].values())
+N_CBX_PASSA = N_CBX_MEDIDAS - N_CBX_EXC
+
+
+def _cbx_borda(state, theme):
+    return next(r['ratio'] for r in CHECKBOX_A11Y['rows']
+                if r['state'] == state and r['theme'] == theme and r['papel'] == 'borda')
+
+
+CBX_LAYER = {t: {'rest': _cbx_borda('default', t), 'focused': _cbx_borda('focus', t)}
+             for t in ('light', 'dark')}
+CBX_DERIVED = CHECKBOX['derived']
+
+TH_CHECKBOX = ('<div class="th-cbx" aria-hidden="true">'
+               '<span class="th-cbx__row"><span class="th-cbx__box is-on">' + al_icon('check')
+               + '</span>E-mail</span>'
+               '<span class="th-cbx__row"><span class="th-cbx__box is-on">' + al_icon('minus')
+               + '</span>Notificações</span>'
+               '<span class="th-cbx__row"><span class="th-cbx__box"></span>SMS</span></div>')
+
+CHECKBOX_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="cbx-stage">{cbx('pg-cbx')}</div>
+
+    <div class="controls" id="cbx-controls">
+      <div class="ctl"><span class="ctl-name">Valor</span>{seg('cbxvalue', [('off', 'Desmarcado'), ('on', 'Marcado'), ('mixed', 'Misto')], 'off')}</div>
+      <div class="ctl"><span class="ctl-name">Estado</span>{seg('cbxstate', [('rest', 'Normal'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('cbxtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><label for="cbx-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="cbx-label" type="text" value="Receber novidades por e-mail" maxlength="60"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="cbx-copy">Copiar</button></div>
+      <pre><code id="cbx-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O checkbox acima é o componente real: esta página carrega o mesmo <code>checkbox.css</code>
+    que vai para produção. Clique no texto e não só na caixa — também marca. No erro, a mensagem
+    em vermelho abaixo dele <b>não faz parte do componente</b>: é o formulário descrevendo o erro
+    em texto, e o componente aponta para ela com <code>aria-describedby</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Pai, filhos e o estado misto</h2>
+  <div class="cell" style="max-width:none">
+    <fieldset class="stage2 cbx-group">
+      <legend>Notificações</legend>
+      {cbx('ov-todas', 'Todas as notificações', extra='data-cbx-pai')}
+      <div class="cbx-children">
+        {cbx('ov-mail', 'E-mail', checked=True, extra='data-cbx-filho')}
+        {cbx('ov-sms', 'SMS', checked=True, extra='data-cbx-filho')}
+        {cbx('ov-push', 'Notificação no celular', extra='data-cbx-filho')}
+      </div>
+    </fieldset>
+    <p class="cap">Marque e desmarque os filhos: o pai fica <b>marcado</b> com todos,
+    <b>vazio</b> com nenhum e <b>misto</b> com alguns. Clicar no pai misto marca todos.
+    Ninguém escolhe o misto — ele é consequência. <i>Carbon e Material, com a mesma regra.</i>
+    O título do grupo é <code>fieldset</code> e <code>legend</code> nativos: o componente de
+    grupo do AL ainda vai existir, e até lá é isso que faz o leitor de tela dizer a que pergunta
+    cada opção responde.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Os sete estados do Figma</h2>
+  {checkbox_specimens(CBX_STATES)}
+</section>
+
+<section>
+  <h2>O que só existe no código</h2>
+  <p>O Figma tem um eixo só de estado. O navegador produz combinações que ele não desenha — e
+  elas foram decididas na etapa 3, pintadas pelos mesmos tokens, sem nenhum a mais além do
+  check desabilitado.</p>
+  <div style="margin-top:16px">{checkbox_specimens(CBX_COMBOS)}</div>
+</section>'''
+
+CHECKBOX_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b><code>&lt;label class="al-checkbox"&gt;</code></b><span>Envolve tudo. É o que faz clicar no texto marcar a caixa, e o que transforma a linha inteira em área de clique — também é onde mora o hover.</span></div>
+    <div><b>Caixa</b><span><code>&lt;input type="checkbox"&gt;</code> nativo com <code>appearance: none</code>: a caixa do navegador sai e a do AL entra. Teclado, anúncio e estado misto continuam do navegador.</span></div>
+    <div><b>Check e traço</b><span>Os ícones <code>check</code> e <code>minus</code> da Fundação, irmãos do input — <code>&lt;input&gt;</code> não tem filho. Posicionados por cima, com <code>pointer-events: none</code> devolvendo o clique.</span></div>
+    <div><b>Rótulo</b><span>Sempre visível, à direita. É a regra que sustenta a exceção de contraste da borda.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A geometria é consequência</h2>
+  <p>A caixa é <code>box-size</code>: <b>24px</b>, o mesmo grid de 24 do desenho Lucide e a
+  mesma entrelinha do rótulo — é isso que alinha a caixa com a primeira linha do texto quando
+  ele quebra, sem ajuste nenhum. O glifo não tem token: são
+  <b>{CBX_DERIVED['icon-size']}px</b>, caixa − 2 × borda − 2 × respiro, e a conta está
+  escrita no CSS em vez de um número. <code>18</code> nem existe na escala de ícone.</p>
+  <p style="margin-top:12px">A borda de 1px existe em todos os estados, inclusive no laranja —
+  por isso a caixa nunca “pula” quando o estado troca a cor dela.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_CHECKBOX_TOKENS}</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>7</b><span>estados no Figma</span></div>
+    <div class="stat"><b>1</b><span>tamanho — regra do Tier 2</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody>{checkbox_token_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Marcado e indeterminado dividem a mesma caixa</b>
+    <code>bg-checked</code> e <code>border-checked</code> valem para os dois. O que diferencia é o
+    glifo — check ou traço —, nunca a cor. E o glifo tem token próprio (<code>checkbox-icon</code>)
+    porque não pode herdar a cor do rótulo: o rótulo é escuro, o check é branco.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody>{checkbox_geo_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Quem ganha quando dois estados acontecem juntos</h2>
+  <p>A mesma técnica do Select: fundo e borda são
+  <code>var(--_*-force, var(--_*-state))</code>. Hover e foco escrevem em
+  <code>--_*-state</code>; marcado, erro e desabilitado escrevem em <code>--_*-force</code>,
+  que vence por ser <b>outra propriedade</b>, não por ter seletor mais pesado. Daí sai cada
+  combinação que o Figma não desenha:</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Marcado + hover</b><span>A caixa laranja não muda. O hover só existe na caixa vazia.</span></div>
+    <div><b>Marcado + foco</b><span>O anel aparece por cima da caixa laranja.</span></div>
+    <div><b>Erro + marcado</b><span>Caixa laranja, rótulo vermelho — a borda de erro só vale na caixa vazia, que é onde o erro mora.</span></div>
+    <div><b>Erro + foco</b><span>Anel padrão: não há anel de erro desenhado para este componente.</span></div>
+    <div><b>Desabilitado</b><span>Vem por último no arquivo e ganha de todos. Marcado e desabilitado mostra o check em <code>icon-disabled</code>.</span></div>
+  </div>
+</section>'''
+
+CHECKBOX_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Várias opções de uma lista</b><span>Ou uma opção isolada que só vale depois de confirmar — enviar, salvar. <i>Carbon, Primer, NN/g.</i></span></div>
+    <div><b>Nunca para escolha única</b><span>Se só uma opção pode ser escolhida, é radio: com o Checkbox a pessoa não tem como saber que as opções se excluem. <i>Carbon.</i></span></div>
+    <div><b>Nunca para ação imediata</b><span>Ativar modo escuro, ligar notificações: quem clica numa caixa espera confirmar depois. Ação imediata pede Switch, que o AL ainda não tem. <i>Carbon, Primer.</i></span></div>
+    <div><b>Aceite</b><span>Checkbox isolado serve para “Li e aceito os termos”, em primeira pessoa. <i>Primer.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Grupo e indeterminado</h2>
+  <div class="anat">
+    <div><b>Uma por linha, na vertical</b><span>Na horizontal fica difícil dizer qual caixa é de qual rótulo. <i>NN/g, Carbon.</i></span></div>
+    <div><b>Título do grupo em <code>fieldset</code> + <code>legend</code></b><span>O componente de grupo do AL é separado e ainda vai existir. Até lá, os nativos — sem eles o leitor de tela anuncia a opção sem a pergunta.</span></div>
+    <div><b>Misto só no pai</b><span>Todos os filhos marcados → pai marcado; nenhum → vazio; alguns → misto. <i>Carbon, Material.</i></span></div>
+    <div><b>Clicar no pai misto marca todos</b><span>Ninguém escolhe o misto: ele é consequência. Aplicado por JavaScript — não existe atributo HTML. <i>Material.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 cbx-stage">{cbx('gd-cbx-ok', 'Receber novidades por e-mail', checked=True)}</div>
+      <p class="cap">Curto, em sentence case, sem ponto final, <b>afirmativo</b>. O texto também é
+      clicável, e o hover acende a linha inteira. <i>Primer, Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 cbx-stage">{cbx('gd-cbx-bad', 'Não quero deixar de receber novidades.')}</div>
+      <p class="cap">Negação obriga a pensar duas vezes para saber o que marcar — e aqui marcar
+      significa <i>receber</i>, o oposto do que a frase parece dizer. <i>Primer.</i></p>
+    </div>
+  </div>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo longo quebra alinhado ao topo</b><span>A caixa fica na altura da primeira linha, não centralizada no bloco. <i>Carbon.</i> No AL sai de graça: caixa e entrelinha medem os mesmos 24px.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Estados</h2>
+  <div class="anat">
+    <div><b>Desabilitado só quando depende de outra escolha na mesma tela</b><span>Se nunca vai poder ser usado, esconda. Mesma regra do Select.</span></div>
+    <div><b>O desabilitado fica abaixo de AA de propósito</b><span>O WCAG 1.4.3 isenta controle inativo, e subir esse contraste faz a caixa parecer clicável.</span></div>
+    <div><b>Marcado e desabilitado existe</b><span>Caixa cinza, check apagado — aparece em qualquer tela de configuração travada, então existe no código mesmo sem variante no Figma.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Erro — o componente não tem mensagem</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 cbx-stage">{cbx_msg('gd-cbx-sum', 'Aceite os termos de uso para continuar.')}{cbx('gd-cbx-err', 'Li e aceito os termos de uso', erro='gd-cbx-sum')}</div>
+      <p class="cap">O formulário descreve o erro em texto — aqui, um resumo acima — e o
+      checkbox aponta para ele com <code>aria-describedby</code>.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 cbx-stage">{cbx('gd-cbx-nomsg', 'Li e aceito os termos de uso', sim='error')}</div>
+      <p class="cap">Só a borda e o rótulo vermelhos. Isso é <b>só cor</b>, e o WCAG exige o erro
+      descrito em texto (3.3.1) e não comunicado só por cor (1.4.1).</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Divergência consciente</b>
+    Carbon e Polaris colocam a mensagem dentro do componente. O AL deixa o texto para o
+    formulário — e é por isso que esta regra é obrigatória, não sugestão: ela cobre a lacuna.
+    O rótulo vermelho também é escolha nossa, coerente com o Select e com o Material; Carbon e
+    Polaris deixam o rótulo neutro. O erro aparece <b>depois do envio</b>, nunca enquanto a
+    pessoa ainda escolhe.
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Um tamanho só</b><span>Regra de todo input do Tier 2.</span></div>
+    <div><b>Texto de apoio e mensagem de erro</b><span>Não fazem parte do componente — são do formulário.</span></div>
+    <div><b>Variantes combinadas no Figma</b><span>Marcado + hover e companhia são cobertos pelo código com os mesmos tokens; as variantes entram se uma atualização pedir.</span></div>
+    <div><b>Checkbox sem rótulo visível</b><span>Fica reservado para a seleção de linha do futuro componente de tabela, que resolve o nome com <code>aria-label</code>. Até lá, não use.</span></div>
+    <div><b>Switch e read-only</b><span>Outros componentes, ainda não abertos.</span></div>
+  </div>
+</section>'''
+
+CHECKBOX_A11Y_TAB = f'''
+<section>
+  <h2>Quem desenha o limite muda com o estado</h2>
+  <p>O portão mede <b>combinação renderizada</b>, e aqui ela mostra uma coisa que o par de
+  token sozinho esconde: <b>desmarcada, quem desenha a caixa é a borda; marcada, é o
+  preenchimento inteiro</b>, porque borda e fundo viram a mesma cor. Medir a borda da caixa
+  marcada contra o próprio fundo daria 1:1 e reprovaria uma caixa perfeitamente visível —
+  então o portão mede o laranja contra a página.</p>
+  <p style="margin-top:12px">E a página não é uma só: o Checkbox vive em listas de
+  configuração, que costumam morar em faixa de seção (<code>bg-surface</code>). O portão mede
+  contra tela, faixa e card, e guarda a pior.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_CBX_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_CBX_PASSA}</b><span>passam</span></div>
+    <div class="stat"><b>{N_CBX_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{CHECKBOX_A11Y['fails']}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Com foco, a borda passa sozinha</h2>
+  <p>O anel desenha um respiro de 2px em <code>bg-canvas</code> colado na caixa, e a vizinha
+  externa da borda passa a ser ele — independente de onde o checkbox foi colocado.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Borda em repouso</th><th>Borda com foco</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num">{CBX_LAYER['light']['rest']:.2f}:1</td><td class="num strong">{CBX_LAYER['light']['focused']:.2f}:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num">{CBX_LAYER['dark']['rest']:.2f}:1</td><td class="num strong">{CBX_LAYER['dark']['focused']:.2f}:1</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">A borda fraca existe só em repouso, nunca durante a navegação por
+  teclado. E, diferente do Select, o anel <b>não</b> aparece no clique do mouse: medido no
+  Chromium, um checkbox clicado não casa <code>:focus-visible</code>.</p>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda em repouso abaixo de 3:1 — decisão consciente</b>
+    <code>border-default</code> fica em {CBX_LAYER['light']['rest']:.2f}:1 no claro e
+    {CBX_LAYER['dark']['rest']:.2f}:1 no escuro, no pior fundo. Foi decidido para seguir o padrão
+    dos inputs do AL. <b>O argumento do Select não vale aqui</b>: no Checkbox a borda é o único
+    desenho do controle vazio. O que sustenta a exceção é o rótulo visível ao lado — por isso
+    “nunca use checkbox sem rótulo visível” é regra de uso, e não sugestão. Hover, foco, erro e
+    a caixa marcada passam todos.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Desabilitado abaixo de AA — isenção do 1.4.3</b>
+    Rótulo, borda e check desabilitados ficam abaixo do piso. O WCAG isenta componente inativo,
+    e subir esse contraste faz a caixa parecer clicável. No tema escuro, a caixa desabilitada e
+    a normal chegam a ser idênticas (<code>#3E3E3E</code>): só o rótulo apagado diferencia —
+    outra razão para o rótulo visível ser obrigatório.
+  </div>
+</section>
+
+<section>
+  <h2>Não-textual — piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{checkbox_a11y_rows(['borda', 'caixa marcada', 'anel de foco', 'check', 'traco'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{checkbox_a11y_rows(['rotulo'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Estas cinco regras não estão escritas numa página: elas são medidas por
+  <code>components/checkbox/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="checkbox"&gt;</code> dentro de <code>&lt;label class="al-checkbox"&gt;</code>. Nenhum <code>role="checkbox"</code> na página.</span></div>
+    <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-checkbox__label</code>, e nada de <code>aria-label</code>.</span></div>
+    <div><b>Erro descrito</b><span>Com <code>aria-invalid="true"</code>, tem <code>aria-describedby</code>, e o id apontado existe no documento.</span></div>
+    <div><b>Glifos decorativos</b><span><code>aria-hidden="true"</code> e <code>focusable="false"</code> no check e no traço — o estado quem anuncia é o input.</span></div>
+    <div><b>Sem atributo <code>indeterminate</code></b><span>Ele não existe em HTML e o navegador o ignora em silêncio. O misto é só por JavaScript.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>{CHECKBOX_A11Y['markupChecked']}</b><span>checkboxes conferidos no HTML</span></div>
+    <div class="stat"><b>5</b><span>regras por checkbox</span></div>
+    <div class="stat"><b>{'pendente' if CHECKBOX_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
+  </div>
+</section>'''
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -3749,6 +4223,7 @@ LANDING_COMPONENTES = f'''
     {card('tag', 'Tag', 'Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.', TH_TAG)}
     {card('avatar', 'Avatar', 'Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.', TH_AVATAR)}
     {card('select', 'Select', 'Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.', TH_SELECT)}
+    {card('checkbox', 'Checkbox', 'Várias opções, ou uma que só vale depois de confirmar. Input nativo com a caixa do AL pintada por cima — com o estado misto para o checkbox pai.', TH_CHECKBOX)}
   </div>
 </section>
 
@@ -3822,7 +4297,7 @@ PAGES = [
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [('4 publicados', True), ('Tier 1 fechado', False), ('8 etapas por componente', False)],
+        [('6 publicados', True), ('Tier 1 fechado', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
@@ -3869,6 +4344,15 @@ PAGES = [
          (f'{N_SELECT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
         [('overview', 'Visão geral', SELECT_OVERVIEW), ('specs', 'Especificações', SELECT_SPECS),
          ('guide', 'Diretrizes', SELECT_GUIDE), ('a11y', 'Acessibilidade', SELECT_A11Y_TAB)])),
+    ('checkbox', 'Componentes', page(
+        'checkbox', 'Componentes', 'Checkbox',
+        'Várias opções de uma lista, ou uma opção isolada que só vale depois de confirmar. É o '
+        '<code>&lt;input type="checkbox"&gt;</code> nativo com a caixa do AL pintada por cima — '
+        'Espaço, leitor de tela e o estado misto vêm do navegador.',
+        [('Estável', True), ('7 estados no Figma', False),
+         (f'{N_CHECKBOX_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', CHECKBOX_OVERVIEW), ('specs', 'Especificações', CHECKBOX_SPECS),
+         ('guide', 'Diretrizes', CHECKBOX_GUIDE), ('a11y', 'Acessibilidade', CHECKBOX_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -3902,6 +4386,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/tag" data-page="tag">Tag</a>
         <a href="#/avatar" data-page="avatar">Avatar</a>
         <a href="#/select" data-page="select">Select</a>
+        <a href="#/checkbox" data-page="checkbox">Checkbox</a>
       </div>
     </div>
   </div>
@@ -4751,6 +5236,134 @@ JS_SELECT = r"""
 """
 
 
+CHROME_CHECKBOX = """
+/* ── miniatura do card do Checkbox ── */
+.th-cbx{display:flex; flex-direction:column; gap:8px; font-size:12.5px; line-height:16px;
+  color:var(--al-text-primary)}
+.th-cbx__row{display:flex; align-items:center; gap:8px}
+.th-cbx__box{display:inline-flex; align-items:center; justify-content:center;
+  width:16px; height:16px; box-sizing:border-box;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-sm);
+  background:var(--al-bg-surface-raised)}
+.th-cbx__box.is-on{background:var(--al-bg-brand); border-color:var(--al-bg-brand);
+  color:var(--al-text-on-brand)}
+.th-cbx__box .al-icon{--al-icon-box:12px}
+/* palcos: o checkbox e inline-flex; aqui ele empilha com a mensagem do formulario */
+.cbx-stage{display:flex !important; flex-direction:column; align-items:flex-start; gap:8px}
+#cbx-stage{display:flex; flex-direction:column; align-items:center; gap:8px; padding-inline:16px}
+.cbx-formerror{margin:0; color:var(--al-text-danger); font-size:13.5px; line-height:20px}
+.cbx-group{display:flex; flex-direction:column; gap:12px; margin:0; padding:0; border:0; min-width:0}
+.cbx-group legend{padding:0; margin-bottom:12px; font-weight:600}
+.cbx-children{display:flex; flex-direction:column; gap:12px; padding-inline-start:32px}
+"""
+
+JS_CHECKBOX_DATA = ('var CBX_CHECK = ' + json.dumps(CBX_CHECK) + ';\n'
+                    'var CBX_DASH = ' + json.dumps(CBX_DASH) + ';\n')
+
+JS_CHECKBOX = r"""
+(function () {
+  // ── Checkbox: o misto so existe por JS (regra 8) ──
+  [].slice.call(document.querySelectorAll('[data-indeterminate]')).forEach(function (el) {
+    el.indeterminate = true;
+  });
+
+  // ── pai e filhos da Visao geral ──
+  var pai = document.querySelector('[data-cbx-pai]');
+  var filhos = [].slice.call(document.querySelectorAll('[data-cbx-filho]'));
+  if (pai && filhos.length) {
+    var sync = function () {
+      var n = filhos.filter(function (f) { return f.checked; }).length;
+      pai.checked = n === filhos.length;
+      pai.indeterminate = n > 0 && n < filhos.length;
+    };
+    filhos.forEach(function (f) { f.addEventListener('change', sync); });
+    pai.addEventListener('change', function () {
+      filhos.forEach(function (f) { f.checked = pai.checked; });
+      pai.indeterminate = false;
+    });
+    sync();
+  }
+
+  // ── playground ──
+  var stage = document.getElementById('cbx-stage');
+  if (!stage) return;
+  var code = document.getElementById('cbx-code');
+  var labelInput = document.getElementById('cbx-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function render() {
+    var valor = pick('cbxvalue');
+    var estado = pick('cbxstate');
+    var theme = pick('cbxtheme');
+    var rotulo = (labelInput.value || '').trim() || 'Receber novidades por e-mail';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var erro = estado === 'error';
+    var off = estado === 'disabled';
+    var attrs = ['id="pg-cbx"', 'class="al-checkbox__input"', 'type="checkbox"'];
+    if (valor === 'on') attrs.push('checked');
+    if (off) attrs.push('disabled');
+    if (erro) attrs.push('aria-invalid="true"', 'aria-describedby="pg-cbx-erro"');
+
+    stage.innerHTML =
+      '<label class="al-checkbox"><span class="al-checkbox__control">'
+      + '<input ' + attrs.join(' ') + '>' + CBX_CHECK + CBX_DASH + '</span>'
+      + '<span class="al-checkbox__label">' + esc(rotulo) + '</span></label>'
+      + (erro ? '<p class="cbx-formerror" id="pg-cbx-erro">Aceite para continuar.</p>' : '');
+    if (valor === 'mixed') document.getElementById('pg-cbx').indeterminate = true;
+
+    // O que muda entre estados e atributo, nunca classe.
+    var iattrs = 'class="al-checkbox__input" type="checkbox" name="news"';
+    if (valor === 'on') iattrs += ' checked';
+    if (off) iattrs += ' disabled';
+    if (erro) iattrs += ' aria-invalid="true" aria-describedby="news-erro"';
+    var lines = [];
+    if (erro) {
+      lines.push('&lt;!-- a mensagem e do FORMULARIO, nao do componente --&gt;');
+      lines.push('&lt;p id="news-erro"&gt;Aceite para continuar.&lt;/p&gt;');
+    }
+    lines.push('&lt;label class="al-checkbox"&gt;');
+    lines.push('  &lt;span class="al-checkbox__control"&gt;');
+    lines.push('    &lt;input ' + iattrs + '&gt;');
+    lines.push('    &lt;svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false"&gt;&lt;!-- check --&gt;&lt;/svg&gt;');
+    lines.push('    &lt;svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false"&gt;&lt;!-- minus --&gt;&lt;/svg&gt;');
+    lines.push('  &lt;/span&gt;');
+    lines.push('  &lt;span class="al-checkbox__label"&gt;' + esc(rotulo) + '&lt;/span&gt;');
+    lines.push('&lt;/label&gt;');
+    if (valor === 'mixed') {
+      lines.push('&lt;script&gt;');
+      lines.push('  // o misto nao tem atributo HTML: so por JavaScript');
+      lines.push('  input.indeterminate = true;');
+      lines.push('&lt;/script&gt;');
+    }
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('#cbx-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('cbx-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+"""
+
+
+
 HTML = (
     '<title>AL Design System</title>\n'
     '<link rel="preconnect" href="https://fonts.googleapis.com">\n'
@@ -4760,12 +5373,14 @@ HTML = (
     '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
+    + CHROME_CHECKBOX
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n\n<script>'
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
-    + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT + '</script>\n'
+    + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
+    + JS_CHECKBOX_DATA + JS_CHECKBOX + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w').write(HTML)
@@ -4784,5 +5399,8 @@ print(f'  tokens do Avatar  : {N_AVATAR_TOKENS}  '
 print(f'  tokens do Select  : {N_SELECT_TOKENS}  '
       f'({len(SELECT_A11Y["rows"])} combinacoes medidas, {SELECT_A11Y["fails"]} reprovas, '
       f'{sum(SELECT_A11Y["exceptions"].values())} medicoes em excecao declarada)')
+print(f'  tokens do Checkbox: {N_CHECKBOX_TOKENS}  '
+      f'({len(CHECKBOX_A11Y["rows"])} combinacoes medidas, {CHECKBOX_A11Y["fails"]} reprovas, '
+      f'{sum(CHECKBOX_A11Y["exceptions"].values())} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

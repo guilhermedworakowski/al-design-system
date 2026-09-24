@@ -6,7 +6,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.7.0 - MIT
+ * v0.8.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -694,6 +694,46 @@
   --al-select-help-line-height: var(--al-line-height-xs);
   --al-select-help-font-weight: 400;
   --al-select-help-tracking: 0.01em;
+
+
+  /* fundo da caixa - marcado e indeterminado dividem o mesmo */
+  --al-checkbox-bg: var(--al-bg-surface-raised);
+  --al-checkbox-bg-hover: var(--al-bg-hover);
+  --al-checkbox-bg-checked: var(--al-bg-brand);
+  --al-checkbox-bg-disabled: var(--al-bg-disabled);
+
+  /* borda da caixa */
+  --al-checkbox-border: var(--al-border-default);
+  --al-checkbox-border-hover: var(--al-border-strong);
+  --al-checkbox-border-focus: var(--al-border-strong);
+  --al-checkbox-border-checked: var(--al-border-brand);
+  --al-checkbox-border-error: var(--al-border-danger);
+  --al-checkbox-border-disabled: var(--al-border-default);
+
+  /* check e traco - nao herdam a cor do rotulo */
+  --al-checkbox-icon: var(--al-text-on-brand);
+  --al-checkbox-icon-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora da caixa, sobre a tela */
+  --al-checkbox-label: var(--al-text-primary);
+  --al-checkbox-label-error: var(--al-text-danger);
+  --al-checkbox-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-checkbox-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-checkbox-box-size: var(--al-icon-size-24);
+  --al-checkbox-padding: var(--al-space-2);
+  --al-checkbox-gap: var(--al-space-8);
+  --al-checkbox-radius: var(--al-radius-sm);
+  --al-checkbox-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-checkbox-label-font-size: var(--al-font-size-md);
+  --al-checkbox-label-line-height: var(--al-line-height-md);
+  --al-checkbox-label-font-weight: 400;
+  --al-checkbox-label-tracking: 0em;
 }
 
 /* AL Design System - tokens do Button
@@ -2401,6 +2441,268 @@
   }
 }
 
+/* AL Design System - tokens do Checkbox
+ * GERADO por components/checkbox/tokens.py. Nao editar a mao.
+ *
+ * Sem bloco de tema: cada token aponta para um semantico, e o tema troca
+ * no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Glifo: 18px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo da caixa - marcado e indeterminado dividem o mesmo */
+  --al-checkbox-bg: var(--al-bg-surface-raised);
+  --al-checkbox-bg-hover: var(--al-bg-hover);
+  --al-checkbox-bg-checked: var(--al-bg-brand);
+  --al-checkbox-bg-disabled: var(--al-bg-disabled);
+
+  /* borda da caixa */
+  --al-checkbox-border: var(--al-border-default);
+  --al-checkbox-border-hover: var(--al-border-strong);
+  --al-checkbox-border-focus: var(--al-border-strong);
+  --al-checkbox-border-checked: var(--al-border-brand);
+  --al-checkbox-border-error: var(--al-border-danger);
+  --al-checkbox-border-disabled: var(--al-border-default);
+
+  /* check e traco - nao herdam a cor do rotulo */
+  --al-checkbox-icon: var(--al-text-on-brand);
+  --al-checkbox-icon-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora da caixa, sobre a tela */
+  --al-checkbox-label: var(--al-text-primary);
+  --al-checkbox-label-error: var(--al-text-danger);
+  --al-checkbox-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-checkbox-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-checkbox-box-size: var(--al-icon-size-24);
+  --al-checkbox-padding: var(--al-space-2);
+  --al-checkbox-gap: var(--al-space-8);
+  --al-checkbox-radius: var(--al-radius-sm);
+  --al-checkbox-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-checkbox-label-font-size: var(--al-font-size-md);
+  --al-checkbox-label-line-height: var(--al-line-height-md);
+  --al-checkbox-label-font-weight: 400;
+  --al-checkbox-label-tracking: 0em;
+}
+
+/* AL Design System - Checkbox
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/checkbox/al-checkbox-tokens.css
+ *           + components/icon/al-icon-tokens.css + components/icon/icon.css
+ *
+ * E O <input type="checkbox"> NATIVO
+ *   O controle e do navegador: Espaco marca, o leitor de tela anuncia
+ *   "marcado / nao marcado / misto", o formulario envia o valor. Este arquivo
+ *   so tira a caixa que o navegador desenha (`appearance: none`) e pinta a do
+ *   AL no lugar. Nada de <div role="checkbox"> - primeira regra da ARIA.
+ *
+ * ANATOMIA
+ *   <label class="al-checkbox">
+ *     <span class="al-checkbox__control">
+ *       <input class="al-checkbox__input" type="checkbox" name="news">
+ *       <svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…check…</svg>
+ *       <svg class="al-icon al-checkbox__dash"  viewBox="0 0 24 24" aria-hidden="true" focusable="false">…minus…</svg>
+ *     </span>
+ *     <span class="al-checkbox__label">Receber novidades por e-mail</span>
+ *   </label>
+ *
+ *   O <label> envolve tudo: clicar no texto marca a caixa, e a area clicavel
+ *   passa a ser a linha inteira (WCAG 2.5.8). Nao ha `for`/`id` a sincronizar.
+ *
+ *   O `__control` existe pela mesma razao do Select: <input> nao tem filho, entao
+ *   o glifo nao pode morar dentro dele. Ele e irmao, posicionado por cima, e
+ *   `pointer-events: none` devolve o clique ao input. Os dois glifos sao os
+ *   icones `check` e `minus` da Foundation, inline - nunca um SVG proprio.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Marcado le `:checked`; indeterminado le `:indeterminate` (so existe por JS:
+ *   `input.indeterminate = true`, nao ha atributo HTML); erro le
+ *   `aria-invalid="true"`; desabilitado le `:disabled`. Nao existe
+ *   `.al-checkbox--error`: cor e anuncio saem da mesma fonte e nao divergem.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - mesma tecnica do Select
+ *   Hover e foco escrevem em `--_*-state`; marcado, erro e desabilitado escrevem
+ *   em `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
+ *   todas decididas na etapa 3:
+ *     marcado + hover     -> a caixa laranja nao muda (o force vence o hover)
+ *     marcado + foco      -> anel por cima da caixa laranja
+ *     erro + foco         -> anel padrao (nao ha anel de erro desenhado)
+ *     erro + marcado      -> caixa laranja, rotulo vermelho: o force de erro so
+ *                            vale na caixa VAZIA, que e onde o erro mora
+ *     marcado + disabled  -> caixa cinza, glifo em `icon-disabled`
+ *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ *
+ * O FIGMA TEM UM EIXO SO DE ESTADO
+ *   Sete variantes; as combinacoes acima nao tem variante e sao cobertas pelos
+ *   mesmos tokens. `icon-disabled` e o unico token sem variante no Figma.
+ *
+ * GEOMETRIA DERIVADA
+ *   Caixa 24 = `box-size`. O glifo nao tem token: 18 = caixa - 2 x borda
+ *   - 2 x padding, e a conta esta escrita abaixo em vez de um numero.
+ *   `box-sizing: border-box` poe a borda DENTRO dos 24, entao a caixa nunca
+ *   "pula" quando o estado troca a cor dela.
+ *
+ * ALINHAMENTO AO TOPO
+ *   `align-items: flex-start`, nao `center`: rotulo longo quebra linha e a caixa
+ *   fica na altura da primeira linha (Carbon). Funciona sem ajuste porque a
+ *   caixa (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ *
+ * SEM TEXTO DE APOIO E SEM MENSAGEM DE ERRO - DE PROPOSITO
+ *   Decisao A/D da etapa 1. O erro aqui e so cor (borda + rotulo), e quem monta
+ *   o formulario tem que descreve-lo em texto noutro lugar (WCAG 3.3.1 / 1.4.1)
+ *   e ligar com `aria-describedby`. Regra 19 das regras de uso.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
+ *   de motion. Mesma pendencia do Button, do Icon Button e do Select.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--al-checkbox-gap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ------------------------------------------------------------- caixa */
+.al-checkbox__control {
+  position: relative;
+  display: block;
+  flex: none;
+  inline-size: var(--al-checkbox-box-size);
+  block-size: var(--al-checkbox-box-size);
+}
+
+.al-checkbox__input {
+  --_bg-state: var(--al-checkbox-bg);
+  --_border-state: var(--al-checkbox-border);
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  inline-size: var(--al-checkbox-box-size);
+  block-size: var(--al-checkbox-box-size);
+
+  border: var(--al-checkbox-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-checkbox-radius);
+  background-color: var(--_bg-force, var(--_bg-state));
+  cursor: inherit;
+
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o raio da caixa */
+.al-checkbox__input:focus {
+  outline: none;
+}
+
+/* ------------------------------------------------------------- glifos */
+/* Ficam dentro da borda e do padding: 24 - 2x1 - 2x2 = 18, como no Figma. */
+.al-checkbox__check,
+.al-checkbox__dash {
+  --al-icon-box: calc(var(--al-checkbox-box-size)
+                      - 2 * var(--al-checkbox-border-width)
+                      - 2 * var(--al-checkbox-padding));
+  position: absolute;
+  inset-block-start: calc(var(--al-checkbox-border-width) + var(--al-checkbox-padding));
+  inset-inline-start: calc(var(--al-checkbox-border-width) + var(--al-checkbox-padding));
+  /* devolve o clique ao input que esta embaixo */
+  pointer-events: none;
+  color: var(--al-checkbox-icon);
+  visibility: hidden;
+}
+
+/* check so no marcado que nao e misto; traco so no misto. Um input pode estar
+   `checked` e `indeterminate` ao mesmo tempo - o misto vence, como no nativo. */
+.al-checkbox__input:checked:not(:indeterminate) ~ .al-checkbox__check,
+.al-checkbox__input:indeterminate ~ .al-checkbox__dash {
+  visibility: visible;
+}
+
+/* ------------------------------------------------------------- rotulo */
+.al-checkbox__label {
+  color: var(--al-checkbox-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-checkbox-label-font-size);
+  line-height: var(--al-checkbox-label-line-height);
+  font-weight: var(--al-checkbox-label-font-weight);
+  letter-spacing: var(--al-checkbox-label-tracking);
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover na linha inteira, nao so na caixa: clicar no rotulo tambem marca,
+   entao o rotulo tambem precisa anunciar que e clicavel. Cobre a caixa, que
+   mora dentro do <label>. */
+.al-checkbox:hover .al-checkbox__input:not(:disabled) {
+  --_bg-state: var(--al-checkbox-bg-hover);
+  --_border-state: var(--al-checkbox-border-hover);
+}
+
+.al-checkbox__input:focus-visible {
+  --_border-state: var(--al-checkbox-border-focus);
+  box-shadow: var(--al-checkbox-ring);
+}
+
+/* marcado e indeterminado dividem a caixa - o glifo diferencia */
+.al-checkbox__input:checked,
+.al-checkbox__input:indeterminate {
+  --_bg-force: var(--al-checkbox-bg-checked);
+  --_border-force: var(--al-checkbox-border-checked);
+}
+
+/* erro so na caixa VAZIA; marcada, ela segue laranja e so o rotulo avisa */
+.al-checkbox__input[aria-invalid="true"]:not(:checked):not(:indeterminate) {
+  --_border-force: var(--al-checkbox-border-error);
+}
+
+.al-checkbox:has(.al-checkbox__input[aria-invalid="true"]) .al-checkbox__label {
+  color: var(--al-checkbox-label-error);
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-checkbox__input:disabled {
+  --_bg-force: var(--al-checkbox-bg-disabled);
+  --_border-force: var(--al-checkbox-border-disabled);
+}
+
+.al-checkbox__input:disabled ~ .al-checkbox__check,
+.al-checkbox__input:disabled ~ .al-checkbox__dash {
+  color: var(--al-checkbox-icon-disabled);
+}
+
+.al-checkbox:has(.al-checkbox__input:disabled) {
+  cursor: not-allowed;
+}
+
+.al-checkbox:has(.al-checkbox__input:disabled) .al-checkbox__label {
+  color: var(--al-checkbox-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-checkbox__input {
+    transition: none;
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -2902,13 +3204,32 @@ footer code{background:none; padding:0}
 /* o palco do playground precisa de largura: o campo ocupa 100% do contêiner */
 #select-stage{display:block; padding-inline:8px}
 #select-stage .al-select{max-width:360px; margin-inline:auto}
+
+/* ── miniatura do card do Checkbox ── */
+.th-cbx{display:flex; flex-direction:column; gap:8px; font-size:12.5px; line-height:16px;
+  color:var(--al-text-primary)}
+.th-cbx__row{display:flex; align-items:center; gap:8px}
+.th-cbx__box{display:inline-flex; align-items:center; justify-content:center;
+  width:16px; height:16px; box-sizing:border-box;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-sm);
+  background:var(--al-bg-surface-raised)}
+.th-cbx__box.is-on{background:var(--al-bg-brand); border-color:var(--al-bg-brand);
+  color:var(--al-text-on-brand)}
+.th-cbx__box .al-icon{--al-icon-box:12px}
+/* palcos: o checkbox e inline-flex; aqui ele empilha com a mensagem do formulario */
+.cbx-stage{display:flex !important; flex-direction:column; align-items:flex-start; gap:8px}
+#cbx-stage{display:flex; flex-direction:column; align-items:center; gap:8px; padding-inline:16px}
+.cbx-formerror{margin:0; color:var(--al-text-danger); font-size:13.5px; line-height:20px}
+.cbx-group{display:flex; flex-direction:column; gap:12px; margin:0; padding:0; border:0; min-width:0}
+.cbx-group legend{padding:0; margin-bottom:12px; font-weight:600}
+.cbx-children{display:flex; flex-direction:column; gap:12px; padding-inline-start:32px}
 </style>
 
 <div class="shell">
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.7.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.8.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -2936,6 +3257,7 @@ footer code{background:none; padding:0}
         <a href="#/tag" data-page="tag">Tag</a>
         <a href="#/avatar" data-page="avatar">Avatar</a>
         <a href="#/select" data-page="select">Select</a>
+        <a href="#/checkbox" data-page="checkbox">Checkbox</a>
       </div>
     </div>
   </div>
@@ -3053,7 +3375,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.7.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.8.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -3083,7 +3405,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.7.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.8.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -3608,9 +3930,9 @@ footer code{background:none; padding:0}
   consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
   normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
   <div class="stats">
-    <div class="stat hl"><b>217</b><span>verificações</span></div>
+    <div class="stat hl"><b>257</b><span>verificações</span></div>
     <div class="stat"><b>0</b><span>reprovas</span></div>
-    <div class="stat"><b>175</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>215</b><span>elementos com contrato conferido</span></div>
     <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
   </div>
 </section>
@@ -3685,7 +4007,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
   O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
-  <code>.al-icon</code>: 175 elementos nesta página, nenhum fora.
+  <code>.al-icon</code>: 215 elementos nesta página, nenhum fora.
   Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
   <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
   porque o rótulo nunca seria lido.</p>
@@ -3696,7 +4018,7 @@ footer code{background:none; padding:0}
     renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">4 publicados</span><span class="badge">Tier 1 fechado</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
+<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">6 publicados</span><span class="badge">Tier 1 fechado</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
 <section>
   <h2>Publicados</h2>
   <div class="cards">
@@ -3705,6 +4027,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/tag" data-page="tag"><div class="card-thumb"><div class="th-icons"><span class="al-tag al-tag--filled al-tag--success al-tag--sm">Pago</span><span class="al-tag al-tag--outlined al-tag--info al-tag--sm">Novo</span></div></div><div class="card-body"><span class="card-title">Tag</span><span class="card-desc">Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.</span></div></a>
     <a class="card" href="#/avatar" data-page="avatar"><div class="card-thumb"><div class="th-icons"><span class="al-avatar al-avatar--sm" aria-hidden="true"><img class="al-avatar__photo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNjAgMTIwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGRkVBREUiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNGRkQ3QzQiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMTYwIiBoZWlnaHQ9IjEyMCIgZmlsbD0idXJsKCNnKSIvPjxjaXJjbGUgY3g9IjgwIiBjeT0iNzgiIHI9IjQ2IiBmaWxsPSIjRThCMDhDIi8+PGNpcmNsZSBjeD0iODAiIGN5PSI0OCIgcj0iMzAiIGZpbGw9IiNFOEIwOEMiLz48cGF0aCBkPSJNNTAgNDQgUTgwIDYgMTEwIDQ0IFExMTIgMjAgODAgMTYgUTQ4IDIwIDUwIDQ0IFoiIGZpbGw9IiMzRTI0MTciLz48L3N2Zz4=" alt=""></span><span class="al-avatar al-avatar--sm" aria-hidden="true"><span class="al-avatar__initials">DC</span></span><span class="al-avatar al-avatar--sm" aria-hidden="true"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg></span></div></div><div class="card-body"><span class="card-title">Avatar</span><span class="card-desc">Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.</span></div></a>
     <a class="card" href="#/select" data-page="select"><div class="card-thumb"><div class="th-select" aria-hidden="true"><span class="th-select__field">Selecione a opção<svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></span></div></div><div class="card-body"><span class="card-title">Select</span><span class="card-desc">Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.</span></div></a>
+    <a class="card" href="#/checkbox" data-page="checkbox"><div class="card-thumb"><div class="th-cbx" aria-hidden="true"><span class="th-cbx__row"><span class="th-cbx__box is-on"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg></span>E-mail</span><span class="th-cbx__row"><span class="th-cbx__box is-on"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span>Notificações</span><span class="th-cbx__row"><span class="th-cbx__box"></span>SMS</span></div></div><div class="card-body"><span class="card-title">Checkbox</span><span class="card-desc">Várias opções, ou uma que só vale depois de confirmar. Input nativo com a caixa do AL pintada por cima — com o estado misto para o checkbox pai.</span></div></a>
   </div>
 </section>
 
@@ -5889,8 +6212,396 @@ footer code{background:none; padding:0}
   estado que permanece</b> enquanto o campo estiver focado, tenha chegado como tiver chegado.
   É o que Carbon, Material e Polaris já usam, e o que sobrevive em qualquer navegador.</p>
 </section></div></div>
+<div class="page" id="pg-checkbox" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Checkbox</h1><p class="lede">Várias opções de uma lista, ou uma opção isolada que só vale depois de confirmar. É o <code>&lt;input type="checkbox"&gt;</code> nativo com a caixa do AL pintada por cima — Espaço, leitor de tela e o estado misto vêm do navegador.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">7 estados no Figma</span><span class="badge">22 tokens</span><span class="badge">2 exceções declaradas</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Checkbox"><button role="tab" id="t-checkbox-overview" aria-controls="p-checkbox-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-checkbox-specs" aria-controls="p-checkbox-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-checkbox-guide" aria-controls="p-checkbox-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-checkbox-a11y" aria-controls="p-checkbox-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-checkbox-overview" role="tabpanel" aria-labelledby="t-checkbox-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="pg-cbx" class="al-checkbox__input" type="checkbox"><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div>
+
+    <div class="controls" id="cbx-controls">
+      <div class="ctl"><span class="ctl-name">Valor</span><div class="seg" role="radiogroup" aria-label="cbxvalue">
+<input type="radio" id="cbxvalue-off" name="cbxvalue" value="off" checked><label for="cbxvalue-off">Desmarcado</label>
+<input type="radio" id="cbxvalue-on" name="cbxvalue" value="on"><label for="cbxvalue-on">Marcado</label>
+<input type="radio" id="cbxvalue-mixed" name="cbxvalue" value="mixed"><label for="cbxvalue-mixed">Misto</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Estado</span><div class="seg" role="radiogroup" aria-label="cbxstate">
+<input type="radio" id="cbxstate-rest" name="cbxstate" value="rest" checked><label for="cbxstate-rest">Normal</label>
+<input type="radio" id="cbxstate-error" name="cbxstate" value="error"><label for="cbxstate-error">Erro</label>
+<input type="radio" id="cbxstate-disabled" name="cbxstate" value="disabled"><label for="cbxstate-disabled">Desabilitado</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="cbxtheme">
+<input type="radio" id="cbxtheme-auto" name="cbxtheme" value="auto" checked><label for="cbxtheme-auto">Do sistema</label>
+<input type="radio" id="cbxtheme-light" name="cbxtheme" value="light"><label for="cbxtheme-light">Claro</label>
+<input type="radio" id="cbxtheme-dark" name="cbxtheme" value="dark"><label for="cbxtheme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><label for="cbx-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="cbx-label" type="text" value="Receber novidades por e-mail" maxlength="60"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="cbx-copy">Copiar</button></div>
+      <pre><code id="cbx-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O checkbox acima é o componente real: esta página carrega o mesmo <code>checkbox.css</code>
+    que vai para produção. Clique no texto e não só na caixa — também marca. No erro, a mensagem
+    em vermelho abaixo dele <b>não faz parte do componente</b>: é o formulário descrevendo o erro
+    em texto, e o componente aponta para ela com <code>aria-describedby</code>.
+  </p>
+</section>
+
+<section>
+  <h2>Pai, filhos e o estado misto</h2>
+  <div class="cell" style="max-width:none">
+    <fieldset class="stage2 cbx-group">
+      <legend>Notificações</legend>
+      <label class="al-checkbox"><span class="al-checkbox__control"><input id="ov-todas" class="al-checkbox__input" type="checkbox" data-cbx-pai><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Todas as notificações</span></label>
+      <div class="cbx-children">
+        <label class="al-checkbox"><span class="al-checkbox__control"><input id="ov-mail" class="al-checkbox__input" type="checkbox" checked data-cbx-filho><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">E-mail</span></label>
+        <label class="al-checkbox"><span class="al-checkbox__control"><input id="ov-sms" class="al-checkbox__input" type="checkbox" checked data-cbx-filho><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">SMS</span></label>
+        <label class="al-checkbox"><span class="al-checkbox__control"><input id="ov-push" class="al-checkbox__input" type="checkbox" data-cbx-filho><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Notificação no celular</span></label>
+      </div>
+    </fieldset>
+    <p class="cap">Marque e desmarque os filhos: o pai fica <b>marcado</b> com todos,
+    <b>vazio</b> com nenhum e <b>misto</b> com alguns. Clicar no pai misto marca todos.
+    Ninguém escolhe o misto — ele é consequência. <i>Carbon e Material, com a mesma regra.</i>
+    O título do grupo é <code>fieldset</code> e <code>legend</code> nativos: o componente de
+    grupo do AL ainda vai existir, e até lá é isso que faz o leitor de tela dizer a que pergunta
+    cada opção responde.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Os sete estados do Figma</h2>
+  <div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Default</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-default" class="al-checkbox__input" type="checkbox"><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div><p class="cap">O repouso. A borda aqui é a exceção de contraste declarada.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Hover</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-hover" class="al-checkbox__input" type="checkbox" style="--_bg-state: var(--al-checkbox-bg-hover); --_border-state: var(--al-checkbox-border-hover)"><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div><p class="cap">Só existe sob o ponteiro: a variável privada foi escrita direto. O real vale na linha inteira — passe o mouse no texto dos outros.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Active (marcado)</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-active" class="al-checkbox__input" type="checkbox" checked><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div><p class="cap">O check é o ícone <code>check</code> da Fundação.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Indeterminate</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-indeterminate" class="al-checkbox__input" type="checkbox" data-indeterminate><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Todas as notificações</span></label></div><p class="cap">Só por JavaScript: <code>input.indeterminate = true</code>. Não existe atributo HTML.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Focus</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-focus" class="al-checkbox__input" type="checkbox"><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div><p class="cap">Tabule até aqui: anel laranja. Pelo mouse o anel não aparece.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Error</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-error" class="al-checkbox__input" type="checkbox" aria-invalid="true" aria-describedby="sp-cbx-error-msg"><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Li e aceito os termos de uso</span></label><p class="cbx-formerror" id="sp-cbx-error-msg">Aceite os termos para continuar.</p></div><p class="cap">Vem de <code>aria-invalid="true"</code>. A mensagem é do formulário, não do componente.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Disabled</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-disabled" class="al-checkbox__input" type="checkbox" disabled><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div><p class="cap">Atributo nativo <code>disabled</code>: o Tab pula sozinho.</p></div></div>
+</section>
+
+<section>
+  <h2>O que só existe no código</h2>
+  <p>O Figma tem um eixo só de estado. O navegador produz combinações que ele não desenha — e
+  elas foram decididas na etapa 3, pintadas pelos mesmos tokens, sem nenhum a mais além do
+  check desabilitado.</p>
+  <div style="margin-top:16px"><div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Marcado + disabled</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-dischk" class="al-checkbox__input" type="checkbox" checked disabled><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Alertas de segurança</span></label></div><p class="cap">Caixa cinza, check em <code>icon-disabled</code> — o único token sem variante no Figma.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Erro + marcado</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-errchk" class="al-checkbox__input" type="checkbox" checked aria-invalid="true" aria-describedby="sp-cbx-errchk-msg"><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Li e aceito os termos de uso</span></label><p class="cbx-formerror" id="sp-cbx-errchk-msg">Aceite os termos para continuar.</p></div><p class="cap">A caixa segue laranja; só o rótulo avisa. Desmarque e a borda fica vermelha.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Marcado + foco</span><div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="sp-cbx-chkfoc" class="al-checkbox__input" type="checkbox" checked><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div><p class="cap">O anel aparece por cima da caixa laranja — ele não depende do preenchimento.</p></div></div></div>
+</section></div><div class="panel" id="p-checkbox-specs" role="tabpanel" aria-labelledby="t-checkbox-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b><code>&lt;label class="al-checkbox"&gt;</code></b><span>Envolve tudo. É o que faz clicar no texto marcar a caixa, e o que transforma a linha inteira em área de clique — também é onde mora o hover.</span></div>
+    <div><b>Caixa</b><span><code>&lt;input type="checkbox"&gt;</code> nativo com <code>appearance: none</code>: a caixa do navegador sai e a do AL entra. Teclado, anúncio e estado misto continuam do navegador.</span></div>
+    <div><b>Check e traço</b><span>Os ícones <code>check</code> e <code>minus</code> da Fundação, irmãos do input — <code>&lt;input&gt;</code> não tem filho. Posicionados por cima, com <code>pointer-events: none</code> devolvendo o clique.</span></div>
+    <div><b>Rótulo</b><span>Sempre visível, à direita. É a regra que sustenta a exceção de contraste da borda.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A geometria é consequência</h2>
+  <p>A caixa é <code>box-size</code>: <b>24px</b>, o mesmo grid de 24 do desenho Lucide e a
+  mesma entrelinha do rótulo — é isso que alinha a caixa com a primeira linha do texto quando
+  ele quebra, sem ajuste nenhum. O glifo não tem token: são
+  <b>18px</b>, caixa − 2 × borda − 2 × respiro, e a conta está
+  escrita no CSS em vez de um número. <code>18</code> nem existe na escala de ícone.</p>
+  <p style="margin-top:12px">A borda de 1px existe em todos os estados, inclusive no laranja —
+  por isso a caixa nunca “pula” quando o estado troca a cor dela.</p>
+  <div class="stats">
+    <div class="stat hl"><b>22</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>7</b><span>estados no Figma</span></div>
+    <div class="stat"><b>1</b><span>tamanho — regra do Tier 2</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody><tr><td class="tok">--al-checkbox-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr><td class="tok">--al-checkbox-bg-hover</td><td class="tok dim">bg-hover</td><td class="tok dim"><span class="chip sm" style="background:#EEEEEE"></span>#EEEEEE</td></tr>
+<tr><td class="tok">--al-checkbox-bg-checked</td><td class="tok dim">bg-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-checkbox-bg-disabled</td><td class="tok dim">bg-disabled</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr><td class="tok">--al-checkbox-border</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-checkbox-border-hover</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-checkbox-border-focus</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-checkbox-border-checked</td><td class="tok dim">border-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-checkbox-border-error</td><td class="tok dim">border-danger</td><td class="tok dim"><span class="chip sm" style="background:#CA293F"></span>#CA293F</td></tr>
+<tr><td class="tok">--al-checkbox-border-disabled</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-checkbox-icon</td><td class="tok dim">text-on-brand</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr><td class="tok">--al-checkbox-icon-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-checkbox-label</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-checkbox-label-error</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr><td class="tok">--al-checkbox-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-checkbox-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr></tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Marcado e indeterminado dividem a mesma caixa</b>
+    <code>bg-checked</code> e <code>border-checked</code> valem para os dois. O que diferencia é o
+    glifo — check ou traço —, nunca a cor. E o glifo tem token próprio (<code>checkbox-icon</code>)
+    porque não pode herdar a cor do rótulo: o rótulo é escuro, o check é branco.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody><tr><td class="tok">--al-checkbox-box-size</td><td class="tok dim">iconSize.24</td><td class="num">24px</td></tr>
+<tr><td class="tok">--al-checkbox-padding</td><td class="tok dim">space.2</td><td class="num">2px</td></tr>
+<tr><td class="tok">--al-checkbox-gap</td><td class="tok dim">space.8</td><td class="num">8px</td></tr>
+<tr><td class="tok">--al-checkbox-radius</td><td class="tok dim">radius.sm</td><td class="num">4px</td></tr>
+<tr><td class="tok">--al-checkbox-border-width</td><td class="tok dim">border.width.1</td><td class="num">1px</td></tr>
+<tr><td class="tok">--al-checkbox-label-font</td><td class="tok dim">type.styles.body-md</td><td class="num">16/24 · peso 400</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Quem ganha quando dois estados acontecem juntos</h2>
+  <p>A mesma técnica do Select: fundo e borda são
+  <code>var(--_*-force, var(--_*-state))</code>. Hover e foco escrevem em
+  <code>--_*-state</code>; marcado, erro e desabilitado escrevem em <code>--_*-force</code>,
+  que vence por ser <b>outra propriedade</b>, não por ter seletor mais pesado. Daí sai cada
+  combinação que o Figma não desenha:</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Marcado + hover</b><span>A caixa laranja não muda. O hover só existe na caixa vazia.</span></div>
+    <div><b>Marcado + foco</b><span>O anel aparece por cima da caixa laranja.</span></div>
+    <div><b>Erro + marcado</b><span>Caixa laranja, rótulo vermelho — a borda de erro só vale na caixa vazia, que é onde o erro mora.</span></div>
+    <div><b>Erro + foco</b><span>Anel padrão: não há anel de erro desenhado para este componente.</span></div>
+    <div><b>Desabilitado</b><span>Vem por último no arquivo e ganha de todos. Marcado e desabilitado mostra o check em <code>icon-disabled</code>.</span></div>
+  </div>
+</section></div><div class="panel" id="p-checkbox-guide" role="tabpanel" aria-labelledby="t-checkbox-guide" tabindex="0" hidden>
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Várias opções de uma lista</b><span>Ou uma opção isolada que só vale depois de confirmar — enviar, salvar. <i>Carbon, Primer, NN/g.</i></span></div>
+    <div><b>Nunca para escolha única</b><span>Se só uma opção pode ser escolhida, é radio: com o Checkbox a pessoa não tem como saber que as opções se excluem. <i>Carbon.</i></span></div>
+    <div><b>Nunca para ação imediata</b><span>Ativar modo escuro, ligar notificações: quem clica numa caixa espera confirmar depois. Ação imediata pede Switch, que o AL ainda não tem. <i>Carbon, Primer.</i></span></div>
+    <div><b>Aceite</b><span>Checkbox isolado serve para “Li e aceito os termos”, em primeira pessoa. <i>Primer.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Grupo e indeterminado</h2>
+  <div class="anat">
+    <div><b>Uma por linha, na vertical</b><span>Na horizontal fica difícil dizer qual caixa é de qual rótulo. <i>NN/g, Carbon.</i></span></div>
+    <div><b>Título do grupo em <code>fieldset</code> + <code>legend</code></b><span>O componente de grupo do AL é separado e ainda vai existir. Até lá, os nativos — sem eles o leitor de tela anuncia a opção sem a pergunta.</span></div>
+    <div><b>Misto só no pai</b><span>Todos os filhos marcados → pai marcado; nenhum → vazio; alguns → misto. <i>Carbon, Material.</i></span></div>
+    <div><b>Clicar no pai misto marca todos</b><span>Ninguém escolhe o misto: ele é consequência. Aplicado por JavaScript — não existe atributo HTML. <i>Material.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="gd-cbx-ok" class="al-checkbox__input" type="checkbox" checked><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Receber novidades por e-mail</span></label></div>
+      <p class="cap">Curto, em sentence case, sem ponto final, <b>afirmativo</b>. O texto também é
+      clicável, e o hover acende a linha inteira. <i>Primer, Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="gd-cbx-bad" class="al-checkbox__input" type="checkbox"><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Não quero deixar de receber novidades.</span></label></div>
+      <p class="cap">Negação obriga a pensar duas vezes para saber o que marcar — e aqui marcar
+      significa <i>receber</i>, o oposto do que a frase parece dizer. <i>Primer.</i></p>
+    </div>
+  </div>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo longo quebra alinhado ao topo</b><span>A caixa fica na altura da primeira linha, não centralizada no bloco. <i>Carbon.</i> No AL sai de graça: caixa e entrelinha medem os mesmos 24px.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Estados</h2>
+  <div class="anat">
+    <div><b>Desabilitado só quando depende de outra escolha na mesma tela</b><span>Se nunca vai poder ser usado, esconda. Mesma regra do Select.</span></div>
+    <div><b>O desabilitado fica abaixo de AA de propósito</b><span>O WCAG 1.4.3 isenta controle inativo, e subir esse contraste faz a caixa parecer clicável.</span></div>
+    <div><b>Marcado e desabilitado existe</b><span>Caixa cinza, check apagado — aparece em qualquer tela de configuração travada, então existe no código mesmo sem variante no Figma.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Erro — o componente não tem mensagem</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 cbx-stage"><p class="cbx-formerror" id="gd-cbx-sum">Aceite os termos de uso para continuar.</p><label class="al-checkbox"><span class="al-checkbox__control"><input id="gd-cbx-err" class="al-checkbox__input" type="checkbox" aria-invalid="true" aria-describedby="gd-cbx-sum"><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label">Li e aceito os termos de uso</span></label></div>
+      <p class="cap">O formulário descreve o erro em texto — aqui, um resumo acima — e o
+      checkbox aponta para ele com <code>aria-describedby</code>.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 cbx-stage"><label class="al-checkbox"><span class="al-checkbox__control"><input id="gd-cbx-nomsg" class="al-checkbox__input" type="checkbox" style="--_border-force: var(--al-checkbox-border-error)"><svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg><svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span><span class="al-checkbox__label" style="color: var(--al-checkbox-label-error)">Li e aceito os termos de uso</span></label></div>
+      <p class="cap">Só a borda e o rótulo vermelhos. Isso é <b>só cor</b>, e o WCAG exige o erro
+      descrito em texto (3.3.1) e não comunicado só por cor (1.4.1).</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Divergência consciente</b>
+    Carbon e Polaris colocam a mensagem dentro do componente. O AL deixa o texto para o
+    formulário — e é por isso que esta regra é obrigatória, não sugestão: ela cobre a lacuna.
+    O rótulo vermelho também é escolha nossa, coerente com o Select e com o Material; Carbon e
+    Polaris deixam o rótulo neutro. O erro aparece <b>depois do envio</b>, nunca enquanto a
+    pessoa ainda escolhe.
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Um tamanho só</b><span>Regra de todo input do Tier 2.</span></div>
+    <div><b>Texto de apoio e mensagem de erro</b><span>Não fazem parte do componente — são do formulário.</span></div>
+    <div><b>Variantes combinadas no Figma</b><span>Marcado + hover e companhia são cobertos pelo código com os mesmos tokens; as variantes entram se uma atualização pedir.</span></div>
+    <div><b>Checkbox sem rótulo visível</b><span>Fica reservado para a seleção de linha do futuro componente de tabela, que resolve o nome com <code>aria-label</code>. Até lá, não use.</span></div>
+    <div><b>Switch e read-only</b><span>Outros componentes, ainda não abertos.</span></div>
+  </div>
+</section></div><div class="panel" id="p-checkbox-a11y" role="tabpanel" aria-labelledby="t-checkbox-a11y" tabindex="0" hidden>
+<section>
+  <h2>Quem desenha o limite muda com o estado</h2>
+  <p>O portão mede <b>combinação renderizada</b>, e aqui ela mostra uma coisa que o par de
+  token sozinho esconde: <b>desmarcada, quem desenha a caixa é a borda; marcada, é o
+  preenchimento inteiro</b>, porque borda e fundo viram a mesma cor. Medir a borda da caixa
+  marcada contra o próprio fundo daria 1:1 e reprovaria uma caixa perfeitamente visível —
+  então o portão mede o laranja contra a página.</p>
+  <p style="margin-top:12px">E a página não é uma só: o Checkbox vive em listas de
+  configuração, que costumam morar em faixa de seção (<code>bg-surface</code>). O portão mede
+  contra tela, faixa e card, e guarda a pior.</p>
+  <div class="stats">
+    <div class="stat hl"><b>60</b><span>combinações medidas</span></div>
+    <div class="stat"><b>48</b><span>passam</span></div>
+    <div class="stat"><b>12</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Com foco, a borda passa sozinha</h2>
+  <p>O anel desenha um respiro de 2px em <code>bg-canvas</code> colado na caixa, e a vizinha
+  externa da borda passa a ser ele — independente de onde o checkbox foi colocado.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Borda em repouso</th><th>Borda com foco</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num">1.47:1</td><td class="num strong">4.88:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num">1.46:1</td><td class="num strong">3.53:1</td></tr>
+    </tbody>
+  </table></div>
+  <p style="margin-top:12px">A borda fraca existe só em repouso, nunca durante a navegação por
+  teclado. E, diferente do Select, o anel <b>não</b> aparece no clique do mouse: medido no
+  Chromium, um checkbox clicado não casa <code>:focus-visible</code>.</p>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda em repouso abaixo de 3:1 — decisão consciente</b>
+    <code>border-default</code> fica em 1.47:1 no claro e
+    1.46:1 no escuro, no pior fundo. Foi decidido para seguir o padrão
+    dos inputs do AL. <b>O argumento do Select não vale aqui</b>: no Checkbox a borda é o único
+    desenho do controle vazio. O que sustenta a exceção é o rótulo visível ao lado — por isso
+    “nunca use checkbox sem rótulo visível” é regra de uso, e não sugestão. Hover, foco, erro e
+    a caixa marcada passam todos.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Desabilitado abaixo de AA — isenção do 1.4.3</b>
+    Rótulo, borda e check desabilitados ficam abaixo do piso. O WCAG isenta componente inativo,
+    e subir esse contraste faz a caixa parecer clicável. No tema escuro, a caixa desabilitada e
+    a normal chegam a ser idênticas (<code>#3E3E3E</code>): só o rótulo apagado diferencia —
+    outra razão para o rótulo visível ser obrigatório.
+  </div>
+</section>
+
+<section>
+  <h2>Não-textual — piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-border</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">1.47:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-border</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">--al-checkbox-border-hover</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">4.21:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-border-hover</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">3.53:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-checkbox-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">4.88:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.53:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked</td><td class="tok dim">caixa marcada</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-bg-checked</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked</td><td class="tok dim">check</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-checkbox-icon</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked</td><td class="tok dim">caixa marcada</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-bg-checked</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked</td><td class="tok dim">check</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-checkbox-icon</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">caixa marcada</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-checkbox-bg-checked</td><td class="tok dim">respiro do anel (bg-canvas)</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">check</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-checkbox-icon</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">caixa marcada</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">--al-checkbox-bg-checked</td><td class="tok dim">respiro do anel (bg-canvas)</td><td class="num strong">5.32:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">check</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-checkbox-icon</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">indeterminate</td><td class="tok dim">caixa marcada</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-bg-checked</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">indeterminate</td><td class="tok dim">traco</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-checkbox-icon</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">indeterminate</td><td class="tok dim">caixa marcada</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-bg-checked</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">indeterminate</td><td class="tok dim">traco</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-checkbox-icon</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-border-error</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">5.03:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-border-error</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-checkbox-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">5.38:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">caixa marcada</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-bg-checked</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">check</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-checkbox-icon</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">caixa marcada</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-bg-checked</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">check</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-checkbox-icon</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-checkbox-border-disabled</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-border-disabled</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-checkbox-border-disabled</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">check</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-checkbox-icon-disabled</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">1.59:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-border-disabled</td><td class="tok dim">pagina (pior caso) + preenchimento</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">check</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-icon-disabled</td><td class="tok dim">preenchimento da caixa</td><td class="num strong">2.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">indeterminate</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">indeterminate</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">7.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">7.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">7.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">1.96:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-checkbox-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">1.96:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-checkbox-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Estas cinco regras não estão escritas numa página: elas são medidas por
+  <code>components/checkbox/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="checkbox"&gt;</code> dentro de <code>&lt;label class="al-checkbox"&gt;</code>. Nenhum <code>role="checkbox"</code> na página.</span></div>
+    <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-checkbox__label</code>, e nada de <code>aria-label</code>.</span></div>
+    <div><b>Erro descrito</b><span>Com <code>aria-invalid="true"</code>, tem <code>aria-describedby</code>, e o id apontado existe no documento.</span></div>
+    <div><b>Glifos decorativos</b><span><code>aria-hidden="true"</code> e <code>focusable="false"</code> no check e no traço — o estado quem anuncia é o input.</span></div>
+    <div><b>Sem atributo <code>indeterminate</code></b><span>Ele não existe em HTML e o navegador o ignora em silêncio. O misto é só por JavaScript.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>19</b><span>checkboxes conferidos no HTML</span></div>
+    <div class="stat"><b>5</b><span>regras por checkbox</span></div>
+    <div class="stat"><b>medido</b><span>estado do contrato</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.7.0</span>
+  <span><b>AL Design System</b> · v0.8.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -6620,6 +7331,108 @@ var SEL_UFS = ["Acre", "Bahia", "Cear\u00e1", "Minas Gerais", "Paran\u00e1", "S\
     });
   });
 
+  render();
+})();
+var CBX_CHECK = "<svg class=\"al-icon al-checkbox__check\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M20 6 9 17l-5-5\" /></svg>";
+var CBX_DASH = "<svg class=\"al-icon al-checkbox__dash\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M5 12h14\" /></svg>";
+
+(function () {
+  // ── Checkbox: o misto so existe por JS (regra 8) ──
+  [].slice.call(document.querySelectorAll('[data-indeterminate]')).forEach(function (el) {
+    el.indeterminate = true;
+  });
+
+  // ── pai e filhos da Visao geral ──
+  var pai = document.querySelector('[data-cbx-pai]');
+  var filhos = [].slice.call(document.querySelectorAll('[data-cbx-filho]'));
+  if (pai && filhos.length) {
+    var sync = function () {
+      var n = filhos.filter(function (f) { return f.checked; }).length;
+      pai.checked = n === filhos.length;
+      pai.indeterminate = n > 0 && n < filhos.length;
+    };
+    filhos.forEach(function (f) { f.addEventListener('change', sync); });
+    pai.addEventListener('change', function () {
+      filhos.forEach(function (f) { f.checked = pai.checked; });
+      pai.indeterminate = false;
+    });
+    sync();
+  }
+
+  // ── playground ──
+  var stage = document.getElementById('cbx-stage');
+  if (!stage) return;
+  var code = document.getElementById('cbx-code');
+  var labelInput = document.getElementById('cbx-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function render() {
+    var valor = pick('cbxvalue');
+    var estado = pick('cbxstate');
+    var theme = pick('cbxtheme');
+    var rotulo = (labelInput.value || '').trim() || 'Receber novidades por e-mail';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var erro = estado === 'error';
+    var off = estado === 'disabled';
+    var attrs = ['id="pg-cbx"', 'class="al-checkbox__input"', 'type="checkbox"'];
+    if (valor === 'on') attrs.push('checked');
+    if (off) attrs.push('disabled');
+    if (erro) attrs.push('aria-invalid="true"', 'aria-describedby="pg-cbx-erro"');
+
+    stage.innerHTML =
+      '<label class="al-checkbox"><span class="al-checkbox__control">'
+      + '<input ' + attrs.join(' ') + '>' + CBX_CHECK + CBX_DASH + '</span>'
+      + '<span class="al-checkbox__label">' + esc(rotulo) + '</span></label>'
+      + (erro ? '<p class="cbx-formerror" id="pg-cbx-erro">Aceite para continuar.</p>' : '');
+    if (valor === 'mixed') document.getElementById('pg-cbx').indeterminate = true;
+
+    // O que muda entre estados e atributo, nunca classe.
+    var iattrs = 'class="al-checkbox__input" type="checkbox" name="news"';
+    if (valor === 'on') iattrs += ' checked';
+    if (off) iattrs += ' disabled';
+    if (erro) iattrs += ' aria-invalid="true" aria-describedby="news-erro"';
+    var lines = [];
+    if (erro) {
+      lines.push('&lt;!-- a mensagem e do FORMULARIO, nao do componente --&gt;');
+      lines.push('&lt;p id="news-erro"&gt;Aceite para continuar.&lt;/p&gt;');
+    }
+    lines.push('&lt;label class="al-checkbox"&gt;');
+    lines.push('  &lt;span class="al-checkbox__control"&gt;');
+    lines.push('    &lt;input ' + iattrs + '&gt;');
+    lines.push('    &lt;svg class="al-icon al-checkbox__check" aria-hidden="true" focusable="false"&gt;&lt;!-- check --&gt;&lt;/svg&gt;');
+    lines.push('    &lt;svg class="al-icon al-checkbox__dash" aria-hidden="true" focusable="false"&gt;&lt;!-- minus --&gt;&lt;/svg&gt;');
+    lines.push('  &lt;/span&gt;');
+    lines.push('  &lt;span class="al-checkbox__label"&gt;' + esc(rotulo) + '&lt;/span&gt;');
+    lines.push('&lt;/label&gt;');
+    if (valor === 'mixed') {
+      lines.push('&lt;script&gt;');
+      lines.push('  // o misto nao tem atributo HTML: so por JavaScript');
+      lines.push('  input.indeterminate = true;');
+      lines.push('&lt;/script&gt;');
+    }
+    code.innerHTML = lines.join('\n');
+  }
+
+  document.querySelectorAll('#cbx-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('cbx-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
   render();
 })();
 </script>

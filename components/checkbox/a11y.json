@@ -10,8 +10,8 @@
     "bg-surface",
     "bg-surface-raised"
   ],
-  "markupSource": "site/checkbox-qa.html",
-  "markupChecked": 17,
+  "markupSource": "site/index.html",
+  "markupChecked": 19,
   "markupPending": false,
   "markupRules": [
     "input type=\"checkbox\" nativo dentro de <label class=\"al-checkbox\">",

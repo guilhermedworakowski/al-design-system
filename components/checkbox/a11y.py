@@ -231,7 +231,9 @@ def marcacao(path):
                 for ref in m.group(1).split():
                     if not re.search(rf'\bid="{re.escape(ref)}"', html):
                         achados.append(f'(c) checkbox descreve por "{ref}", que nao existe')
-    if re.search(r'role="checkbox"', html):
+    # So dentro de TAG: a aba de Acessibilidade do site escreve role="checkbox"
+    # em prosa, dentro de <code>, justamente para dizer que nao se usa.
+    if re.search(r'<[a-zA-Z][^>]*\srole="checkbox"', html):
         achados.append('(a) role="checkbox" na pagina - o componente e o input nativo')
 
     # (b) rotulo visivel e nao-vazio em cada bloco
