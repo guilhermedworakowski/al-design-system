@@ -1,0 +1,217 @@
+/* AL Design System - Switch
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/switch/al-switch-tokens.css
+ *
+ * E O <input type="checkbox" role="switch"> NATIVO
+ *   O controle e do navegador: Espaco alterna, clicar no rotulo alterna, o
+ *   formulario envia o valor. `role="switch"` so troca o anuncio do leitor de
+ *   tela de "caixa de selecao, marcada" para "chave, ligada". Este arquivo tira
+ *   a caixa que o navegador desenha (`appearance: none`) e pinta o trilho do AL
+ *   no lugar. Nada de <div role="switch"> nem <button aria-pressed> - primeira
+ *   regra da ARIA (regra 22; divergencia consciente do Primer).
+ *
+ * ANATOMIA
+ *   <label class="al-switch">
+ *     <span class="al-switch__control">
+ *       <input class="al-switch__input" type="checkbox" role="switch">
+ *       <span class="al-switch__thumb" aria-hidden="true"></span>
+ *     </span>
+ *     <span class="al-switch__label">Notificacoes por e-mail</span>
+ *   </label>
+ *
+ *   O <label> envolve tudo: clicar no texto alterna, e a area clicavel passa a
+ *   ser a linha inteira (WCAG 2.5.8, regra 7). Nao ha `for`/`id` a sincronizar.
+ *
+ *   O proprio <input> E o trilho. A bolinha e um <span> irmao, posicionado por
+ *   cima, pela mesma razao do ponto do Radio: <input> nao tem filho, e
+ *   `::before` em <input> nao e garantido em todo navegador.
+ *   `pointer-events: none` devolve o clique ao input.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Ligado le `:checked`; desabilitado le `:disabled`. Nao existe
+ *   `.al-switch--on`: o que o leitor anuncia e o que a tela pinta saem da mesma
+ *   fonte e nao divergem. Nao ha erro - o switch tem efeito imediato e nao
+ *   valida (etapa 1, regra 20).
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - tecnica do Checkbox/Radio
+ *   Hover escreve em `--_border-state`; ligado e desabilitado escrevem em
+ *   `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
+ *   decididas nas etapas 1 e 3:
+ *     ligado + hover      -> nada muda: o ligado forca `border-checked` (regra 14)
+ *     ligado + foco       -> anel por fora do trilho laranja
+ *     foco                -> a borda fica a de repouso; quem sinaliza e o anel
+ *     ligado + disabled   -> trilho cinza, bolinha a direita em
+ *                            `thumb-checked-disabled`, sem laranja (regra 19)
+ *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ *
+ * O FIGMA TEM UM EIXO SO DE ESTADO
+ *   Cinco variantes; as combinacoes acima nao tem variante e sao cobertas pelos
+ *   mesmos tokens. `thumb-checked-disabled` e o unico token sem variante.
+ *
+ * GEOMETRIA DERIVADA - NENHUM NUMERO ALEM DOS TOKENS
+ *   altura  = `track-height` (24, a entrelinha do rotulo)
+ *   bolinha = altura - 2 x borda - 2 x padding              = 14
+ *   largura = 2 x altura - 2 x borda - 2 x padding          = 38
+ *             (e o mesmo que 2 x bolinha + 2 x padding + 2 x borda)
+ *   curso   = a propria bolinha                             = 14
+ *   As contas estao escritas abaixo em vez de numeros. `box-sizing:
+ *   border-box` poe a borda DENTRO dos 38x24, entao o trilho nunca "pula"
+ *   quando o estado troca a cor dela.
+ *
+ * A BOLINHA ANDA POR `inset-inline-start`, NAO POR `transform`
+ *   Assim o lado "ligado" segue a direcao do texto sozinho: em pagina da
+ *   direita para a esquerda, ligado fica a esquerda sem regra extra.
+ *
+ * ALINHAMENTO AO TOPO
+ *   `align-items: flex-start`: rotulo longo quebra linha e o trilho fica na
+ *   altura da primeira linha (regra 11). Funciona sem ajuste porque a altura
+ *   do trilho (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ *
+ * O QUE ESTE ARQUIVO NAO FAZ - REGRA 21 (opcao A, decisao de Gui)
+ *   Se a acao falhar, a aplicacao desmarca o input de volta e avisa em texto.
+ *   O componente nao tem estado de carregamento nem de erro.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
+ *   de motion. Mesma pendencia do Button, do Select, do Checkbox e do Radio.
+ *   Com `prefers-reduced-motion`, a bolinha troca de lado sem deslizar (regra 25).
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-switch {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--al-switch-gap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* -------------------------------------------------------------- trilho */
+.al-switch__control {
+  position: relative;
+  display: block;
+  flex: none;
+  block-size: var(--al-switch-track-height);
+}
+
+.al-switch__input {
+  --_bg-state: var(--al-switch-track);
+  --_border-state: var(--al-switch-border);
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  inline-size: calc(2 * var(--al-switch-track-height)
+                    - 2 * var(--al-switch-border-width)
+                    - 2 * var(--al-switch-padding));
+  block-size: var(--al-switch-track-height);
+
+  border: var(--al-switch-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-switch-radius);
+  background-color: var(--_bg-force, var(--_bg-state));
+  cursor: inherit;
+
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o trilho arredondado */
+.al-switch__input:focus {
+  outline: none;
+}
+
+/* ------------------------------------------------------------- bolinha */
+/* Dentro da borda e do padding: 24 - 2x1 - 2x4 = 14, como no Figma. */
+.al-switch__thumb {
+  --_thumb: calc(var(--al-switch-track-height)
+                 - 2 * var(--al-switch-border-width)
+                 - 2 * var(--al-switch-padding));
+  --_inset: calc(var(--al-switch-border-width) + var(--al-switch-padding));
+
+  position: absolute;
+  inset-block-start: var(--_inset);
+  inset-inline-start: var(--_inset);
+  inline-size: var(--_thumb);
+  block-size: var(--_thumb);
+  border-radius: var(--al-switch-radius);
+  background-color: var(--al-switch-thumb);
+  /* devolve o clique ao input que esta embaixo */
+  pointer-events: none;
+
+  transition:
+    inset-inline-start 120ms ease,
+    background-color 120ms ease;
+}
+
+/* ligado: a bolinha anda o proprio tamanho */
+.al-switch__input:checked ~ .al-switch__thumb {
+  inset-inline-start: calc(var(--_inset) + var(--_thumb));
+  background-color: var(--al-switch-thumb-checked);
+}
+
+/* ------------------------------------------------------------- rotulo */
+.al-switch__label {
+  color: var(--al-switch-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-switch-label-font-size);
+  line-height: var(--al-switch-label-line-height);
+  font-weight: var(--al-switch-label-font-weight);
+  letter-spacing: var(--al-switch-label-tracking);
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover na linha inteira: clicar no rotulo tambem alterna, entao o rotulo
+   tambem anuncia que e clicavel. So a borda muda; no ligado o force vence. */
+.al-switch:hover .al-switch__input:not(:disabled) {
+  --_border-state: var(--al-switch-border-hover);
+}
+
+/* foco: so o anel - a borda fica a de repouso, como no Figma */
+.al-switch__input:focus-visible {
+  box-shadow: var(--al-switch-ring);
+}
+
+/* ligado: o laranja e quem diz o estado */
+.al-switch__input:checked {
+  --_bg-force: var(--al-switch-track-checked);
+  --_border-force: var(--al-switch-border-checked);
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-switch__input:disabled {
+  --_bg-force: var(--al-switch-track-disabled);
+  --_border-force: var(--al-switch-border-disabled);
+}
+
+.al-switch__input:disabled ~ .al-switch__thumb {
+  background-color: var(--al-switch-thumb-disabled);
+}
+
+/* ligado + desabilitado: sem variante no Figma, sem laranja (regra 19) */
+.al-switch__input:checked:disabled ~ .al-switch__thumb {
+  background-color: var(--al-switch-thumb-checked-disabled);
+}
+
+.al-switch:has(.al-switch__input:disabled) {
+  cursor: not-allowed;
+}
+
+.al-switch:has(.al-switch__input:disabled) .al-switch__label {
+  color: var(--al-switch-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-switch__input,
+  .al-switch__thumb {
+    transition: none;
+  }
+}
