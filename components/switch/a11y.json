@@ -10,8 +10,8 @@
     "bg-surface",
     "bg-surface-raised"
   ],
-  "markupSource": "site/switch-qa.html",
-  "markupChecked": 12,
+  "markupSource": "site/index.html",
+  "markupChecked": 16,
   "markupPending": false,
   "markupRules": [
     "input type=\"checkbox\" role=\"switch\" nativo dentro de <label class=\"al-switch\">; nenhum outro role=\"switch\", sem aria-pressed",
