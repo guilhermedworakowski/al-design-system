@@ -83,6 +83,8 @@
   --al-bg-active: #E0E0E0;
   --al-bg-disabled: #E0E0E0;
   --al-bg-inverse: #292929;
+  --al-bg-thumb: #B3B3B3;
+  --al-bg-thumb-disabled: #CECECE;
   --al-bg-brand: #FC5000;
   --al-bg-brand-hover: #C53900;
   --al-bg-brand-active: #992700;
@@ -224,6 +226,8 @@
     --al-bg-active: #565656;
     --al-bg-disabled: #3E3E3E;
     --al-bg-inverse: #F7F7F7;
+    --al-bg-thumb: #717171;
+    --al-bg-thumb-disabled: #565656;
     --al-bg-brand: #FC5000;
     --al-bg-brand-hover: #EA4900;
     --al-bg-brand-active: #C53900;
@@ -283,6 +287,8 @@
   --al-bg-active: #565656;
   --al-bg-disabled: #3E3E3E;
   --al-bg-inverse: #F7F7F7;
+  --al-bg-thumb: #717171;
+  --al-bg-thumb-disabled: #565656;
   --al-bg-brand: #FC5000;
   --al-bg-brand-hover: #EA4900;
   --al-bg-brand-active: #C53900;
