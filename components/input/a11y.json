@@ -5,8 +5,8 @@
     "text": 4.5,
     "nonText": 3.0
   },
-  "markupSource": "site/input-qa.html",
-  "markupChecked": 17,
+  "markupSource": "site/index.html",
+  "markupChecked": 24,
   "markupPending": false,
   "markupRules": [
     "todo campo tem id e um <label for> de rotulo apontando para ele",
