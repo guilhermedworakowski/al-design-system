@@ -17,6 +17,12 @@ SEM = {
   'bg-active':          (c('neutral',200), c('neutral',700)),
   'bg-disabled':        (c('neutral',200), c('neutral',800)),
   'bg-inverse':         (c('neutral',900), c('neutral',50)),
+  # peca que desliza sobre um trilho (Switch; serve ao Slider). O escuro e o
+  # espelho do claro na escada, como em text-disabled e border-default. Nao
+  # entra em PAIRS: o contraste contra o trilho e combinacao de componente, e o
+  # Switch declara a excecao no portao dele (decisao de Gui, 25/09/2026).
+  'bg-thumb':           (c('neutral',400), c('neutral',600)),
+  'bg-thumb-disabled':  (c('neutral',300), c('neutral',700)),
   # marca
   'bg-brand':           (c('orange',500),  c('orange',500)),
   'bg-brand-hover':     (c('orange',600),  BRAND_HOVER),

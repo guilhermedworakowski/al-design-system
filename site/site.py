@@ -22,8 +22,9 @@ Navegacao em duas camadas, como Carbon e Material fazem:
 Interatividade so onde ela prova alguma coisa: o playground do Button, o
 trilho, as abas e o switch de tema. As paginas da Foundation sao estaticas.
 
-Os icones do trilho e o switch de tema sao casca do site. NAO sao componentes
-do AL - o Icon e o Switch ainda nao existem, e so nascem depois do Figma.
+Os icones do trilho sao casca do site. O switch de tema NAO e: desde a etapa 7
+do Switch (25/09/2026) ele e o componente do AL, com rotulo visivel - o portao
+de marcacao do components/switch/a11y.py cobra isso no HTML emitido.
 
 Rodar: python3 site/site.py     (escreve site/index.html)
 """
@@ -77,6 +78,10 @@ RADIO = json.load(open(os.path.join(ROOT, 'components', 'radio', 'tokens.json'))
 RADIO_TOKENS = open(os.path.join(ROOT, 'components', 'radio', 'al-radio-tokens.css')).read()
 RADIO_CSS = open(os.path.join(ROOT, 'components', 'radio', 'radio.css')).read()
 RADIO_A11Y = json.load(open(os.path.join(ROOT, 'components', 'radio', 'a11y.json')))
+SWITCH = json.load(open(os.path.join(ROOT, 'components', 'switch', 'tokens.json')))
+SWITCH_TOKENS = open(os.path.join(ROOT, 'components', 'switch', 'al-switch-tokens.css')).read()
+SWITCH_CSS = open(os.path.join(ROOT, 'components', 'switch', 'switch.css')).read()
+SWITCH_A11Y = json.load(open(os.path.join(ROOT, 'components', 'switch', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -99,6 +104,7 @@ N_AVATAR_TOKENS = len(AVATAR['alias'])
 N_SELECT_TOKENS = len(SELECT['alias'])
 N_CHECKBOX_TOKENS = len(CHECKBOX['alias'])
 N_RADIO_TOKENS = len(RADIO['alias'])
+N_SWITCH_TOKENS = len(SWITCH['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -138,7 +144,8 @@ def scope_themes(found_css, *token_blocks):
 
 
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
-                         AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS)
+                         AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
+                         SWITCH_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -146,7 +153,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + AVATAR_TOKENS + '\n' + AVATAR_CSS
             + '\n' + SELECT_TOKENS + '\n' + SELECT_CSS
             + '\n' + CHECKBOX_TOKENS + '\n' + CHECKBOX_CSS
-            + '\n' + RADIO_TOKENS + '\n' + RADIO_CSS)
+            + '\n' + RADIO_TOKENS + '\n' + RADIO_CSS
+            + '\n' + SWITCH_TOKENS + '\n' + SWITCH_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -635,41 +643,13 @@ body{
 .nav-sub a.soon:hover{background:none; color:var(--al-text-secondary)}
 
 /* ── rodapé do trilho: o switch de tema ──
-   Casca do site, não o componente. O AL ainda não tem um Switch, e inventar um
-   aqui criaria um componente por acidente — sem Figma, sem tokens, sem portão.
-   Quando o Switch existir de verdade, este vira consumo dele. */
-/* O padding de 6px aqui existe só para o alvo de toque: ele leva a área
-   clicável de 42×24 para 54×36 sem mudar o desenho, e o 18px do rodapé
-   compensa para o track continuar alinhado com os ícones do menu, em 24px. */
-.rail-foot{margin-top:auto; border-top:1px solid var(--al-border-subtle); padding:14px 18px}
-.theme-switch{
-  appearance:none; border:0; background:none; cursor:pointer;
-  display:block; padding:6px; border-radius:9999px; color:var(--al-text-secondary);
-}
-.theme-switch:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
-.theme-switch:not([aria-checked="true"]):hover .ts-track{border-color:var(--al-border-strong)}
-.theme-switch[aria-checked="true"]:hover .ts-track{
-  background:var(--al-bg-brand-hover); border-color:var(--al-bg-brand-hover);
-}
-.ts-track{
-  flex:none; width:42px; height:24px; border-radius:9999px; padding:2px; display:flex;
-  background:var(--al-bg-subtle); border:1px solid var(--al-border-default);
-  transition:background-color 160ms ease, border-color 160ms ease;
-}
-.theme-switch[aria-checked="true"] .ts-track{
-  background:var(--al-bg-brand); border-color:var(--al-bg-brand);
-}
-.ts-thumb{
-  width:18px; height:18px; border-radius:9999px; display:grid; place-items:center;
-  background:var(--al-bg-canvas); box-shadow:var(--al-elevation-1);
-  color:var(--al-text-secondary); transition:transform 160ms ease;
-}
-.theme-switch[aria-checked="true"] .ts-thumb{transform:translateX(18px)}
-.ts-thumb svg{display:block; width:12px; height:12px}
-.theme-switch[aria-checked="true"] .ts-sun{display:none}
-.theme-switch:not([aria-checked="true"]) .ts-moon{display:none}
+   É o Switch do AL, não uma imitação: até 25/09/2026 era um <button
+   role="switch"> desenhado à mão, com sol e lua na bolinha, e o portão de
+   marcação do Switch reprovou o próprio site. Agora o rótulo "Tema escuro" é
+   visível (regra 23) e o ícone saiu (ícone na bolinha está fora do escopo). */
+.rail-foot{margin-top:auto; border-top:1px solid var(--al-border-subtle); padding:18px 18px 14px}
 @media (prefers-reduced-motion: reduce){
-  .ts-track, .ts-thumb, .nav-chev svg{transition:none}
+  .nav-chev svg{transition:none}
 }
 
 /* ── cards das páginas-índice ── */
@@ -1086,15 +1066,6 @@ ICO_COMPONENTES = ('<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">'
                    '<rect x="3" y="13.5" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.6"/>'
                    '<rect x="13.5" y="13.5" width="7.5" height="7.5" rx="3.75" stroke="currentColor" '
                    'stroke-width="1.6" stroke-dasharray="2.6 2.4"/></svg>')
-SUN = ('<svg class="ts-sun" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
-       '<circle cx="8" cy="8" r="3.1" stroke="currentColor" stroke-width="1.5"/>'
-       '<path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1'
-       'M12.9 12.9l-1.1-1.1M4.2 4.2 3.1 3.1" stroke="currentColor" stroke-width="1.5" '
-       'stroke-linecap="round"/></svg>')
-MOON = ('<svg class="ts-moon" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
-        '<path d="M13.5 9.6A5.9 5.9 0 0 1 6.4 2.5a5.9 5.9 0 1 0 7.1 7.1Z" '
-        'stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>')
-
 CARET = ('<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">'
          '<path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.6" '
          'stroke-linecap="round" stroke-linejoin="round"/></svg>')
@@ -4048,7 +4019,7 @@ CHECKBOX_GUIDE = f'''
   <div class="anat">
     <div><b>Várias opções de uma lista</b><span>Ou uma opção isolada que só vale depois de confirmar — enviar, salvar. <i>Carbon, Primer, NN/g.</i></span></div>
     <div><b>Nunca para escolha única</b><span>Se só uma opção pode ser escolhida, é radio: com o Checkbox a pessoa não tem como saber que as opções se excluem. <i>Carbon.</i></span></div>
-    <div><b>Nunca para ação imediata</b><span>Ativar modo escuro, ligar notificações: quem clica numa caixa espera confirmar depois. Ação imediata pede Switch, que o AL ainda não tem. <i>Carbon, Primer.</i></span></div>
+    <div><b>Nunca para ação imediata</b><span>Ativar modo escuro, ligar notificações: quem clica numa caixa espera confirmar depois. Ação imediata pede o <a href="#/switch">Switch</a>. <i>Carbon, Primer.</i></span></div>
     <div><b>Aceite</b><span>Checkbox isolado serve para “Li e aceito os termos”, em primeira pessoa. <i>Primer.</i></span></div>
   </div>
 </section>
@@ -4126,7 +4097,7 @@ CHECKBOX_GUIDE = f'''
     <div><b>Texto de apoio e mensagem de erro</b><span>Não fazem parte do componente — são do formulário.</span></div>
     <div><b>Variantes combinadas no Figma</b><span>Marcado + hover e companhia são cobertos pelo código com os mesmos tokens; as variantes entram se uma atualização pedir.</span></div>
     <div><b>Checkbox sem rótulo visível</b><span>Fica reservado para a seleção de linha do futuro componente de tabela, que resolve o nome com <code>aria-label</code>. Até lá, não use.</span></div>
-    <div><b>Switch e read-only</b><span>Outros componentes, ainda não abertos.</span></div>
+    <div><b>Read-only</b><span>Ainda não aberto. Ação imediata é o <a href="#/switch">Switch</a>.</span></div>
   </div>
 </section>'''
 
@@ -4536,7 +4507,7 @@ RADIO_GUIDE = f'''
     <div><b>Uma única opção de uma lista curta</b><span>Todas visíveis, para a pessoa comparar antes de escolher. <i>Primer, Spectrum, Material.</i></span></div>
     <div><b>Até cinco ou seis opções</b><span>Acima disso, use o Select. <i>Material (5), Primer e Spectrum (6).</i></span></div>
     <div><b>Nunca para várias escolhas, nunca sozinho</b><span>Várias escolhas é Checkbox. Uma pergunta tem sempre duas opções ou mais; um sim/não de aceite isolado também é Checkbox. <i>Polaris, Carbon.</i></span></div>
-    <div><b>Nunca para ação imediata</b><span>A escolha só vale quando a pessoa envia ou salva — as setas mudam a escolha enquanto ela navega. Ação imediata pede Switch, que o AL ainda não tem. <i>Primer, Material.</i></span></div>
+    <div><b>Nunca para ação imediata</b><span>A escolha só vale quando a pessoa envia ou salva — as setas mudam a escolha enquanto ela navega. Ação imediata pede o <a href="#/switch">Switch</a>. <i>Primer, Material.</i></span></div>
   </div>
 </section>
 
@@ -4635,7 +4606,7 @@ RADIO_GUIDE = f'''
     <div><b>Componente de grupo</b><span>Nem agora nem no roadmap: a pergunta é <code>fieldset</code> + <code>legend</code> nativos.</span></div>
     <div><b>Texto de apoio e mensagem de erro</b><span>Não fazem parte do componente — são do formulário.</span></div>
     <div><b>Variantes combinadas no Figma</b><span>Cobertas pelo código com os mesmos tokens.</span></div>
-    <div><b>Radio em card, Switch e read-only</b><span>Outros componentes, ainda não abertos.</span></div>
+    <div><b>Radio em card e read-only</b><span>Ainda não abertos. Ação imediata é o <a href="#/switch">Switch</a>.</span></div>
   </div>
 </section>'''
 
@@ -4728,6 +4699,451 @@ RADIO_A11Y_TAB = f'''
 </section>'''
 
 
+# ═══════════════════════════════════════════════════════════════ Switch · abas
+# 5 estados no Figma, num eixo so. Efeito imediato: nao ha formulario com
+# "Enviar" nesta pagina (regra 1) - a demonstracao e uma tela de configuracoes.
+# O components/switch/a11y.py cobra o contrato de marcacao no HTML emitido.
+def sw(sid, rotulo, *, checked=False, disabled=False, sim=None, extra=''):
+    """Um Switch real. `sim='hover'` escreve na MESMA variavel privada que o
+    switch.css usa - o hover so vive sob o ponteiro."""
+    attrs = [f'id="{sid}"', 'class="al-switch__input"', 'type="checkbox"', 'role="switch"']
+    if checked:
+        attrs.append('checked')
+    if disabled:
+        attrs.append('disabled')
+    if sim == 'hover':
+        attrs.append('style="--_border-state: var(--al-switch-border-hover)"')
+    if extra:
+        attrs.append(extra)
+    return (f'<label class="al-switch">'
+            f'<span class="al-switch__control"><input {" ".join(attrs)}>'
+            f'<span class="al-switch__thumb" aria-hidden="true"></span></span>'
+            f'<span class="al-switch__label">{rotulo}</span></label>')
+
+
+SW_STATES = [
+    ('default', 'Default', 'Desligado. A bolinha e a borda são as exceções de contraste declaradas; '
+     'quem sustenta é o rótulo visível e o laranja do ligado.',
+     sw('sp-sw-default', 'Notificações por e-mail')),
+    ('hover', 'Hover', 'Só existe sob o ponteiro: a variável privada foi escrita direto no input. '
+     'O real acende a borda na linha inteira — passe o mouse no Default.',
+     sw('sp-sw-hover', 'Notificações por e-mail', sim='hover')),
+    ('active', 'Active (ligado)', 'Trilho laranja, bolinha branca à direita. Clique: ela desliza de '
+     'volta. Com o mouse em cima do ligado nada muda.',
+     sw('sp-sw-active', 'Modo escuro automático', checked=True)),
+    ('focus', 'Focus', 'Tabule até aqui: anel laranja com respiro, e a borda fica a de repouso. '
+     'Espaço alterna; Enter não.',
+     sw('sp-sw-focus', 'Legendas nos vídeos')),
+    ('disabled', 'Disabled', 'Atributo nativo <code>disabled</code>: o Tab pula. Contraste abaixo '
+     'de AA de propósito.',
+     sw('sp-sw-disabled', 'Resumo semanal', disabled=True)),
+]
+
+SW_COMBOS = [
+    ('dischk', 'Ligado + disabled', 'Trilho cinza, bolinha à direita um tom mais escura '
+     '(<code>thumb-checked-disabled</code>) — sem laranja. O único token sem variante no Figma.',
+     sw('sp-sw-dischk', 'Backup diário', checked=True, disabled=True)),
+    ('chkfoc', 'Ligado + foco', 'O anel aparece por fora do trilho laranja — ele não depende do estado.',
+     sw('sp-sw-chkfoc', 'Sincronizar contatos', checked=True)),
+    ('long', 'Rótulo longo', 'O texto quebra e o trilho fica na altura da primeira linha: '
+     'trilho e entrelinha medem os mesmos 24px.',
+     sw('sp-sw-long', 'Enviar a nota fiscal por e-mail ao contador assim que o pagamento for '
+                      'confirmado', checked=True)),
+]
+
+
+def switch_specimens(lista):
+    cells = []
+    for slug, nome, nota, corpo in lista:
+        cells.append(f'<div class="cell"><span class="lab" '
+                     f'style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2 sw-stage">{corpo}</div>'
+                     f'<p class="cap">{nota}</p></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def switch_token_rows():
+    rows = []
+    for name in SWITCH['alias']:
+        res = SWITCH['resolved'].get(name)
+        if not isinstance(res, dict) or 'light' not in res:
+            continue
+        lt = res['light']
+        sw_ = (f'<span class="chip sm" style="background:{lt}"></span>'
+               if isinstance(lt, str) and lt.startswith('#') else '')
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{SWITCH["alias"][name]}</td>'
+                    f'<td class="tok dim">{sw_}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+def switch_geo_rows():
+    rows = []
+    for role in ['track-height', 'padding', 'gap', 'radius', 'border-width']:
+        name = f'switch-{role}'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{SWITCH["alias"][name]}</td>'
+                    f'<td class="num">{SWITCH["resolved"][name]}px</td></tr>')
+    res = SWITCH['resolved']['switch-label-font']
+    rows.append(f'<tr><td class="tok">--al-switch-label-font</td>'
+                f'<td class="tok dim">{SWITCH["alias"]["switch-label-font"]}</td>'
+                f'<td class="num">{res[1]}/{res[2]} · peso {res[3]}</td></tr>')
+    return '\n'.join(rows)
+
+
+def switch_a11y_rows(papeis):
+    out = []
+    for r in SWITCH_A11Y['rows']:
+        if r['papel'] not in papeis:
+            continue
+        if r['pass']:
+            verdict = '<span class="pass">passa</span>'
+        elif r['exc']:
+            verdict = '<span class="exc">exceção</span>'
+        else:
+            verdict = '<span class="fail">reprova</span>'
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['soNoCodigo'] else '')
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{estado}</td>'
+            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">--al-{r["token"]}</td>'
+            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+N_SW_MEDIDAS = len(SWITCH_A11Y['rows'])
+N_SW_EXC = sum(SWITCH_A11Y['exceptions'].values())
+N_SW_PASSA = N_SW_MEDIDAS - N_SW_EXC
+SW_DERIVED = SWITCH['derived']
+SW_PIOR = min((r for r in SWITCH_A11Y['rows'] if r['pass']), key=lambda r: r['ratio'] / r['floor'])
+
+
+def _sw(state, theme, papel):
+    return next(r['ratio'] for r in SWITCH_A11Y['rows']
+                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+
+
+SW_THUMB = {t: _sw('default', t, 'bolinha') for t in ('light', 'dark')}
+SW_BORDA = {t: _sw('default', t, 'borda') for t in ('light', 'dark')}
+SW_ON = {t: _sw('checked', t, 'bolinha') for t in ('light', 'dark')}
+
+TH_SWITCH = ('<div class="th-sw" aria-hidden="true">'
+             '<span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>E-mail</span>'
+             '<span class="th-sw__row"><span class="th-sw__track"><span class="th-sw__thumb"></span></span>Celular</span>'
+             '<span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>Resumo</span></div>')
+
+SWITCH_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="sw-stage">{sw('pg-sw', 'Notificações por e-mail', checked=True)}</div>
+
+    <div class="controls" id="sw-controls">
+      <div class="ctl"><span class="ctl-name">Estado inicial</span>{seg('swvalue', [('on', 'Ligado'), ('off', 'Desligado')], 'on')}</div>
+      <div class="ctl"><span class="ctl-name">Disponível</span>{seg('swstate', [('rest', 'Sim'), ('disabled', 'Desabilitado')], 'rest')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('swtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><label for="sw-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="sw-label" type="text" value="Notificações por e-mail" maxlength="60"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="sw-copy">Copiar</button></div>
+      <pre><code id="sw-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O switch acima é o componente real: esta página carrega o mesmo <code>switch.css</code> que vai
+    para produção. Tabule até ele e aperte Espaço. Por baixo é um
+    <code>&lt;input type="checkbox"&gt;</code> com <code>role="switch"</code>, e é isso que faz o leitor
+    de tela anunciar “chave, ligada” em vez de “caixa de seleção, marcada”.
+  </p>
+</section>
+
+<section>
+  <h2>Uma tela de configurações de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <div class="sw-settings">
+      <fieldset class="sw-group">
+        <legend>Notificações</legend>
+        <div class="sw-opts">
+          {sw('ov-sw-email', 'Notificações por e-mail', checked=True)}
+          {sw('ov-sw-resumo', 'Resumo semanal', checked=True)}
+          {sw('ov-sw-push', 'Notificações no celular')}
+          {sw('ov-sw-contador', 'Enviar notas ao contador')}
+        </div>
+      </fieldset>
+      <p class="sw-status" id="ov-sw-status" role="status" aria-live="polite"></p>
+    </div>
+    <p class="cap">Não há botão “Salvar”: cada switch vale na hora. Desligue as notificações por
+    e-mail e o resumo semanal fica desabilitado, porque depende delas. Ligue o envio ao contador: a
+    bolinha troca no clique e, quando o servidor simulado recusa, volta ao estado real e a aplicação
+    avisa em texto. <i>Primer, Polaris e Material: o switch aplica na hora e mostra o estado real.</i></p>
+  </div>
+</section>
+
+<section>
+  <h2>Os cinco estados do Figma</h2>
+  {switch_specimens(SW_STATES)}
+</section>
+
+<section>
+  <h2>O que só existe no código</h2>
+  <p>O Figma tem um eixo só de estado. O navegador produz combinações que ele não desenha — e
+  elas foram decididas na etapa 3, pintadas pelos mesmos tokens, sem nenhum a mais além da
+  bolinha do ligado desabilitado.</p>
+  <div style="margin-top:16px">{switch_specimens(SW_COMBOS)}</div>
+</section>'''
+
+SWITCH_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b><code>&lt;label class="al-switch"&gt;</code></b><span>Envolve tudo. É o que faz clicar no texto alternar, e o que transforma a linha inteira em área de clique — também é onde mora o hover.</span></div>
+    <div><b>Trilho</b><span>É o próprio <code>&lt;input type="checkbox" role="switch"&gt;</code>, com <code>appearance: none</code>: a caixa do navegador sai e o trilho do AL entra. Espaço, clique no rótulo e o valor no formulário continuam do navegador.</span></div>
+    <div><b>Bolinha</b><span>Um <code>&lt;span&gt;</code> irmão do input, com <code>aria-hidden</code> — <code>&lt;input&gt;</code> não tem filho. <code>pointer-events: none</code> devolve o clique ao input.</span></div>
+    <div><b>Rótulo</b><span>Sempre visível, à direita, e nunca muda com o estado. É a regra que sustenta as duas exceções de contraste.</span></div>
+    <div><b>O grupo — fora do componente</b><span>Quando há vários switches, o título é da aplicação: um título de seção, ou <code>fieldset</code> + <code>legend</code>. Cada switch continua independente.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A geometria é consequência</h2>
+  <p>O trilho tem <code>track-height</code>: <b>24px</b>, a mesma altura do círculo do Radio e da
+  entrelinha do rótulo. Todo o resto sai dele: a bolinha são <b>{SW_DERIVED['thumb-size']}px</b>
+  (altura − 2 × borda − 2 × respiro), a largura são <b>{SW_DERIVED['track-width']}px</b> (a bolinha
+  cabe duas vezes, mais respiro e borda) e o curso é a própria bolinha. Nenhum desses números tem
+  token — as contas estão escritas no CSS.</p>
+  <p style="margin-top:12px">A bolinha anda por <code>inset-inline-start</code>, não por
+  <code>transform</code>: numa página escrita da direita para a esquerda, o ligado fica à esquerda
+  sozinho. A borda de 1px existe em todos os estados e fica dentro dos 38×24, então o trilho nunca
+  “pula” quando o estado troca a cor dela.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_SWITCH_TOKENS}</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>5</b><span>estados no Figma</span></div>
+    <div class="stat"><b>1</b><span>tamanho — regra do Tier 2</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody>{switch_token_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Dois semânticos nasceram para o Switch</b>
+    <code>bg-thumb</code> e <code>bg-thumb-disabled</code> entraram na Fundação, com claro e escuro
+    — o escuro é o espelho do claro na escada de neutros. O nome serve a qualquer peça que desliza
+    sobre um trilho, como um Slider no futuro. O resto reaproveita semânticos que já existiam:
+    o trilho desligado é <code>bg-surface</code> e a bolinha ligada é <code>text-on-brand</code>.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody>{switch_geo_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Quem ganha quando dois estados acontecem juntos</h2>
+  <p>A mesma técnica do Checkbox e do Radio: fundo e borda são
+  <code>var(--_*-force, var(--_*-state))</code>. O hover escreve em <code>--_border-state</code>;
+  ligado e desabilitado escrevem em <code>--_*-force</code>, que vence por ser <b>outra
+  propriedade</b>, não por ter seletor mais pesado.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Ligado + hover</b><span>Nada muda: o ligado força a borda laranja. O laranja já é o sinal mais forte.</span></div>
+    <div><b>Foco</b><span>Só o anel. A borda fica a de repouso — é assim no Figma.</span></div>
+    <div><b>Ligado + foco</b><span>O anel aparece por fora do trilho laranja.</span></div>
+    <div><b>Desabilitado</b><span>Vem por último no arquivo e ganha de todos. Ligado e desabilitado mostra a bolinha à direita em <code>thumb-checked-disabled</code>, sem laranja.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Sem erro, sem carregamento</h2>
+  <p>O switch tem efeito imediato, então não valida e não tem estado de erro. Quando a ação falha,
+  quem age é a aplicação: ela desmarca o input de volta e avisa em texto. O componente não tem
+  estado de carregamento — a bolinha troca no clique e só volta se o sistema recusar.</p>
+</section>'''
+
+SWITCH_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Ligar ou desligar algo que vale na hora</b><span>Sem botão “Salvar”: quem aciona um switch espera que a mudança já tenha acontecido. <i>Carbon, Primer, Polaris, Spectrum, Material.</i></span></div>
+    <div><b>Se só vale depois de enviar, é Checkbox</b><span>Um switch num formulário com “Enviar” dá a impressão de que já aplicou — e não aplicou. <i>Polaris, Primer.</i></span></div>
+    <div><b>Só dois estados opostos</b><span>Se as opções não são um liga/desliga simples — “Diário / Semanal” —, é Radio ou Select. <i>Polaris, Carbon.</i></span></div>
+    <div><b>Nunca para aceite de termos</b><span>Aceite depende de envio e costuma ser obrigatório: é Checkbox. <i>Primer, Polaris.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Mais de um switch</h2>
+  <div class="anat">
+    <div><b>Lista vertical, um por linha, cada um independente</b><span>Ligar um nunca desliga outro. Se precisa desligar, a pergunta é de escolha única — e é Radio. <i>Material, Carbon.</i></span></div>
+    <div><b>O título do grupo é da aplicação</b><span>Um título de seção, ou <code>fieldset</code> + <code>legend</code>. Não há componente de grupo. <i>Carbon.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 sw-stage">{sw('gd-sw-ok', 'Notificações por e-mail', checked=True)}</div>
+      <p class="cap">Nomeia a configuração. Teste: leia em voz alta e some “ligado” ou
+      “desligado” no fim — “Notificações por e-mail, ligado” faz sentido. <i>NN/g, Primer.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 sw-stage">{sw('gd-sw-bad', 'Deseja receber notificações?')}</div>
+      <p class="cap">Pergunta não é rótulo: “Deseja receber notificações?, desligado” não faz
+      sentido. Também não use o estado como rótulo (“Notificações ativadas”), porque ele teria de
+      mudar a cada clique. <i>NN/g, Carbon.</i></p>
+    </div>
+  </div>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Visível, à direita, e clicar nele alterna</b><span>O <code>&lt;label&gt;</code> envolve o controle: a área de clique é a linha inteira, não só os 38×24 do trilho. <i>Carbon, Material; WCAG 2.5.8.</i></span></div>
+    <div><b>Nunca muda com o estado</b><span>Quem mostra o estado é o controle. <i>Carbon.</i></span></div>
+    <div><b>Sem “Ligado/Desligado” ao lado</b><span>O switch sozinho basta. <i>Material.</i> Divergência consciente do Primer, que mostra esse texto.</span></div>
+    <div><b>Curto, sem ponto final</b><span>Rótulo longo quebra, e o trilho fica na altura da primeira linha. <i>NN/g, Carbon.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Estado inicial e estados</h2>
+  <div class="anat">
+    <div><b>O estado inicial é o estado real</b><span>Se a notificação está ativa no sistema, o switch nasce ligado. Nunca pré-ligue “porque é o recomendado” — o switch não propõe, ele mostra. <i>Material.</i></span></div>
+    <div><b>Posição e cor mudam juntas</b><span>Ligado é trilho laranja com a bolinha à direita; nunca só a cor (WCAG 1.4.1).</span></div>
+    <div><b>Aplica no clique, sem confirmação</b><span>Nunca pergunte “Tem certeza?” para algo que se desfaz com outro clique. Ação grave não é switch. <i>Primer, Polaris, Material.</i></span></div>
+    <div><b>Desabilitado só quando depende de outra configuração</b><span>Se nunca vai estar disponível, esconda. <i>Mesma regra do Select, do Checkbox e do Radio.</i></span></div>
+    <div><b>O desabilitado fica abaixo de AA de propósito</b><span>O WCAG isenta controle inativo, e subir esse contraste faz o switch parecer clicável.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Quando a ação falha</h2>
+  <div class="anat">
+    <div><b>Sem erro e nunca obrigatório</b><span>Se uma configuração precisa estar ligada para a pessoa seguir, é um aceite — e aceite é Checkbox. <i>Spectrum, Polaris.</i></span></div>
+    <div><b>Troca na hora, e volta se falhar</b><span>A bolinha muda no clique. Se o sistema recusar, ela volta ao estado real e a aplicação avisa em texto o que falhou. O switch nunca mostra um estado que o sistema não tem.</span></div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Divergência consciente</b>
+    O Primer pede para esperar a resposta com um indicador de carregamento. O AL não tem esse
+    estado, e sem indicador a pessoa clica e parece que nada aconteceu — por isso a troca é
+    imediata e o recuo é da aplicação. <i>Material: o switch mostra o status real.</i>
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Um tamanho só</b><span>Regra de todo input do Tier 2.</span></div>
+    <div><b>Erro, texto de status e somente-leitura</b><span>O switch tem efeito imediato; somente-leitura só existe no Carbon — se aparecer, mostre o valor como texto.</span></div>
+    <div><b>Ícone dentro da bolinha</b><span>Existe no Material; o AL não usa.</span></div>
+    <div><b>Texto de apoio abaixo do rótulo</b><span>O Primer tem. Se a demanda aparecer, abre uma rodada nova do componente.</span></div>
+    <div><b>Componente de grupo e estado de carregamento</b><span>O grupo é da aplicação; a espera é coberta pela troca imediata.</span></div>
+  </div>
+</section>'''
+
+SWITCH_A11Y_TAB = f'''
+<section>
+  <h2>A bolinha mede contra o trilho em que está</h2>
+  <p>O portão mede <b>combinação renderizada</b>: a borda contra a página por fora e o trilho por
+  dentro, a bolinha contra o trilho, o rótulo contra a página. E a página não é uma só: tela,
+  faixa de seção e card, guardando a pior. A menor margem entre as que passam é
+  <b>{SW_PIOR['papel']}</b> em <code>{SW_PIOR['state']}</code>, {SW_PIOR['ratio']:.2f}:1 contra o piso
+  de {SW_PIOR['floor']}:1.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_SW_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_SW_PASSA}</b><span>passam</span></div>
+    <div class="stat"><b>{N_SW_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{SWITCH_A11Y['fails']}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O que a etapa 3 não conseguia ver</h2>
+  <p>O trilho desligado é <code>bg-surface</code>. Numa faixa de seção em <code>bg-surface</code>,
+  trilho e página são <b>a mesma cor</b> — nos dois temas. Ali, o switch desligado é desenhado só
+  pela borda e pela bolinha. Não é uma falha nova: é exatamente o caso que a regra do rótulo
+  visível cobre.</p>
+</section>
+
+<section>
+  <h2>As três exceções, nomeadas</h2>
+  <div class="note">
+    <b>Bolinha desligada abaixo de 3:1 — decisão consciente</b>
+    <code>bg-thumb</code> fica em {SW_THUMB['light']:.2f}:1 no claro e {SW_THUMB['dark']:.2f}:1 no
+    escuro contra o trilho. O <code>neutral-400</code> é o teto decidido na etapa 1. O que sustenta:
+    o ligado é trilho laranja, que passa, e o rótulo visível ao lado. A bolinha ligada passa com
+    {SW_ON['light']:.2f}:1.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Borda em repouso abaixo de 3:1 — o padrão dos inputs</b>
+    <code>border-default</code> fica em {SW_BORDA['light']:.2f}:1 no claro e
+    {SW_BORDA['dark']:.2f}:1 no escuro, no pior fundo — a mesma decisão do Checkbox e do Radio. O
+    hover passa, e o foco é sinalizado pelo anel.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Desabilitado abaixo de AA — isenção do 1.4.3</b>
+    Rótulo, borda e bolinha desabilitados ficam abaixo do piso. O WCAG isenta componente inativo, e
+    subir esse contraste faz o switch parecer clicável.
+  </div>
+</section>
+
+<section>
+  <h2>Teclado</h2>
+  <p>O Tab entra em cada switch uma vez e pula o desabilitado. <b>Espaço alterna; Enter não</b> — é
+  o comportamento do checkbox nativo, e é o que o leitor de tela ensina para “chave”. O anel só
+  aparece quando o foco chega pelo teclado. Com “reduzir movimento” ligado no sistema, a bolinha
+  troca de lado sem deslizar.</p>
+</section>
+
+<section>
+  <h2>Não-textual — piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{switch_a11y_rows(['borda', 'anel de foco', 'bolinha'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{switch_a11y_rows(['rotulo'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Estas cinco regras não estão escritas numa página: elas são medidas por
+  <code>components/switch/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="checkbox" role="switch"&gt;</code> dentro de <code>&lt;label class="al-switch"&gt;</code>. Nenhum outro elemento com <code>role="switch"</code>, nada de <code>aria-pressed</code>.</span></div>
+    <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-switch__label</code>, e nada de <code>aria-label</code>.</span></div>
+    <div><b>Estado nativo</b><span>Sem <code>aria-checked</code>: o estado é o <code>checked</code> do input, e um atributo paralelo diverge do que a tela pinta.</span></div>
+    <div><b>Sem erro</b><span>Nada de <code>required</code> nem <code>aria-invalid</code>.</span></div>
+    <div><b>Bolinha decorativa</b><span><code>aria-hidden="true"</code> — o estado quem anuncia é o input.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>{SWITCH_A11Y['markupChecked']}</b><span>switches conferidos no HTML</span></div>
+    <div class="stat"><b>5</b><span>regras por switch</span></div>
+    <div class="stat"><b>{'pendente' if SWITCH_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
+  </div>
+</section>'''
+
+
 
 LANDING_COMPONENTES = f'''
 <section>
@@ -4740,6 +5156,7 @@ LANDING_COMPONENTES = f'''
     {card('select', 'Select', 'Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.', TH_SELECT)}
     {card('checkbox', 'Checkbox', 'Várias opções, ou uma que só vale depois de confirmar. Input nativo com a caixa do AL pintada por cima — com o estado misto para o checkbox pai.', TH_CHECKBOX)}
     {card('radio', 'Radio', 'Uma opção de uma lista curta. Input nativo com o círculo do AL pintado por cima — e o erro é da pergunta, não da opção.', TH_RADIO)}
+    {card('switch', 'Switch', 'Liga ou desliga algo que vale na hora, sem “Salvar”. Checkbox nativo com role="switch" e o trilho do AL pintado por cima.', TH_SWITCH)}
   </div>
 </section>
 
@@ -4878,6 +5295,15 @@ PAGES = [
          (f'{N_RADIO_TOKENS} tokens', False), ('2 exceções declaradas', False)],
         [('overview', 'Visão geral', RADIO_OVERVIEW), ('specs', 'Especificações', RADIO_SPECS),
          ('guide', 'Diretrizes', RADIO_GUIDE), ('a11y', 'Acessibilidade', RADIO_A11Y_TAB)])),
+    ('switch', 'Componentes', page(
+        'switch', 'Componentes', 'Switch',
+        'Liga ou desliga uma configuração que vale na hora, sem botão “Salvar”. É o '
+        '<code>&lt;input type="checkbox" role="switch"&gt;</code> nativo com o trilho do AL pintado por '
+        'cima — Espaço, clique no rótulo e o anúncio “chave, ligada” vêm do navegador.',
+        [('Estável', True), ('5 estados no Figma', False),
+         (f'{N_SWITCH_TOKENS} tokens', False), ('3 exceções declaradas', False)],
+        [('overview', 'Visão geral', SWITCH_OVERVIEW), ('specs', 'Especificações', SWITCH_SPECS),
+         ('guide', 'Diretrizes', SWITCH_GUIDE), ('a11y', 'Acessibilidade', SWITCH_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -4913,15 +5339,13 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/select" data-page="select">Select</a>
         <a href="#/checkbox" data-page="checkbox">Checkbox</a>
         <a href="#/radio" data-page="radio">Radio</a>
+        <a href="#/switch" data-page="switch">Switch</a>
       </div>
     </div>
   </div>
 
   <div class="rail-foot">
-    <button type="button" class="theme-switch" id="themeswitch" role="switch" aria-checked="false"
-            aria-label="Tema escuro">
-      <span class="ts-track" aria-hidden="true"><span class="ts-thumb">{SUN}{MOON}</span></span>
-    </button>
+    {sw('themeswitch', 'Tema escuro')}
   </div>
 </nav>'''
 
@@ -5020,7 +5444,7 @@ JS = r"""
 
   function applyTheme(dark, remember) {
     root.setAttribute('data-theme', dark ? 'dark' : 'light');
-    sw.setAttribute('aria-checked', dark ? 'true' : 'false');
+    sw.checked = dark;
     if (remember) {
       try { localStorage.setItem('al-theme', dark ? 'dark' : 'light'); } catch (e) { /* sem storage */ }
     }
@@ -5038,20 +5462,21 @@ JS = r"""
   if (saved) {
     applyTheme(saved === 'dark', false);          // escolha anterior: carimba
   } else if (stamped) {
-    sw.setAttribute('aria-checked', stamped === 'dark' ? 'true' : 'false');
+    sw.checked = stamped === 'dark';
   } else {
-    sw.setAttribute('aria-checked', mq && mq.matches ? 'true' : 'false');
+    sw.checked = !!(mq && mq.matches);
     if (mq && mq.addEventListener) {
       mq.addEventListener('change', function (e) {
         if (!root.getAttribute('data-theme')) {
-          sw.setAttribute('aria-checked', e.matches ? 'true' : 'false');
+          sw.checked = e.matches;
         }
       });
     }
   }
 
-  sw.addEventListener('click', function () {
-    applyTheme(sw.getAttribute('aria-checked') !== 'true', true);
+  // O input nativo ja trocou o `checked` quando o evento chega: so carimbar.
+  sw.addEventListener('change', function () {
+    applyTheme(sw.checked, true);
   });
 
   // Se o ambiente reescrever data-theme por fora (o visualizador tem o próprio
@@ -5059,9 +5484,7 @@ JS = r"""
   if (window.MutationObserver) {
     new MutationObserver(function () {
       var dark = root.getAttribute('data-theme') === 'dark';
-      if ((sw.getAttribute('aria-checked') === 'true') !== dark) {
-        sw.setAttribute('aria-checked', dark ? 'true' : 'false');
-      }
+      if (sw.checked !== dark) sw.checked = dark;
     }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
@@ -6027,6 +6450,114 @@ JS_RADIO = r"""
 })();
 """
 
+CHROME_SWITCH = """
+/* ── miniatura do card do Switch ── */
+.th-sw{display:flex; flex-direction:column; gap:8px; font-size:12.5px; line-height:16px;
+  color:var(--al-text-primary)}
+.th-sw__row{display:flex; align-items:center; gap:8px}
+.th-sw__track{position:relative; width:26px; height:16px; box-sizing:border-box;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-full);
+  background:var(--al-bg-surface)}
+.th-sw__thumb{position:absolute; top:3px; left:3px; width:8px; height:8px;
+  border-radius:inherit; background:var(--al-bg-thumb)}
+.th-sw__track.is-on{background:var(--al-bg-brand); border-color:var(--al-border-brand)}
+.th-sw__track.is-on .th-sw__thumb{left:13px; background:var(--al-text-on-brand)}
+/* grupo de configuracoes: montado pela aplicacao (regra 6) */
+.sw-stage{display:flex !important; flex-direction:column; align-items:flex-start; gap:8px}
+#sw-stage{display:flex; flex-direction:column; align-items:center; gap:8px; padding-inline:16px}
+.sw-settings{display:flex; flex-direction:column; gap:16px; align-items:flex-start}
+.sw-group{margin:0; padding:0; border:0; min-width:0}
+.sw-group legend{padding:0; margin-bottom:12px; font-weight:600}
+.sw-opts{display:flex; flex-direction:column; gap:16px}
+.sw-status{margin:0; font-size:13.5px; line-height:20px}
+.sw-status:empty{display:none}
+.sw-status.is-erro{padding:12px 16px; border-radius:var(--al-radius-md);
+  background:var(--al-bg-danger-subtle); color:var(--al-text-danger)}
+.sw-status.is-ok{color:var(--al-text-success)}
+"""
+
+JS_SWITCH = r"""
+(function () {
+  // ── Switch: a tela de configuracoes da Visao geral ──
+  // Dependencia (regra 17) e falha com recuo, opcao A (regra 21).
+  var email = document.getElementById('ov-sw-email');
+  if (email) {
+    var resumo = document.getElementById('ov-sw-resumo');
+    var contador = document.getElementById('ov-sw-contador');
+    var status = document.getElementById('ov-sw-status');
+    var dep = function () { resumo.disabled = !email.checked; };
+    email.addEventListener('change', dep);
+    dep();
+    contador.addEventListener('change', function () {
+      var pedido = contador.checked;
+      status.className = 'sw-status';
+      status.textContent = '';
+      setTimeout(function () {
+        if (pedido) {
+          contador.checked = false;
+          status.className = 'sw-status is-erro';
+          status.textContent = 'Não foi possível ativar o envio ao contador: nenhum contador cadastrado.';
+        } else {
+          status.className = 'sw-status is-ok';
+          status.textContent = 'Envio ao contador desativado.';
+        }
+      }, 700);
+    });
+  }
+
+  // ── playground ──
+  var stage = document.getElementById('sw-stage');
+  if (!stage) return;
+  var code = document.getElementById('sw-code');
+  var labelInput = document.getElementById('sw-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function render() {
+    var ligado = pick('swvalue') === 'on';
+    var off = pick('swstate') === 'disabled';
+    var theme = pick('swtheme');
+    var rotulo = (labelInput.value || '').trim() || 'Notificações por e-mail';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var a = 'class="al-switch__input" type="checkbox" role="switch"'
+      + (ligado ? ' checked' : '') + (off ? ' disabled' : '');
+    stage.innerHTML = '<label class="al-switch"><span class="al-switch__control">'
+      + '<input id="pg-sw" ' + a + '>'
+      + '<span class="al-switch__thumb" aria-hidden="true"></span></span>'
+      + '<span class="al-switch__label">' + esc(rotulo) + '</span></label>';
+    code.innerHTML = [
+      '&lt;label class="al-switch"&gt;',
+      '  &lt;span class="al-switch__control"&gt;',
+      '    &lt;input ' + a + '&gt;',
+      '    &lt;span class="al-switch__thumb" aria-hidden="true"&gt;&lt;/span&gt;',
+      '  &lt;/span&gt;',
+      '  &lt;span class="al-switch__label"&gt;' + esc(esc(rotulo)) + '&lt;/span&gt;',
+      '&lt;/label&gt;'
+    ].join('\n');
+  }
+
+  document.querySelectorAll('#sw-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('sw-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+"""
 
 
 HTML = (
@@ -6039,14 +6570,14 @@ HTML = (
     '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
-    + CHROME_CHECKBOX + CHROME_RADIO
+    + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n\n<script>'
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
-    + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + '</script>\n'
+    + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
@@ -6071,5 +6602,8 @@ print(f'  tokens do Checkbox: {N_CHECKBOX_TOKENS}  '
 print(f'  tokens do Radio   : {N_RADIO_TOKENS}  '
       f'({len(RADIO_A11Y["rows"])} combinacoes medidas, {RADIO_A11Y["fails"]} reprovas, '
       f'{sum(RADIO_A11Y["exceptions"].values())} medicoes em excecao declarada)')
+print(f'  tokens do Switch  : {N_SWITCH_TOKENS}  '
+      f'({len(SWITCH_A11Y["rows"])} combinacoes medidas, {SWITCH_A11Y["fails"]} reprovas, '
+      f'{sum(SWITCH_A11Y["exceptions"].values())} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

@@ -7,7 +7,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.9.0 - MIT
+ * v0.10.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -91,6 +91,8 @@
   --al-bg-active: #E0E0E0;
   --al-bg-disabled: #E0E0E0;
   --al-bg-inverse: #292929;
+  --al-bg-thumb: #B3B3B3;
+  --al-bg-thumb-disabled: #CECECE;
   --al-bg-brand: #FC5000;
   --al-bg-brand-hover: #C53900;
   --al-bg-brand-active: #992700;
@@ -232,6 +234,8 @@
     --al-bg-active: #565656;
     --al-bg-disabled: #3E3E3E;
     --al-bg-inverse: #F7F7F7;
+    --al-bg-thumb: #717171;
+    --al-bg-thumb-disabled: #565656;
     --al-bg-brand: #FC5000;
     --al-bg-brand-hover: #EA4900;
     --al-bg-brand-active: #C53900;
@@ -291,6 +295,8 @@
   --al-bg-active: #565656;
   --al-bg-disabled: #3E3E3E;
   --al-bg-inverse: #F7F7F7;
+  --al-bg-thumb: #717171;
+  --al-bg-thumb-disabled: #565656;
   --al-bg-brand: #FC5000;
   --al-bg-brand-hover: #EA4900;
   --al-bg-brand-active: #C53900;
@@ -349,6 +355,8 @@
   --al-bg-active: #E0E0E0;
   --al-bg-disabled: #E0E0E0;
   --al-bg-inverse: #292929;
+  --al-bg-thumb: #B3B3B3;
+  --al-bg-thumb-disabled: #CECECE;
   --al-bg-brand: #FC5000;
   --al-bg-brand-hover: #C53900;
   --al-bg-brand-active: #992700;
@@ -774,6 +782,44 @@
   --al-radio-label-line-height: var(--al-line-height-md);
   --al-radio-label-font-weight: 400;
   --al-radio-label-tracking: 0em;
+
+
+  /* trilho - o laranja do ligado e quem diz o estado */
+  --al-switch-track: var(--al-bg-surface);
+  --al-switch-track-checked: var(--al-bg-brand);
+  --al-switch-track-disabled: var(--al-bg-disabled);
+
+  /* borda do trilho - o hover so mexe aqui */
+  --al-switch-border: var(--al-border-default);
+  --al-switch-border-hover: var(--al-border-strong);
+  --al-switch-border-checked: var(--al-border-brand);
+  --al-switch-border-disabled: var(--al-border-default);
+
+  /* bolinha */
+  --al-switch-thumb: var(--al-bg-thumb);
+  --al-switch-thumb-checked: var(--al-text-on-brand);
+  --al-switch-thumb-disabled: var(--al-bg-thumb-disabled);
+  --al-switch-thumb-checked-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora do trilho, sobre a tela */
+  --al-switch-label: var(--al-text-primary);
+  --al-switch-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-switch-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-switch-track-height: var(--al-icon-size-24);
+  --al-switch-padding: var(--al-space-4);
+  --al-switch-gap: var(--al-space-8);
+  --al-switch-radius: var(--al-radius-full);
+  --al-switch-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-switch-label-font-size: var(--al-font-size-md);
+  --al-switch-label-line-height: var(--al-line-height-md);
+  --al-switch-label-font-weight: 400;
+  --al-switch-label-tracking: 0em;
 }
 
 /* AL Design System - tokens do Button
@@ -3028,6 +3074,274 @@
   }
 }
 
+/* AL Design System - tokens do Switch
+ * GERADO por components/switch/tokens.py. Nao editar a mao.
+ *
+ * Sem bloco de tema: cada token aponta para um semantico, e o tema troca
+ * no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Bolinha: 14px, trilho: 38px de largura,
+ * curso: a propria bolinha. Derivados, sem token.
+ */
+
+:root {
+
+  /* trilho - o laranja do ligado e quem diz o estado */
+  --al-switch-track: var(--al-bg-surface);
+  --al-switch-track-checked: var(--al-bg-brand);
+  --al-switch-track-disabled: var(--al-bg-disabled);
+
+  /* borda do trilho - o hover so mexe aqui */
+  --al-switch-border: var(--al-border-default);
+  --al-switch-border-hover: var(--al-border-strong);
+  --al-switch-border-checked: var(--al-border-brand);
+  --al-switch-border-disabled: var(--al-border-default);
+
+  /* bolinha */
+  --al-switch-thumb: var(--al-bg-thumb);
+  --al-switch-thumb-checked: var(--al-text-on-brand);
+  --al-switch-thumb-disabled: var(--al-bg-thumb-disabled);
+  --al-switch-thumb-checked-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora do trilho, sobre a tela */
+  --al-switch-label: var(--al-text-primary);
+  --al-switch-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-switch-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-switch-track-height: var(--al-icon-size-24);
+  --al-switch-padding: var(--al-space-4);
+  --al-switch-gap: var(--al-space-8);
+  --al-switch-radius: var(--al-radius-full);
+  --al-switch-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-switch-label-font-size: var(--al-font-size-md);
+  --al-switch-label-line-height: var(--al-line-height-md);
+  --al-switch-label-font-weight: 400;
+  --al-switch-label-tracking: 0em;
+}
+
+/* AL Design System - Switch
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/switch/al-switch-tokens.css
+ *
+ * E O <input type="checkbox" role="switch"> NATIVO
+ *   O controle e do navegador: Espaco alterna, clicar no rotulo alterna, o
+ *   formulario envia o valor. `role="switch"` so troca o anuncio do leitor de
+ *   tela de "caixa de selecao, marcada" para "chave, ligada". Este arquivo tira
+ *   a caixa que o navegador desenha (`appearance: none`) e pinta o trilho do AL
+ *   no lugar. Nada de <div role="switch"> nem <button aria-pressed> - primeira
+ *   regra da ARIA (regra 22; divergencia consciente do Primer).
+ *
+ * ANATOMIA
+ *   <label class="al-switch">
+ *     <span class="al-switch__control">
+ *       <input class="al-switch__input" type="checkbox" role="switch">
+ *       <span class="al-switch__thumb" aria-hidden="true"></span>
+ *     </span>
+ *     <span class="al-switch__label">Notificacoes por e-mail</span>
+ *   </label>
+ *
+ *   O <label> envolve tudo: clicar no texto alterna, e a area clicavel passa a
+ *   ser a linha inteira (WCAG 2.5.8, regra 7). Nao ha `for`/`id` a sincronizar.
+ *
+ *   O proprio <input> E o trilho. A bolinha e um <span> irmao, posicionado por
+ *   cima, pela mesma razao do ponto do Radio: <input> nao tem filho, e
+ *   `::before` em <input> nao e garantido em todo navegador.
+ *   `pointer-events: none` devolve o clique ao input.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Ligado le `:checked`; desabilitado le `:disabled`. Nao existe
+ *   `.al-switch--on`: o que o leitor anuncia e o que a tela pinta saem da mesma
+ *   fonte e nao divergem. Nao ha erro - o switch tem efeito imediato e nao
+ *   valida (etapa 1, regra 20).
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - tecnica do Checkbox/Radio
+ *   Hover escreve em `--_border-state`; ligado e desabilitado escrevem em
+ *   `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
+ *   decididas nas etapas 1 e 3:
+ *     ligado + hover      -> nada muda: o ligado forca `border-checked` (regra 14)
+ *     ligado + foco       -> anel por fora do trilho laranja
+ *     foco                -> a borda fica a de repouso; quem sinaliza e o anel
+ *     ligado + disabled   -> trilho cinza, bolinha a direita em
+ *                            `thumb-checked-disabled`, sem laranja (regra 19)
+ *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ *
+ * O FIGMA TEM UM EIXO SO DE ESTADO
+ *   Cinco variantes; as combinacoes acima nao tem variante e sao cobertas pelos
+ *   mesmos tokens. `thumb-checked-disabled` e o unico token sem variante.
+ *
+ * GEOMETRIA DERIVADA - NENHUM NUMERO ALEM DOS TOKENS
+ *   altura  = `track-height` (24, a entrelinha do rotulo)
+ *   bolinha = altura - 2 x borda - 2 x padding              = 14
+ *   largura = 2 x altura - 2 x borda - 2 x padding          = 38
+ *             (e o mesmo que 2 x bolinha + 2 x padding + 2 x borda)
+ *   curso   = a propria bolinha                             = 14
+ *   As contas estao escritas abaixo em vez de numeros. `box-sizing:
+ *   border-box` poe a borda DENTRO dos 38x24, entao o trilho nunca "pula"
+ *   quando o estado troca a cor dela.
+ *
+ * A BOLINHA ANDA POR `inset-inline-start`, NAO POR `transform`
+ *   Assim o lado "ligado" segue a direcao do texto sozinho: em pagina da
+ *   direita para a esquerda, ligado fica a esquerda sem regra extra.
+ *
+ * ALINHAMENTO AO TOPO
+ *   `align-items: flex-start`: rotulo longo quebra linha e o trilho fica na
+ *   altura da primeira linha (regra 11). Funciona sem ajuste porque a altura
+ *   do trilho (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ *
+ * O QUE ESTE ARQUIVO NAO FAZ - REGRA 21 (opcao A, decisao de Gui)
+ *   Se a acao falhar, a aplicacao desmarca o input de volta e avisa em texto.
+ *   O componente nao tem estado de carregamento nem de erro.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
+ *   de motion. Mesma pendencia do Button, do Select, do Checkbox e do Radio.
+ *   Com `prefers-reduced-motion`, a bolinha troca de lado sem deslizar (regra 25).
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-switch {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--al-switch-gap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* -------------------------------------------------------------- trilho */
+.al-switch__control {
+  position: relative;
+  display: block;
+  flex: none;
+  block-size: var(--al-switch-track-height);
+}
+
+.al-switch__input {
+  --_bg-state: var(--al-switch-track);
+  --_border-state: var(--al-switch-border);
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  inline-size: calc(2 * var(--al-switch-track-height)
+                    - 2 * var(--al-switch-border-width)
+                    - 2 * var(--al-switch-padding));
+  block-size: var(--al-switch-track-height);
+
+  border: var(--al-switch-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-switch-radius);
+  background-color: var(--_bg-force, var(--_bg-state));
+  cursor: inherit;
+
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o trilho arredondado */
+.al-switch__input:focus {
+  outline: none;
+}
+
+/* ------------------------------------------------------------- bolinha */
+/* Dentro da borda e do padding: 24 - 2x1 - 2x4 = 14, como no Figma. */
+.al-switch__thumb {
+  --_thumb: calc(var(--al-switch-track-height)
+                 - 2 * var(--al-switch-border-width)
+                 - 2 * var(--al-switch-padding));
+  --_inset: calc(var(--al-switch-border-width) + var(--al-switch-padding));
+
+  position: absolute;
+  inset-block-start: var(--_inset);
+  inset-inline-start: var(--_inset);
+  inline-size: var(--_thumb);
+  block-size: var(--_thumb);
+  border-radius: var(--al-switch-radius);
+  background-color: var(--al-switch-thumb);
+  /* devolve o clique ao input que esta embaixo */
+  pointer-events: none;
+
+  transition:
+    inset-inline-start 120ms ease,
+    background-color 120ms ease;
+}
+
+/* ligado: a bolinha anda o proprio tamanho */
+.al-switch__input:checked ~ .al-switch__thumb {
+  inset-inline-start: calc(var(--_inset) + var(--_thumb));
+  background-color: var(--al-switch-thumb-checked);
+}
+
+/* ------------------------------------------------------------- rotulo */
+.al-switch__label {
+  color: var(--al-switch-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-switch-label-font-size);
+  line-height: var(--al-switch-label-line-height);
+  font-weight: var(--al-switch-label-font-weight);
+  letter-spacing: var(--al-switch-label-tracking);
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover na linha inteira: clicar no rotulo tambem alterna, entao o rotulo
+   tambem anuncia que e clicavel. So a borda muda; no ligado o force vence. */
+.al-switch:hover .al-switch__input:not(:disabled) {
+  --_border-state: var(--al-switch-border-hover);
+}
+
+/* foco: so o anel - a borda fica a de repouso, como no Figma */
+.al-switch__input:focus-visible {
+  box-shadow: var(--al-switch-ring);
+}
+
+/* ligado: o laranja e quem diz o estado */
+.al-switch__input:checked {
+  --_bg-force: var(--al-switch-track-checked);
+  --_border-force: var(--al-switch-border-checked);
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-switch__input:disabled {
+  --_bg-force: var(--al-switch-track-disabled);
+  --_border-force: var(--al-switch-border-disabled);
+}
+
+.al-switch__input:disabled ~ .al-switch__thumb {
+  background-color: var(--al-switch-thumb-disabled);
+}
+
+/* ligado + desabilitado: sem variante no Figma, sem laranja (regra 19) */
+.al-switch__input:checked:disabled ~ .al-switch__thumb {
+  background-color: var(--al-switch-thumb-checked-disabled);
+}
+
+.al-switch:has(.al-switch__input:disabled) {
+  cursor: not-allowed;
+}
+
+.al-switch:has(.al-switch__input:disabled) .al-switch__label {
+  color: var(--al-switch-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-switch__input,
+  .al-switch__thumb {
+    transition: none;
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -3087,41 +3401,13 @@ body{
 .nav-sub a.soon:hover{background:none; color:var(--al-text-secondary)}
 
 /* ── rodapé do trilho: o switch de tema ──
-   Casca do site, não o componente. O AL ainda não tem um Switch, e inventar um
-   aqui criaria um componente por acidente — sem Figma, sem tokens, sem portão.
-   Quando o Switch existir de verdade, este vira consumo dele. */
-/* O padding de 6px aqui existe só para o alvo de toque: ele leva a área
-   clicável de 42×24 para 54×36 sem mudar o desenho, e o 18px do rodapé
-   compensa para o track continuar alinhado com os ícones do menu, em 24px. */
-.rail-foot{margin-top:auto; border-top:1px solid var(--al-border-subtle); padding:14px 18px}
-.theme-switch{
-  appearance:none; border:0; background:none; cursor:pointer;
-  display:block; padding:6px; border-radius:9999px; color:var(--al-text-secondary);
-}
-.theme-switch:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
-.theme-switch:not([aria-checked="true"]):hover .ts-track{border-color:var(--al-border-strong)}
-.theme-switch[aria-checked="true"]:hover .ts-track{
-  background:var(--al-bg-brand-hover); border-color:var(--al-bg-brand-hover);
-}
-.ts-track{
-  flex:none; width:42px; height:24px; border-radius:9999px; padding:2px; display:flex;
-  background:var(--al-bg-subtle); border:1px solid var(--al-border-default);
-  transition:background-color 160ms ease, border-color 160ms ease;
-}
-.theme-switch[aria-checked="true"] .ts-track{
-  background:var(--al-bg-brand); border-color:var(--al-bg-brand);
-}
-.ts-thumb{
-  width:18px; height:18px; border-radius:9999px; display:grid; place-items:center;
-  background:var(--al-bg-canvas); box-shadow:var(--al-elevation-1);
-  color:var(--al-text-secondary); transition:transform 160ms ease;
-}
-.theme-switch[aria-checked="true"] .ts-thumb{transform:translateX(18px)}
-.ts-thumb svg{display:block; width:12px; height:12px}
-.theme-switch[aria-checked="true"] .ts-sun{display:none}
-.theme-switch:not([aria-checked="true"]) .ts-moon{display:none}
+   É o Switch do AL, não uma imitação: até 25/09/2026 era um <button
+   role="switch"> desenhado à mão, com sol e lua na bolinha, e o portão de
+   marcação do Switch reprovou o próprio site. Agora o rótulo "Tema escuro" é
+   visível (regra 23) e o ícone saiu (ícone na bolinha está fora do escopo). */
+.rail-foot{margin-top:auto; border-top:1px solid var(--al-border-subtle); padding:18px 18px 14px}
 @media (prefers-reduced-motion: reduce){
-  .ts-track, .ts-thumb, .nav-chev svg{transition:none}
+  .nav-chev svg{transition:none}
 }
 
 /* ── cards das páginas-índice ── */
@@ -3572,13 +3858,37 @@ footer code{background:none; padding:0}
   background:var(--al-bg-danger-subtle); color:var(--al-text-danger); font-size:13.5px; line-height:20px}
 .rd-actions{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
 .rd-ok{margin:0; color:var(--al-text-success); font-size:13.5px}
+
+/* ── miniatura do card do Switch ── */
+.th-sw{display:flex; flex-direction:column; gap:8px; font-size:12.5px; line-height:16px;
+  color:var(--al-text-primary)}
+.th-sw__row{display:flex; align-items:center; gap:8px}
+.th-sw__track{position:relative; width:26px; height:16px; box-sizing:border-box;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-full);
+  background:var(--al-bg-surface)}
+.th-sw__thumb{position:absolute; top:3px; left:3px; width:8px; height:8px;
+  border-radius:inherit; background:var(--al-bg-thumb)}
+.th-sw__track.is-on{background:var(--al-bg-brand); border-color:var(--al-border-brand)}
+.th-sw__track.is-on .th-sw__thumb{left:13px; background:var(--al-text-on-brand)}
+/* grupo de configuracoes: montado pela aplicacao (regra 6) */
+.sw-stage{display:flex !important; flex-direction:column; align-items:flex-start; gap:8px}
+#sw-stage{display:flex; flex-direction:column; align-items:center; gap:8px; padding-inline:16px}
+.sw-settings{display:flex; flex-direction:column; gap:16px; align-items:flex-start}
+.sw-group{margin:0; padding:0; border:0; min-width:0}
+.sw-group legend{padding:0; margin-bottom:12px; font-weight:600}
+.sw-opts{display:flex; flex-direction:column; gap:16px}
+.sw-status{margin:0; font-size:13.5px; line-height:20px}
+.sw-status:empty{display:none}
+.sw-status.is-erro{padding:12px 16px; border-radius:var(--al-radius-md);
+  background:var(--al-bg-danger-subtle); color:var(--al-text-danger)}
+.sw-status.is-ok{color:var(--al-text-success)}
 </style>
 
 <div class="shell">
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.9.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.10.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -3608,22 +3918,20 @@ footer code{background:none; padding:0}
         <a href="#/select" data-page="select">Select</a>
         <a href="#/checkbox" data-page="checkbox">Checkbox</a>
         <a href="#/radio" data-page="radio">Radio</a>
+        <a href="#/switch" data-page="switch">Switch</a>
       </div>
     </div>
   </div>
 
   <div class="rail-foot">
-    <button type="button" class="theme-switch" id="themeswitch" role="switch" aria-checked="false"
-            aria-label="Tema escuro">
-      <span class="ts-track" aria-hidden="true"><span class="ts-thumb"><svg class="ts-sun" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="3.1" stroke="currentColor" stroke-width="1.5"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2 3.1 3.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><svg class="ts-moon" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13.5 9.6A5.9 5.9 0 0 1 6.4 2.5a5.9 5.9 0 1 0 7.1 7.1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></span></span>
-    </button>
+    <label class="al-switch"><span class="al-switch__control"><input id="themeswitch" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Tema escuro</span></label>
   </div>
 </nav>
 <main class="main"><div class="inner">
 <div class="page" id="pg-fundacao"><header class="phead"><div class="eyebrow">Fundação</div><h1>Fundação</h1><p class="lede">A camada que decide antes de qualquer componente existir: a cor, a tipografia, a medida e a prova de que tudo isso atravessa o portão. Nenhum componente inventa valor — todos consomem daqui, e é por isso que trocar o tema não é retrabalho.</p></header><div class="panel"><div class="stats">
   <div class="stat hl"><b>#FC5000</b><span>âncora de marca, preservada exata</span></div>
   <div class="stat"><b>66</b><span>primitivas em 6 famílias</span></div>
-  <div class="stat"><b>49</b><span>semânticos, cada um com dois temas</span></div>
+  <div class="stat"><b>51</b><span>semânticos, cada um com dois temas</span></div>
   <div class="stat hl"><b>77 / 80</b><span>pares em AA pleno · 3 exceções de marca</span></div>
 </div>
 <section>
@@ -3631,7 +3939,7 @@ footer code{background:none; padding:0}
   <div class="cards">
     <a class="card" href="#/principios" data-page="principios"><div class="card-thumb"><span class="th-anchor">#FC5000</span></div><div class="card-body"><span class="card-title">Princípios</span><span class="card-desc">As cinco decisões que travam o resto, o pipeline de oito etapas e os quatro portões de build.</span></div></a>
     <a class="card" href="#/prova" data-page="prova"><div class="card-thumb"><div class="th-split"><div style="background:#FFFFFF"><b style="background:#FC5000"></b></div><div style="background:#181818"><b style="background:#FC5000"></b></div></div></div><div class="card-body"><span class="card-title">A prova</span><span class="card-desc">Os mesmos tokens montados nos dois temas, lado a lado: botões, campos, foco e avisos.</span></div></a>
-    <a class="card" href="#/cor" data-page="cor"><div class="card-thumb"><div class="th-ramp"><span style="background:#FFF5F0"></span><span style="background:#FFEADE"></span><span style="background:#FFD7C4"></span><span style="background:#FFBDA0"></span><span style="background:#FF9267"></span><span style="background:#FC5000"></span><span style="background:#C53900"></span><span style="background:#992700"></span><span style="background:#6C2100"></span><span style="background:#4A1700"></span><span style="background:#2D0D00"></span></div></div><div class="card-body"><span class="card-title">Cor</span><span class="card-desc">66 primitivas em OKLCH, 49 semânticos com dois temas e os 80 pares medidos do portão de contraste.</span></div></a>
+    <a class="card" href="#/cor" data-page="cor"><div class="card-thumb"><div class="th-ramp"><span style="background:#FFF5F0"></span><span style="background:#FFEADE"></span><span style="background:#FFD7C4"></span><span style="background:#FFBDA0"></span><span style="background:#FF9267"></span><span style="background:#FC5000"></span><span style="background:#C53900"></span><span style="background:#992700"></span><span style="background:#6C2100"></span><span style="background:#4A1700"></span><span style="background:#2D0D00"></span></div></div><div class="card-body"><span class="card-title">Cor</span><span class="card-desc">66 primitivas em OKLCH, 51 semânticos com dois temas e os 80 pares medidos do portão de contraste.</span></div></a>
     <a class="card" href="#/tipografia" data-page="tipografia"><div class="card-thumb"><div class="th-aa">Aa<small>Inter · 14 estilos</small></div></div><div class="card-body"><span class="card-title">Tipografia</span><span class="card-desc">Inter e JetBrains Mono em 14 estilos fechados de tamanho, entrelinha, peso e tracking.</span></div></a>
     <a class="card" href="#/espacamento" data-page="espacamento"><div class="card-thumb"><div class="th-bars"><i style="width:14%"></i><i style="width:26%"></i><i style="width:48%"></i><i style="width:84%"></i></div></div><div class="card-body"><span class="card-title">Espaçamento e medidas</span><span class="card-desc">Base 4 com ritmo de 8, 9 raios, 6 elevações e o anel de foco de duas camadas.</span></div></a>
     <a class="card" href="#/icon" data-page="icon"><div class="card-thumb"><div class="th-icons"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.268 21a2 2 0 0 0 3.464 0" /><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg></div></div><div class="card-body"><span class="card-title">Ícones</span><span class="card-desc">70 ícones no grid de 24, sem escala fixa: o mesmo componente serve de 16 a 96 e o traço acompanha.</span></div></a>
@@ -3695,7 +4003,7 @@ footer code{background:none; padding:0}
     </tbody>
   </table></div>
 </section></div></div>
-<div class="page" id="pg-prova" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>A prova</h1><p class="lede">A mesma interface montada com os mesmos tokens, nos dois temas, lado a lado. Se a camada semântica estiver certa, nada aqui precisou ser escrito duas vezes.</p><div class="meta"><span class="badge on">Dois temas</span><span class="badge">49 semânticos</span><span class="badge">0 valores literais</span></div></header><div class="panel">
+<div class="page" id="pg-prova" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>A prova</h1><p class="lede">A mesma interface montada com os mesmos tokens, nos dois temas, lado a lado. Se a camada semântica estiver certa, nada aqui precisou ser escrito duas vezes.</p><div class="meta"><span class="badge on">Dois temas</span><span class="badge">51 semânticos</span><span class="badge">0 valores literais</span></div></header><div class="panel">
 <section>
   <h2>Os mesmos tokens, os dois temas</h2>
   <p>Nada aqui usa valor literal: cada cor destes dois painéis sai da camada semântica, lida do
@@ -3725,7 +4033,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.9.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.10.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -3755,7 +4063,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.9.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.10.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -3763,7 +4071,7 @@ footer code{background:none; padding:0}
   </div>
 </div></div></div>
 </section></div></div>
-<div class="page" id="pg-cor" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Cor</h1><p class="lede">66 primitivas geradas em OKLCH a partir de #FC5000, 49 semânticos com dois temas cada, e 80 pares medidos antes de qualquer um virar token.</p><div class="meta"><span class="badge">66 primitivas</span><span class="badge on">49 semânticos</span><span class="badge">OKLCH</span><span class="badge">WCAG 2.1 AA</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Cor"><button role="tab" id="t-cor-escala" aria-controls="p-cor-escala" aria-selected="true">Escala</button><button role="tab" id="t-cor-semanticos" aria-controls="p-cor-semanticos" aria-selected="false" tabindex=-1>Semânticos</button><button role="tab" id="t-cor-contraste" aria-controls="p-cor-contraste" aria-selected="false" tabindex=-1>Contraste</button></div><div class="panel" id="p-cor-escala" role="tabpanel" aria-labelledby="t-cor-escala" tabindex="0">
+<div class="page" id="pg-cor" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Cor</h1><p class="lede">66 primitivas geradas em OKLCH a partir de #FC5000, 51 semânticos com dois temas cada, e 80 pares medidos antes de qualquer um virar token.</p><div class="meta"><span class="badge">66 primitivas</span><span class="badge on">51 semânticos</span><span class="badge">OKLCH</span><span class="badge">WCAG 2.1 AA</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Cor"><button role="tab" id="t-cor-escala" aria-controls="p-cor-escala" aria-selected="true">Escala</button><button role="tab" id="t-cor-semanticos" aria-controls="p-cor-semanticos" aria-selected="false" tabindex=-1>Semânticos</button><button role="tab" id="t-cor-contraste" aria-controls="p-cor-contraste" aria-selected="false" tabindex=-1>Contraste</button></div><div class="panel" id="p-cor-escala" role="tabpanel" aria-labelledby="t-cor-escala" tabindex="0">
 <section>
   <h2>Uma escada de lightness para todas as famílias</h2>
   <p>Cada degrau tem a mesma lightness OKLab nas seis famílias. O degrau 500 é <b>0,666</b> porque
@@ -3805,10 +4113,10 @@ footer code{background:none; padding:0}
 </section></div><div class="panel" id="p-cor-semanticos" role="tabpanel" aria-labelledby="t-cor-semanticos" tabindex="0" hidden>
 <section>
   <h2>A camada que troca com o tema</h2>
-  <p>49 tokens, cada um com um valor por tema. É esta camada que muda quando o tema vira, e é
+  <p>51 tokens, cada um com um valor por tema. É esta camada que muda quando o tema vira, e é
   aqui que a intenção fica registrada: <code>bg-danger</code> diz o que a cor <i>significa</i>,
   <code>red-700</code> diz apenas o que ela <i>é</i>.</p>
-  <div style="margin-top:22px"><h3 class="sub">Superfície e preenchimento <span class="count">26 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-bg-canvas</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-bg-surface</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-bg-surface-raised</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-subtle</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-hover</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-active</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-disabled</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-inverse</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-bg-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-bg-brand-hover</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td><td class="chipcell"><span class="chip" style="background:#EA4900"></span></td><td class="tok dim">#EA4900</td></tr><tr><td class="tok">--al-bg-brand-active</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td></tr><tr><td class="tok">--al-bg-brand-subtle</td><td class="chipcell"><span class="chip" style="background:#FFEADE"></span></td><td class="tok dim">#FFEADE</td><td class="chipcell"><span class="chip" style="background:#2D0D00"></span></td><td class="tok dim">#2D0D00</td></tr><tr><td class="tok">--al-bg-brand-strong</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td></tr><tr><td class="tok">--al-bg-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-bg-danger-hover</td><td class="chipcell"><span class="chip" style="background:#780014"></span></td><td class="tok dim">#780014</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-bg-danger-active</td><td class="chipcell"><span class="chip" style="background:#550007"></span></td><td class="tok dim">#550007</td><td class="chipcell"><span class="chip" style="background:#FFBABB"></span></td><td class="tok dim">#FFBABB</td></tr><tr><td class="tok">--al-bg-danger-subtle</td><td class="chipcell"><span class="chip" style="background:#FFE8E9"></span></td><td class="tok dim">#FFE8E9</td><td class="chipcell"><span class="chip" style="background:#360001"></span></td><td class="tok dim">#360001</td></tr><tr><td class="tok">--al-bg-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-bg-success-hover</td><td class="chipcell"><span class="chip" style="background:#004C03"></span></td><td class="tok dim">#004C03</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-bg-success-subtle</td><td class="chipcell"><span class="chip" style="background:#DEF6E4"></span></td><td class="tok dim">#DEF6E4</td><td class="chipcell"><span class="chip" style="background:#001F00"></span></td><td class="tok dim">#001F00</td></tr><tr><td class="tok">--al-bg-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-bg-warning-hover</td><td class="chipcell"><span class="chip" style="background:#523800"></span></td><td class="tok dim">#523800</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-bg-warning-subtle</td><td class="chipcell"><span class="chip" style="background:#F7EED5"></span></td><td class="tok dim">#F7EED5</td><td class="chipcell"><span class="chip" style="background:#221500"></span></td><td class="tok dim">#221500</td></tr><tr><td class="tok">--al-bg-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr><tr><td class="tok">--al-bg-info-hover</td><td class="chipcell"><span class="chip" style="background:#003C7A"></span></td><td class="tok dim">#003C7A</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr><tr><td class="tok">--al-bg-info-subtle</td><td class="chipcell"><span class="chip" style="background:#E2F1FF"></span></td><td class="tok dim">#E2F1FF</td><td class="chipcell"><span class="chip" style="background:#001639"></span></td><td class="tok dim">#001639</td></tr></tbody></table></div><h3 class="sub">Texto <span class="count">12 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-text-primary</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-text-secondary</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-placeholder</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-disabled</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-text-inverse</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-text-on-brand</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td></tr><tr><td class="tok">--al-text-on-solid</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-text-brand</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-text-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-text-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-text-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-text-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr></tbody></table></div><h3 class="sub">Borda <span class="count">9 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-border-subtle</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-border-default</td><td class="chipcell"><span class="chip" style="background:#CECECE"></span></td><td class="tok dim">#CECECE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-border-strong</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#949494"></span></td><td class="tok dim">#949494</td></tr><tr><td class="tok">--al-border-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-border-focus</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-border-danger</td><td class="chipcell"><span class="chip" style="background:#CA293F"></span></td><td class="tok dim">#CA293F</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-border-success</td><td class="chipcell"><span class="chip" style="background:#008A2A"></span></td><td class="tok dim">#008A2A</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-border-warning</td><td class="chipcell"><span class="chip" style="background:#916A00"></span></td><td class="tok dim">#916A00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-border-info</td><td class="chipcell"><span class="chip" style="background:#0071D0"></span></td><td class="tok dim">#0071D0</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr></tbody></table></div><h3 class="sub">Cor do anel de foco <span class="count">2 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-shadow-focus-default</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-shadow-focus-error</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr></tbody></table></div></div>
+  <div style="margin-top:22px"><h3 class="sub">Superfície e preenchimento <span class="count">28 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-bg-canvas</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-bg-surface</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-bg-surface-raised</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-subtle</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-hover</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-active</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-disabled</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-inverse</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-bg-thumb</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-bg-thumb-disabled</td><td class="chipcell"><span class="chip" style="background:#CECECE"></span></td><td class="tok dim">#CECECE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-bg-brand-hover</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td><td class="chipcell"><span class="chip" style="background:#EA4900"></span></td><td class="tok dim">#EA4900</td></tr><tr><td class="tok">--al-bg-brand-active</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td></tr><tr><td class="tok">--al-bg-brand-subtle</td><td class="chipcell"><span class="chip" style="background:#FFEADE"></span></td><td class="tok dim">#FFEADE</td><td class="chipcell"><span class="chip" style="background:#2D0D00"></span></td><td class="tok dim">#2D0D00</td></tr><tr><td class="tok">--al-bg-brand-strong</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td></tr><tr><td class="tok">--al-bg-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-bg-danger-hover</td><td class="chipcell"><span class="chip" style="background:#780014"></span></td><td class="tok dim">#780014</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-bg-danger-active</td><td class="chipcell"><span class="chip" style="background:#550007"></span></td><td class="tok dim">#550007</td><td class="chipcell"><span class="chip" style="background:#FFBABB"></span></td><td class="tok dim">#FFBABB</td></tr><tr><td class="tok">--al-bg-danger-subtle</td><td class="chipcell"><span class="chip" style="background:#FFE8E9"></span></td><td class="tok dim">#FFE8E9</td><td class="chipcell"><span class="chip" style="background:#360001"></span></td><td class="tok dim">#360001</td></tr><tr><td class="tok">--al-bg-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-bg-success-hover</td><td class="chipcell"><span class="chip" style="background:#004C03"></span></td><td class="tok dim">#004C03</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-bg-success-subtle</td><td class="chipcell"><span class="chip" style="background:#DEF6E4"></span></td><td class="tok dim">#DEF6E4</td><td class="chipcell"><span class="chip" style="background:#001F00"></span></td><td class="tok dim">#001F00</td></tr><tr><td class="tok">--al-bg-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-bg-warning-hover</td><td class="chipcell"><span class="chip" style="background:#523800"></span></td><td class="tok dim">#523800</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-bg-warning-subtle</td><td class="chipcell"><span class="chip" style="background:#F7EED5"></span></td><td class="tok dim">#F7EED5</td><td class="chipcell"><span class="chip" style="background:#221500"></span></td><td class="tok dim">#221500</td></tr><tr><td class="tok">--al-bg-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr><tr><td class="tok">--al-bg-info-hover</td><td class="chipcell"><span class="chip" style="background:#003C7A"></span></td><td class="tok dim">#003C7A</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr><tr><td class="tok">--al-bg-info-subtle</td><td class="chipcell"><span class="chip" style="background:#E2F1FF"></span></td><td class="tok dim">#E2F1FF</td><td class="chipcell"><span class="chip" style="background:#001639"></span></td><td class="tok dim">#001639</td></tr></tbody></table></div><h3 class="sub">Texto <span class="count">12 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-text-primary</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-text-secondary</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-placeholder</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-disabled</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-text-inverse</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-text-on-brand</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td></tr><tr><td class="tok">--al-text-on-solid</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-text-brand</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-text-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-text-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-text-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-text-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr></tbody></table></div><h3 class="sub">Borda <span class="count">9 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-border-subtle</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-border-default</td><td class="chipcell"><span class="chip" style="background:#CECECE"></span></td><td class="tok dim">#CECECE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-border-strong</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#949494"></span></td><td class="tok dim">#949494</td></tr><tr><td class="tok">--al-border-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-border-focus</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-border-danger</td><td class="chipcell"><span class="chip" style="background:#CA293F"></span></td><td class="tok dim">#CA293F</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-border-success</td><td class="chipcell"><span class="chip" style="background:#008A2A"></span></td><td class="tok dim">#008A2A</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-border-warning</td><td class="chipcell"><span class="chip" style="background:#916A00"></span></td><td class="tok dim">#916A00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-border-info</td><td class="chipcell"><span class="chip" style="background:#0071D0"></span></td><td class="tok dim">#0071D0</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr></tbody></table></div><h3 class="sub">Cor do anel de foco <span class="count">2 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-shadow-focus-default</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-shadow-focus-error</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr></tbody></table></div></div>
 </section></div><div class="panel" id="p-cor-contraste" role="tabpanel" aria-labelledby="t-cor-contraste" tabindex="0" hidden>
 <section>
   <h2>O que o texto claro sobre a marca custa, medido</h2>
@@ -4379,6 +4687,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/select" data-page="select"><div class="card-thumb"><div class="th-select" aria-hidden="true"><span class="th-select__field">Selecione a opção<svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></span></div></div><div class="card-body"><span class="card-title">Select</span><span class="card-desc">Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.</span></div></a>
     <a class="card" href="#/checkbox" data-page="checkbox"><div class="card-thumb"><div class="th-cbx" aria-hidden="true"><span class="th-cbx__row"><span class="th-cbx__box is-on"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg></span>E-mail</span><span class="th-cbx__row"><span class="th-cbx__box is-on"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span>Notificações</span><span class="th-cbx__row"><span class="th-cbx__box"></span>SMS</span></div></div><div class="card-body"><span class="card-title">Checkbox</span><span class="card-desc">Várias opções, ou uma que só vale depois de confirmar. Input nativo com a caixa do AL pintada por cima — com o estado misto para o checkbox pai.</span></div></a>
     <a class="card" href="#/radio" data-page="radio"><div class="card-thumb"><div class="th-rd" aria-hidden="true"><span class="th-rd__row"><span class="th-rd__dot is-on"></span>Mensal</span><span class="th-rd__row"><span class="th-rd__dot"></span>Anual</span><span class="th-rd__row"><span class="th-rd__dot"></span>Empresarial</span></div></div><div class="card-body"><span class="card-title">Radio</span><span class="card-desc">Uma opção de uma lista curta. Input nativo com o círculo do AL pintado por cima — e o erro é da pergunta, não da opção.</span></div></a>
+    <a class="card" href="#/switch" data-page="switch"><div class="card-thumb"><div class="th-sw" aria-hidden="true"><span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>E-mail</span><span class="th-sw__row"><span class="th-sw__track"><span class="th-sw__thumb"></span></span>Celular</span><span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>Resumo</span></div></div><div class="card-body"><span class="card-title">Switch</span><span class="card-desc">Liga ou desliga algo que vale na hora, sem “Salvar”. Checkbox nativo com role="switch" e o trilho do AL pintado por cima.</span></div></a>
   </div>
 </section>
 
@@ -6725,7 +7034,7 @@ footer code{background:none; padding:0}
   <div class="anat">
     <div><b>Várias opções de uma lista</b><span>Ou uma opção isolada que só vale depois de confirmar — enviar, salvar. <i>Carbon, Primer, NN/g.</i></span></div>
     <div><b>Nunca para escolha única</b><span>Se só uma opção pode ser escolhida, é radio: com o Checkbox a pessoa não tem como saber que as opções se excluem. <i>Carbon.</i></span></div>
-    <div><b>Nunca para ação imediata</b><span>Ativar modo escuro, ligar notificações: quem clica numa caixa espera confirmar depois. Ação imediata pede Switch, que o AL ainda não tem. <i>Carbon, Primer.</i></span></div>
+    <div><b>Nunca para ação imediata</b><span>Ativar modo escuro, ligar notificações: quem clica numa caixa espera confirmar depois. Ação imediata pede o <a href="#/switch">Switch</a>. <i>Carbon, Primer.</i></span></div>
     <div><b>Aceite</b><span>Checkbox isolado serve para “Li e aceito os termos”, em primeira pessoa. <i>Primer.</i></span></div>
   </div>
 </section>
@@ -6803,7 +7112,7 @@ footer code{background:none; padding:0}
     <div><b>Texto de apoio e mensagem de erro</b><span>Não fazem parte do componente — são do formulário.</span></div>
     <div><b>Variantes combinadas no Figma</b><span>Marcado + hover e companhia são cobertos pelo código com os mesmos tokens; as variantes entram se uma atualização pedir.</span></div>
     <div><b>Checkbox sem rótulo visível</b><span>Fica reservado para a seleção de linha do futuro componente de tabela, que resolve o nome com <code>aria-label</code>. Até lá, não use.</span></div>
-    <div><b>Switch e read-only</b><span>Outros componentes, ainda não abertos.</span></div>
+    <div><b>Read-only</b><span>Ainda não aberto. Ação imediata é o <a href="#/switch">Switch</a>.</span></div>
   </div>
 </section></div><div class="panel" id="p-checkbox-a11y" role="tabpanel" aria-labelledby="t-checkbox-a11y" tabindex="0" hidden>
 <section>
@@ -7119,7 +7428,7 @@ footer code{background:none; padding:0}
     <div><b>Uma única opção de uma lista curta</b><span>Todas visíveis, para a pessoa comparar antes de escolher. <i>Primer, Spectrum, Material.</i></span></div>
     <div><b>Até cinco ou seis opções</b><span>Acima disso, use o Select. <i>Material (5), Primer e Spectrum (6).</i></span></div>
     <div><b>Nunca para várias escolhas, nunca sozinho</b><span>Várias escolhas é Checkbox. Uma pergunta tem sempre duas opções ou mais; um sim/não de aceite isolado também é Checkbox. <i>Polaris, Carbon.</i></span></div>
-    <div><b>Nunca para ação imediata</b><span>A escolha só vale quando a pessoa envia ou salva — as setas mudam a escolha enquanto ela navega. Ação imediata pede Switch, que o AL ainda não tem. <i>Primer, Material.</i></span></div>
+    <div><b>Nunca para ação imediata</b><span>A escolha só vale quando a pessoa envia ou salva — as setas mudam a escolha enquanto ela navega. Ação imediata pede o <a href="#/switch">Switch</a>. <i>Primer, Material.</i></span></div>
   </div>
 </section>
 
@@ -7218,7 +7527,7 @@ footer code{background:none; padding:0}
     <div><b>Componente de grupo</b><span>Nem agora nem no roadmap: a pergunta é <code>fieldset</code> + <code>legend</code> nativos.</span></div>
     <div><b>Texto de apoio e mensagem de erro</b><span>Não fazem parte do componente — são do formulário.</span></div>
     <div><b>Variantes combinadas no Figma</b><span>Cobertas pelo código com os mesmos tokens.</span></div>
-    <div><b>Radio em card, Switch e read-only</b><span>Outros componentes, ainda não abertos.</span></div>
+    <div><b>Radio em card e read-only</b><span>Ainda não abertos. Ação imediata é o <a href="#/switch">Switch</a>.</span></div>
   </div>
 </section></div><div class="panel" id="p-radio-a11y" role="tabpanel" aria-labelledby="t-radio-a11y" tabindex="0" hidden>
 <section>
@@ -7359,8 +7668,379 @@ footer code{background:none; padding:0}
     <div class="stat"><b>medido</b><span>estado do contrato</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-switch" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Switch</h1><p class="lede">Liga ou desliga uma configuração que vale na hora, sem botão “Salvar”. É o <code>&lt;input type="checkbox" role="switch"&gt;</code> nativo com o trilho do AL pintado por cima — Espaço, clique no rótulo e o anúncio “chave, ligada” vêm do navegador.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">5 estados no Figma</span><span class="badge">20 tokens</span><span class="badge">3 exceções declaradas</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Switch"><button role="tab" id="t-switch-overview" aria-controls="p-switch-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-switch-specs" aria-controls="p-switch-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-switch-guide" aria-controls="p-switch-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-switch-a11y" aria-controls="p-switch-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-switch-overview" role="tabpanel" aria-labelledby="t-switch-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="pg-sw" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações por e-mail</span></label></div>
+
+    <div class="controls" id="sw-controls">
+      <div class="ctl"><span class="ctl-name">Estado inicial</span><div class="seg" role="radiogroup" aria-label="swvalue">
+<input type="radio" id="swvalue-on" name="swvalue" value="on" checked><label for="swvalue-on">Ligado</label>
+<input type="radio" id="swvalue-off" name="swvalue" value="off"><label for="swvalue-off">Desligado</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Disponível</span><div class="seg" role="radiogroup" aria-label="swstate">
+<input type="radio" id="swstate-rest" name="swstate" value="rest" checked><label for="swstate-rest">Sim</label>
+<input type="radio" id="swstate-disabled" name="swstate" value="disabled"><label for="swstate-disabled">Desabilitado</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="swtheme">
+<input type="radio" id="swtheme-auto" name="swtheme" value="auto" checked><label for="swtheme-auto">Do sistema</label>
+<input type="radio" id="swtheme-light" name="swtheme" value="light"><label for="swtheme-light">Claro</label>
+<input type="radio" id="swtheme-dark" name="swtheme" value="dark"><label for="swtheme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><label for="sw-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="sw-label" type="text" value="Notificações por e-mail" maxlength="60"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="sw-copy">Copiar</button></div>
+      <pre><code id="sw-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O switch acima é o componente real: esta página carrega o mesmo <code>switch.css</code> que vai
+    para produção. Tabule até ele e aperte Espaço. Por baixo é um
+    <code>&lt;input type="checkbox"&gt;</code> com <code>role="switch"</code>, e é isso que faz o leitor
+    de tela anunciar “chave, ligada” em vez de “caixa de seleção, marcada”.
+  </p>
+</section>
+
+<section>
+  <h2>Uma tela de configurações de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <div class="sw-settings">
+      <fieldset class="sw-group">
+        <legend>Notificações</legend>
+        <div class="sw-opts">
+          <label class="al-switch"><span class="al-switch__control"><input id="ov-sw-email" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações por e-mail</span></label>
+          <label class="al-switch"><span class="al-switch__control"><input id="ov-sw-resumo" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Resumo semanal</span></label>
+          <label class="al-switch"><span class="al-switch__control"><input id="ov-sw-push" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações no celular</span></label>
+          <label class="al-switch"><span class="al-switch__control"><input id="ov-sw-contador" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Enviar notas ao contador</span></label>
+        </div>
+      </fieldset>
+      <p class="sw-status" id="ov-sw-status" role="status" aria-live="polite"></p>
+    </div>
+    <p class="cap">Não há botão “Salvar”: cada switch vale na hora. Desligue as notificações por
+    e-mail e o resumo semanal fica desabilitado, porque depende delas. Ligue o envio ao contador: a
+    bolinha troca no clique e, quando o servidor simulado recusa, volta ao estado real e a aplicação
+    avisa em texto. <i>Primer, Polaris e Material: o switch aplica na hora e mostra o estado real.</i></p>
+  </div>
+</section>
+
+<section>
+  <h2>Os cinco estados do Figma</h2>
+  <div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Default</span><div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="sp-sw-default" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações por e-mail</span></label></div><p class="cap">Desligado. A bolinha e a borda são as exceções de contraste declaradas; quem sustenta é o rótulo visível e o laranja do ligado.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Hover</span><div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="sp-sw-hover" class="al-switch__input" type="checkbox" role="switch" style="--_border-state: var(--al-switch-border-hover)"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações por e-mail</span></label></div><p class="cap">Só existe sob o ponteiro: a variável privada foi escrita direto no input. O real acende a borda na linha inteira — passe o mouse no Default.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Active (ligado)</span><div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="sp-sw-active" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Modo escuro automático</span></label></div><p class="cap">Trilho laranja, bolinha branca à direita. Clique: ela desliza de volta. Com o mouse em cima do ligado nada muda.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Focus</span><div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="sp-sw-focus" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Legendas nos vídeos</span></label></div><p class="cap">Tabule até aqui: anel laranja com respiro, e a borda fica a de repouso. Espaço alterna; Enter não.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Disabled</span><div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="sp-sw-disabled" class="al-switch__input" type="checkbox" role="switch" disabled><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Resumo semanal</span></label></div><p class="cap">Atributo nativo <code>disabled</code>: o Tab pula. Contraste abaixo de AA de propósito.</p></div></div>
+</section>
+
+<section>
+  <h2>O que só existe no código</h2>
+  <p>O Figma tem um eixo só de estado. O navegador produz combinações que ele não desenha — e
+  elas foram decididas na etapa 3, pintadas pelos mesmos tokens, sem nenhum a mais além da
+  bolinha do ligado desabilitado.</p>
+  <div style="margin-top:16px"><div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Ligado + disabled</span><div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="sp-sw-dischk" class="al-switch__input" type="checkbox" role="switch" checked disabled><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Backup diário</span></label></div><p class="cap">Trilho cinza, bolinha à direita um tom mais escura (<code>thumb-checked-disabled</code>) — sem laranja. O único token sem variante no Figma.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Ligado + foco</span><div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="sp-sw-chkfoc" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Sincronizar contatos</span></label></div><p class="cap">O anel aparece por fora do trilho laranja — ele não depende do estado.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Rótulo longo</span><div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="sp-sw-long" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Enviar a nota fiscal por e-mail ao contador assim que o pagamento for confirmado</span></label></div><p class="cap">O texto quebra e o trilho fica na altura da primeira linha: trilho e entrelinha medem os mesmos 24px.</p></div></div></div>
+</section></div><div class="panel" id="p-switch-specs" role="tabpanel" aria-labelledby="t-switch-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b><code>&lt;label class="al-switch"&gt;</code></b><span>Envolve tudo. É o que faz clicar no texto alternar, e o que transforma a linha inteira em área de clique — também é onde mora o hover.</span></div>
+    <div><b>Trilho</b><span>É o próprio <code>&lt;input type="checkbox" role="switch"&gt;</code>, com <code>appearance: none</code>: a caixa do navegador sai e o trilho do AL entra. Espaço, clique no rótulo e o valor no formulário continuam do navegador.</span></div>
+    <div><b>Bolinha</b><span>Um <code>&lt;span&gt;</code> irmão do input, com <code>aria-hidden</code> — <code>&lt;input&gt;</code> não tem filho. <code>pointer-events: none</code> devolve o clique ao input.</span></div>
+    <div><b>Rótulo</b><span>Sempre visível, à direita, e nunca muda com o estado. É a regra que sustenta as duas exceções de contraste.</span></div>
+    <div><b>O grupo — fora do componente</b><span>Quando há vários switches, o título é da aplicação: um título de seção, ou <code>fieldset</code> + <code>legend</code>. Cada switch continua independente.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A geometria é consequência</h2>
+  <p>O trilho tem <code>track-height</code>: <b>24px</b>, a mesma altura do círculo do Radio e da
+  entrelinha do rótulo. Todo o resto sai dele: a bolinha são <b>14px</b>
+  (altura − 2 × borda − 2 × respiro), a largura são <b>38px</b> (a bolinha
+  cabe duas vezes, mais respiro e borda) e o curso é a própria bolinha. Nenhum desses números tem
+  token — as contas estão escritas no CSS.</p>
+  <p style="margin-top:12px">A bolinha anda por <code>inset-inline-start</code>, não por
+  <code>transform</code>: numa página escrita da direita para a esquerda, o ligado fica à esquerda
+  sozinho. A borda de 1px existe em todos os estados e fica dentro dos 38×24, então o trilho nunca
+  “pula” quando o estado troca a cor dela.</p>
+  <div class="stats">
+    <div class="stat hl"><b>20</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>5</b><span>estados no Figma</span></div>
+    <div class="stat"><b>1</b><span>tamanho — regra do Tier 2</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody><tr><td class="tok">--al-switch-track</td><td class="tok dim">bg-surface</td><td class="tok dim"><span class="chip sm" style="background:#F7F7F7"></span>#F7F7F7</td></tr>
+<tr><td class="tok">--al-switch-track-checked</td><td class="tok dim">bg-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-switch-track-disabled</td><td class="tok dim">bg-disabled</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr><td class="tok">--al-switch-border</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-switch-border-hover</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-switch-border-checked</td><td class="tok dim">border-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-switch-border-disabled</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-switch-thumb</td><td class="tok dim">bg-thumb</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-switch-thumb-checked</td><td class="tok dim">text-on-brand</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr><td class="tok">--al-switch-thumb-disabled</td><td class="tok dim">bg-thumb-disabled</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-switch-thumb-checked-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-switch-label</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-switch-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-switch-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr></tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Dois semânticos nasceram para o Switch</b>
+    <code>bg-thumb</code> e <code>bg-thumb-disabled</code> entraram na Fundação, com claro e escuro
+    — o escuro é o espelho do claro na escada de neutros. O nome serve a qualquer peça que desliza
+    sobre um trilho, como um Slider no futuro. O resto reaproveita semânticos que já existiam:
+    o trilho desligado é <code>bg-surface</code> e a bolinha ligada é <code>text-on-brand</code>.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody><tr><td class="tok">--al-switch-track-height</td><td class="tok dim">iconSize.24</td><td class="num">24px</td></tr>
+<tr><td class="tok">--al-switch-padding</td><td class="tok dim">space.4</td><td class="num">4px</td></tr>
+<tr><td class="tok">--al-switch-gap</td><td class="tok dim">space.8</td><td class="num">8px</td></tr>
+<tr><td class="tok">--al-switch-radius</td><td class="tok dim">radius.full</td><td class="num">9999px</td></tr>
+<tr><td class="tok">--al-switch-border-width</td><td class="tok dim">border.width.1</td><td class="num">1px</td></tr>
+<tr><td class="tok">--al-switch-label-font</td><td class="tok dim">type.styles.body-md</td><td class="num">16/24 · peso 400</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Quem ganha quando dois estados acontecem juntos</h2>
+  <p>A mesma técnica do Checkbox e do Radio: fundo e borda são
+  <code>var(--_*-force, var(--_*-state))</code>. O hover escreve em <code>--_border-state</code>;
+  ligado e desabilitado escrevem em <code>--_*-force</code>, que vence por ser <b>outra
+  propriedade</b>, não por ter seletor mais pesado.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Ligado + hover</b><span>Nada muda: o ligado força a borda laranja. O laranja já é o sinal mais forte.</span></div>
+    <div><b>Foco</b><span>Só o anel. A borda fica a de repouso — é assim no Figma.</span></div>
+    <div><b>Ligado + foco</b><span>O anel aparece por fora do trilho laranja.</span></div>
+    <div><b>Desabilitado</b><span>Vem por último no arquivo e ganha de todos. Ligado e desabilitado mostra a bolinha à direita em <code>thumb-checked-disabled</code>, sem laranja.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Sem erro, sem carregamento</h2>
+  <p>O switch tem efeito imediato, então não valida e não tem estado de erro. Quando a ação falha,
+  quem age é a aplicação: ela desmarca o input de volta e avisa em texto. O componente não tem
+  estado de carregamento — a bolinha troca no clique e só volta se o sistema recusar.</p>
+</section></div><div class="panel" id="p-switch-guide" role="tabpanel" aria-labelledby="t-switch-guide" tabindex="0" hidden>
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Ligar ou desligar algo que vale na hora</b><span>Sem botão “Salvar”: quem aciona um switch espera que a mudança já tenha acontecido. <i>Carbon, Primer, Polaris, Spectrum, Material.</i></span></div>
+    <div><b>Se só vale depois de enviar, é Checkbox</b><span>Um switch num formulário com “Enviar” dá a impressão de que já aplicou — e não aplicou. <i>Polaris, Primer.</i></span></div>
+    <div><b>Só dois estados opostos</b><span>Se as opções não são um liga/desliga simples — “Diário / Semanal” —, é Radio ou Select. <i>Polaris, Carbon.</i></span></div>
+    <div><b>Nunca para aceite de termos</b><span>Aceite depende de envio e costuma ser obrigatório: é Checkbox. <i>Primer, Polaris.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Mais de um switch</h2>
+  <div class="anat">
+    <div><b>Lista vertical, um por linha, cada um independente</b><span>Ligar um nunca desliga outro. Se precisa desligar, a pergunta é de escolha única — e é Radio. <i>Material, Carbon.</i></span></div>
+    <div><b>O título do grupo é da aplicação</b><span>Um título de seção, ou <code>fieldset</code> + <code>legend</code>. Não há componente de grupo. <i>Carbon.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="gd-sw-ok" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações por e-mail</span></label></div>
+      <p class="cap">Nomeia a configuração. Teste: leia em voz alta e some “ligado” ou
+      “desligado” no fim — “Notificações por e-mail, ligado” faz sentido. <i>NN/g, Primer.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2 sw-stage"><label class="al-switch"><span class="al-switch__control"><input id="gd-sw-bad" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Deseja receber notificações?</span></label></div>
+      <p class="cap">Pergunta não é rótulo: “Deseja receber notificações?, desligado” não faz
+      sentido. Também não use o estado como rótulo (“Notificações ativadas”), porque ele teria de
+      mudar a cada clique. <i>NN/g, Carbon.</i></p>
+    </div>
+  </div>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Visível, à direita, e clicar nele alterna</b><span>O <code>&lt;label&gt;</code> envolve o controle: a área de clique é a linha inteira, não só os 38×24 do trilho. <i>Carbon, Material; WCAG 2.5.8.</i></span></div>
+    <div><b>Nunca muda com o estado</b><span>Quem mostra o estado é o controle. <i>Carbon.</i></span></div>
+    <div><b>Sem “Ligado/Desligado” ao lado</b><span>O switch sozinho basta. <i>Material.</i> Divergência consciente do Primer, que mostra esse texto.</span></div>
+    <div><b>Curto, sem ponto final</b><span>Rótulo longo quebra, e o trilho fica na altura da primeira linha. <i>NN/g, Carbon.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Estado inicial e estados</h2>
+  <div class="anat">
+    <div><b>O estado inicial é o estado real</b><span>Se a notificação está ativa no sistema, o switch nasce ligado. Nunca pré-ligue “porque é o recomendado” — o switch não propõe, ele mostra. <i>Material.</i></span></div>
+    <div><b>Posição e cor mudam juntas</b><span>Ligado é trilho laranja com a bolinha à direita; nunca só a cor (WCAG 1.4.1).</span></div>
+    <div><b>Aplica no clique, sem confirmação</b><span>Nunca pergunte “Tem certeza?” para algo que se desfaz com outro clique. Ação grave não é switch. <i>Primer, Polaris, Material.</i></span></div>
+    <div><b>Desabilitado só quando depende de outra configuração</b><span>Se nunca vai estar disponível, esconda. <i>Mesma regra do Select, do Checkbox e do Radio.</i></span></div>
+    <div><b>O desabilitado fica abaixo de AA de propósito</b><span>O WCAG isenta controle inativo, e subir esse contraste faz o switch parecer clicável.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Quando a ação falha</h2>
+  <div class="anat">
+    <div><b>Sem erro e nunca obrigatório</b><span>Se uma configuração precisa estar ligada para a pessoa seguir, é um aceite — e aceite é Checkbox. <i>Spectrum, Polaris.</i></span></div>
+    <div><b>Troca na hora, e volta se falhar</b><span>A bolinha muda no clique. Se o sistema recusar, ela volta ao estado real e a aplicação avisa em texto o que falhou. O switch nunca mostra um estado que o sistema não tem.</span></div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Divergência consciente</b>
+    O Primer pede para esperar a resposta com um indicador de carregamento. O AL não tem esse
+    estado, e sem indicador a pessoa clica e parece que nada aconteceu — por isso a troca é
+    imediata e o recuo é da aplicação. <i>Material: o switch mostra o status real.</i>
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Um tamanho só</b><span>Regra de todo input do Tier 2.</span></div>
+    <div><b>Erro, texto de status e somente-leitura</b><span>O switch tem efeito imediato; somente-leitura só existe no Carbon — se aparecer, mostre o valor como texto.</span></div>
+    <div><b>Ícone dentro da bolinha</b><span>Existe no Material; o AL não usa.</span></div>
+    <div><b>Texto de apoio abaixo do rótulo</b><span>O Primer tem. Se a demanda aparecer, abre uma rodada nova do componente.</span></div>
+    <div><b>Componente de grupo e estado de carregamento</b><span>O grupo é da aplicação; a espera é coberta pela troca imediata.</span></div>
+  </div>
+</section></div><div class="panel" id="p-switch-a11y" role="tabpanel" aria-labelledby="t-switch-a11y" tabindex="0" hidden>
+<section>
+  <h2>A bolinha mede contra o trilho em que está</h2>
+  <p>O portão mede <b>combinação renderizada</b>: a borda contra a página por fora e o trilho por
+  dentro, a bolinha contra o trilho, o rótulo contra a página. E a página não é uma só: tela,
+  faixa de seção e card, guardando a pior. A menor margem entre as que passam é
+  <b>anel de foco</b> em <code>focus</code>, 3.12:1 contra o piso
+  de 3.0:1.</p>
+  <div class="stats">
+    <div class="stat hl"><b>46</b><span>combinações medidas</span></div>
+    <div class="stat"><b>24</b><span>passam</span></div>
+    <div class="stat"><b>22</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O que a etapa 3 não conseguia ver</h2>
+  <p>O trilho desligado é <code>bg-surface</code>. Numa faixa de seção em <code>bg-surface</code>,
+  trilho e página são <b>a mesma cor</b> — nos dois temas. Ali, o switch desligado é desenhado só
+  pela borda e pela bolinha. Não é uma falha nova: é exatamente o caso que a regra do rótulo
+  visível cobre.</p>
+</section>
+
+<section>
+  <h2>As três exceções, nomeadas</h2>
+  <div class="note">
+    <b>Bolinha desligada abaixo de 3:1 — decisão consciente</b>
+    <code>bg-thumb</code> fica em 1.96:1 no claro e 2.98:1 no
+    escuro contra o trilho. O <code>neutral-400</code> é o teto decidido na etapa 1. O que sustenta:
+    o ligado é trilho laranja, que passa, e o rótulo visível ao lado. A bolinha ligada passa com
+    3.34:1.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Borda em repouso abaixo de 3:1 — o padrão dos inputs</b>
+    <code>border-default</code> fica em 1.47:1 no claro e
+    1.46:1 no escuro, no pior fundo — a mesma decisão do Checkbox e do Radio. O
+    hover passa, e o foco é sinalizado pelo anel.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Desabilitado abaixo de AA — isenção do 1.4.3</b>
+    Rótulo, borda e bolinha desabilitados ficam abaixo do piso. O WCAG isenta componente inativo, e
+    subir esse contraste faz o switch parecer clicável.
+  </div>
+</section>
+
+<section>
+  <h2>Teclado</h2>
+  <p>O Tab entra em cada switch uma vez e pula o desabilitado. <b>Espaço alterna; Enter não</b> — é
+  o comportamento do checkbox nativo, e é o que o leitor de tela ensina para “chave”. O anel só
+  aparece quando o foco chega pelo teclado. Com “reduzir movimento” ligado no sistema, a bolinha
+  troca de lado sem deslizar.</p>
+</section>
+
+<section>
+  <h2>Não-textual — piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-border</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">1.47:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-thumb</td><td class="tok dim">trilho</td><td class="num strong">1.96:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-border</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">--al-switch-thumb</td><td class="tok dim">trilho</td><td class="num strong">2.98:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-border-hover</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">4.56:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-thumb</td><td class="tok dim">trilho</td><td class="num strong">1.96:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-border-hover</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">3.53:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">--al-switch-thumb</td><td class="tok dim">trilho</td><td class="num strong">2.98:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-border</td><td class="tok dim">respiro do anel (bg-canvas) + trilho</td><td class="num strong">1.47:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-thumb</td><td class="tok dim">trilho</td><td class="num strong">1.96:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">--al-switch-border</td><td class="tok dim">respiro do anel (bg-canvas) + trilho</td><td class="num strong">1.98:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">--al-switch-thumb</td><td class="tok dim">trilho</td><td class="num strong">2.98:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-border-checked</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-switch-thumb-checked</td><td class="tok dim">trilho</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-border-checked</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-switch-thumb-checked</td><td class="tok dim">trilho</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-switch-border-checked</td><td class="tok dim">respiro do anel (bg-canvas) + trilho</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-switch-thumb-checked</td><td class="tok dim">trilho</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">--al-switch-border-checked</td><td class="tok dim">respiro do anel (bg-canvas) + trilho</td><td class="num strong">5.32:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FC5000"></span></td><td class="tok dim">--al-switch-thumb-checked</td><td class="tok dim">trilho</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-switch-border-disabled</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-switch-thumb-disabled</td><td class="tok dim">trilho</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-border-disabled</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-thumb-disabled</td><td class="tok dim">trilho</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-switch-border-disabled</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-switch-thumb-checked-disabled</td><td class="tok dim">trilho</td><td class="num strong">1.59:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-border-disabled</td><td class="tok dim">pagina (pior caso) + trilho</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">bolinha</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-thumb-checked-disabled</td><td class="tok dim">trilho</td><td class="num strong">2.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">13.58:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">checked-focus <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">1.96:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">--al-switch-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">1.96:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled-checked <span class="tok dim">(código)</span></td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-switch-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Estas cinco regras não estão escritas numa página: elas são medidas por
+  <code>components/switch/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="checkbox" role="switch"&gt;</code> dentro de <code>&lt;label class="al-switch"&gt;</code>. Nenhum outro elemento com <code>role="switch"</code>, nada de <code>aria-pressed</code>.</span></div>
+    <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-switch__label</code>, e nada de <code>aria-label</code>.</span></div>
+    <div><b>Estado nativo</b><span>Sem <code>aria-checked</code>: o estado é o <code>checked</code> do input, e um atributo paralelo diverge do que a tela pinta.</span></div>
+    <div><b>Sem erro</b><span>Nada de <code>required</code> nem <code>aria-invalid</code>.</span></div>
+    <div><b>Bolinha decorativa</b><span><code>aria-hidden="true"</code> — o estado quem anuncia é o input.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>16</b><span>switches conferidos no HTML</span></div>
+    <div class="stat"><b>5</b><span>regras por switch</span></div>
+    <div class="stat"><b>medido</b><span>estado do contrato</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.9.0</span>
+  <span><b>AL Design System</b> · v0.10.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -7456,7 +8136,7 @@ footer code{background:none; padding:0}
 
   function applyTheme(dark, remember) {
     root.setAttribute('data-theme', dark ? 'dark' : 'light');
-    sw.setAttribute('aria-checked', dark ? 'true' : 'false');
+    sw.checked = dark;
     if (remember) {
       try { localStorage.setItem('al-theme', dark ? 'dark' : 'light'); } catch (e) { /* sem storage */ }
     }
@@ -7474,20 +8154,21 @@ footer code{background:none; padding:0}
   if (saved) {
     applyTheme(saved === 'dark', false);          // escolha anterior: carimba
   } else if (stamped) {
-    sw.setAttribute('aria-checked', stamped === 'dark' ? 'true' : 'false');
+    sw.checked = stamped === 'dark';
   } else {
-    sw.setAttribute('aria-checked', mq && mq.matches ? 'true' : 'false');
+    sw.checked = !!(mq && mq.matches);
     if (mq && mq.addEventListener) {
       mq.addEventListener('change', function (e) {
         if (!root.getAttribute('data-theme')) {
-          sw.setAttribute('aria-checked', e.matches ? 'true' : 'false');
+          sw.checked = e.matches;
         }
       });
     }
   }
 
-  sw.addEventListener('click', function () {
-    applyTheme(sw.getAttribute('aria-checked') !== 'true', true);
+  // O input nativo ja trocou o `checked` quando o evento chega: so carimbar.
+  sw.addEventListener('change', function () {
+    applyTheme(sw.checked, true);
   });
 
   // Se o ambiente reescrever data-theme por fora (o visualizador tem o próprio
@@ -7495,9 +8176,7 @@ footer code{background:none; padding:0}
   if (window.MutationObserver) {
     new MutationObserver(function () {
       var dark = root.getAttribute('data-theme') === 'dark';
-      if ((sw.getAttribute('aria-checked') === 'true') !== dark) {
-        sw.setAttribute('aria-checked', dark ? 'true' : 'false');
-      }
+      if (sw.checked !== dark) sw.checked = dark;
     }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
@@ -8296,6 +8975,87 @@ var CBX_DASH = "<svg class=\"al-icon al-checkbox__dash\" aria-hidden=\"true\" fo
     i.addEventListener('input', render);
   });
   document.getElementById('rd-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+
+(function () {
+  // ── Switch: a tela de configuracoes da Visao geral ──
+  // Dependencia (regra 17) e falha com recuo, opcao A (regra 21).
+  var email = document.getElementById('ov-sw-email');
+  if (email) {
+    var resumo = document.getElementById('ov-sw-resumo');
+    var contador = document.getElementById('ov-sw-contador');
+    var status = document.getElementById('ov-sw-status');
+    var dep = function () { resumo.disabled = !email.checked; };
+    email.addEventListener('change', dep);
+    dep();
+    contador.addEventListener('change', function () {
+      var pedido = contador.checked;
+      status.className = 'sw-status';
+      status.textContent = '';
+      setTimeout(function () {
+        if (pedido) {
+          contador.checked = false;
+          status.className = 'sw-status is-erro';
+          status.textContent = 'Não foi possível ativar o envio ao contador: nenhum contador cadastrado.';
+        } else {
+          status.className = 'sw-status is-ok';
+          status.textContent = 'Envio ao contador desativado.';
+        }
+      }, 700);
+    });
+  }
+
+  // ── playground ──
+  var stage = document.getElementById('sw-stage');
+  if (!stage) return;
+  var code = document.getElementById('sw-code');
+  var labelInput = document.getElementById('sw-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function render() {
+    var ligado = pick('swvalue') === 'on';
+    var off = pick('swstate') === 'disabled';
+    var theme = pick('swtheme');
+    var rotulo = (labelInput.value || '').trim() || 'Notificações por e-mail';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var a = 'class="al-switch__input" type="checkbox" role="switch"'
+      + (ligado ? ' checked' : '') + (off ? ' disabled' : '');
+    stage.innerHTML = '<label class="al-switch"><span class="al-switch__control">'
+      + '<input id="pg-sw" ' + a + '>'
+      + '<span class="al-switch__thumb" aria-hidden="true"></span></span>'
+      + '<span class="al-switch__label">' + esc(rotulo) + '</span></label>';
+    code.innerHTML = [
+      '&lt;label class="al-switch"&gt;',
+      '  &lt;span class="al-switch__control"&gt;',
+      '    &lt;input ' + a + '&gt;',
+      '    &lt;span class="al-switch__thumb" aria-hidden="true"&gt;&lt;/span&gt;',
+      '  &lt;/span&gt;',
+      '  &lt;span class="al-switch__label"&gt;' + esc(esc(rotulo)) + '&lt;/span&gt;',
+      '&lt;/label&gt;'
+    ].join('\n');
+  }
+
+  document.querySelectorAll('#sw-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('sw-copy').addEventListener('click', function () {
     var btn = this;
     navigator.clipboard.writeText(code.textContent).then(function () {
       btn.textContent = 'Copiado';

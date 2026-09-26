@@ -1,0 +1,49 @@
+/* AL Design System - tokens do Switch
+ * GERADO por components/switch/tokens.py. Nao editar a mao.
+ *
+ * Sem bloco de tema: cada token aponta para um semantico, e o tema troca
+ * no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Bolinha: 14px, trilho: 38px de largura,
+ * curso: a propria bolinha. Derivados, sem token.
+ */
+
+:root {
+
+  /* trilho - o laranja do ligado e quem diz o estado */
+  --al-switch-track: var(--al-bg-surface);
+  --al-switch-track-checked: var(--al-bg-brand);
+  --al-switch-track-disabled: var(--al-bg-disabled);
+
+  /* borda do trilho - o hover so mexe aqui */
+  --al-switch-border: var(--al-border-default);
+  --al-switch-border-hover: var(--al-border-strong);
+  --al-switch-border-checked: var(--al-border-brand);
+  --al-switch-border-disabled: var(--al-border-default);
+
+  /* bolinha */
+  --al-switch-thumb: var(--al-bg-thumb);
+  --al-switch-thumb-checked: var(--al-text-on-brand);
+  --al-switch-thumb-disabled: var(--al-bg-thumb-disabled);
+  --al-switch-thumb-checked-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora do trilho, sobre a tela */
+  --al-switch-label: var(--al-text-primary);
+  --al-switch-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-switch-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-switch-track-height: var(--al-icon-size-24);
+  --al-switch-padding: var(--al-space-4);
+  --al-switch-gap: var(--al-space-8);
+  --al-switch-radius: var(--al-radius-full);
+  --al-switch-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-switch-label-font-size: var(--al-font-size-md);
+  --al-switch-label-line-height: var(--al-line-height-md);
+  --al-switch-label-font-weight: 400;
+  --al-switch-label-tracking: 0em;
+}

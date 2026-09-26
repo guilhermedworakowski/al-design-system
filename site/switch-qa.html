@@ -1,0 +1,986 @@
+<meta charset="utf-8">
+<title>AL Switch QA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ================= foundation ================= */
+/* AL Design System - Foundation
+ * v0.10.0 - MIT
+ * GERADO por foundation/css.py. Nao editar a mao: rode o script.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* primitivas de cor - a rampa crua. Nao consumir direto num componente. */
+  --al-color-neutral-50: #F7F7F7;
+  --al-color-neutral-100: #EEEEEE;
+  --al-color-neutral-200: #E0E0E0;
+  --al-color-neutral-300: #CECECE;
+  --al-color-neutral-400: #B3B3B3;
+  --al-color-neutral-500: #949494;
+  --al-color-neutral-600: #717171;
+  --al-color-neutral-700: #565656;
+  --al-color-neutral-800: #3E3E3E;
+  --al-color-neutral-900: #292929;
+  --al-color-neutral-950: #181818;
+  --al-color-orange-50: #FFF5F0;
+  --al-color-orange-100: #FFEADE;
+  --al-color-orange-200: #FFD7C4;
+  --al-color-orange-300: #FFBDA0;
+  --al-color-orange-400: #FF9267;
+  --al-color-orange-500: #FC5000;
+  --al-color-orange-600: #C53900;
+  --al-color-orange-700: #992700;
+  --al-color-orange-800: #6C2100;
+  --al-color-orange-900: #4A1700;
+  --al-color-orange-950: #2D0D00;
+  --al-color-red-50: #FFF5F5;
+  --al-color-red-100: #FFE8E9;
+  --al-color-red-200: #FFD5D5;
+  --al-color-red-300: #FFBABB;
+  --al-color-red-400: #FF8D91;
+  --al-color-red-500: #F84F5D;
+  --al-color-red-600: #CA293F;
+  --al-color-red-700: #A00E27;
+  --al-color-red-800: #780014;
+  --al-color-red-900: #550007;
+  --al-color-red-950: #360001;
+  --al-color-amber-50: #FBF7EC;
+  --al-color-amber-100: #F7EED5;
+  --al-color-amber-200: #F2DFB0;
+  --al-color-amber-300: #EBCA7E;
+  --al-color-amber-400: #DCAC2E;
+  --al-color-amber-500: #BA8C00;
+  --al-color-amber-600: #916A00;
+  --al-color-amber-700: #704F00;
+  --al-color-amber-800: #523800;
+  --al-color-amber-900: #392500;
+  --al-color-amber-950: #221500;
+  --al-color-green-50: #EFFBF2;
+  --al-color-green-100: #DEF6E4;
+  --al-color-green-200: #C1EECA;
+  --al-color-green-300: #9DE2A9;
+  --al-color-green-400: #6ACD7C;
+  --al-color-green-500: #1BB14B;
+  --al-color-green-600: #008A2A;
+  --al-color-green-700: #006911;
+  --al-color-green-800: #004C03;
+  --al-color-green-900: #013400;
+  --al-color-green-950: #001F00;
+  --al-color-blue-50: #F1F8FF;
+  --al-color-blue-100: #E2F1FF;
+  --al-color-blue-200: #CAE4FF;
+  --al-color-blue-300: #A9D3FF;
+  --al-color-blue-400: #76B8FF;
+  --al-color-blue-500: #2696FF;
+  --al-color-blue-600: #0071D0;
+  --al-color-blue-700: #0055A3;
+  --al-color-blue-800: #003C7A;
+  --al-color-blue-900: #002858;
+  --al-color-blue-950: #001639;
+
+  /* semanticos de cor - TEMA CLARO. E aqui que o tema e resolvido. */
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-thumb: #B3B3B3;
+  --al-bg-thumb-disabled: #CECECE;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+
+  /* tipografia */
+  --al-font-sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --al-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-font-weight-regular: 400;
+  --al-font-weight-medium: 500;
+  --al-font-weight-semibold: 600;
+  --al-font-weight-bold: 700;
+  --al-font-size-xs: 12px;
+  --al-font-size-sm: 14px;
+  --al-font-size-md: 16px;
+  --al-font-size-lg: 18px;
+  --al-font-size-xl: 20px;
+  --al-font-size-2xl: 24px;
+  --al-font-size-3xl: 30px;
+  --al-font-size-4xl: 36px;
+  --al-font-size-5xl: 48px;
+  --al-font-size-6xl: 60px;
+  --al-line-height-xs: 16px;
+  --al-line-height-sm: 20px;
+  --al-line-height-md: 24px;
+  --al-line-height-lg: 28px;
+  --al-line-height-xl: 28px;
+  --al-line-height-2xl: 32px;
+  --al-line-height-3xl: 36px;
+  --al-line-height-4xl: 44px;
+  --al-line-height-5xl: 56px;
+  --al-line-height-6xl: 68px;
+
+  /* espacamento */
+  --al-space-0: 0px;
+  --al-space-2: 2px;
+  --al-space-4: 4px;
+  --al-space-8: 8px;
+  --al-space-12: 12px;
+  --al-space-16: 16px;
+  --al-space-20: 20px;
+  --al-space-24: 24px;
+  --al-space-32: 32px;
+  --al-space-40: 40px;
+  --al-space-48: 48px;
+  --al-space-64: 64px;
+  --al-space-80: 80px;
+  --al-space-96: 96px;
+
+  /* raio */
+  --al-radius-none: 0px;
+  --al-radius-xs: 2px;
+  --al-radius-sm: 4px;
+  --al-radius-md: 6px;
+  --al-radius-lg: 8px;
+  --al-radius-xl: 12px;
+  --al-radius-2xl: 16px;
+  --al-radius-3xl: 24px;
+  --al-radius-full: 9999px;
+
+  /* borda */
+  --al-border-width-0: 0px;
+  --al-border-width-1: 1px;
+  --al-border-width-2: 2px;
+  --al-border-width-focus: 2px;
+  --al-border-focus-offset: 2px;
+
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
+
+  /* elevacao - TEMA CLARO */
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+
+  /* anel de foco - composto uma vez, acompanha o tema sozinho.
+     Duas camadas: respiro na cor do fundo, depois o anel na cor do foco. */
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+}
+
+/* TEMA ESCURO. Tres estados, nao dois: sem carimbo no root, so o
+ * prefers-color-scheme separa; com carimbo, a escolha explicita vence. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --al-bg-canvas: #181818;
+    --al-bg-surface: #292929;
+    --al-bg-surface-raised: #3E3E3E;
+    --al-bg-subtle: #3E3E3E;
+    --al-bg-hover: #3E3E3E;
+    --al-bg-active: #565656;
+    --al-bg-disabled: #3E3E3E;
+    --al-bg-inverse: #F7F7F7;
+    --al-bg-thumb: #717171;
+    --al-bg-thumb-disabled: #565656;
+    --al-bg-brand: #FC5000;
+    --al-bg-brand-hover: #EA4900;
+    --al-bg-brand-active: #C53900;
+    --al-bg-brand-subtle: #2D0D00;
+    --al-bg-brand-strong: #992700;
+    --al-bg-danger: #F84F5D;
+    --al-bg-danger-hover: #FF8D91;
+    --al-bg-danger-active: #FFBABB;
+    --al-bg-danger-subtle: #360001;
+    --al-bg-success: #1BB14B;
+    --al-bg-success-hover: #6ACD7C;
+    --al-bg-success-subtle: #001F00;
+    --al-bg-warning: #DCAC2E;
+    --al-bg-warning-hover: #EBCA7E;
+    --al-bg-warning-subtle: #221500;
+    --al-bg-info: #2696FF;
+    --al-bg-info-hover: #76B8FF;
+    --al-bg-info-subtle: #001639;
+    --al-text-primary: #F7F7F7;
+    --al-text-secondary: #B3B3B3;
+    --al-text-placeholder: #B3B3B3;
+    --al-text-disabled: #717171;
+    --al-text-inverse: #292929;
+    --al-text-on-brand: #FFFFFF;
+    --al-text-on-solid: #181818;
+    --al-text-brand: #FF9267;
+    --al-text-danger: #FF8D91;
+    --al-text-success: #6ACD7C;
+    --al-text-warning: #EBCA7E;
+    --al-text-info: #76B8FF;
+    --al-border-subtle: #3E3E3E;
+    --al-border-default: #565656;
+    --al-border-strong: #949494;
+    --al-border-brand: #FC5000;
+    --al-border-focus: #FF9267;
+    --al-border-danger: #F84F5D;
+    --al-border-success: #1BB14B;
+    --al-border-warning: #DCAC2E;
+    --al-border-info: #2696FF;
+    --al-shadow-focus-default: #FF9267;
+    --al-shadow-focus-error: #FF8D91;
+    --al-elevation-0: none;
+    --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+    --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+    --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+    --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+    --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+  }
+}
+
+:root[data-theme="dark"] {
+  --al-bg-canvas: #181818;
+  --al-bg-surface: #292929;
+  --al-bg-surface-raised: #3E3E3E;
+  --al-bg-subtle: #3E3E3E;
+  --al-bg-hover: #3E3E3E;
+  --al-bg-active: #565656;
+  --al-bg-disabled: #3E3E3E;
+  --al-bg-inverse: #F7F7F7;
+  --al-bg-thumb: #717171;
+  --al-bg-thumb-disabled: #565656;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #EA4900;
+  --al-bg-brand-active: #C53900;
+  --al-bg-brand-subtle: #2D0D00;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #F84F5D;
+  --al-bg-danger-hover: #FF8D91;
+  --al-bg-danger-active: #FFBABB;
+  --al-bg-danger-subtle: #360001;
+  --al-bg-success: #1BB14B;
+  --al-bg-success-hover: #6ACD7C;
+  --al-bg-success-subtle: #001F00;
+  --al-bg-warning: #DCAC2E;
+  --al-bg-warning-hover: #EBCA7E;
+  --al-bg-warning-subtle: #221500;
+  --al-bg-info: #2696FF;
+  --al-bg-info-hover: #76B8FF;
+  --al-bg-info-subtle: #001639;
+  --al-text-primary: #F7F7F7;
+  --al-text-secondary: #B3B3B3;
+  --al-text-placeholder: #B3B3B3;
+  --al-text-disabled: #717171;
+  --al-text-inverse: #292929;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #181818;
+  --al-text-brand: #FF9267;
+  --al-text-danger: #FF8D91;
+  --al-text-success: #6ACD7C;
+  --al-text-warning: #EBCA7E;
+  --al-text-info: #76B8FF;
+  --al-border-subtle: #3E3E3E;
+  --al-border-default: #565656;
+  --al-border-strong: #949494;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FF9267;
+  --al-border-danger: #F84F5D;
+  --al-border-success: #1BB14B;
+  --al-border-warning: #DCAC2E;
+  --al-border-info: #2696FF;
+  --al-shadow-focus-default: #FF9267;
+  --al-shadow-focus-error: #FF8D91;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+  --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+  --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+  --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+  --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+}
+
+/* ================= switch - tokens ================= */
+/* AL Design System - tokens do Switch
+ * GERADO por components/switch/tokens.py. Nao editar a mao.
+ *
+ * Sem bloco de tema: cada token aponta para um semantico, e o tema troca
+ * no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Bolinha: 14px, trilho: 38px de largura,
+ * curso: a propria bolinha. Derivados, sem token.
+ */
+
+:root {
+
+  /* trilho - o laranja do ligado e quem diz o estado */
+  --al-switch-track: var(--al-bg-surface);
+  --al-switch-track-checked: var(--al-bg-brand);
+  --al-switch-track-disabled: var(--al-bg-disabled);
+
+  /* borda do trilho - o hover so mexe aqui */
+  --al-switch-border: var(--al-border-default);
+  --al-switch-border-hover: var(--al-border-strong);
+  --al-switch-border-checked: var(--al-border-brand);
+  --al-switch-border-disabled: var(--al-border-default);
+
+  /* bolinha */
+  --al-switch-thumb: var(--al-bg-thumb);
+  --al-switch-thumb-checked: var(--al-text-on-brand);
+  --al-switch-thumb-disabled: var(--al-bg-thumb-disabled);
+  --al-switch-thumb-checked-disabled: var(--al-text-disabled);
+
+  /* rotulo - vive fora do trilho, sobre a tela */
+  --al-switch-label: var(--al-text-primary);
+  --al-switch-label-disabled: var(--al-text-disabled);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-switch-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-switch-track-height: var(--al-icon-size-24);
+  --al-switch-padding: var(--al-space-4);
+  --al-switch-gap: var(--al-space-8);
+  --al-switch-radius: var(--al-radius-full);
+  --al-switch-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-switch-label-font-size: var(--al-font-size-md);
+  --al-switch-label-line-height: var(--al-line-height-md);
+  --al-switch-label-font-weight: 400;
+  --al-switch-label-tracking: 0em;
+}
+
+/* ================= switch ================= */
+/* AL Design System - Switch
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/switch/al-switch-tokens.css
+ *
+ * E O <input type="checkbox" role="switch"> NATIVO
+ *   O controle e do navegador: Espaco alterna, clicar no rotulo alterna, o
+ *   formulario envia o valor. `role="switch"` so troca o anuncio do leitor de
+ *   tela de "caixa de selecao, marcada" para "chave, ligada". Este arquivo tira
+ *   a caixa que o navegador desenha (`appearance: none`) e pinta o trilho do AL
+ *   no lugar. Nada de <div role="switch"> nem <button aria-pressed> - primeira
+ *   regra da ARIA (regra 22; divergencia consciente do Primer).
+ *
+ * ANATOMIA
+ *   <label class="al-switch">
+ *     <span class="al-switch__control">
+ *       <input class="al-switch__input" type="checkbox" role="switch">
+ *       <span class="al-switch__thumb" aria-hidden="true"></span>
+ *     </span>
+ *     <span class="al-switch__label">Notificacoes por e-mail</span>
+ *   </label>
+ *
+ *   O <label> envolve tudo: clicar no texto alterna, e a area clicavel passa a
+ *   ser a linha inteira (WCAG 2.5.8, regra 7). Nao ha `for`/`id` a sincronizar.
+ *
+ *   O proprio <input> E o trilho. A bolinha e um <span> irmao, posicionado por
+ *   cima, pela mesma razao do ponto do Radio: <input> nao tem filho, e
+ *   `::before` em <input> nao e garantido em todo navegador.
+ *   `pointer-events: none` devolve o clique ao input.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Ligado le `:checked`; desabilitado le `:disabled`. Nao existe
+ *   `.al-switch--on`: o que o leitor anuncia e o que a tela pinta saem da mesma
+ *   fonte e nao divergem. Nao ha erro - o switch tem efeito imediato e nao
+ *   valida (etapa 1, regra 20).
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - tecnica do Checkbox/Radio
+ *   Hover escreve em `--_border-state`; ligado e desabilitado escrevem em
+ *   `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
+ *   decididas nas etapas 1 e 3:
+ *     ligado + hover      -> nada muda: o ligado forca `border-checked` (regra 14)
+ *     ligado + foco       -> anel por fora do trilho laranja
+ *     foco                -> a borda fica a de repouso; quem sinaliza e o anel
+ *     ligado + disabled   -> trilho cinza, bolinha a direita em
+ *                            `thumb-checked-disabled`, sem laranja (regra 19)
+ *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ *
+ * O FIGMA TEM UM EIXO SO DE ESTADO
+ *   Cinco variantes; as combinacoes acima nao tem variante e sao cobertas pelos
+ *   mesmos tokens. `thumb-checked-disabled` e o unico token sem variante.
+ *
+ * GEOMETRIA DERIVADA - NENHUM NUMERO ALEM DOS TOKENS
+ *   altura  = `track-height` (24, a entrelinha do rotulo)
+ *   bolinha = altura - 2 x borda - 2 x padding              = 14
+ *   largura = 2 x altura - 2 x borda - 2 x padding          = 38
+ *             (e o mesmo que 2 x bolinha + 2 x padding + 2 x borda)
+ *   curso   = a propria bolinha                             = 14
+ *   As contas estao escritas abaixo em vez de numeros. `box-sizing:
+ *   border-box` poe a borda DENTRO dos 38x24, entao o trilho nunca "pula"
+ *   quando o estado troca a cor dela.
+ *
+ * A BOLINHA ANDA POR `inset-inline-start`, NAO POR `transform`
+ *   Assim o lado "ligado" segue a direcao do texto sozinho: em pagina da
+ *   direita para a esquerda, ligado fica a esquerda sem regra extra.
+ *
+ * ALINHAMENTO AO TOPO
+ *   `align-items: flex-start`: rotulo longo quebra linha e o trilho fica na
+ *   altura da primeira linha (regra 11). Funciona sem ajuste porque a altura
+ *   do trilho (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ *
+ * O QUE ESTE ARQUIVO NAO FAZ - REGRA 21 (opcao A, decisao de Gui)
+ *   Se a acao falhar, a aplicacao desmarca o input de volta e avisa em texto.
+ *   O componente nao tem estado de carregamento nem de erro.
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
+ *   de motion. Mesma pendencia do Button, do Select, do Checkbox e do Radio.
+ *   Com `prefers-reduced-motion`, a bolinha troca de lado sem deslizar (regra 25).
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-switch {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--al-switch-gap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* -------------------------------------------------------------- trilho */
+.al-switch__control {
+  position: relative;
+  display: block;
+  flex: none;
+  block-size: var(--al-switch-track-height);
+}
+
+.al-switch__input {
+  --_bg-state: var(--al-switch-track);
+  --_border-state: var(--al-switch-border);
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  inline-size: calc(2 * var(--al-switch-track-height)
+                    - 2 * var(--al-switch-border-width)
+                    - 2 * var(--al-switch-padding));
+  block-size: var(--al-switch-track-height);
+
+  border: var(--al-switch-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-switch-radius);
+  background-color: var(--_bg-force, var(--_bg-state));
+  cursor: inherit;
+
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* nada aqui e `outline`: o anel e sombra, para respeitar o trilho arredondado */
+.al-switch__input:focus {
+  outline: none;
+}
+
+/* ------------------------------------------------------------- bolinha */
+/* Dentro da borda e do padding: 24 - 2x1 - 2x4 = 14, como no Figma. */
+.al-switch__thumb {
+  --_thumb: calc(var(--al-switch-track-height)
+                 - 2 * var(--al-switch-border-width)
+                 - 2 * var(--al-switch-padding));
+  --_inset: calc(var(--al-switch-border-width) + var(--al-switch-padding));
+
+  position: absolute;
+  inset-block-start: var(--_inset);
+  inset-inline-start: var(--_inset);
+  inline-size: var(--_thumb);
+  block-size: var(--_thumb);
+  border-radius: var(--al-switch-radius);
+  background-color: var(--al-switch-thumb);
+  /* devolve o clique ao input que esta embaixo */
+  pointer-events: none;
+
+  transition:
+    inset-inline-start 120ms ease,
+    background-color 120ms ease;
+}
+
+/* ligado: a bolinha anda o proprio tamanho */
+.al-switch__input:checked ~ .al-switch__thumb {
+  inset-inline-start: calc(var(--_inset) + var(--_thumb));
+  background-color: var(--al-switch-thumb-checked);
+}
+
+/* ------------------------------------------------------------- rotulo */
+.al-switch__label {
+  color: var(--al-switch-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-switch-label-font-size);
+  line-height: var(--al-switch-label-line-height);
+  font-weight: var(--al-switch-label-font-weight);
+  letter-spacing: var(--al-switch-label-tracking);
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover na linha inteira: clicar no rotulo tambem alterna, entao o rotulo
+   tambem anuncia que e clicavel. So a borda muda; no ligado o force vence. */
+.al-switch:hover .al-switch__input:not(:disabled) {
+  --_border-state: var(--al-switch-border-hover);
+}
+
+/* foco: so o anel - a borda fica a de repouso, como no Figma */
+.al-switch__input:focus-visible {
+  box-shadow: var(--al-switch-ring);
+}
+
+/* ligado: o laranja e quem diz o estado */
+.al-switch__input:checked {
+  --_bg-force: var(--al-switch-track-checked);
+  --_border-force: var(--al-switch-border-checked);
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-switch__input:disabled {
+  --_bg-force: var(--al-switch-track-disabled);
+  --_border-force: var(--al-switch-border-disabled);
+}
+
+.al-switch__input:disabled ~ .al-switch__thumb {
+  background-color: var(--al-switch-thumb-disabled);
+}
+
+/* ligado + desabilitado: sem variante no Figma, sem laranja (regra 19) */
+.al-switch__input:checked:disabled ~ .al-switch__thumb {
+  background-color: var(--al-switch-thumb-checked-disabled);
+}
+
+.al-switch:has(.al-switch__input:disabled) {
+  cursor: not-allowed;
+}
+
+.al-switch:has(.al-switch__input:disabled) .al-switch__label {
+  color: var(--al-switch-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-switch__input,
+  .al-switch__thumb {
+    transition: none;
+  }
+}
+
+
+/* ================= cromo da pagina de QA =================
+   Usa os proprios tokens do AL. Nao ha paleta paralela aqui de proposito. */
+html, body { background: var(--al-bg-canvas); }
+body {
+  margin: 0;
+  color: var(--al-text-primary);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-font-size-md);
+  line-height: var(--al-line-height-md);
+}
+.qa-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-inline: var(--al-space-16);
+  padding-block: var(--al-space-32) var(--al-space-64);
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-space-48);
+}
+.qa-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; gap: var(--al-space-16);
+  border-bottom: 1px solid var(--al-border-subtle);
+  padding-bottom: var(--al-space-16);
+}
+.qa-head h1 {
+  margin: 0; font-size: var(--al-font-size-3xl); line-height: var(--al-line-height-3xl);
+  font-weight: 600; letter-spacing: -0.02em; text-wrap: balance;
+}
+.qa-sub { margin: var(--al-space-4) 0 0; color: var(--al-text-secondary); font-size: var(--al-font-size-sm); }
+.qa-btn {
+  display: inline-flex; align-items: center; gap: var(--al-space-8);
+  padding: var(--al-space-8) var(--al-space-16);
+  border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-full);
+  background: var(--al-bg-surface-raised); color: var(--al-text-primary);
+  font: inherit; font-size: var(--al-font-size-sm); cursor: pointer;
+}
+.qa-btn:focus-visible { outline: none; box-shadow: var(--al-focus-ring-default); }
+.qa-btn--primary { background: var(--al-bg-brand); border-color: var(--al-bg-brand); color: var(--al-text-on-brand); }
+section h2 {
+  margin: 0 0 var(--al-space-4);
+  font-size: var(--al-font-size-xl); line-height: var(--al-line-height-xl);
+  font-weight: 600; letter-spacing: -0.01em;
+}
+section > p.qa-lede { margin: 0 0 var(--al-space-20); color: var(--al-text-secondary); max-width: 62ch; }
+.qa-grid {
+  display: grid; gap: var(--al-space-20);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.qa-card {
+  display: flex; flex-direction: column; gap: var(--al-space-12);
+  padding: var(--al-space-20);
+  border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface);
+}
+.qa-card__head { display: flex; align-items: center; justify-content: space-between; gap: var(--al-space-8); }
+.qa-card__title { margin: 0; font-size: var(--al-font-size-sm); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.qa-card__stage { display: flex; flex-direction: column; gap: var(--al-space-8); min-height: var(--al-space-48); }
+.qa-card__note { margin: 0; margin-top: auto; color: var(--al-text-secondary); font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); }
+.qa-tag {
+  font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs);
+  padding: 2px var(--al-space-8); border-radius: var(--al-radius-full);
+  border: 1px solid var(--al-border-default); color: var(--al-text-secondary);
+  white-space: nowrap;
+}
+.qa-tag--real { border-color: var(--al-border-success); color: var(--al-text-success); }
+.qa-tag--codigo { border-color: var(--al-border-info); color: var(--al-text-info); }
+.qa-formerror { margin: 0; color: var(--al-text-danger); font-size: var(--al-font-size-sm); line-height: var(--al-line-height-sm); }
+/* a pergunta - fieldset nativo, montado pela aplicacao (regra 6) */
+fieldset.qa-q { margin: 0; padding: 0; border: 0; min-width: 0; display: flex; flex-direction: column; gap: var(--al-space-12); }
+fieldset.qa-q legend { padding: 0; margin-bottom: var(--al-space-12); font-size: var(--al-font-size-sm); line-height: var(--al-line-height-sm); font-weight: 600; }
+.qa-form {
+  display: flex; flex-direction: column; gap: var(--al-space-32);
+  padding: var(--al-space-24);
+  border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface-raised);
+  max-width: 560px;
+}
+.qa-form fieldset.qa-q legend { font-size: var(--al-font-size-md); line-height: var(--al-line-height-md); }
+.qa-summary {
+  margin: 0; padding: var(--al-space-12) var(--al-space-16);
+  border-radius: var(--al-radius-md);
+  background: var(--al-bg-danger-subtle); color: var(--al-text-danger);
+  font-size: var(--al-font-size-sm); line-height: var(--al-line-height-sm);
+}
+.qa-ok { margin: 0; color: var(--al-text-success); font-size: var(--al-font-size-sm); }
+.qa-actions { display: flex; gap: var(--al-space-12); flex-wrap: wrap; align-items: center; }
+.qa-checks { margin: 0; padding-left: var(--al-space-20); display: grid; gap: var(--al-space-8); max-width: 68ch; }
+.qa-checks li { color: var(--al-text-secondary); }
+.qa-checks strong { color: var(--al-text-primary); font-weight: 500; }
+.qa-tablewrap { overflow-x: auto; }
+table.qa-measure { border-collapse: collapse; width: 100%; font-size: var(--al-font-size-sm); font-variant-numeric: tabular-nums; }
+table.qa-measure th, table.qa-measure td { text-align: left; padding: var(--al-space-8) var(--al-space-12); border-bottom: 1px solid var(--al-border-subtle); white-space: nowrap; }
+table.qa-measure th { font-weight: 600; font-size: var(--al-font-size-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--al-text-secondary); }
+.qa-verdict { font-weight: 600; }
+.qa-verdict--ok { color: var(--al-text-success); }
+.qa-verdict--exc { color: var(--al-text-warning); }
+.qa-verdict--bad { color: var(--al-text-danger); }
+.qa-foot { color: var(--al-text-secondary); font-size: var(--al-font-size-sm); border-top: 1px solid var(--al-border-subtle); padding-top: var(--al-space-16); }
+code { font-family: var(--al-font-mono); font-size: 0.9em; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+.qa-settings {
+  max-width: 560px;
+  padding: var(--al-space-24);
+  border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface-raised);
+  display: flex; flex-direction: column; gap: var(--al-space-16);
+}
+.qa-settings .qa-hint { margin: calc(-1 * var(--al-space-8)) 0 0; color: var(--al-text-secondary); font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); }
+.qa-toast { margin: 0; font-size: var(--al-font-size-sm); line-height: var(--al-line-height-sm); }
+.qa-toast--erro { padding: var(--al-space-12) var(--al-space-16); border-radius: var(--al-radius-md); background: var(--al-bg-danger-subtle); color: var(--al-text-danger); }
+.qa-toast--ok { color: var(--al-text-success); }
+</style>
+
+<div class="qa-wrap">
+  <header class="qa-head">
+    <div>
+      <h1>Switch — QA da etapa 6</h1>
+      <p class="qa-sub">AL Design System 0.10.0 · componente 0.1.0 ·
+      &lt;input type="checkbox" role="switch"&gt; nativo · 22 medições de token, 12 exceções declaradas, 0 reprovas</p>
+    </div>
+    <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">
+      <span id="theme-label">Tema claro</span>
+    </button>
+  </header>
+
+  <section>
+    <h2>O que testar</h2>
+    <ol class="qa-checks">
+      <li><strong>Tabule pela página.</strong> Cada switch recebe o Tab uma vez; o desabilitado é pulado.</li>
+      <li><strong>Espaço alterna, Enter não.</strong> É o comportamento do checkbox nativo (regra 24).</li>
+      <li><strong>O anel só aparece no teclado.</strong> Chegue por Tab: anel laranja. Clique com o mouse: sem anel.</li>
+      <li><strong>Clique no texto, não no trilho:</strong> também alterna, e o hover acende a borda na linha inteira — menos no ligado.</li>
+      <li><strong>Na tela de configurações, desligue “Notificações por e-mail”:</strong> o “Resumo semanal” fica desabilitado, porque depende dele (regra 17).</li>
+      <li><strong>Ligue “Enviar notas ao contador”:</strong> a bolinha troca na hora; um instante depois o servidor simulado recusa, ela volta e o aviso aparece em texto (regra 21).</li>
+      <li><strong>Troque o tema</strong> no botão acima e refaça os itens 3 e 4.</li>
+      <li><strong>Reduza a janela</strong> até a largura de telefone: rótulo longo quebra, nada corta.</li>
+      <li><strong>Ative “reduzir movimento” no sistema:</strong> a bolinha passa a trocar de lado sem deslizar (regra 25).</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Os cinco estados do Figma</h2>
+    <p class="qa-lede">Um cartão por variante do component set. Só o Hover é simulado, porque só existe
+    enquanto o ponteiro está em cima.</p>
+    <div class="qa-grid">
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Default</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-switch"><span class="al-switch__control"><input id="st-default" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações por e-mail</span></label></div>
+      <p class="qa-card__note">desligado. A bolinha (1,96:1) e a borda (1,47:1) são as exceções declaradas; quem sustenta é o rótulo visível e o laranja do ligado.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Hover</h3>
+        <span class="qa-tag qa-tag--simulado">simulado</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-switch"><span class="al-switch__control"><input id="st-hover" class="al-switch__input" type="checkbox" role="switch" style="--_border-state: var(--al-switch-border-hover)"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações por e-mail</span></label></div>
+      <p class="qa-card__note">só existe sob o ponteiro; a variável privada foi escrita direto no input. Passe o mouse no Default: acende a borda, e vale na linha inteira.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Active (ligado)</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-switch"><span class="al-switch__control"><input id="st-checked" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Modo escuro automático</span></label></div>
+      <p class="qa-card__note">trilho laranja, bolinha branca à direita. Clique: ela desliza de volta. Passe o mouse ligado: nada muda (regra 14).</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Focus</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-switch"><span class="al-switch__control"><input id="st-focus" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Legendas nos vídeos</span></label></div>
+      <p class="qa-card__note">tabule até aqui: anel laranja com respiro, a borda fica a de repouso. Espaço alterna; Enter não (regra 24). Clique com o mouse: sem anel.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Disabled</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-switch"><span class="al-switch__control"><input id="st-disabled" class="al-switch__input" type="checkbox" role="switch" disabled><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Resumo semanal</span></label></div>
+      <p class="qa-card__note">atributo disabled nativo: o Tab pula. Contraste abaixo de AA de propósito.</p>
+    </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Combinações que só existem no código</h2>
+    <p class="qa-lede">O Figma tem um eixo só de estado; o navegador produz combinações que ele não
+    desenha. Estas foram decididas na etapa 3 e são pintadas pelos mesmos tokens.</p>
+    <div class="qa-grid">
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Ligado + disabled</h3>
+        <span class="qa-tag qa-tag--codigo">codigo</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-switch"><span class="al-switch__control"><input id="cb-dischk" class="al-switch__input" type="checkbox" role="switch" checked disabled><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Backup diário</span></label></div>
+      <p class="qa-card__note">trilho cinza, bolinha à direita um tom mais escura (thumb-checked-disabled) — sem laranja. Único token sem variante no Figma.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Ligado + foco</h3>
+        <span class="qa-tag qa-tag--codigo">codigo</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-switch"><span class="al-switch__control"><input id="cb-chkfoc" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Sincronizar contatos</span></label></div>
+      <p class="qa-card__note">tabule até aqui: o anel aparece por fora do trilho laranja.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Rótulo longo</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="qa-card__stage"><label class="al-switch"><span class="al-switch__control"><input id="cb-long" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Enviar a nota fiscal por e-mail ao contador assim que o pagamento for confirmado</span></label></div>
+      <p class="qa-card__note">o texto quebra e o trilho fica alinhado à primeira linha (regra 11).</p>
+    </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tela de configurações</h2>
+    <p class="qa-lede">Sem botão “Salvar”: cada switch vale na hora (regra 1). O título do grupo é da
+    aplicação — um <code>fieldset</code> com <code>legend</code> (regra 6).</p>
+    <div class="qa-settings">
+      <fieldset class="qa-q">
+        <legend>Notificações</legend>
+        <label class="al-switch"><span class="al-switch__control"><input id="cfg-email" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações por e-mail</span></label><label class="al-switch"><span class="al-switch__control"><input id="cfg-resumo" class="al-switch__input" type="checkbox" role="switch" checked><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Resumo semanal</span></label><label class="al-switch"><span class="al-switch__control"><input id="cfg-push" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Notificações no celular</span></label><label class="al-switch"><span class="al-switch__control"><input id="cfg-contador" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Enviar notas ao contador</span></label>
+      </fieldset>
+      <p class="qa-toast" id="cfg-status" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Contraste medido no navegador</h2>
+    <p class="qa-lede">Não são os números do <code>tokens.json</code>: o script lê a cor que o navegador
+    realmente pintou, com <code>getComputedStyle</code>, depois de esperar a transição terminar — contra o
+    fundo onde cada switch está de verdade (cartão em <code>bg-surface</code>).</p>
+    <div class="qa-tablewrap">
+      <table class="qa-measure">
+        <thead><tr><th>papel</th><th>frente</th><th>fundo</th><th>medido</th><th>piso</th><th>veredito</th></tr></thead>
+        <tbody id="measure-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="qa-foot">Gerado por <code>components/switch/qa.py</code> a partir do CSS commitado em
+  <code>dev</code>. <code>al-foundation.css</code>, <code>al-switch-tokens.css</code> e
+  <code>switch.css</code> estão embutidos como estão no repositório.</p>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  function r(id) { return document.getElementById(id); }
+
+  // ------------------------------------------- dependencia (regra 17)
+  var email = r('cfg-email'), resumo = r('cfg-resumo');
+  function dependencia() { resumo.disabled = !email.checked; }
+  email.addEventListener('change', dependencia);
+  dependencia();
+
+  // ------------------------------------------- falha, opcao A (regra 21)
+  // Troca na hora; o "servidor" recusa; a bolinha volta ao estado real e a
+  // aplicacao avisa em texto. O componente nao tem estado de carregamento.
+  var contador = r('cfg-contador'), status = r('cfg-status');
+  contador.addEventListener('change', function () {
+    var pedido = contador.checked;
+    status.className = 'qa-toast';
+    status.textContent = '';
+    setTimeout(function () {
+      if (pedido) {
+        contador.checked = false;
+        status.className = 'qa-toast qa-toast--erro';
+        status.textContent = 'Não foi possível ativar o envio ao contador: nenhum contador cadastrado.';
+      } else {
+        status.className = 'qa-toast qa-toast--ok';
+        status.textContent = 'Envio ao contador desativado.';
+      }
+    }, 700);
+  });
+
+  // ------------------------------------------------------------------ tema
+  var btn = r('theme-toggle');
+  var label = r('theme-label');
+  function escuro() {
+    if (root.dataset.theme) return root.dataset.theme === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function pintarBotao() {
+    var d = escuro();
+    label.textContent = d ? 'Tema escuro' : 'Tema claro';
+    btn.setAttribute('aria-pressed', String(d));
+  }
+  btn.addEventListener('click', function () {
+    root.dataset.theme = escuro() ? 'light' : 'dark';
+    pintarBotao();
+    // 350ms de folga para a transicao de 120ms terminar
+    setTimeout(medir, 350);
+  });
+  pintarBotao();
+
+  // ------------------------------------------------------------- contraste
+  function rgb(str) {
+    var m = str.match(/-?[\d.]+/g);
+    return m ? [ +m[0], +m[1], +m[2] ] : null;
+  }
+  function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(c) { return 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); }
+  function cr(a, b) {
+    var la = lum(a), lb = lum(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+  function cor(el, prop) { return rgb(getComputedStyle(el)[prop]); }
+  function rotuloDe(id) { return r(id).closest('.al-switch').querySelector('.al-switch__label'); }
+  function bolinhaDe(id) { return r(id).parentNode.querySelector('.al-switch__thumb'); }
+  function fundoDe(id) { return cor(r(id).closest('.qa-card'), 'backgroundColor'); }
+  function trilho(id) { return cor(r(id), 'backgroundColor'); }
+
+  var TXT = 4.5, GRA = 3.0;
+
+  function alvos() {
+    return [
+      ['rótulo',                    cor(rotuloDe('st-default'), 'color'),               fundoDe('st-default'), TXT, false],
+      ['borda em repouso',          cor(r('st-default'), 'borderTopColor'),             fundoDe('st-default'), GRA, true],
+      ['borda em hover',            cor(r('st-hover'), 'borderTopColor'),               fundoDe('st-hover'),   GRA, false],
+      ['bolinha desligada',         cor(bolinhaDe('st-default'), 'backgroundColor'),    trilho('st-default'),  GRA, true],
+      ['trilho ligado',             trilho('st-checked'),                               fundoDe('st-checked'), GRA, false],
+      ['bolinha ligada',            cor(bolinhaDe('st-checked'), 'backgroundColor'),    trilho('st-checked'),  GRA, false],
+      ['rótulo desabilitado',       cor(rotuloDe('st-disabled'), 'color'),              fundoDe('st-disabled'), TXT, true],
+      ['bolinha desabilitada',      cor(bolinhaDe('st-disabled'), 'backgroundColor'),   trilho('st-disabled'), GRA, true],
+      ['bolinha ligada desabilit.', cor(bolinhaDe('cb-dischk'), 'backgroundColor'),     trilho('cb-dischk'),   GRA, true],
+    ];
+  }
+
+  function medir() {
+    var corpo = r('measure-body');
+    corpo.textContent = '';
+    alvos().forEach(function (l) {
+      var fg = l[1], bg = l[2];
+      if (!fg || !bg) return;
+      var v = cr(fg, bg), passa = v >= l[3];
+      var classe = passa ? 'ok' : (l[4] ? 'exc' : 'bad');
+      var texto = passa ? 'passa' : (l[4] ? 'exceção declarada' : 'REPROVA');
+      var tr = document.createElement('tr');
+      [l[0], 'rgb(' + fg.join(', ') + ')', 'rgb(' + bg.join(', ') + ')',
+       v.toFixed(2) + ':1', l[3].toFixed(1) + ':1'].forEach(function (x) {
+        var td = document.createElement('td'); td.textContent = x; tr.appendChild(td);
+      });
+      var td = document.createElement('td');
+      td.textContent = texto;
+      td.className = 'qa-verdict qa-verdict--' + classe;
+      tr.appendChild(td);
+      corpo.appendChild(tr);
+    });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { setTimeout(medir, 350); });
+  } else {
+    setTimeout(medir, 350);
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+    pintarBotao(); setTimeout(medir, 350);
+  });
+})();
+</script>
