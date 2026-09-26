@@ -25,7 +25,10 @@ TOKENS = {
     # 0.6.0: o Avatar - componente novo, casa do meio. Fecha o Tier 1. Nao
     # cria par de contraste novo (zero excecoes), e o menor portao de a11y do
     # sistema ate agora: o fundo nunca varia por tipo, so por tema.
-    "name": "AL Design System", "version": "0.9.0", "license": "MIT",
+    # 0.10.0: o Switch - componente novo, casa do meio. Primeiro componente a
+    # criar semantico na Foundation (bg-thumb, bg-thumb-disabled), e o primeiro
+    # que o proprio site consome: o switch de tema do trilho.
+    "name": "AL Design System", "version": "0.10.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
