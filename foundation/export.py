@@ -28,7 +28,10 @@ TOKENS = {
     # 0.10.0: o Switch - componente novo, casa do meio. Primeiro componente a
     # criar semantico na Foundation (bg-thumb, bg-thumb-disabled), e o primeiro
     # que o proprio site consome: o switch de tema do trilho.
-    "name": "AL Design System", "version": "0.10.0", "license": "MIT",
+    # 0.11.0: o Input - componente novo, casa do meio. Primeiro com read-only
+    # (que NAO e isento de contraste como o disabled) e com afixos dentro da
+    # borda: a caixa e um invólucro, e o estado chega a ela por :has().
+    "name": "AL Design System", "version": "0.11.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
