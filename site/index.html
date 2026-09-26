@@ -7,7 +7,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.10.0 - MIT
+ * v0.11.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -820,6 +820,71 @@
   --al-switch-label-line-height: var(--al-line-height-md);
   --al-switch-label-font-weight: 400;
   --al-switch-label-tracking: 0em;
+
+
+  /* fundo - so o disabled e o readonly mudam */
+  --al-input-bg: var(--al-bg-surface-raised);
+  --al-input-bg-disabled: var(--al-bg-disabled);
+  --al-input-bg-readonly: var(--al-bg-subtle);
+
+  /* borda - o eixo que carrega o estado */
+  --al-input-border: var(--al-border-default);
+  --al-input-border-hover: var(--al-border-strong);
+  --al-input-border-focus: var(--al-border-brand);
+  --al-input-border-error: var(--al-border-danger);
+  --al-input-border-disabled: var(--al-border-default);
+  --al-input-border-readonly: var(--al-border-subtle);
+
+  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */
+  --al-input-text-placeholder: var(--al-text-placeholder);
+  --al-input-text-value: var(--al-text-primary);
+  --al-input-text-disabled: var(--al-text-disabled);
+
+  /* prefixo e sufixo - nao herdam a cor do placeholder */
+  --al-input-affix: var(--al-text-primary);
+
+  /* rotulo, marca, contador e apoio - vivem fora do campo, sobre a tela */
+  --al-input-label: var(--al-text-primary);
+  --al-input-label-error: var(--al-text-danger);
+  --al-input-label-disabled: var(--al-text-disabled);
+  --al-input-optional: var(--al-text-secondary);
+  --al-input-counter: var(--al-text-secondary);
+  --al-input-counter-error: var(--al-text-danger);
+  --al-input-help: var(--al-text-secondary);
+  --al-input-help-error: var(--al-text-danger);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-input-ring: var(--al-focus-ring-default);
+  --al-input-ring-error: var(--al-focus-ring-error);
+
+  /* geometria */
+  --al-input-padding-x: var(--al-space-12);
+  --al-input-padding-y: var(--al-space-12);
+  --al-input-gap: var(--al-space-8);
+  --al-input-radius: var(--al-radius-lg);
+  --al-input-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-input-font-size: var(--al-font-size-md);
+  --al-input-line-height: var(--al-line-height-md);
+  --al-input-font-weight: 400;
+  --al-input-tracking: 0em;
+  --al-input-label-font-size: var(--al-font-size-md);
+  --al-input-label-line-height: var(--al-line-height-md);
+  --al-input-label-font-weight: 400;
+  --al-input-label-tracking: 0em;
+  --al-input-optional-font-size: var(--al-font-size-sm);
+  --al-input-optional-line-height: var(--al-line-height-sm);
+  --al-input-optional-font-weight: 400;
+  --al-input-optional-tracking: 0em;
+  --al-input-counter-font-size: var(--al-font-size-sm);
+  --al-input-counter-line-height: var(--al-line-height-sm);
+  --al-input-counter-font-weight: 400;
+  --al-input-counter-tracking: 0em;
+  --al-input-help-font-size: var(--al-font-size-xs);
+  --al-input-help-line-height: var(--al-line-height-xs);
+  --al-input-help-font-weight: 400;
+  --al-input-help-tracking: 0.01em;
 }
 
 /* AL Design System - tokens do Button
@@ -3342,6 +3407,382 @@
   }
 }
 
+/* AL Design System - tokens do Input
+ * GERADO por components/input/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Altura do campo: 48px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo - so o disabled e o readonly mudam */
+  --al-input-bg: var(--al-bg-surface-raised);
+  --al-input-bg-disabled: var(--al-bg-disabled);
+  --al-input-bg-readonly: var(--al-bg-subtle);
+
+  /* borda - o eixo que carrega o estado */
+  --al-input-border: var(--al-border-default);
+  --al-input-border-hover: var(--al-border-strong);
+  --al-input-border-focus: var(--al-border-brand);
+  --al-input-border-error: var(--al-border-danger);
+  --al-input-border-disabled: var(--al-border-default);
+  --al-input-border-readonly: var(--al-border-subtle);
+
+  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */
+  --al-input-text-placeholder: var(--al-text-placeholder);
+  --al-input-text-value: var(--al-text-primary);
+  --al-input-text-disabled: var(--al-text-disabled);
+
+  /* prefixo e sufixo - nao herdam a cor do placeholder */
+  --al-input-affix: var(--al-text-primary);
+
+  /* rotulo, marca, contador e apoio - vivem fora do campo, sobre a tela */
+  --al-input-label: var(--al-text-primary);
+  --al-input-label-error: var(--al-text-danger);
+  --al-input-label-disabled: var(--al-text-disabled);
+  --al-input-optional: var(--al-text-secondary);
+  --al-input-counter: var(--al-text-secondary);
+  --al-input-counter-error: var(--al-text-danger);
+  --al-input-help: var(--al-text-secondary);
+  --al-input-help-error: var(--al-text-danger);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-input-ring: var(--al-focus-ring-default);
+  --al-input-ring-error: var(--al-focus-ring-error);
+
+  /* geometria */
+  --al-input-padding-x: var(--al-space-12);
+  --al-input-padding-y: var(--al-space-12);
+  --al-input-gap: var(--al-space-8);
+  --al-input-radius: var(--al-radius-lg);
+  --al-input-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-input-font-size: var(--al-font-size-md);
+  --al-input-line-height: var(--al-line-height-md);
+  --al-input-font-weight: 400;
+  --al-input-tracking: 0em;
+  --al-input-label-font-size: var(--al-font-size-md);
+  --al-input-label-line-height: var(--al-line-height-md);
+  --al-input-label-font-weight: 400;
+  --al-input-label-tracking: 0em;
+  --al-input-optional-font-size: var(--al-font-size-sm);
+  --al-input-optional-line-height: var(--al-line-height-sm);
+  --al-input-optional-font-weight: 400;
+  --al-input-optional-tracking: 0em;
+  --al-input-counter-font-size: var(--al-font-size-sm);
+  --al-input-counter-line-height: var(--al-line-height-sm);
+  --al-input-counter-font-weight: 400;
+  --al-input-counter-tracking: 0em;
+  --al-input-help-font-size: var(--al-font-size-xs);
+  --al-input-help-line-height: var(--al-line-height-xs);
+  --al-input-help-font-weight: 400;
+  --al-input-help-tracking: 0.01em;
+}
+
+/* AL Design System - Input
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/input/al-input-tokens.css
+ *
+ * CAMPO DE TEXTO DE UMA LINHA
+ *   <input> nativo, `type` text, email, url ou tel. Senha e o componente
+ *   Password; varias linhas e o Textarea. Nenhum dos dois estica este arquivo.
+ *
+ * ANATOMIA
+ *   <div class="al-input">
+ *     <div class="al-input__labelrow">
+ *       <label class="al-input__label" id="site-label" for="site">Site</label>
+ *       <span class="al-input__optional">(Opcional)</span>
+ *       <span class="al-input__counter" aria-live="off">0/100</span>
+ *     </div>
+ *     <div class="al-input__control">
+ *       <label class="al-input__affix" id="site-prefix" for="site">www.</label>
+ *       <input class="al-input__field" id="site" type="url"
+ *              aria-labelledby="site-label site-prefix site-suffix"
+ *              aria-describedby="site-help">
+ *       <label class="al-input__affix" id="site-suffix" for="site">.com</label>
+ *     </div>
+ *     <p class="al-input__help" id="site-help">Texto de apoio</p>
+ *   </div>
+ *
+ *   Marca "(Opcional)", contador, prefixo, sufixo e texto de apoio sao
+ *   MARCACAO, nao modificador: quem nao quer, nao escreve o elemento.
+ *
+ * A CAIXA E O `__control`, NAO O <input>
+ *   Prefixo e sufixo precisam ficar DENTRO da borda, e <input> nao aceita
+ *   filho. Entao borda, fundo, raio e anel moram no `__control`, e o <input>
+ *   e transparente, sem borda, ocupando o espaco que sobra. Consequencia: o
+ *   estado do campo e lido pelo conteiner via `:has()` - hover, foco, erro,
+ *   desabilitado e read-only.
+ *
+ *   Degradacao se `:has()` faltar: o campo fica sempre no estado de repouso -
+ *   sem anel de foco pintado pelo AL. Por isso o `outline` so e zerado DENTRO
+ *   de um `@supports selector(:has(*))`: sem `:has()` volta o anel nativo do
+ *   navegador, e o foco nunca some.
+ *
+ * O AFIXO E <label for>, E NAO <span>
+ *   Clicar em "www." precisa focar o campo, como clicar no rotulo. <label for>
+ *   faz isso sem uma linha de JavaScript. O nome anunciado continua
+ *   deterministico porque o <input> declara `aria-labelledby` = rotulo +
+ *   prefixo + sufixo ("Site, www., .com"), e aria-labelledby vence as labels -
+ *   solucao do Polaris, regra 29. Sem afixo, nao ha aria-labelledby: basta o
+ *   <label for>.
+ *
+ *   O afixo e visual e NAO vai no envio (regra 10): esta fora do <input>.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Erro le `aria-invalid="true"`; desabilitado le `:disabled`; read-only le
+ *   o atributo `[readonly]` - NUNCA `:read-only`, que tambem casa campo
+ *   desabilitado e misturaria os dois estados. Mesmo motivo do Select: a cor
+ *   nao pode divergir do que o leitor de tela anuncia.
+ *
+ *   A unica excecao e o contador acima do limite, `data-over-limit`. Nao ha
+ *   atributo nativo para isso: sem `maxlength` (regra 14 - o limite nao trava
+ *   a digitacao) o navegador nao sabe que passou. O JavaScript que ja atualiza
+ *   o numero e o mesmo que liga o atributo.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE
+ *   Mesma mecanica do Select: interacao escreve em `--_border-state`; erro,
+ *   read-only e desabilitado escrevem em `--_border-force`, que vence sempre
+ *   por ser outra propriedade. Entre os tres decide a ordem do arquivo:
+ *   erro, read-only, desabilitado - o desabilitado ganha de todos.
+ *
+ * NAO EXISTE ACTIVE
+ *   Campo de texto SEMPRE casa `:focus-visible`, inclusive no clique de mouse
+ *   (a spec manda isso para todo elemento que aceita digitacao). A borda de
+ *   1px de um Active seria coberta pelo anel no mesmo instante. Regra 20.
+ *
+ * READ-ONLY NAO MOSTRA PLACEHOLDER
+ *   O cinza do placeholder sobre `bg-readonly` da 4.21:1, abaixo do piso. E
+ *   placeholder ensina a preencher, o que nao se aplica. O CSS o torna
+ *   transparente; a regra 22 manda o read-only vazio mostrar "—" como valor.
+ *
+ * ALTURA E CONSEQUENCIA, NAO `height`
+ *   48 = padding-y x2 + entrelinha, com a borda descontada do padding - a
+ *   mesma convencao do Button, do Tag e do Select. A borda de 1px existe em
+ *   todos os estados, entao o campo nunca "pula" quando o estado troca.
+ *
+ * LARGURA
+ *   100% do conteiner. Formulario decide largura (regra 26).
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
+ *   escala de motion. Mesma pendencia do Button e do Select; aparece nomeada
+ *   no relatorio do check.py.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-input-gap);
+}
+
+/* ------------------------------------------------------------ rotulo */
+/* baseline, nao center: rotulo tem entrelinha 24, marca e contador 20. */
+.al-input__labelrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--al-input-gap);
+}
+
+.al-input__label {
+  color: var(--al-input-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-label-font-size);
+  line-height: var(--al-input-label-line-height);
+  font-weight: var(--al-input-label-font-weight);
+  letter-spacing: var(--al-input-label-tracking);
+}
+
+.al-input__optional {
+  color: var(--al-input-optional);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-optional-font-size);
+  line-height: var(--al-input-optional-line-height);
+  font-weight: var(--al-input-optional-font-weight);
+  letter-spacing: var(--al-input-optional-tracking);
+}
+
+/* empurrado para a direita da linha do rotulo - posicao do Carbon */
+.al-input__counter {
+  margin-left: auto;
+  color: var(--al-input-counter);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-counter-font-size);
+  line-height: var(--al-input-counter-line-height);
+  font-weight: var(--al-input-counter-font-weight);
+  letter-spacing: var(--al-input-counter-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------- caixa */
+.al-input__control {
+  --_border-state: var(--al-input-border);
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--al-input-gap);
+  width: 100%;
+
+  /* a borda entra na caixa, entao descontar aqui fecha 48 exatos */
+  padding: calc(var(--al-input-padding-y) - var(--al-input-border-width))
+           calc(var(--al-input-padding-x) - var(--al-input-border-width));
+
+  border: var(--al-input-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-input-radius);
+  background-color: var(--_bg-force, var(--al-input-bg));
+  cursor: text;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* ------------------------------------------------------------- campo */
+.al-input__field {
+  --_text-state: var(--al-input-text-value);
+
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--_text-force, var(--_text-state));
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-font-size);
+  line-height: var(--al-input-line-height);
+  font-weight: var(--al-input-font-weight);
+  letter-spacing: var(--al-input-tracking);
+}
+
+/* Firefox baixa a opacidade do placeholder por conta propria; o token ja
+   carrega o cinza certo, entao a opacidade volta ao inteiro. */
+.al-input__field::placeholder {
+  color: var(--al-input-text-placeholder);
+  opacity: 1;
+}
+
+/* So zera o anel nativo onde o anel do AL existe - ver cabecalho. */
+@supports selector(:has(*)) {
+  .al-input__field:focus {
+    outline: none;
+  }
+}
+
+/* ---------------------------------------------------- prefixo e sufixo */
+.al-input__affix {
+  flex: none;
+  color: var(--al-input-affix);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-font-size);
+  line-height: var(--al-input-line-height);
+  font-weight: var(--al-input-font-weight);
+  letter-spacing: var(--al-input-tracking);
+  white-space: nowrap;
+  cursor: text;
+}
+
+/* -------------------------------------------------------- texto de apoio */
+.al-input__help {
+  color: var(--al-input-help);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-help-font-size);
+  line-height: var(--al-input-help-line-height);
+  font-weight: var(--al-input-help-font-weight);
+  letter-spacing: var(--al-input-help-tracking);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover: nem desabilitado nem read-only reagem - regra 23 */
+.al-input__control:hover:not(:has(.al-input__field:disabled, .al-input__field[readonly])) {
+  --_border-state: var(--al-input-border-hover);
+}
+
+/* foco - por Tab OU por clique, e ele permanece. Nao ha Active. */
+.al-input__control:has(.al-input__field:focus-visible) {
+  --_border-state: var(--al-input-border-focus);
+  box-shadow: var(--_ring-force, var(--al-input-ring));
+}
+
+/* erro - vence hover e foco por escrever noutra propriedade */
+.al-input__control:has(.al-input__field[aria-invalid="true"]) {
+  --_border-force: var(--al-input-border-error);
+  --_ring-force: var(--al-input-ring-error);
+}
+
+.al-input:has(.al-input__field[aria-invalid="true"]) .al-input__label {
+  color: var(--al-input-label-error);
+}
+
+.al-input:has(.al-input__field[aria-invalid="true"]) .al-input__help {
+  color: var(--al-input-help-error);
+}
+
+/* O contador so fica vermelho quando o erro E o limite - regra 15.
+   Erro por outro motivo deixa o contador cinza. */
+.al-input__counter[data-over-limit] {
+  color: var(--al-input-counter-error);
+}
+
+/* read-only - `[readonly]`, nunca `:read-only` (casa o disabled tambem) */
+.al-input__control:has(.al-input__field[readonly]) {
+  --_border-force: var(--al-input-border-readonly);
+  --_bg-force: var(--al-input-bg-readonly);
+  cursor: default;
+}
+
+.al-input__control:has(.al-input__field[readonly]) .al-input__affix {
+  cursor: default;
+}
+
+.al-input__field[readonly]::placeholder {
+  color: transparent;
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-input__control:has(.al-input__field:disabled) {
+  --_border-force: var(--al-input-border-disabled);
+  --_bg-force: var(--al-input-bg-disabled);
+  cursor: not-allowed;
+}
+
+.al-input__field:disabled {
+  --_text-force: var(--al-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.al-input__field:disabled::placeholder,
+.al-input__control:has(.al-input__field:disabled) .al-input__affix {
+  color: var(--al-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.al-input:has(.al-input__field:disabled) .al-input__label,
+.al-input:has(.al-input__field:disabled) .al-input__optional,
+.al-input:has(.al-input__field:disabled) .al-input__counter {
+  color: var(--al-input-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-input__control {
+    transition: none;
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -3882,13 +4323,27 @@ footer code{background:none; padding:0}
 .sw-status.is-erro{padding:12px 16px; border-radius:var(--al-radius-md);
   background:var(--al-bg-danger-subtle); color:var(--al-text-danger)}
 .sw-status.is-ok{color:var(--al-text-success)}
+
+/* ── miniatura do card do Input ── */
+.th-input{display:flex; flex-direction:column; gap:6px; width:100%; max-width:200px; margin-inline:auto}
+.th-input__label{font-size:12px; line-height:16px; color:var(--al-text-primary)}
+.th-input__field{
+  display:block; padding:8px 10px;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-lg);
+  background:var(--al-bg-surface-raised);
+  color:var(--al-text-placeholder);
+  font-size:12.5px; line-height:16px;
+}
+/* o palco do playground precisa de largura: o campo ocupa 100% do conteiner */
+#input-stage{display:block; padding-inline:8px}
+#input-stage .al-input{width:100%; max-width:360px; margin-inline:auto}
 </style>
 
 <div class="shell">
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.10.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.11.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -3919,6 +4374,7 @@ footer code{background:none; padding:0}
         <a href="#/checkbox" data-page="checkbox">Checkbox</a>
         <a href="#/radio" data-page="radio">Radio</a>
         <a href="#/switch" data-page="switch">Switch</a>
+        <a href="#/input" data-page="input">Input</a>
       </div>
     </div>
   </div>
@@ -4033,7 +4489,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.10.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.11.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -4063,7 +4519,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.10.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.11.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -4688,6 +5144,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/checkbox" data-page="checkbox"><div class="card-thumb"><div class="th-cbx" aria-hidden="true"><span class="th-cbx__row"><span class="th-cbx__box is-on"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M20 6 9 17l-5-5" /></svg></span>E-mail</span><span class="th-cbx__row"><span class="th-cbx__box is-on"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12h14" /></svg></span>Notificações</span><span class="th-cbx__row"><span class="th-cbx__box"></span>SMS</span></div></div><div class="card-body"><span class="card-title">Checkbox</span><span class="card-desc">Várias opções, ou uma que só vale depois de confirmar. Input nativo com a caixa do AL pintada por cima — com o estado misto para o checkbox pai.</span></div></a>
     <a class="card" href="#/radio" data-page="radio"><div class="card-thumb"><div class="th-rd" aria-hidden="true"><span class="th-rd__row"><span class="th-rd__dot is-on"></span>Mensal</span><span class="th-rd__row"><span class="th-rd__dot"></span>Anual</span><span class="th-rd__row"><span class="th-rd__dot"></span>Empresarial</span></div></div><div class="card-body"><span class="card-title">Radio</span><span class="card-desc">Uma opção de uma lista curta. Input nativo com o círculo do AL pintado por cima — e o erro é da pergunta, não da opção.</span></div></a>
     <a class="card" href="#/switch" data-page="switch"><div class="card-thumb"><div class="th-sw" aria-hidden="true"><span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>E-mail</span><span class="th-sw__row"><span class="th-sw__track"><span class="th-sw__thumb"></span></span>Celular</span><span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>Resumo</span></div></div><div class="card-body"><span class="card-title">Switch</span><span class="card-desc">Liga ou desliga algo que vale na hora, sem “Salvar”. Checkbox nativo com role="switch" e o trilho do AL pintado por cima.</span></div></a>
+    <a class="card" href="#/input" data-page="input"><div class="card-thumb"><div class="th-input" aria-hidden="true"><span class="th-input__label">E-mail</span><span class="th-input__field">nome@empresa.com</span></div></div><div class="card-body"><span class="card-title">Input</span><span class="card-desc">Resposta livre de uma linha. Input nativo dentro de uma caixa que aceita prefixo, sufixo e contador — e um read-only que se lê.</span></div></a>
   </div>
 </section>
 
@@ -8039,8 +8496,546 @@ footer code{background:none; padding:0}
     <div class="stat"><b>medido</b><span>estado do contrato</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-input" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Input</h1><p class="lede">Resposta livre de uma linha: nome, e-mail, URL, telefone. É o <code>&lt;input&gt;</code> nativo dentro de uma caixa do AL — que é o que deixa prefixo e sufixo morarem dentro da borda, sem que nenhum dos dois vá junto no envio.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">7 estados no Figma</span><span class="badge">33 tokens</span><span class="badge">2 exceções declaradas</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Input"><button role="tab" id="t-input-overview" aria-controls="p-input-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-input-specs" aria-controls="p-input-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-input-guide" aria-controls="p-input-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-input-a11y" aria-controls="p-input-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-input-overview" role="tabpanel" aria-labelledby="t-input-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="input-stage"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="play-input-label" for="play-input">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="play-input" type="email" placeholder="nome@empresa.com"></div></div></div>
+
+    <div class="controls" id="input-controls">
+      <div class="ctl"><span class="ctl-name">Estado</span><div class="seg" role="radiogroup" aria-label="inpstate">
+<input type="radio" id="inpstate-rest" name="inpstate" value="rest" checked><label for="inpstate-rest">Repouso</label>
+<input type="radio" id="inpstate-error" name="inpstate" value="error"><label for="inpstate-error">Erro</label>
+<input type="radio" id="inpstate-disabled" name="inpstate" value="disabled"><label for="inpstate-disabled">Desabilitado</label>
+<input type="radio" id="inpstate-readonly" name="inpstate" value="readonly"><label for="inpstate-readonly">Read-only</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Valor</span><div class="seg" role="radiogroup" aria-label="inpvalue">
+<input type="radio" id="inpvalue-none" name="inpvalue" value="none" checked><label for="inpvalue-none">Vazio</label>
+<input type="radio" id="inpvalue-filled" name="inpvalue" value="filled"><label for="inpvalue-filled">Preenchido</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Obrigatoriedade</span><div class="seg" role="radiogroup" aria-label="inpopt">
+<input type="radio" id="inpopt-req" name="inpopt" value="req" checked><label for="inpopt-req">Obrigatório</label>
+<input type="radio" id="inpopt-opt" name="inpopt" value="opt"><label for="inpopt-opt">Opcional</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Prefixo e sufixo</span><div class="seg" role="radiogroup" aria-label="inpaffix">
+<input type="radio" id="inpaffix-off" name="inpaffix" value="off" checked><label for="inpaffix-off">Sem</label>
+<input type="radio" id="inpaffix-on" name="inpaffix" value="on"><label for="inpaffix-on">www. + .com</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Contador</span><div class="seg" role="radiogroup" aria-label="inpcount">
+<input type="radio" id="inpcount-off" name="inpcount" value="off" checked><label for="inpcount-off">Sem</label>
+<input type="radio" id="inpcount-on" name="inpcount" value="on"><label for="inpcount-on">Limite de 40</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Texto de apoio</span><div class="seg" role="radiogroup" aria-label="inphelp">
+<input type="radio" id="inphelp-off" name="inphelp" value="off" checked><label for="inphelp-off">Sem</label>
+<input type="radio" id="inphelp-on" name="inphelp" value="on"><label for="inphelp-on">Com</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="inptheme">
+<input type="radio" id="inptheme-auto" name="inptheme" value="auto" checked><label for="inptheme-auto">Do sistema</label>
+<input type="radio" id="inptheme-light" name="inptheme" value="light"><label for="inptheme-light">Claro</label>
+<input type="radio" id="inptheme-dark" name="inptheme" value="dark"><label for="inptheme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><label for="input-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="input-label" type="text" value="E-mail" maxlength="28"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="input-copy">Copiar</button></div>
+      <pre><code id="input-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O campo acima é o componente real: esta página carrega o mesmo <code>input.css</code> que vai
+    para produção. Ligue o contador e digite além de 40 caracteres — o número fica vermelho e o
+    campo <b>não trava</b>. Ligue o prefixo e clique em “www.”: o cursor vai para o campo.
+  </p>
+</section>
+
+<section>
+  <h2>A caixa é um invólucro, não o &lt;input&gt;</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Prefixo e sufixo dentro da borda</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ov-affix-label" for="ov-affix">Site</label><span class="al-input__optional">(Opcional)</span></div><div class="al-input__control"><label class="al-input__affix" id="ov-affix-prefix" for="ov-affix">www.</label><input class="al-input__field" id="ov-affix" type="url" placeholder="empresa" aria-labelledby="ov-affix-label ov-affix-prefix ov-affix-suffix"><label class="al-input__affix" id="ov-affix-suffix" for="ov-affix">.com</label></div></div></div>
+      <p class="cap"><code>&lt;input&gt;</code> não aceita filho, então borda, fundo e anel moram num
+      invólucro, e o campo é transparente lá dentro. O estado do campo chega ao invólucro por
+      <code>:has()</code>. Os afixos são <code>&lt;label for&gt;</code>: clicar neles foca o campo,
+      sem JavaScript.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">O afixo não vai no envio</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ov-money-label" for="ov-money">Valor do frete</label></div><div class="al-input__control"><label class="al-input__affix" id="ov-money-prefix" for="ov-money">R$</label><input class="al-input__field" id="ov-money" type="text" value="42,90" aria-labelledby="ov-money-label ov-money-prefix"></div></div></div>
+      <p class="cap">Só o que está no campo é enviado. Quem precisa do valor completo junta no
+      código — a pessoa nunca redigita o que o afixo já mostra. <i>Material 3: moeda, unidade,
+      domínio.</i></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Os sete estados</h2>
+  <div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Default</span><div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ip-default-label" for="ip-default">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="ip-default" type="email" placeholder="nome@empresa.com"></div></div></div><p class="cap">O repouso. A borda aqui é a exceção de contraste declarada.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Hover</span><div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ip-hover-label" for="ip-hover">E-mail</label></div><div class="al-input__control" style="--_border-state: var(--al-input-border-hover)"><input class="al-input__field" id="ip-hover" type="email" placeholder="nome@empresa.com"></div></div></div><p class="cap">Só existe sob o ponteiro: a variável privada foi escrita direto.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Focus</span><div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ip-focus-label" for="ip-focus">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="ip-focus" type="email" placeholder="nome@empresa.com"></div></div></div><p class="cap">Clique <b>ou</b> tabule: o anel aparece nos dois casos. Não existe Active.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Error</span><div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ip-error-label" for="ip-error">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="ip-error" type="email" value="nome@empresa" placeholder="nome@empresa.com" aria-describedby="ip-error-help" aria-invalid="true"></div><p class="al-input__help" id="ip-error-help">Use um e-mail no formato nome@empresa.com</p></div></div><p class="cap">Vem de <code>aria-invalid="true"</code>, e a mensagem é obrigatória.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Focus + Error</span><div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ip-focus-error-label" for="ip-focus-error">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="ip-focus-error" type="email" value="nome@empresa" placeholder="nome@empresa.com" aria-describedby="ip-focus-error-help" aria-invalid="true"></div><p class="al-input__help" id="ip-focus-error-help">Use um e-mail no formato nome@empresa.com</p></div></div><p class="cap">Focado, o anel troca para vinho — <code>focusRing.error</code>.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Disabled</span><div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ip-disabled-label" for="ip-disabled">E-mail</label><span class="al-input__optional">(Opcional)</span></div><div class="al-input__control"><input class="al-input__field" id="ip-disabled" type="email" placeholder="nome@empresa.com" disabled></div></div></div><p class="cap">Atributo nativo <code>disabled</code>: o Tab pula sozinho e o valor não vai no envio.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Read-only</span><div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ip-readonly-label" for="ip-readonly">CPF</label></div><div class="al-input__control"><input class="al-input__field" id="ip-readonly" type="text" value="123.456.789-09" readonly></div></div></div><p class="cap">Atributo <code>readonly</code>: recebe Tab, deixa copiar, vai no envio — e o hover não reage.</p></div></div>
+</section>
+
+<section>
+  <h2>Num formulário de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <div class="stage2" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:20px; align-items:start">
+      <div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="fm-nome-label" for="fm-nome">Nome completo</label></div><div class="al-input__control"><input class="al-input__field" id="fm-nome" type="text" autocomplete="name" aria-describedby="fm-nome-help"></div><p class="al-input__help" id="fm-nome-help">Como aparece no documento</p></div>
+      <div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="fm-email-label" for="fm-email">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="fm-email" type="email" autocomplete="email" placeholder="nome@empresa.com"></div></div>
+      <div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="fm-tel-label" for="fm-tel">Telefone</label></div><div class="al-input__control"><input class="al-input__field" id="fm-tel" type="tel" autocomplete="tel" value="1199" aria-describedby="fm-tel-help" aria-invalid="true"></div><p class="al-input__help" id="fm-tel-help">Use DDD e número, como 11 91234-5678</p></div>
+      <div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="fm-bio-label" for="fm-bio">Descrição curta</label><span class="al-input__optional">(Opcional)</span><span class="al-input__counter" id="fm-bio-count" aria-live="off">0/40</span></div><div class="al-input__control"><input class="al-input__field" id="fm-bio" type="text" aria-describedby="fm-bio-help" data-limit="40" data-counter="fm-bio-count"></div><p class="al-input__help" id="fm-bio-help">Aparece no seu perfil</p></div>
+      <div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="fm-cpf-label" for="fm-cpf">CPF</label></div><div class="al-input__control"><input class="al-input__field" id="fm-cpf" type="text" value="123.456.789-09" readonly></div></div>
+      <div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="fm-empresa-label" for="fm-empresa">Empresa</label></div><div class="al-input__control"><input class="al-input__field" id="fm-empresa" type="text" placeholder="Preenchida pelo convite" disabled></div></div>
+    </div>
+    <p class="cap">Tabule por eles: o <b>CPF</b> (read-only) recebe foco e deixa copiar; a
+    <b>Empresa</b> (desabilitada) é pulada sozinha. Na <b>Descrição curta</b>, passe de 40
+    caracteres.</p>
+  </div>
+</section></div><div class="panel" id="p-input-specs" role="tabpanel" aria-labelledby="t-input-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Rótulo</b><span><code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Sempre visível — é a regra que sustenta a exceção de contraste da borda.</span></div>
+    <div><b>Marca “(Opcional)”</b><span>Uma entrelinha menor que o rótulo, em <code>text-secondary</code>. O AL marca o <b>opcional</b>: quem não tem a marca é obrigatório.</span></div>
+    <div><b>Contador</b><span>À direita da linha do rótulo, com números de largura fixa. Só existe havendo limite; fica vermelho só quando o erro <b>é</b> o limite.</span></div>
+    <div><b>Caixa</b><span><code>.al-input__control</code>: borda, fundo, raio e anel. O <code>&lt;input&gt;</code> nativo vive dentro, transparente, ocupando o que sobra.</span></div>
+    <div><b>Prefixo e sufixo</b><span><code>&lt;label for&gt;</code> dentro da caixa. O prefixo encosta no texto com o gap; o sufixo é empurrado para a borda direita.</span></div>
+    <div><b>Texto de apoio</b><span>Opcional, e o mesmo slot da mensagem de erro — no erro a mensagem o substitui, e é obrigatória.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A altura é consequência</h2>
+  <p>Não existe <code>height</code> neste componente. O campo fecha em
+  <b>48px</b> porque é <code>padding-y</code> × 2 mais a entrelinha,
+  com a borda de 1px descontada do padding — a mesma convenção do Button, do Tag e do Select. A
+  caixa inteira soma <b>80px</b>, e
+  <b>104px</b> com o texto de apoio.</p>
+  <div class="stats">
+    <div class="stat hl"><b>33</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>7</b><span>estados</span></div>
+    <div class="stat"><b>1</b><span>tamanho, por escolha</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody><tr><td class="tok">--al-input-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr><td class="tok">--al-input-bg-disabled</td><td class="tok dim">bg-disabled</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr><td class="tok">--al-input-bg-readonly</td><td class="tok dim">bg-subtle</td><td class="tok dim"><span class="chip sm" style="background:#EEEEEE"></span>#EEEEEE</td></tr>
+<tr><td class="tok">--al-input-border</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-input-border-hover</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-input-border-focus</td><td class="tok dim">border-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-input-border-error</td><td class="tok dim">border-danger</td><td class="tok dim"><span class="chip sm" style="background:#CA293F"></span>#CA293F</td></tr>
+<tr><td class="tok">--al-input-border-disabled</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-input-border-readonly</td><td class="tok dim">border-subtle</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr><td class="tok">--al-input-text-placeholder</td><td class="tok dim">text-placeholder</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-input-text-value</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-input-text-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-input-affix</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-input-label</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-input-label-error</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr><td class="tok">--al-input-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-input-optional</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-input-counter</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-input-counter-error</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr><td class="tok">--al-input-help</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-input-help-error</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr><td class="tok">--al-input-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr>
+<tr><td class="tok">--al-input-ring-error</td><td class="tok dim">focusRing.error</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #A00E27</td></tr></tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>O afixo tem token próprio</b>
+    Com o campo vazio, o prefixo é escuro e o placeholder ao lado é cinza — duas cores na mesma
+    linha. Se o afixo herdasse a cor do texto, clarearia junto com o placeholder. Daí
+    <code>input-affix</code>.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Read-only não é disabled</b>
+    O disabled é isento do 1.4.3 por ser inativo; o read-only não é — o conteúdo existe para ser
+    lido. Por isso o texto dele é <code>input-text-value</code>, o mesmo do campo editável, e não há
+    <code>input-text-readonly</code>. O fundo é <code>bg-subtle</code>; no tema escuro ele coincide
+    com o fundo do campo, e read-only e editável se separam pela borda — escolha consciente.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody><tr><td class="tok">--al-input-padding-x</td><td class="tok dim">space.12</td><td class="num">12px</td></tr>
+<tr><td class="tok">--al-input-padding-y</td><td class="tok dim">space.12</td><td class="num">12px</td></tr>
+<tr><td class="tok">--al-input-gap</td><td class="tok dim">space.8</td><td class="num">8px</td></tr>
+<tr><td class="tok">--al-input-radius</td><td class="tok dim">radius.lg</td><td class="num">8px</td></tr>
+<tr><td class="tok">--al-input-border-width</td><td class="tok dim">border.width.1</td><td class="num">1px</td></tr>
+<tr><td class="tok">--al-input-font</td><td class="tok dim">type.styles.body-md</td><td class="num">16/24 · peso 400</td></tr>
+<tr><td class="tok">--al-input-label-font</td><td class="tok dim">type.styles.body-md</td><td class="num">16/24 · peso 400</td></tr>
+<tr><td class="tok">--al-input-optional-font</td><td class="tok dim">type.styles.body-sm</td><td class="num">14/20 · peso 400</td></tr>
+<tr><td class="tok">--al-input-counter-font</td><td class="tok dim">type.styles.body-sm</td><td class="num">14/20 · peso 400</td></tr>
+<tr><td class="tok">--al-input-help-font</td><td class="tok dim">type.styles.caption</td><td class="num">12/16 · peso 400</td></tr></tbody>
+  </table></div>
+  <p style="margin-top:12px">Um <code>gap</code> só serve a três lugares — a pilha rótulo → campo → apoio,
+  o espaço entre o rótulo e “(Opcional)” e o espaço entre o prefixo e o texto. Os três são 8; dois
+  tokens com o mesmo valor seriam dois lugares para divergir por engano.</p>
+</section>
+
+<section>
+  <h2>O estado vem da marcação</h2>
+  <div class="anat">
+    <div><b>Erro</b><span><code>aria-invalid="true"</code> no <code>&lt;input&gt;</code>. Não há classe de erro: a cor não pode divergir do que o leitor de tela anuncia.</span></div>
+    <div><b>Desabilitado</b><span><code>disabled</code> nativo.</span></div>
+    <div><b>Read-only</b><span>O atributo <code>[readonly]</code> — <b>nunca</b> <code>:read-only</code>, que também casa o campo desabilitado e misturaria os dois estados.</span></div>
+    <div><b>Contador acima do limite</b><span><code>data-over-limit</code>, a única exceção. Sem <code>maxlength</code> o navegador não sabe que passou, então o mesmo JavaScript que atualiza o número liga o atributo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Precedência por variável, não por especificidade</h2>
+  <p>A borda é <code>var(--_border-force, var(--_border-state))</code>. Hover e foco escrevem em
+  <code>--_border-state</code>; erro, read-only e desabilitado escrevem em
+  <code>--_border-force</code>, que vence sempre por ser <b>outra propriedade</b>. Entre os três
+  decide a ordem do arquivo: erro, read-only, desabilitado — o desabilitado ganha de todos.</p>
+</section></div><div class="panel" id="p-input-guide" role="tabpanel" aria-labelledby="t-input-guide" tabindex="0" hidden>
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Resposta livre de uma linha</b><span>Nome, e-mail, URL, telefone. Se a resposta cabe numa lista conhecida, é Select (4+ opções) ou Radio (até 3). <i>Primer; Carbon.</i></span></div>
+    <div><b>Várias linhas não é Input</b><span>Abre Textarea, não estica o Input. <i>Carbon separa text input de text area.</i></span></div>
+    <div><b>Senha é outro componente</b><span>O Password entra no roadmap. Número e busca ficam fora desta versão. <i>Carbon: PasswordInput, NumberInput e Search são componentes à parte.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo, placeholder e a marca de opcional</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-ok-label" for="gd-ok">E-mail</label><span class="al-input__optional">(Opcional)</span></div><div class="al-input__control"><input class="al-input__field" id="gd-ok" type="email" placeholder="nome@empresa.com"></div></div></div>
+      <p class="cap">Rótulo visível, curto, descrevendo <b>o dado</b>. O placeholder é um
+      <b>exemplo de formato</b>, nunca a instrução. <i>Spectrum; Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-bad-label" for="gd-bad">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="gd-bad" type="email" placeholder="Digite seu e-mail corporativo"></div></div></div>
+      <p class="cap">Instrução no placeholder. Some ao digitar, e quem usa preenchimento
+      automático nunca a vê. Requisito vai no texto de apoio. <i>Spectrum.</i></p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O AL marca o opcional, não o obrigatório</b>
+    Mesma escola do Select, oposta à do asterisco do Polaris: marca-se a minoria. Não existe estilo
+    de “obrigatório” — a ausência da marca é o obrigatório.
+  </div>
+</section>
+
+<section>
+  <h2>Prefixo e sufixo</h2>
+  <div class="anat">
+    <div><b>Para a parte fixa do valor</b><span>Moeda, unidade, domínio — o que a pessoa não digita. <i>Material 3; Primer.</i></span></div>
+    <div><b>Não vai no envio</b><span>O afixo é visual. Se o sistema precisa do valor completo, o código junta.</span></div>
+    <div><b>Os dois juntos, só formando um formato</b><span>“www.” + “.com” emolduram um único valor. Não empilhe contexto nos dois lados. <b>Divergência parcial do Primer</b>, que recomenda evitar os dois.</span></div>
+    <div><b>Curto</b><span>Símbolo, unidade ou domínio. Explicação vai no texto de apoio. <i>Primer.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O contador não trava a digitação</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Dentro do limite</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-count-label" for="gd-count">Apelido</label><span class="al-input__counter" id="gd-count-count" aria-live="off">4/20</span></div><div class="al-input__control"><input class="al-input__field" id="gd-count" type="text" value="Duda" data-limit="20" data-counter="gd-count-count"></div></div></div>
+      <p class="cap">Só aparece havendo limite real. <i>Material 3; Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Acima do limite</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-over-label" for="gd-over">Apelido</label><span class="al-input__counter" id="gd-over-count" aria-live="off" data-over-limit>25/20</span></div><div class="al-input__control"><input class="al-input__field" id="gd-over" type="text" value="Maria Eduarda Albuquerque" data-limit="20" data-counter="gd-over-count"></div></div></div>
+      <p class="cap">Sem <code>maxlength</code>: o campo aceita, o contador fica vermelho e o envio
+      falha com mensagem. Travar corta sem aviso o texto colado. <b>Divergência consciente do
+      Carbon</b>, que bloqueia; precedente GOV.UK Character count.</p>
+    </div>
+  </div>
+  <p style="margin-top:12px">Num erro por outro motivo, o contador continua cinza — se o erro é
+  “campo obrigatório”, contador vermelho apontaria a causa errada.</p>
+</section>
+
+<section>
+  <h2>Apoio e erro dividem o mesmo slot</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Sem erro</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-help-label" for="gd-help">Código do cupom</label></div><div class="al-input__control"><input class="al-input__field" id="gd-help" type="text" aria-describedby="gd-help-help"></div><p class="al-input__help" id="gd-help-help">Mínimo de 8 caracteres</p></div></div>
+      <p class="cap">O apoio explica o campo — e é opcional, nasce desligado.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Com erro</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-err-label" for="gd-err">Código do cupom</label></div><div class="al-input__control"><input class="al-input__field" id="gd-err" type="text" value="abc" aria-describedby="gd-err-help" aria-invalid="true"></div><p class="al-input__help" id="gd-err-help">Use pelo menos 8 caracteres</p></div></div>
+      <p class="cap">A mensagem <b>substitui</b> o apoio, é obrigatória e diz como corrigir.
+      <i>Material 3; Spectrum; Primer: “an invalid field should always have a message”.</i></p>
+    </div>
+  </div>
+  <p style="margin-top:12px">O erro aparece quando a pessoa sai do campo ou envia — nunca a cada
+  tecla. Só o contador muda em tempo real.</p>
+</section>
+
+<section>
+  <h2>Read-only e desabilitado resolvem coisas diferentes</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Read-only</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-ro-label" for="gd-ro">CPF</label></div><div class="al-input__control"><input class="al-input__field" id="gd-ro" type="text" value="123.456.789-09" readonly></div></div></div>
+      <p class="cap">O dado precisa ser lido e copiado, e <b>vai no envio</b>. Recebe Tab, não
+      reage ao hover. Vazio, mostra “—” — nunca placeholder. <i>Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Desabilitado</span>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-off-label" for="gd-off">Empresa</label></div><div class="al-input__control"><input class="al-input__field" id="gd-off" type="text" placeholder="Preenchida pelo convite" disabled></div></div></div>
+      <p class="cap">O campo não se aplica agora, e <b>não vai no envio</b>. Fica abaixo do AA de
+      propósito: o 1.4.3 isenta componente inativo.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Largura</h2>
+  <p>O componente ocupa 100% do contêiner, e o formulário decide o contêiner pelo tamanho
+  esperado da resposta: um CEP não precisa da largura de um endereço. <i>GOV.UK: “use
+  appropriately-sized text inputs”.</i> Um tamanho só de altura, 48px.</p>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Aviso (warning), ícone à esquerda, botão de limpar</b><span>Não entram nesta versão.</span></div>
+    <div><b>Senha, número, busca e várias linhas</b><span>Cada demanda abre o componente próprio — Password, Textarea — e não estica o Input.</span></div>
+    <div><b>Tamanhos extras</b><span>Um tamanho só, como no Select.</span></div>
+  </div>
+</section></div><div class="panel" id="p-input-a11y" role="tabpanel" aria-labelledby="t-input-a11y" tabindex="0" hidden>
+<section>
+  <h2>O fundo efetivo muda com a camada</h2>
+  <p>O portão mede <b>combinação renderizada</b>: oito situações — os sete estados e o read-only
+  focado — nos dois temas, cada papel contra o fundo que ele realmente tem na tela. A borda troca
+  de vizinho quando o campo recebe foco: em repouso toca a página (a pior entre
+  <code>bg-canvas</code> e <code>bg-surface-raised</code>); com foco, o anel desenha um respiro de
+  2px em <code>bg-canvas</code> colado nela.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Borda em repouso</th><th>Borda com foco</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num">1.57:1</td><td class="num strong">3.34:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num">1.46:1</td><td class="num strong">3.20:1</td></tr>
+    </tbody>
+  </table></div>
+  <div class="stats">
+    <div class="stat hl"><b>134</b><span>combinações medidas</span></div>
+    <div class="stat"><b>118</b><span>passam</span></div>
+    <div class="stat"><b>16</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda abaixo de 3:1 no repouso e no read-only — decisão consciente</b>
+    <code>border-default</code> dá 1.57:1 no claro; o read-only, em
+    <code>border-subtle</code>, chega a 1.00:1 no escuro. O 1.4.11
+    não falha quando a borda não é o único meio de perceber o componente — e aqui não é: há rótulo
+    visível e texto dentro. <b>Por isso “nunca use o Input sem rótulo visível” é regra de uso, e
+    não sugestão:</b> é ela que sustenta esta exceção.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Disabled abaixo de AA — isenção do 1.4.3</b>
+    O WCAG isenta componente inativo, e subir esse contraste faz o desabilitado parecer editável.
+    Exceção permanente do AL.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O read-only não tem isenção — e não precisa</b>
+    O texto dele é o mesmo do campo editável: 12.54:1 no claro.
+    O único texto que reprovaria ali é o placeholder (4,21:1), e ele não aparece: o CSS o torna
+    transparente e o read-only vazio mostra “—”.
+  </div>
+</section>
+
+<section>
+  <h2>Borda e anel — o não-textual, piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-border</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.57:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-border</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-border-hover</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">4.88:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-border-hover</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">3.53:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-border-error</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">5.38:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-border-error</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">5.38:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-ring-error</td><td class="tok dim">respiro + pagina</td><td class="num strong">8.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-ring-error</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.82:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-input-border-disabled</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-border-disabled</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">readonly</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#E0E0E0"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">--al-input-border-readonly</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.14:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">readonly</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-border-readonly</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.00:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-readonly</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#E0E0E0"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">--al-input-border-readonly</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">1.14:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-readonly</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-readonly</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-border-readonly</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">1.00:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-readonly</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">mensagem de erro</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">mensagem de erro</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">mensagem de erro</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">mensagem de erro</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">texto</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-input-text-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">1.59:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.10:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.10:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.10:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">texto</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">readonly</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">12.54:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">readonly</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">12.54:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">readonly</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">readonly</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">readonly</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">readonly</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">readonly</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">readonly</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">readonly</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">readonly</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">readonly</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">readonly</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">readonly</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">readonly</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-readonly</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">12.54:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-readonly</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">12.54:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-readonly</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-readonly</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-readonly</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-readonly</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-readonly</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-readonly</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-readonly</td><td class="tok dim">afixo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-affix</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-readonly</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-readonly</td><td class="tok dim">marca opcional</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-optional</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-readonly</td><td class="tok dim">contador</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-readonly</td><td class="tok dim">contador acima do limite</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-counter-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-readonly</td><td class="tok dim">apoio</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-input-help</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Sete regras, medidas por <code>components/input/a11y.py</code> no HTML que este site emite.
+  Quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> de rótulo apontando para ele.</span></div>
+    <div><b>Erro com mensagem</b><span><code>aria-invalid="true"</code> com <code>aria-describedby</code> para um texto que existe e não está vazio.</span></div>
+    <div><b>Afixo no nome</b><span>Campo com afixo tem <code>aria-labelledby</code> = rótulo + prefixo + sufixo: o leitor lê “Site, www., .com”. <i>Polaris.</i></span></div>
+    <div><b>Sem <code>aria-label</code> redundante</b><span>Havendo rótulo visível, o nome anunciado tem que ser ele.</span></div>
+    <div><b>Sem <code>maxlength</code></b><span>O limite não trava a digitação.</span></div>
+    <div><b>Contador com <code>aria-live</code></b><span><code>polite</code> com o campo focado, <code>off</code> fora — senão os contadores falam um atrás do outro. <i>Polaris.</i></span></div>
+    <div><b>Read-only nunca vazio</b><span>Sem valor, mostra “—”.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>24</b><span>campos conferidos no HTML</span></div>
+    <div class="stat"><b>7</b><span>regras por campo</span></div>
+    <div class="stat"><b>medido</b><span>estado do contrato</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Não existe Active — e a medição confirmou</h2>
+  <p>A especificação do <code>:focus-visible</code> manda todo elemento que aceita digitação
+  mostrar o foco, <b>inclusive no clique de mouse</b>. Medido no Chromium na etapa 6: clicar no
+  campo liga o anel, e clicar no read-only também. Uma borda laranja de 1px para o clique seria
+  coberta pelo anel no mesmo instante — por isso o estado saiu do Figma na etapa 1.</p>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.10.0</span>
+  <span><b>AL Design System</b> · v0.11.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -9056,6 +10051,128 @@ var CBX_DASH = "<svg class=\"al-icon al-checkbox__dash\" aria-hidden=\"true\" fo
     i.addEventListener('input', render);
   });
   document.getElementById('sw-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+
+(function () {
+  // ── contador do Input ──
+  // O que a aplicacao faria: o limite nao trava a digitacao (sem maxlength),
+  // entao e este script que conta, liga data-over-limit e so deixa o contador
+  // falar com o campo focado (aria-live polite / off - solucao do Polaris).
+  function ligarContadores(raiz) {
+    raiz.querySelectorAll('.al-input__field[data-limit]').forEach(function (campo) {
+      if (campo.dataset.bound) return;
+      campo.dataset.bound = '1';
+      var limite = +campo.dataset.limit;
+      var cont = document.getElementById(campo.dataset.counter);
+      if (!cont) return;
+      function atualizar() {
+        var n = campo.value.length;
+        cont.textContent = n + '/' + limite;
+        if (n > limite) cont.setAttribute('data-over-limit', '');
+        else cont.removeAttribute('data-over-limit');
+      }
+      campo.addEventListener('input', atualizar);
+      campo.addEventListener('focus', function () { cont.setAttribute('aria-live', 'polite'); });
+      campo.addEventListener('blur', function () { cont.setAttribute('aria-live', 'off'); });
+      atualizar();
+    });
+  }
+  ligarContadores(document);
+
+  // ── playground do Input ──
+  var stage = document.getElementById('input-stage');
+  if (!stage) return;
+  var code = document.getElementById('input-code');
+  var labelInput = document.getElementById('input-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    var estado = pick('inpstate');
+    var cheio = pick('inpvalue') === 'filled';
+    var opcional = pick('inpopt') === 'opt';
+    var afixo = pick('inpaffix') === 'on';
+    var contador = pick('inpcount') === 'on';
+    var comApoio = pick('inphelp') === 'on';
+    var theme = pick('inptheme');
+    var rotulo = (labelInput.value || '').trim() || 'E-mail';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var erro = estado === 'error', off = estado === 'disabled', ro = estado === 'readonly';
+    var tipo = afixo ? 'url' : 'email';
+    var ph = afixo ? 'empresa' : 'nome@empresa.com';
+    var valor = cheio ? (afixo ? 'empresa' : 'nome@empresa.com') : '';
+    if (erro && cheio) valor = afixo ? 'empresa!' : 'nome@empresa';
+    // regra 22: read-only vazio mostra "—", nunca placeholder
+    if (ro && !valor) valor = '—';
+    // o erro SUBSTITUI o apoio, e a mensagem e obrigatoria (regra 17)
+    var msg = erro ? (afixo ? 'Use só letras, números e hífen'
+                            : 'Use um e-mail no formato nome@empresa.com')
+                   : (comApoio ? 'Usamos para enviar o recibo' : null);
+
+    function attrsDe(id) {
+      var a = ['class="al-input__field"', 'id="' + id + '"', 'type="' + tipo + '"'];
+      if (valor) a.push('value="' + esc(valor) + '"');
+      if (!ro) a.push('placeholder="' + ph + '"');
+      if (afixo) a.push('aria-labelledby="' + id + '-label ' + id + '-prefix ' + id + '-suffix"');
+      if (msg) a.push('aria-describedby="' + id + '-help"');
+      if (erro) a.push('aria-invalid="true"');
+      if (contador && !ro) a.push('data-limit="40" data-counter="' + id + '-count"');
+      if (ro) a.push('readonly');
+      if (off) a.push('disabled');
+      return a;
+    }
+
+    function montar(id, escapar) {
+      var e = escapar ? function (s) { return s.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+                      : function (s) { return s; };
+      var ind = escapar ? '\n' : '';
+      var sp = function (n) { return escapar ? new Array(n + 1).join(' ') : ''; };
+      var out = e('<div class="al-input">') + ind
+        + sp(2) + e('<div class="al-input__labelrow">') + ind
+        + sp(4) + e('<label class="al-input__label" id="' + id + '-label" for="' + id + '">')
+        + esc(rotulo) + e('</label>') + ind;
+      if (opcional) out += sp(4) + e('<span class="al-input__optional">(Opcional)</span>') + ind;
+      // read-only nao se digita: contador ali contaria o "—"
+      if (contador && !ro) out += sp(4) + e('<span class="al-input__counter" id="' + id
+                                     + '-count" aria-live="off">' + valor.length + '/40</span>') + ind;
+      out += sp(2) + e('</div>') + ind + sp(2) + e('<div class="al-input__control">') + ind;
+      if (afixo) out += sp(4) + e('<label class="al-input__affix" id="' + id + '-prefix" for="' + id + '">www.</label>') + ind;
+      out += sp(4) + e('<input ' + attrsDe(id).join(' ') + '>') + ind;
+      if (afixo) out += sp(4) + e('<label class="al-input__affix" id="' + id + '-suffix" for="' + id + '">.com</label>') + ind;
+      out += sp(2) + e('</div>') + ind;
+      if (msg) out += sp(2) + e('<p class="al-input__help" id="' + id + '-help">' + msg + '</p>') + ind;
+      out += e('</div>');
+      return out;
+    }
+
+    stage.innerHTML = montar('play-input', false);
+    ligarContadores(stage);
+    var linhas = montar('email', true);
+    if (erro) linhas += '\n&lt;!-- o erro vem de aria-invalid, nunca de uma classe --&gt;';
+    if (contador) linhas += '\n&lt;!-- sem maxlength: o script conta e liga data-over-limit --&gt;';
+    code.innerHTML = linhas;
+  }
+
+  document.querySelectorAll('#input-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('input-copy').addEventListener('click', function () {
     var btn = this;
     navigator.clipboard.writeText(code.textContent).then(function () {
       btn.textContent = 'Copiado';

@@ -1,0 +1,299 @@
+/* AL Design System - Input
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/input/al-input-tokens.css
+ *
+ * CAMPO DE TEXTO DE UMA LINHA
+ *   <input> nativo, `type` text, email, url ou tel. Senha e o componente
+ *   Password; varias linhas e o Textarea. Nenhum dos dois estica este arquivo.
+ *
+ * ANATOMIA
+ *   <div class="al-input">
+ *     <div class="al-input__labelrow">
+ *       <label class="al-input__label" id="site-label" for="site">Site</label>
+ *       <span class="al-input__optional">(Opcional)</span>
+ *       <span class="al-input__counter" aria-live="off">0/100</span>
+ *     </div>
+ *     <div class="al-input__control">
+ *       <label class="al-input__affix" id="site-prefix" for="site">www.</label>
+ *       <input class="al-input__field" id="site" type="url"
+ *              aria-labelledby="site-label site-prefix site-suffix"
+ *              aria-describedby="site-help">
+ *       <label class="al-input__affix" id="site-suffix" for="site">.com</label>
+ *     </div>
+ *     <p class="al-input__help" id="site-help">Texto de apoio</p>
+ *   </div>
+ *
+ *   Marca "(Opcional)", contador, prefixo, sufixo e texto de apoio sao
+ *   MARCACAO, nao modificador: quem nao quer, nao escreve o elemento.
+ *
+ * A CAIXA E O `__control`, NAO O <input>
+ *   Prefixo e sufixo precisam ficar DENTRO da borda, e <input> nao aceita
+ *   filho. Entao borda, fundo, raio e anel moram no `__control`, e o <input>
+ *   e transparente, sem borda, ocupando o espaco que sobra. Consequencia: o
+ *   estado do campo e lido pelo conteiner via `:has()` - hover, foco, erro,
+ *   desabilitado e read-only.
+ *
+ *   Degradacao se `:has()` faltar: o campo fica sempre no estado de repouso -
+ *   sem anel de foco pintado pelo AL. Por isso o `outline` so e zerado DENTRO
+ *   de um `@supports selector(:has(*))`: sem `:has()` volta o anel nativo do
+ *   navegador, e o foco nunca some.
+ *
+ * O AFIXO E <label for>, E NAO <span>
+ *   Clicar em "www." precisa focar o campo, como clicar no rotulo. <label for>
+ *   faz isso sem uma linha de JavaScript. O nome anunciado continua
+ *   deterministico porque o <input> declara `aria-labelledby` = rotulo +
+ *   prefixo + sufixo ("Site, www., .com"), e aria-labelledby vence as labels -
+ *   solucao do Polaris, regra 29. Sem afixo, nao ha aria-labelledby: basta o
+ *   <label for>.
+ *
+ *   O afixo e visual e NAO vai no envio (regra 10): esta fora do <input>.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Erro le `aria-invalid="true"`; desabilitado le `:disabled`; read-only le
+ *   o atributo `[readonly]` - NUNCA `:read-only`, que tambem casa campo
+ *   desabilitado e misturaria os dois estados. Mesmo motivo do Select: a cor
+ *   nao pode divergir do que o leitor de tela anuncia.
+ *
+ *   A unica excecao e o contador acima do limite, `data-over-limit`. Nao ha
+ *   atributo nativo para isso: sem `maxlength` (regra 14 - o limite nao trava
+ *   a digitacao) o navegador nao sabe que passou. O JavaScript que ja atualiza
+ *   o numero e o mesmo que liga o atributo.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE
+ *   Mesma mecanica do Select: interacao escreve em `--_border-state`; erro,
+ *   read-only e desabilitado escrevem em `--_border-force`, que vence sempre
+ *   por ser outra propriedade. Entre os tres decide a ordem do arquivo:
+ *   erro, read-only, desabilitado - o desabilitado ganha de todos.
+ *
+ * NAO EXISTE ACTIVE
+ *   Campo de texto SEMPRE casa `:focus-visible`, inclusive no clique de mouse
+ *   (a spec manda isso para todo elemento que aceita digitacao). A borda de
+ *   1px de um Active seria coberta pelo anel no mesmo instante. Regra 20.
+ *
+ * READ-ONLY NAO MOSTRA PLACEHOLDER
+ *   O cinza do placeholder sobre `bg-readonly` da 4.21:1, abaixo do piso. E
+ *   placeholder ensina a preencher, o que nao se aplica. O CSS o torna
+ *   transparente; a regra 22 manda o read-only vazio mostrar "—" como valor.
+ *
+ * ALTURA E CONSEQUENCIA, NAO `height`
+ *   48 = padding-y x2 + entrelinha, com a borda descontada do padding - a
+ *   mesma convencao do Button, do Tag e do Select. A borda de 1px existe em
+ *   todos os estados, entao o campo nunca "pula" quando o estado troca.
+ *
+ * LARGURA
+ *   100% do conteiner. Formulario decide largura (regra 26).
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
+ *   escala de motion. Mesma pendencia do Button e do Select; aparece nomeada
+ *   no relatorio do check.py.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-input-gap);
+}
+
+/* ------------------------------------------------------------ rotulo */
+/* baseline, nao center: rotulo tem entrelinha 24, marca e contador 20. */
+.al-input__labelrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--al-input-gap);
+}
+
+.al-input__label {
+  color: var(--al-input-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-label-font-size);
+  line-height: var(--al-input-label-line-height);
+  font-weight: var(--al-input-label-font-weight);
+  letter-spacing: var(--al-input-label-tracking);
+}
+
+.al-input__optional {
+  color: var(--al-input-optional);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-optional-font-size);
+  line-height: var(--al-input-optional-line-height);
+  font-weight: var(--al-input-optional-font-weight);
+  letter-spacing: var(--al-input-optional-tracking);
+}
+
+/* empurrado para a direita da linha do rotulo - posicao do Carbon */
+.al-input__counter {
+  margin-left: auto;
+  color: var(--al-input-counter);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-counter-font-size);
+  line-height: var(--al-input-counter-line-height);
+  font-weight: var(--al-input-counter-font-weight);
+  letter-spacing: var(--al-input-counter-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------- caixa */
+.al-input__control {
+  --_border-state: var(--al-input-border);
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--al-input-gap);
+  width: 100%;
+
+  /* a borda entra na caixa, entao descontar aqui fecha 48 exatos */
+  padding: calc(var(--al-input-padding-y) - var(--al-input-border-width))
+           calc(var(--al-input-padding-x) - var(--al-input-border-width));
+
+  border: var(--al-input-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-input-radius);
+  background-color: var(--_bg-force, var(--al-input-bg));
+  cursor: text;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* ------------------------------------------------------------- campo */
+.al-input__field {
+  --_text-state: var(--al-input-text-value);
+
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--_text-force, var(--_text-state));
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-font-size);
+  line-height: var(--al-input-line-height);
+  font-weight: var(--al-input-font-weight);
+  letter-spacing: var(--al-input-tracking);
+}
+
+/* Firefox baixa a opacidade do placeholder por conta propria; o token ja
+   carrega o cinza certo, entao a opacidade volta ao inteiro. */
+.al-input__field::placeholder {
+  color: var(--al-input-text-placeholder);
+  opacity: 1;
+}
+
+/* So zera o anel nativo onde o anel do AL existe - ver cabecalho. */
+@supports selector(:has(*)) {
+  .al-input__field:focus {
+    outline: none;
+  }
+}
+
+/* ---------------------------------------------------- prefixo e sufixo */
+.al-input__affix {
+  flex: none;
+  color: var(--al-input-affix);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-font-size);
+  line-height: var(--al-input-line-height);
+  font-weight: var(--al-input-font-weight);
+  letter-spacing: var(--al-input-tracking);
+  white-space: nowrap;
+  cursor: text;
+}
+
+/* -------------------------------------------------------- texto de apoio */
+.al-input__help {
+  color: var(--al-input-help);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-help-font-size);
+  line-height: var(--al-input-help-line-height);
+  font-weight: var(--al-input-help-font-weight);
+  letter-spacing: var(--al-input-help-tracking);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover: nem desabilitado nem read-only reagem - regra 23 */
+.al-input__control:hover:not(:has(.al-input__field:disabled, .al-input__field[readonly])) {
+  --_border-state: var(--al-input-border-hover);
+}
+
+/* foco - por Tab OU por clique, e ele permanece. Nao ha Active. */
+.al-input__control:has(.al-input__field:focus-visible) {
+  --_border-state: var(--al-input-border-focus);
+  box-shadow: var(--_ring-force, var(--al-input-ring));
+}
+
+/* erro - vence hover e foco por escrever noutra propriedade */
+.al-input__control:has(.al-input__field[aria-invalid="true"]) {
+  --_border-force: var(--al-input-border-error);
+  --_ring-force: var(--al-input-ring-error);
+}
+
+.al-input:has(.al-input__field[aria-invalid="true"]) .al-input__label {
+  color: var(--al-input-label-error);
+}
+
+.al-input:has(.al-input__field[aria-invalid="true"]) .al-input__help {
+  color: var(--al-input-help-error);
+}
+
+/* O contador so fica vermelho quando o erro E o limite - regra 15.
+   Erro por outro motivo deixa o contador cinza. */
+.al-input__counter[data-over-limit] {
+  color: var(--al-input-counter-error);
+}
+
+/* read-only - `[readonly]`, nunca `:read-only` (casa o disabled tambem) */
+.al-input__control:has(.al-input__field[readonly]) {
+  --_border-force: var(--al-input-border-readonly);
+  --_bg-force: var(--al-input-bg-readonly);
+  cursor: default;
+}
+
+.al-input__control:has(.al-input__field[readonly]) .al-input__affix {
+  cursor: default;
+}
+
+.al-input__field[readonly]::placeholder {
+  color: transparent;
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-input__control:has(.al-input__field:disabled) {
+  --_border-force: var(--al-input-border-disabled);
+  --_bg-force: var(--al-input-bg-disabled);
+  cursor: not-allowed;
+}
+
+.al-input__field:disabled {
+  --_text-force: var(--al-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.al-input__field:disabled::placeholder,
+.al-input__control:has(.al-input__field:disabled) .al-input__affix {
+  color: var(--al-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.al-input:has(.al-input__field:disabled) .al-input__label,
+.al-input:has(.al-input__field:disabled) .al-input__optional,
+.al-input:has(.al-input__field:disabled) .al-input__counter {
+  color: var(--al-input-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-input__control {
+    transition: none;
+  }
+}

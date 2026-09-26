@@ -1,0 +1,1205 @@
+<meta charset="utf-8">
+<title>AL Input QA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ================= foundation ================= */
+/* AL Design System - Foundation
+ * v0.11.0 - MIT
+ * GERADO por foundation/css.py. Nao editar a mao: rode o script.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* primitivas de cor - a rampa crua. Nao consumir direto num componente. */
+  --al-color-neutral-50: #F7F7F7;
+  --al-color-neutral-100: #EEEEEE;
+  --al-color-neutral-200: #E0E0E0;
+  --al-color-neutral-300: #CECECE;
+  --al-color-neutral-400: #B3B3B3;
+  --al-color-neutral-500: #949494;
+  --al-color-neutral-600: #717171;
+  --al-color-neutral-700: #565656;
+  --al-color-neutral-800: #3E3E3E;
+  --al-color-neutral-900: #292929;
+  --al-color-neutral-950: #181818;
+  --al-color-orange-50: #FFF5F0;
+  --al-color-orange-100: #FFEADE;
+  --al-color-orange-200: #FFD7C4;
+  --al-color-orange-300: #FFBDA0;
+  --al-color-orange-400: #FF9267;
+  --al-color-orange-500: #FC5000;
+  --al-color-orange-600: #C53900;
+  --al-color-orange-700: #992700;
+  --al-color-orange-800: #6C2100;
+  --al-color-orange-900: #4A1700;
+  --al-color-orange-950: #2D0D00;
+  --al-color-red-50: #FFF5F5;
+  --al-color-red-100: #FFE8E9;
+  --al-color-red-200: #FFD5D5;
+  --al-color-red-300: #FFBABB;
+  --al-color-red-400: #FF8D91;
+  --al-color-red-500: #F84F5D;
+  --al-color-red-600: #CA293F;
+  --al-color-red-700: #A00E27;
+  --al-color-red-800: #780014;
+  --al-color-red-900: #550007;
+  --al-color-red-950: #360001;
+  --al-color-amber-50: #FBF7EC;
+  --al-color-amber-100: #F7EED5;
+  --al-color-amber-200: #F2DFB0;
+  --al-color-amber-300: #EBCA7E;
+  --al-color-amber-400: #DCAC2E;
+  --al-color-amber-500: #BA8C00;
+  --al-color-amber-600: #916A00;
+  --al-color-amber-700: #704F00;
+  --al-color-amber-800: #523800;
+  --al-color-amber-900: #392500;
+  --al-color-amber-950: #221500;
+  --al-color-green-50: #EFFBF2;
+  --al-color-green-100: #DEF6E4;
+  --al-color-green-200: #C1EECA;
+  --al-color-green-300: #9DE2A9;
+  --al-color-green-400: #6ACD7C;
+  --al-color-green-500: #1BB14B;
+  --al-color-green-600: #008A2A;
+  --al-color-green-700: #006911;
+  --al-color-green-800: #004C03;
+  --al-color-green-900: #013400;
+  --al-color-green-950: #001F00;
+  --al-color-blue-50: #F1F8FF;
+  --al-color-blue-100: #E2F1FF;
+  --al-color-blue-200: #CAE4FF;
+  --al-color-blue-300: #A9D3FF;
+  --al-color-blue-400: #76B8FF;
+  --al-color-blue-500: #2696FF;
+  --al-color-blue-600: #0071D0;
+  --al-color-blue-700: #0055A3;
+  --al-color-blue-800: #003C7A;
+  --al-color-blue-900: #002858;
+  --al-color-blue-950: #001639;
+
+  /* semanticos de cor - TEMA CLARO. E aqui que o tema e resolvido. */
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-thumb: #B3B3B3;
+  --al-bg-thumb-disabled: #CECECE;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+
+  /* tipografia */
+  --al-font-sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --al-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-font-weight-regular: 400;
+  --al-font-weight-medium: 500;
+  --al-font-weight-semibold: 600;
+  --al-font-weight-bold: 700;
+  --al-font-size-xs: 12px;
+  --al-font-size-sm: 14px;
+  --al-font-size-md: 16px;
+  --al-font-size-lg: 18px;
+  --al-font-size-xl: 20px;
+  --al-font-size-2xl: 24px;
+  --al-font-size-3xl: 30px;
+  --al-font-size-4xl: 36px;
+  --al-font-size-5xl: 48px;
+  --al-font-size-6xl: 60px;
+  --al-line-height-xs: 16px;
+  --al-line-height-sm: 20px;
+  --al-line-height-md: 24px;
+  --al-line-height-lg: 28px;
+  --al-line-height-xl: 28px;
+  --al-line-height-2xl: 32px;
+  --al-line-height-3xl: 36px;
+  --al-line-height-4xl: 44px;
+  --al-line-height-5xl: 56px;
+  --al-line-height-6xl: 68px;
+
+  /* espacamento */
+  --al-space-0: 0px;
+  --al-space-2: 2px;
+  --al-space-4: 4px;
+  --al-space-8: 8px;
+  --al-space-12: 12px;
+  --al-space-16: 16px;
+  --al-space-20: 20px;
+  --al-space-24: 24px;
+  --al-space-32: 32px;
+  --al-space-40: 40px;
+  --al-space-48: 48px;
+  --al-space-64: 64px;
+  --al-space-80: 80px;
+  --al-space-96: 96px;
+
+  /* raio */
+  --al-radius-none: 0px;
+  --al-radius-xs: 2px;
+  --al-radius-sm: 4px;
+  --al-radius-md: 6px;
+  --al-radius-lg: 8px;
+  --al-radius-xl: 12px;
+  --al-radius-2xl: 16px;
+  --al-radius-3xl: 24px;
+  --al-radius-full: 9999px;
+
+  /* borda */
+  --al-border-width-0: 0px;
+  --al-border-width-1: 1px;
+  --al-border-width-2: 2px;
+  --al-border-width-focus: 2px;
+  --al-border-focus-offset: 2px;
+
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
+
+  /* elevacao - TEMA CLARO */
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+
+  /* anel de foco - composto uma vez, acompanha o tema sozinho.
+     Duas camadas: respiro na cor do fundo, depois o anel na cor do foco. */
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+}
+
+/* TEMA ESCURO. Tres estados, nao dois: sem carimbo no root, so o
+ * prefers-color-scheme separa; com carimbo, a escolha explicita vence. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --al-bg-canvas: #181818;
+    --al-bg-surface: #292929;
+    --al-bg-surface-raised: #3E3E3E;
+    --al-bg-subtle: #3E3E3E;
+    --al-bg-hover: #3E3E3E;
+    --al-bg-active: #565656;
+    --al-bg-disabled: #3E3E3E;
+    --al-bg-inverse: #F7F7F7;
+    --al-bg-thumb: #717171;
+    --al-bg-thumb-disabled: #565656;
+    --al-bg-brand: #FC5000;
+    --al-bg-brand-hover: #EA4900;
+    --al-bg-brand-active: #C53900;
+    --al-bg-brand-subtle: #2D0D00;
+    --al-bg-brand-strong: #992700;
+    --al-bg-danger: #F84F5D;
+    --al-bg-danger-hover: #FF8D91;
+    --al-bg-danger-active: #FFBABB;
+    --al-bg-danger-subtle: #360001;
+    --al-bg-success: #1BB14B;
+    --al-bg-success-hover: #6ACD7C;
+    --al-bg-success-subtle: #001F00;
+    --al-bg-warning: #DCAC2E;
+    --al-bg-warning-hover: #EBCA7E;
+    --al-bg-warning-subtle: #221500;
+    --al-bg-info: #2696FF;
+    --al-bg-info-hover: #76B8FF;
+    --al-bg-info-subtle: #001639;
+    --al-text-primary: #F7F7F7;
+    --al-text-secondary: #B3B3B3;
+    --al-text-placeholder: #B3B3B3;
+    --al-text-disabled: #717171;
+    --al-text-inverse: #292929;
+    --al-text-on-brand: #FFFFFF;
+    --al-text-on-solid: #181818;
+    --al-text-brand: #FF9267;
+    --al-text-danger: #FF8D91;
+    --al-text-success: #6ACD7C;
+    --al-text-warning: #EBCA7E;
+    --al-text-info: #76B8FF;
+    --al-border-subtle: #3E3E3E;
+    --al-border-default: #565656;
+    --al-border-strong: #949494;
+    --al-border-brand: #FC5000;
+    --al-border-focus: #FF9267;
+    --al-border-danger: #F84F5D;
+    --al-border-success: #1BB14B;
+    --al-border-warning: #DCAC2E;
+    --al-border-info: #2696FF;
+    --al-shadow-focus-default: #FF9267;
+    --al-shadow-focus-error: #FF8D91;
+    --al-elevation-0: none;
+    --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+    --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+    --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+    --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+    --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+  }
+}
+
+:root[data-theme="dark"] {
+  --al-bg-canvas: #181818;
+  --al-bg-surface: #292929;
+  --al-bg-surface-raised: #3E3E3E;
+  --al-bg-subtle: #3E3E3E;
+  --al-bg-hover: #3E3E3E;
+  --al-bg-active: #565656;
+  --al-bg-disabled: #3E3E3E;
+  --al-bg-inverse: #F7F7F7;
+  --al-bg-thumb: #717171;
+  --al-bg-thumb-disabled: #565656;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #EA4900;
+  --al-bg-brand-active: #C53900;
+  --al-bg-brand-subtle: #2D0D00;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #F84F5D;
+  --al-bg-danger-hover: #FF8D91;
+  --al-bg-danger-active: #FFBABB;
+  --al-bg-danger-subtle: #360001;
+  --al-bg-success: #1BB14B;
+  --al-bg-success-hover: #6ACD7C;
+  --al-bg-success-subtle: #001F00;
+  --al-bg-warning: #DCAC2E;
+  --al-bg-warning-hover: #EBCA7E;
+  --al-bg-warning-subtle: #221500;
+  --al-bg-info: #2696FF;
+  --al-bg-info-hover: #76B8FF;
+  --al-bg-info-subtle: #001639;
+  --al-text-primary: #F7F7F7;
+  --al-text-secondary: #B3B3B3;
+  --al-text-placeholder: #B3B3B3;
+  --al-text-disabled: #717171;
+  --al-text-inverse: #292929;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #181818;
+  --al-text-brand: #FF9267;
+  --al-text-danger: #FF8D91;
+  --al-text-success: #6ACD7C;
+  --al-text-warning: #EBCA7E;
+  --al-text-info: #76B8FF;
+  --al-border-subtle: #3E3E3E;
+  --al-border-default: #565656;
+  --al-border-strong: #949494;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FF9267;
+  --al-border-danger: #F84F5D;
+  --al-border-success: #1BB14B;
+  --al-border-warning: #DCAC2E;
+  --al-border-info: #2696FF;
+  --al-shadow-focus-default: #FF9267;
+  --al-shadow-focus-error: #FF8D91;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+  --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+  --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+  --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+  --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+}
+
+/* ================= input - tokens ================= */
+/* AL Design System - tokens do Input
+ * GERADO por components/input/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Altura do campo: 48px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo - so o disabled e o readonly mudam */
+  --al-input-bg: var(--al-bg-surface-raised);
+  --al-input-bg-disabled: var(--al-bg-disabled);
+  --al-input-bg-readonly: var(--al-bg-subtle);
+
+  /* borda - o eixo que carrega o estado */
+  --al-input-border: var(--al-border-default);
+  --al-input-border-hover: var(--al-border-strong);
+  --al-input-border-focus: var(--al-border-brand);
+  --al-input-border-error: var(--al-border-danger);
+  --al-input-border-disabled: var(--al-border-default);
+  --al-input-border-readonly: var(--al-border-subtle);
+
+  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */
+  --al-input-text-placeholder: var(--al-text-placeholder);
+  --al-input-text-value: var(--al-text-primary);
+  --al-input-text-disabled: var(--al-text-disabled);
+
+  /* prefixo e sufixo - nao herdam a cor do placeholder */
+  --al-input-affix: var(--al-text-primary);
+
+  /* rotulo, marca, contador e apoio - vivem fora do campo, sobre a tela */
+  --al-input-label: var(--al-text-primary);
+  --al-input-label-error: var(--al-text-danger);
+  --al-input-label-disabled: var(--al-text-disabled);
+  --al-input-optional: var(--al-text-secondary);
+  --al-input-counter: var(--al-text-secondary);
+  --al-input-counter-error: var(--al-text-danger);
+  --al-input-help: var(--al-text-secondary);
+  --al-input-help-error: var(--al-text-danger);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-input-ring: var(--al-focus-ring-default);
+  --al-input-ring-error: var(--al-focus-ring-error);
+
+  /* geometria */
+  --al-input-padding-x: var(--al-space-12);
+  --al-input-padding-y: var(--al-space-12);
+  --al-input-gap: var(--al-space-8);
+  --al-input-radius: var(--al-radius-lg);
+  --al-input-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-input-font-size: var(--al-font-size-md);
+  --al-input-line-height: var(--al-line-height-md);
+  --al-input-font-weight: 400;
+  --al-input-tracking: 0em;
+  --al-input-label-font-size: var(--al-font-size-md);
+  --al-input-label-line-height: var(--al-line-height-md);
+  --al-input-label-font-weight: 400;
+  --al-input-label-tracking: 0em;
+  --al-input-optional-font-size: var(--al-font-size-sm);
+  --al-input-optional-line-height: var(--al-line-height-sm);
+  --al-input-optional-font-weight: 400;
+  --al-input-optional-tracking: 0em;
+  --al-input-counter-font-size: var(--al-font-size-sm);
+  --al-input-counter-line-height: var(--al-line-height-sm);
+  --al-input-counter-font-weight: 400;
+  --al-input-counter-tracking: 0em;
+  --al-input-help-font-size: var(--al-font-size-xs);
+  --al-input-help-line-height: var(--al-line-height-xs);
+  --al-input-help-font-weight: 400;
+  --al-input-help-tracking: 0.01em;
+}
+
+/* ================= input ================= */
+/* AL Design System - Input
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/input/al-input-tokens.css
+ *
+ * CAMPO DE TEXTO DE UMA LINHA
+ *   <input> nativo, `type` text, email, url ou tel. Senha e o componente
+ *   Password; varias linhas e o Textarea. Nenhum dos dois estica este arquivo.
+ *
+ * ANATOMIA
+ *   <div class="al-input">
+ *     <div class="al-input__labelrow">
+ *       <label class="al-input__label" id="site-label" for="site">Site</label>
+ *       <span class="al-input__optional">(Opcional)</span>
+ *       <span class="al-input__counter" aria-live="off">0/100</span>
+ *     </div>
+ *     <div class="al-input__control">
+ *       <label class="al-input__affix" id="site-prefix" for="site">www.</label>
+ *       <input class="al-input__field" id="site" type="url"
+ *              aria-labelledby="site-label site-prefix site-suffix"
+ *              aria-describedby="site-help">
+ *       <label class="al-input__affix" id="site-suffix" for="site">.com</label>
+ *     </div>
+ *     <p class="al-input__help" id="site-help">Texto de apoio</p>
+ *   </div>
+ *
+ *   Marca "(Opcional)", contador, prefixo, sufixo e texto de apoio sao
+ *   MARCACAO, nao modificador: quem nao quer, nao escreve o elemento.
+ *
+ * A CAIXA E O `__control`, NAO O <input>
+ *   Prefixo e sufixo precisam ficar DENTRO da borda, e <input> nao aceita
+ *   filho. Entao borda, fundo, raio e anel moram no `__control`, e o <input>
+ *   e transparente, sem borda, ocupando o espaco que sobra. Consequencia: o
+ *   estado do campo e lido pelo conteiner via `:has()` - hover, foco, erro,
+ *   desabilitado e read-only.
+ *
+ *   Degradacao se `:has()` faltar: o campo fica sempre no estado de repouso -
+ *   sem anel de foco pintado pelo AL. Por isso o `outline` so e zerado DENTRO
+ *   de um `@supports selector(:has(*))`: sem `:has()` volta o anel nativo do
+ *   navegador, e o foco nunca some.
+ *
+ * O AFIXO E <label for>, E NAO <span>
+ *   Clicar em "www." precisa focar o campo, como clicar no rotulo. <label for>
+ *   faz isso sem uma linha de JavaScript. O nome anunciado continua
+ *   deterministico porque o <input> declara `aria-labelledby` = rotulo +
+ *   prefixo + sufixo ("Site, www., .com"), e aria-labelledby vence as labels -
+ *   solucao do Polaris, regra 29. Sem afixo, nao ha aria-labelledby: basta o
+ *   <label for>.
+ *
+ *   O afixo e visual e NAO vai no envio (regra 10): esta fora do <input>.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Erro le `aria-invalid="true"`; desabilitado le `:disabled`; read-only le
+ *   o atributo `[readonly]` - NUNCA `:read-only`, que tambem casa campo
+ *   desabilitado e misturaria os dois estados. Mesmo motivo do Select: a cor
+ *   nao pode divergir do que o leitor de tela anuncia.
+ *
+ *   A unica excecao e o contador acima do limite, `data-over-limit`. Nao ha
+ *   atributo nativo para isso: sem `maxlength` (regra 14 - o limite nao trava
+ *   a digitacao) o navegador nao sabe que passou. O JavaScript que ja atualiza
+ *   o numero e o mesmo que liga o atributo.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE
+ *   Mesma mecanica do Select: interacao escreve em `--_border-state`; erro,
+ *   read-only e desabilitado escrevem em `--_border-force`, que vence sempre
+ *   por ser outra propriedade. Entre os tres decide a ordem do arquivo:
+ *   erro, read-only, desabilitado - o desabilitado ganha de todos.
+ *
+ * NAO EXISTE ACTIVE
+ *   Campo de texto SEMPRE casa `:focus-visible`, inclusive no clique de mouse
+ *   (a spec manda isso para todo elemento que aceita digitacao). A borda de
+ *   1px de um Active seria coberta pelo anel no mesmo instante. Regra 20.
+ *
+ * READ-ONLY NAO MOSTRA PLACEHOLDER
+ *   O cinza do placeholder sobre `bg-readonly` da 4.21:1, abaixo do piso. E
+ *   placeholder ensina a preencher, o que nao se aplica. O CSS o torna
+ *   transparente; a regra 22 manda o read-only vazio mostrar "—" como valor.
+ *
+ * ALTURA E CONSEQUENCIA, NAO `height`
+ *   48 = padding-y x2 + entrelinha, com a borda descontada do padding - a
+ *   mesma convencao do Button, do Tag e do Select. A borda de 1px existe em
+ *   todos os estados, entao o campo nunca "pula" quando o estado troca.
+ *
+ * LARGURA
+ *   100% do conteiner. Formulario decide largura (regra 26).
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
+ *   escala de motion. Mesma pendencia do Button e do Select; aparece nomeada
+ *   no relatorio do check.py.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-input-gap);
+}
+
+/* ------------------------------------------------------------ rotulo */
+/* baseline, nao center: rotulo tem entrelinha 24, marca e contador 20. */
+.al-input__labelrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--al-input-gap);
+}
+
+.al-input__label {
+  color: var(--al-input-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-label-font-size);
+  line-height: var(--al-input-label-line-height);
+  font-weight: var(--al-input-label-font-weight);
+  letter-spacing: var(--al-input-label-tracking);
+}
+
+.al-input__optional {
+  color: var(--al-input-optional);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-optional-font-size);
+  line-height: var(--al-input-optional-line-height);
+  font-weight: var(--al-input-optional-font-weight);
+  letter-spacing: var(--al-input-optional-tracking);
+}
+
+/* empurrado para a direita da linha do rotulo - posicao do Carbon */
+.al-input__counter {
+  margin-left: auto;
+  color: var(--al-input-counter);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-counter-font-size);
+  line-height: var(--al-input-counter-line-height);
+  font-weight: var(--al-input-counter-font-weight);
+  letter-spacing: var(--al-input-counter-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------- caixa */
+.al-input__control {
+  --_border-state: var(--al-input-border);
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--al-input-gap);
+  width: 100%;
+
+  /* a borda entra na caixa, entao descontar aqui fecha 48 exatos */
+  padding: calc(var(--al-input-padding-y) - var(--al-input-border-width))
+           calc(var(--al-input-padding-x) - var(--al-input-border-width));
+
+  border: var(--al-input-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-input-radius);
+  background-color: var(--_bg-force, var(--al-input-bg));
+  cursor: text;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* ------------------------------------------------------------- campo */
+.al-input__field {
+  --_text-state: var(--al-input-text-value);
+
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--_text-force, var(--_text-state));
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-font-size);
+  line-height: var(--al-input-line-height);
+  font-weight: var(--al-input-font-weight);
+  letter-spacing: var(--al-input-tracking);
+}
+
+/* Firefox baixa a opacidade do placeholder por conta propria; o token ja
+   carrega o cinza certo, entao a opacidade volta ao inteiro. */
+.al-input__field::placeholder {
+  color: var(--al-input-text-placeholder);
+  opacity: 1;
+}
+
+/* So zera o anel nativo onde o anel do AL existe - ver cabecalho. */
+@supports selector(:has(*)) {
+  .al-input__field:focus {
+    outline: none;
+  }
+}
+
+/* ---------------------------------------------------- prefixo e sufixo */
+.al-input__affix {
+  flex: none;
+  color: var(--al-input-affix);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-font-size);
+  line-height: var(--al-input-line-height);
+  font-weight: var(--al-input-font-weight);
+  letter-spacing: var(--al-input-tracking);
+  white-space: nowrap;
+  cursor: text;
+}
+
+/* -------------------------------------------------------- texto de apoio */
+.al-input__help {
+  color: var(--al-input-help);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-help-font-size);
+  line-height: var(--al-input-help-line-height);
+  font-weight: var(--al-input-help-font-weight);
+  letter-spacing: var(--al-input-help-tracking);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover: nem desabilitado nem read-only reagem - regra 23 */
+.al-input__control:hover:not(:has(.al-input__field:disabled, .al-input__field[readonly])) {
+  --_border-state: var(--al-input-border-hover);
+}
+
+/* foco - por Tab OU por clique, e ele permanece. Nao ha Active. */
+.al-input__control:has(.al-input__field:focus-visible) {
+  --_border-state: var(--al-input-border-focus);
+  box-shadow: var(--_ring-force, var(--al-input-ring));
+}
+
+/* erro - vence hover e foco por escrever noutra propriedade */
+.al-input__control:has(.al-input__field[aria-invalid="true"]) {
+  --_border-force: var(--al-input-border-error);
+  --_ring-force: var(--al-input-ring-error);
+}
+
+.al-input:has(.al-input__field[aria-invalid="true"]) .al-input__label {
+  color: var(--al-input-label-error);
+}
+
+.al-input:has(.al-input__field[aria-invalid="true"]) .al-input__help {
+  color: var(--al-input-help-error);
+}
+
+/* O contador so fica vermelho quando o erro E o limite - regra 15.
+   Erro por outro motivo deixa o contador cinza. */
+.al-input__counter[data-over-limit] {
+  color: var(--al-input-counter-error);
+}
+
+/* read-only - `[readonly]`, nunca `:read-only` (casa o disabled tambem) */
+.al-input__control:has(.al-input__field[readonly]) {
+  --_border-force: var(--al-input-border-readonly);
+  --_bg-force: var(--al-input-bg-readonly);
+  cursor: default;
+}
+
+.al-input__control:has(.al-input__field[readonly]) .al-input__affix {
+  cursor: default;
+}
+
+.al-input__field[readonly]::placeholder {
+  color: transparent;
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-input__control:has(.al-input__field:disabled) {
+  --_border-force: var(--al-input-border-disabled);
+  --_bg-force: var(--al-input-bg-disabled);
+  cursor: not-allowed;
+}
+
+.al-input__field:disabled {
+  --_text-force: var(--al-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.al-input__field:disabled::placeholder,
+.al-input__control:has(.al-input__field:disabled) .al-input__affix {
+  color: var(--al-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.al-input:has(.al-input__field:disabled) .al-input__label,
+.al-input:has(.al-input__field:disabled) .al-input__optional,
+.al-input:has(.al-input__field:disabled) .al-input__counter {
+  color: var(--al-input-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-input__control {
+    transition: none;
+  }
+}
+
+
+/* ================= cromo da pagina de QA =================
+   Usa os proprios tokens do AL, sem paleta paralela. */
+html, body { background: var(--al-bg-canvas); }
+body {
+  margin: 0;
+  color: var(--al-text-primary);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-font-size-md);
+  line-height: var(--al-line-height-md);
+}
+.qa-wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-inline: var(--al-space-16);
+  padding-block: var(--al-space-32) var(--al-space-64);
+  display: flex; flex-direction: column; gap: var(--al-space-48);
+}
+.qa-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; gap: var(--al-space-16);
+  border-bottom: 1px solid var(--al-border-subtle);
+  padding-bottom: var(--al-space-16);
+}
+.qa-head h1 {
+  margin: 0; font-size: var(--al-font-size-3xl); line-height: var(--al-line-height-3xl);
+  font-weight: 600; letter-spacing: -0.02em; text-wrap: balance;
+}
+.qa-sub { margin: var(--al-space-4) 0 0; color: var(--al-text-secondary); font-size: var(--al-font-size-sm); }
+.qa-theme {
+  display: inline-flex; align-items: center; gap: var(--al-space-8);
+  padding: var(--al-space-8) var(--al-space-12);
+  border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-full);
+  background: var(--al-bg-surface-raised); color: var(--al-text-primary);
+  font: inherit; font-size: var(--al-font-size-sm); cursor: pointer;
+}
+.qa-theme:focus-visible { outline: none; box-shadow: var(--al-focus-ring-default); }
+section h2 {
+  margin: 0 0 var(--al-space-4);
+  font-size: var(--al-font-size-xl); line-height: var(--al-line-height-xl);
+  font-weight: 600; letter-spacing: -0.01em;
+}
+section > p.qa-lede { margin: 0 0 var(--al-space-20); color: var(--al-text-secondary); max-width: 62ch; }
+.qa-grid {
+  display: grid; gap: var(--al-space-20);
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+}
+.qa-card {
+  display: flex; flex-direction: column; gap: var(--al-space-12);
+  padding: var(--al-space-20);
+  border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface);
+}
+.qa-card__head { display: flex; align-items: center; justify-content: space-between; gap: var(--al-space-8); }
+.qa-card__title { margin: 0; font-size: var(--al-font-size-sm); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.qa-card__note { margin: 0; color: var(--al-text-secondary); font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); }
+.qa-tag {
+  font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs);
+  padding: 2px var(--al-space-8); border-radius: var(--al-radius-full);
+  border: 1px solid var(--al-border-default); color: var(--al-text-secondary);
+}
+.qa-tag--real { border-color: var(--al-border-success); color: var(--al-text-success); }
+.qa-form {
+  display: grid; gap: var(--al-space-20);
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  padding: var(--al-space-24);
+  border: 1px solid var(--al-border-subtle); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface-raised);
+}
+.qa-checks { margin: 0; padding-left: var(--al-space-20); display: grid; gap: var(--al-space-8); max-width: 68ch; }
+.qa-checks li { color: var(--al-text-secondary); }
+.qa-checks strong { color: var(--al-text-primary); font-weight: 500; }
+.qa-tablewrap { overflow-x: auto; }
+table.qa-measure { border-collapse: collapse; width: 100%; font-size: var(--al-font-size-sm); font-variant-numeric: tabular-nums; }
+table.qa-measure th, table.qa-measure td { text-align: left; padding: var(--al-space-8) var(--al-space-12); border-bottom: 1px solid var(--al-border-subtle); white-space: nowrap; }
+table.qa-measure th { font-weight: 600; font-size: var(--al-font-size-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--al-text-secondary); }
+.qa-verdict { font-weight: 600; }
+.qa-verdict--ok { color: var(--al-text-success); }
+.qa-verdict--exc { color: var(--al-text-warning); }
+.qa-verdict--bad { color: var(--al-text-danger); }
+.qa-foot { color: var(--al-text-secondary); font-size: var(--al-font-size-sm); border-top: 1px solid var(--al-border-subtle); padding-top: var(--al-space-16); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="qa-wrap">
+  <header class="qa-head">
+    <div>
+      <h1>Input — QA da etapa 6</h1>
+      <p class="qa-sub">AL Design System 0.11.0 · componente 0.1.0 ·
+      &lt;input&gt; nativo · 44 medições de contraste, 10 exceções declaradas, 0 reprovas</p>
+    </div>
+    <button type="button" class="qa-theme" id="theme-toggle" aria-pressed="false">
+      <span id="theme-label">Tema claro</span>
+    </button>
+  </header>
+
+  <section>
+    <h2>O que testar</h2>
+    <ol class="qa-checks">
+      <li><strong>Tabule pelo formulário.</strong> Os campos recebem foco na ordem visual; o <strong>CPF</strong> (read-only) recebe foco, a <strong>Empresa</strong> (desabilitada) é pulada.</li>
+      <li><strong>Clique num campo com o mouse.</strong> O anel laranja aparece também no clique — é o comportamento certo, não há estado Active.</li>
+      <li><strong>Telefone</strong> está em erro: focado, o anel tem que ser vinho.</li>
+      <li><strong>Site:</strong> clique em “www.” ou “.com” — o cursor vai para o campo.</li>
+      <li><strong>Descrição curta:</strong> digite mais de 40 caracteres. O contador fica vermelho e o campo continua aceitando texto.</li>
+      <li><strong>CPF:</strong> passe o mouse (a borda não muda), tabule até ele e selecione o texto para copiar.</li>
+      <li><strong>Troque o tema</strong> no botão acima e refaça os itens 2, 3 e 6.</li>
+      <li><strong>Reduza a janela</strong> até a largura de telefone: os campos esticam, nada corta.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Os estados</h2>
+    <p class="qa-lede">Os sete estados do Figma, mais três casos que só existem no código: read-only
+    vazio, prefixo com sufixo e contador acima do limite. O Hover escreve direto na variável privada
+    que o próprio <code>input.css</code> usa; os demais são reais.</p>
+    <div class="qa-grid">
+        <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Default</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-default-label" for="st-default">E-mail</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="st-default" name="st-default" type="email" placeholder="nome@empresa.com">
+      </div>
+    </div>
+      <p class="qa-card__note">o repouso. A borda aqui é a exceção de contraste declarada.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Hover</h3>
+        <span class="qa-tag qa-tag--simulado">simulado</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-hover-label" for="st-hover">E-mail</label>
+      </div>
+      <div class="al-input__control" style="--_border-state: var(--al-input-border-hover)">
+        <input class="al-input__field" id="st-hover" name="st-hover" type="email" placeholder="nome@empresa.com">
+      </div>
+    </div>
+      <p class="qa-card__note">só existe sob o ponteiro, então a variável privada do componente foi escrita direto.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Focus</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-focus-label" for="st-focus">E-mail</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="st-focus" name="st-focus" type="email" placeholder="nome@empresa.com">
+      </div>
+    </div>
+      <p class="qa-card__note">clique OU tabule: o anel laranja aparece nos dois casos. Não existe Active.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Error</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-error-label" for="st-error">E-mail</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="st-error" name="st-error" type="email" value="nome@empresa" aria-describedby="st-error-help" aria-invalid="true">
+      </div>
+      <p class="al-input__help" id="st-error-help">Use um e-mail no formato nome@empresa.com</p>
+    </div>
+      <p class="qa-card__note">vem de aria-invalid="true" na marcação. A mensagem é obrigatória.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Focus + Error</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-focuserror-label" for="st-focuserror">E-mail</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="st-focuserror" name="st-focuserror" type="email" value="nome@empresa" aria-describedby="st-focuserror-help" aria-invalid="true">
+      </div>
+      <p class="al-input__help" id="st-focuserror-help">Use um e-mail no formato nome@empresa.com</p>
+    </div>
+      <p class="qa-card__note">tabule até aqui: o anel tem que vir vinho, não laranja.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Disabled</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-disabled-label" for="st-disabled">E-mail</label>
+        <span class="al-input__optional">(Opcional)</span>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="st-disabled" name="st-disabled" type="email" placeholder="nome@empresa.com" disabled>
+      </div>
+    </div>
+      <p class="qa-card__note">atributo disabled nativo: o Tab pula este campo sozinho.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Read-only</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-readonly-label" for="st-readonly">CPF</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="st-readonly" name="st-readonly" type="text" value="123.456.789-09" readonly>
+      </div>
+    </div>
+      <p class="qa-card__note">o Tab chega aqui e dá para selecionar e copiar. O hover não escurece a borda.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Read-only vazio</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-readonly-empty-label" for="st-readonly-empty">Inscrição estadual</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="st-readonly-empty" name="st-readonly-empty" type="text" value="—" readonly>
+      </div>
+    </div>
+      <p class="qa-card__note">regra 22: mostra "—" como valor. Placeholder aqui não apareceria de qualquer jeito.</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Prefixo + sufixo</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-affix-label" for="st-affix">Site</label>
+        <span class="al-input__optional">(Opcional)</span>
+      </div>
+      <div class="al-input__control">
+        <label class="al-input__affix" id="st-affix-prefix" for="st-affix">www.</label>
+        <input class="al-input__field" id="st-affix" name="st-affix" type="url" placeholder="empresa" aria-labelledby="st-affix-label st-affix-prefix st-affix-suffix">
+        <label class="al-input__affix" id="st-affix-suffix" for="st-affix">.com</label>
+      </div>
+    </div>
+      <p class="qa-card__note">clique em "www." ou ".com": o cursor vai para o campo. O leitor de tela lê "Site, www., .com".</p>
+    </article>
+    <article class="qa-card">
+      <header class="qa-card__head">
+        <h3 class="qa-card__title">Contador acima do limite</h3>
+        <span class="qa-tag qa-tag--real">real</span>
+      </header>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="st-over-label" for="st-over">Apelido</label>
+        <span class="al-input__counter" id="st-over-count" aria-live="off" data-over-limit>25/20</span>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="st-over" name="st-over" type="text" value="Maria Eduarda Albuquerque" data-limit="20" data-counter="st-over-count">
+      </div>
+    </div>
+      <p class="qa-card__note">digite ou apague: passou de 20, o contador fica vermelho; o campo NÃO trava.</p>
+    </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Formulário real</h2>
+    <p class="qa-lede">Sete campos numa mesma tela, do jeito que o componente vai viver. É aqui que a
+    ordem de tabulação, o read-only e o contador se provam.</p>
+    <form class="qa-form" id="qa-form" onsubmit="return false">
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="f-nome-label" for="f-nome">Nome completo</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="f-nome" name="f-nome" type="text" autocomplete="name" aria-describedby="f-nome-help">
+      </div>
+      <p class="al-input__help" id="f-nome-help">Como aparece no documento</p>
+    </div>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="f-email-label" for="f-email">E-mail</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="f-email" name="f-email" type="email" autocomplete="email" placeholder="nome@empresa.com">
+      </div>
+    </div>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="f-site-label" for="f-site">Site</label>
+        <span class="al-input__optional">(Opcional)</span>
+      </div>
+      <div class="al-input__control">
+        <label class="al-input__affix" id="f-site-prefix" for="f-site">www.</label>
+        <input class="al-input__field" id="f-site" name="f-site" type="url" placeholder="empresa" aria-labelledby="f-site-label f-site-prefix f-site-suffix">
+        <label class="al-input__affix" id="f-site-suffix" for="f-site">.com</label>
+      </div>
+    </div>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="f-tel-label" for="f-tel">Telefone</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="f-tel" name="f-tel" type="tel" autocomplete="tel" value="1199" aria-describedby="f-tel-help" aria-invalid="true">
+      </div>
+      <p class="al-input__help" id="f-tel-help">Use DDD e número, como 11 91234-5678</p>
+    </div>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="f-bio-label" for="f-bio">Descrição curta</label>
+        <span class="al-input__optional">(Opcional)</span>
+        <span class="al-input__counter" id="f-bio-count" aria-live="off">0/40</span>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="f-bio" name="f-bio" type="text" aria-describedby="f-bio-help" data-limit="40" data-counter="f-bio-count">
+      </div>
+      <p class="al-input__help" id="f-bio-help">Aparece no seu perfil</p>
+    </div>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="f-cpf-label" for="f-cpf">CPF</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="f-cpf" name="f-cpf" type="text" value="123.456.789-09" readonly>
+      </div>
+    </div>
+      <div class="al-input">
+      <div class="al-input__labelrow">
+        <label class="al-input__label" id="f-empresa-label" for="f-empresa">Empresa</label>
+      </div>
+      <div class="al-input__control">
+        <input class="al-input__field" id="f-empresa" name="f-empresa" type="text" placeholder="Preenchida pelo convite" disabled>
+      </div>
+    </div>
+    </form>
+  </section>
+
+  <section>
+    <h2>Contraste medido no navegador</h2>
+    <p class="qa-lede">Não são os números do <code>tokens.json</code>: o script lê a cor que o
+    navegador realmente pintou, com <code>getComputedStyle</code>, depois de esperar a transição
+    terminar.</p>
+    <div class="qa-tablewrap">
+      <table class="qa-measure">
+        <thead><tr><th>papel</th><th>frente</th><th>fundo</th><th>medido</th><th>piso</th><th>veredito</th></tr></thead>
+        <tbody id="measure-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="qa-foot">Gerado por <code>components/input/qa.py</code> a partir do CSS commitado em
+  <code>dev</code>. <code>al-foundation.css</code>, <code>al-input-tokens.css</code> e
+  <code>input.css</code> estão embutidos como estão no repositório.</p>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var label = document.getElementById('theme-label');
+
+  function escuro() {
+    if (root.dataset.theme) return root.dataset.theme === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function pintarBotao() {
+    var d = escuro();
+    label.textContent = d ? 'Tema escuro' : 'Tema claro';
+    btn.setAttribute('aria-pressed', String(d));
+  }
+  btn.addEventListener('click', function () {
+    root.dataset.theme = escuro() ? 'light' : 'dark';
+    pintarBotao();
+    // 350ms de folga para a transicao de 120ms terminar
+    setTimeout(medir, 350);
+  });
+  pintarBotao();
+
+  // ------------------------------------------------------------ contador
+  // O que a aplicacao faria: numero, data-over-limit e aria-live so com foco.
+  document.querySelectorAll('.al-input__field[data-limit]').forEach(function (campo) {
+    var limite = +campo.dataset.limit;
+    var cont = document.getElementById(campo.dataset.counter);
+    function atualizar() {
+      var n = campo.value.length;
+      cont.textContent = n + '/' + limite;
+      if (n > limite) cont.setAttribute('data-over-limit', '');
+      else cont.removeAttribute('data-over-limit');
+    }
+    campo.addEventListener('input', atualizar);
+    campo.addEventListener('focus', function () { cont.setAttribute('aria-live', 'polite'); });
+    campo.addEventListener('blur', function () { cont.setAttribute('aria-live', 'off'); });
+    atualizar();
+  });
+
+  // ---------------------------------------------------------- contraste
+  function rgb(str) {
+    var m = str.match(/-?[\d.]+/g);
+    return m ? [ +m[0], +m[1], +m[2] ] : null;
+  }
+  function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(c) { return 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); }
+  function cr(a, b) {
+    var la = lum(a), lb = lum(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+  function corDe(el, prop, pseudo) { return rgb(getComputedStyle(el, pseudo || null)[prop]); }
+  function caixa(id) { return document.getElementById(id).closest('.al-input__control'); }
+  function $(s) { return document.querySelector(s); }
+
+  var TXT = 4.5, GRAF = 3.0;
+
+  function alvos() {
+    var form = corDe(document.getElementById('qa-form'), 'backgroundColor');
+    var fundo = corDe(caixa('f-email'), 'backgroundColor');
+    var fundoRo = corDe(caixa('f-cpf'), 'backgroundColor');
+    var fundoOff = corDe(caixa('f-empresa'), 'backgroundColor');
+    var over = document.getElementById('st-over-count');
+    var overFundo = corDe(over.closest('.qa-card'), 'backgroundColor');
+    return [
+      ['rótulo',                corDe($('#f-nome-label'), 'color'),            form,     TXT,  false],
+      ['rótulo em erro',        corDe($('#f-tel-label'), 'color'),             form,     TXT,  false],
+      ['marca (Opcional)',      corDe($('#qa-form .al-input__optional'), 'color'), form, TXT,  false],
+      ['contador',              corDe(document.getElementById('f-bio-count'), 'color'), form, TXT, false],
+      ['contador acima do limite', corDe(over, 'color'),                       overFundo, TXT, false],
+      ['texto de apoio',        corDe($('#f-nome-help'), 'color'),             form,     TXT,  false],
+      ['mensagem de erro',      corDe($('#f-tel-help'), 'color'),              form,     TXT,  false],
+      ['placeholder',           corDe($('#f-email'), 'color', '::placeholder'), fundo,   TXT,  false],
+      ['valor',                 corDe($('#f-tel'), 'color'),                   fundo,    TXT,  false],
+      ['prefixo',               corDe($('#f-site-prefix'), 'color'),           fundo,    TXT,  false],
+      ['valor read-only',       corDe($('#f-cpf'), 'color'),                   fundoRo,  TXT,  false],
+      ['borda em repouso',      corDe(caixa('f-email'), 'borderTopColor'),     form,     GRAF, true],
+      ['borda em erro',         corDe(caixa('f-tel'), 'borderTopColor'),       form,     GRAF, false],
+      ['borda read-only',       corDe(caixa('f-cpf'), 'borderTopColor'),       form,     GRAF, true],
+      ['texto desabilitado',    corDe($('#f-empresa'), 'color', '::placeholder'), fundoOff, TXT, true],
+    ];
+  }
+
+  function medir() {
+    var corpo = document.getElementById('measure-body');
+    corpo.textContent = '';
+    alvos().forEach(function (l) {
+      var nome = l[0], fg = l[1], bg = l[2], piso = l[3], exc = l[4];
+      if (!fg || !bg) return;
+      var r = cr(fg, bg), passa = r >= piso;
+      var classe = passa ? 'ok' : (exc ? 'exc' : 'bad');
+      var tr = document.createElement('tr');
+      [nome, 'rgb(' + fg.join(', ') + ')', 'rgb(' + bg.join(', ') + ')',
+       r.toFixed(2) + ':1', piso.toFixed(1) + ':1'].forEach(function (v) {
+        var td = document.createElement('td'); td.textContent = v; tr.appendChild(td);
+      });
+      var td = document.createElement('td');
+      td.textContent = passa ? 'passa' : (exc ? 'exceção declarada' : 'REPROVA');
+      td.className = 'qa-verdict qa-verdict--' + classe;
+      tr.appendChild(td);
+      corpo.appendChild(tr);
+    });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { setTimeout(medir, 50); });
+  } else {
+    setTimeout(medir, 200);
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+    pintarBotao(); setTimeout(medir, 350);
+  });
+})();
+</script>

@@ -1,0 +1,75 @@
+/* AL Design System - tokens do Input
+ * GERADO por components/input/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Altura do campo: 48px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo - so o disabled e o readonly mudam */
+  --al-input-bg: var(--al-bg-surface-raised);
+  --al-input-bg-disabled: var(--al-bg-disabled);
+  --al-input-bg-readonly: var(--al-bg-subtle);
+
+  /* borda - o eixo que carrega o estado */
+  --al-input-border: var(--al-border-default);
+  --al-input-border-hover: var(--al-border-strong);
+  --al-input-border-focus: var(--al-border-brand);
+  --al-input-border-error: var(--al-border-danger);
+  --al-input-border-disabled: var(--al-border-default);
+  --al-input-border-readonly: var(--al-border-subtle);
+
+  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */
+  --al-input-text-placeholder: var(--al-text-placeholder);
+  --al-input-text-value: var(--al-text-primary);
+  --al-input-text-disabled: var(--al-text-disabled);
+
+  /* prefixo e sufixo - nao herdam a cor do placeholder */
+  --al-input-affix: var(--al-text-primary);
+
+  /* rotulo, marca, contador e apoio - vivem fora do campo, sobre a tela */
+  --al-input-label: var(--al-text-primary);
+  --al-input-label-error: var(--al-text-danger);
+  --al-input-label-disabled: var(--al-text-disabled);
+  --al-input-optional: var(--al-text-secondary);
+  --al-input-counter: var(--al-text-secondary);
+  --al-input-counter-error: var(--al-text-danger);
+  --al-input-help: var(--al-text-secondary);
+  --al-input-help-error: var(--al-text-danger);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-input-ring: var(--al-focus-ring-default);
+  --al-input-ring-error: var(--al-focus-ring-error);
+
+  /* geometria */
+  --al-input-padding-x: var(--al-space-12);
+  --al-input-padding-y: var(--al-space-12);
+  --al-input-gap: var(--al-space-8);
+  --al-input-radius: var(--al-radius-lg);
+  --al-input-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-input-font-size: var(--al-font-size-md);
+  --al-input-line-height: var(--al-line-height-md);
+  --al-input-font-weight: 400;
+  --al-input-tracking: 0em;
+  --al-input-label-font-size: var(--al-font-size-md);
+  --al-input-label-line-height: var(--al-line-height-md);
+  --al-input-label-font-weight: 400;
+  --al-input-label-tracking: 0em;
+  --al-input-optional-font-size: var(--al-font-size-sm);
+  --al-input-optional-line-height: var(--al-line-height-sm);
+  --al-input-optional-font-weight: 400;
+  --al-input-optional-tracking: 0em;
+  --al-input-counter-font-size: var(--al-font-size-sm);
+  --al-input-counter-line-height: var(--al-line-height-sm);
+  --al-input-counter-font-weight: 400;
+  --al-input-counter-tracking: 0em;
+  --al-input-help-font-size: var(--al-font-size-xs);
+  --al-input-help-line-height: var(--al-line-height-xs);
+  --al-input-help-font-weight: 400;
+  --al-input-help-tracking: 0.01em;
+}

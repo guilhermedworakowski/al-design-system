@@ -82,6 +82,10 @@ SWITCH = json.load(open(os.path.join(ROOT, 'components', 'switch', 'tokens.json'
 SWITCH_TOKENS = open(os.path.join(ROOT, 'components', 'switch', 'al-switch-tokens.css')).read()
 SWITCH_CSS = open(os.path.join(ROOT, 'components', 'switch', 'switch.css')).read()
 SWITCH_A11Y = json.load(open(os.path.join(ROOT, 'components', 'switch', 'a11y.json')))
+INPUT = json.load(open(os.path.join(ROOT, 'components', 'input', 'tokens.json')))
+INPUT_TOKENS = open(os.path.join(ROOT, 'components', 'input', 'al-input-tokens.css')).read()
+INPUT_CSS = open(os.path.join(ROOT, 'components', 'input', 'input.css')).read()
+INPUT_A11Y = json.load(open(os.path.join(ROOT, 'components', 'input', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -105,6 +109,7 @@ N_SELECT_TOKENS = len(SELECT['alias'])
 N_CHECKBOX_TOKENS = len(CHECKBOX['alias'])
 N_RADIO_TOKENS = len(RADIO['alias'])
 N_SWITCH_TOKENS = len(SWITCH['alias'])
+N_INPUT_TOKENS = len(INPUT['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -145,7 +150,7 @@ def scope_themes(found_css, *token_blocks):
 
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
-                         SWITCH_TOKENS)
+                         SWITCH_TOKENS, INPUT_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -154,7 +159,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + SELECT_TOKENS + '\n' + SELECT_CSS
             + '\n' + CHECKBOX_TOKENS + '\n' + CHECKBOX_CSS
             + '\n' + RADIO_TOKENS + '\n' + RADIO_CSS
-            + '\n' + SWITCH_TOKENS + '\n' + SWITCH_CSS)
+            + '\n' + SWITCH_TOKENS + '\n' + SWITCH_CSS
+            + '\n' + INPUT_TOKENS + '\n' + INPUT_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -5145,6 +5151,531 @@ SWITCH_A11Y_TAB = f'''
 
 
 
+# ═══════════════════════════════════════════════════════════════ Input · abas
+# 7 estados no Figma (sem Active, sem Typed). O codigo pinta mais tres casos que
+# o Figma nao desenha: read-only vazio, prefixo + sufixo e contador acima do
+# limite - a pagina os mostra como o que sao, pintados pelos tokens aprovados.
+INPUT_STATES = [
+    ('default', 'Default'), ('hover', 'Hover'), ('focus', 'Focus'), ('error', 'Error'),
+    ('focus-error', 'Focus + Error'), ('disabled', 'Disabled'), ('readonly', 'Read-only'),
+]
+
+
+def inp(cid, rotulo='E-mail', *, tipo='text', opcional=False, apoio=None, erro=None,
+        disabled=False, readonly=False, valor=None, placeholder=None, prefixo=None,
+        sufixo=None, limite=None, autocomplete=None, sim=None):
+    """Um Input real. `sim` escreve na MESMA variavel privada que o input.css usa
+    para o hover - nao e estilo paralelo. Read-only nunca sai sem valor: vazio
+    vira "—" (regra 22), e o portao de marcacao cobra isso."""
+    if readonly and not (valor or '').strip():
+        valor = '—'
+    attrs = ['class="al-input__field"', f'id="{cid}"', f'type="{tipo}"']
+    if autocomplete:
+        attrs.append(f'autocomplete="{autocomplete}"')
+    if valor is not None:
+        attrs.append(f'value="{valor}"')
+    if placeholder and not readonly:
+        attrs.append(f'placeholder="{placeholder}"')
+    if prefixo or sufixo:
+        nomes = [f'{cid}-label'] + ([f'{cid}-prefix'] if prefixo else []) \
+                + ([f'{cid}-suffix'] if sufixo else [])
+        attrs.append(f'aria-labelledby="{" ".join(nomes)}"')
+    msg = erro or apoio
+    if msg:
+        attrs.append(f'aria-describedby="{cid}-help"')
+    if erro:
+        attrs.append('aria-invalid="true"')
+    if limite:
+        attrs.append(f'data-limit="{limite}" data-counter="{cid}-count"')
+    if readonly:
+        attrs.append('readonly')
+    if disabled:
+        attrs.append('disabled')
+
+    linha = [f'<label class="al-input__label" id="{cid}-label" for="{cid}">{rotulo}</label>']
+    if opcional:
+        linha.append('<span class="al-input__optional">(Opcional)</span>')
+    if limite:
+        n = len(valor or '')
+        acima = ' data-over-limit' if n > limite else ''
+        linha.append(f'<span class="al-input__counter" id="{cid}-count" '
+                     f'aria-live="off"{acima}>{n}/{limite}</span>')
+    caixa = []
+    if prefixo:
+        caixa.append(f'<label class="al-input__affix" id="{cid}-prefix" for="{cid}">{prefixo}</label>')
+    caixa.append(f'<input {" ".join(attrs)}>')
+    if sufixo:
+        caixa.append(f'<label class="al-input__affix" id="{cid}-suffix" for="{cid}">{sufixo}</label>')
+    estilo = f' style="--_border-state: var(--al-input-border-{sim})"' if sim else ''
+    help_html = f'<p class="al-input__help" id="{cid}-help">{msg}</p>' if msg else ''
+    return (f'<div class="al-input"><div class="al-input__labelrow">{"".join(linha)}</div>'
+            f'<div class="al-input__control"{estilo}>{"".join(caixa)}</div>{help_html}</div>')
+
+
+INPUT_ERRO = 'Use um e-mail no formato nome@empresa.com'
+
+
+def input_specimens():
+    """Os sete estados do Figma, parados, lado a lado. Hover leva a nota de que e
+    escrito direto - a vitrine nao pode fingir que o ponteiro esta la."""
+    cells = []
+    notas = {
+        'default': 'O repouso. A borda aqui é a exceção de contraste declarada.',
+        'hover': 'Só existe sob o ponteiro: a variável privada foi escrita direto.',
+        'focus': 'Clique <b>ou</b> tabule: o anel aparece nos dois casos. Não existe Active.',
+        'error': 'Vem de <code>aria-invalid="true"</code>, e a mensagem é obrigatória.',
+        'focus-error': 'Focado, o anel troca para vinho — <code>focusRing.error</code>.',
+        'disabled': 'Atributo nativo <code>disabled</code>: o Tab pula sozinho e o valor não vai no envio.',
+        'readonly': 'Atributo <code>readonly</code>: recebe Tab, deixa copiar, vai no envio — e o hover não reage.',
+    }
+    for slug, nome in INPUT_STATES:
+        kw = dict(cid=f'ip-{slug}', rotulo='E-mail', tipo='email', placeholder='nome@empresa.com')
+        if slug == 'hover':
+            kw['sim'] = 'hover'
+        if slug in ('error', 'focus-error'):
+            kw.update(valor='nome@empresa', erro=INPUT_ERRO)
+        if slug == 'disabled':
+            kw.update(disabled=True, opcional=True)
+        if slug == 'readonly':
+            kw = dict(cid='ip-readonly', rotulo='CPF', valor='123.456.789-09', readonly=True)
+        cells.append(f'<div class="cell"><span class="lab" '
+                     f'style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2" style="display:block">{inp(**kw)}</div>'
+                     f'<p class="cap">{notas[slug]}</p></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def input_token_rows():
+    rows = []
+    for name in INPUT['alias']:
+        res = INPUT['resolved'].get(name)
+        if not isinstance(res, dict) or 'light' not in res:
+            continue
+        lt = res['light']
+        sw_ = (f'<span class="chip sm" style="background:{lt}"></span>'
+               if isinstance(lt, str) and lt.startswith('#') else '')
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{INPUT["alias"][name]}</td>'
+                    f'<td class="tok dim">{sw_}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+def input_geo_rows():
+    rows = []
+    for role in ['padding-x', 'padding-y', 'gap', 'radius', 'border-width']:
+        name = f'input-{role}'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{INPUT["alias"][name]}</td>'
+                    f'<td class="num">{INPUT["resolved"][name]}px</td></tr>')
+    for role in ['font', 'label-font', 'optional-font', 'counter-font', 'help-font']:
+        name = f'input-{role}'
+        res = INPUT['resolved'][name]
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{INPUT["alias"][name]}</td>'
+                    f'<td class="num">{res[1]}/{res[2]} · peso {res[3]}</td></tr>')
+    return '\n'.join(rows)
+
+
+def input_a11y_rows(papeis):
+    """Uma linha por medicao, filtrada pelo papel. Excecao aparece como excecao."""
+    out = []
+    for r in INPUT_A11Y['rows']:
+        if r['papel'] not in papeis:
+            continue
+        if r['pass']:
+            verdict = '<span class="pass">passa</span>'
+        elif r['exc']:
+            verdict = '<span class="exc">exceção</span>'
+        else:
+            verdict = '<span class="fail">reprova</span>'
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{r["state"]}</td>'
+            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">--al-{r["token"]}</td>'
+            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+N_IN_MEDIDAS = len(INPUT_A11Y['rows'])
+N_IN_EXC = sum(INPUT_A11Y['exceptions'].values())
+N_IN_PASSA = N_IN_MEDIDAS - N_IN_EXC
+IN_LAYER = {d['theme']: d for d in INPUT_A11Y['layerEffect']}
+
+
+def _in(state, theme, papel):
+    return next(r['ratio'] for r in INPUT_A11Y['rows']
+                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+
+
+TH_INPUT = ('<div class="th-input" aria-hidden="true">'
+            '<span class="th-input__label">E-mail</span>'
+            '<span class="th-input__field">nome@empresa.com</span></div>')
+
+INPUT_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="input-stage">{inp('play-input', tipo='email', placeholder='nome@empresa.com')}</div>
+
+    <div class="controls" id="input-controls">
+      <div class="ctl"><span class="ctl-name">Estado</span>{seg('inpstate', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado'), ('readonly', 'Read-only')], 'rest')}</div>
+      <div class="ctl"><span class="ctl-name">Valor</span>{seg('inpvalue', [('none', 'Vazio'), ('filled', 'Preenchido')], 'none')}</div>
+      <div class="ctl"><span class="ctl-name">Obrigatoriedade</span>{seg('inpopt', [('req', 'Obrigatório'), ('opt', 'Opcional')], 'req')}</div>
+      <div class="ctl"><span class="ctl-name">Prefixo e sufixo</span>{seg('inpaffix', [('off', 'Sem'), ('on', 'www. + .com')], 'off')}</div>
+      <div class="ctl"><span class="ctl-name">Contador</span>{seg('inpcount', [('off', 'Sem'), ('on', 'Limite de 40')], 'off')}</div>
+      <div class="ctl"><span class="ctl-name">Texto de apoio</span>{seg('inphelp', [('off', 'Sem'), ('on', 'Com')], 'off')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('inptheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><label for="input-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="input-label" type="text" value="E-mail" maxlength="28"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="input-copy">Copiar</button></div>
+      <pre><code id="input-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O campo acima é o componente real: esta página carrega o mesmo <code>input.css</code> que vai
+    para produção. Ligue o contador e digite além de 40 caracteres — o número fica vermelho e o
+    campo <b>não trava</b>. Ligue o prefixo e clique em “www.”: o cursor vai para o campo.
+  </p>
+</section>
+
+<section>
+  <h2>A caixa é um invólucro, não o &lt;input&gt;</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Prefixo e sufixo dentro da borda</span>
+      <div class="stage2" style="display:block">{inp('ov-affix', 'Site', tipo='url', opcional=True, prefixo='www.', sufixo='.com', placeholder='empresa')}</div>
+      <p class="cap"><code>&lt;input&gt;</code> não aceita filho, então borda, fundo e anel moram num
+      invólucro, e o campo é transparente lá dentro. O estado do campo chega ao invólucro por
+      <code>:has()</code>. Os afixos são <code>&lt;label for&gt;</code>: clicar neles foca o campo,
+      sem JavaScript.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">O afixo não vai no envio</span>
+      <div class="stage2" style="display:block">{inp('ov-money', 'Valor do frete', prefixo='R$', valor='42,90')}</div>
+      <p class="cap">Só o que está no campo é enviado. Quem precisa do valor completo junta no
+      código — a pessoa nunca redigita o que o afixo já mostra. <i>Material 3: moeda, unidade,
+      domínio.</i></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Os sete estados</h2>
+  {input_specimens()}
+</section>
+
+<section>
+  <h2>Num formulário de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <div class="stage2" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr)); gap:20px; align-items:start">
+      {inp('fm-nome', 'Nome completo', autocomplete='name', apoio='Como aparece no documento')}
+      {inp('fm-email', 'E-mail', tipo='email', autocomplete='email', placeholder='nome@empresa.com')}
+      {inp('fm-tel', 'Telefone', tipo='tel', autocomplete='tel', valor='1199', erro='Use DDD e número, como 11 91234-5678')}
+      {inp('fm-bio', 'Descrição curta', opcional=True, limite=40, apoio='Aparece no seu perfil')}
+      {inp('fm-cpf', 'CPF', valor='123.456.789-09', readonly=True)}
+      {inp('fm-empresa', 'Empresa', disabled=True, placeholder='Preenchida pelo convite')}
+    </div>
+    <p class="cap">Tabule por eles: o <b>CPF</b> (read-only) recebe foco e deixa copiar; a
+    <b>Empresa</b> (desabilitada) é pulada sozinha. Na <b>Descrição curta</b>, passe de 40
+    caracteres.</p>
+  </div>
+</section>'''
+
+INPUT_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Rótulo</b><span><code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Sempre visível — é a regra que sustenta a exceção de contraste da borda.</span></div>
+    <div><b>Marca “(Opcional)”</b><span>Uma entrelinha menor que o rótulo, em <code>text-secondary</code>. O AL marca o <b>opcional</b>: quem não tem a marca é obrigatório.</span></div>
+    <div><b>Contador</b><span>À direita da linha do rótulo, com números de largura fixa. Só existe havendo limite; fica vermelho só quando o erro <b>é</b> o limite.</span></div>
+    <div><b>Caixa</b><span><code>.al-input__control</code>: borda, fundo, raio e anel. O <code>&lt;input&gt;</code> nativo vive dentro, transparente, ocupando o que sobra.</span></div>
+    <div><b>Prefixo e sufixo</b><span><code>&lt;label for&gt;</code> dentro da caixa. O prefixo encosta no texto com o gap; o sufixo é empurrado para a borda direita.</span></div>
+    <div><b>Texto de apoio</b><span>Opcional, e o mesmo slot da mensagem de erro — no erro a mensagem o substitui, e é obrigatória.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A altura é consequência</h2>
+  <p>Não existe <code>height</code> neste componente. O campo fecha em
+  <b>{INPUT['derived']['field-height']}px</b> porque é <code>padding-y</code> × 2 mais a entrelinha,
+  com a borda de 1px descontada do padding — a mesma convenção do Button, do Tag e do Select. A
+  caixa inteira soma <b>{INPUT['derived']['total-height']}px</b>, e
+  <b>{INPUT['derived']['total-height-with-help']}px</b> com o texto de apoio.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_INPUT_TOKENS}</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>7</b><span>estados</span></div>
+    <div class="stat"><b>1</b><span>tamanho, por escolha</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody>{input_token_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>O afixo tem token próprio</b>
+    Com o campo vazio, o prefixo é escuro e o placeholder ao lado é cinza — duas cores na mesma
+    linha. Se o afixo herdasse a cor do texto, clarearia junto com o placeholder. Daí
+    <code>input-affix</code>.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Read-only não é disabled</b>
+    O disabled é isento do 1.4.3 por ser inativo; o read-only não é — o conteúdo existe para ser
+    lido. Por isso o texto dele é <code>input-text-value</code>, o mesmo do campo editável, e não há
+    <code>input-text-readonly</code>. O fundo é <code>bg-subtle</code>; no tema escuro ele coincide
+    com o fundo do campo, e read-only e editável se separam pela borda — escolha consciente.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody>{input_geo_rows()}</tbody>
+  </table></div>
+  <p style="margin-top:12px">Um <code>gap</code> só serve a três lugares — a pilha rótulo → campo → apoio,
+  o espaço entre o rótulo e “(Opcional)” e o espaço entre o prefixo e o texto. Os três são 8; dois
+  tokens com o mesmo valor seriam dois lugares para divergir por engano.</p>
+</section>
+
+<section>
+  <h2>O estado vem da marcação</h2>
+  <div class="anat">
+    <div><b>Erro</b><span><code>aria-invalid="true"</code> no <code>&lt;input&gt;</code>. Não há classe de erro: a cor não pode divergir do que o leitor de tela anuncia.</span></div>
+    <div><b>Desabilitado</b><span><code>disabled</code> nativo.</span></div>
+    <div><b>Read-only</b><span>O atributo <code>[readonly]</code> — <b>nunca</b> <code>:read-only</code>, que também casa o campo desabilitado e misturaria os dois estados.</span></div>
+    <div><b>Contador acima do limite</b><span><code>data-over-limit</code>, a única exceção. Sem <code>maxlength</code> o navegador não sabe que passou, então o mesmo JavaScript que atualiza o número liga o atributo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Precedência por variável, não por especificidade</h2>
+  <p>A borda é <code>var(--_border-force, var(--_border-state))</code>. Hover e foco escrevem em
+  <code>--_border-state</code>; erro, read-only e desabilitado escrevem em
+  <code>--_border-force</code>, que vence sempre por ser <b>outra propriedade</b>. Entre os três
+  decide a ordem do arquivo: erro, read-only, desabilitado — o desabilitado ganha de todos.</p>
+</section>'''
+
+INPUT_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Resposta livre de uma linha</b><span>Nome, e-mail, URL, telefone. Se a resposta cabe numa lista conhecida, é Select (4+ opções) ou Radio (até 3). <i>Primer; Carbon.</i></span></div>
+    <div><b>Várias linhas não é Input</b><span>Abre Textarea, não estica o Input. <i>Carbon separa text input de text area.</i></span></div>
+    <div><b>Senha é outro componente</b><span>O Password entra no roadmap. Número e busca ficam fora desta versão. <i>Carbon: PasswordInput, NumberInput e Search são componentes à parte.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo, placeholder e a marca de opcional</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block">{inp('gd-ok', 'E-mail', tipo='email', opcional=True, placeholder='nome@empresa.com')}</div>
+      <p class="cap">Rótulo visível, curto, descrevendo <b>o dado</b>. O placeholder é um
+      <b>exemplo de formato</b>, nunca a instrução. <i>Spectrum; Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block">{inp('gd-bad', 'E-mail', tipo='email', placeholder='Digite seu e-mail corporativo')}</div>
+      <p class="cap">Instrução no placeholder. Some ao digitar, e quem usa preenchimento
+      automático nunca a vê. Requisito vai no texto de apoio. <i>Spectrum.</i></p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O AL marca o opcional, não o obrigatório</b>
+    Mesma escola do Select, oposta à do asterisco do Polaris: marca-se a minoria. Não existe estilo
+    de “obrigatório” — a ausência da marca é o obrigatório.
+  </div>
+</section>
+
+<section>
+  <h2>Prefixo e sufixo</h2>
+  <div class="anat">
+    <div><b>Para a parte fixa do valor</b><span>Moeda, unidade, domínio — o que a pessoa não digita. <i>Material 3; Primer.</i></span></div>
+    <div><b>Não vai no envio</b><span>O afixo é visual. Se o sistema precisa do valor completo, o código junta.</span></div>
+    <div><b>Os dois juntos, só formando um formato</b><span>“www.” + “.com” emolduram um único valor. Não empilhe contexto nos dois lados. <b>Divergência parcial do Primer</b>, que recomenda evitar os dois.</span></div>
+    <div><b>Curto</b><span>Símbolo, unidade ou domínio. Explicação vai no texto de apoio. <i>Primer.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O contador não trava a digitação</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Dentro do limite</span>
+      <div class="stage2" style="display:block">{inp('gd-count', 'Apelido', limite=20, valor='Duda')}</div>
+      <p class="cap">Só aparece havendo limite real. <i>Material 3; Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Acima do limite</span>
+      <div class="stage2" style="display:block">{inp('gd-over', 'Apelido', limite=20, valor='Maria Eduarda Albuquerque')}</div>
+      <p class="cap">Sem <code>maxlength</code>: o campo aceita, o contador fica vermelho e o envio
+      falha com mensagem. Travar corta sem aviso o texto colado. <b>Divergência consciente do
+      Carbon</b>, que bloqueia; precedente GOV.UK Character count.</p>
+    </div>
+  </div>
+  <p style="margin-top:12px">Num erro por outro motivo, o contador continua cinza — se o erro é
+  “campo obrigatório”, contador vermelho apontaria a causa errada.</p>
+</section>
+
+<section>
+  <h2>Apoio e erro dividem o mesmo slot</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Sem erro</span>
+      <div class="stage2" style="display:block">{inp('gd-help', 'Código do cupom', apoio='Mínimo de 8 caracteres')}</div>
+      <p class="cap">O apoio explica o campo — e é opcional, nasce desligado.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Com erro</span>
+      <div class="stage2" style="display:block">{inp('gd-err', 'Código do cupom', valor='abc', erro='Use pelo menos 8 caracteres')}</div>
+      <p class="cap">A mensagem <b>substitui</b> o apoio, é obrigatória e diz como corrigir.
+      <i>Material 3; Spectrum; Primer: “an invalid field should always have a message”.</i></p>
+    </div>
+  </div>
+  <p style="margin-top:12px">O erro aparece quando a pessoa sai do campo ou envia — nunca a cada
+  tecla. Só o contador muda em tempo real.</p>
+</section>
+
+<section>
+  <h2>Read-only e desabilitado resolvem coisas diferentes</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Read-only</span>
+      <div class="stage2" style="display:block">{inp('gd-ro', 'CPF', valor='123.456.789-09', readonly=True)}</div>
+      <p class="cap">O dado precisa ser lido e copiado, e <b>vai no envio</b>. Recebe Tab, não
+      reage ao hover. Vazio, mostra “—” — nunca placeholder. <i>Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Desabilitado</span>
+      <div class="stage2" style="display:block">{inp('gd-off', 'Empresa', disabled=True, placeholder='Preenchida pelo convite')}</div>
+      <p class="cap">O campo não se aplica agora, e <b>não vai no envio</b>. Fica abaixo do AA de
+      propósito: o 1.4.3 isenta componente inativo.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Largura</h2>
+  <p>O componente ocupa 100% do contêiner, e o formulário decide o contêiner pelo tamanho
+  esperado da resposta: um CEP não precisa da largura de um endereço. <i>GOV.UK: “use
+  appropriately-sized text inputs”.</i> Um tamanho só de altura, 48px.</p>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Aviso (warning), ícone à esquerda, botão de limpar</b><span>Não entram nesta versão.</span></div>
+    <div><b>Senha, número, busca e várias linhas</b><span>Cada demanda abre o componente próprio — Password, Textarea — e não estica o Input.</span></div>
+    <div><b>Tamanhos extras</b><span>Um tamanho só, como no Select.</span></div>
+  </div>
+</section>'''
+
+INPUT_A11Y_TAB = f'''
+<section>
+  <h2>O fundo efetivo muda com a camada</h2>
+  <p>O portão mede <b>combinação renderizada</b>: oito situações — os sete estados e o read-only
+  focado — nos dois temas, cada papel contra o fundo que ele realmente tem na tela. A borda troca
+  de vizinho quando o campo recebe foco: em repouso toca a página (a pior entre
+  <code>bg-canvas</code> e <code>bg-surface-raised</code>); com foco, o anel desenha um respiro de
+  2px em <code>bg-canvas</code> colado nela.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Borda em repouso</th><th>Borda com foco</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num">{IN_LAYER['light']['rest']:.2f}:1</td><td class="num strong">{IN_LAYER['light']['focused']:.2f}:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num">{IN_LAYER['dark']['rest']:.2f}:1</td><td class="num strong">{IN_LAYER['dark']['focused']:.2f}:1</td></tr>
+    </tbody>
+  </table></div>
+  <div class="stats">
+    <div class="stat hl"><b>{N_IN_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_IN_PASSA}</b><span>passam</span></div>
+    <div class="stat"><b>{N_IN_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{INPUT_A11Y['fails']}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda abaixo de 3:1 no repouso e no read-only — decisão consciente</b>
+    <code>border-default</code> dá {IN_LAYER['light']['rest']:.2f}:1 no claro; o read-only, em
+    <code>border-subtle</code>, chega a {_in('readonly', 'dark', 'borda'):.2f}:1 no escuro. O 1.4.11
+    não falha quando a borda não é o único meio de perceber o componente — e aqui não é: há rótulo
+    visível e texto dentro. <b>Por isso “nunca use o Input sem rótulo visível” é regra de uso, e
+    não sugestão:</b> é ela que sustenta esta exceção.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Disabled abaixo de AA — isenção do 1.4.3</b>
+    O WCAG isenta componente inativo, e subir esse contraste faz o desabilitado parecer editável.
+    Exceção permanente do AL.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O read-only não tem isenção — e não precisa</b>
+    O texto dele é o mesmo do campo editável: {_in('readonly', 'light', 'valor'):.2f}:1 no claro.
+    O único texto que reprovaria ali é o placeholder (4,21:1), e ele não aparece: o CSS o torna
+    transparente e o read-only vazio mostra “—”.
+  </div>
+</section>
+
+<section>
+  <h2>Borda e anel — o não-textual, piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{input_a11y_rows(['borda', 'anel de foco'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{input_a11y_rows(['rotulo', 'marca opcional', 'contador', 'contador acima do limite', 'apoio', 'mensagem de erro', 'placeholder', 'valor', 'afixo', 'texto'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Sete regras, medidas por <code>components/input/a11y.py</code> no HTML que este site emite.
+  Quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> de rótulo apontando para ele.</span></div>
+    <div><b>Erro com mensagem</b><span><code>aria-invalid="true"</code> com <code>aria-describedby</code> para um texto que existe e não está vazio.</span></div>
+    <div><b>Afixo no nome</b><span>Campo com afixo tem <code>aria-labelledby</code> = rótulo + prefixo + sufixo: o leitor lê “Site, www., .com”. <i>Polaris.</i></span></div>
+    <div><b>Sem <code>aria-label</code> redundante</b><span>Havendo rótulo visível, o nome anunciado tem que ser ele.</span></div>
+    <div><b>Sem <code>maxlength</code></b><span>O limite não trava a digitação.</span></div>
+    <div><b>Contador com <code>aria-live</code></b><span><code>polite</code> com o campo focado, <code>off</code> fora — senão os contadores falam um atrás do outro. <i>Polaris.</i></span></div>
+    <div><b>Read-only nunca vazio</b><span>Sem valor, mostra “—”.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>{INPUT_A11Y['markupChecked']}</b><span>campos conferidos no HTML</span></div>
+    <div class="stat"><b>7</b><span>regras por campo</span></div>
+    <div class="stat"><b>{'pendente' if INPUT_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Não existe Active — e a medição confirmou</h2>
+  <p>A especificação do <code>:focus-visible</code> manda todo elemento que aceita digitação
+  mostrar o foco, <b>inclusive no clique de mouse</b>. Medido no Chromium na etapa 6: clicar no
+  campo liga o anel, e clicar no read-only também. Uma borda laranja de 1px para o clique seria
+  coberta pelo anel no mesmo instante — por isso o estado saiu do Figma na etapa 1.</p>
+</section>'''
+
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -5157,6 +5688,7 @@ LANDING_COMPONENTES = f'''
     {card('checkbox', 'Checkbox', 'Várias opções, ou uma que só vale depois de confirmar. Input nativo com a caixa do AL pintada por cima — com o estado misto para o checkbox pai.', TH_CHECKBOX)}
     {card('radio', 'Radio', 'Uma opção de uma lista curta. Input nativo com o círculo do AL pintado por cima — e o erro é da pergunta, não da opção.', TH_RADIO)}
     {card('switch', 'Switch', 'Liga ou desliga algo que vale na hora, sem “Salvar”. Checkbox nativo com role="switch" e o trilho do AL pintado por cima.', TH_SWITCH)}
+    {card('input', 'Input', 'Resposta livre de uma linha. Input nativo dentro de uma caixa que aceita prefixo, sufixo e contador — e um read-only que se lê.', TH_INPUT)}
   </div>
 </section>
 
@@ -5304,6 +5836,15 @@ PAGES = [
          (f'{N_SWITCH_TOKENS} tokens', False), ('3 exceções declaradas', False)],
         [('overview', 'Visão geral', SWITCH_OVERVIEW), ('specs', 'Especificações', SWITCH_SPECS),
          ('guide', 'Diretrizes', SWITCH_GUIDE), ('a11y', 'Acessibilidade', SWITCH_A11Y_TAB)])),
+    ('input', 'Componentes', page(
+        'input', 'Componentes', 'Input',
+        'Resposta livre de uma linha: nome, e-mail, URL, telefone. É o <code>&lt;input&gt;</code> '
+        'nativo dentro de uma caixa do AL — que é o que deixa prefixo e sufixo morarem dentro da '
+        'borda, sem que nenhum dos dois vá junto no envio.',
+        [('Estável', True), ('7 estados no Figma', False),
+         (f'{N_INPUT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', INPUT_OVERVIEW), ('specs', 'Especificações', INPUT_SPECS),
+         ('guide', 'Diretrizes', INPUT_GUIDE), ('a11y', 'Acessibilidade', INPUT_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -5340,6 +5881,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/checkbox" data-page="checkbox">Checkbox</a>
         <a href="#/radio" data-page="radio">Radio</a>
         <a href="#/switch" data-page="switch">Switch</a>
+        <a href="#/input" data-page="input">Input</a>
       </div>
     </div>
   </div>
@@ -6560,6 +7102,147 @@ JS_SWITCH = r"""
 """
 
 
+CHROME_INPUT = """
+/* ── miniatura do card do Input ── */
+.th-input{display:flex; flex-direction:column; gap:6px; width:100%; max-width:200px; margin-inline:auto}
+.th-input__label{font-size:12px; line-height:16px; color:var(--al-text-primary)}
+.th-input__field{
+  display:block; padding:8px 10px;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-lg);
+  background:var(--al-bg-surface-raised);
+  color:var(--al-text-placeholder);
+  font-size:12.5px; line-height:16px;
+}
+/* o palco do playground precisa de largura: o campo ocupa 100% do conteiner */
+#input-stage{display:block; padding-inline:8px}
+#input-stage .al-input{width:100%; max-width:360px; margin-inline:auto}
+"""
+
+JS_INPUT = r"""
+(function () {
+  // ── contador do Input ──
+  // O que a aplicacao faria: o limite nao trava a digitacao (sem maxlength),
+  // entao e este script que conta, liga data-over-limit e so deixa o contador
+  // falar com o campo focado (aria-live polite / off - solucao do Polaris).
+  function ligarContadores(raiz) {
+    raiz.querySelectorAll('.al-input__field[data-limit]').forEach(function (campo) {
+      if (campo.dataset.bound) return;
+      campo.dataset.bound = '1';
+      var limite = +campo.dataset.limit;
+      var cont = document.getElementById(campo.dataset.counter);
+      if (!cont) return;
+      function atualizar() {
+        var n = campo.value.length;
+        cont.textContent = n + '/' + limite;
+        if (n > limite) cont.setAttribute('data-over-limit', '');
+        else cont.removeAttribute('data-over-limit');
+      }
+      campo.addEventListener('input', atualizar);
+      campo.addEventListener('focus', function () { cont.setAttribute('aria-live', 'polite'); });
+      campo.addEventListener('blur', function () { cont.setAttribute('aria-live', 'off'); });
+      atualizar();
+    });
+  }
+  ligarContadores(document);
+
+  // ── playground do Input ──
+  var stage = document.getElementById('input-stage');
+  if (!stage) return;
+  var code = document.getElementById('input-code');
+  var labelInput = document.getElementById('input-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    var estado = pick('inpstate');
+    var cheio = pick('inpvalue') === 'filled';
+    var opcional = pick('inpopt') === 'opt';
+    var afixo = pick('inpaffix') === 'on';
+    var contador = pick('inpcount') === 'on';
+    var comApoio = pick('inphelp') === 'on';
+    var theme = pick('inptheme');
+    var rotulo = (labelInput.value || '').trim() || 'E-mail';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var erro = estado === 'error', off = estado === 'disabled', ro = estado === 'readonly';
+    var tipo = afixo ? 'url' : 'email';
+    var ph = afixo ? 'empresa' : 'nome@empresa.com';
+    var valor = cheio ? (afixo ? 'empresa' : 'nome@empresa.com') : '';
+    if (erro && cheio) valor = afixo ? 'empresa!' : 'nome@empresa';
+    // regra 22: read-only vazio mostra "—", nunca placeholder
+    if (ro && !valor) valor = '—';
+    // o erro SUBSTITUI o apoio, e a mensagem e obrigatoria (regra 17)
+    var msg = erro ? (afixo ? 'Use só letras, números e hífen'
+                            : 'Use um e-mail no formato nome@empresa.com')
+                   : (comApoio ? 'Usamos para enviar o recibo' : null);
+
+    function attrsDe(id) {
+      var a = ['class="al-input__field"', 'id="' + id + '"', 'type="' + tipo + '"'];
+      if (valor) a.push('value="' + esc(valor) + '"');
+      if (!ro) a.push('placeholder="' + ph + '"');
+      if (afixo) a.push('aria-labelledby="' + id + '-label ' + id + '-prefix ' + id + '-suffix"');
+      if (msg) a.push('aria-describedby="' + id + '-help"');
+      if (erro) a.push('aria-invalid="true"');
+      if (contador && !ro) a.push('data-limit="40" data-counter="' + id + '-count"');
+      if (ro) a.push('readonly');
+      if (off) a.push('disabled');
+      return a;
+    }
+
+    function montar(id, escapar) {
+      var e = escapar ? function (s) { return s.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+                      : function (s) { return s; };
+      var ind = escapar ? '\n' : '';
+      var sp = function (n) { return escapar ? new Array(n + 1).join(' ') : ''; };
+      var out = e('<div class="al-input">') + ind
+        + sp(2) + e('<div class="al-input__labelrow">') + ind
+        + sp(4) + e('<label class="al-input__label" id="' + id + '-label" for="' + id + '">')
+        + esc(rotulo) + e('</label>') + ind;
+      if (opcional) out += sp(4) + e('<span class="al-input__optional">(Opcional)</span>') + ind;
+      // read-only nao se digita: contador ali contaria o "—"
+      if (contador && !ro) out += sp(4) + e('<span class="al-input__counter" id="' + id
+                                     + '-count" aria-live="off">' + valor.length + '/40</span>') + ind;
+      out += sp(2) + e('</div>') + ind + sp(2) + e('<div class="al-input__control">') + ind;
+      if (afixo) out += sp(4) + e('<label class="al-input__affix" id="' + id + '-prefix" for="' + id + '">www.</label>') + ind;
+      out += sp(4) + e('<input ' + attrsDe(id).join(' ') + '>') + ind;
+      if (afixo) out += sp(4) + e('<label class="al-input__affix" id="' + id + '-suffix" for="' + id + '">.com</label>') + ind;
+      out += sp(2) + e('</div>') + ind;
+      if (msg) out += sp(2) + e('<p class="al-input__help" id="' + id + '-help">' + msg + '</p>') + ind;
+      out += e('</div>');
+      return out;
+    }
+
+    stage.innerHTML = montar('play-input', false);
+    ligarContadores(stage);
+    var linhas = montar('email', true);
+    if (erro) linhas += '\n&lt;!-- o erro vem de aria-invalid, nunca de uma classe --&gt;';
+    if (contador) linhas += '\n&lt;!-- sem maxlength: o script conta e liga data-over-limit --&gt;';
+    code.innerHTML = linhas;
+  }
+
+  document.querySelectorAll('#input-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('input-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+"""
+
+
 HTML = (
     '<meta charset="utf-8">\n'
     '<title>AL Design System</title>\n'
@@ -6570,14 +7253,14 @@ HTML = (
     '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
-    + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH
+    + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n\n<script>'
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
-    + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + '</script>\n'
+    + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
@@ -6605,5 +7288,8 @@ print(f'  tokens do Radio   : {N_RADIO_TOKENS}  '
 print(f'  tokens do Switch  : {N_SWITCH_TOKENS}  '
       f'({len(SWITCH_A11Y["rows"])} combinacoes medidas, {SWITCH_A11Y["fails"]} reprovas, '
       f'{sum(SWITCH_A11Y["exceptions"].values())} medicoes em excecao declarada)')
+print(f'  tokens do Input   : {N_INPUT_TOKENS}  '
+      f'({len(INPUT_A11Y["rows"])} combinacoes medidas, {INPUT_A11Y["fails"]} reprovas, '
+      f'{sum(INPUT_A11Y["exceptions"].values())} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
