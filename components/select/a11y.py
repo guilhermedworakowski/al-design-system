@@ -42,7 +42,12 @@ O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
     d) a seta e decorativa: `aria-hidden="true"` e `focusable="false"` na
        propria tag - o sentido mora no rotulo (contrato do icon.css);
     e) nenhum campo usa `aria-label` havendo rotulo visivel, porque o nome
-       anunciado tem que bater com o texto que a pessoa le (regra 24).
+       anunciado tem que bater com o texto que a pessoa le (regra 24);
+    f) o `id` do campo e UNICO no documento. Sem isso o `<label for>` liga no
+       primeiro elemento com aquele id, que pode nao ser o campo - foi o que
+       aconteceu no playground do site ate 0.11.0: o campo chamava `pg-select`,
+       o mesmo id do conteiner da pagina, e o rotulo apontava para a pagina.
+       As regras (a) a (e) passavam todas; so contar o id pegou.
 
   Regra escrita numa pagina envelhece; regra medida quebra o build.
 
@@ -244,6 +249,9 @@ def marcacao(path):
             achados.append(f'(a) <select> sem id: {tag[:70]}')
             continue
         sid = m_id.group(1)
+        n_id = len(re.findall(rf'\bid="{re.escape(sid)}"', html))
+        if n_id > 1:
+            achados.append(f'(f) id "{sid}" aparece {n_id} vezes - o <label for> pode ligar em outro elemento')
         if sid not in ids_label:
             achados.append(f'(a) nenhum <label for="{sid}"> aponta para este campo')
         if 'aria-label' in tag and sid in ids_label:
@@ -328,7 +336,7 @@ def run():
         print('    PENDENTE - nenhum campo neste HTML. Rodar site/site.py e chamar')
         print('    este portao de novo (ver ORDEM DE EXECUCAO no cabecalho).')
     else:
-        print('    as cinco regras passam em todos os campos')
+        print('    as seis regras passam em todos os campos')
     print('-' * 78)
 
     # O site le este arquivo para montar a aba de Acessibilidade.
@@ -346,6 +354,7 @@ def run():
             'o placeholder e a primeira <option value=""> selecionada',
             'a seta e decorativa: aria-hidden="true" e focusable="false"',
             'nenhum campo usa aria-label havendo rotulo visivel',
+            'o id do campo e unico no documento',
         ],
         'fails': len(reprovas),
         'exceptions': {k: len([l for l in excecoes if l['exc'] == k]) for k in PENDING},

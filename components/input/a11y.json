@@ -15,7 +15,8 @@
     "nenhum campo usa aria-label havendo rotulo visivel",
     "nenhum campo usa maxlength",
     "todo contador declara aria-live",
-    "campo read-only tem valor (\"—\" quando vazio)"
+    "campo read-only tem valor (\"—\" quando vazio)",
+    "o id do campo e unico no documento"
   ],
   "fails": 0,
   "exceptions": {

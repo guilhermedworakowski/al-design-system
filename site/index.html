@@ -6873,7 +6873,7 @@ footer code{background:none; padding:0}
 <section>
   <h2>Playground</h2>
   <div class="pg">
-    <div class="stage" id="select-stage"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="pg-select">Estado</label></div><div class="al-select__control"><select id="pg-select" class="al-select__field"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div>
+    <div class="stage" id="select-stage"><div class="al-select"><div class="al-select__labelrow"><label class="al-select__label" for="play-select">Estado</label></div><div class="al-select__control"><select id="play-select" class="al-select__field"><option value="" disabled selected>Selecione o estado</option><option value="Acre">Acre</option><option value="Bahia">Bahia</option><option value="Ceará">Ceará</option><option value="Minas Gerais">Minas Gerais</option><option value="Paraná">Paraná</option><option value="São Paulo">São Paulo</option></select><svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m6 9 6 6 6-6" /></svg></div></div></div>
 
     <div class="controls" id="select-controls">
       <div class="ctl"><span class="ctl-name">Estado</span><div class="seg" role="radiogroup" aria-label="selstate">
@@ -7291,7 +7291,7 @@ footer code{background:none; padding:0}
 <section>
   <h2>O contrato de marcação</h2>
   <p>Num campo de formulário quase tudo que dá errado é <b>marcação</b>, não estilo — e
-  marcação só existe na saída renderizada. Por isso estas cinco regras não estão escritas numa
+  marcação só existe na saída renderizada. Por isso estas seis regras não estão escritas numa
   página: elas são medidas por <code>components/select/a11y.py</code> no HTML que este site
   emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
@@ -7300,10 +7300,11 @@ footer code{background:none; padding:0}
     <div><b>Placeholder de verdade</b><span>É a primeira <code>&lt;option value=""&gt;</code> e ela está <code>selected</code>.</span></div>
     <div><b>Seta decorativa</b><span><code>aria-hidden="true"</code> e <code>focusable="false"</code> na própria tag — o sentido mora no rótulo.</span></div>
     <div><b>Sem <code>aria-label</code> redundante</b><span>Havendo rótulo visível, o nome anunciado tem que ser ele.</span></div>
+    <div><b><code>id</code> único</b><span>Senão o <code>&lt;label for&gt;</code> liga no primeiro elemento com aquele id. O playground desta página caiu nisso até a 0.11.0: o campo tinha o mesmo id da página, e as outras cinco regras passavam.</span></div>
   </div>
   <div class="stats" style="margin-top:16px">
     <div class="stat hl"><b>18</b><span>campos conferidos no HTML</span></div>
-    <div class="stat"><b>5</b><span>regras por campo</span></div>
+    <div class="stat"><b>6</b><span>regras por campo</span></div>
     <div class="stat"><b>medido</b><span>estado do contrato</span></div>
   </div>
   <p style="margin-top:12px; font-size:13.5px; color:var(--al-text-secondary)">
@@ -8714,13 +8715,13 @@ footer code{background:none; padding:0}
   <div class="dd">
     <div class="cell">
       <span class="lab" style="color:var(--al-text-success)">Faça</span>
-      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-ok-label" for="gd-ok">E-mail</label><span class="al-input__optional">(Opcional)</span></div><div class="al-input__control"><input class="al-input__field" id="gd-ok" type="email" placeholder="nome@empresa.com"></div></div></div>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ig-ok-label" for="ig-ok">E-mail</label><span class="al-input__optional">(Opcional)</span></div><div class="al-input__control"><input class="al-input__field" id="ig-ok" type="email" placeholder="nome@empresa.com"></div></div></div>
       <p class="cap">Rótulo visível, curto, descrevendo <b>o dado</b>. O placeholder é um
       <b>exemplo de formato</b>, nunca a instrução. <i>Spectrum; Carbon.</i></p>
     </div>
     <div class="cell">
       <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
-      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-bad-label" for="gd-bad">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="gd-bad" type="email" placeholder="Digite seu e-mail corporativo"></div></div></div>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ig-bad-label" for="ig-bad">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="ig-bad" type="email" placeholder="Digite seu e-mail corporativo"></div></div></div>
       <p class="cap">Instrução no placeholder. Some ao digitar, e quem usa preenchimento
       automático nunca a vê. Requisito vai no texto de apoio. <i>Spectrum.</i></p>
     </div>
@@ -8747,12 +8748,12 @@ footer code{background:none; padding:0}
   <div class="dd">
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Dentro do limite</span>
-      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-count-label" for="gd-count">Apelido</label><span class="al-input__counter" id="gd-count-count" aria-live="off">4/20</span></div><div class="al-input__control"><input class="al-input__field" id="gd-count" type="text" value="Duda" data-limit="20" data-counter="gd-count-count"></div></div></div>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ig-count-label" for="ig-count">Apelido</label><span class="al-input__counter" id="ig-count-count" aria-live="off">4/20</span></div><div class="al-input__control"><input class="al-input__field" id="ig-count" type="text" value="Duda" data-limit="20" data-counter="ig-count-count"></div></div></div>
       <p class="cap">Só aparece havendo limite real. <i>Material 3; Carbon.</i></p>
     </div>
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Acima do limite</span>
-      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-over-label" for="gd-over">Apelido</label><span class="al-input__counter" id="gd-over-count" aria-live="off" data-over-limit>25/20</span></div><div class="al-input__control"><input class="al-input__field" id="gd-over" type="text" value="Maria Eduarda Albuquerque" data-limit="20" data-counter="gd-over-count"></div></div></div>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ig-over-label" for="ig-over">Apelido</label><span class="al-input__counter" id="ig-over-count" aria-live="off" data-over-limit>25/20</span></div><div class="al-input__control"><input class="al-input__field" id="ig-over" type="text" value="Maria Eduarda Albuquerque" data-limit="20" data-counter="ig-over-count"></div></div></div>
       <p class="cap">Sem <code>maxlength</code>: o campo aceita, o contador fica vermelho e o envio
       falha com mensagem. Travar corta sem aviso o texto colado. <b>Divergência consciente do
       Carbon</b>, que bloqueia; precedente GOV.UK Character count.</p>
@@ -8767,12 +8768,12 @@ footer code{background:none; padding:0}
   <div class="dd">
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Sem erro</span>
-      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-help-label" for="gd-help">Código do cupom</label></div><div class="al-input__control"><input class="al-input__field" id="gd-help" type="text" aria-describedby="gd-help-help"></div><p class="al-input__help" id="gd-help-help">Mínimo de 8 caracteres</p></div></div>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ig-help-label" for="ig-help">Código do cupom</label></div><div class="al-input__control"><input class="al-input__field" id="ig-help" type="text" aria-describedby="ig-help-help"></div><p class="al-input__help" id="ig-help-help">Mínimo de 8 caracteres</p></div></div>
       <p class="cap">O apoio explica o campo — e é opcional, nasce desligado.</p>
     </div>
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Com erro</span>
-      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-err-label" for="gd-err">Código do cupom</label></div><div class="al-input__control"><input class="al-input__field" id="gd-err" type="text" value="abc" aria-describedby="gd-err-help" aria-invalid="true"></div><p class="al-input__help" id="gd-err-help">Use pelo menos 8 caracteres</p></div></div>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ig-err-label" for="ig-err">Código do cupom</label></div><div class="al-input__control"><input class="al-input__field" id="ig-err" type="text" value="abc" aria-describedby="ig-err-help" aria-invalid="true"></div><p class="al-input__help" id="ig-err-help">Use pelo menos 8 caracteres</p></div></div>
       <p class="cap">A mensagem <b>substitui</b> o apoio, é obrigatória e diz como corrigir.
       <i>Material 3; Spectrum; Primer: “an invalid field should always have a message”.</i></p>
     </div>
@@ -8786,13 +8787,13 @@ footer code{background:none; padding:0}
   <div class="dd">
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Read-only</span>
-      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-ro-label" for="gd-ro">CPF</label></div><div class="al-input__control"><input class="al-input__field" id="gd-ro" type="text" value="123.456.789-09" readonly></div></div></div>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ig-ro-label" for="ig-ro">CPF</label></div><div class="al-input__control"><input class="al-input__field" id="ig-ro" type="text" value="123.456.789-09" readonly></div></div></div>
       <p class="cap">O dado precisa ser lido e copiado, e <b>vai no envio</b>. Recebe Tab, não
       reage ao hover. Vazio, mostra “—” — nunca placeholder. <i>Carbon.</i></p>
     </div>
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Desabilitado</span>
-      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="gd-off-label" for="gd-off">Empresa</label></div><div class="al-input__control"><input class="al-input__field" id="gd-off" type="text" placeholder="Preenchida pelo convite" disabled></div></div></div>
+      <div class="stage2" style="display:block"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" id="ig-off-label" for="ig-off">Empresa</label></div><div class="al-input__control"><input class="al-input__field" id="ig-off" type="text" placeholder="Preenchida pelo convite" disabled></div></div></div>
       <p class="cap">O campo não se aplica agora, e <b>não vai no envio</b>. Fica abaixo do AA de
       propósito: o 1.4.3 isenta componente inativo.</p>
     </div>
@@ -9009,7 +9010,7 @@ footer code{background:none; padding:0}
 
 <section>
   <h2>O contrato de marcação</h2>
-  <p>Sete regras, medidas por <code>components/input/a11y.py</code> no HTML que este site emite.
+  <p>Oito regras, medidas por <code>components/input/a11y.py</code> no HTML que este site emite.
   Quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> de rótulo apontando para ele.</span></div>
@@ -9019,10 +9020,11 @@ footer code{background:none; padding:0}
     <div><b>Sem <code>maxlength</code></b><span>O limite não trava a digitação.</span></div>
     <div><b>Contador com <code>aria-live</code></b><span><code>polite</code> com o campo focado, <code>off</code> fora — senão os contadores falam um atrás do outro. <i>Polaris.</i></span></div>
     <div><b>Read-only nunca vazio</b><span>Sem valor, mostra “—”.</span></div>
+    <div><b><code>id</code> único</b><span>Senão o <code>&lt;label for&gt;</code> liga no primeiro elemento com aquele id — a lição do playground do Select.</span></div>
   </div>
   <div class="stats" style="margin-top:16px">
     <div class="stat hl"><b>24</b><span>campos conferidos no HTML</span></div>
-    <div class="stat"><b>7</b><span>regras por campo</span></div>
+    <div class="stat"><b>8</b><span>regras por campo</span></div>
     <div class="stat"><b>medido</b><span>estado do contrato</span></div>
   </div>
 </section>
@@ -9696,10 +9698,10 @@ var SEL_UFS = ["Acre", "Bahia", "Cear\u00e1", "Minas Gerais", "Paran\u00e1", "S\
     var msg = erro ? 'Escolha um estado para continuar'
                    : (comApoio ? 'Onde a nota será emitida' : null);
 
-    var attrs = ['id="pg-select"', 'class="al-select__field"'];
+    var attrs = ['id="play-select"', 'class="al-select__field"'];
     if (erro) attrs.push('aria-invalid="true"');
     if (off) attrs.push('disabled');
-    if (msg) attrs.push('aria-describedby="pg-select-help"');
+    if (msg) attrs.push('aria-describedby="play-select-help"');
 
     var opts = ['<option value="" disabled' + (comValor ? '' : ' selected')
                 + '>Selecione o estado</option>'];
@@ -9709,12 +9711,12 @@ var SEL_UFS = ["Acre", "Bahia", "Cear\u00e1", "Minas Gerais", "Paran\u00e1", "S\
     });
 
     var marca = opcional ? '<span class="al-select__optional">(Opcional)</span>' : '';
-    var linha = msg ? '<p class="al-select__help" id="pg-select-help">' + msg + '</p>' : '';
+    var linha = msg ? '<p class="al-select__help" id="play-select-help">' + msg + '</p>' : '';
 
     stage.innerHTML =
       '<div class="al-select">'
       + '<div class="al-select__labelrow">'
-      + '<label class="al-select__label" for="pg-select">' + esc(rotulo) + '</label>'
+      + '<label class="al-select__label" for="play-select">' + esc(rotulo) + '</label>'
       + marca + '</div>'
       + '<div class="al-select__control">'
       + '<select ' + attrs.join(' ') + '>' + opts.join('') + '</select>'
