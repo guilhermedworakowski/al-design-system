@@ -3,7 +3,7 @@
 Design system open source, do Figma ao código. Construído em público, uma camada de cada vez.
 
 - **Licença:** MIT
-- **Versão:** `0.11.0`
+- **Versão:** `0.11.1`
 - **Figma:** biblioteca privada por enquanto — primitivas, semânticos e tokens de componente documentados abaixo
 
 ## Estado atual
@@ -51,13 +51,80 @@ Todo input do Tier 2 tem **um tamanho só**, por regra.
 
 O plano de evolução completo — divisão de trabalho, pipeline por componente e roadmap em tiers — está no [playbook](https://claude.ai/code/artifact/18a0c1ed-949c-4c8d-8906-93c21ed560a3).
 
+## Instalação
+
+O AL é consumido como pacote npm instalado direto deste repositório, sempre fixado numa tag. Ele não é publicado no registro do npm: o `"private": true` do `package.json` impede publicação acidental, e a instalação por Git não depende disso.
+
+```bash
+npm install github:guilhermedworakowski/al-design-system#v0.11.1
+```
+
+A tag no fim não é opcional. Sem ela, cada instalação puxa o que estiver na `main` naquele dia, e o produto muda sem que ninguém tenha decidido mudar. Com a tag, atualizar é uma decisão explícita: trocar o número, reinstalar e revisar.
+
+### O que vem no pacote
+
+Só a saída que um produto consome:
+
+- `foundation/al-foundation.css` — primitivas, semânticos (claro e escuro), tipografia, espaçamento, radius, tamanho de ícone, elevação e anel de foco
+- `components/<c>/al-<c>-tokens.css` e `components/<c>/<c>.css` — tokens e CSS de cada componente
+- `components/icon/icons/*.svg` e `icons.json` — os 70 ícones (Lucide, ISC — ver `components/icon/NOTICE`)
+- `tokens.json` — a fonte da verdade, para quem quiser ler os tokens por código
+
+Os scripts Python (geração e portões) não vão no pacote: eles são o processo que produz essa saída, e rodam aqui, não no produto.
+
+### Importar
+
+A ordem importa, e é sempre a mesma: Foundation, depois os tokens do componente, depois o CSS do componente.
+
+```js
+import 'al-design-system/foundation.css';
+import 'al-design-system/components/button/al-button-tokens.css';
+import 'al-design-system/components/button/button.css';
+```
+
+Importe só os componentes que o produto usa. A Foundation é obrigatória em qualquer caso: todo token de componente é alias de um token dela.
+
+### Marcação
+
+O CSS não garante acessibilidade sozinho. Cada componente tem um contrato de marcação — escrito no topo do seu `.css` e cobrado pelo `a11y.py` no site deste repositório. Ao usar um componente num produto, siga esse contrato; o portão daqui não roda no HTML de lá.
+
+### Tema
+
+Claro e escuro já vêm na Foundation. Sem nada no `<html>`, o tema segue o sistema operacional (`prefers-color-scheme`). Para forçar um, carimbe o root:
+
+```html
+<html data-theme="dark">
+```
+
+O tema troca no `:root`. Tematizar um container isolado exige re-declarar a camada semântica dentro dele (ver "Arquitetura de tokens").
+
+### Fontes
+
+As fontes não vêm no pacote. A Foundation declara `Inter` e `JetBrains Mono` com fallbacks de sistema; carregar os arquivos é responsabilidade do produto — de preferência hospedados junto com ele, em vez de um serviço externo.
+
+### Ícones
+
+Os SVGs entram inline, com a classe `.al-icon` no próprio `<svg>` — `<img>` e `background-image` não herdam a cor do texto. Em bundlers baseados em Vite (Astro, por exemplo), o conteúdo do arquivo pode ser lido com o sufixo `?raw`:
+
+```js
+import arrowRight from 'al-design-system/components/icon/icons/arrow-right.svg?raw';
+```
+
+O arquivo `.svg` traz só o desenho: a classe `.al-icon` e o contrato de acessibilidade (`aria-hidden="true" focusable="false"` quando decorativo, `role="img"` com `aria-label` quando carrega sentido) são acrescentados por quem consome. Um componente de ícone no produto resolve isso num lugar só.
+
+### Atualizar
+
+1. Ler o que mudou na release (mensagem do commit `Release x.y.z`).
+2. Trocar a tag no `package.json` do produto e rodar `npm install`.
+3. Revisar o produto nos dois temas antes de publicar.
+
 ## Estrutura
 
 ```
 foundation/
   color.py       # motor OKLCH -> sRGB, gamut mapping, contraste
   build.py       # camada semântica + portão de contraste (WCAG 2.1 AA)
-  export.py      # gera tokens.json a partir de color.py + build.py
+  export.py      # gera tokens.json a partir de color.py + build.py e grava a versão no package.json
   css.py         # gera al-foundation.css a partir de tokens.json
   tune.py        # scripts de calibração da rampa neutra
 
@@ -132,7 +199,7 @@ site/
   site.py        # gera index.html: o site — Foundation + componentes, navegação e playground
 ```
 
-Arquivos `tokens.json`, `*.css` gerados e `site/index.html` são saída — versionados para consulta, mas nunca editados à mão.
+Arquivos `tokens.json`, `*.css` gerados e `site/index.html` são saída — versionados para consulta, mas nunca editados à mão. A versão do `package.json` também: o `export.py` a regrava a partir do `tokens.json`, então o número do release mora num lugar só.
 
 Todo script resolve caminho a partir de si mesmo, nunca do diretório de onde é chamado: rodar da raiz ou de dentro da própria pasta dá exatamente o mesmo resultado. Existe **um** `tokens.json`, na raiz, e ele é a fonte da verdade de toda a cadeia.
 

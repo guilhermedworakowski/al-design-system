@@ -31,7 +31,8 @@ TOKENS = {
     # 0.11.0: o Input - componente novo, casa do meio. Primeiro com read-only
     # (que NAO e isento de contraste como o disabled) e com afixos dentro da
     # borda: a caixa e um invólucro, e o estado chega a ela por :has().
-    "name": "AL Design System", "version": "0.11.0", "license": "MIT",
+    # 0.11.1: package.json — distribuição; nenhum token muda
+    "name": "AL Design System", "version": "0.11.1", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
@@ -130,8 +131,19 @@ if fails:
 TOKENS["contrastReport"] = report
 
 json.dump(TOKENS, open(TOKENS_PATH,'w'), indent=2, ensure_ascii=False)
+
+# A versao tem uma fonte so: meta.version, acima. O package.json repete o
+# numero para o npm, e quem o regrava e este script - nunca a mao. Fica depois
+# do portao de contraste: export abortado nao sobe versao de pacote.
+PACKAGE_PATH = os.path.join(ROOT, 'package.json')
+pkg = json.load(open(PACKAGE_PATH, encoding='utf-8'))
+pkg['version'] = TOKENS['meta']['version']
+with open(PACKAGE_PATH, 'w', encoding='utf-8') as f:
+    json.dump(pkg, f, indent=2, ensure_ascii=False)
+    f.write('\n')
 n_prim = sum(len(v) for v in P.values()) + 1
 print(f"tokens.json escrito")
+print(f"package.json na versao {pkg['version']}")
 print(f"  primitivas de cor : {n_prim}  ({len(P)} familias x 11 steps + orange-550)")
 print(f"  semanticos de cor : {len(SEM)} x 2 temas = {len(SEM)*2}")
 print(f"  estilos de texto  : {len(TOKENS['type']['styles'])}")

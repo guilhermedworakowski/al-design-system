@@ -1,0 +1,30 @@
+{
+  "name": "al-design-system",
+  "version": "0.11.1",
+  "description": "AL Design System: Foundation e componentes em CSS, do Figma ao código.",
+  "license": "MIT",
+  "author": "Guilherme Domingues",
+  "homepage": "https://github.com/guilhermedworakowski/al-design-system#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guilhermedworakowski/al-design-system.git"
+  },
+  "private": true,
+  "files": [
+    "foundation/al-foundation.css",
+    "components/*/*.css",
+    "components/icon/icons/",
+    "components/icon/icons.json",
+    "components/icon/NOTICE",
+    "/tokens.json"
+  ],
+  "exports": {
+    "./foundation.css": "./foundation/al-foundation.css",
+    "./tokens.json": "./tokens.json",
+    "./components/*": "./components/*",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}

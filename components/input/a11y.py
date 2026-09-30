@@ -23,7 +23,7 @@ O QUE O FUNDO EFETIVO MUDA AQUI
 
 DOIS PISOS: texto 4,5:1 (1.4.3); borda e anel 3:1 (1.4.11).
 
-O CONTRATO DE MARCACAO - sete regras, todas da etapa 4
+O CONTRATO DE MARCACAO - oito regras, sete da etapa 4 e uma da licao do Select
 
     a) todo `.al-input__field` tem `id` e um `<label for>` de rotulo
        (`.al-input__label`) apontando para ele (regras 4 e 28);
@@ -34,7 +34,10 @@ O CONTRATO DE MARCACAO - sete regras, todas da etapa 4
     d) nenhum campo usa `aria-label` havendo rotulo visivel (regra 28);
     e) nenhum campo usa `maxlength` - o limite nao trava a digitacao (regra 14);
     f) todo contador declara `aria-live` (regra 30);
-    g) campo `readonly` tem `value` nao vazio - vazio mostra "—" (regra 22).
+    g) campo `readonly` tem `value` nao vazio - vazio mostra "—" (regra 22);
+    h) o `id` do campo e UNICO no documento - senao o `<label for>` liga no
+       primeiro elemento com aquele id. O playground do Select caiu nisso ate
+       0.11.0 (`pg-select` era tambem o id da pagina) e nenhuma outra regra viu.
 
 ORDEM DE EXECUCAO - roda DEPOIS do site.py (mesmo arranjo do Select). Enquanto
 o site nao tiver Input, o JSON sai com `markupPending: true`.
@@ -226,6 +229,9 @@ def marcacao(path):
         if not cid:
             achados.append(f'(a) <input> sem id: {tag[:70]}')
             continue
+        n_id = len(re.findall(rf'\bid="{re.escape(cid)}"', html))
+        if n_id > 1:
+            achados.append(f'(h) id "{cid}" aparece {n_id} vezes - o <label for> pode ligar em outro elemento')
         if cid not in rotulo_de:
             achados.append(f'(a) nenhum <label class="al-input__label" for="{cid}">')
         if re.search(r'\baria-label=', tag) and cid in rotulo_de:
@@ -313,7 +319,7 @@ def run():
         for a in achados:
             print('   ', a)
     else:
-        print('    as sete regras passam em todos os campos')
+        print('    as oito regras passam em todos os campos')
     print('-' * 78)
 
     json.dump({
@@ -332,6 +338,7 @@ def run():
             'nenhum campo usa maxlength',
             'todo contador declara aria-live',
             'campo read-only tem valor ("—" quando vazio)',
+            'o id do campo e unico no documento',
         ],
         'fails': len(reprovas),
         'exceptions': {k: len([l for l in excecoes if l['exc'] == k]) for k in PENDING},

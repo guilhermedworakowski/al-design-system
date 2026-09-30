@@ -3409,7 +3409,7 @@ SELECT_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
-    <div class="stage" id="select-stage">{sel('pg-select')}</div>
+    <div class="stage" id="select-stage">{sel('play-select')}</div>
 
     <div class="controls" id="select-controls">
       <div class="ctl"><span class="ctl-name">Estado</span>{seg('selstate', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}</div>
@@ -3691,7 +3691,7 @@ SELECT_A11Y_TAB = f'''
 <section>
   <h2>O contrato de marcação</h2>
   <p>Num campo de formulário quase tudo que dá errado é <b>marcação</b>, não estilo — e
-  marcação só existe na saída renderizada. Por isso estas cinco regras não estão escritas numa
+  marcação só existe na saída renderizada. Por isso estas seis regras não estão escritas numa
   página: elas são medidas por <code>components/select/a11y.py</code> no HTML que este site
   emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
@@ -3700,10 +3700,11 @@ SELECT_A11Y_TAB = f'''
     <div><b>Placeholder de verdade</b><span>É a primeira <code>&lt;option value=""&gt;</code> e ela está <code>selected</code>.</span></div>
     <div><b>Seta decorativa</b><span><code>aria-hidden="true"</code> e <code>focusable="false"</code> na própria tag — o sentido mora no rótulo.</span></div>
     <div><b>Sem <code>aria-label</code> redundante</b><span>Havendo rótulo visível, o nome anunciado tem que ser ele.</span></div>
+    <div><b><code>id</code> único</b><span>Senão o <code>&lt;label for&gt;</code> liga no primeiro elemento com aquele id. O playground desta página caiu nisso até a 0.11.0: o campo tinha o mesmo id da página, e as outras cinco regras passavam.</span></div>
   </div>
   <div class="stats" style="margin-top:16px">
     <div class="stat hl"><b>{SELECT_A11Y['markupChecked']}</b><span>campos conferidos no HTML</span></div>
-    <div class="stat"><b>5</b><span>regras por campo</span></div>
+    <div class="stat"><b>6</b><span>regras por campo</span></div>
     <div class="stat"><b>{'pendente' if SELECT_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
   </div>
   <p style="margin-top:12px; font-size:13.5px; color:var(--al-text-secondary)">
@@ -5483,13 +5484,13 @@ INPUT_GUIDE = f'''
   <div class="dd">
     <div class="cell">
       <span class="lab" style="color:var(--al-text-success)">Faça</span>
-      <div class="stage2" style="display:block">{inp('gd-ok', 'E-mail', tipo='email', opcional=True, placeholder='nome@empresa.com')}</div>
+      <div class="stage2" style="display:block">{inp('ig-ok', 'E-mail', tipo='email', opcional=True, placeholder='nome@empresa.com')}</div>
       <p class="cap">Rótulo visível, curto, descrevendo <b>o dado</b>. O placeholder é um
       <b>exemplo de formato</b>, nunca a instrução. <i>Spectrum; Carbon.</i></p>
     </div>
     <div class="cell">
       <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
-      <div class="stage2" style="display:block">{inp('gd-bad', 'E-mail', tipo='email', placeholder='Digite seu e-mail corporativo')}</div>
+      <div class="stage2" style="display:block">{inp('ig-bad', 'E-mail', tipo='email', placeholder='Digite seu e-mail corporativo')}</div>
       <p class="cap">Instrução no placeholder. Some ao digitar, e quem usa preenchimento
       automático nunca a vê. Requisito vai no texto de apoio. <i>Spectrum.</i></p>
     </div>
@@ -5516,12 +5517,12 @@ INPUT_GUIDE = f'''
   <div class="dd">
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Dentro do limite</span>
-      <div class="stage2" style="display:block">{inp('gd-count', 'Apelido', limite=20, valor='Duda')}</div>
+      <div class="stage2" style="display:block">{inp('ig-count', 'Apelido', limite=20, valor='Duda')}</div>
       <p class="cap">Só aparece havendo limite real. <i>Material 3; Carbon.</i></p>
     </div>
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Acima do limite</span>
-      <div class="stage2" style="display:block">{inp('gd-over', 'Apelido', limite=20, valor='Maria Eduarda Albuquerque')}</div>
+      <div class="stage2" style="display:block">{inp('ig-over', 'Apelido', limite=20, valor='Maria Eduarda Albuquerque')}</div>
       <p class="cap">Sem <code>maxlength</code>: o campo aceita, o contador fica vermelho e o envio
       falha com mensagem. Travar corta sem aviso o texto colado. <b>Divergência consciente do
       Carbon</b>, que bloqueia; precedente GOV.UK Character count.</p>
@@ -5536,12 +5537,12 @@ INPUT_GUIDE = f'''
   <div class="dd">
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Sem erro</span>
-      <div class="stage2" style="display:block">{inp('gd-help', 'Código do cupom', apoio='Mínimo de 8 caracteres')}</div>
+      <div class="stage2" style="display:block">{inp('ig-help', 'Código do cupom', apoio='Mínimo de 8 caracteres')}</div>
       <p class="cap">O apoio explica o campo — e é opcional, nasce desligado.</p>
     </div>
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Com erro</span>
-      <div class="stage2" style="display:block">{inp('gd-err', 'Código do cupom', valor='abc', erro='Use pelo menos 8 caracteres')}</div>
+      <div class="stage2" style="display:block">{inp('ig-err', 'Código do cupom', valor='abc', erro='Use pelo menos 8 caracteres')}</div>
       <p class="cap">A mensagem <b>substitui</b> o apoio, é obrigatória e diz como corrigir.
       <i>Material 3; Spectrum; Primer: “an invalid field should always have a message”.</i></p>
     </div>
@@ -5555,13 +5556,13 @@ INPUT_GUIDE = f'''
   <div class="dd">
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Read-only</span>
-      <div class="stage2" style="display:block">{inp('gd-ro', 'CPF', valor='123.456.789-09', readonly=True)}</div>
+      <div class="stage2" style="display:block">{inp('ig-ro', 'CPF', valor='123.456.789-09', readonly=True)}</div>
       <p class="cap">O dado precisa ser lido e copiado, e <b>vai no envio</b>. Recebe Tab, não
       reage ao hover. Vazio, mostra “—” — nunca placeholder. <i>Carbon.</i></p>
     </div>
     <div class="cell">
       <span class="lab" style="color:var(--al-text-secondary)">Desabilitado</span>
-      <div class="stage2" style="display:block">{inp('gd-off', 'Empresa', disabled=True, placeholder='Preenchida pelo convite')}</div>
+      <div class="stage2" style="display:block">{inp('ig-off', 'Empresa', disabled=True, placeholder='Preenchida pelo convite')}</div>
       <p class="cap">O campo não se aplica agora, e <b>não vai no envio</b>. Fica abaixo do AA de
       propósito: o 1.4.3 isenta componente inativo.</p>
     </div>
@@ -5648,7 +5649,7 @@ INPUT_A11Y_TAB = f'''
 
 <section>
   <h2>O contrato de marcação</h2>
-  <p>Sete regras, medidas por <code>components/input/a11y.py</code> no HTML que este site emite.
+  <p>Oito regras, medidas por <code>components/input/a11y.py</code> no HTML que este site emite.
   Quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> de rótulo apontando para ele.</span></div>
@@ -5658,10 +5659,11 @@ INPUT_A11Y_TAB = f'''
     <div><b>Sem <code>maxlength</code></b><span>O limite não trava a digitação.</span></div>
     <div><b>Contador com <code>aria-live</code></b><span><code>polite</code> com o campo focado, <code>off</code> fora — senão os contadores falam um atrás do outro. <i>Polaris.</i></span></div>
     <div><b>Read-only nunca vazio</b><span>Sem valor, mostra “—”.</span></div>
+    <div><b><code>id</code> único</b><span>Senão o <code>&lt;label for&gt;</code> liga no primeiro elemento com aquele id — a lição do playground do Select.</span></div>
   </div>
   <div class="stats" style="margin-top:16px">
     <div class="stat hl"><b>{INPUT_A11Y['markupChecked']}</b><span>campos conferidos no HTML</span></div>
-    <div class="stat"><b>7</b><span>regras por campo</span></div>
+    <div class="stat"><b>8</b><span>regras por campo</span></div>
     <div class="stat"><b>{'pendente' if INPUT_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
   </div>
 </section>
@@ -6654,10 +6656,10 @@ JS_SELECT = r"""
     var msg = erro ? 'Escolha um estado para continuar'
                    : (comApoio ? 'Onde a nota será emitida' : null);
 
-    var attrs = ['id="pg-select"', 'class="al-select__field"'];
+    var attrs = ['id="play-select"', 'class="al-select__field"'];
     if (erro) attrs.push('aria-invalid="true"');
     if (off) attrs.push('disabled');
-    if (msg) attrs.push('aria-describedby="pg-select-help"');
+    if (msg) attrs.push('aria-describedby="play-select-help"');
 
     var opts = ['<option value="" disabled' + (comValor ? '' : ' selected')
                 + '>Selecione o estado</option>'];
@@ -6667,12 +6669,12 @@ JS_SELECT = r"""
     });
 
     var marca = opcional ? '<span class="al-select__optional">(Opcional)</span>' : '';
-    var linha = msg ? '<p class="al-select__help" id="pg-select-help">' + msg + '</p>' : '';
+    var linha = msg ? '<p class="al-select__help" id="play-select-help">' + msg + '</p>' : '';
 
     stage.innerHTML =
       '<div class="al-select">'
       + '<div class="al-select__labelrow">'
-      + '<label class="al-select__label" for="pg-select">' + esc(rotulo) + '</label>'
+      + '<label class="al-select__label" for="play-select">' + esc(rotulo) + '</label>'
       + marca + '</div>'
       + '<div class="al-select__control">'
       + '<select ' + attrs.join(' ') + '>' + opts.join('') + '</select>'

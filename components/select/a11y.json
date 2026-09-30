@@ -13,7 +13,8 @@
     "campo em erro tem aria-invalid=\"true\" e aria-describedby que existe",
     "o placeholder e a primeira <option value=\"\"> selecionada",
     "a seta e decorativa: aria-hidden=\"true\" e focusable=\"false\"",
-    "nenhum campo usa aria-label havendo rotulo visivel"
+    "nenhum campo usa aria-label havendo rotulo visivel",
+    "o id do campo e unico no documento"
   ],
   "fails": 0,
   "exceptions": {
