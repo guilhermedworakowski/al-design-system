@@ -5,8 +5,8 @@
     "text": 4.5,
     "nonText": 3.0
   },
-  "markupSource": "site/password-qa.html",
-  "markupChecked": 15,
+  "markupSource": "site/index.html",
+  "markupChecked": 17,
   "markupPending": false,
   "markupRules": [
     "todo campo tem id e um <label for> de rotulo apontando para ele",

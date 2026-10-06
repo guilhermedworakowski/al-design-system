@@ -90,6 +90,11 @@ TEXTAREA = json.load(open(os.path.join(ROOT, 'components', 'textarea', 'tokens.j
 TEXTAREA_TOKENS = open(os.path.join(ROOT, 'components', 'textarea', 'al-textarea-tokens.css')).read()
 TEXTAREA_CSS = open(os.path.join(ROOT, 'components', 'textarea', 'textarea.css')).read()
 TEXTAREA_A11Y = json.load(open(os.path.join(ROOT, 'components', 'textarea', 'a11y.json')))
+PASSWORD = json.load(open(os.path.join(ROOT, 'components', 'password', 'tokens.json')))
+PASSWORD_TOKENS = open(os.path.join(ROOT, 'components', 'password', 'al-password-tokens.css')).read()
+PASSWORD_CSS = open(os.path.join(ROOT, 'components', 'password', 'password.css')).read()
+PASSWORD_JS = open(os.path.join(ROOT, 'components', 'password', 'password.js')).read()
+PASSWORD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'password', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -115,6 +120,7 @@ N_RADIO_TOKENS = len(RADIO['alias'])
 N_SWITCH_TOKENS = len(SWITCH['alias'])
 N_INPUT_TOKENS = len(INPUT['alias'])
 N_TEXTAREA_TOKENS = len(TEXTAREA['alias'])
+N_PASSWORD_TOKENS = len(PASSWORD['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -157,7 +163,8 @@ def scope_themes(found_css, *token_blocks):
 
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
-                         SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS)
+                         SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
+                         PASSWORD_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -168,7 +175,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + RADIO_TOKENS + '\n' + RADIO_CSS
             + '\n' + SWITCH_TOKENS + '\n' + SWITCH_CSS
             + '\n' + INPUT_TOKENS + '\n' + INPUT_CSS
-            + '\n' + TEXTAREA_TOKENS + '\n' + TEXTAREA_CSS)
+            + '\n' + TEXTAREA_TOKENS + '\n' + TEXTAREA_CSS
+            + '\n' + PASSWORD_TOKENS + '\n' + PASSWORD_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -6199,6 +6207,479 @@ TEXTAREA_A11Y_TAB = f'''
 
 
 
+# ════════════════════════════════════════════════════════════ Password · abas
+# 17 variantes no Figma = 6 estados x Type (No / Visible / Hidden), menos o
+# Disabled Visible. No codigo o Type nao e variante: vazio e conteudo, e
+# visivel/escondida e o `type` do <input>, trocado pelo password.js. Os cartoes
+# mostram os 6 estados; o visivel aparece no playground e na secao do olho.
+PW_EYE = al_icon('eye', 'al-icon al-password__show')
+PW_EYE_OFF = al_icon('eye-off', 'al-icon al-password__hide')
+PW_SENHA = 'pa$$w0rd123'
+PW_ERRO = 'A senha precisa ter pelo menos 8 caracteres'
+PW_REQ = 'Use pelo menos 8 caracteres. Frases longas são mais seguras que símbolos.'
+
+
+def pwd(cid, rotulo='Senha', *, novo=False, erro=None, disabled=False, valor=None,
+        placeholder='Digite sua senha', show=None, hide=None, req=None, sim=None):
+    """Um Password real. `sim` escreve na MESMA variavel privada que o
+    password.css usa para o hover. O botao nasce `hidden` e o password.js o
+    revela - sem JS o olho nao existe (regra 28, GOV.UK). `req` poe os
+    requisitos ACIMA do campo, fora do componente (regra 7, opcao B)."""
+    a = ['class="al-password__field"', f'id="{cid}"', 'type="password"',
+         f'autocomplete="{"new-password" if novo else "current-password"}"',
+         'spellcheck="false"', 'autocapitalize="none"']
+    if valor:
+        a.append(f'value="{valor}"')
+    if placeholder:
+        a.append(f'placeholder="{placeholder}"')
+    desc = ([f'{cid}-req'] if req else []) + ([f'{cid}-erro'] if erro else [])
+    if desc:
+        a.append(f'aria-describedby="{" ".join(desc)}"')
+    if erro:
+        a.append('aria-invalid="true"')
+    if disabled:
+        a.append('disabled')
+    b = ['class="al-password__toggle"', 'type="button"', f'aria-controls="{cid}"',
+         'aria-label="Mostrar senha"']
+    if show:
+        b.append(f'data-label-show="{show}" data-label-hide="{hide}"')
+    if disabled:
+        b.append('disabled')
+    b.append('hidden')
+    estilo = f' style="--_border-state: var(--al-password-border-{sim})"' if sim else ''
+    req_html = f'<p class="pw-req" id="{cid}-req">{req}</p>' if req else ''
+    msg = f'<p class="al-password__help" id="{cid}-erro">{erro}</p>' if erro else ''
+    comp = (f'<div class="al-password"><label class="al-password__label" for="{cid}">{rotulo}</label>'
+            f'<div class="al-password__control"{estilo}><input {" ".join(a)}>'
+            f'<button {" ".join(b)}>{PW_EYE}{PW_EYE_OFF}</button></div>{msg}</div>')
+    return f'<div class="pw-group">{req_html}{comp}</div>' if req else comp
+
+
+PASSWORD_STATES = [
+    ('default', 'Default'), ('hover', 'Hover'), ('focus', 'Focus'), ('error', 'Error'),
+    ('focus-error', 'Focus + Error'), ('disabled', 'Disabled'),
+]
+
+
+def password_specimens():
+    notas = {
+        'default': 'O repouso, já com senha: pontos desenhados pelo navegador e o olho, que é a ação de mostrar.',
+        'hover': 'Só existe sob o ponteiro: a variável privada foi escrita direto.',
+        'focus': 'Clique <b>ou</b> tabule até o campo: borda e anel laranja na caixa inteira.',
+        'error': 'Vem de <code>aria-invalid="true"</code>. O valor mantém a cor normal; só rótulo, borda e mensagem mudam.',
+        'focus-error': 'No campo, o anel é vinho. Tabule mais uma vez: no olho, o anel é laranja — o erro é do campo, não do botão.',
+        'disabled': 'Campo e olho levam <code>disabled</code>: o Tab pula os dois, e a senha nunca fica visível.',
+    }
+    cells = []
+    for slug, nome in PASSWORD_STATES:
+        kw = dict(cid=f'pw-{slug}', valor=PW_SENHA)
+        if slug == 'hover':
+            kw['sim'] = 'hover'
+        if slug in ('error', 'focus-error'):
+            kw['erro'] = PW_ERRO
+        if slug == 'disabled':
+            kw['disabled'] = True
+        cells.append(f'<div class="cell"><span class="lab" '
+                     f'style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2" style="display:block">{pwd(**kw)}</div>'
+                     f'<p class="cap">{notas[slug]}</p></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def password_token_rows():
+    rows = []
+    for name in PASSWORD['alias']:
+        res = PASSWORD['resolved'].get(name)
+        if not isinstance(res, dict) or 'light' not in res:
+            continue
+        lt = res['light']
+        sw_ = (f'<span class="chip sm" style="background:{lt}"></span>'
+               if isinstance(lt, str) and lt.startswith('#') else '')
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{PASSWORD["alias"][name]}</td>'
+                    f'<td class="tok dim">{sw_}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+def password_geo_rows():
+    rows = []
+    for role in ['padding-x', 'padding-y', 'gap', 'radius', 'border-width', 'icon-size',
+                 'toggle-radius']:
+        name = f'password-{role}'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{PASSWORD["alias"][name]}</td>'
+                    f'<td class="num">{PASSWORD["resolved"][name]}px</td></tr>')
+    for role in ['font', 'label-font', 'help-font']:
+        name = f'password-{role}'
+        res = PASSWORD['resolved'][name]
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{PASSWORD["alias"][name]}</td>'
+                    f'<td class="num">{res[1]}/{res[2]} · peso {res[3]}</td></tr>')
+    return '\n'.join(rows)
+
+
+def password_a11y_rows(papeis):
+    out = []
+    for r in PASSWORD_A11Y['rows']:
+        if r['papel'] not in papeis:
+            continue
+        if r['pass']:
+            verdict = '<span class="pass">passa</span>'
+        elif r['exc']:
+            verdict = '<span class="exc">exceção</span>'
+        else:
+            verdict = '<span class="fail">reprova</span>'
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{r["state"]}</td>'
+            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">--al-{r["token"]}</td>'
+            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+N_PW_MEDIDAS = len(PASSWORD_A11Y['rows'])
+N_PW_EXC = sum(PASSWORD_A11Y['exceptions'].values())
+N_PW_PASSA = N_PW_MEDIDAS - N_PW_EXC
+PW_DER = PASSWORD['derived']
+
+
+def _pw(state, theme, papel):
+    return next(r['ratio'] for r in PASSWORD_A11Y['rows']
+                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+
+
+TH_PASSWORD = ('<div class="th-password" aria-hidden="true">'
+               '<span class="th-password__label">Senha</span>'
+               '<span class="th-password__field"><span>••••••••</span>'
+               + al_icon('eye', 'al-icon th-password__eye') + '</span></div>')
+
+PASSWORD_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="password-stage">{pwd('play-password')}</div>
+
+    <div class="controls" id="password-controls">
+      <div class="ctl"><span class="ctl-name">Estado</span>{seg('pwstate', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}</div>
+      <div class="ctl"><span class="ctl-name">Valor</span>{seg('pwvalue', [('none', 'Vazio'), ('filled', 'Preenchido')], 'none')}</div>
+      <div class="ctl"><span class="ctl-name">Uso</span>{seg('pwuse', [('login', 'Login'), ('new', 'Senha nova')], 'login')}</div>
+      <div class="ctl"><span class="ctl-name">Requisitos no formulário</span>{seg('pwreq', [('off', 'Sem'), ('on', 'Com')], 'off')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('pwtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><label for="password-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="password-label" type="text" value="Senha" maxlength="40"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="password-copy">Copiar</button></div>
+      <pre><code id="password-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O campo acima é o componente real: esta página carrega o mesmo <code>password.css</code> e o
+    mesmo <code>password.js</code> que vão para produção. Digite, tabule até o olho e aperte
+    Espaço — a senha aparece, o ícone vira o olho cortado e o foco fica no botão.
+  </p>
+</section>
+
+<section>
+  <h2>O olho</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Escondida — o padrão</span>
+      <div class="stage2" style="display:block">{pwd('pwo-hidden', valor=PW_SENHA)}</div>
+      <p class="cap">Toda senha nasce escondida. O ícone mostra a <b>ação</b>: olho = mostrar.
+      <i>GOV.UK; Material; Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Visível — depois do clique</span>
+      <div class="stage2" style="display:block">{pwd('pwo-visible', valor=PW_SENHA)}</div>
+      <p class="cap">Olho cortado = esconder. Alternar não apaga o valor e não tira o foco do
+      botão. Ao enviar o formulário, volta a ficar escondida.</p>
+    </div>
+  </div>
+  <p style="margin-top:12px">O olho é um <code>&lt;button&gt;</code> de verdade, dentro da mesma
+  borda do campo, e vem depois dele na ordem do Tab. Tem anel de foco próprio — circular, sempre
+  laranja — e o foco nele não acende a caixa.</p>
+</section>
+
+<section>
+  <h2>Os seis estados</h2>
+  {password_specimens()}
+</section>
+
+<section>
+  <h2>Num formulário de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <form class="stage2 pw-form" id="pw-demo-form" action="#" novalidate>
+      {pwd('pf-atual', 'Senha atual', valor=PW_SENHA, show='Mostrar senha atual', hide='Ocultar senha atual')}
+      {pwd('pf-nova', 'Nova senha', novo=True, req=PW_REQ, show='Mostrar nova senha', hide='Ocultar nova senha')}
+      {pwd('pf-confirma', 'Confirmar nova senha', novo=True, valor='abc', erro=PW_ERRO, show='Mostrar confirmação', hide='Ocultar confirmação')}
+      {pwd('pf-admin', 'Senha do administrador', valor=PW_SENHA, disabled=True, placeholder=None)}
+      <button type="submit" class="al-btn al-btn--primary al-btn--md pw-submit"><span class="al-btn__label">Salvar</span></button>
+    </form>
+    <p class="cap">Tabule pelos campos: cada olho tem nome próprio (“Mostrar nova senha”). Os
+    requisitos ficam <b>acima</b> da nova senha, fora do componente. Deixe uma senha visível e
+    clique em Salvar — ela volta a ficar escondida. A do administrador é pulada.</p>
+  </div>
+</section>'''
+
+PASSWORD_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Rótulo</b><span><code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Sempre visível — é a regra que sustenta a exceção de contraste da borda.</span></div>
+    <div><b>Caixa</b><span>O <code>__control</code>: borda, fundo, raio e anel do campo. O <code>&lt;input&gt;</code> é transparente dentro dela, como no Input, porque o olho precisa morar dentro da borda.</span></div>
+    <div><b>Campo</b><span><code>&lt;input type="password"&gt;</code> nativo. Os pontos são do navegador.</span></div>
+    <div><b>Olho</b><span><code>&lt;button type="button"&gt;</code> de {PW_DER['toggle-target']}×{PW_DER['toggle-target']}, com os dois ícones da Fundação dentro. Qual aparece é lido do <code>type</code> do campo.</span></div>
+    <div><b>Mensagem de erro</b><span>Só existe no erro. Não há texto de apoio em repouso: requisitos ficam no formulário, acima do campo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <p>Não existe <code>height</code>: o campo soma <code>padding-y</code> × 2 e uma entrelinha, com
+  a borda de 1px descontada do padding — <b>{PW_DER['field-height']}px</b>. O olho tem
+  {PW_DER['toggle-target']}px, a mesma entrelinha, então não mexe na altura. O componente inteiro
+  tem <b>{PW_DER['total-height']}px</b>, e <b>{PW_DER['total-height-with-error']}px</b> com a
+  mensagem de erro.</p>
+  <p style="margin-top:12px">O alvo do olho é <b>{PW_DER['toggle-target']}×{PW_DER['toggle-target']}</b>,
+  o mínimo exato do WCAG 2.5.8. Sem folga: se o ícone encolher, o alvo reprova junto.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_PASSWORD_TOKENS}</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>6</b><span>estados</span></div>
+    <div class="stat"><b>17</b><span>variantes no Figma</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody>{password_token_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Três anéis, três tokens</b>
+    <code>ring</code> e <code>ring-error</code> vão na caixa, com o foco no campo.
+    <code>toggle-ring</code> vai só no olho e é sempre o padrão, mesmo com o campo em erro. O
+    respiro de 2px do anel é <code>bg-canvas</code>: no escuro, ele desenha um contorno fino
+    dentro do campo — aceito na etapa 3.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody>{password_geo_rows()}</tbody>
+  </table></div>
+  <p style="margin-top:12px">Um <code>gap</code> só serve à pilha rótulo → campo → erro e ao espaço
+  entre o texto e o olho. Os dois são 8.</p>
+</section>
+
+<section>
+  <h2>O estado vem da marcação</h2>
+  <div class="anat">
+    <div><b>Visível ou escondida</b><span>O <code>type</code> do campo: <code>password</code> ou <code>text</code>. O CSS troca o ícone; o JavaScript só troca o <code>type</code> e o <code>aria-label</code>.</span></div>
+    <div><b>Erro</b><span><code>aria-invalid="true"</code> no campo. Não há classe de erro.</span></div>
+    <div><b>Desabilitado</b><span><code>disabled</code> no campo <b>e</b> no botão.</span></div>
+    <div><b>Foco</b><span>A caixa lê <code>__field:focus-visible</code>, não <code>:focus-within</code> — por isso o foco no olho não a acende.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O comportamento: <code>password.js</code></h2>
+  <p>É o primeiro componente do AL com JavaScript próprio. Sem ele o olho não existiria, então o
+  comportamento viaja com o componente em vez de cada sistema reimplementar.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Revela o botão</b><span>O olho nasce <code>hidden</code>. Sem JavaScript, fica só o campo de senha nativo — melhor que um botão que não faz nada.</span></div>
+    <div><b>Alterna</b><span><code>type</code> password ↔ text e o nome anunciado (“Mostrar senha” ↔ “Ocultar senha”). Nomes próprios por <code>data-label-show</code> / <code>data-label-hide</code>.</span></div>
+    <div><b>Esconde no envio</b><span>No <code>submit</code> do formulário, volta a <code>type="password"</code>.</span></div>
+    <div><b>Conteúdo inserido depois</b><span><code>window.alPassword.init(elemento)</code>. Chamar duas vezes não liga nada em dobro.</span></div>
+  </div>
+</section>'''
+
+PASSWORD_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Toda senha criada ou digitada</b><span>Login, cadastro, troca de senha. <i>GOV.UK.</i></span></div>
+    <div><b>Código de uso único não é senha</b><span>O código do SMS vai no Input com <code>autocomplete="one-time-code"</code>. Não é segredo guardado, e esconder só atrapalha a transcrição. <i>GOV.UK.</i></span></div>
+    <div><b>“Confirmar senha” é do formulário</b><span>O componente não tem esse campo; o olho já cobre a conferência que ele fazia.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo e placeholder</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block">{pwd('pd-ok', 'Nova senha', novo=True)}</div>
+      <p class="cap">Rótulo visível dizendo o dado — “Senha”, “Senha atual”, “Nova senha”. Placeholder
+      curto e genérico, ou nenhum. <i>Polaris.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block">{pwd('pd-bad', 'Senha', novo=True, placeholder='Mín. 8 caracteres, 1 número, 1 símbolo')}</div>
+      <p class="cap">Requisito no placeholder. Some na primeira tecla, e o gerenciador de senhas
+      nunca o mostra.</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>“Digite sua senha” é uma divergência consciente</b>
+    No Input o placeholder só traz exemplo de formato (regra 7). Senha não tem formato a
+    exemplificar, então o Password aceita um placeholder genérico — nunca requisito, nunca exemplo
+    de senha. E o Password é sempre obrigatório: não há a marca “(Opcional)”.
+  </div>
+</section>
+
+<section>
+  <h2>Requisitos antes de digitar</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block">{pwd('pd-req', 'Nova senha', novo=True, req=PW_REQ)}</div>
+      <p class="cap">Requisitos <b>acima</b> do campo, no formulário, ligados por
+      <code>aria-describedby</code>. A pessoa lê antes de errar. <i>Polaris.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block">{pwd('pd-late', 'Nova senha', novo=True, valor='abc', erro=PW_ERRO)}</div>
+      <p class="cap">Requisito que só aparece como erro. A pessoa descobre a regra depois de
+      tentar.</p>
+    </div>
+  </div>
+  <p style="margin-top:12px">Sem limite máximo e sem <code>maxlength</code>; o mínimo (8 é o
+  recomendado) é regra do sistema, não do componente. Colar é sempre permitido. <i>GOV.UK;
+  WCAG 3.3.8.</i></p>
+</section>
+
+<section>
+  <h2>Erro</h2>
+  <div class="anat">
+    <div><b>Mensagem obrigatória, dizendo como corrigir</b><span>“A senha precisa ter pelo menos 8 caracteres”. <i>Primer.</i></span></div>
+    <div><b>No login, nunca diga qual dado errou</b><span>“E-mail ou senha incorretos” — nunca “Senha incorreta”. Dizer qual errou ajuda quem tenta invadir. <i>GOV.UK.</i></span></div>
+    <div><b>Login que falhou volta vazio</b><span>O campo de senha é limpo e escondido. <i>GOV.UK.</i></span></div>
+    <div><b>Ao sair do campo ou enviar</b><span>Nunca a cada tecla.</span></div>
+    <div><b>O valor não fica vermelho</b><span>Só rótulo, borda e mensagem: o vermelho aponta o que corrigir, não o conteúdo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Mostrar e ocultar</h2>
+  <div class="anat">
+    <div><b>Nasce escondida</b><span>Só a pessoa decide mostrar. <i>GOV.UK.</i></span></div>
+    <div><b>O ícone é a ação</b><span>Olho = mostrar; olho cortado = esconder. <i>Material; Carbon.</i></span></div>
+    <div><b>Um olho por campo</b><span>Com vários campos, o nome anunciado diferencia: “Mostrar nova senha”. <i>GOV.UK.</i></span></div>
+    <div><b>Esconde no envio</b><span>A senha não fica exposta na tela seguinte. <i>GOV.UK.</i></span></div>
+    <div><b>Desabilitado fica sempre escondido</b><span>E o olho fica apagado e fora do Tab.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Medidor de força e checklist ao vivo</b><span>Pesam em comportamento; o ganho é pequeno nesta versão.</span></div>
+    <div><b>Aviso de Caps Lock</b><span>Fica para uma versão futura.</span></div>
+    <div><b>Read-only</b><span>Senha “só para ler” expõe o dado sem uso para quem lê.</span></div>
+    <div><b>Texto de apoio em repouso</b><span>Requisitos ficam no formulário.</span></div>
+    <div><b>Botão de copiar e tamanhos extras</b><span>Não entram nesta versão.</span></div>
+  </div>
+</section>'''
+
+PASSWORD_A11Y_TAB = f'''
+<section>
+  <h2>O anel do olho mora dentro do campo</h2>
+  <p>O portão mede <b>combinação renderizada</b>: os seis estados nos dois temas, cada papel contra
+  o fundo que ele realmente tem na tela. O que a etapa 3 não via: o anel do olho toca o respiro de
+  2px <b>e</b> o fundo do campo, e vale o pior dos dois.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Anel do olho</th><th>Olho</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num strong">{_pw('default', 'light', 'anel do olho'):.2f}:1</td><td class="num">{_pw('default', 'light', 'olho'):.2f}:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num strong">{_pw('default', 'dark', 'anel do olho'):.2f}:1</td><td class="num">{_pw('default', 'dark', 'olho'):.2f}:1</td></tr>
+    </tbody>
+  </table></div>
+  <div class="stats">
+    <div class="stat hl"><b>{N_PW_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_PW_PASSA}</b><span>passam</span></div>
+    <div class="stat"><b>{N_PW_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{PASSWORD_A11Y['fails']}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda abaixo de 3:1 no repouso — decisão consciente</b>
+    <code>border-default</code> dá {_pw('default', 'light', 'borda'):.2f}:1 no claro e
+    {_pw('default', 'dark', 'borda'):.2f}:1 no escuro. O 1.4.11 não falha quando a borda não é o
+    único meio de perceber o componente — há rótulo visível e o olho dentro. <b>Por isso “nunca sem
+    rótulo visível” é regra de uso.</b>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Disabled abaixo de AA — isenção do 1.4.3</b>
+    Inclui o olho apagado. O WCAG isenta componente inativo, e subir esse contraste faz o
+    desabilitado parecer editável.
+  </div>
+</section>
+
+<section>
+  <h2>Borda, anéis e olho — o não-textual, piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{password_a11y_rows(['borda', 'anel do campo', 'anel do olho', 'olho'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{password_a11y_rows(['rotulo', 'mensagem de erro', 'placeholder', 'valor', 'texto'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Dez regras, medidas por <code>components/password/a11y.py</code> no HTML que este site
+  emite. Quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> apontando para ele, sem <code>aria-label</code> redundante.</span></div>
+    <div><b>Erro com mensagem</b><span><code>aria-invalid="true"</code> com <code>aria-describedby</code> para um texto que existe e não está vazio.</span></div>
+    <div><b>Nasce escondida</b><span>O campo é emitido com <code>type="password"</code>.</span></div>
+    <div><b>Gerenciador e corretor</b><span><code>autocomplete</code> <code>current-password</code> ou <code>new-password</code>; <code>spellcheck="false"</code> e <code>autocapitalize="none"</code> — o corretor pode mandar a senha aberta para fora.</span></div>
+    <div><b>Sem <code>maxlength</code></b><span>Nenhum limite máximo no campo.</span></div>
+    <div><b>O olho é botão</b><span><code>&lt;button type="button"&gt;</code> — sem o <code>type</code>, enviaria o formulário — com <code>aria-controls</code> no campo e <code>aria-label</code>.</span></div>
+    <div><b>Ícones decorativos</b><span><code>aria-hidden="true"</code> e <code>focusable="false"</code>: o nome é do botão.</span></div>
+    <div><b>Desabilitado inteiro</b><span>Campo desabilitado leva o olho desabilitado junto.</span></div>
+    <div><b><code>id</code> único</b><span>Id repetido liga o <code>&lt;label for&gt;</code> no elemento errado.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>{PASSWORD_A11Y['markupChecked']}</b><span>campos conferidos no HTML</span></div>
+    <div class="stat"><b>10</b><span>regras por campo</span></div>
+    <div class="stat"><b>{'pendente' if PASSWORD_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado, medido na etapa 6</h2>
+  <div class="anat">
+    <div><b>Campo, depois olho</b><span>O Tab chega no campo (a caixa acende) e depois no olho (só o círculo). Espaço ou Enter alternam, e o foco fica no botão.</span></div>
+    <div><b>O valor não se perde</b><span>Alternar não apaga nem move o cursor para fora.</span></div>
+    <div><b>Desabilitado é pulado</b><span>Campo e olho saem da ordem de tabulação.</span></div>
+    <div><b>Alto contraste</b><span>Os anéis de sombra somem no modo de alto contraste do Windows; os dois focos voltam como contorno nativo na cor do sistema.</span></div>
+    <div><b>O olho nativo do Edge sai</b><span>Seriam dois olhos; o CSS esconde o do navegador. O botão de senha forte do Safari e o do gerenciador não são tocados.</span></div>
+  </div>
+</section>'''
+
+
 
 LANDING_COMPONENTES = f'''
 <section>
@@ -6213,6 +6694,7 @@ LANDING_COMPONENTES = f'''
     {card('radio', 'Radio', 'Uma opção de uma lista curta. Input nativo com o círculo do AL pintado por cima — e o erro é da pergunta, não da opção.', TH_RADIO)}
     {card('switch', 'Switch', 'Liga ou desliga algo que vale na hora, sem “Salvar”. Checkbox nativo com role="switch" e o trilho do AL pintado por cima.', TH_SWITCH)}
     {card('input', 'Input', 'Resposta livre de uma linha. Input nativo dentro de uma caixa que aceita prefixo, sufixo e contador — e um read-only que se lê.', TH_INPUT)}
+    {card('password', 'Password', 'Senha com o olho de mostrar e ocultar. Input nativo de senha, um botão de verdade dentro da caixa, e um script que esconde de novo no envio.', TH_PASSWORD)}
     {card('textarea', 'Textarea', 'Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.', TH_TEXTAREA)}
   </div>
 </section>
@@ -6379,6 +6861,15 @@ PAGES = [
          (f'{N_TEXTAREA_TOKENS} tokens', False), ('2 exceções declaradas', False)],
         [('overview', 'Visão geral', TEXTAREA_OVERVIEW), ('specs', 'Especificações', TEXTAREA_SPECS),
          ('guide', 'Diretrizes', TEXTAREA_GUIDE), ('a11y', 'Acessibilidade', TEXTAREA_A11Y_TAB)])),
+    ('password', 'Componentes', page(
+        'password', 'Componentes', 'Password',
+        'Campo de senha com o botão de mostrar e ocultar. É o <code>&lt;input type="password"&gt;</code> '
+        'nativo numa caixa que guarda o olho — um botão de verdade, com foco próprio — e o primeiro '
+        'componente do AL que traz o próprio JavaScript.',
+        [('Estável', True), ('17 variantes no Figma', False),
+         (f'{N_PASSWORD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', PASSWORD_OVERVIEW), ('specs', 'Especificações', PASSWORD_SPECS),
+         ('guide', 'Diretrizes', PASSWORD_GUIDE), ('a11y', 'Acessibilidade', PASSWORD_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -6417,6 +6908,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/switch" data-page="switch">Switch</a>
         <a href="#/input" data-page="input">Input</a>
         <a href="#/textarea" data-page="textarea">Textarea</a>
+        <a href="#/password" data-page="password">Password</a>
       </div>
     </div>
   </div>
@@ -7913,6 +8405,134 @@ JS_TEXTAREA = r"""
 })();
 """
 
+CHROME_PASSWORD = """
+/* ── miniatura do card do Password ── */
+.th-password{display:flex; flex-direction:column; gap:6px; width:100%; max-width:200px; margin-inline:auto}
+.th-password__label{font-size:12px; line-height:16px; color:var(--al-text-primary)}
+.th-password__field{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 10px;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-lg);
+  background:var(--al-bg-surface-raised);
+  color:var(--al-text-primary);
+  font-size:12.5px; line-height:16px; letter-spacing:1px;
+}
+.th-password__eye{width:16px; height:16px; color:var(--al-text-primary)}
+/* o palco do playground precisa de largura: o campo ocupa 100% do conteiner */
+#password-stage{display:block; padding-inline:8px}
+#password-stage > *{width:100%; max-width:360px; margin-inline:auto}
+/* requisitos: texto do formulario, fora do componente (regra 7, opcao B) */
+.pw-group{display:flex; flex-direction:column; gap:8px}
+.pw-req{margin:0; color:var(--al-text-secondary); font-size:14px; line-height:20px}
+/* uma coluna, como um formulario de senha de verdade - lado a lado, os
+   requisitos e a mensagem de erro desalinhavam os campos vizinhos */
+.pw-form{display:grid !important; grid-template-columns:minmax(0,1fr); max-width:420px; gap:20px}
+.pw-submit{justify-self:start}
+"""
+
+JS_PASSWORD = r"""
+(function () {
+  // ── playground do Password ──
+  // O comportamento do olho e o password.js do componente, embutido logo
+  // antes deste bloco. Aqui so o que e da pagina: abrir o exemplo "visivel",
+  // segurar o envio do formulario de demonstracao e montar o palco.
+  if (!window.alPassword) return;
+  window.alPassword.init();
+  var vis = document.getElementById('pwo-visible');
+  if (vis) vis.closest('.al-password').querySelector('.al-password__toggle').click();
+  var demo = document.getElementById('pw-demo-form');
+  if (demo) demo.addEventListener('submit', function (e) { e.preventDefault(); });
+
+  var stage = document.getElementById('password-stage');
+  if (!stage) return;
+  var code = document.getElementById('password-code');
+  var labelInput = document.getElementById('password-label');
+  var EYE = stage.querySelector('.al-password__show').outerHTML;
+  var EYE_OFF = stage.querySelector('.al-password__hide').outerHTML;
+  var REQ = 'Use pelo menos 8 caracteres. Frases longas são mais seguras que símbolos.';
+  var ERRO = 'A senha precisa ter pelo menos 8 caracteres';
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    var estado = pick('pwstate');
+    var cheio = pick('pwvalue') === 'filled';
+    var novo = pick('pwuse') === 'new';
+    var comReq = pick('pwreq') === 'on';
+    var theme = pick('pwtheme');
+    var rotulo = (labelInput.value || '').trim() || 'Senha';
+    var erro = estado === 'error', off = estado === 'disabled';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    function montar(id, escapar) {
+      var e = escapar ? function (s) { return s.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+                      : function (s) { return s; };
+      var nl = escapar ? '\n' : '';
+      var sp = function (n) { return escapar ? new Array(n + 1).join(' ') : ''; };
+      var desc = [];
+      if (comReq) desc.push(id + '-req');
+      if (erro) desc.push(id + '-erro');
+      var a = ['class="al-password__field"', 'id="' + id + '"', 'type="password"',
+               'autocomplete="' + (novo ? 'new-password' : 'current-password') + '"',
+               'spellcheck="false"', 'autocapitalize="none"'];
+      if (cheio) a.push('value="pa$$w0rd123"');
+      if (!off) a.push('placeholder="Digite sua senha"');
+      if (desc.length) a.push('aria-describedby="' + desc.join(' ') + '"');
+      if (erro) a.push('aria-invalid="true"');
+      if (off) a.push('disabled');
+      var b = ['class="al-password__toggle"', 'type="button"', 'aria-controls="' + id + '"',
+               'aria-label="Mostrar senha"'];
+      if (off) b.push('disabled');
+      b.push('hidden');
+      var out = '';
+      if (comReq) out += e('<p class="pw-req" id="' + id + '-req">') + REQ + e('</p>') + nl;
+      out += e('<div class="al-password">') + nl
+        + sp(2) + e('<label class="al-password__label" for="' + id + '">') + esc(rotulo) + e('</label>') + nl
+        + sp(2) + e('<div class="al-password__control">') + nl
+        + sp(4) + e('<input ' + a.join(' ') + '>') + nl
+        + sp(4) + e('<button ' + b.join(' ') + '>') + nl
+        + (escapar ? sp(6) + e('<svg class="al-icon al-password__show" …>eye</svg>') + nl
+                     + sp(6) + e('<svg class="al-icon al-password__hide" …>eye-off</svg>') + nl
+                   : EYE + EYE_OFF)
+        + sp(4) + e('</button>') + nl
+        + sp(2) + e('</div>') + nl;
+      if (erro) out += sp(2) + e('<p class="al-password__help" id="' + id + '-erro">') + ERRO + e('</p>') + nl;
+      out += e('</div>');
+      return out;
+    }
+
+    stage.innerHTML = comReq ? '<div class="pw-group">' + montar('play-password', false) + '</div>'
+                             : montar('play-password', false);
+    window.alPassword.init(stage);
+    var linhas = montar('senha', true);
+    if (comReq) linhas = '&lt;!-- requisitos: texto do formulario, acima do campo --&gt;\n' + linhas;
+    linhas += '\n&lt;script src="password.js"&gt;&lt;/script&gt;  &lt;!-- revela o olho e alterna --&gt;';
+    code.innerHTML = linhas;
+  }
+
+  document.querySelectorAll('#password-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('password-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+"""
+
+
 HTML = (
     '<meta charset="utf-8">\n'
     '<title>AL Design System</title>\n'
@@ -7923,14 +8543,15 @@ HTML = (
     '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
-    + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA
+    + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n\n<script>'
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
-    + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA + '</script>\n'
+    + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
+    + PASSWORD_JS + JS_PASSWORD + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
@@ -7964,5 +8585,8 @@ print(f'  tokens do Input   : {N_INPUT_TOKENS}  '
 print(f'  tokens do Textarea: {N_TEXTAREA_TOKENS}  '
       f'({len(TEXTAREA_A11Y["rows"])} combinacoes medidas, {TEXTAREA_A11Y["fails"]} reprovas, '
       f'{sum(TEXTAREA_A11Y["exceptions"].values())} medicoes em excecao declarada)')
+print(f'  tokens do Password: {N_PASSWORD_TOKENS}  '
+      f'({len(PASSWORD_A11Y["rows"])} combinacoes medidas, {PASSWORD_A11Y["fails"]} reprovas, '
+      f'{sum(PASSWORD_A11Y["exceptions"].values())} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
