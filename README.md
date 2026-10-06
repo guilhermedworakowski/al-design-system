@@ -3,7 +3,7 @@
 Design system open source, do Figma ao código. Construído em público, uma camada de cada vez.
 
 - **Licença:** MIT
-- **Versão:** `0.12.0`
+- **Versão:** `0.13.0`
 - **Figma:** biblioteca privada por enquanto — primitivas, semânticos e tokens de componente documentados abaixo
 
 ## Estado atual
@@ -32,6 +32,8 @@ O **Input** é o quinto do Tier 2: resposta livre de uma linha (texto, e-mail, U
 
 O **Textarea** é o sexto do Tier 2: resposta livre de várias linhas (descrição, comentário, justificativa). É o Input sem prefixo e sufixo — mesmos sete estados, mesmas cores, mesmas duas exceções —, e a ausência dos afixos muda a estrutura: a própria `<textarea>` nativa é a caixa, então o estado é lido direto nela, sem invólucro e sem `:has()`, e o puxador e a barra de rolagem são dela. A altura vem do atributo `rows`: três linhas (96px) são o padrão **e o piso** — um `min-height` segura um `rows` menor e segura o puxador —, e o formulário pede mais linhas quando espera resposta longa, como manda o GOV.UK. O `check.py` ganhou um portão novo: o 3 do CSS e o `ROWS` do `tokens.py` são o mesmo número em dois lugares e reprovam se divergirem. Altura fixa: o texto rola em vez de crescer (Carbon), redimensiona só na vertical, e o disabled não redimensiona. Enter quebra a linha e nunca envia. Com ele, a Foundation passou a declarar `color-scheme` também quando o tema é forçado por `data-theme` — sem isso, puxador e barra de rolagem seguiam o sistema e não a página.
 
+O **Password** é o sétimo do Tier 2, e entrou no roadmap no lugar do Date picker: senha existe em todo sistema, data só em alguns. É o `<input type="password">` nativo numa caixa como a do Input, com o **olho** dentro da borda — um `<button>` de verdade, com anel de foco próprio, circular e sempre o padrão, mesmo com o campo em erro: o anel diz onde está o foco, e o erro é do campo. O ícone mostra a ação (olho = mostrar, olho cortado = esconder), e qual aparece é lido do `type` do campo, sem classe. É o **primeiro componente com JavaScript próprio**: o `password.js` revela o botão (sem script, o olho não existe — solução do GOV.UK), alterna `type` e nome anunciado ("Mostrar senha" / "Ocultar senha"), e esconde a senha de novo quando o formulário é enviado. Sem read-only, sem contador, sem `maxlength`, sem marca de opcional: o Password é sempre obrigatório, e os requisitos ficam no formulário, acima do campo, para serem lidos **antes** de errar (Polaris). O alvo do olho é 24×24 — o mínimo exato do WCAG 2.5.8. Mesmas duas exceções do Input.
+
 Todo input do Tier 2 tem **um tamanho só**, por regra.
 
 | | |
@@ -39,7 +41,7 @@ Todo input do Tier 2 tem **um tamanho só**, por regra.
 | Primitivas de cor | 66 (6 famílias × 11 degraus) |
 | Tokens semânticos | 51 × 2 temas |
 | Pares de contraste validados | 80 — 77 em AA pleno, 3 exceções de marca nomeadas, 0 abaixo do piso |
-| Componentes prontos | 10 (Button, Icon Button, Tag, Avatar, Select, Checkbox, Radio, Switch, Input, Textarea) |
+| Componentes prontos | 11 (Button, Icon Button, Tag, Avatar, Select, Checkbox, Radio, Switch, Input, Textarea, Password) |
 | Ícones | 70 — Lucide, grid 24, sem escala fixa |
 | Tokens do Button | 48 — 40 alias, 8 transparentes, 0 valores soltos |
 | Tokens do Icon Button | 42 — 34 alias, 8 transparentes, 0 valores soltos |
@@ -51,6 +53,7 @@ Todo input do Tier 2 tem **um tamanho só**, por regra.
 | Tokens do Switch | 20 — 20 alias, 0 transparentes, 0 valores soltos |
 | Tokens do Input | 33 — 33 alias, 0 transparentes, 0 valores soltos |
 | Tokens do Textarea | 32 — 32 alias, 0 transparentes, 0 valores soltos |
+| Tokens do Password | 29 — 29 alias, 0 transparentes, 0 valores soltos |
 
 O plano de evolução completo — divisão de trabalho, pipeline por componente e roadmap em tiers — está no [playbook](https://claude.ai/code/artifact/18a0c1ed-949c-4c8d-8906-93c21ed560a3).
 
@@ -59,7 +62,7 @@ O plano de evolução completo — divisão de trabalho, pipeline por componente
 O AL é consumido como pacote npm instalado direto deste repositório, sempre fixado numa tag. Ele não é publicado no registro do npm: o `"private": true` do `package.json` impede publicação acidental, e a instalação por Git não depende disso.
 
 ```bash
-npm install github:guilhermedworakowski/al-design-system#v0.12.0
+npm install github:guilhermedworakowski/al-design-system#v0.13.0
 ```
 
 A tag no fim não é opcional. Sem ela, cada instalação puxa o que estiver na `main` naquele dia, e o produto muda sem que ninguém tenha decidido mudar. Com a tag, atualizar é uma decisão explícita: trocar o número, reinstalar e revisar.
@@ -70,6 +73,7 @@ Só a saída que um produto consome:
 
 - `foundation/al-foundation.css` — primitivas, semânticos (claro e escuro), tipografia, espaçamento, radius, tamanho de ícone, elevação e anel de foco
 - `components/<c>/al-<c>-tokens.css` e `components/<c>/<c>.css` — tokens e CSS de cada componente
+- `components/password/password.js` — o comportamento do olho do Password, o único componente com script
 - `components/icon/icons/*.svg` e `icons.json` — os 70 ícones (Lucide, ISC — ver `components/icon/NOTICE`)
 - `tokens.json` — a fonte da verdade, para quem quiser ler os tokens por código
 
@@ -86,6 +90,12 @@ import 'al-design-system/components/button/button.css';
 ```
 
 Importe só os componentes que o produto usa. A Foundation é obrigatória em qualquer caso: todo token de componente é alias de um token dela.
+
+O Password precisa também do script, carregado uma vez por página. Ele liga sozinho todo `.al-password` presente no carregamento; conteúdo inserido depois chama `window.alPassword.init(elemento)`:
+
+```js
+import 'al-design-system/components/password/password.js';
+```
 
 ### Marcação
 
@@ -205,6 +215,14 @@ components/textarea/
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
   qa.py          # gera site/textarea-qa.html, a visualização da etapa 6
 
+components/password/
+  tokens.py      # camada de alias do Password + portão de alias + portão de contraste, gera tokens.json e o CSS
+  password.css   # o componente, escrito à mão
+  password.js    # o olho: revela o botão, alterna type e nome, esconde no envio
+  check.py       # portão do CSS: recusa valor literal e token órfão em password.css
+  a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
+  qa.py          # gera site/password-qa.html, a visualização da etapa 6
+
 site/
   site.py        # gera index.html: o site — Foundation + componentes, navegação e playground
 ```
@@ -246,6 +264,8 @@ python3 components/input/tokens.py  # tokens do Input + portão de alias + port�
 python3 components/input/check.py   # portão do CSS do Input + token órfão
 python3 components/textarea/tokens.py  # tokens do Textarea + portão de alias + portão de contraste + CSS
 python3 components/textarea/check.py   # portão do CSS do Textarea + token órfão + piso de linhas
+python3 components/password/tokens.py  # tokens do Password + portão de alias + portão de contraste + CSS
+python3 components/password/check.py   # portão do CSS do Password + token órfão
 python3 site/site.py               # o site: Foundation + componentes
 python3 components/icon/a11y.py      # QA do Icon — depois do site, ver abaixo
 python3 components/icon-button/a11y.py    # QA do Icon Button — idem
@@ -257,6 +277,7 @@ python3 components/radio/a11y.py     # QA do Radio — idem
 python3 components/switch/a11y.py    # QA do Switch — idem
 python3 components/input/a11y.py     # QA do Input — idem
 python3 components/textarea/a11y.py  # QA do Textarea — idem
+python3 components/password/a11y.py  # QA do Password — idem
 python3 site/site.py               # de novo, para o site ler os a11y.json atualizados
 ```
 
@@ -277,7 +298,7 @@ dentro do `<label>`, rótulo visível sem `aria-label`, glifos decorativos e nen
 `indeterminate` na marcação; o do Radio cobra a pergunta — todo `name` com duas opções ou mais,
 dentro de um só `<fieldset>` com `<legend>` visível — e o erro no `fieldset`, nunca no radio; o do Switch cobra `role="switch"` só no input nativo,
 rótulo visível, nada de `aria-checked`, `required` ou `aria-invalid`, e a bolinha decorativa; o do Input cobra
-o rótulo ligado, a mensagem de erro não vazia, os afixos no `aria-labelledby`, nenhum `maxlength`, contador com `aria-live` e read-only nunca vazio; o do Textarea cobra o mesmo sem os afixos, e mais a `<textarea>` nativa (nada de `contenteditable`) e `rows` de 3 ou mais. Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar
+o rótulo ligado, a mensagem de erro não vazia, os afixos no `aria-labelledby`, nenhum `maxlength`, contador com `aria-live` e read-only nunca vazio; o do Textarea cobra o mesmo sem os afixos, e mais a `<textarea>` nativa (nada de `contenteditable`) e `rows` de 3 ou mais; o do Password cobra o campo nascendo `type="password"`, `autocomplete` de senha, `spellcheck="false"` e `autocapitalize="none"`, e o olho como `<button type="button">` com `aria-controls` e `aria-label`, ícones decorativos e desabilitado junto com o campo. Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar
 a aba de acessibilidade. As duas gerações convergem numa passada; não há loop.
 
 ## Os portões
@@ -294,13 +315,14 @@ Validação é parte do build, não checagem opcional. Cada camada tem o seu, e 
 | Marcação · Icon | `components/icon/a11y.py` | `.al-icon` no HTML emitido sem contrato de acessibilidade, ou com `aria-hidden` junto de um rótulo. |
 | Marcação · Tag | `components/tag/a11y.py` | `.al-tag` no HTML emitido que seja `<button>`, tenha `role="button"` ou `tabindex`, ou cujo X esteja sem `type="button"`, sem `aria-label`, ou com um `aria-label` que não contenha o rótulo da tag. |
 | Marcação · Icon Button | `components/icon-button/a11y.py` | `.al-icon-btn` no HTML emitido sem `aria-label`, com `aria-hidden` no próprio botão, com `aria-busy` solto sem `aria-disabled`, ou usando o atributo `disabled`. Esse contrato não vive no CSS, então o portão de literal não alcança — é aqui que ele é cobrado. |
-| Token órfão | `components/select/check.py`, `components/checkbox/check.py`, `components/radio/check.py`, `components/switch/check.py`, `components/input/check.py`, `components/textarea/check.py` | Token declarado no `tokens.py` que o CSS do componente nunca consome — ou o CSS esqueceu de aplicar, ou o token não devia ter nascido. |
+| Token órfão | `components/select/check.py`, `components/checkbox/check.py`, `components/radio/check.py`, `components/switch/check.py`, `components/input/check.py`, `components/textarea/check.py`, `components/password/check.py` | Token declarado no `tokens.py` que o CSS do componente nunca consome — ou o CSS esqueceu de aplicar, ou o token não devia ter nascido. |
 | Marcação · Select | `components/select/a11y.py` | Campo sem `<label for>` ligado ao `id`, erro sem `aria-describedby` que exista, placeholder que não seja a primeira `<option value="">` selecionada, seta sem contrato decorativo, ou `aria-label` havendo rótulo visível. |
 | Marcação · Checkbox | `components/checkbox/a11y.py` | Checkbox fora de `<label class="al-checkbox">` ou sem `type="checkbox"`, `role="checkbox"` em qualquer tag, rótulo vazio ou `aria-label`, erro sem `aria-describedby` que exista, glifo sem contrato decorativo, ou `indeterminate` escrito como atributo. |
 | Marcação · Radio | `components/radio/a11y.py` | Radio fora de `<label class="al-radio">` ou sem `type="radio"`, `role="radio"` em qualquer tag, rótulo vazio ou `aria-label`, radio sem `name` ou sozinho no seu `name`, pergunta fora de `<fieldset>` ou sem `<legend>`, `aria-invalid` no radio em vez do `fieldset`, erro sem `aria-describedby` que exista, ou ponto sem `aria-hidden`. |
 | Marcação · Switch | `components/switch/a11y.py` | Switch fora de `<label class="al-switch">`, input sem `type="checkbox"` ou sem `role="switch"`, `role="switch"` em qualquer outra tag, `aria-pressed`, rótulo vazio ou `aria-label`, `aria-checked` no input, `required` ou `aria-invalid`, ou bolinha sem `aria-hidden`. Foi este portão que reprovou o switch de tema feito à mão do próprio site. |
 | Marcação · Input | `components/input/a11y.py` | Campo sem `<label for>` de rótulo ligado ao `id`, erro sem `aria-describedby` para uma mensagem que exista e não esteja vazia, afixo fora do `aria-labelledby`, `aria-label` havendo rótulo visível, `maxlength` (o limite não trava a digitação), contador sem `aria-live`, ou read-only vazio. |
 | Marcação · Textarea | `components/textarea/a11y.py` | Classe do campo fora de uma `<textarea>` nativa ou `contenteditable`, campo sem `<label for>` de rótulo, `rows` menor que 3, `id` repetido, erro sem `aria-describedby` para uma mensagem não vazia, `aria-label` havendo rótulo visível, `maxlength`, contador sem `aria-live`, ou read-only vazio. |
+| Marcação · Password | `components/password/a11y.py` | Campo sem `<label for>` de rótulo, `id` repetido, `aria-label` havendo rótulo visível, `maxlength`, campo que não nasce `type="password"`, `autocomplete` que não seja `current-password` ou `new-password`, falta de `spellcheck="false"` ou `autocapitalize="none"`, erro sem mensagem não vazia, olho sem `type="button"` (enviaria o formulário), sem `aria-controls` no campo ou sem `aria-label`, ícone do olho sem contrato decorativo, ou campo desabilitado com o olho habilitado. |
 | Piso de linhas | `components/textarea/check.py` | O multiplicador do `min-height` no `textarea.css` diferente do `ROWS` do `tokens.py` — o mesmo número escrito em dois lugares. |
 | Marcação · Avatar | `components/avatar/a11y.py` | `.al-avatar` no HTML emitido com `aria-hidden` e `role="img"` juntos, ou nenhum dos dois; `role="img"` sem `aria-label`; a foto interna sem `alt=""`; ou o ícone interno sem `aria-hidden`/`focusable="false"`. |
 
@@ -318,7 +340,7 @@ Em CSS, a camada de componente não tem bloco de tema — e não precisa. O tema
 
 **Nomenclatura:** o nome do token separa níveis com hífen (`bg-brand`, `button-primary-bg-hover`). No Figma, a mesma coisa vive em pasta dentro da collection do componente (`primary/bg-hover` na collection `4. Button`) — a barra é o mecanismo de agrupamento do painel de variáveis, não parte do nome do token.
 
-**Nem todo token de código vira variável no Figma.** O Icon Button tem 42 tokens e 28 variáveis na collection `5. Icon Button`, e a diferença é deliberada. As oito tintas saem da collection `3. Icon ink`, que resolve por **modo** — um mecanismo que o CSS não tem, e por isso lá cada tinta precisa ser uma custom property concreta. Os quatro anéis de foco são *effect styles*, porque sombra não pode ser variável. E os dois `icon-size` apontam direto para a Foundation. O Button segue a mesma regra: 48 tokens, 40 variáveis. O Avatar tem 13 tokens e 10 variáveis na collection `7. Avatar` — a diferença são as três fontes (`Label/sm`, `Heading/xs`, `Heading/sm`), que são estilos de texto e não variáveis, mesma regra do Tag. O Select tem 31 tokens e 25 variáveis na collection `8. Select`; o Checkbox, 22 tokens e 20 variáveis na collection `9. Checkbox`; o Radio, 21 tokens e 19 variáveis na collection `10. Radio`; o Switch, 20 tokens e 18 variáveis na collection `11. Switch`; o Input, 33 tokens e 26 variáveis na collection `12. Input`; o Textarea, 32 tokens e 25 variáveis na collection `13. Textarea` — nos seis a diferença são as fontes e os anéis de foco, que são estilos e não variáveis.
+**Nem todo token de código vira variável no Figma.** O Icon Button tem 42 tokens e 28 variáveis na collection `5. Icon Button`, e a diferença é deliberada. As oito tintas saem da collection `3. Icon ink`, que resolve por **modo** — um mecanismo que o CSS não tem, e por isso lá cada tinta precisa ser uma custom property concreta. Os quatro anéis de foco são *effect styles*, porque sombra não pode ser variável. E os dois `icon-size` apontam direto para a Foundation. O Button segue a mesma regra: 48 tokens, 40 variáveis. O Avatar tem 13 tokens e 10 variáveis na collection `7. Avatar` — a diferença são as três fontes (`Label/sm`, `Heading/xs`, `Heading/sm`), que são estilos de texto e não variáveis, mesma regra do Tag. O Select tem 31 tokens e 25 variáveis na collection `8. Select`; o Checkbox, 22 tokens e 20 variáveis na collection `9. Checkbox`; o Radio, 21 tokens e 19 variáveis na collection `10. Radio`; o Switch, 20 tokens e 18 variáveis na collection `11. Switch`; o Input, 33 tokens e 26 variáveis na collection `12. Input`; o Textarea, 32 tokens e 25 variáveis na collection `13. Textarea`; o Password, 29 tokens e 23 variáveis na collection `14. Password` — nos sete a diferença são as fontes e os anéis de foco, que são estilos e não variáveis.
 
 **Escala de ícone:** `icon-size` tem os degraus 16, 20, 24 e 32, nomeados pelo próprio valor — como o espaçamento, e pelo mesmo motivo: nome de camiseta obriga a renomear quando um degrau entra no meio. A escala nomeia os tamanhos recorrentes; ela não limita o componente `Icon`, que é vetorizado e vale em qualquer tamanho. O portão de CSS literal valida contra ela, então um tamanho novo dentro do DS é uma decisão consciente de uma linha.
 

@@ -1,6 +1,6 @@
 {
   "name": "al-design-system",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "AL Design System: Foundation e componentes em CSS, do Figma ao código.",
   "license": "MIT",
   "author": "Guilherme Domingues",
@@ -13,6 +13,7 @@
   "files": [
     "foundation/al-foundation.css",
     "components/*/*.css",
+    "components/*/*.js",
     "components/icon/icons/",
     "components/icon/icons.json",
     "components/icon/NOTICE",
