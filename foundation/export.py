@@ -32,7 +32,7 @@ TOKENS = {
     # (que NAO e isento de contraste como o disabled) e com afixos dentro da
     # borda: a caixa e um invólucro, e o estado chega a ela por :has().
     # 0.11.1: package.json — distribuição; nenhum token muda
-    "name": "AL Design System", "version": "0.11.1", "license": "MIT",
+    "name": "AL Design System", "version": "0.12.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },

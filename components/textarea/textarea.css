@@ -1,0 +1,265 @@
+/* AL Design System - Textarea
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/textarea/al-textarea-tokens.css
+ *
+ * CAMPO DE TEXTO DE VARIAS LINHAS
+ *   <textarea> nativo, nunca div contenteditable (regra 26): o elemento
+ *   nativo ja traz teclado, selecao, colar, desfazer e corretor. Enter quebra
+ *   linha e nunca envia (regra 21) - comportamento nativo, nada a fazer aqui.
+ *
+ * ANATOMIA
+ *   <div class="al-textarea">
+ *     <div class="al-textarea__labelrow">
+ *       <label class="al-textarea__label" for="desc">Descricao do problema</label>
+ *       <span class="al-textarea__optional">(Opcional)</span>
+ *       <span class="al-textarea__counter" aria-live="off">0/500</span>
+ *     </div>
+ *     <textarea class="al-textarea__field" id="desc" rows="3"
+ *               aria-describedby="desc-help"></textarea>
+ *     <p class="al-textarea__help" id="desc-help">Texto de apoio</p>
+ *   </div>
+ *
+ *   Marca "(Opcional)", contador e texto de apoio sao MARCACAO, nao
+ *   modificador: quem nao quer, nao escreve o elemento.
+ *
+ * A CAIXA E A PROPRIA <textarea>
+ *   Diferenca central para o Input: sem prefixo e sufixo nao ha nada que
+ *   precise morar dentro da borda alem do texto. Entao borda, fundo, raio e
+ *   anel ficam na <textarea>, e o estado e lido direto nela - `:hover`,
+ *   `:focus-visible`, `[aria-invalid]`, `[readonly]`, `:disabled` - sem
+ *   conteiner e sem `:has()`. Ganho pratico: o puxador de redimensionar e a
+ *   barra de rolagem sao da propria caixa, e a borda acompanha o puxador.
+ *
+ *   `:has()` so aparece na raiz, para pintar rotulo e apoio no erro e no
+ *   desabilitado. Sem `:has()`, o campo funciona inteiro e so o rotulo deixa
+ *   de mudar de cor - o anel de foco nunca depende dele.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Erro le `aria-invalid="true"`; desabilitado le `:disabled`; read-only le
+ *   o atributo `[readonly]` - NUNCA `:read-only`, que tambem casa o
+ *   desabilitado. A cor nao pode divergir do que o leitor de tela anuncia.
+ *
+ *   A unica excecao e o contador acima do limite, `data-over-limit`, ligado
+ *   pelo JavaScript que atualiza o numero. Sem `maxlength` (regra 16 - o
+ *   limite nao trava a digitacao) o navegador nao sabe que passou.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE
+ *   Mesma mecanica do Input: interacao escreve em `--_border-state`; erro,
+ *   read-only e desabilitado escrevem em `--_border-force`, que vence sempre.
+ *   Entre os tres decide a ordem do arquivo: o desabilitado ganha de todos.
+ *
+ * NAO EXISTE ACTIVE
+ *   Campo de texto sempre casa `:focus-visible`, inclusive no clique. Regra 22.
+ *
+ * ALTURA: `rows`, COM PISO DE TRES LINHAS
+ *   A altura vem do atributo `rows` (regra 10: o formulario escolhe, >= 3) -
+ *   o navegador calcula rows x entrelinha + padding + borda. Nao ha `height`.
+ *   O `min-height` e o piso das regras 9 e 10: 3 entrelinhas + padding-y x2
+ *   = 96, e segura tambem o puxador - ninguem encolhe o campo abaixo de tres
+ *   linhas. O 3 do calc() e o ROWS de tokens.py; o check.py confere que os
+ *   dois batem.
+ *
+ *   A borda de 1px entra no padding (box-sizing border-box), como no Button,
+ *   no Select e no Input: o campo nunca "pula" quando o estado troca.
+ *
+ * REDIMENSIONA SO NA VERTICAL; DISABLED NAO REDIMENSIONA
+ *   `resize: vertical` (regra 12) - largura e do formulario. O desabilitado
+ *   leva `resize: none` (regra 13); o read-only mantem o puxador, porque
+ *   quem le texto longo pode querer abrir espaco. Texto maior que o campo rola
+ *   (regra 11); nao cresce sozinho.
+ *
+ *   Puxador e barra de rolagem sao desenhados pelo navegador e NAO tem token.
+ *   Eles seguem o `color-scheme` da Foundation.
+ *
+ * READ-ONLY NAO MOSTRA PLACEHOLDER E RECEBE FOCO
+ *   Placeholder sobre `bg-readonly` da 4.21:1, abaixo do piso; o CSS o torna
+ *   transparente e a regra 24 manda o read-only vazio mostrar "—". O foco
+ *   por Tab e nativo e e necessario: sem ele, quem usa teclado nao rola um
+ *   texto longo.
+ *
+ * LARGURA
+ *   100% do conteiner. Formulario decide largura (regra 14).
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
+ *   escala de motion. Mesma pendencia do Button, do Select e do Input.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-textarea {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-textarea-gap);
+}
+
+/* ------------------------------------------------------------ rotulo */
+/* baseline, nao center: rotulo tem entrelinha 24, marca e contador 20. */
+.al-textarea__labelrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--al-textarea-gap);
+}
+
+.al-textarea__label {
+  color: var(--al-textarea-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-textarea-label-font-size);
+  line-height: var(--al-textarea-label-line-height);
+  font-weight: var(--al-textarea-label-font-weight);
+  letter-spacing: var(--al-textarea-label-tracking);
+}
+
+.al-textarea__optional {
+  color: var(--al-textarea-optional);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-textarea-optional-font-size);
+  line-height: var(--al-textarea-optional-line-height);
+  font-weight: var(--al-textarea-optional-font-weight);
+  letter-spacing: var(--al-textarea-optional-tracking);
+}
+
+/* empurrado para a direita da linha do rotulo - mesma posicao do Input */
+.al-textarea__counter {
+  margin-left: auto;
+  color: var(--al-textarea-counter);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-textarea-counter-font-size);
+  line-height: var(--al-textarea-counter-line-height);
+  font-weight: var(--al-textarea-counter-font-weight);
+  letter-spacing: var(--al-textarea-counter-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------- caixa e campo */
+.al-textarea__field {
+  --_border-state: var(--al-textarea-border);
+
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 0;
+
+  /* piso de tres linhas - ver cabecalho. O 3 e o ROWS de tokens.py. */
+  min-height: calc(var(--al-textarea-line-height) * 3
+                   + var(--al-textarea-padding-y) * 2);
+
+  /* a borda entra na caixa, entao descontar aqui fecha 96 exatos */
+  padding: calc(var(--al-textarea-padding-y) - var(--al-textarea-border-width))
+           calc(var(--al-textarea-padding-x) - var(--al-textarea-border-width));
+
+  border: var(--al-textarea-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-textarea-radius);
+  background-color: var(--_bg-force, var(--al-textarea-bg));
+  color: var(--_text-force, var(--al-textarea-text-value));
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-textarea-font-size);
+  line-height: var(--al-textarea-line-height);
+  font-weight: var(--al-textarea-font-weight);
+  letter-spacing: var(--al-textarea-tracking);
+
+  resize: vertical;
+  overflow-y: auto;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* Firefox baixa a opacidade do placeholder por conta propria; o token ja
+   carrega o cinza certo, entao a opacidade volta ao inteiro. */
+.al-textarea__field::placeholder {
+  color: var(--al-textarea-text-placeholder);
+  opacity: 1;
+}
+
+/* O anel do AL e box-shadow na propria caixa - nao depende de `:has()`, entao
+   o outline nativo pode sair sempre. Sai trocado por um outline TRANSPARENTE,
+   nao por `none`: no modo de alto contraste do Windows o box-shadow some e o
+   navegador pinta o outline com a cor do sistema - o foco nunca desaparece. */
+.al-textarea__field:focus {
+  outline: var(--al-textarea-border-width) solid transparent;
+}
+
+/* -------------------------------------------------------- texto de apoio */
+.al-textarea__help {
+  color: var(--al-textarea-help);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-textarea-help-font-size);
+  line-height: var(--al-textarea-help-line-height);
+  font-weight: var(--al-textarea-help-font-weight);
+  letter-spacing: var(--al-textarea-help-tracking);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover: nem desabilitado nem read-only reagem - regra 24 */
+.al-textarea__field:hover:not(:disabled, [readonly]) {
+  --_border-state: var(--al-textarea-border-hover);
+}
+
+/* foco - por Tab OU por clique, e ele permanece. Nao ha Active. */
+.al-textarea__field:focus-visible {
+  --_border-state: var(--al-textarea-border-focus);
+  box-shadow: var(--_ring-force, var(--al-textarea-ring));
+}
+
+/* erro - vence hover e foco por escrever noutra propriedade */
+.al-textarea__field[aria-invalid="true"] {
+  --_border-force: var(--al-textarea-border-error);
+  --_ring-force: var(--al-textarea-ring-error);
+}
+
+.al-textarea:has(.al-textarea__field[aria-invalid="true"]) .al-textarea__label {
+  color: var(--al-textarea-label-error);
+}
+
+.al-textarea:has(.al-textarea__field[aria-invalid="true"]) .al-textarea__help {
+  color: var(--al-textarea-help-error);
+}
+
+/* O contador so fica vermelho quando o erro E o limite - regra 17. */
+.al-textarea__counter[data-over-limit] {
+  color: var(--al-textarea-counter-error);
+}
+
+/* read-only - `[readonly]`, nunca `:read-only`. Mantem o puxador (regra 13). */
+.al-textarea__field[readonly] {
+  --_border-force: var(--al-textarea-border-readonly);
+  --_bg-force: var(--al-textarea-bg-readonly);
+  cursor: default;
+}
+
+.al-textarea__field[readonly]::placeholder {
+  color: transparent;
+}
+
+/* desabilitado - por ultimo, porque ganha de todos. Sem puxador (regra 13). */
+.al-textarea__field:disabled {
+  --_border-force: var(--al-textarea-border-disabled);
+  --_bg-force: var(--al-textarea-bg-disabled);
+  --_text-force: var(--al-textarea-text-disabled);
+  resize: none;
+  cursor: not-allowed;
+}
+
+.al-textarea__field:disabled::placeholder {
+  color: var(--al-textarea-text-disabled);
+}
+
+.al-textarea:has(.al-textarea__field:disabled) .al-textarea__label,
+.al-textarea:has(.al-textarea__field:disabled) .al-textarea__optional,
+.al-textarea:has(.al-textarea__field:disabled) .al-textarea__counter {
+  color: var(--al-textarea-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-textarea__field {
+    transition: none;
+  }
+}
