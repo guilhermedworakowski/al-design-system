@@ -7,7 +7,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.12.0 - MIT
+ * v0.13.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -957,6 +957,61 @@
   --al-textarea-help-line-height: var(--al-line-height-xs);
   --al-textarea-help-font-weight: 400;
   --al-textarea-help-tracking: 0.01em;
+
+
+  /* fundo - so o disabled muda */
+  --al-password-bg: var(--al-bg-surface-raised);
+  --al-password-bg-disabled: var(--al-bg-disabled);
+
+  /* borda - o eixo que carrega o estado */
+  --al-password-border: var(--al-border-default);
+  --al-password-border-hover: var(--al-border-strong);
+  --al-password-border-focus: var(--al-border-brand);
+  --al-password-border-error: var(--al-border-danger);
+  --al-password-border-disabled: var(--al-border-default);
+
+  /* texto dentro do campo - pontos e texto aberto usam a mesma cor */
+  --al-password-text-placeholder: var(--al-text-placeholder);
+  --al-password-text-value: var(--al-text-primary);
+  --al-password-text-disabled: var(--al-text-disabled);
+
+  /* rotulo e erro - vivem fora do campo, sobre a tela */
+  --al-password-label: var(--al-text-primary);
+  --al-password-label-error: var(--al-text-danger);
+  --al-password-label-disabled: var(--al-text-disabled);
+  --al-password-help-error: var(--al-text-danger);
+
+  /* botao do olho */
+  --al-password-toggle-icon: var(--al-text-primary);
+  --al-password-toggle-icon-disabled: var(--al-text-disabled);
+
+  /* aneis de foco - apontam para a sombra composta, nao para a cor crua */
+  --al-password-ring: var(--al-focus-ring-default);
+  --al-password-ring-error: var(--al-focus-ring-error);
+  --al-password-toggle-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-password-padding-x: var(--al-space-12);
+  --al-password-padding-y: var(--al-space-12);
+  --al-password-gap: var(--al-space-8);
+  --al-password-radius: var(--al-radius-lg);
+  --al-password-border-width: var(--al-border-width-1);
+  --al-password-icon-size: var(--al-icon-size-24);
+  --al-password-toggle-radius: var(--al-radius-full);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-password-font-size: var(--al-font-size-md);
+  --al-password-line-height: var(--al-line-height-md);
+  --al-password-font-weight: 400;
+  --al-password-tracking: 0em;
+  --al-password-label-font-size: var(--al-font-size-md);
+  --al-password-label-line-height: var(--al-line-height-md);
+  --al-password-label-font-weight: 400;
+  --al-password-label-tracking: 0em;
+  --al-password-help-font-size: var(--al-font-size-xs);
+  --al-password-help-line-height: var(--al-line-height-xs);
+  --al-password-help-font-weight: 400;
+  --al-password-help-tracking: 0.01em;
 }
 
 /* AL Design System - tokens do Button
@@ -4194,6 +4249,375 @@
   }
 }
 
+/* AL Design System - tokens do Password
+ * GERADO por components/password/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Altura do campo: 48px derivados, sem token.
+ * Alvo do olho: 24px = icon-size, sem token proprio.
+ */
+
+:root {
+
+  /* fundo - so o disabled muda */
+  --al-password-bg: var(--al-bg-surface-raised);
+  --al-password-bg-disabled: var(--al-bg-disabled);
+
+  /* borda - o eixo que carrega o estado */
+  --al-password-border: var(--al-border-default);
+  --al-password-border-hover: var(--al-border-strong);
+  --al-password-border-focus: var(--al-border-brand);
+  --al-password-border-error: var(--al-border-danger);
+  --al-password-border-disabled: var(--al-border-default);
+
+  /* texto dentro do campo - pontos e texto aberto usam a mesma cor */
+  --al-password-text-placeholder: var(--al-text-placeholder);
+  --al-password-text-value: var(--al-text-primary);
+  --al-password-text-disabled: var(--al-text-disabled);
+
+  /* rotulo e erro - vivem fora do campo, sobre a tela */
+  --al-password-label: var(--al-text-primary);
+  --al-password-label-error: var(--al-text-danger);
+  --al-password-label-disabled: var(--al-text-disabled);
+  --al-password-help-error: var(--al-text-danger);
+
+  /* botao do olho */
+  --al-password-toggle-icon: var(--al-text-primary);
+  --al-password-toggle-icon-disabled: var(--al-text-disabled);
+
+  /* aneis de foco - apontam para a sombra composta, nao para a cor crua */
+  --al-password-ring: var(--al-focus-ring-default);
+  --al-password-ring-error: var(--al-focus-ring-error);
+  --al-password-toggle-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-password-padding-x: var(--al-space-12);
+  --al-password-padding-y: var(--al-space-12);
+  --al-password-gap: var(--al-space-8);
+  --al-password-radius: var(--al-radius-lg);
+  --al-password-border-width: var(--al-border-width-1);
+  --al-password-icon-size: var(--al-icon-size-24);
+  --al-password-toggle-radius: var(--al-radius-full);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-password-font-size: var(--al-font-size-md);
+  --al-password-line-height: var(--al-line-height-md);
+  --al-password-font-weight: 400;
+  --al-password-tracking: 0em;
+  --al-password-label-font-size: var(--al-font-size-md);
+  --al-password-label-line-height: var(--al-line-height-md);
+  --al-password-label-font-weight: 400;
+  --al-password-label-tracking: 0em;
+  --al-password-help-font-size: var(--al-font-size-xs);
+  --al-password-help-line-height: var(--al-line-height-xs);
+  --al-password-help-font-weight: 400;
+  --al-password-help-tracking: 0.01em;
+}
+
+/* AL Design System - Password
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/icon/icon.css
+ *           + components/password/al-password-tokens.css
+ *           + components/password/password.js (o olho)
+ *
+ * CAMPO DE SENHA COM MOSTRAR / OCULTAR
+ *   <input type="password"> nativo e um <button> com o olho dentro da mesma
+ *   caixa. E o Input sem read-only, contador, afixos, marca de opcional e
+ *   texto de apoio fora do erro (etapa 1). Requisitos da senha ficam no
+ *   formulario, acima do campo, ligados por aria-describedby (regra 7, B).
+ *
+ * ANATOMIA
+ *   <div class="al-password">
+ *     <label class="al-password__label" for="senha">Senha</label>
+ *     <div class="al-password__control">
+ *       <input class="al-password__field" id="senha" type="password"
+ *              autocomplete="current-password" spellcheck="false"
+ *              autocapitalize="none" placeholder="Digite sua senha">
+ *       <button class="al-password__toggle" type="button" aria-controls="senha"
+ *               aria-label="Mostrar senha" hidden>
+ *         <svg class="al-icon al-password__show" aria-hidden="true" focusable="false">eye</svg>
+ *         <svg class="al-icon al-password__hide" aria-hidden="true" focusable="false">eye-off</svg>
+ *       </button>
+ *     </div>
+ *     <p class="al-password__help" id="senha-erro">Mensagem de erro</p>
+ *   </div>
+ *
+ *   `__help` so existe no erro - no Figma, e nas regras, nao ha apoio em
+ *   repouso. Por isso ele pinta direto com `help-error`.
+ *
+ * O BOTAO NASCE `hidden`
+ *   Sem JavaScript o olho nao faz nada, e botao que nao faz nada e pior do
+ *   que botao nenhum. O password.js tira o `hidden` quando assume o
+ *   comportamento - mesma solucao do GOV.UK. Por isso o display do botao
+ *   respeita `[hidden]` explicitamente: `display: inline-flex` venceria o
+ *   atributo.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Visivel/escondido le o proprio `type` do <input> (`password` x `text`):
+ *   o icone troca por CSS, e o JS so mexe no `type` e no `aria-label`. Erro le
+ *   `aria-invalid="true"`; desabilitado le `:disabled`. A cor nunca diverge do
+ *   que o leitor de tela anuncia - mesmo principio do Select e do Input.
+ *
+ *   O icone mostra a ACAO (regra 14): escondida -> olho (mostrar);
+ *   visivel -> olho cortado (esconder).
+ *
+ * A CAIXA E O `__control`, NAO O <input>
+ *   O olho precisa ficar DENTRO da borda, e <input> nao aceita filho. Borda,
+ *   fundo, raio e anel do campo moram no `__control`, lidos via `:has()`.
+ *   Mesma degradacao do Input: sem `:has()` o `outline` nativo volta.
+ *
+ * DOIS FOCOS, DOIS ANEIS (opcao A da etapa 1)
+ *   Foco no campo -> borda laranja + anel no `__control` inteiro.
+ *   Foco no olho  -> anel SO em volta do olho, circular, sempre o padrao,
+ *   mesmo com o campo em erro (regra 19). O `__control` nao reage ao foco do
+ *   botao: le `__field:focus-visible`, nao `:focus-within`.
+ *
+ * NAO EXISTE ACTIVE
+ *   Campo de texto sempre casa `:focus-visible`, inclusive no clique. Igual ao
+ *   Input, regra 20 dele.
+ *
+ * O OLHO NATIVO DO EDGE SAI
+ *   Edge desenha um olho proprio dentro de type=password (`::-ms-reveal`).
+ *   Com o do AL, seriam dois. O CSS esconde o nativo. O botao de senha forte
+ *   do Safari e o do gerenciador de senhas NAO sao tocados (regra 27).
+ *
+ * ALTURA E CONSEQUENCIA, NAO `height`
+ *   48 = padding-y x2 + entrelinha, borda descontada do padding. O olho tem
+ *   24 = a entrelinha, entao nao mexe na altura. Alvo do olho: 24x24, o
+ *   minimo exato do WCAG 2.5.8 (regra 23).
+ *
+ * LARGURA
+ *   100% do conteiner. Formulario decide largura (regra 24).
+ *
+ * EXCECAO CONSCIENTE - DURACAO LITERAL
+ *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
+ *   escala de motion. Mesma pendencia do Button, do Select e do Input;
+ *   aparece nomeada no relatorio do check.py.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-password {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-password-gap);
+}
+
+/* ------------------------------------------------------------ rotulo */
+.al-password__label {
+  color: var(--al-password-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-password-label-font-size);
+  line-height: var(--al-password-label-line-height);
+  font-weight: var(--al-password-label-font-weight);
+  letter-spacing: var(--al-password-label-tracking);
+}
+
+/* ------------------------------------------------------------- caixa */
+.al-password__control {
+  --_border-state: var(--al-password-border);
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--al-password-gap);
+  width: 100%;
+
+  /* a borda entra na caixa, entao descontar aqui fecha 48 exatos */
+  padding: calc(var(--al-password-padding-y) - var(--al-password-border-width))
+           calc(var(--al-password-padding-x) - var(--al-password-border-width));
+
+  border: var(--al-password-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-password-radius);
+  background-color: var(--_bg-force, var(--al-password-bg));
+  cursor: text;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+/* ------------------------------------------------------------- campo */
+.al-password__field {
+  --_text-state: var(--al-password-text-value);
+
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--_text-force, var(--_text-state));
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-password-font-size);
+  line-height: var(--al-password-line-height);
+  font-weight: var(--al-password-font-weight);
+  letter-spacing: var(--al-password-tracking);
+}
+
+.al-password__field::placeholder {
+  color: var(--al-password-text-placeholder);
+  opacity: 1;
+}
+
+/* o olho nativo do Edge - ver cabecalho */
+.al-password__field::-ms-reveal,
+.al-password__field::-ms-clear {
+  display: none;
+}
+
+@supports selector(:has(*)) {
+  .al-password__field:focus {
+    outline: none;
+  }
+}
+
+/* -------------------------------------------------------------- o olho */
+.al-password__toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+
+  box-sizing: border-box;
+  width: var(--al-password-icon-size);
+  height: var(--al-password-icon-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--al-password-toggle-radius);
+
+  background: none;
+  /* o svg herda daqui via currentColor - contrato do Icon */
+  color: var(--al-password-toggle-icon);
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* `display` acima venceria o atributo - o botao sem JS nao aparece */
+.al-password__toggle[hidden] {
+  display: none;
+}
+
+/* anel so no olho, circular, sempre o padrao - regra 19. Sem transicao:
+   anel de foco nunca anima. O risco diagonal do eye-off vai de canto a canto
+   do quadro de 24 e cruza o circulo - visto na etapa 6 e ACEITO por Gui
+   (opcao A). Nao trocar o raio sem falar com ele. */
+.al-password__toggle:focus-visible {
+  outline: none;
+  box-shadow: var(--al-password-toggle-ring);
+}
+
+.al-password__toggle > svg {
+  display: block;
+  flex: none;
+  width: var(--al-password-icon-size);
+  height: var(--al-password-icon-size);
+}
+
+/* qual icone aparece le o `type` do campo - regra 14. O seletor leva o
+   `__toggle >` de proposito: precisa vencer o `display: block` da regra
+   acima, que tem a mesma forma (achado da etapa 6 - sem isso os dois
+   icones apareciam juntos). */
+.al-password__toggle > .al-password__hide {
+  display: none;
+}
+
+.al-password:has(.al-password__field[type="text"]) .al-password__show {
+  display: none;
+}
+
+.al-password:has(.al-password__field[type="text"]) .al-password__hide {
+  display: block;
+}
+
+/* -------------------------------------------------- mensagem de erro */
+.al-password__help {
+  color: var(--al-password-help-error);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-password-help-font-size);
+  line-height: var(--al-password-help-line-height);
+  font-weight: var(--al-password-help-font-weight);
+  letter-spacing: var(--al-password-help-tracking);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover: desabilitado nao reage */
+.al-password__control:hover:not(:has(.al-password__field:disabled)) {
+  --_border-state: var(--al-password-border-hover);
+}
+
+/* foco NO CAMPO - o foco no olho nao acende a caixa (opcao A) */
+.al-password__control:has(.al-password__field:focus-visible) {
+  --_border-state: var(--al-password-border-focus);
+  box-shadow: var(--_ring-force, var(--al-password-ring));
+}
+
+/* erro - vence hover e foco por escrever noutra propriedade. O valor
+   continua `text-value`: so rotulo, borda e mensagem ficam vermelhos. */
+.al-password__control:has(.al-password__field[aria-invalid="true"]) {
+  --_border-force: var(--al-password-border-error);
+  --_ring-force: var(--al-password-ring-error);
+}
+
+.al-password:has(.al-password__field[aria-invalid="true"]) .al-password__label {
+  color: var(--al-password-label-error);
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-password__control:has(.al-password__field:disabled) {
+  --_border-force: var(--al-password-border-disabled);
+  --_bg-force: var(--al-password-bg-disabled);
+  cursor: not-allowed;
+}
+
+.al-password__field:disabled {
+  --_text-force: var(--al-password-text-disabled);
+  cursor: not-allowed;
+}
+
+.al-password__field:disabled::placeholder {
+  color: var(--al-password-text-disabled);
+}
+
+/* o botao tambem leva `disabled` na marcacao - sai do Tab (regra 20) */
+.al-password__toggle:disabled {
+  color: var(--al-password-toggle-icon-disabled);
+  cursor: not-allowed;
+}
+
+.al-password:has(.al-password__field:disabled) .al-password__label {
+  color: var(--al-password-label-disabled);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-password__control {
+    transition: none;
+  }
+}
+
+/* No alto contraste a sombra e descartada e os dois aneis somem. O foco
+   volta como outline nativo - mesma rede do X do Tag. */
+@media (forced-colors: active) {
+  .al-password__control:has(.al-password__field:focus-visible),
+  .al-password__toggle:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -4762,13 +5186,36 @@ footer code{background:none; padding:0}
 /* o palco do playground precisa de largura: o campo ocupa 100% do conteiner */
 #textarea-stage{display:block; padding-inline:8px}
 #textarea-stage .al-textarea{width:100%; max-width:420px; margin-inline:auto}
+
+/* ── miniatura do card do Password ── */
+.th-password{display:flex; flex-direction:column; gap:6px; width:100%; max-width:200px; margin-inline:auto}
+.th-password__label{font-size:12px; line-height:16px; color:var(--al-text-primary)}
+.th-password__field{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:8px 10px;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-lg);
+  background:var(--al-bg-surface-raised);
+  color:var(--al-text-primary);
+  font-size:12.5px; line-height:16px; letter-spacing:1px;
+}
+.th-password__eye{width:16px; height:16px; color:var(--al-text-primary)}
+/* o palco do playground precisa de largura: o campo ocupa 100% do conteiner */
+#password-stage{display:block; padding-inline:8px}
+#password-stage > *{width:100%; max-width:360px; margin-inline:auto}
+/* requisitos: texto do formulario, fora do componente (regra 7, opcao B) */
+.pw-group{display:flex; flex-direction:column; gap:8px}
+.pw-req{margin:0; color:var(--al-text-secondary); font-size:14px; line-height:20px}
+/* uma coluna, como um formulario de senha de verdade - lado a lado, os
+   requisitos e a mensagem de erro desalinhavam os campos vizinhos */
+.pw-form{display:grid !important; grid-template-columns:minmax(0,1fr); max-width:420px; gap:20px}
+.pw-submit{justify-self:start}
 </style>
 
 <div class="shell">
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.12.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.13.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -4801,6 +5248,7 @@ footer code{background:none; padding:0}
         <a href="#/switch" data-page="switch">Switch</a>
         <a href="#/input" data-page="input">Input</a>
         <a href="#/textarea" data-page="textarea">Textarea</a>
+        <a href="#/password" data-page="password">Password</a>
       </div>
     </div>
   </div>
@@ -4915,7 +5363,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.12.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.13.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -4945,7 +5393,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.12.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.13.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -5470,9 +5918,9 @@ footer code{background:none; padding:0}
   consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
   normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
   <div class="stats">
-    <div class="stat hl"><b>257</b><span>verificações</span></div>
+    <div class="stat hl"><b>292</b><span>verificações</span></div>
     <div class="stat"><b>0</b><span>reprovas</span></div>
-    <div class="stat"><b>215</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>250</b><span>elementos com contrato conferido</span></div>
     <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
   </div>
 </section>
@@ -5547,7 +5995,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
   O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
-  <code>.al-icon</code>: 215 elementos nesta página, nenhum fora.
+  <code>.al-icon</code>: 250 elementos nesta página, nenhum fora.
   Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
   <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
   porque o rótulo nunca seria lido.</p>
@@ -5571,6 +6019,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/radio" data-page="radio"><div class="card-thumb"><div class="th-rd" aria-hidden="true"><span class="th-rd__row"><span class="th-rd__dot is-on"></span>Mensal</span><span class="th-rd__row"><span class="th-rd__dot"></span>Anual</span><span class="th-rd__row"><span class="th-rd__dot"></span>Empresarial</span></div></div><div class="card-body"><span class="card-title">Radio</span><span class="card-desc">Uma opção de uma lista curta. Input nativo com o círculo do AL pintado por cima — e o erro é da pergunta, não da opção.</span></div></a>
     <a class="card" href="#/switch" data-page="switch"><div class="card-thumb"><div class="th-sw" aria-hidden="true"><span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>E-mail</span><span class="th-sw__row"><span class="th-sw__track"><span class="th-sw__thumb"></span></span>Celular</span><span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>Resumo</span></div></div><div class="card-body"><span class="card-title">Switch</span><span class="card-desc">Liga ou desliga algo que vale na hora, sem “Salvar”. Checkbox nativo com role="switch" e o trilho do AL pintado por cima.</span></div></a>
     <a class="card" href="#/input" data-page="input"><div class="card-thumb"><div class="th-input" aria-hidden="true"><span class="th-input__label">E-mail</span><span class="th-input__field">nome@empresa.com</span></div></div><div class="card-body"><span class="card-title">Input</span><span class="card-desc">Resposta livre de uma linha. Input nativo dentro de uma caixa que aceita prefixo, sufixo e contador — e um read-only que se lê.</span></div></a>
+    <a class="card" href="#/password" data-page="password"><div class="card-thumb"><div class="th-password" aria-hidden="true"><span class="th-password__label">Senha</span><span class="th-password__field"><span>••••••••</span><svg class="al-icon th-password__eye" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg></span></div></div><div class="card-body"><span class="card-title">Password</span><span class="card-desc">Senha com o olho de mostrar e ocultar. Input nativo de senha, um botão de verdade dentro da caixa, e um script que esconde de novo no envio.</span></div></a>
     <a class="card" href="#/textarea" data-page="textarea"><div class="card-thumb"><div class="th-textarea" aria-hidden="true"><span class="th-textarea__label">Descrição</span><span class="th-textarea__field">O que aconteceu<br>e quando</span></div></div><div class="card-body"><span class="card-title">Textarea</span><span class="card-desc">Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.</span></div></a>
   </div>
 </section>
@@ -9989,8 +10438,434 @@ footer code{background:none; padding:0}
     <div><b>Alto contraste</b><span>No foco, o contorno nativo vira transparente em vez de sumir: no modo de alto contraste do Windows o anel de sombra desaparece e o navegador pinta esse contorno com a cor do sistema.</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-password" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Password</h1><p class="lede">Campo de senha com o botão de mostrar e ocultar. É o <code>&lt;input type="password"&gt;</code> nativo numa caixa que guarda o olho — um botão de verdade, com foco próprio — e o primeiro componente do AL que traz o próprio JavaScript.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">17 variantes no Figma</span><span class="badge">29 tokens</span><span class="badge">2 exceções declaradas</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Password"><button role="tab" id="t-password-overview" aria-controls="p-password-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-password-specs" aria-controls="p-password-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-password-guide" aria-controls="p-password-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-password-a11y" aria-controls="p-password-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-password-overview" role="tabpanel" aria-labelledby="t-password-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="password-stage"><div class="al-password"><label class="al-password__label" for="play-password">Senha</label><div class="al-password__control"><input class="al-password__field" id="play-password" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" placeholder="Digite sua senha"><button class="al-password__toggle" type="button" aria-controls="play-password" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div>
+
+    <div class="controls" id="password-controls">
+      <div class="ctl"><span class="ctl-name">Estado</span><div class="seg" role="radiogroup" aria-label="pwstate">
+<input type="radio" id="pwstate-rest" name="pwstate" value="rest" checked><label for="pwstate-rest">Repouso</label>
+<input type="radio" id="pwstate-error" name="pwstate" value="error"><label for="pwstate-error">Erro</label>
+<input type="radio" id="pwstate-disabled" name="pwstate" value="disabled"><label for="pwstate-disabled">Desabilitado</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Valor</span><div class="seg" role="radiogroup" aria-label="pwvalue">
+<input type="radio" id="pwvalue-none" name="pwvalue" value="none" checked><label for="pwvalue-none">Vazio</label>
+<input type="radio" id="pwvalue-filled" name="pwvalue" value="filled"><label for="pwvalue-filled">Preenchido</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Uso</span><div class="seg" role="radiogroup" aria-label="pwuse">
+<input type="radio" id="pwuse-login" name="pwuse" value="login" checked><label for="pwuse-login">Login</label>
+<input type="radio" id="pwuse-new" name="pwuse" value="new"><label for="pwuse-new">Senha nova</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Requisitos no formulário</span><div class="seg" role="radiogroup" aria-label="pwreq">
+<input type="radio" id="pwreq-off" name="pwreq" value="off" checked><label for="pwreq-off">Sem</label>
+<input type="radio" id="pwreq-on" name="pwreq" value="on"><label for="pwreq-on">Com</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="pwtheme">
+<input type="radio" id="pwtheme-auto" name="pwtheme" value="auto" checked><label for="pwtheme-auto">Do sistema</label>
+<input type="radio" id="pwtheme-light" name="pwtheme" value="light"><label for="pwtheme-light">Claro</label>
+<input type="radio" id="pwtheme-dark" name="pwtheme" value="dark"><label for="pwtheme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><label for="password-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="password-label" type="text" value="Senha" maxlength="40"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="password-copy">Copiar</button></div>
+      <pre><code id="password-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O campo acima é o componente real: esta página carrega o mesmo <code>password.css</code> e o
+    mesmo <code>password.js</code> que vão para produção. Digite, tabule até o olho e aperte
+    Espaço — a senha aparece, o ícone vira o olho cortado e o foco fica no botão.
+  </p>
+</section>
+
+<section>
+  <h2>O olho</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Escondida — o padrão</span>
+      <div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pwo-hidden">Senha</label><div class="al-password__control"><input class="al-password__field" id="pwo-hidden" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" placeholder="Digite sua senha"><button class="al-password__toggle" type="button" aria-controls="pwo-hidden" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div>
+      <p class="cap">Toda senha nasce escondida. O ícone mostra a <b>ação</b>: olho = mostrar.
+      <i>GOV.UK; Material; Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Visível — depois do clique</span>
+      <div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pwo-visible">Senha</label><div class="al-password__control"><input class="al-password__field" id="pwo-visible" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" placeholder="Digite sua senha"><button class="al-password__toggle" type="button" aria-controls="pwo-visible" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div>
+      <p class="cap">Olho cortado = esconder. Alternar não apaga o valor e não tira o foco do
+      botão. Ao enviar o formulário, volta a ficar escondida.</p>
+    </div>
+  </div>
+  <p style="margin-top:12px">O olho é um <code>&lt;button&gt;</code> de verdade, dentro da mesma
+  borda do campo, e vem depois dele na ordem do Tab. Tem anel de foco próprio — circular, sempre
+  laranja — e o foco nele não acende a caixa.</p>
+</section>
+
+<section>
+  <h2>Os seis estados</h2>
+  <div class="dd"><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Default</span><div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pw-default">Senha</label><div class="al-password__control"><input class="al-password__field" id="pw-default" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" placeholder="Digite sua senha"><button class="al-password__toggle" type="button" aria-controls="pw-default" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div><p class="cap">O repouso, já com senha: pontos desenhados pelo navegador e o olho, que é a ação de mostrar.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Hover</span><div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pw-hover">Senha</label><div class="al-password__control" style="--_border-state: var(--al-password-border-hover)"><input class="al-password__field" id="pw-hover" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" placeholder="Digite sua senha"><button class="al-password__toggle" type="button" aria-controls="pw-hover" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div><p class="cap">Só existe sob o ponteiro: a variável privada foi escrita direto.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Focus</span><div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pw-focus">Senha</label><div class="al-password__control"><input class="al-password__field" id="pw-focus" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" placeholder="Digite sua senha"><button class="al-password__toggle" type="button" aria-controls="pw-focus" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div><p class="cap">Clique <b>ou</b> tabule até o campo: borda e anel laranja na caixa inteira.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Error</span><div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pw-error">Senha</label><div class="al-password__control"><input class="al-password__field" id="pw-error" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" placeholder="Digite sua senha" aria-describedby="pw-error-erro" aria-invalid="true"><button class="al-password__toggle" type="button" aria-controls="pw-error" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div><p class="al-password__help" id="pw-error-erro">A senha precisa ter pelo menos 8 caracteres</p></div></div><p class="cap">Vem de <code>aria-invalid="true"</code>. O valor mantém a cor normal; só rótulo, borda e mensagem mudam.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Focus + Error</span><div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pw-focus-error">Senha</label><div class="al-password__control"><input class="al-password__field" id="pw-focus-error" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" placeholder="Digite sua senha" aria-describedby="pw-focus-error-erro" aria-invalid="true"><button class="al-password__toggle" type="button" aria-controls="pw-focus-error" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div><p class="al-password__help" id="pw-focus-error-erro">A senha precisa ter pelo menos 8 caracteres</p></div></div><p class="cap">No campo, o anel é vinho. Tabule mais uma vez: no olho, o anel é laranja — o erro é do campo, não do botão.</p></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Disabled</span><div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pw-disabled">Senha</label><div class="al-password__control"><input class="al-password__field" id="pw-disabled" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" placeholder="Digite sua senha" disabled><button class="al-password__toggle" type="button" aria-controls="pw-disabled" aria-label="Mostrar senha" disabled hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div><p class="cap">Campo e olho levam <code>disabled</code>: o Tab pula os dois, e a senha nunca fica visível.</p></div></div>
+</section>
+
+<section>
+  <h2>Num formulário de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <form class="stage2 pw-form" id="pw-demo-form" action="#" novalidate>
+      <div class="al-password"><label class="al-password__label" for="pf-atual">Senha atual</label><div class="al-password__control"><input class="al-password__field" id="pf-atual" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" placeholder="Digite sua senha"><button class="al-password__toggle" type="button" aria-controls="pf-atual" aria-label="Mostrar senha" data-label-show="Mostrar senha atual" data-label-hide="Ocultar senha atual" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div>
+      <div class="pw-group"><p class="pw-req" id="pf-nova-req">Use pelo menos 8 caracteres. Frases longas são mais seguras que símbolos.</p><div class="al-password"><label class="al-password__label" for="pf-nova">Nova senha</label><div class="al-password__control"><input class="al-password__field" id="pf-nova" type="password" autocomplete="new-password" spellcheck="false" autocapitalize="none" placeholder="Digite sua senha" aria-describedby="pf-nova-req"><button class="al-password__toggle" type="button" aria-controls="pf-nova" aria-label="Mostrar senha" data-label-show="Mostrar nova senha" data-label-hide="Ocultar nova senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div>
+      <div class="al-password"><label class="al-password__label" for="pf-confirma">Confirmar nova senha</label><div class="al-password__control"><input class="al-password__field" id="pf-confirma" type="password" autocomplete="new-password" spellcheck="false" autocapitalize="none" value="abc" placeholder="Digite sua senha" aria-describedby="pf-confirma-erro" aria-invalid="true"><button class="al-password__toggle" type="button" aria-controls="pf-confirma" aria-label="Mostrar senha" data-label-show="Mostrar confirmação" data-label-hide="Ocultar confirmação" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div><p class="al-password__help" id="pf-confirma-erro">A senha precisa ter pelo menos 8 caracteres</p></div>
+      <div class="al-password"><label class="al-password__label" for="pf-admin">Senha do administrador</label><div class="al-password__control"><input class="al-password__field" id="pf-admin" type="password" autocomplete="current-password" spellcheck="false" autocapitalize="none" value="pa$$w0rd123" disabled><button class="al-password__toggle" type="button" aria-controls="pf-admin" aria-label="Mostrar senha" disabled hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div>
+      <button type="submit" class="al-btn al-btn--primary al-btn--md pw-submit"><span class="al-btn__label">Salvar</span></button>
+    </form>
+    <p class="cap">Tabule pelos campos: cada olho tem nome próprio (“Mostrar nova senha”). Os
+    requisitos ficam <b>acima</b> da nova senha, fora do componente. Deixe uma senha visível e
+    clique em Salvar — ela volta a ficar escondida. A do administrador é pulada.</p>
+  </div>
+</section></div><div class="panel" id="p-password-specs" role="tabpanel" aria-labelledby="t-password-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Rótulo</b><span><code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Sempre visível — é a regra que sustenta a exceção de contraste da borda.</span></div>
+    <div><b>Caixa</b><span>O <code>__control</code>: borda, fundo, raio e anel do campo. O <code>&lt;input&gt;</code> é transparente dentro dela, como no Input, porque o olho precisa morar dentro da borda.</span></div>
+    <div><b>Campo</b><span><code>&lt;input type="password"&gt;</code> nativo. Os pontos são do navegador.</span></div>
+    <div><b>Olho</b><span><code>&lt;button type="button"&gt;</code> de 24×24, com os dois ícones da Fundação dentro. Qual aparece é lido do <code>type</code> do campo.</span></div>
+    <div><b>Mensagem de erro</b><span>Só existe no erro. Não há texto de apoio em repouso: requisitos ficam no formulário, acima do campo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <p>Não existe <code>height</code>: o campo soma <code>padding-y</code> × 2 e uma entrelinha, com
+  a borda de 1px descontada do padding — <b>48px</b>. O olho tem
+  24px, a mesma entrelinha, então não mexe na altura. O componente inteiro
+  tem <b>80px</b>, e <b>104px</b> com a
+  mensagem de erro.</p>
+  <p style="margin-top:12px">O alvo do olho é <b>24×24</b>,
+  o mínimo exato do WCAG 2.5.8. Sem folga: se o ícone encolher, o alvo reprova junto.</p>
+  <div class="stats">
+    <div class="stat hl"><b>29</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>6</b><span>estados</span></div>
+    <div class="stat"><b>17</b><span>variantes no Figma</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody><tr><td class="tok">--al-password-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr><td class="tok">--al-password-bg-disabled</td><td class="tok dim">bg-disabled</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td></tr>
+<tr><td class="tok">--al-password-border</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-password-border-hover</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-password-border-focus</td><td class="tok dim">border-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-password-border-error</td><td class="tok dim">border-danger</td><td class="tok dim"><span class="chip sm" style="background:#CA293F"></span>#CA293F</td></tr>
+<tr><td class="tok">--al-password-border-disabled</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td></tr>
+<tr><td class="tok">--al-password-text-placeholder</td><td class="tok dim">text-placeholder</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-password-text-value</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-password-text-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-password-label</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-password-label-error</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr><td class="tok">--al-password-label-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-password-help-error</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td></tr>
+<tr><td class="tok">--al-password-toggle-icon</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td></tr>
+<tr><td class="tok">--al-password-toggle-icon-disabled</td><td class="tok dim">text-disabled</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-password-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr>
+<tr><td class="tok">--al-password-ring-error</td><td class="tok dim">focusRing.error</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #A00E27</td></tr>
+<tr><td class="tok">--al-password-toggle-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim">0 0 0 2px #FFFFFF, 0 0 0 4px #FC5000</td></tr></tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Três anéis, três tokens</b>
+    <code>ring</code> e <code>ring-error</code> vão na caixa, com o foco no campo.
+    <code>toggle-ring</code> vai só no olho e é sempre o padrão, mesmo com o campo em erro. O
+    respiro de 2px do anel é <code>bg-canvas</code>: no escuro, ele desenha um contorno fino
+    dentro do campo — aceito na etapa 3.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody><tr><td class="tok">--al-password-padding-x</td><td class="tok dim">space.12</td><td class="num">12px</td></tr>
+<tr><td class="tok">--al-password-padding-y</td><td class="tok dim">space.12</td><td class="num">12px</td></tr>
+<tr><td class="tok">--al-password-gap</td><td class="tok dim">space.8</td><td class="num">8px</td></tr>
+<tr><td class="tok">--al-password-radius</td><td class="tok dim">radius.lg</td><td class="num">8px</td></tr>
+<tr><td class="tok">--al-password-border-width</td><td class="tok dim">border.width.1</td><td class="num">1px</td></tr>
+<tr><td class="tok">--al-password-icon-size</td><td class="tok dim">iconSize.24</td><td class="num">24px</td></tr>
+<tr><td class="tok">--al-password-toggle-radius</td><td class="tok dim">radius.full</td><td class="num">9999px</td></tr>
+<tr><td class="tok">--al-password-font</td><td class="tok dim">type.styles.body-md</td><td class="num">16/24 · peso 400</td></tr>
+<tr><td class="tok">--al-password-label-font</td><td class="tok dim">type.styles.body-md</td><td class="num">16/24 · peso 400</td></tr>
+<tr><td class="tok">--al-password-help-font</td><td class="tok dim">type.styles.caption</td><td class="num">12/16 · peso 400</td></tr></tbody>
+  </table></div>
+  <p style="margin-top:12px">Um <code>gap</code> só serve à pilha rótulo → campo → erro e ao espaço
+  entre o texto e o olho. Os dois são 8.</p>
+</section>
+
+<section>
+  <h2>O estado vem da marcação</h2>
+  <div class="anat">
+    <div><b>Visível ou escondida</b><span>O <code>type</code> do campo: <code>password</code> ou <code>text</code>. O CSS troca o ícone; o JavaScript só troca o <code>type</code> e o <code>aria-label</code>.</span></div>
+    <div><b>Erro</b><span><code>aria-invalid="true"</code> no campo. Não há classe de erro.</span></div>
+    <div><b>Desabilitado</b><span><code>disabled</code> no campo <b>e</b> no botão.</span></div>
+    <div><b>Foco</b><span>A caixa lê <code>__field:focus-visible</code>, não <code>:focus-within</code> — por isso o foco no olho não a acende.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O comportamento: <code>password.js</code></h2>
+  <p>É o primeiro componente do AL com JavaScript próprio. Sem ele o olho não existiria, então o
+  comportamento viaja com o componente em vez de cada sistema reimplementar.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Revela o botão</b><span>O olho nasce <code>hidden</code>. Sem JavaScript, fica só o campo de senha nativo — melhor que um botão que não faz nada.</span></div>
+    <div><b>Alterna</b><span><code>type</code> password ↔ text e o nome anunciado (“Mostrar senha” ↔ “Ocultar senha”). Nomes próprios por <code>data-label-show</code> / <code>data-label-hide</code>.</span></div>
+    <div><b>Esconde no envio</b><span>No <code>submit</code> do formulário, volta a <code>type="password"</code>.</span></div>
+    <div><b>Conteúdo inserido depois</b><span><code>window.alPassword.init(elemento)</code>. Chamar duas vezes não liga nada em dobro.</span></div>
+  </div>
+</section></div><div class="panel" id="p-password-guide" role="tabpanel" aria-labelledby="t-password-guide" tabindex="0" hidden>
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Toda senha criada ou digitada</b><span>Login, cadastro, troca de senha. <i>GOV.UK.</i></span></div>
+    <div><b>Código de uso único não é senha</b><span>O código do SMS vai no Input com <code>autocomplete="one-time-code"</code>. Não é segredo guardado, e esconder só atrapalha a transcrição. <i>GOV.UK.</i></span></div>
+    <div><b>“Confirmar senha” é do formulário</b><span>O componente não tem esse campo; o olho já cobre a conferência que ele fazia.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo e placeholder</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pd-ok">Nova senha</label><div class="al-password__control"><input class="al-password__field" id="pd-ok" type="password" autocomplete="new-password" spellcheck="false" autocapitalize="none" placeholder="Digite sua senha"><button class="al-password__toggle" type="button" aria-controls="pd-ok" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div>
+      <p class="cap">Rótulo visível dizendo o dado — “Senha”, “Senha atual”, “Nova senha”. Placeholder
+      curto e genérico, ou nenhum. <i>Polaris.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pd-bad">Senha</label><div class="al-password__control"><input class="al-password__field" id="pd-bad" type="password" autocomplete="new-password" spellcheck="false" autocapitalize="none" placeholder="Mín. 8 caracteres, 1 número, 1 símbolo"><button class="al-password__toggle" type="button" aria-controls="pd-bad" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div>
+      <p class="cap">Requisito no placeholder. Some na primeira tecla, e o gerenciador de senhas
+      nunca o mostra.</p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>“Digite sua senha” é uma divergência consciente</b>
+    No Input o placeholder só traz exemplo de formato (regra 7). Senha não tem formato a
+    exemplificar, então o Password aceita um placeholder genérico — nunca requisito, nunca exemplo
+    de senha. E o Password é sempre obrigatório: não há a marca “(Opcional)”.
+  </div>
+</section>
+
+<section>
+  <h2>Requisitos antes de digitar</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block"><div class="pw-group"><p class="pw-req" id="pd-req-req">Use pelo menos 8 caracteres. Frases longas são mais seguras que símbolos.</p><div class="al-password"><label class="al-password__label" for="pd-req">Nova senha</label><div class="al-password__control"><input class="al-password__field" id="pd-req" type="password" autocomplete="new-password" spellcheck="false" autocapitalize="none" placeholder="Digite sua senha" aria-describedby="pd-req-req"><button class="al-password__toggle" type="button" aria-controls="pd-req" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div></div></div></div>
+      <p class="cap">Requisitos <b>acima</b> do campo, no formulário, ligados por
+      <code>aria-describedby</code>. A pessoa lê antes de errar. <i>Polaris.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block"><div class="al-password"><label class="al-password__label" for="pd-late">Nova senha</label><div class="al-password__control"><input class="al-password__field" id="pd-late" type="password" autocomplete="new-password" spellcheck="false" autocapitalize="none" value="abc" placeholder="Digite sua senha" aria-describedby="pd-late-erro" aria-invalid="true"><button class="al-password__toggle" type="button" aria-controls="pd-late" aria-label="Mostrar senha" hidden><svg class="al-icon al-password__show" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon al-password__hide" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" /><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" /><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" /><path d="m2 2 20 20" /></svg></button></div><p class="al-password__help" id="pd-late-erro">A senha precisa ter pelo menos 8 caracteres</p></div></div>
+      <p class="cap">Requisito que só aparece como erro. A pessoa descobre a regra depois de
+      tentar.</p>
+    </div>
+  </div>
+  <p style="margin-top:12px">Sem limite máximo e sem <code>maxlength</code>; o mínimo (8 é o
+  recomendado) é regra do sistema, não do componente. Colar é sempre permitido. <i>GOV.UK;
+  WCAG 3.3.8.</i></p>
+</section>
+
+<section>
+  <h2>Erro</h2>
+  <div class="anat">
+    <div><b>Mensagem obrigatória, dizendo como corrigir</b><span>“A senha precisa ter pelo menos 8 caracteres”. <i>Primer.</i></span></div>
+    <div><b>No login, nunca diga qual dado errou</b><span>“E-mail ou senha incorretos” — nunca “Senha incorreta”. Dizer qual errou ajuda quem tenta invadir. <i>GOV.UK.</i></span></div>
+    <div><b>Login que falhou volta vazio</b><span>O campo de senha é limpo e escondido. <i>GOV.UK.</i></span></div>
+    <div><b>Ao sair do campo ou enviar</b><span>Nunca a cada tecla.</span></div>
+    <div><b>O valor não fica vermelho</b><span>Só rótulo, borda e mensagem: o vermelho aponta o que corrigir, não o conteúdo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Mostrar e ocultar</h2>
+  <div class="anat">
+    <div><b>Nasce escondida</b><span>Só a pessoa decide mostrar. <i>GOV.UK.</i></span></div>
+    <div><b>O ícone é a ação</b><span>Olho = mostrar; olho cortado = esconder. <i>Material; Carbon.</i></span></div>
+    <div><b>Um olho por campo</b><span>Com vários campos, o nome anunciado diferencia: “Mostrar nova senha”. <i>GOV.UK.</i></span></div>
+    <div><b>Esconde no envio</b><span>A senha não fica exposta na tela seguinte. <i>GOV.UK.</i></span></div>
+    <div><b>Desabilitado fica sempre escondido</b><span>E o olho fica apagado e fora do Tab.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Medidor de força e checklist ao vivo</b><span>Pesam em comportamento; o ganho é pequeno nesta versão.</span></div>
+    <div><b>Aviso de Caps Lock</b><span>Fica para uma versão futura.</span></div>
+    <div><b>Read-only</b><span>Senha “só para ler” expõe o dado sem uso para quem lê.</span></div>
+    <div><b>Texto de apoio em repouso</b><span>Requisitos ficam no formulário.</span></div>
+    <div><b>Botão de copiar e tamanhos extras</b><span>Não entram nesta versão.</span></div>
+  </div>
+</section></div><div class="panel" id="p-password-a11y" role="tabpanel" aria-labelledby="t-password-a11y" tabindex="0" hidden>
+<section>
+  <h2>O anel do olho mora dentro do campo</h2>
+  <p>O portão mede <b>combinação renderizada</b>: os seis estados nos dois temas, cada papel contra
+  o fundo que ele realmente tem na tela. O que a etapa 3 não via: o anel do olho toca o respiro de
+  2px <b>e</b> o fundo do campo, e vale o pior dos dois.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Anel do olho</th><th>Olho</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num strong">3.34:1</td><td class="num">14.55:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num strong">4.87:1</td><td class="num">9.98:1</td></tr>
+    </tbody>
+  </table></div>
+  <div class="stats">
+    <div class="stat hl"><b>70</b><span>combinações medidas</span></div>
+    <div class="stat"><b>60</b><span>passam</span></div>
+    <div class="stat"><b>10</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda abaixo de 3:1 no repouso — decisão consciente</b>
+    <code>border-default</code> dá 1.57:1 no claro e
+    1.46:1 no escuro. O 1.4.11 não falha quando a borda não é o
+    único meio de perceber o componente — há rótulo visível e o olho dentro. <b>Por isso “nunca sem
+    rótulo visível” é regra de uso.</b>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Disabled abaixo de AA — isenção do 1.4.3</b>
+    Inclui o olho apagado. O WCAG isenta componente inativo, e subir esse contraste faz o
+    desabilitado parecer editável.
+  </div>
+</section>
+
+<section>
+  <h2>Borda, anéis e olho — o não-textual, piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-border</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.57:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">anel do olho</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-toggle-ring</td><td class="tok dim">respiro (bg-canvas) + preenchimento</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-border</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">anel do olho</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-toggle-ring</td><td class="tok dim">respiro (bg-canvas) + preenchimento</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-border-hover</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">4.88:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-border-hover</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">3.53:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">anel do campo</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-border-focus</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.20:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">anel do campo</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-ring</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-border-error</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">5.38:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">anel do olho</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-toggle-ring</td><td class="tok dim">respiro (bg-canvas) + preenchimento</td><td class="num strong">3.34:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-border-error</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">anel do olho</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-toggle-ring</td><td class="tok dim">respiro (bg-canvas) + preenchimento</td><td class="num strong">4.87:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">5.38:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">anel do campo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-ring-error</td><td class="tok dim">respiro + pagina</td><td class="num strong">8.12:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-border-error</td><td class="tok dim">respiro do anel (bg-canvas) + preenchimento</td><td class="num strong">3.19:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">anel do campo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-ring-error</td><td class="tok dim">respiro + pagina</td><td class="num strong">4.82:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-toggle-icon</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-password-border-disabled</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-password-toggle-icon-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">1.59:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-border-disabled</td><td class="tok dim">pagina (pior de canvas / surface-raised) + preenchimento</td><td class="num strong">1.46:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">olho</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-toggle-icon-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">2.19:1</td><td class="num dim">3.0:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">default</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-label</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error</td><td class="tok dim">mensagem de erro</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error</td><td class="tok dim">mensagem de erro</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">4.88:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">14.55:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">focus-error</td><td class="tok dim">mensagem de erro</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">8.12:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">placeholder</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-placeholder</td><td class="tok dim">preenchimento do campo</td><td class="num strong">5.10:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">valor</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-value</td><td class="tok dim">preenchimento do campo</td><td class="num strong">9.98:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-label-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">focus-error</td><td class="tok dim">mensagem de erro</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-help-error</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">4.82:1</td><td class="num dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">texto</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">--al-password-text-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">1.59:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">--al-password-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.10:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">texto</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-text-disabled</td><td class="tok dim">preenchimento do campo</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">disabled</td><td class="tok dim">rotulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">--al-password-label-disabled</td><td class="tok dim">pagina (pior caso)</td><td class="num strong">2.19:1</td><td class="num dim">4.5:1</td><td><span class="exc">exceção</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Dez regras, medidas por <code>components/password/a11y.py</code> no HTML que este site
+  emite. Quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> apontando para ele, sem <code>aria-label</code> redundante.</span></div>
+    <div><b>Erro com mensagem</b><span><code>aria-invalid="true"</code> com <code>aria-describedby</code> para um texto que existe e não está vazio.</span></div>
+    <div><b>Nasce escondida</b><span>O campo é emitido com <code>type="password"</code>.</span></div>
+    <div><b>Gerenciador e corretor</b><span><code>autocomplete</code> <code>current-password</code> ou <code>new-password</code>; <code>spellcheck="false"</code> e <code>autocapitalize="none"</code> — o corretor pode mandar a senha aberta para fora.</span></div>
+    <div><b>Sem <code>maxlength</code></b><span>Nenhum limite máximo no campo.</span></div>
+    <div><b>O olho é botão</b><span><code>&lt;button type="button"&gt;</code> — sem o <code>type</code>, enviaria o formulário — com <code>aria-controls</code> no campo e <code>aria-label</code>.</span></div>
+    <div><b>Ícones decorativos</b><span><code>aria-hidden="true"</code> e <code>focusable="false"</code>: o nome é do botão.</span></div>
+    <div><b>Desabilitado inteiro</b><span>Campo desabilitado leva o olho desabilitado junto.</span></div>
+    <div><b><code>id</code> único</b><span>Id repetido liga o <code>&lt;label for&gt;</code> no elemento errado.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>17</b><span>campos conferidos no HTML</span></div>
+    <div class="stat"><b>10</b><span>regras por campo</span></div>
+    <div class="stat"><b>medido</b><span>estado do contrato</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado, medido na etapa 6</h2>
+  <div class="anat">
+    <div><b>Campo, depois olho</b><span>O Tab chega no campo (a caixa acende) e depois no olho (só o círculo). Espaço ou Enter alternam, e o foco fica no botão.</span></div>
+    <div><b>O valor não se perde</b><span>Alternar não apaga nem move o cursor para fora.</span></div>
+    <div><b>Desabilitado é pulado</b><span>Campo e olho saem da ordem de tabulação.</span></div>
+    <div><b>Alto contraste</b><span>Os anéis de sombra somem no modo de alto contraste do Windows; os dois focos voltam como contorno nativo na cor do sistema.</span></div>
+    <div><b>O olho nativo do Edge sai</b><span>Seriam dois olhos; o CSS esconde o do navegador. O botão de senha forte do Safari e o do gerenciador não são tocados.</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.12.0</span>
+  <span><b>AL Design System</b> · v0.13.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -11245,6 +12120,170 @@ var CBX_DASH = "<svg class=\"al-icon al-checkbox__dash\" aria-hidden=\"true\" fo
     i.addEventListener('input', render);
   });
   document.getElementById('textarea-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+/* AL Design System - Password: o comportamento do olho
+ *
+ * O CSS ja sabe tudo o que e visual - qual icone mostrar le o `type` do
+ * campo. Este arquivo so faz o que CSS nao alcanca:
+ *
+ *   1. tira o `hidden` do botao (sem JS o olho nao existe - GOV.UK);
+ *   2. alterna `type` password <-> text e o `aria-label` do botao
+ *      ("Mostrar senha" / "Ocultar senha", regra 28). O foco fica no botao
+ *      e o valor nao e tocado (regra 15);
+ *   3. esconde de novo quando o formulario e enviado (regra 16).
+ *
+ * Varios campos na mesma tela: os nomes vem de `data-label-show` e
+ * `data-label-hide` no botao ("Mostrar nova senha"), regra 17.
+ *
+ * Campo desabilitado nunca alterna - e o botao leva `disabled` na marcacao.
+ *
+ * Inicia sozinho no carregamento. Conteudo inserido depois:
+ *   window.alPassword.init(elementoQueContemOsCampos)
+ */
+(function () {
+  'use strict';
+
+  function setup(root) {
+    var field = root.querySelector('.al-password__field');
+    var toggle = root.querySelector('.al-password__toggle');
+    if (!field || !toggle || toggle.hasAttribute('data-al-ready')) return;
+    toggle.setAttribute('data-al-ready', '');
+
+    var labelShow = toggle.getAttribute('data-label-show') || 'Mostrar senha';
+    var labelHide = toggle.getAttribute('data-label-hide') || 'Ocultar senha';
+
+    function setVisible(visible) {
+      field.type = visible ? 'text' : 'password';
+      toggle.setAttribute('aria-label', visible ? labelHide : labelShow);
+    }
+
+    toggle.addEventListener('click', function () {
+      if (field.disabled) return;
+      setVisible(field.type === 'password');
+    });
+
+    if (field.form) {
+      field.form.addEventListener('submit', function () {
+        setVisible(false);
+      });
+    }
+
+    setVisible(false);          // regra 13: nasce sempre escondida
+    toggle.hidden = false;
+  }
+
+  function init(scope) {
+    var roots = (scope || document).querySelectorAll('.al-password');
+    for (var i = 0; i < roots.length; i++) setup(roots[i]);
+  }
+
+  window.alPassword = { init: init };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { init(); });
+  } else {
+    init();
+  }
+})();
+
+(function () {
+  // ── playground do Password ──
+  // O comportamento do olho e o password.js do componente, embutido logo
+  // antes deste bloco. Aqui so o que e da pagina: abrir o exemplo "visivel",
+  // segurar o envio do formulario de demonstracao e montar o palco.
+  if (!window.alPassword) return;
+  window.alPassword.init();
+  var vis = document.getElementById('pwo-visible');
+  if (vis) vis.closest('.al-password').querySelector('.al-password__toggle').click();
+  var demo = document.getElementById('pw-demo-form');
+  if (demo) demo.addEventListener('submit', function (e) { e.preventDefault(); });
+
+  var stage = document.getElementById('password-stage');
+  if (!stage) return;
+  var code = document.getElementById('password-code');
+  var labelInput = document.getElementById('password-label');
+  var EYE = stage.querySelector('.al-password__show').outerHTML;
+  var EYE_OFF = stage.querySelector('.al-password__hide').outerHTML;
+  var REQ = 'Use pelo menos 8 caracteres. Frases longas são mais seguras que símbolos.';
+  var ERRO = 'A senha precisa ter pelo menos 8 caracteres';
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    var estado = pick('pwstate');
+    var cheio = pick('pwvalue') === 'filled';
+    var novo = pick('pwuse') === 'new';
+    var comReq = pick('pwreq') === 'on';
+    var theme = pick('pwtheme');
+    var rotulo = (labelInput.value || '').trim() || 'Senha';
+    var erro = estado === 'error', off = estado === 'disabled';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    function montar(id, escapar) {
+      var e = escapar ? function (s) { return s.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+                      : function (s) { return s; };
+      var nl = escapar ? '\n' : '';
+      var sp = function (n) { return escapar ? new Array(n + 1).join(' ') : ''; };
+      var desc = [];
+      if (comReq) desc.push(id + '-req');
+      if (erro) desc.push(id + '-erro');
+      var a = ['class="al-password__field"', 'id="' + id + '"', 'type="password"',
+               'autocomplete="' + (novo ? 'new-password' : 'current-password') + '"',
+               'spellcheck="false"', 'autocapitalize="none"'];
+      if (cheio) a.push('value="pa$$w0rd123"');
+      if (!off) a.push('placeholder="Digite sua senha"');
+      if (desc.length) a.push('aria-describedby="' + desc.join(' ') + '"');
+      if (erro) a.push('aria-invalid="true"');
+      if (off) a.push('disabled');
+      var b = ['class="al-password__toggle"', 'type="button"', 'aria-controls="' + id + '"',
+               'aria-label="Mostrar senha"'];
+      if (off) b.push('disabled');
+      b.push('hidden');
+      var out = '';
+      if (comReq) out += e('<p class="pw-req" id="' + id + '-req">') + REQ + e('</p>') + nl;
+      out += e('<div class="al-password">') + nl
+        + sp(2) + e('<label class="al-password__label" for="' + id + '">') + esc(rotulo) + e('</label>') + nl
+        + sp(2) + e('<div class="al-password__control">') + nl
+        + sp(4) + e('<input ' + a.join(' ') + '>') + nl
+        + sp(4) + e('<button ' + b.join(' ') + '>') + nl
+        + (escapar ? sp(6) + e('<svg class="al-icon al-password__show" …>eye</svg>') + nl
+                     + sp(6) + e('<svg class="al-icon al-password__hide" …>eye-off</svg>') + nl
+                   : EYE + EYE_OFF)
+        + sp(4) + e('</button>') + nl
+        + sp(2) + e('</div>') + nl;
+      if (erro) out += sp(2) + e('<p class="al-password__help" id="' + id + '-erro">') + ERRO + e('</p>') + nl;
+      out += e('</div>');
+      return out;
+    }
+
+    stage.innerHTML = comReq ? '<div class="pw-group">' + montar('play-password', false) + '</div>'
+                             : montar('play-password', false);
+    window.alPassword.init(stage);
+    var linhas = montar('senha', true);
+    if (comReq) linhas = '&lt;!-- requisitos: texto do formulario, acima do campo --&gt;\n' + linhas;
+    linhas += '\n&lt;script src="password.js"&gt;&lt;/script&gt;  &lt;!-- revela o olho e alterna --&gt;';
+    code.innerHTML = linhas;
+  }
+
+  document.querySelectorAll('#password-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('password-copy').addEventListener('click', function () {
     var btn = this;
     navigator.clipboard.writeText(code.textContent).then(function () {
       btn.textContent = 'Copiado';
