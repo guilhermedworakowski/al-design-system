@@ -86,6 +86,10 @@ INPUT = json.load(open(os.path.join(ROOT, 'components', 'input', 'tokens.json'))
 INPUT_TOKENS = open(os.path.join(ROOT, 'components', 'input', 'al-input-tokens.css')).read()
 INPUT_CSS = open(os.path.join(ROOT, 'components', 'input', 'input.css')).read()
 INPUT_A11Y = json.load(open(os.path.join(ROOT, 'components', 'input', 'a11y.json')))
+TEXTAREA = json.load(open(os.path.join(ROOT, 'components', 'textarea', 'tokens.json')))
+TEXTAREA_TOKENS = open(os.path.join(ROOT, 'components', 'textarea', 'al-textarea-tokens.css')).read()
+TEXTAREA_CSS = open(os.path.join(ROOT, 'components', 'textarea', 'textarea.css')).read()
+TEXTAREA_A11Y = json.load(open(os.path.join(ROOT, 'components', 'textarea', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -110,6 +114,7 @@ N_CHECKBOX_TOKENS = len(CHECKBOX['alias'])
 N_RADIO_TOKENS = len(RADIO['alias'])
 N_SWITCH_TOKENS = len(SWITCH['alias'])
 N_INPUT_TOKENS = len(INPUT['alias'])
+N_TEXTAREA_TOKENS = len(TEXTAREA['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -142,7 +147,9 @@ def scope_themes(found_css, *token_blocks):
             comps.append(mb.group(1))
     btn = '\n'.join(comps)
 
-    css += '\n[data-theme="light"] {\n' + semantic_light + '\n}\n'
+    # color-scheme: a UI nativa (puxador e barra do Textarea, lista do Select)
+    # segue o palco, nao o sistema. O bloco escuro ja traz o dele da Foundation.
+    css += '\n[data-theme="light"] {\n  color-scheme: light;\n' + semantic_light + '\n}\n'
     css += ('\n/* Re-declaracao para container tematizado - so o playground precisa. */\n'
             '[data-theme="light"], [data-theme="dark"] {\n' + rings + '\n' + btn + '\n}\n')
     return css
@@ -150,7 +157,7 @@ def scope_themes(found_css, *token_blocks):
 
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
-                         SWITCH_TOKENS, INPUT_TOKENS)
+                         SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -160,7 +167,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + CHECKBOX_TOKENS + '\n' + CHECKBOX_CSS
             + '\n' + RADIO_TOKENS + '\n' + RADIO_CSS
             + '\n' + SWITCH_TOKENS + '\n' + SWITCH_CSS
-            + '\n' + INPUT_TOKENS + '\n' + INPUT_CSS)
+            + '\n' + INPUT_TOKENS + '\n' + INPUT_CSS
+            + '\n' + TEXTAREA_TOKENS + '\n' + TEXTAREA_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -5676,6 +5684,520 @@ INPUT_A11Y_TAB = f'''
   coberta pelo anel no mesmo instante — por isso o estado saiu do Figma na etapa 1.</p>
 </section>'''
 
+# ════════════════════════════════════════════════════════════ Textarea · abas
+# Os mesmos 7 estados do Input. O codigo pinta mais tres casos que o Figma nao
+# desenha: read-only vazio, texto longo rolando e rows="6" - a pagina os mostra
+# como o que sao, pintados pelos tokens aprovados.
+TEXTAREA_STATES = INPUT_STATES
+
+TA_LONGO = ('O pedido chegou com a caixa amassada e dois itens soltos. Um deles, o copo de '
+            'vidro, veio trincado na borda. Entrei em contato pelo chat no mesmo dia e me '
+            'pediram fotos, que enviei. Desde então não tive retorno, e o prazo de troca '
+            'termina na sexta-feira.')
+TA_ERRO = 'Conte o que aconteceu e quando, em pelo menos 20 caracteres'
+
+
+def ta(cid, rotulo='Descrição do problema', *, opcional=False, apoio=None, erro=None,
+       rows=3, disabled=False, readonly=False, valor='', placeholder=None,
+       limite=None, sim=None):
+    """Um Textarea real. `sim` escreve na MESMA variavel privada que o
+    textarea.css usa para o hover. Read-only nunca sai vazio: vira "—" (regra
+    24), e o portao de marcacao cobra isso."""
+    if readonly and not valor.strip():
+        valor = '—'
+    attrs = ['class="al-textarea__field"', f'id="{cid}"', f'rows="{rows}"']
+    if placeholder and not readonly:
+        attrs.append(f'placeholder="{placeholder}"')
+    msg = erro or apoio
+    if msg:
+        attrs.append(f'aria-describedby="{cid}-help"')
+    if erro:
+        attrs.append('aria-invalid="true"')
+    if limite:
+        attrs.append(f'data-limit="{limite}" data-counter="{cid}-count"')
+    if readonly:
+        attrs.append('readonly')
+    if disabled:
+        attrs.append('disabled')
+    if sim:
+        attrs.append(f'style="--_border-state: var(--al-textarea-border-{sim})"')
+
+    linha = [f'<label class="al-textarea__label" id="{cid}-label" for="{cid}">{rotulo}</label>']
+    if opcional:
+        linha.append('<span class="al-textarea__optional">(Opcional)</span>')
+    if limite:
+        n = len(valor)
+        acima = ' data-over-limit' if n > limite else ''
+        linha.append(f'<span class="al-textarea__counter" id="{cid}-count" '
+                     f'aria-live="off"{acima}>{n}/{limite}</span>')
+    help_html = f'<p class="al-textarea__help" id="{cid}-help">{msg}</p>' if msg else ''
+    return (f'<div class="al-textarea"><div class="al-textarea__labelrow">{"".join(linha)}</div>'
+            f'<textarea {" ".join(attrs)}>{valor}</textarea>{help_html}</div>')
+
+
+def textarea_specimens():
+    cells = []
+    notas = {
+        'default': 'O repouso. A borda aqui é a exceção de contraste declarada.',
+        'hover': 'Só existe sob o ponteiro: a variável privada foi escrita direto.',
+        'focus': 'Clique <b>ou</b> tabule: o anel aparece nos dois casos. Não existe Active.',
+        'error': 'Vem de <code>aria-invalid="true"</code>, e a mensagem é obrigatória.',
+        'focus-error': 'Focado, o anel troca para vinho — <code>focusRing.error</code>.',
+        'disabled': 'Atributo nativo <code>disabled</code>: o Tab pula sozinho, o valor não vai no envio e o canto perde o puxador.',
+        'readonly': 'Atributo <code>readonly</code>: recebe Tab, rola pelas setas, deixa copiar, vai no envio. Mantém o puxador; o hover não reage.',
+    }
+    for slug, nome in TEXTAREA_STATES:
+        kw = dict(cid=f'tx-{slug}', placeholder='O que aconteceu e quando')
+        if slug == 'hover':
+            kw['sim'] = 'hover'
+        if slug in ('error', 'focus-error'):
+            kw = dict(cid=f'tx-{slug}', valor='Veio quebrado', erro=TA_ERRO)
+        if slug == 'disabled':
+            kw = dict(cid='tx-disabled', rotulo='Observações', opcional=True,
+                      placeholder='Liberado depois do envio', disabled=True)
+        if slug == 'readonly':
+            kw = dict(cid='tx-readonly', rotulo='Relato original', valor=TA_LONGO, readonly=True)
+        cells.append(f'<div class="cell"><span class="lab" '
+                     f'style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2" style="display:block">{ta(**kw)}</div>'
+                     f'<p class="cap">{notas[slug]}</p></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def textarea_token_rows():
+    rows = []
+    for name in TEXTAREA['alias']:
+        res = TEXTAREA['resolved'].get(name)
+        if not isinstance(res, dict) or 'light' not in res:
+            continue
+        lt = res['light']
+        sw_ = (f'<span class="chip sm" style="background:{lt}"></span>'
+               if isinstance(lt, str) and lt.startswith('#') else '')
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{TEXTAREA["alias"][name]}</td>'
+                    f'<td class="tok dim">{sw_}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+def textarea_geo_rows():
+    rows = []
+    for role in ['padding-x', 'padding-y', 'gap', 'radius', 'border-width']:
+        name = f'textarea-{role}'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{TEXTAREA["alias"][name]}</td>'
+                    f'<td class="num">{TEXTAREA["resolved"][name]}px</td></tr>')
+    for role in ['font', 'label-font', 'optional-font', 'counter-font', 'help-font']:
+        name = f'textarea-{role}'
+        res = TEXTAREA['resolved'][name]
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{TEXTAREA["alias"][name]}</td>'
+                    f'<td class="num">{res[1]}/{res[2]} · peso {res[3]}</td></tr>')
+    return '\n'.join(rows)
+
+
+def textarea_a11y_rows(papeis):
+    out = []
+    for r in TEXTAREA_A11Y['rows']:
+        if r['papel'] not in papeis:
+            continue
+        if r['pass']:
+            verdict = '<span class="pass">passa</span>'
+        elif r['exc']:
+            verdict = '<span class="exc">exceção</span>'
+        else:
+            verdict = '<span class="fail">reprova</span>'
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{r["state"]}</td>'
+            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">--al-{r["token"]}</td>'
+            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
+    return '\n'.join(out)
+
+
+N_TA_MEDIDAS = len(TEXTAREA_A11Y['rows'])
+N_TA_EXC = sum(TEXTAREA_A11Y['exceptions'].values())
+N_TA_PASSA = N_TA_MEDIDAS - N_TA_EXC
+TA_LAYER = {d['theme']: d for d in TEXTAREA_A11Y['layerEffect']}
+TA_DER = TEXTAREA['derived']
+TA_LINE = TEXTAREA['resolved']['textarea-font'][2]
+TA_PAD = TEXTAREA['resolved']['textarea-padding-y']
+
+
+def _ta(state, theme, papel):
+    return next(r['ratio'] for r in TEXTAREA_A11Y['rows']
+                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+
+
+TH_TEXTAREA = ('<div class="th-textarea" aria-hidden="true">'
+               '<span class="th-textarea__label">Descrição</span>'
+               '<span class="th-textarea__field">O que aconteceu<br>e quando</span></div>')
+
+TEXTAREA_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="textarea-stage">{ta('play-textarea', placeholder='O que aconteceu e quando')}</div>
+
+    <div class="controls" id="textarea-controls">
+      <div class="ctl"><span class="ctl-name">Estado</span>{seg('tastate', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado'), ('readonly', 'Read-only')], 'rest')}</div>
+      <div class="ctl"><span class="ctl-name">Valor</span>{seg('tavalue', [('none', 'Vazio'), ('short', 'Curto'), ('long', 'Longo')], 'none')}</div>
+      <div class="ctl"><span class="ctl-name">Linhas</span>{seg('tarows', [('3', '3 (padrão)'), ('6', '6')], '3')}</div>
+      <div class="ctl"><span class="ctl-name">Obrigatoriedade</span>{seg('taopt', [('req', 'Obrigatório'), ('opt', 'Opcional')], 'req')}</div>
+      <div class="ctl"><span class="ctl-name">Contador</span>{seg('tacount', [('off', 'Sem'), ('on', 'Limite de 140')], 'off')}</div>
+      <div class="ctl"><span class="ctl-name">Texto de apoio</span>{seg('tahelp', [('off', 'Sem'), ('on', 'Com')], 'off')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tatheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><label for="textarea-label" class="ctl-name">Rótulo</label>
+        <input class="txt" id="textarea-label" type="text" value="Descrição do problema" maxlength="40"></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="textarea-copy">Copiar</button></div>
+      <pre><code id="textarea-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O campo acima é o componente real: esta página carrega o mesmo <code>textarea.css</code> que
+    vai para produção. Aperte Enter dentro dele — quebra a linha, nunca envia. Puxe o canto: só
+    para baixo, e nunca abaixo de 3 linhas. Ligue o contador, escolha o valor longo e digite além
+    de 140 — o número fica vermelho e o campo <b>não trava</b>.
+  </p>
+</section>
+
+<section>
+  <h2>A caixa é a própria &lt;textarea&gt;</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Texto maior que o campo</span>
+      <div class="stage2" style="display:block">{ta('tov-scroll', valor=TA_LONGO)}</div>
+      <p class="cap">O campo <b>rola</b>, não cresce — o formulário não pula enquanto a pessoa
+      digita. Puxe o canto para abrir espaço. <i>Carbon; Spectrum Web Components.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Resposta longa esperada</span>
+      <div class="stage2" style="display:block">{ta('tov-rows6', 'Relato completo', rows=6, placeholder='Descreva com detalhes')}</div>
+      <p class="cap"><code>rows="6"</code>: o formulário pede mais linhas quando espera mais
+      texto. Não é tamanho novo — fonte, respiro e cor são os mesmos. <i>GOV.UK: altura
+      proporcional ao texto esperado.</i></p>
+    </div>
+  </div>
+  <p style="margin-top:12px">Diferente do Input, aqui não há prefixo nem sufixo morando dentro da
+  borda — então não há invólucro. Borda, fundo, raio e anel ficam na própria
+  <code>&lt;textarea&gt;</code>, e o puxador e a barra de rolagem são dela.</p>
+</section>
+
+<section>
+  <h2>Os sete estados</h2>
+  {textarea_specimens()}
+</section>
+
+<section>
+  <h2>Num formulário de verdade</h2>
+  <div class="cell" style="max-width:none">
+    <div class="stage2" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr)); gap:20px; align-items:start">
+      {ta('tf-desc', placeholder='O que aconteceu e quando', apoio='Inclua o número do pedido, se tiver')}
+      {ta('tf-motivo', 'Motivo da troca', valor='Não serviu', erro='Conte o motivo em pelo menos 20 caracteres')}
+      {ta('tf-obs', 'Observações para a entrega', opcional=True, limite=140, apoio='Portaria, horário, ponto de referência')}
+      {ta('tf-relato', 'Relato original', valor=TA_LONGO, readonly=True)}
+      {ta('tf-resposta', 'Resposta do suporte', disabled=True, placeholder='Liberada depois do envio')}
+    </div>
+    <p class="cap">Tabule por eles: o <b>Relato original</b> (read-only) recebe foco e rola pelas
+    setas; a <b>Resposta do suporte</b> (desabilitada) é pulada sozinha. Em <b>Observações</b>,
+    passe de 140 caracteres.</p>
+  </div>
+</section>'''
+
+TEXTAREA_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Rótulo</b><span><code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Sempre visível — é a regra que sustenta a exceção de contraste da borda.</span></div>
+    <div><b>Marca “(Opcional)”</b><span>Uma entrelinha menor que o rótulo, em <code>text-secondary</code>. O AL marca o <b>opcional</b>.</span></div>
+    <div><b>Contador</b><span>À direita da linha do rótulo, com números de largura fixa. Só existe havendo limite; fica vermelho só quando o erro <b>é</b> o limite.</span></div>
+    <div><b>Caixa</b><span>A própria <code>&lt;textarea&gt;</code>: borda, fundo, raio, anel, puxador e barra de rolagem.</span></div>
+    <div><b>Texto de apoio</b><span>Opcional, e o mesmo slot da mensagem de erro — no erro a mensagem o substitui, e é obrigatória.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>A altura vem de <code>rows</code></h2>
+  <p>Não existe <code>height</code>. O navegador calcula a altura pelo atributo
+  <code>rows</code>: <code>padding-y</code> × 2 mais uma entrelinha de {TA_LINE}px por linha, com a
+  borda de 1px descontada do padding. Três linhas, o padrão, fecham em
+  <b>{TA_DER['field-height']}px</b>; seis, em <b>{TA_PAD * 2 + TA_LINE * 6}px</b>. A caixa inteira
+  soma <b>{TA_DER['total-height']}px</b>, e <b>{TA_DER['total-height-with-help']}px</b> com o texto de
+  apoio.</p>
+  <p style="margin-top:12px">Três linhas são também o <b>piso</b>: um <code>min-height</code> de
+  {TA_DER['field-height']}px segura um <code>rows</code> menor escrito por engano e segura o
+  puxador. O 3 do CSS e o <code>ROWS</code> do <code>tokens.py</code> são o mesmo número em dois
+  lugares — o <code>check.py</code> reprova se divergirem.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_TEXTAREA_TOKENS}</b><span>tokens, todos alias</span></div>
+    <div class="stat"><b>0</b><span>valores soltos</span></div>
+    <div class="stat"><b>7</b><span>estados</span></div>
+    <div class="stat"><b>3</b><span>linhas, padrão e piso</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Redimensionar e rolar</h2>
+  <div class="anat">
+    <div><b>Só na vertical</b><span><code>resize: vertical</code>. Na horizontal não: largura é do formulário.</span></div>
+    <div><b>Disabled não redimensiona</b><span><code>resize: none</code> — o campo não se aplica agora, não há o que abrir.</span></div>
+    <div><b>Read-only redimensiona</b><span>Quem lê um texto longo pode querer abrir espaço.</span></div>
+    <div><b>Rola, não cresce</b><span>Texto maior que o campo rola. Crescer sozinho fica fora desta versão.</span></div>
+    <div><b>Puxador e barra são do navegador</b><span>Não têm token. Seguem o <code>color-scheme</code> da Fundação — que desde esta versão também é declarado quando o tema é forçado por <code>data-theme</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Cor — um token por papel e estado</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Resolve (claro)</th></tr></thead>
+    <tbody>{textarea_token_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>O foco é <code>border-brand</code>, por consistência</b>
+    Igual ao Input e ao Select. No escuro, <code>border-brand</code> fica um degrau abaixo do anel
+    (<code>orange-500</code> contra <code>orange-400</code>); <code>border-focus</code> casaria os
+    dois. Se um dia trocar, troca nos três juntos.
+  </div>
+</section>
+
+<section>
+  <h2>Geometria e tipografia</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+    <tbody>{textarea_geo_rows()}</tbody>
+  </table></div>
+  <p style="margin-top:12px">Um <code>gap</code> só serve à pilha rótulo → campo → apoio e ao
+  espaço entre o rótulo e “(Opcional)”. Os dois são 8.</p>
+</section>
+
+<section>
+  <h2>O estado vem da marcação</h2>
+  <div class="anat">
+    <div><b>Erro</b><span><code>aria-invalid="true"</code> na <code>&lt;textarea&gt;</code>. Não há classe de erro.</span></div>
+    <div><b>Desabilitado</b><span><code>disabled</code> nativo.</span></div>
+    <div><b>Read-only</b><span>O atributo <code>[readonly]</code> — <b>nunca</b> <code>:read-only</code>, que também casa o campo desabilitado.</span></div>
+    <div><b>Contador acima do limite</b><span><code>data-over-limit</code>, ligado pelo mesmo JavaScript que atualiza o número. Sem <code>maxlength</code>, o navegador não sabe que passou.</span></div>
+  </div>
+  <p style="margin-top:12px">Como a caixa é o próprio campo, o estado é lido direto nele — sem
+  <code>:has()</code>. O <code>:has()</code> aparece só para pintar rótulo e apoio no erro e no
+  desabilitado; sem ele, o campo funciona inteiro. A precedência é a do Input: erro, read-only e
+  desabilitado escrevem em <code>--_border-force</code>, que vence o hover e o foco.</p>
+</section>'''
+
+TEXTAREA_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="anat">
+    <div><b>Resposta que pode passar de uma linha</b><span>Descrição, comentário, justificativa. Poucas palavras é Input. <i>Carbon; Polaris.</i></span></div>
+    <div><b>Nunca para dado com partes</b><span>Endereço, data: separe em vários Inputs. Num campo livre cada pessoa escreve num formato. <i>Carbon; GOV.UK. Diverge do exemplo de endereço do Polaris, de propósito.</i></span></div>
+    <div><b>Lista conhecida não é texto livre</b><span>Select (4+ opções) ou Radio (até 3). <i>Carbon.</i></span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Rótulo, placeholder e a marca de opcional</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block">{ta('tg-ok', opcional=True, placeholder='O que aconteceu e quando', apoio='Inclua o número do pedido, se tiver')}</div>
+      <p class="cap">Rótulo visível, curto, dizendo <b>o dado</b>. O placeholder é exemplo do tipo
+      de resposta; o requisito vai no apoio. <i>Spectrum; Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block">{ta('tg-bad', 'Descrição', placeholder='Descreva aqui o problema, com o número do pedido e a data em que aconteceu')}</div>
+      <p class="cap">Instrução no placeholder. Some na primeira tecla, e num texto longo a pessoa
+      perde a referência no meio do caminho. <i>Spectrum.</i></p>
+    </div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O AL marca o opcional, não o obrigatório</b>
+    Mesma escola do Select e do Input, oposta à do asterisco do Polaris. A ausência da marca é o
+    obrigatório.
+  </div>
+</section>
+
+<section>
+  <h2>Altura proporcional à resposta</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-success)">Faça</span>
+      <div class="stage2" style="display:block">{ta('tg-rows', 'Relato completo', rows=6, placeholder='Descreva com detalhes')}</div>
+      <p class="cap">Resposta longa esperada, campo alto: <code>rows="6"</code>. <i>GOV.UK; Primer;
+      Polaris.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-danger)">Não faça</span>
+      <div class="stage2" style="display:block">{ta('tg-short', 'Relato completo', placeholder='Descreva com detalhes')}</div>
+      <p class="cap">Campo de 3 linhas pedindo um relato inteiro diz, sem querer, “responda
+      curto”. Três linhas é o padrão <b>e o mínimo</b>; abaixo disso, o piso segura.</p>
+    </div>
+  </div>
+  <p style="margin-top:12px">Texto maior que o campo rola, e a pessoa pode puxar o canto — só na
+  vertical. O componente ocupa 100% do contêiner; o formulário decide a largura.</p>
+</section>
+
+<section>
+  <h2>O contador não trava a digitação</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Dentro do limite</span>
+      <div class="stage2" style="display:block">{ta('tg-count', 'Resumo', limite=140, valor='Copo trincado na borda.')}</div>
+      <p class="cap">Só aparece havendo limite real, e nasce desligado. <i>Material 3; Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Acima do limite</span>
+      <div class="stage2" style="display:block">{ta('tg-over', 'Resumo', limite=140, valor=TA_LONGO[:170])}</div>
+      <p class="cap">Sem <code>maxlength</code>: o campo aceita, o contador fica vermelho e o envio
+      falha com mensagem. No Textarea isso pesa mais — colar texto longo é o caso comum.
+      <b>Divergência consciente do Carbon</b>; precedente GOV.UK Character count.</p>
+    </div>
+  </div>
+  <p style="margin-top:12px">Num erro por outro motivo, o contador continua cinza.</p>
+</section>
+
+<section>
+  <h2>Apoio, erro e o Enter</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Com erro</span>
+      <div class="stage2" style="display:block">{ta('tg-err', 'Motivo da troca', valor='Não serviu', erro='Conte o motivo em pelo menos 20 caracteres')}</div>
+      <p class="cap">A mensagem <b>substitui</b> o apoio, é obrigatória e diz como corrigir. Aparece
+      ao sair do campo ou enviar, nunca a cada tecla. <i>Material 3; Spectrum; Primer.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Enter quebra a linha</span>
+      <div class="stage2" style="display:block">{ta('tg-enter', 'Comentário', placeholder='Escreva e aperte Enter')}</div>
+      <p class="cap">Nunca envia o formulário — é o comportamento nativo, e quem escreve um
+      parágrafo espera isso. Um atalho (Ctrl+Enter) não substitui o botão visível. Chat com Enter
+      para enviar é outro componente. <i>MDN.</i></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Read-only e desabilitado resolvem coisas diferentes</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Read-only</span>
+      <div class="stage2" style="display:block">{ta('tg-ro', 'Relato original', valor=TA_LONGO, readonly=True)}</div>
+      <p class="cap">Ler, copiar e rolar — e <b>vai no envio</b>. Recebe Tab, e precisa: sem foco,
+      quem usa teclado não rola um texto longo. Vazio, mostra “—”. <i>Carbon.</i></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Desabilitado</span>
+      <div class="stage2" style="display:block">{ta('tg-off', 'Resposta do suporte', disabled=True, placeholder='Liberada depois do envio')}</div>
+      <p class="cap">Não se aplica agora, <b>não vai no envio</b>, e não redimensiona. Fica abaixo do
+      AA de propósito: o 1.4.3 isenta componente inativo.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Prefixo e sufixo</b><span>Parte fixa do valor não faz sentido num texto livre de várias linhas.</span></div>
+    <div><b>Crescer sozinho</b><span>Se a demanda vier, entra como opção — sempre com altura máxima. O Polaris cresce sem teto, e isso virou issue.</span></div>
+    <div><b>Redimensionar na horizontal</b><span>Largura é do formulário.</span></div>
+    <div><b>Editor de texto rico</b><span>Negrito, listas: outro componente.</span></div>
+    <div><b>Aviso (warning) e tamanhos extras</b><span>Não entram nesta versão.</span></div>
+  </div>
+</section>'''
+
+TEXTAREA_A11Y_TAB = f'''
+<section>
+  <h2>O fundo efetivo muda com a camada</h2>
+  <p>O portão mede <b>combinação renderizada</b>: oito situações — os sete estados e o read-only
+  focado — nos dois temas, cada papel contra o fundo que ele realmente tem na tela. Com foco, a
+  borda deixa de tocar a página e passa a tocar o respiro de 2px do anel.</p>
+  <div class="scroller" style="margin-top:16px"><table>
+    <thead><tr><th>Tema</th><th>Borda em repouso</th><th>Borda com foco</th></tr></thead>
+    <tbody>
+      <tr><td class="tok dim">claro</td><td class="num">{TA_LAYER['light']['rest']:.2f}:1</td><td class="num strong">{TA_LAYER['light']['focused']:.2f}:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num">{TA_LAYER['dark']['rest']:.2f}:1</td><td class="num strong">{TA_LAYER['dark']['focused']:.2f}:1</td></tr>
+    </tbody>
+  </table></div>
+  <div class="stats">
+    <div class="stat hl"><b>{N_TA_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_TA_PASSA}</b><span>passam</span></div>
+    <div class="stat"><b>{N_TA_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{TEXTAREA_A11Y['fails']}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As duas exceções, nomeadas</h2>
+  <div class="note">
+    <b>Borda abaixo de 3:1 no repouso e no read-only — decisão consciente</b>
+    <code>border-default</code> dá {TA_LAYER['light']['rest']:.2f}:1 no claro; o read-only, em
+    <code>border-subtle</code>, chega a {_ta('readonly', 'dark', 'borda'):.2f}:1 no escuro. O 1.4.11
+    não falha quando a borda não é o único meio de perceber o componente — há rótulo visível e
+    texto dentro. <b>Por isso “nunca sem rótulo visível” é regra de uso:</b> é ela que sustenta
+    esta exceção.
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Disabled abaixo de AA — isenção do 1.4.3</b>
+    O WCAG isenta componente inativo, e subir esse contraste faz o desabilitado parecer editável.
+  </div>
+</section>
+
+<section>
+  <h2>Borda e anel — o não-textual, piso 3:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{textarea_a11y_rows(['borda', 'anel de foco'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Texto — piso 4,5:1</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{textarea_a11y_rows(['rotulo', 'marca opcional', 'contador', 'contador acima do limite', 'apoio', 'mensagem de erro', 'placeholder', 'valor', 'texto'])}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Oito regras, medidas por <code>components/textarea/a11y.py</code> no HTML que este site
+  emite. Quebram o build.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> de rótulo apontando para ele.</span></div>
+    <div><b>Erro com mensagem</b><span><code>aria-invalid="true"</code> com <code>aria-describedby</code> para um texto que existe e não está vazio.</span></div>
+    <div><b><code>&lt;textarea&gt;</code> nativo</b><span>Nenhum outro elemento leva a classe do campo, e nada de <code>contenteditable</code>: o nativo traz teclado, seleção, colar, desfazer e corretor.</span></div>
+    <div><b>Sem <code>aria-label</code> redundante</b><span>Havendo rótulo visível, o nome anunciado tem que ser ele.</span></div>
+    <div><b>Sem <code>maxlength</code></b><span>O limite não trava a digitação.</span></div>
+    <div><b>Contador com <code>aria-live</code></b><span><code>polite</code> com o campo focado, <code>off</code> fora. <i>Polaris; Carbon issue #12071.</i></span></div>
+    <div><b>Read-only nunca vazio</b><span>Sem conteúdo, mostra “—”.</span></div>
+    <div><b><code>rows</code> ≥ 3 e <code>id</code> único</b><span>Três linhas é o mínimo; e id repetido liga o <code>&lt;label for&gt;</code> no elemento errado.</span></div>
+  </div>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>{TEXTAREA_A11Y['markupChecked']}</b><span>campos conferidos no HTML</span></div>
+    <div class="stat"><b>8</b><span>regras por campo</span></div>
+    <div class="stat"><b>{'pendente' if TEXTAREA_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado, medido na etapa 6</h2>
+  <div class="anat">
+    <div><b>Foco no clique e no Tab</b><span>O anel aparece nos dois casos — <code>:focus-visible</code> sempre casa num campo de digitação. Não existe Active.</span></div>
+    <div><b>Enter quebra a linha</b><span>Nunca envia o formulário.</span></div>
+    <div><b>Read-only rola pelas setas</b><span>Recebe Tab, e as setas rolam o texto — por isso ele não pode sair da ordem de tabulação.</span></div>
+    <div><b>Alto contraste</b><span>No foco, o contorno nativo vira transparente em vez de sumir: no modo de alto contraste do Windows o anel de sombra desaparece e o navegador pinta esse contorno com a cor do sistema.</span></div>
+  </div>
+</section>'''
+
+
 
 
 LANDING_COMPONENTES = f'''
@@ -5691,6 +6213,7 @@ LANDING_COMPONENTES = f'''
     {card('radio', 'Radio', 'Uma opção de uma lista curta. Input nativo com o círculo do AL pintado por cima — e o erro é da pergunta, não da opção.', TH_RADIO)}
     {card('switch', 'Switch', 'Liga ou desliga algo que vale na hora, sem “Salvar”. Checkbox nativo com role="switch" e o trilho do AL pintado por cima.', TH_SWITCH)}
     {card('input', 'Input', 'Resposta livre de uma linha. Input nativo dentro de uma caixa que aceita prefixo, sufixo e contador — e um read-only que se lê.', TH_INPUT)}
+    {card('textarea', 'Textarea', 'Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.', TH_TEXTAREA)}
   </div>
 </section>
 
@@ -5847,6 +6370,15 @@ PAGES = [
          (f'{N_INPUT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
         [('overview', 'Visão geral', INPUT_OVERVIEW), ('specs', 'Especificações', INPUT_SPECS),
          ('guide', 'Diretrizes', INPUT_GUIDE), ('a11y', 'Acessibilidade', INPUT_A11Y_TAB)])),
+    ('textarea', 'Componentes', page(
+        'textarea', 'Componentes', 'Textarea',
+        'Resposta livre de várias linhas: descrição, comentário, justificativa. É a '
+        '<code>&lt;textarea&gt;</code> nativa, e ela mesma é a caixa — rola quando o texto passa, '
+        'redimensiona só na vertical e nunca envia o formulário no Enter.',
+        [('Estável', True), ('7 estados no Figma', False),
+         (f'{N_TEXTAREA_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', TEXTAREA_OVERVIEW), ('specs', 'Especificações', TEXTAREA_SPECS),
+         ('guide', 'Diretrizes', TEXTAREA_GUIDE), ('a11y', 'Acessibilidade', TEXTAREA_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -5884,6 +6416,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/radio" data-page="radio">Radio</a>
         <a href="#/switch" data-page="switch">Switch</a>
         <a href="#/input" data-page="input">Input</a>
+        <a href="#/textarea" data-page="textarea">Textarea</a>
       </div>
     </div>
   </div>
@@ -7245,6 +7778,141 @@ JS_INPUT = r"""
 """
 
 
+CHROME_TEXTAREA = """
+/* ── miniatura do card do Textarea ── */
+.th-textarea{display:flex; flex-direction:column; gap:6px; width:100%; max-width:200px; margin-inline:auto}
+.th-textarea__label{font-size:12px; line-height:16px; color:var(--al-text-primary)}
+.th-textarea__field{
+  display:block; padding:8px 10px 20px;
+  border:1px solid var(--al-border-default); border-radius:var(--al-radius-lg);
+  background:var(--al-bg-surface-raised);
+  color:var(--al-text-placeholder);
+  font-size:12.5px; line-height:16px;
+}
+/* o palco do playground precisa de largura: o campo ocupa 100% do conteiner */
+#textarea-stage{display:block; padding-inline:8px}
+#textarea-stage .al-textarea{width:100%; max-width:420px; margin-inline:auto}
+"""
+
+JS_TEXTAREA = r"""
+(function () {
+  // ── contador do Textarea ──
+  // Mesmo contrato do Input: sem maxlength, este script conta, liga
+  // data-over-limit e so deixa o contador falar com o campo focado.
+  function ligarContadores(raiz) {
+    raiz.querySelectorAll('.al-textarea__field[data-limit]').forEach(function (campo) {
+      if (campo.dataset.bound) return;
+      campo.dataset.bound = '1';
+      var limite = +campo.dataset.limit;
+      var cont = document.getElementById(campo.dataset.counter);
+      if (!cont) return;
+      function atualizar() {
+        var n = campo.value.length;
+        cont.textContent = n + '/' + limite;
+        if (n > limite) cont.setAttribute('data-over-limit', '');
+        else cont.removeAttribute('data-over-limit');
+      }
+      campo.addEventListener('input', atualizar);
+      campo.addEventListener('focus', function () { cont.setAttribute('aria-live', 'polite'); });
+      campo.addEventListener('blur', function () { cont.setAttribute('aria-live', 'off'); });
+      atualizar();
+    });
+  }
+  ligarContadores(document);
+
+  // ── playground do Textarea ──
+  var stage = document.getElementById('textarea-stage');
+  if (!stage) return;
+  var code = document.getElementById('textarea-code');
+  var labelInput = document.getElementById('textarea-label');
+  var CURTO = 'Copo trincado na borda.';
+  var LONGO = 'O pedido chegou com a caixa amassada e dois itens soltos. Um deles, o copo de '
+    + 'vidro, veio trincado na borda. Entrei em contato pelo chat no mesmo dia e me pediram '
+    + 'fotos, que enviei. Desde então não tive retorno, e o prazo de troca termina na sexta-feira.';
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    var estado = pick('tastate');
+    var valorSel = pick('tavalue');
+    var rows = pick('tarows');
+    var opcional = pick('taopt') === 'opt';
+    var contador = pick('tacount') === 'on';
+    var comApoio = pick('tahelp') === 'on';
+    var theme = pick('tatheme');
+    var rotulo = (labelInput.value || '').trim() || 'Descrição do problema';
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    var erro = estado === 'error', off = estado === 'disabled', ro = estado === 'readonly';
+    var valor = valorSel === 'short' ? CURTO : (valorSel === 'long' ? LONGO : '');
+    if (erro && !valor) valor = 'Veio quebrado';
+    // regra 24: read-only vazio mostra "—", nunca placeholder
+    if (ro && !valor) valor = '—';
+    // o erro SUBSTITUI o apoio, e a mensagem e obrigatoria (regra 19)
+    var msg = erro ? 'Conte o que aconteceu e quando, em pelo menos 20 caracteres'
+                   : (comApoio ? 'Inclua o número do pedido, se tiver' : null);
+
+    function attrsDe(id) {
+      var a = ['class="al-textarea__field"', 'id="' + id + '"', 'rows="' + rows + '"'];
+      if (!ro) a.push('placeholder="O que aconteceu e quando"');
+      if (msg) a.push('aria-describedby="' + id + '-help"');
+      if (erro) a.push('aria-invalid="true"');
+      if (contador && !ro) a.push('data-limit="140" data-counter="' + id + '-count"');
+      if (ro) a.push('readonly');
+      if (off) a.push('disabled');
+      return a;
+    }
+
+    function montar(id, escapar) {
+      var e = escapar ? function (s) { return s.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+                      : function (s) { return s; };
+      var ind = escapar ? '\n' : '';
+      var sp = function (n) { return escapar ? new Array(n + 1).join(' ') : ''; };
+      var out = e('<div class="al-textarea">') + ind
+        + sp(2) + e('<div class="al-textarea__labelrow">') + ind
+        + sp(4) + e('<label class="al-textarea__label" id="' + id + '-label" for="' + id + '">')
+        + esc(rotulo) + e('</label>') + ind;
+      if (opcional) out += sp(4) + e('<span class="al-textarea__optional">(Opcional)</span>') + ind;
+      // read-only nao se digita: contador ali contaria o "—"
+      if (contador && !ro) out += sp(4) + e('<span class="al-textarea__counter" id="' + id
+                                     + '-count" aria-live="off">' + valor.length + '/140</span>') + ind;
+      out += sp(2) + e('</div>') + ind;
+      out += sp(2) + e('<textarea ' + attrsDe(id).join(' ') + '>') + esc(valor) + e('</textarea>') + ind;
+      if (msg) out += sp(2) + e('<p class="al-textarea__help" id="' + id + '-help">' + msg + '</p>') + ind;
+      out += e('</div>');
+      return out;
+    }
+
+    stage.innerHTML = montar('play-textarea', false);
+    ligarContadores(stage);
+    var linhas = montar('descricao', true);
+    if (erro) linhas += '\n&lt;!-- o erro vem de aria-invalid, nunca de uma classe --&gt;';
+    if (contador) linhas += '\n&lt;!-- sem maxlength: o script conta e liga data-over-limit --&gt;';
+    code.innerHTML = linhas;
+  }
+
+  document.querySelectorAll('#textarea-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('textarea-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+"""
+
 HTML = (
     '<meta charset="utf-8">\n'
     '<title>AL Design System</title>\n'
@@ -7255,14 +7923,14 @@ HTML = (
     '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
-    + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT
+    + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n\n<script>'
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
-    + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + '</script>\n'
+    + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
@@ -7293,5 +7961,8 @@ print(f'  tokens do Switch  : {N_SWITCH_TOKENS}  '
 print(f'  tokens do Input   : {N_INPUT_TOKENS}  '
       f'({len(INPUT_A11Y["rows"])} combinacoes medidas, {INPUT_A11Y["fails"]} reprovas, '
       f'{sum(INPUT_A11Y["exceptions"].values())} medicoes em excecao declarada)')
+print(f'  tokens do Textarea: {N_TEXTAREA_TOKENS}  '
+      f'({len(TEXTAREA_A11Y["rows"])} combinacoes medidas, {TEXTAREA_A11Y["fails"]} reprovas, '
+      f'{sum(TEXTAREA_A11Y["exceptions"].values())} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

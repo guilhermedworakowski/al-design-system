@@ -5,8 +5,8 @@
     "text": 4.5,
     "nonText": 3.0
   },
-  "markupSource": "site/textarea-qa.html",
-  "markupChecked": 16,
+  "markupSource": "site/index.html",
+  "markupChecked": 25,
   "markupPending": false,
   "markupRules": [
     "todo campo tem id e um <label for> de rotulo apontando para ele",
