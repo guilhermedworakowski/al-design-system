@@ -1,0 +1,37 @@
+/* AL Design System - tokens do Accordion
+ * GERADO por components/accordion/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ */
+
+:root {
+
+  /* fundo - so o cabecalho reage; o conteudo fica no repouso */
+  --al-accordion-bg: var(--al-bg-surface-raised);
+  --al-accordion-bg-hover: var(--al-bg-hover-raised);
+  --al-accordion-bg-active: var(--al-bg-active-raised);
+
+  /* titulo - chevron e icone herdam por currentColor */
+  --al-accordion-title: var(--al-text-primary);
+
+  /* divisoria entre cabecalho e conteudo - parada em todos os estados */
+  --al-accordion-divider: var(--al-border-default);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-accordion-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-accordion-padding: var(--al-space-24);
+  --al-accordion-gap: var(--al-space-8);
+  --al-accordion-content-gap: var(--al-space-8);
+  --al-accordion-radius: var(--al-radius-lg);
+  --al-accordion-divider-width: var(--al-border-width-1);
+  --al-accordion-icon-size: var(--al-icon-size-24);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-accordion-title-font-size: var(--al-font-size-xl);
+  --al-accordion-title-line-height: var(--al-line-height-xl);
+  --al-accordion-title-font-weight: 600;
+  --al-accordion-title-tracking: -0.01em;
+}
