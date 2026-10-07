@@ -61,7 +61,11 @@ TOKENS = {
     # (surface-raised) era igual ao bg-hover, e o hover do ghost e do secondary
     # sumia no rodape. O modal.css passa a usar bg-hover-raised e
     # bg-active-raised nesses botoes. Nenhum token novo.
-    "name": "AL Design System", "version": "0.18.1", "license": "MIT",
+    # 0.18.2: ajuste no Card e no Modal, terceira casa. Botoes Ghost e Secondary
+    # (Button e Icon Button) dentro do Card, e Icon Button em qualquer parte do
+    # Modal, usam bg-hover-raised e bg-active-raised: o fundo e surface-raised e,
+    # no escuro, igual ao bg-hover. Nenhum token novo.
+    "name": "AL Design System", "version": "0.18.2", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
