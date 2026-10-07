@@ -139,6 +139,16 @@
   gap: var(--al-modal-gap);
 }
 
+/* Botoes ghost e secondary sobre o fundo elevado: o Button le bg-hover/bg-active, feitos para
+   bg-surface. No escuro o fundo do Modal (surface-raised) e igual ao bg-hover,
+   e o hover sumia. Aqui o estado vem dos semanticos -raised, os mesmos
+   que o Accordion ja usa. So muda o fundo de hover/pressed; o resto e do Button. */
+.al-modal__actions .al-btn--ghost,
+.al-modal__actions .al-btn--secondary {
+  --_bg-hover: var(--al-bg-hover-raised);
+  --_bg-active: var(--al-bg-active-raised);
+}
+
 /* ---------------------------------------------------------- pagina atras */
 /* regra 28: a pagina nao rola com o Modal aberto. `:modal` e so o aberto por
    showModal(): um <dialog open> solto, como os congelados da pagina de QA,
