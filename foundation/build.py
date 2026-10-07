@@ -17,6 +17,13 @@ SEM = {
   'bg-active':          (c('neutral',200), c('neutral',700)),
   'bg-disabled':        (c('neutral',200), c('neutral',800)),
   'bg-inverse':         (c('neutral',900), c('neutral',50)),
+  # hover e pressed SOBRE superficie elevada (Accordion; serve ao Tab dentro de
+  # card). bg-hover foi calibrado para a tela: no escuro ele e o mesmo 800 da
+  # bg-surface-raised e o hover sumia (1,00:1). Aqui o escuro sobe um degrau; no
+  # claro a elevada e branca e o valor e o mesmo de bg-hover / bg-active.
+  # Decisao G de Gui, 07/10/2026.
+  'bg-hover-raised':    (c('neutral',100), c('neutral',700)),
+  'bg-active-raised':   (c('neutral',200), c('neutral',600)),
   # peca que desliza sobre um trilho (Switch; serve ao Slider). O escuro e o
   # espelho do claro na escada, como em text-disabled e border-default. Nao
   # entra em PAIRS: o contraste contra o trilho e combinacao de componente, e o
@@ -84,6 +91,8 @@ PAIRS = [
   ('text-primary',    'bg-surface',        4.5, 'texto principal em superficie'),
   ('text-primary',    'bg-surface-raised', 4.5, 'texto principal em card elevado'),
   ('text-primary',    'bg-subtle',         4.5, 'texto principal em fundo sutil'),
+  ('text-primary',    'bg-hover-raised',   4.5, 'texto principal em hover sobre elevada'),
+  ('text-primary',    'bg-active-raised',  4.5, 'texto principal pressionado sobre elevada'),
   ('text-secondary',  'bg-canvas',         4.5, 'texto secundario na tela'),
   ('text-secondary',  'bg-surface',        4.5, 'texto secundario em superficie'),
   ('text-placeholder','bg-canvas',         4.5, 'placeholder de input'),

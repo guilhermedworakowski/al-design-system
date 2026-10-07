@@ -108,6 +108,10 @@ TAB_TOKENS = open(os.path.join(ROOT, 'components', 'tab', 'al-tab-tokens.css')).
 TAB_CSS = open(os.path.join(ROOT, 'components', 'tab', 'tab.css')).read()
 TAB_JS = open(os.path.join(ROOT, 'components', 'tab', 'tab.js')).read()
 TAB_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tab', 'a11y.json')))
+ACC = json.load(open(os.path.join(ROOT, 'components', 'accordion', 'tokens.json')))
+ACC_TOKENS = open(os.path.join(ROOT, 'components', 'accordion', 'al-accordion-tokens.css')).read()
+ACC_CSS = open(os.path.join(ROOT, 'components', 'accordion', 'accordion.css')).read()
+ACC_A11Y = json.load(open(os.path.join(ROOT, 'components', 'accordion', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -137,6 +141,7 @@ N_PASSWORD_TOKENS = len(PASSWORD['alias'])
 N_DIVIDER_TOKENS = len(DIVIDER['alias'])
 N_CARD_TOKENS = len(CARD['alias'])
 N_TAB_TOKENS = len(TAB['alias'])
+N_ACC_TOKENS = len(ACC['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -180,7 +185,8 @@ def scope_themes(found_css, *token_blocks):
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
-                         PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS)
+                         PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
+                         ACC_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -195,7 +201,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + PASSWORD_TOKENS + '\n' + PASSWORD_CSS
             + '\n' + DIVIDER_TOKENS + '\n' + DIVIDER_CSS
             + '\n' + CARD_TOKENS + '\n' + CARD_CSS
-            + '\n' + TAB_TOKENS + '\n' + TAB_CSS)
+            + '\n' + TAB_TOKENS + '\n' + TAB_CSS
+            + '\n' + ACC_TOKENS + '\n' + ACC_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -8026,6 +8033,422 @@ TH_TAB = ('<div class="th-tab" aria-hidden="true" inert>'
           + '</div>')
 
 
+# ═══════════════════════════════════════════════════════════ Accordion · abas
+# Quarto componente do Tier 3. Um item, um tamanho, sem desabilitado, nativo
+# (<details>/<summary>) e sem JS do componente. Todo item da pagina sai do
+# accordion.css real. Amostra congelada e exemplo ilustrativo levam
+# `aria-hidden` + `inert` (nao viram parada de Tab falsa); os "a evitar" sao
+# casca do site (ac-fake-*), nunca um .al-accordion errado - o portao de
+# marcacao le esta pagina e recusaria, com razao.
+AC_ICONS = [('none', 'Sem ícone'), ('icon', 'Com ícone')]
+AC_MODES = [('multi', 'Vários abertos'), ('single', 'Um por vez')]
+AC_PAGES = [('surface', 'Superfície'), ('canvas', 'Tela')]
+AC_STATES = [('repouso', 'Repouso'), ('hover', 'Hover'), ('pressed', 'Pressed'), ('foco', 'Foco')]
+
+N_AC_MEDIDAS = len(ACC_A11Y['rows'])
+N_AC_EXC = sum(1 for r in ACC_A11Y['rows'] if r['exception'])
+N_AC_PASS = sum(1 for r in ACC_A11Y['rows'] if r['pass'])
+N_AC_FAIL = sum(1 for r in ACC_A11Y['rows'] if not r['pass'] and not r['exception'])
+N_AC_EXC_KEYS = len(ACC['pending'])
+
+AC_FAQ = [
+    ('Como funciona o reembolso?', 'credit-card',
+     'O reembolso cai no mesmo meio de pagamento da compra em até 7 dias úteis.'),
+    ('Posso trocar o endereço depois da compra?', 'map-pin',
+     'Sim, enquanto o pedido não sair para entrega. Depois disso, fale com o atendimento.'),
+    ('Como cancelo minha assinatura?', 'settings',
+     'Em Conta › Assinatura › Cancelar. O acesso continua até o fim do período pago.'),
+]
+AC_FROZEN = {
+    'repouso': '',
+    'hover': 'background-color: var(--al-accordion-bg-hover)',
+    'pressed': 'background-color: var(--al-accordion-bg-active)',
+    'foco': 'z-index: 1; background-color: var(--al-accordion-bg); box-shadow: var(--al-accordion-ring)',
+}
+
+
+def ac_item(title, body, icon=None, open_=False, name=None, head_style='', sample=False):
+    """Um .al-accordion de verdade. `sample` = amostra: aria-hidden + inert."""
+    attrs = (' open' if open_ else '') + (f' name="{name}"' if name else '')
+    attrs += ' aria-hidden="true" inert' if sample else ''
+    hs = f' style="{head_style}"' if head_style else ''
+    ic = al_icon(icon, cls='al-icon al-accordion__icon') if icon else ''
+    return (f'<details class="al-accordion"{attrs}><summary class="al-accordion__header"{hs}>{ic}'
+            f'<span class="al-accordion__title">{title}</span>'
+            f'{al_icon("chevron-down", cls="al-icon al-accordion__chevron")}</summary>'
+            f'<div class="al-accordion__content"><p class="ac-copy">{body}</p></div></details>')
+
+
+def ac_demo(icon, mode):
+    """A pilha do playground, devolvida como (html, codigo)."""
+    nm = 'ac-pg' if mode == 'single' else None
+    html = '<div class="ac-stack">' + ''.join(
+        ac_item(t, b, i if icon == 'icon' else None, name=nm) for t, i, b in AC_FAQ) + '</div>'
+    na = ' name="faq"' if mode == 'single' else ''
+    ic = '\n    <svg class="al-icon al-accordion__icon" aria-hidden="true" focusable="false">…</svg>' \
+        if icon == 'icon' else ''
+    code = ['<h2>Perguntas frequentes</h2>  <!-- o titulo real vem ANTES da pilha (regra 25) -->',
+            f'<details class="al-accordion"{na}>',
+            f'  <summary class="al-accordion__header">{ic}',
+            '    <span class="al-accordion__title">Como funciona o reembolso?</span>',
+            '    <svg class="al-icon al-accordion__chevron" aria-hidden="true" focusable="false">…chevron-down…</svg>',
+            '  </summary>',
+            '  <div class="al-accordion__content">',
+            '    <p>O reembolso cai no mesmo meio de pagamento da compra em até 7 dias úteis.</p>',
+            '  </div>',
+            '</details>',
+            '<!-- …um <details> por pergunta; sem JS: o navegador abre, fecha e anuncia -->']
+    return html, '\n'.join(code)
+
+
+AC_DEMOS = {f'{i}|{m}': dict(zip(('html', 'code'), ac_demo(i, m)))
+            for i, _ in AC_ICONS for m, _ in AC_MODES}
+
+
+def ac_matrix():
+    head = ''.join(f'<span class="ac-mx-lab">{n}</span>' for n in ('Fechado', 'Aberto'))
+    rows = [f'<div class="ac-mx-row ac-mx-row--head"><span></span>{head}</div>']
+    t, ic, b = AC_FAQ[0]
+    for e, nome in AC_STATES:
+        cels = ''.join(f'<div>{ac_item(t, b, "house", open_=o, head_style=AC_FROZEN[e], sample=True)}</div>'
+                       for o in (False, True))
+        rows.append(f'<div class="ac-mx-row"><span class="ac-mx-lab">{nome}</span>{cels}</div>')
+    return '<div class="ac-mx">' + ''.join(rows) + '</div>'
+
+
+def accordion_token_rows():
+    rows = []
+    for name in ACC['alias']:
+        res = ACC['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, dict):
+            light = dark = '<span class="dim">sombra composta</span>'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{ACC["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+def accordion_a11y_rows():
+    oque = {'titulo': 'título', 'chevron': 'chevron', 'divisoria': 'divisória',
+            'limite-pelo-fundo': 'item × página', 'anel': 'anel de foco'}
+    out = []
+    for r in ACC_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        if r['invisible']:
+            v = '<span class="fail">invisível</span>'
+        elif r['pass']:
+            v = '<span class="pass">passa</span>'
+        else:
+            v = '<span class="exc">exceção declarada</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="tok dim">{r["state"]}</td><td class="name">{oque[r["what"]]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+AC_PAG = [
+    ('Cartão de crédito', 'credit-card', 'Parcele em até 12 vezes sem juros acima de R$ 300.'),
+    ('Pix', 'send', 'O pagamento é aprovado na hora e o pedido segue no mesmo dia.'),
+    ('Boleto', 'file-text', 'Vence em 3 dias. O pedido só é separado depois da compensação.'),
+]
+
+ACCORDION_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="accordion-stage"><div class="ac-page" data-acpage="surface">{AC_DEMOS["none|multi"]["html"]}</div></div>
+
+    <div class="controls" id="accordion-controls">
+      <div class="ctl"><span class="ctl-name">Ícone</span>{seg('acicon', AC_ICONS, 'none')}</div>
+      <div class="ctl"><span class="ctl-name">Abertura</span>{seg('acmode', AC_MODES, 'multi')}</div>
+      <div class="ctl"><span class="ctl-name">Página</span>{seg('acpage', AC_PAGES, 'surface')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('actheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    </div>
+    <p class="cd-warn" id="accordion-warn" hidden>Direto na tela clara o item some: fundo e página têm a mesma cor. A regra 14 manda pôr o Accordion sobre <code>bg-surface</code>.</p>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="accordion-copy">Copiar</button></div>
+      <pre><code id="accordion-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Tabule até um cabeçalho e use Enter ou Espaço: o anel envolve só o cabeçalho, e o foco não
+    sai dele ao abrir. Com <b>Um por vez</b>, abrir um item fecha o outro. Troque o <b>Tema</b>
+    para escuro e passe o ponteiro: o cabeçalho clareia em relação ao item.
+  </p>
+</section>
+
+<section>
+  <h2>Vários abertos, ou um por vez</h2>
+  <p>O padrão é deixar a pessoa abrir quantos quiser. Um por vez só quando os itens são
+  alternativas: abrir um torna os outros irrelevantes.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Perguntas: vários abertos</span>
+      <div class="stage2 ac-stage" data-acpage="surface"><div class="ac-stack">{"".join(ac_item(t, b) for t, _, b in AC_FAQ)}</div></div>
+      <p class="cap">Nada fecha sozinho o que a pessoa estava lendo. <i>Carbon, GOV.UK.</i></p>
+    </div>
+    <div class="cell do">
+      <span class="lab">Forma de pagamento: um por vez</span>
+      <div class="stage2 ac-stage" data-acpage="surface"><div class="ac-stack">{"".join(ac_item(t, b, i, open_=(k == 0), name="ac-ov-pagamento") for k, (t, i, b) in enumerate(AC_PAG))}</div></div>
+      <p class="cap">O mesmo <code>name</code> em cada item, e o navegador fecha o anterior. Sem JS.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Um item sozinho</h2>
+  <p>O Accordion não precisa de pilha: um item só é o “ver detalhes” de um resumo.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Detalhes do pedido</span>
+      <div class="stage2 ac-stage" data-acpage="surface">{ac_item('Ver detalhes do pedido', 'Pedido #1042 · 3 itens · entregue em 3 de outubro.')}</div>
+      <p class="cap">O título diz o que está escondido. <i>Primer Details, Polaris Collapsible.</i></p>
+    </div>
+  </div>
+</section>'''
+
+
+ACCORDION_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Item</b><span><code>.al-accordion</code> é o <code>&lt;details&gt;</code>. Fundo <code>accordion-bg</code> e raio <code>accordion-radius</code>.</span></div>
+    <div><b>Cabeçalho</b><span><code>__header</code> é o <code>&lt;summary&gt;</code>: o cabeçalho inteiro é o botão. Só ele reage a hover, pressed e foco.</span></div>
+    <div><b>Título</b><span><code>__title</code>, Heading/xs. É visual: nada de <code>&lt;h3&gt;</code> dentro do <code>&lt;summary&gt;</code>.</span></div>
+    <div><b>Ícones</b><span><code>__icon</code> à esquerda, opcional, e <code>__chevron</code> no fim. Decorativos, cor herdada do título.</span></div>
+    <div><b>Conteúdo</b><span><code>__content</code>, com a divisória de 1px na borda de cima. Aceita qualquer coisa, menos outro Accordion.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As 8 variantes</h2>
+  <p>Fechado e aberto nos quatro estados, sobre <code>bg-surface</code>. Hover, pressed e foco estão
+  congelados, escritos direto no <code>&lt;summary&gt;</code> com os mesmos tokens que o seletor usa.</p>
+  <div class="cd-panel" style="margin-top:16px">{ac_matrix()}</div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Accordion</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{accordion_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Hover e pressed sobre superfície elevada</b>
+    O item mora em <code>bg-surface-raised</code>. No escuro, o <code>bg-hover</code> comum é a mesma
+    cor dessa superfície, e o hover sumia. Por isso a Foundation ganhou <code>bg-hover-raised</code>
+    e <code>bg-active-raised</code>, um degrau acima no escuro.
+  </div>
+  <div class="note">
+    <b>A divisória é do conteúdo</b>
+    No Figma a linha é a borda de baixo do cabeçalho aberto. No código ela é a borda de cima do
+    conteúdo: o desenho é o mesmo, e o cabeçalho mede 76px aberto ou fechado.
+  </div>
+  <div class="note">
+    <b>O anel passa por cima do conteúdo</b>
+    O anel é sombra do <code>&lt;summary&gt;</code>, e o conteúdo, que vem depois, cobriria a base
+    dele. O cabeçalho em foco sobe uma camada.
+  </div>
+  <div class="note">
+    <b>O chevron espelha, a altura não anima</b>
+    Aberto, o mesmo <code>chevron-down</code> é espelhado na vertical em 120ms. O conteúdo aparece de
+    uma vez: animar a altura do <code>&lt;details&gt;</code> ainda não tem suporte em todos os navegadores.
+  </div>
+  <div class="note">
+    <b>Sem altura e sem largura</b>
+    A largura vem do contêiner e a altura do conteúdo. Título longo quebra em linhas, e os ícones
+    ficam alinhados à primeira.
+  </div>
+</section>'''
+
+
+AC_RULES = [
+    ('Quando usar', [
+        ('Conteúdo secundário', 'Perguntas frequentes, detalhes, configurações avançadas: o que nem todo mundo precisa ler. Precedentes: Carbon, Polaris.'),
+        ('Nunca esconder o essencial', 'Erro, aviso, ação obrigatória ou informação que todo mundo precisa ver ficam à vista. Nem todo mundo percebe que o item abre. Precedentes: GOV.UK, Polaris.'),
+        ('Se a pessoa vai ler tudo, não use', 'Use a página com títulos normais: cada item fechado é um clique a mais. Precedentes: Carbon, GOV.UK.'),
+        ('Accordion ou Tab', 'No Accordion o conteúdo empilha e vários abrem. Para alternar entre conteúdos do mesmo nível, um por vez, use o <a href="#/tab">Tab</a>. Precedentes: Carbon, Polaris.'),
+        ('Nunca um dentro do outro', 'Aninhar esconde conteúdo dentro de conteúdo escondido. Precedentes: Carbon, Spectrum.'),
+    ]),
+    ('Combinação e empilhamento', [
+        ('Um item sozinho vale', 'O “ver detalhes” de um resumo. Precedentes: Primer Details, Polaris Collapsible.'),
+        ('Mesmo espaço em toda a pilha', 'Não existe componente de grupo: quem monta a página escolhe o espaço, da escala, igual entre todos os itens. Precedente: Spectrum.'),
+        ('Vários abertos por padrão', 'Um por vez (<code>name</code>) só quando os itens são alternativas. <b>Divergência consciente</b> do Spectrum, que abre um por vez por padrão. Precedentes: Carbon, GOV.UK, Primer.'),
+        ('Todos fechados ao carregar', 'Começa aberto só o item para onde a pessoa foi levada, por um link direto. Precedentes: Carbon, GOV.UK.'),
+    ]),
+    ('Tamanho e layout', [
+        ('Um tamanho só', '76px fechado. Não reduza o padding nem troque a fonte. O cabeçalho inteiro é o alvo, bem acima dos 24px do critério 2.5.8.'),
+        ('Largura do contêiner', 'Os 320px do Figma são a medida do exemplo. Precedente: Carbon.'),
+        ('Título longo quebra linha', 'Sem reticências: truncar esconde o resumo que faz a pessoa decidir se abre. Os ícones ficam alinhados à primeira linha.'),
+        ('O chevron fica no fim', 'O título alinha com o resto do texto da página. Não há opção à esquerda. Precedente: Carbon.'),
+        ('Sempre sobre <code>bg-surface</code>', 'Direto na tela clara o item fica 1,00:1 e some. Dentro de um Card, tem a mesma cor do card. É a regra que sustenta a exceção de contraste do fundo. Precedente: Card Filled.'),
+    ]),
+    ('Conteúdo', [
+        ('O título resume o conteúdo', 'Curto, em sentence case. Em perguntas frequentes, o título é a pergunta. Precedentes: Carbon, Spectrum.'),
+        ('Títulos paralelos e distintos', 'A mesma estrutura em toda a pilha, nenhum repetido. Precedentes: Polaris, GOV.UK.'),
+        ('Nada clicável no cabeçalho', 'Nem link, nem botão, nem Switch: o cabeçalho já é o botão. Ações vão no conteúdo. Precedente: APG.'),
+    ]),
+    ('Ícone', [
+        ('Ícone à esquerda é decorativo', 'Opcional, escondido do leitor de tela; quem fala é o título. Numa pilha, todos têm ou nenhum tem.'),
+        ('O chevron também é decorativo', 'Para baixo fechado, para cima aberto. O estado chega ao leitor de tela pela marcação nativa. Precedente: APG.'),
+    ]),
+    ('Estados', [
+        ('Não existe desabilitado', 'Item sem conteúdo sai da pilha. <b>Divergência consciente</b> do Carbon e do Spectrum, que desabilitam o grupo.'),
+        ('Só o cabeçalho reage', 'O conteúdo nunca muda de fundo: ele não é clicável. Precedente: APG.'),
+        ('Foco é repouso mais anel', 'Só pelo teclado. O anel abraça o cabeçalho e passa por cima do conteúdo. Precedente: WCAG 2.4.7.'),
+        ('Abrir não move o foco', 'O foco fica no cabeçalho e a página não rola. Precedentes: Primer, APG.'),
+    ]),
+    ('Acessibilidade', [
+        ('Nativo, sem ARIA', '<code>&lt;details&gt;</code> e <code>&lt;summary&gt;</code>: o navegador anuncia aberto ou fechado e responde a Enter e Espaço. Precedente: MDN.'),
+        ('O título real vem antes da pilha', 'Nada de <code>&lt;h3&gt;</code> dentro do <code>&lt;summary&gt;</code>: em parte dos leitores ele sai da lista de títulos. Se a pilha precisa ser achada por título, ponha um antes dela. Precedente: APG.'),
+        ('A busca da página ainda não abre em todo navegador', 'No Chrome e no Edge, Ctrl+F abre o item que tem o texto; nos outros, não. Mais um motivo para não esconder o essencial.'),
+        ('Alto contraste ganha contorno', 'Nesse modo o fundo some, e cada item ganha contorno na cor do texto do sistema.'),
+        ('Duas exceções declaradas', 'A divisória fica abaixo de 3:1: ela só separa, o chevron diz se está aberto. O item mal se separa da página pelo fundo, e por isso mora sobre <code>bg-surface</code>.'),
+    ]),
+]
+
+
+def ac_rules_html():
+    out, n = [], 0
+    for grupo, regras in AC_RULES:
+        out.append(f'<h3 class="cd-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    assert n == 28, f'as regras aprovadas sao 28, o site tem {n}'
+    return '\n'.join(out)
+
+
+ACCORDION_GUIDE = f'''
+<section>
+  <h2>Onde ele mora</h2>
+  <p>O fundo do item é o da superfície elevada. Sobre a tela clara ele fica 1,00:1 e some; sobre
+  <code>bg-surface</code>, o cinza da página desenha o limite.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Sobre superfície</span>
+      <div class="stage2 ac-stage" data-acpage="surface">{ac_item('Como funciona o reembolso?', AC_FAQ[0][2], sample=True)}</div>
+      <p class="cap">O limite aparece nos dois temas.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Direto na tela</span>
+      <div class="stage2 ac-stage" data-acpage="canvas">{ac_item('Como funciona o reembolso?', AC_FAQ[0][2], sample=True)}</div>
+      <p class="cap">Branco sobre branco: sobra um título solto com uma seta.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Título real antes da pilha</span>
+      <div class="stage2 ac-stage" data-acpage="surface"><div class="ac-stack"><span class="ac-fake-h">Perguntas frequentes</span>{ac_item('Como cancelo minha assinatura?', AC_FAQ[2][2], sample=True)}</div></div>
+      <p class="cap">Quem navega por títulos acha a pilha; o título do item é visual.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Botão dentro do cabeçalho</span>
+      <div class="stage2 ac-stage" data-acpage="surface"><div class="ac-fake"><span class="ac-fake-t">Assinatura</span><span class="ac-fake-btn">Cancelar</span><span class="ac-fake-chev">{al_icon('chevron-down', cls='al-icon')}</span></div></div>
+      <p class="cap">Dois botões no mesmo lugar: o clique abre ou cancela? A ação vai no conteúdo.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {ac_rules_html()}
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Componente de grupo</b><span>A pilha são itens lado a lado; o espaço é do layout.</span></div>
+    <div><b>Outro tamanho</b><span>Um só nesta versão.</span></div>
+    <div><b>Desabilitado</b><span>Não existe (regra 20).</span></div>
+    <div><b>Sem fundo, para card ou painel lateral</b><span>O “flush” do Carbon. Entra quando a demanda aparecer.</span></div>
+    <div><b>Abrir e fechar todos</b><span>Primer e GOV.UK têm; o AL ainda não.</span></div>
+    <div><b>Chevron à esquerda e conteúdo carregado ao abrir</b><span>Abrem rodada nova de escopo.</span></div>
+  </div>
+</section>'''
+
+
+ACCORDION_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede cada tema × estado do cabeçalho contra o fundo efetivo, sobre
+  <code>bg-surface</code>, a única página onde o Accordion pode ficar. O título tem que passar
+  4,5:1 sem exceção; chevron e anel, 3:1. A divisória e o limite do item são as duas exceções
+  declaradas. Um terceiro julgamento reprova o item <b>invisível</b>.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_AC_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_AC_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>{N_AC_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{N_AC_FAIL}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Estado</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{accordion_a11y_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra dez regras lendo o HTML que este site emite:
+  <b>{ACC_A11Y['markupChecked'] or 0} itens</b> nesta página, nenhum fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Nativo</b><span><code>.al-accordion</code> é um <code>&lt;details&gt;</code>.</span></div>
+    <div><b>b · Cabeçalho</b><span>O primeiro filho é o <code>&lt;summary class="al-accordion__header"&gt;</code>.</span></div>
+    <div><b>c · Nome</b><span>Um <code>__title</code> com texto.</span></div>
+    <div><b>d · Sem título dentro</b><span>Nenhum <code>h1</code>…<code>h6</code> no <code>&lt;summary&gt;</code>.</span></div>
+    <div><b>e · Nada clicável dentro</b><span>Nenhum link, botão, campo ou <code>tabindex</code> no cabeçalho.</span></div>
+    <div><b>f · Ícones decorativos</b><span><code>__icon</code> e <code>__chevron</code> com <code>aria-hidden="true"</code>.</span></div>
+    <div><b>g · Sem aninhar</b><span>Nada de Accordion dentro de Accordion.</span></div>
+    <div><b>h · Sem ARIA manual</b><span>Nem <code>role</code>, <code>aria-expanded</code>, <code>aria-controls</code> ou <code>tabindex</code>.</span></div>
+    <div><b>i · Sem disabled</b><span>Nem <code>disabled</code>, nem <code>aria-disabled</code>.</span></div>
+    <div><b>j · Um conteúdo</b><span>Exatamente um <code>__content</code>, filho direto, depois do cabeçalho.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Uma parada por item</b><span>Quem recebe o Tab é o cabeçalho. Amostras congeladas não recebem.</span></div>
+    <div><b>Enter e Espaço</b><span>Abrem e fecham. O foco fica no cabeçalho e a página não rola.</span></div>
+    <div><b>Foco só pelo teclado</b><span>Depois de um clique de mouse não aparece anel.</span></div>
+    <div><b>Anúncio</b><span>O título e “recolhido” ou “expandido”; nada sobre os ícones.</span></div>
+    <div><b>Um por vez</b><span>Com <code>name</code>, abrir um fecha o anterior, sem script.</span></div>
+    <div><b>Alto contraste</b><span>O item ganha contorno na cor do texto do sistema; o foco, <code>Highlight</code>.</span></div>
+    <div><b>Movimento reduzido</b><span>O fundo e o chevron trocam sem transição.</span></div>
+  </div>
+</section>'''
+
+
+# A miniatura mora dentro do link do card do indice: <details> ali seria
+# interativo dentro de link. Entao e casca pintada com os tokens do Accordion.
+TH_ACCORDION = ('<div class="th-accordion" aria-hidden="true">'
+                '<div class="th-ac-item"><span class="th-ac-t"></span><span class="th-ac-c"></span></div>'
+                '<div class="th-ac-item is-open"><span class="th-ac-t"></span><span class="th-ac-c"></span>'
+                '<span class="th-ac-body"></span></div>'
+                '<div class="th-ac-item"><span class="th-ac-t"></span><span class="th-ac-c"></span></div>'
+                '</div>')
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -8044,6 +8467,7 @@ LANDING_COMPONENTES = f'''
     {card('divider', 'Divider', 'A linha entre dois grupos de conteúdo. É o &lt;hr&gt; nativo, horizontal ou vertical — e entra só quando o espaço não basta.', TH_DIVIDER)}
     {card('card', 'Card', 'Um assunto num contêiner. Três tipos, três paddings, e o clicável inteiro feito com um link de verdade no título.', TH_CARD)}
     {card('tab', 'Tab', 'Troca de conteúdo na mesma tela, ou navegação entre páginas com o mesmo visual. Line e Square, e o primeiro componente com script próprio.', TH_TAB)}
+    {card('accordion', 'Accordion', 'Conteúdo secundário que abre e fecha no lugar. É o &lt;details&gt; nativo: sem script, vários abertos por padrão ou um por vez com name.', TH_ACCORDION)}
   </div>
 </section>
 
@@ -8052,9 +8476,13 @@ LANDING_COMPONENTES = f'''
   <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
   disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
   sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
-  seguiu pelo Card e chegou ao Tab. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
+  seguiu pelo Card e pelo Tab e chegou ao Accordion. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
   auditar.</p>
 </section>'''
+
+# O selo da pagina Componentes conta os cards publicados do indice - era um
+# numero escrito a mao e envelheceu (dizia 6 com 15 publicados).
+N_PUBLICADOS = LANDING_COMPONENTES.count('<a class="card"')
 
 PAGES = [
     ('fundacao', 'Fundação', simple_page(
@@ -8118,7 +8546,7 @@ PAGES = [
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [('6 publicados', True), ('Tier 1 fechado', False), ('8 etapas por componente', False)],
+        [(f'{N_PUBLICADOS} publicados', True), ('Tier 3 em andamento', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
@@ -8246,6 +8674,15 @@ PAGES = [
          (f'{N_TAB_TOKENS} tokens', False), (f'{N_TB_EXC_KEYS} exceções declaradas', False)],
         [('overview', 'Visão geral', TAB_OVERVIEW), ('specs', 'Especificações', TAB_SPECS),
          ('guide', 'Diretrizes', TAB_GUIDE), ('a11y', 'Acessibilidade', TAB_A11Y_TAB)])),
+    ('accordion', 'Componentes', page(
+        'accordion', 'Componentes', 'Accordion',
+        'Esconde conteúdo secundário atrás de um título que abre e fecha no lugar. É o '
+        '&lt;details&gt; nativo: o navegador abre, fecha e anuncia, sem script — vários abertos por '
+        'padrão, um por vez quando os itens são alternativas.',
+        [('Estável', True), ('8 variantes no Figma', False),
+         (f'{N_ACC_TOKENS} tokens', False), (f'{N_AC_EXC_KEYS} exceções declaradas', False)],
+        [('overview', 'Visão geral', ACCORDION_OVERVIEW), ('specs', 'Especificações', ACCORDION_SPECS),
+         ('guide', 'Diretrizes', ACCORDION_GUIDE), ('a11y', 'Acessibilidade', ACCORDION_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -8288,6 +8725,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/divider" data-page="divider">Divider</a>
         <a href="#/card" data-page="card">Card</a>
         <a href="#/tab" data-page="tab">Tab</a>
+        <a href="#/accordion" data-page="accordion">Accordion</a>
       </div>
     </div>
   </div>
@@ -10176,6 +10614,91 @@ CHROME_TAB = """
 """
 
 
+CHROME_ACCORDION = """
+/* ── páginas do Accordion ──
+   Casca do site. O item em si é sempre o .al-accordion, do accordion.css real.
+   Os exemplos "a evitar" usam .ac-fake-*, nunca um .al-accordion errado. */
+.ac-page{width:100%; max-width:460px; padding:24px; border-radius:12px; text-align:left}
+.ac-page[data-acpage="surface"], .ac-stage[data-acpage="surface"]{background:var(--al-bg-surface)}
+.ac-page[data-acpage="canvas"], .ac-stage[data-acpage="canvas"]{background:var(--al-bg-canvas)}
+.ac-page[data-acpage="canvas"], .ac-stage[data-acpage="canvas"]{outline:1px dashed var(--al-border-default); outline-offset:-1px}
+.dd .stage2.ac-stage{display:block; padding:20px}
+.ac-stack{display:flex; flex-direction:column; gap:8px}
+.ac-copy{margin:0; color:var(--al-text-secondary)}
+.ac-mx{display:flex; flex-direction:column; gap:16px}
+.ac-mx-row{display:grid; grid-template-columns:76px repeat(2, minmax(0,1fr)); gap:16px; align-items:start}
+.ac-mx-lab{font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary)}
+.ac-mx-row:not(.ac-mx-row--head) > .ac-mx-lab{padding-top:28px}
+.ac-fake-h{font-size:16px; line-height:24px; font-weight:600; color:var(--al-text-primary)}
+.ac-fake{display:flex; align-items:center; gap:8px; padding:24px; border-radius:8px;
+  background:var(--al-bg-surface-raised); color:var(--al-text-primary)}
+.ac-fake-t{flex:1; font-size:20px; line-height:28px; font-weight:600; letter-spacing:-.01em}
+.ac-fake-btn{padding:6px 14px; border-radius:9999px; font-size:13px; border:1px solid var(--al-border-strong)}
+.ac-fake-chev{display:inline-flex}
+.th-accordion{display:flex; flex-direction:column; gap:6px; width:100%; max-width:180px}
+.th-ac-item{display:grid; grid-template-columns:1fr auto; align-items:center; gap:6px 8px;
+  padding:8px 10px; border-radius:6px; background:var(--al-accordion-bg)}
+.th-ac-t{height:7px; width:60%; border-radius:4px; background:var(--al-border-default)}
+.th-ac-c{width:7px; height:7px; border-right:2px solid var(--al-accordion-title);
+  border-bottom:2px solid var(--al-accordion-title); transform:rotate(45deg) translateY(-2px)}
+.th-ac-item.is-open .th-ac-c{transform:rotate(-135deg) translateY(-2px)}
+.th-ac-body{grid-column:1 / -1; height:7px; width:82%; border-radius:4px; background:var(--al-bg-subtle);
+  box-shadow:0 -7px 0 -6px var(--al-accordion-divider)}
+@media (max-width: 720px){
+  .ac-mx-row{grid-template-columns:minmax(0,1fr)}
+  .ac-mx-row--head{display:none}
+  .ac-mx-row:not(.ac-mx-row--head) > .ac-mx-lab{padding-top:0}
+}
+"""
+
+
+JS_ACCORDION_DATA = 'var AC_DEMOS = ' + json.dumps(AC_DEMOS, ensure_ascii=False).replace('</', '<\\/') + ';\n'
+
+JS_ACCORDION = r"""
+(function () {
+  // ── playground do Accordion ── o componente nao tem JS; isto e so o palco
+  var stage = document.getElementById('accordion-stage');
+  if (!stage) return;
+  var code = document.getElementById('accordion-code');
+  var warn = document.getElementById('accordion-warn');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinacao vem pronto do site.py (AC_DEMOS) - o mesmo que
+  // a pagina emite parada, para o playground nao ensinar outro contrato.
+  function render() {
+    var i = pick('acicon'), m = pick('acmode'), pg = pick('acpage'), theme = pick('actheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = AC_DEMOS[i + '|' + m];
+    stage.innerHTML = '<div class="ac-page" data-acpage="' + pg + '">' + demo.html + '</div>';
+    code.innerHTML = esc(demo.code);
+    warn.hidden = pg !== 'canvas';
+  }
+
+  document.querySelectorAll('#accordion-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('accordion-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
 HTML = (
     '<meta charset="utf-8">\n'
     '<title>AL Design System</title>\n'
@@ -10187,7 +10710,7 @@ HTML = (
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB
+    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -10197,7 +10720,8 @@ HTML = (
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
     + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER
     + JS_CARD_DATA + JS_CARD
-    + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB + '</script>\n'
+    + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
+    + JS_ACCORDION_DATA + JS_ACCORDION + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
@@ -10246,5 +10770,9 @@ print(f'  tokens do Tab     : {N_TAB_TOKENS}  '
       f'({len(TAB_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in TAB_A11Y["rows"] if r["indistinct"])} indistinguiveis, '
       f'{sum(1 for r in TAB_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
+print(f'  tokens do Accord. : {N_ACC_TOKENS}  '
+      f'({len(ACC_A11Y["rows"])} combinacoes medidas, '
+      f'{sum(1 for r in ACC_A11Y["rows"] if r["invisible"])} invisiveis, '
+      f'{sum(1 for r in ACC_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
