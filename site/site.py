@@ -8480,6 +8480,10 @@ LANDING_COMPONENTES = f'''
   auditar.</p>
 </section>'''
 
+# O selo da pagina Componentes conta os cards publicados do indice - era um
+# numero escrito a mao e envelheceu (dizia 6 com 15 publicados).
+N_PUBLICADOS = LANDING_COMPONENTES.count('<a class="card"')
+
 PAGES = [
     ('fundacao', 'Fundação', simple_page(
         'fundacao', 'Fundação', 'Fundação',
@@ -8542,7 +8546,7 @@ PAGES = [
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [('6 publicados', True), ('Tier 1 fechado', False), ('8 etapas por componente', False)],
+        [(f'{N_PUBLICADOS} publicados', True), ('Tier 3 em andamento', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
