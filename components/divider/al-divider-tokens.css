@@ -1,0 +1,11 @@
+/* AL Design System - tokens do Divider
+ * GERADO por components/divider/tokens.py. Nao editar a mao.
+ *
+ * Sem bloco de tema: cada token aponta para um semantico, e o tema troca
+ * no :root - o mesmo elemento onde estes alias sao declarados.
+ */
+
+:root {
+  --al-divider-color: var(--al-border-subtle);
+  --al-divider-thickness: var(--al-border-width-1);
+}

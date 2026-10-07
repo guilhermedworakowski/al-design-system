@@ -1,0 +1,66 @@
+/* AL Design System - Divider
+ * Escrito a mao. Depende de al-foundation.css e al-divider-tokens.css, nesta
+ * ordem.
+ *
+ * Nenhum valor aqui e literal: a cor e a espessura entram por
+ * var(--al-divider-*). O check.py ao lado recusa o arquivo se algum escapar.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   anunciado, horizontal (o padrao - opcao A de Gui, 07/10/2026):
+ *     <hr class="al-divider">
+ *
+ *   anunciado, vertical (regra 14 - o separador e horizontal por padrao):
+ *     <hr class="al-divider al-divider--vertical" aria-orientation="vertical">
+ *
+ *   decorativo (regra 13 - a estrutura ja separa):
+ *     <hr class="al-divider" aria-hidden="true">
+ *
+ *   dentro de lista ou menu (regra 15 - <ul> so aceita <li>):
+ *     <li class="al-divider" role="separator"></li>
+ *
+ * POR QUE `<hr>` NAS DUAS ORIENTACOES
+ *   O `<hr>` ja tem o papel `separator` sem atributo nenhum, e o ARIA aceita
+ *   `aria-orientation` nele. Um elemento so para os dois casos e um contrato
+ *   so para o portao de marcacao da etapa 6 medir.
+ *
+ * A LINHA E BORDA, NAO FUNDO
+ *   No Figma a linha e um retangulo preenchido de 1px. Aqui ela e a borda de
+ *   uma caixa de espessura zero, por dois motivos: o `<hr>` do navegador ja e
+ *   desenhado assim (so trocamos estilo e cor), e no modo de alto contraste
+ *   do sistema a borda e repintada com a cor do texto - um fundo sumiria.
+ *   O resultado visual e o mesmo: 1px em border-subtle.
+ *
+ * COMPRIMENTO E MARGEM SAO DO LAYOUT
+ *   A horizontal ocupa a largura do conteiner (comportamento de bloco). A
+ *   vertical estica na altura da linha (`align-self: stretch`), entao PRECISA
+ *   de um pai em flex ou grid em linha - fora disso ela nao tem altura, e isso
+ *   e correto: vertical so existe entre itens lado a lado (regra 5).
+ *   A margem e zerada porque o `<hr>` do navegador traz uma propria; o espaco
+ *   em volta e decisao de quem monta a tela (regra 9, opcao B).
+ *
+ * SEM ESTADO, POR DECISAO
+ *   Sem hover, foco, transicao ou disabled. O divisor nunca e focavel nem
+ *   clicavel (regra 16): separador focavel no ARIA e o Window Splitter, outro
+ *   componente. Por isso este arquivo nao tem duracao literal nenhuma.
+ */
+
+.al-divider {
+  display: block;
+  flex-shrink: 0;
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  block-size: 0;
+  list-style: none;
+  border-block-start: var(--al-divider-thickness) solid var(--al-divider-color);
+}
+
+.al-divider--vertical {
+  align-self: stretch;
+  block-size: auto;
+  inline-size: 0;
+  border-block-start: 0;
+  border-inline-start: var(--al-divider-thickness) solid var(--al-divider-color);
+}
