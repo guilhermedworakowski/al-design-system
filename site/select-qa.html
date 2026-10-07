@@ -6,7 +6,7 @@
 <style>
 /* ================= foundation ================= */
 /* AL Design System - Foundation
- * v0.17.1 - MIT
+ * v0.17.2 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -205,12 +205,16 @@
   --al-icon-size-24: 24px;
   --al-icon-size-32: 32px;
 
-  /* motion - duracao pelo PORTE de quem se move, curva pelo TIPO da acao.
-     Entrada desacelera (ease-out), saida acelera (ease-in). */
-  --al-motion-duration-panel: 300ms;
+  /* motion - duracao pelo PORTE de quem se move (feedback, o resto, pelo papel),
+     curva pelo TIPO da acao. Entrada desacelera (ease-out), saida acelera (ease-in). */
+  --al-motion-duration-feedback: 120ms;
   --al-motion-duration-popup: 200ms;
+  --al-motion-duration-panel: 300ms;
+  --al-motion-duration-spinner: 700ms;
+  --al-motion-duration-spinner-reduced: 2400ms;
   --al-motion-easing-enter: cubic-bezier(0, 0, 0.58, 1);
   --al-motion-easing-exit: cubic-bezier(0.42, 0, 1, 1);
+  --al-motion-easing-spinner: cubic-bezier(0, 0, 1, 1);
 
   /* elevacao - TEMA CLARO */
   --al-elevation-0: none;
@@ -641,10 +645,11 @@
  *   nao o obrigatorio - nao existe estilo de "obrigatorio" porque a ausencia
  *   da marca E o obrigatorio.
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
- *   escala de motion. Mesma pendencia do Button e do Icon Button; aparece
- *   nomeada no relatorio do check.py, nunca como reprova silenciosa.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -726,8 +731,8 @@
   -webkit-tap-highlight-color: transparent;
 
   transition:
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nada aqui e `outline`: o anel e sombra, para respeitar o raio do campo */
@@ -816,6 +821,16 @@
 
 .al-select:has(.al-select__field:disabled) .al-select__chevron {
   color: var(--al-select-icon-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-select__field:hover,
+.al-select__field:active,
+.al-select__field:focus-visible,
+.al-select__field[aria-invalid="true"] {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */
@@ -917,7 +932,7 @@ table.qa-measure th { font-weight: 600; font-size: var(--al-font-size-xs); text-
   <header class="qa-head">
     <div>
       <h1>Select — QA da etapa 6</h1>
-      <p class="qa-sub">AL Design System 0.17.1 · componente 0.1.0 ·
+      <p class="qa-sub">AL Design System 0.17.2 · componente 0.1.0 ·
       &lt;select&gt; nativo · 38 medições de contraste, 10 exceções declaradas, 0 reprovas</p>
     </div>
     <button type="button" class="qa-theme" id="theme-toggle" aria-pressed="false">

@@ -78,9 +78,9 @@
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ---------------------------------------------------------------- variantes */
@@ -223,7 +223,7 @@
   border: var(--al-border-width-2) solid currentColor;
   border-top-color: transparent;
   border-radius: var(--al-radius-full);
-  animation: al-btn-spin 700ms linear infinite;
+  animation: al-btn-spin var(--al-motion-duration-spinner) var(--al-motion-easing-spinner) infinite;
 }
 
 .al-btn[aria-busy="true"] .al-btn__spinner {
@@ -241,6 +241,15 @@
   }
 }
 
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-btn:hover,
+.al-btn:active,
+.al-btn:focus-visible {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
 /* ---------------------------------------------------------------- ambiente */
 @media (prefers-reduced-motion: reduce) {
   .al-btn {
@@ -249,7 +258,7 @@
   /* o spinner nao para: ele e a unica pista de que algo esta acontecendo.
      Desacelera ate deixar de ser movimento agressivo. */
   .al-btn__spinner {
-    animation-duration: 2400ms;
+    animation-duration: var(--al-motion-duration-spinner-reduced);
   }
 }
 

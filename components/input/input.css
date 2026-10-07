@@ -84,10 +84,11 @@
  * LARGURA
  *   100% do conteiner. Formulario decide largura (regra 26).
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
- *   escala de motion. Mesma pendencia do Button e do Select; aparece nomeada
- *   no relatorio do check.py.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -158,8 +159,8 @@
   cursor: text;
 
   transition:
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ------------------------------------------------------------- campo */
@@ -289,6 +290,15 @@
 .al-input:has(.al-input__field:disabled) .al-input__optional,
 .al-input:has(.al-input__field:disabled) .al-input__counter {
   color: var(--al-input-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-input__control:hover,
+.al-input__control:has(.al-input__field:focus-visible),
+.al-input__control:has(.al-input__field[aria-invalid="true"]) {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */

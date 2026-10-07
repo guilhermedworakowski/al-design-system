@@ -4,8 +4,8 @@
  *
  * Nenhum valor aqui e literal: cor, espaco, raio, sombra e tipografia entram
  * por var(--al-card-*). O check.py ao lado recusa o arquivo se algum escapar.
- * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
- * de motion na Foundation - igual ao Button e ao Input.
+ * Duracao e curva da transicao sao tokens de
+ * motion; o bloco ENTRADA, perto do fim, troca a curva nos estados de destino.
  *
  * CONTRATO DE MARCACAO
  *
@@ -85,7 +85,7 @@
   background-color: var(--al-card-bg);
   box-shadow: var(--_edge), var(--_ring), var(--_lift);
   list-style: none;
-  transition: box-shadow 120ms ease;
+  transition: box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ------------------------------------------------------------------ tipo */
@@ -185,6 +185,14 @@
   .al-card--clickable.al-card--border:has(.al-card__link:focus-visible) {
     --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-focus);
   }
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-card--clickable:hover,
+.al-card--clickable:has(.al-card__link:focus-visible) {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 @media (prefers-reduced-motion: reduce) {

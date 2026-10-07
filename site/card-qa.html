@@ -7,7 +7,7 @@
 <style>
 /* ================= foundation ================= */
 /* AL Design System - Foundation
- * v0.17.1 - MIT
+ * v0.17.2 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -206,12 +206,16 @@
   --al-icon-size-24: 24px;
   --al-icon-size-32: 32px;
 
-  /* motion - duracao pelo PORTE de quem se move, curva pelo TIPO da acao.
-     Entrada desacelera (ease-out), saida acelera (ease-in). */
-  --al-motion-duration-panel: 300ms;
+  /* motion - duracao pelo PORTE de quem se move (feedback, o resto, pelo papel),
+     curva pelo TIPO da acao. Entrada desacelera (ease-out), saida acelera (ease-in). */
+  --al-motion-duration-feedback: 120ms;
   --al-motion-duration-popup: 200ms;
+  --al-motion-duration-panel: 300ms;
+  --al-motion-duration-spinner: 700ms;
+  --al-motion-duration-spinner-reduced: 2400ms;
   --al-motion-easing-enter: cubic-bezier(0, 0, 0.58, 1);
   --al-motion-easing-exit: cubic-bezier(0.42, 0, 1, 1);
+  --al-motion-easing-spinner: cubic-bezier(0, 0, 1, 1);
 
   /* elevacao - TEMA CLARO */
   --al-elevation-0: none;
@@ -550,8 +554,8 @@
  *
  * Nenhum valor aqui e literal: cor, espaco, raio, sombra e tipografia entram
  * por var(--al-card-*). O check.py ao lado recusa o arquivo se algum escapar.
- * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
- * de motion na Foundation - igual ao Button e ao Input.
+ * Duracao e curva da transicao sao tokens de
+ * motion; o bloco ENTRADA, perto do fim, troca a curva nos estados de destino.
  *
  * CONTRATO DE MARCACAO
  *
@@ -631,7 +635,7 @@
   background-color: var(--al-card-bg);
   box-shadow: var(--_edge), var(--_ring), var(--_lift);
   list-style: none;
-  transition: box-shadow 120ms ease;
+  transition: box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ------------------------------------------------------------------ tipo */
@@ -731,6 +735,14 @@
   .al-card--clickable.al-card--border:has(.al-card__link:focus-visible) {
     --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-focus);
   }
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-card--clickable:hover,
+.al-card--clickable:has(.al-card__link:focus-visible) {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -856,7 +868,7 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   <header class="qa-head">
     <div>
       <h1>Card — QA da etapa 6</h1>
-      <p class="qa-sub">AL Design System 0.17.1 · componente 0.1.0 ·
+      <p class="qa-sub">AL Design System 0.17.2 · componente 0.1.0 ·
       3 tipos × 3 paddings × estático/clicável · portão: 32 combinações, 22 passam, 10 exceções, 0 reprovas</p>
     </div>
     <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">

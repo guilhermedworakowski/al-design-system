@@ -72,9 +72,11 @@
  *   Se a acao falhar, a aplicacao desmarca o input de volta e avisa em texto.
  *   O componente nao tem estado de carregamento nem de erro.
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
- *   de motion. Mesma pendencia do Button, do Select, do Checkbox e do Radio.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *   Com `prefers-reduced-motion`, a bolinha troca de lado sem deslizar (regra 25).
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
@@ -118,9 +120,9 @@
   cursor: inherit;
 
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nada aqui e `outline`: o anel e sombra, para respeitar o trilho arredondado */
@@ -147,8 +149,8 @@
   pointer-events: none;
 
   transition:
-    inset-inline-start 120ms ease,
-    background-color 120ms ease;
+    inset-inline-start var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ligado: a bolinha anda o proprio tamanho */
@@ -206,6 +208,16 @@
 
 .al-switch:has(.al-switch__input:disabled) .al-switch__label {
   color: var(--al-switch-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-switch:hover .al-switch__input,
+.al-switch__input:focus-visible,
+.al-switch__input:checked,
+.al-switch__input:checked ~ .al-switch__thumb {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */

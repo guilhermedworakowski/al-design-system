@@ -47,7 +47,12 @@ TOKENS = {
     # 0.17.1: Motion - atualizacao da Foundation, terceira casa. Quatro tokens
     # (duration-panel/popup, easing-enter/exit) para o que entra e sai da tela;
     # nenhum componente consome ainda, e os 120ms literais seguem pendentes.
-    "name": "AL Design System", "version": "0.17.1", "license": "MIT",
+    # 0.17.2: Motion completo - atualizacao da Foundation, terceira casa. Mais
+    # quatro tokens (duration-feedback, duration-spinner, duration-spinner-reduced,
+    # easing-spinner) e os 12 componentes com transicao passam a consumir
+    # motion: nenhuma duracao nem curva literal. Valor renderizado igual, exceto
+    # a curva dos controles, que agora e ease-out ao entrar e ease-in ao sair.
+    "name": "AL Design System", "version": "0.17.2", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
@@ -102,18 +107,31 @@ TOKENS = {
   #               componente obrigaria um token novo a cada componente novo;
   #               porte nao. `panel` cobre o que ocupa a tela (Modal, Drawer),
   #               `popup` o que aparece pequeno por cima dela (Tooltip, Toast).
+  #   `feedback` e o terceiro degrau e e de PAPEL, nao de porte: e a resposta
+  #               do controle ao ponteiro, ao foco e a selecao. Entrou em
+  #               08/10/2026 para absorver os 120ms que 12 componentes escreviam
+  #               a mao. Usa o mesmo par enter/exit dos overlays: entrar num
+  #               estado (hover, foco, marcado) e ease-out, sair e ease-in.
+  #   `spinner` e `spinner-reduced` sao duracoes de LOOP (uma volta), com a
+  #               curva `easing-spinner` (linear, escrita como 0,0,1,1 - o
+  #               mesmo movimento). Entraram em 08/10/2026 para tirar os
+  #               700ms/2400ms literais do Button e do Icon Button.
   # Entrada e saida tem a mesma duracao por decisao de Gui (08/10/2026); se
   # um dia divergirem, o token novo e `duration-panel-exit`, sem renomear.
   # As curvas sao as palavras-chave do CSS escritas por extenso: o Figma, o
   # JS e o grafico do site precisam dos quatro numeros, nao do apelido.
   "motion": {
-    "duration": {"panel": 300, "popup": 200},
-    "easing": {"enter": [0, 0, 0.58, 1], "exit": [0.42, 0, 1, 1]},
+    "duration": {"feedback": 120, "popup": 200, "panel": 300, "spinner": 700, "spinner-reduced": 2400},
+    "easing": {"enter": [0, 0, 0.58, 1], "exit": [0.42, 0, 1, 1], "spinner": [0, 0, 1, 1]},
     "uso": {
+      "duration-feedback": "Hover, pressed, foco e selecao em todo controle (Button, Input, Switch, Tab...). Entrar no estado usa easing-enter, sair usa easing-exit.",
+      "duration-spinner": "Uma volta do spinner (Button, Icon Button). Loop continuo: nao e entrada nem saida.",
+      "duration-spinner-reduced": "Uma volta do spinner sob prefers-reduced-motion. O spinner nao para, porque e a unica pista de que algo acontece; so desacelera.",
       "duration-panel": "Modal e Drawer: o que cobre a tela ou entra por uma borda dela. Entrada e saida.",
       "duration-popup": "Tooltip e Toast: o que aparece pequeno por cima da tela. Entrada e saida.",
       "easing-enter": "Tudo que entra (ease-out): chega rapido e assenta devagar.",
       "easing-exit": "Tudo que sai (ease-in): parte devagar e acelera ate sumir.",
+      "easing-spinner": "Loop continuo (linear): velocidade constante, sem aceleracao nem freio. Spinner e, no futuro, skeleton.",
     },
     "_note": "Sob prefers-reduced-motion o componente zera a transicao (transition: none). "
              "Nao existe token de duracao zero: ausencia de movimento nao e um valor de escala.",

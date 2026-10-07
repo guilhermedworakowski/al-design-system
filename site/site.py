@@ -28,7 +28,7 @@ de marcacao do components/switch/a11y.py cobra isso no HTML emitido.
 
 Rodar: python3 site/site.py     (escreve site/index.html)
 """
-import base64, json, os, re, sys
+import base64, glob, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HERE = os.path.join(ROOT, 'site')
@@ -850,6 +850,7 @@ td.tok{font-family:var(--al-font-mono); font-size:12px; white-space:nowrap}
 td.tok.dim, td.num.dim{color:var(--al-text-secondary)}
 td.name{font-weight:600}
 td.num{font-family:var(--al-font-mono); text-align:right; font-variant-numeric:tabular-nums}
+th.num{text-align:right}
 td.num.strong{font-weight:600}
 td.chipcell{width:30px; padding-right:4px}
 .chip{display:inline-block; width:18px; height:18px; border-radius:5px; vertical-align:middle;
@@ -1443,6 +1444,10 @@ MO_DUR = MO['duration']
 MO_EASE = MO['easing']
 MO_USO = MO['uso']
 N_MO_TOKENS = len(MO_DUR) + len(MO_EASE)
+# quem de fato consome: o CSS real, nao uma lista escrita a mao
+N_MO_CONSUMERS = sum(
+    1 for f in glob.glob(os.path.join(ROOT, 'components', '*', '*.css'))
+    if 'var(--al-motion-duration-feedback)' in open(f, encoding='utf-8').read())
 
 
 def mo_css(kind, name):
@@ -1498,20 +1503,36 @@ MO_DEMOS = [
     ('toast', 'Toast', 'popup',
      '<span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span>'
      '<div class="mo-box mo-box--toast mo-move"><b class="mo-dot"></b><i class="mo-l mo-l--60"></i></div>'),
+    ('control', 'Controle', 'feedback',
+     '<div class="mo-ctl-track"><i class="mo-ctl-thumb"></i></div>'),
+    ('spinner', 'Spinner', 'spinner',
+     '<button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1" data-mo-busy>'
+     '<span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Salvando</span></button>'),
 ]
+
+
+MO_CTL_LABEL = {'feedback': ('Ativar', 'Desativar'), 'spinner': ('Girar', 'Parar')}
+
+
+def mo_caption(size):
+    if size == 'spinner':
+        return (f'<b>Volta</b> · linear · {MO_DUR["spinner"]}ms<br>'
+                f'<b>Movimento reduzido</b> · linear · {MO_DUR["spinner-reduced"]}ms')
+    return (f'<b>Entrada</b> · ease-out · {MO_DUR[size]}ms<br>'
+            f'<b>Saída</b> · ease-in · {MO_DUR[size]}ms')
 
 
 def mo_cells():
     out = []
     for key, name, size, scene in MO_DEMOS:
+        off, on = MO_CTL_LABEL.get(size, ('Abrir', 'Fechar'))
         out.append(
             f'<div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">{name}</span>'
             f'<div class="mo-stage" data-mo="{key}" data-size="{size}" data-open="false">'
             f'<div class="mo-scene" aria-hidden="true">{scene}</div></div>'
-            f'<button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="{key}">'
-            f'<span class="al-btn__label">Abrir</span></button>'
-            f'<p class="cap"><b>Entrada</b> · ease-out · {MO_DUR[size]}ms<br>'
-            f'<b>Saída</b> · ease-in · {MO_DUR[size]}ms</p></div>')
+            f'<button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="{key}"'
+            f' data-off="{off}" data-on="{on}"><span class="al-btn__label">{off}</span></button>'
+            f'<p class="cap">{mo_caption(size)}</p></div>')
     return ''.join(out)
 
 
@@ -1520,24 +1541,25 @@ MO_SPEED = seg('mospeed', [('1', '1×'), ('4', '¼×')], '1').replace(
 
 
 def mo_matrix():
+    row = lambda tipo, ease: (
+        f'<tr><td class="name">{tipo}</td><td class="tok">{ease}</td>'
+        f'<td class="num">{MO_DUR["feedback"]}ms</td><td class="num">{MO_DUR["popup"]}ms</td>'
+        f'<td class="num">{MO_DUR["panel"]}ms</td></tr>')
     return (
         '<div class="scroller"><table>'
-        '<thead><tr><th>Tipo de ação</th><th>Easing</th><th class="num">Modal e Drawer</th>'
-        '<th class="num">Tooltip e Toast</th></tr></thead><tbody>'
-        f'<tr><td class="name">Entrada</td><td class="tok">ease-out</td>'
-        f'<td class="num">{MO_DUR["panel"]}ms</td><td class="num">{MO_DUR["popup"]}ms</td></tr>'
-        f'<tr><td class="name">Saída</td><td class="tok">ease-in</td>'
-        f'<td class="num">{MO_DUR["panel"]}ms</td><td class="num">{MO_DUR["popup"]}ms</td></tr>'
+        '<thead><tr><th>Tipo de ação</th><th>Easing</th><th class="num">Controles</th>'
+        '<th class="num">Tooltip e Toast</th><th class="num">Modal e Drawer</th></tr></thead><tbody>'
+        + row('Entrada', 'ease-out') + row('Saída', 'ease-in') +
         '</tbody></table></div>')
 
 
-def mo_bars():
-    top = max(MO_DUR.values())
+def mo_bars(keys):
+    top = max(MO_DUR[k] for k in keys)
     rows = ''.join(
         f'<div class="bar-row"><span class="bar-name">duration-{k}</span>'
-        f'<span class="mo-track"><span class="bar" style="width:{v / top * 100:.1f}%"></span></span>'
-        f'<span class="bar-val">{v}ms</span></div>'
-        for k, v in MO_DUR.items())
+        f'<span class="mo-track"><span class="bar" style="width:{MO_DUR[k] / top * 100:.1f}%"></span></span>'
+        f'<span class="bar-val">{MO_DUR[k]}ms</span></div>'
+        for k in keys)
     return f'<div class="bars mo-bars">{rows}</div>'
 
 
@@ -1553,10 +1575,12 @@ def mo_token_rows():
 
 TAB_MOTION_MOVIMENTOS = f'''
 <section>
-  <h2>Entrada e saída <span class="count">4 movimentos</span></h2>
-  <p>Dois tipos de ação, duas durações. O que entra desacelera e assenta; o que sai acelera e some.
+  <h2>Entrada e saída <span class="count">{len(MO_DEMOS)} movimentos</span></h2>
+  <p>Dois tipos de ação, três durações. O que entra desacelera e assenta; o que sai acelera e some.
   O porte de quem se move decide o tempo: o que ocupa a tela leva {MO_DUR["panel"]}ms, o que aparece
-  pequeno por cima dela leva {MO_DUR["popup"]}ms.</p>
+  pequeno por cima dela leva {MO_DUR["popup"]}ms, e a resposta de um controle ao ponteiro leva
+  {MO_DUR["feedback"]}ms. A curva é a mesma para todos: entrar num estado (hover, foco, marcado) é
+  entrada, voltar dele é saída. O spinner fica à parte, porque loop não entra nem sai.</p>
   <div style="margin-top:18px">{mo_matrix()}</div>
 </section>
 
@@ -1564,15 +1588,16 @@ TAB_MOTION_MOVIMENTOS = f'''
   <h2>Veja se mexe do jeito certo</h2>
   <p>Cada palco usa os tokens reais: a transição lê <code>--al-motion-duration-*</code> e
   <code>--al-motion-easing-*</code> do <code>al-foundation.css</code> carregado nesta página. Abrir
-  usa a curva de entrada, fechar usa a de saída.</p>
+  usa a curva de entrada, fechar usa a de saída. O palco do controle liga e desliga com a curva de entrada e a de saída, e o do spinner é o
+  botão real em <code>aria-busy</code>.</p>
   <div class="mo-bar">
     <div class="ctl"><span class="ctl-name">Velocidade</span>{MO_SPEED}</div>
     <button type="button" class="al-btn al-btn--primary al-btn--sm" id="mo-all">
-      <span class="al-btn__label">Reproduzir os quatro</span></button>
+      <span class="al-btn__label">Reproduzir todos</span></button>
   </div>
   <div class="dd">{mo_cells()}</div>
   <p class="mo-fine">Ilustração do movimento, não dos componentes: Modal, Drawer, Tooltip e Toast ainda
-  não existem no AL. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
+  não existem no AL, e o palco do controle é uma miniatura, não o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
   a Foundation fixa só a duração e a curva.</p>
   <p class="mo-fine" id="mo-reduced" hidden>Seu sistema pede movimento reduzido. Os palcos trocam de estado
   sem animar, que é exatamente o que um componente do AL faz nessa preferência.</p>
@@ -1593,27 +1618,43 @@ TAB_MOTION_MOVIMENTOS = f'''
     todos os do AL já fazem. Duração zero não é um valor de escala: é ausência de movimento.</p>
   </div>
   <div class="note">
-    <b>Os 120ms dos componentes atuais continuam literais</b>
-    <p>Estes quatro tokens cobrem o que entra e sai da tela. Hover, pressed e troca de cor nos
-    componentes de hoje usam 120ms escritos à mão, e seguem como pendência consciente nos portões
-    até a escala de feedback existir.</p>
+    <b>O controle entra e sai como o resto</b>
+    <p>Hover, foco, seleção e pressed usam <code>ease-out</code> ao entrar no estado e
+    <code>ease-in</code> ao sair dele, com {MO_DUR["feedback"]}ms. No CSS isso vira duas declarações: a base
+    traz a curva de saída, e um bloco de estados de destino troca para a de entrada, porque a
+    transição usa a curva do estado para onde vai. {N_MO_CONSUMERS} componentes consomem.</p>
+  </div>
+  <div class="note">
+    <b>O spinner é loop, e tem curva e durações próprias</b>
+    <p>Uma volta leva {MO_DUR["spinner"]}ms em <code>linear</code>: velocidade constante, sem aceleração nem
+    freio. Sob movimento reduzido ele não para, porque é a única pista de que algo está acontecendo, e
+    desacelera para {MO_DUR["spinner-reduced"]}ms. Button e Icon Button consomem os três tokens; nenhuma
+    duração fica escrita à mão em componente algum.</p>
   </div>
 </section>'''
 
 TAB_MOTION_TOKENS = f'''
 <section>
-  <h2>Duração <span class="count">{len(MO_DUR)} degraus</span></h2>
+  <h2>Duração <span class="count">3 degraus</span></h2>
   <p>Nomeada pelo porte de quem se move, e não pelo componente: um Dialog ou um Sheet futuro
-  encontra o degrau sem token novo. A barra é proporcional ao tempo.</p>
-  <div style="margin-top:20px">{mo_bars()}</div>
+  encontra o degrau sem token novo. O <code>feedback</code> é nomeado pelo papel — a resposta do
+  controle ao ponteiro — porque não existe "porte" de um hover. A barra é proporcional ao tempo.</p>
+  <div style="margin-top:20px">{mo_bars(["feedback", "popup", "panel"])}</div>
+</section>
+
+<section>
+  <h2>Loop contínuo <span class="count">2 degraus</span></h2>
+  <p>Uma volta do spinner, no movimento normal e sob movimento reduzido. Escala própria na barra: perto
+  de 2400ms, os 700ms ficariam do tamanho de um traço ao lado dos degraus acima.</p>
+  <div style="margin-top:20px">{mo_bars(["spinner", "spinner-reduced"])}</div>
 </section>
 
 <section>
   <h2>Easing <span class="count">{len(MO_EASE)} curvas</span></h2>
   <p>As palavras-chave <code>ease-out</code> e <code>ease-in</code> do CSS, escritas com os quatro
   números. O Figma e o JavaScript pedem os números; o apelido não serve a eles. A diagonal tracejada
-  é o movimento linear, reservado a loops contínuos.</p>
-  <div class="mo-curves">{mo_curve("enter", "Entrada · ease-out")}{mo_curve("exit", "Saída · ease-in")}</div>
+  é o movimento linear: é a própria curva do spinner, e fica reservada a loops contínuos.</p>
+  <div class="mo-curves">{mo_curve("enter", "Entrada · ease-out")}{mo_curve("exit", "Saída · ease-in")}{mo_curve("spinner", "Loop · linear")}</div>
 </section>
 
 <section>
@@ -2143,7 +2184,7 @@ LANDING_FUNDACAO = f'''
     {card('cor', 'Cor', f'{N_PRIM} primitivas em OKLCH, {N_SEM} semânticos com dois temas e os {N_PAIRS} pares medidos do portão de contraste.', TH_COR)}
     {card('tipografia', 'Tipografia', f'Inter e JetBrains Mono em {len(T["type"]["styles"])} estilos fechados de tamanho, entrelinha, peso e tracking.', TH_TIPO)}
     {card('espacamento', 'Espaçamento e medidas', f'Base 4 com ritmo de 8, {len(T["radius"])} raios, 6 elevações e o anel de foco de duas camadas.', TH_ESPACO)}
-    {card('motion', 'Motion', f'{N_MO_TOKENS} tokens para o que entra e sai da tela: duas durações pelo porte, uma curva para entrar e outra para sair.', TH_MOTION)}
+    {card('motion', 'Motion', f'{N_MO_TOKENS} tokens para o que entra e sai da tela: cinco durações e três curvas: entrar, sair e girar.', TH_MOTION)}
     {card('icon', 'Ícones', f'{N_ICONS} ícones no grid de 24, sem escala fixa: o mesmo componente serve de 16 a 96 e o traço acompanha.', TH_ICON)}
   </div>
 </section>'''
@@ -8740,10 +8781,10 @@ PAGES = [
 
     ('motion', 'Fundação', page(
         'motion', 'Fundação', 'Motion',
-        'O que entra e sai da tela. A curva depende do tipo da ação — entrada desacelera, saída '
-        'acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo.',
-        [(f'{N_MO_TOKENS} tokens', True), ('2 tipos de ação', False),
-         (f'{len(MO_DUR)} durações', False), ('0 componentes consomem ainda', False)],
+        'O que entra e sai da tela, e o que gira. A curva depende do tipo da ação — entrada desacelera, saída '
+        'acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo à mão.',
+        [(f'{N_MO_TOKENS} tokens', True), ('2 tipos de ação', False), ('1 loop', False),
+         (f'{len(MO_DUR)} durações', False), (f'{N_MO_CONSUMERS} componentes consomem', False)],
         [('movimentos', 'Movimentos', TAB_MOTION_MOVIMENTOS), ('tokens', 'Tokens', TAB_MOTION_TOKENS)])),
 
     ('icon', 'Fundação', page(
@@ -10927,6 +10968,10 @@ CHROME_MOTION = """
   background:var(--al-bg-surface); border:1px solid var(--al-border-subtle)}
 #mo-root[data-speed="4"] .mo-stage{--mo-speed:4}
 .mo-stage[data-size="popup"]{--mo-dur:var(--al-motion-duration-popup)}
+.mo-stage[data-size="feedback"]{--mo-dur:var(--al-motion-duration-feedback)}
+.mo-stage[data-size="spinner"] .al-btn{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%)}
+/* câmera lenta: só multiplica a volta do spinner real; o movimento reduzido segue o token dele */
+.mo-stage[data-size="spinner"] .al-btn__spinner{animation-duration:calc(var(--al-motion-duration-spinner) * var(--mo-speed))}
 .mo-scene{position:absolute; inset:0}
 .mo-sk{position:absolute; left:14px; height:8px; border-radius:4px; background:var(--al-border-default)}
 .mo-sk--a{top:16px; width:46%}
@@ -10957,6 +11002,16 @@ CHROME_MOTION = """
 .mo-box--toast{left:14px; right:14px; bottom:14px; flex-direction:row; align-items:center; gap:10px;
   padding:12px 14px; border-radius:var(--al-radius-xl); background:var(--al-bg-inverse);
   border-color:transparent; --mo-from:translateY(var(--al-space-16))}
+.mo-ctl-track{
+  position:absolute; left:50%; top:50%; width:72px; height:40px; margin:-20px 0 0 -36px;
+  border-radius:var(--al-radius-full); background:var(--al-border-strong);
+  transition:background-color calc(var(--mo-dur) * var(--mo-speed)) var(--al-motion-easing-exit)}
+.mo-ctl-thumb{
+  position:absolute; top:4px; left:4px; width:32px; height:32px; border-radius:50%;
+  background:var(--al-bg-canvas);
+  transition:transform calc(var(--mo-dur) * var(--mo-speed)) var(--al-motion-easing-exit)}
+.mo-stage[data-open="true"] .mo-ctl-track{background:var(--al-bg-brand); transition-timing-function:var(--al-motion-easing-enter)}
+.mo-stage[data-open="true"] .mo-ctl-thumb{transform:translateX(32px); transition-timing-function:var(--al-motion-easing-enter)}
 .mo-l{display:block; height:7px; border-radius:4px; background:var(--al-border-default)}
 .mo-l--40{width:40%} .mo-l--60{width:60%} .mo-l--90{width:90%}
 .mo-box--tooltip .mo-l, .mo-box--toast .mo-l{background:var(--al-text-inverse); opacity:.7}
@@ -10966,7 +11021,7 @@ CHROME_MOTION = """
 .mo-cell .al-btn{align-self:flex-start}
 .mo-fine{font-size:13px; color:var(--al-text-secondary); margin-top:14px; max-width:74ch}
 
-.mo-bars .bar-name{width:132px}
+.mo-bars .bar-name{width:196px}
 .mo-track, .mo-track .bar{display:block}
 .mo-track{flex:1; min-width:0; max-width:420px}
 .mo-curves{display:flex; flex-wrap:wrap; gap:28px; margin-top:20px}
@@ -10984,7 +11039,8 @@ CHROME_MOTION = """
 .th-curve path{fill:none; stroke:var(--al-bg-brand); stroke-width:3; stroke-linecap:round}
 .th-curve line{stroke:var(--al-border-strong); stroke-width:1.5; stroke-dasharray:3 4}
 @media (prefers-reduced-motion: reduce){
-  .mo-move{transition:none}
+  .mo-stage[data-size="spinner"] .al-btn__spinner{animation-duration:calc(var(--al-motion-duration-spinner-reduced) * var(--mo-speed))}
+  .mo-move, .mo-ctl-track, .mo-ctl-thumb{transition:none}
 }
 """
 
@@ -11002,12 +11058,18 @@ JS_MOTION = r"""
 
   function setOpen(stage, on) {
     stage.setAttribute('data-open', on ? 'true' : 'false');
+    var busy = stage.querySelector('[data-mo-busy]');
+    if (busy) {
+      busy.setAttribute('aria-busy', on ? 'true' : 'false');
+      busy.setAttribute('aria-disabled', on ? 'true' : 'false');
+    }
     var label = root.querySelector('[data-mo-toggle="' + stage.getAttribute('data-mo') + '"] .al-btn__label');
-    if (label) label.textContent = on ? 'Fechar' : 'Abrir';
+    var btn = label && label.parentNode;
+    if (label) label.textContent = btn.getAttribute(on ? 'data-on' : 'data-off') || (on ? 'Fechar' : 'Abrir');
   }
   // a duração que o navegador está de fato usando, já com a velocidade
   function ms(stage) {
-    var el = stage.querySelector('.mo-move');
+    var el = stage.querySelector('.mo-move, .mo-ctl-track');
     return el ? parseFloat(getComputedStyle(el).transitionDuration) * 1000 : 0;
   }
   function longest() { return Math.max.apply(null, stages.map(ms)); }
@@ -11117,6 +11179,6 @@ print(f'  tokens do Accord. : {N_ACC_TOKENS}  '
       f'({len(ACC_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in ACC_A11Y["rows"] if r["invisible"])} invisiveis, '
       f'{sum(1 for r in ACC_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
-print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, 0 componentes consomem)')
+print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

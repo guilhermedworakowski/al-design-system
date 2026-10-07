@@ -66,9 +66,11 @@
  *   o formulario tem que descreve-lo em texto noutro lugar (WCAG 3.3.1 / 1.4.1)
  *   e ligar com `aria-describedby`. Regra 19 das regras de uso.
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
- *   de motion. Mesma pendencia do Button, do Icon Button e do Select.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -110,9 +112,9 @@
   cursor: inherit;
 
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nada aqui e `outline`: o anel e sombra, para respeitar o raio da caixa */
@@ -200,6 +202,17 @@
 
 .al-checkbox:has(.al-checkbox__input:disabled) .al-checkbox__label {
   color: var(--al-checkbox-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-checkbox:hover .al-checkbox__input,
+.al-checkbox__input:focus-visible,
+.al-checkbox__input:checked,
+.al-checkbox__input:indeterminate,
+.al-checkbox__input[aria-invalid="true"] {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */
