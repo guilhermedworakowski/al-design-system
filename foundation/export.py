@@ -40,7 +40,11 @@ TOKENS = {
     # nenhum token da Foundation muda.
     # 0.16.0: o Tab - componente novo, casa do meio. Terceiro do Tier 3 e o
     # primeiro com script proprio (tab.js); nenhum token da Foundation muda.
-    "name": "AL Design System", "version": "0.16.0", "license": "MIT",
+    # 0.17.0: o Accordion - componente novo, casa do meio. Quarto do Tier 3,
+    # <details>/<summary> nativo, sem script. A Foundation ganha dois
+    # semanticos, bg-hover-raised e bg-active-raised: no escuro o bg-hover era
+    # a mesma cor da superficie elevada e o hover sumia.
+    "name": "AL Design System", "version": "0.17.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
