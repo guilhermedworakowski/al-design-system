@@ -4,8 +4,8 @@
  *
  * Nenhum valor aqui e literal: cor, espaco, raio, anel e tipografia entram
  * por var(--al-accordion-*). O check.py ao lado recusa o arquivo se algum
- * escapar. Unica excecao consciente: a duracao da transicao (120ms), que
- * espera escala de motion na Foundation - igual ao Button, ao Card e ao Tab.
+ * escapar. Duracao e curva da transicao sao tokens de
+ * motion; o bloco ENTRADA, perto do fim, troca a curva nos estados de destino.
  *
  * CONTRATO DE MARCACAO - NATIVO, SEM JS (DECISAO B, REGRA 24)
  *
@@ -79,7 +79,7 @@
   color: var(--al-accordion-title);
   list-style: none;
   cursor: pointer;
-  transition: background-color 120ms ease;
+  transition: background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* o triangulo nativo: `list-style` some com ele no Chrome e no Firefox,
@@ -133,7 +133,7 @@
 }
 
 .al-accordion__chevron {
-  transition: scale 120ms ease;
+  transition: scale var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 .al-accordion[open] > .al-accordion__header .al-accordion__chevron {
@@ -147,6 +147,17 @@
   gap: var(--al-accordion-content-gap);
   padding: var(--al-accordion-padding);
   border-block-start: var(--al-accordion-divider-width) solid var(--al-accordion-divider);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-accordion__header:hover,
+.al-accordion__header:active,
+.al-accordion__header:focus-visible,
+.al-accordion[open] > .al-accordion__header,
+.al-accordion[open] > .al-accordion__header .al-accordion__chevron {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 @media (prefers-reduced-motion: reduce) {

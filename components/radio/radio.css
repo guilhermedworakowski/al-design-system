@@ -91,9 +91,11 @@
  *   (regras 22 e 26, WCAG 3.3.1 / 1.4.1). Achado da etapa 6: a primeira versao
  *   lia o erro no proprio radio, copiando o Checkbox.
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
- *   de motion. Mesma pendencia do Button, do Icon Button, do Select e do Checkbox.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -135,9 +137,9 @@
   cursor: inherit;
 
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nada aqui e `outline`: o anel e sombra, para respeitar o circulo */
@@ -224,6 +226,16 @@
 
 .al-radio:has(.al-radio__input:disabled) .al-radio__label {
   color: var(--al-radio-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-radio:hover .al-radio__input,
+.al-radio__input:focus-visible,
+.al-radio__input:checked,
+[aria-invalid="true"] .al-radio__input {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */

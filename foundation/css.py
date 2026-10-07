@@ -79,8 +79,8 @@ for k, v in T['iconSize'].items():
     w(f'  --al-icon-size-{k}: {v}px;')
 
 # ---------------- motion ----------------
-block('motion - duracao pelo PORTE de quem se move, curva pelo TIPO da acao.\n'
-      '     Entrada desacelera (ease-out), saida acelera (ease-in).')
+block('motion - duracao pelo PORTE de quem se move (feedback, o resto, pelo papel),\n'
+      '     curva pelo TIPO da acao. Entrada desacelera (ease-out), saida acelera (ease-in).')
 for k, v in T['motion']['duration'].items():
     w(f'  --al-motion-duration-{k}: {v}ms;')
 for k, v in T['motion']['easing'].items():

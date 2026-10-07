@@ -7,7 +7,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.17.1 - MIT
+ * v0.17.2 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -206,12 +206,16 @@
   --al-icon-size-24: 24px;
   --al-icon-size-32: 32px;
 
-  /* motion - duracao pelo PORTE de quem se move, curva pelo TIPO da acao.
-     Entrada desacelera (ease-out), saida acelera (ease-in). */
-  --al-motion-duration-panel: 300ms;
+  /* motion - duracao pelo PORTE de quem se move (feedback, o resto, pelo papel),
+     curva pelo TIPO da acao. Entrada desacelera (ease-out), saida acelera (ease-in). */
+  --al-motion-duration-feedback: 120ms;
   --al-motion-duration-popup: 200ms;
+  --al-motion-duration-panel: 300ms;
+  --al-motion-duration-spinner: 700ms;
+  --al-motion-duration-spinner-reduced: 2400ms;
   --al-motion-easing-enter: cubic-bezier(0, 0, 0.58, 1);
   --al-motion-easing-exit: cubic-bezier(0.42, 0, 1, 1);
+  --al-motion-easing-spinner: cubic-bezier(0, 0, 1, 1);
 
   /* elevacao - TEMA CLARO */
   --al-elevation-0: none;
@@ -1301,9 +1305,9 @@
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ---------------------------------------------------------------- variantes */
@@ -1446,7 +1450,7 @@
   border: var(--al-border-width-2) solid currentColor;
   border-top-color: transparent;
   border-radius: var(--al-radius-full);
-  animation: al-btn-spin 700ms linear infinite;
+  animation: al-btn-spin var(--al-motion-duration-spinner) var(--al-motion-easing-spinner) infinite;
 }
 
 .al-btn[aria-busy="true"] .al-btn__spinner {
@@ -1464,6 +1468,15 @@
   }
 }
 
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-btn:hover,
+.al-btn:active,
+.al-btn:focus-visible {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
 /* ---------------------------------------------------------------- ambiente */
 @media (prefers-reduced-motion: reduce) {
   .al-btn {
@@ -1472,7 +1485,7 @@
   /* o spinner nao para: ele e a unica pista de que algo esta acontecendo.
      Desacelera ate deixar de ser movimento agressivo. */
   .al-btn__spinner {
-    animation-duration: 2400ms;
+    animation-duration: var(--al-motion-duration-spinner-reduced);
   }
 }
 
@@ -1782,9 +1795,9 @@
   appearance: none;
   -webkit-tap-highlight-color: transparent;
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ---------------------------------------------------------------- variantes */
@@ -1903,7 +1916,7 @@
   border: var(--al-border-width-2) solid currentColor;
   border-top-color: transparent;
   border-radius: var(--al-radius-full);
-  animation: al-icon-btn-spin 700ms linear infinite;
+  animation: al-icon-btn-spin var(--al-motion-duration-spinner) var(--al-motion-easing-spinner) infinite;
 }
 
 .al-icon-btn[aria-busy="true"] .al-icon-btn__spinner {
@@ -1921,6 +1934,15 @@
   }
 }
 
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-icon-btn:hover,
+.al-icon-btn:active,
+.al-icon-btn:focus-visible {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
 /* ---------------------------------------------------------------- ambiente */
 @media (prefers-reduced-motion: reduce) {
   .al-icon-btn {
@@ -1929,7 +1951,7 @@
   /* o spinner nao para: sem rotulo, ele e a unica pista visual de que algo
      esta acontecendo. Desacelera ate deixar de ser movimento agressivo. */
   .al-icon-btn__spinner {
-    animation-duration: 2400ms;
+    animation-duration: var(--al-motion-duration-spinner-reduced);
   }
 }
 
@@ -2659,10 +2681,11 @@
  *   nao o obrigatorio - nao existe estilo de "obrigatorio" porque a ausencia
  *   da marca E o obrigatorio.
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
- *   escala de motion. Mesma pendencia do Button e do Icon Button; aparece
- *   nomeada no relatorio do check.py, nunca como reprova silenciosa.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -2744,8 +2767,8 @@
   -webkit-tap-highlight-color: transparent;
 
   transition:
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nada aqui e `outline`: o anel e sombra, para respeitar o raio do campo */
@@ -2834,6 +2857,16 @@
 
 .al-select:has(.al-select__field:disabled) .al-select__chevron {
   color: var(--al-select-icon-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-select__field:hover,
+.al-select__field:active,
+.al-select__field:focus-visible,
+.al-select__field[aria-invalid="true"] {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */
@@ -2962,9 +2995,11 @@
  *   o formulario tem que descreve-lo em texto noutro lugar (WCAG 3.3.1 / 1.4.1)
  *   e ligar com `aria-describedby`. Regra 19 das regras de uso.
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
- *   de motion. Mesma pendencia do Button, do Icon Button e do Select.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -3006,9 +3041,9 @@
   cursor: inherit;
 
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nada aqui e `outline`: o anel e sombra, para respeitar o raio da caixa */
@@ -3096,6 +3131,17 @@
 
 .al-checkbox:has(.al-checkbox__input:disabled) .al-checkbox__label {
   color: var(--al-checkbox-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-checkbox:hover .al-checkbox__input,
+.al-checkbox__input:focus-visible,
+.al-checkbox__input:checked,
+.al-checkbox__input:indeterminate,
+.al-checkbox__input[aria-invalid="true"] {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */
@@ -3248,9 +3294,11 @@
  *   (regras 22 e 26, WCAG 3.3.1 / 1.4.1). Achado da etapa 6: a primeira versao
  *   lia o erro no proprio radio, copiando o Checkbox.
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
- *   de motion. Mesma pendencia do Button, do Icon Button, do Select e do Checkbox.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -3292,9 +3340,9 @@
   cursor: inherit;
 
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nada aqui e `outline`: o anel e sombra, para respeitar o circulo */
@@ -3381,6 +3429,16 @@
 
 .al-radio:has(.al-radio__input:disabled) .al-radio__label {
   color: var(--al-radio-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-radio:hover .al-radio__input,
+.al-radio__input:focus-visible,
+.al-radio__input:checked,
+[aria-invalid="true"] .al-radio__input {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */
@@ -3514,9 +3572,11 @@
  *   Se a acao falhar, a aplicacao desmarca o input de volta e avisa em texto.
  *   O componente nao tem estado de carregamento nem de erro.
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem escala
- *   de motion. Mesma pendencia do Button, do Select, do Checkbox e do Radio.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *   Com `prefers-reduced-motion`, a bolinha troca de lado sem deslizar (regra 25).
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
@@ -3560,9 +3620,9 @@
   cursor: inherit;
 
   transition:
-    background-color 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nada aqui e `outline`: o anel e sombra, para respeitar o trilho arredondado */
@@ -3589,8 +3649,8 @@
   pointer-events: none;
 
   transition:
-    inset-inline-start 120ms ease,
-    background-color 120ms ease;
+    inset-inline-start var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ligado: a bolinha anda o proprio tamanho */
@@ -3648,6 +3708,16 @@
 
 .al-switch:has(.al-switch__input:disabled) .al-switch__label {
   color: var(--al-switch-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-switch:hover .al-switch__input,
+.al-switch__input:focus-visible,
+.al-switch__input:checked,
+.al-switch__input:checked ~ .al-switch__thumb {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */
@@ -3820,10 +3890,11 @@
  * LARGURA
  *   100% do conteiner. Formulario decide largura (regra 26).
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
- *   escala de motion. Mesma pendencia do Button e do Select; aparece nomeada
- *   no relatorio do check.py.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -3894,8 +3965,8 @@
   cursor: text;
 
   transition:
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ------------------------------------------------------------- campo */
@@ -4025,6 +4096,15 @@
 .al-input:has(.al-input__field:disabled) .al-input__optional,
 .al-input:has(.al-input__field:disabled) .al-input__counter {
   color: var(--al-input-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-input__control:hover,
+.al-input__control:has(.al-input__field:focus-visible),
+.al-input__control:has(.al-input__field[aria-invalid="true"]) {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */
@@ -4190,9 +4270,11 @@
  * LARGURA
  *   100% do conteiner. Formulario decide largura (regra 14).
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
- *   escala de motion. Mesma pendencia do Button, do Select e do Input.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -4275,8 +4357,8 @@
   overflow-y: auto;
 
   transition:
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* Firefox baixa a opacidade do placeholder por conta propria; o token ja
@@ -4364,6 +4446,15 @@
 .al-textarea:has(.al-textarea__field:disabled) .al-textarea__optional,
 .al-textarea:has(.al-textarea__field:disabled) .al-textarea__counter {
   color: var(--al-textarea-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-textarea__field:hover,
+.al-textarea__field:focus-visible,
+.al-textarea__field[aria-invalid="true"] {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */
@@ -4516,10 +4607,11 @@
  * LARGURA
  *   100% do conteiner. Formulario decide largura (regra 24).
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
- *   escala de motion. Mesma pendencia do Button, do Select e do Input;
- *   aparece nomeada no relatorio do check.py.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -4562,8 +4654,8 @@
   cursor: text;
 
   transition:
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ------------------------------------------------------------- campo */
@@ -4725,6 +4817,15 @@
   color: var(--al-password-label-disabled);
 }
 
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-password__control:hover,
+.al-password__control:has(.al-password__field:focus-visible),
+.al-password__control:has(.al-password__field[aria-invalid="true"]) {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
 /* ------------------------------------------------------------ ambiente */
 @media (prefers-reduced-motion: reduce) {
   .al-password__control {
@@ -4876,8 +4977,8 @@
  *
  * Nenhum valor aqui e literal: cor, espaco, raio, sombra e tipografia entram
  * por var(--al-card-*). O check.py ao lado recusa o arquivo se algum escapar.
- * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
- * de motion na Foundation - igual ao Button e ao Input.
+ * Duracao e curva da transicao sao tokens de
+ * motion; o bloco ENTRADA, perto do fim, troca a curva nos estados de destino.
  *
  * CONTRATO DE MARCACAO
  *
@@ -4957,7 +5058,7 @@
   background-color: var(--al-card-bg);
   box-shadow: var(--_edge), var(--_ring), var(--_lift);
   list-style: none;
-  transition: box-shadow 120ms ease;
+  transition: box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* ------------------------------------------------------------------ tipo */
@@ -5059,6 +5160,14 @@
   }
 }
 
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-card--clickable:hover,
+.al-card--clickable:has(.al-card__link:focus-visible) {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .al-card {
     transition: none;
@@ -5128,8 +5237,8 @@
  *
  * Nenhum valor aqui e literal: cor, espaco, raio, anel e tipografia entram por
  * var(--al-tab-*). O check.py ao lado recusa o arquivo se algum escapar.
- * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
- * de motion na Foundation - igual ao Button, ao Input e ao Card.
+ * Duracao e curva da transicao sao tokens de
+ * motion; o bloco ENTRADA, perto do fim, troca a curva nos estados de destino.
  *
  * CONTRATO DE MARCACAO
  *
@@ -5235,7 +5344,7 @@
   letter-spacing: var(--al-tab-label-tracking);
   white-space: nowrap;
   color: var(--al-tab-label);
-  transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+  transition: background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit), color var(--al-motion-duration-feedback) var(--al-motion-easing-exit), box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nao selecionada - hover e pressed escurecem o rotulo (bloqueante 1) */
@@ -5293,6 +5402,17 @@
 .al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):active .al-tab__label {
   background-color: var(--al-tab-square-bg-selected-active);
   color: var(--al-tab-square-label-selected-active);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-tab:hover .al-tab__label,
+.al-tab:active .al-tab__label,
+.al-tab:focus-visible .al-tab__label,
+.al-tab[aria-selected="true"] .al-tab__label,
+.al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5366,8 +5486,8 @@
  *
  * Nenhum valor aqui e literal: cor, espaco, raio, anel e tipografia entram
  * por var(--al-accordion-*). O check.py ao lado recusa o arquivo se algum
- * escapar. Unica excecao consciente: a duracao da transicao (120ms), que
- * espera escala de motion na Foundation - igual ao Button, ao Card e ao Tab.
+ * escapar. Duracao e curva da transicao sao tokens de
+ * motion; o bloco ENTRADA, perto do fim, troca a curva nos estados de destino.
  *
  * CONTRATO DE MARCACAO - NATIVO, SEM JS (DECISAO B, REGRA 24)
  *
@@ -5441,7 +5561,7 @@
   color: var(--al-accordion-title);
   list-style: none;
   cursor: pointer;
-  transition: background-color 120ms ease;
+  transition: background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* o triangulo nativo: `list-style` some com ele no Chrome e no Firefox,
@@ -5495,7 +5615,7 @@
 }
 
 .al-accordion__chevron {
-  transition: scale 120ms ease;
+  transition: scale var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 .al-accordion[open] > .al-accordion__header .al-accordion__chevron {
@@ -5509,6 +5629,17 @@
   gap: var(--al-accordion-content-gap);
   padding: var(--al-accordion-padding);
   border-block-start: var(--al-accordion-divider-width) solid var(--al-accordion-divider);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-accordion__header:hover,
+.al-accordion__header:active,
+.al-accordion__header:focus-visible,
+.al-accordion[open] > .al-accordion__header,
+.al-accordion[open] > .al-accordion__header .al-accordion__chevron {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -5747,6 +5878,7 @@ td.tok{font-family:var(--al-font-mono); font-size:12px; white-space:nowrap}
 td.tok.dim, td.num.dim{color:var(--al-text-secondary)}
 td.name{font-weight:600}
 td.num{font-family:var(--al-font-mono); text-align:right; font-variant-numeric:tabular-nums}
+th.num{text-align:right}
 td.num.strong{font-weight:600}
 td.chipcell{width:30px; padding-right:4px}
 .chip{display:inline-block; width:18px; height:18px; border-radius:5px; vertical-align:middle;
@@ -6265,6 +6397,10 @@ footer code{background:none; padding:0}
   background:var(--al-bg-surface); border:1px solid var(--al-border-subtle)}
 #mo-root[data-speed="4"] .mo-stage{--mo-speed:4}
 .mo-stage[data-size="popup"]{--mo-dur:var(--al-motion-duration-popup)}
+.mo-stage[data-size="feedback"]{--mo-dur:var(--al-motion-duration-feedback)}
+.mo-stage[data-size="spinner"] .al-btn{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%)}
+/* câmera lenta: só multiplica a volta do spinner real; o movimento reduzido segue o token dele */
+.mo-stage[data-size="spinner"] .al-btn__spinner{animation-duration:calc(var(--al-motion-duration-spinner) * var(--mo-speed))}
 .mo-scene{position:absolute; inset:0}
 .mo-sk{position:absolute; left:14px; height:8px; border-radius:4px; background:var(--al-border-default)}
 .mo-sk--a{top:16px; width:46%}
@@ -6295,6 +6431,16 @@ footer code{background:none; padding:0}
 .mo-box--toast{left:14px; right:14px; bottom:14px; flex-direction:row; align-items:center; gap:10px;
   padding:12px 14px; border-radius:var(--al-radius-xl); background:var(--al-bg-inverse);
   border-color:transparent; --mo-from:translateY(var(--al-space-16))}
+.mo-ctl-track{
+  position:absolute; left:50%; top:50%; width:72px; height:40px; margin:-20px 0 0 -36px;
+  border-radius:var(--al-radius-full); background:var(--al-border-strong);
+  transition:background-color calc(var(--mo-dur) * var(--mo-speed)) var(--al-motion-easing-exit)}
+.mo-ctl-thumb{
+  position:absolute; top:4px; left:4px; width:32px; height:32px; border-radius:50%;
+  background:var(--al-bg-canvas);
+  transition:transform calc(var(--mo-dur) * var(--mo-speed)) var(--al-motion-easing-exit)}
+.mo-stage[data-open="true"] .mo-ctl-track{background:var(--al-bg-brand); transition-timing-function:var(--al-motion-easing-enter)}
+.mo-stage[data-open="true"] .mo-ctl-thumb{transform:translateX(32px); transition-timing-function:var(--al-motion-easing-enter)}
 .mo-l{display:block; height:7px; border-radius:4px; background:var(--al-border-default)}
 .mo-l--40{width:40%} .mo-l--60{width:60%} .mo-l--90{width:90%}
 .mo-box--tooltip .mo-l, .mo-box--toast .mo-l{background:var(--al-text-inverse); opacity:.7}
@@ -6304,7 +6450,7 @@ footer code{background:none; padding:0}
 .mo-cell .al-btn{align-self:flex-start}
 .mo-fine{font-size:13px; color:var(--al-text-secondary); margin-top:14px; max-width:74ch}
 
-.mo-bars .bar-name{width:132px}
+.mo-bars .bar-name{width:196px}
 .mo-track, .mo-track .bar{display:block}
 .mo-track{flex:1; min-width:0; max-width:420px}
 .mo-curves{display:flex; flex-wrap:wrap; gap:28px; margin-top:20px}
@@ -6322,7 +6468,8 @@ footer code{background:none; padding:0}
 .th-curve path{fill:none; stroke:var(--al-bg-brand); stroke-width:3; stroke-linecap:round}
 .th-curve line{stroke:var(--al-border-strong); stroke-width:1.5; stroke-dasharray:3 4}
 @media (prefers-reduced-motion: reduce){
-  .mo-move{transition:none}
+  .mo-stage[data-size="spinner"] .al-btn__spinner{animation-duration:calc(var(--al-motion-duration-spinner-reduced) * var(--mo-speed))}
+  .mo-move, .mo-ctl-track, .mo-ctl-thumb{transition:none}
 }
 </style>
 
@@ -6330,7 +6477,7 @@ footer code{background:none; padding:0}
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.17.1 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.17.2 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -6392,7 +6539,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/cor" data-page="cor"><div class="card-thumb"><div class="th-ramp"><span style="background:#FFF5F0"></span><span style="background:#FFEADE"></span><span style="background:#FFD7C4"></span><span style="background:#FFBDA0"></span><span style="background:#FF9267"></span><span style="background:#FC5000"></span><span style="background:#C53900"></span><span style="background:#992700"></span><span style="background:#6C2100"></span><span style="background:#4A1700"></span><span style="background:#2D0D00"></span></div></div><div class="card-body"><span class="card-title">Cor</span><span class="card-desc">66 primitivas em OKLCH, 53 semânticos com dois temas e os 84 pares medidos do portão de contraste.</span></div></a>
     <a class="card" href="#/tipografia" data-page="tipografia"><div class="card-thumb"><div class="th-aa">Aa<small>Inter · 14 estilos</small></div></div><div class="card-body"><span class="card-title">Tipografia</span><span class="card-desc">Inter e JetBrains Mono em 14 estilos fechados de tamanho, entrelinha, peso e tracking.</span></div></a>
     <a class="card" href="#/espacamento" data-page="espacamento"><div class="card-thumb"><div class="th-bars"><i style="width:14%"></i><i style="width:26%"></i><i style="width:48%"></i><i style="width:84%"></i></div></div><div class="card-body"><span class="card-title">Espaçamento e medidas</span><span class="card-desc">Base 4 com ritmo de 8, 9 raios, 6 elevações e o anel de foco de duas camadas.</span></div></a>
-    <a class="card" href="#/motion" data-page="motion"><div class="card-thumb"><svg class="th-curve" viewBox="0 0 120 56" aria-hidden="true"><line x1="6" y1="50" x2="114" y2="6"/><path d="M6 50 C6 50, 74 6, 114 6"/></svg></div><div class="card-body"><span class="card-title">Motion</span><span class="card-desc">4 tokens para o que entra e sai da tela: duas durações pelo porte, uma curva para entrar e outra para sair.</span></div></a>
+    <a class="card" href="#/motion" data-page="motion"><div class="card-thumb"><svg class="th-curve" viewBox="0 0 120 56" aria-hidden="true"><line x1="6" y1="50" x2="114" y2="6"/><path d="M6 50 C6 50, 74 6, 114 6"/></svg></div><div class="card-body"><span class="card-title">Motion</span><span class="card-desc">8 tokens para o que entra e sai da tela: cinco durações e três curvas: entrar, sair e girar.</span></div></a>
     <a class="card" href="#/icon" data-page="icon"><div class="card-thumb"><div class="th-icons"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.268 21a2 2 0 0 0 3.464 0" /><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg></div></div><div class="card-body"><span class="card-title">Ícones</span><span class="card-desc">70 ícones no grid de 24, sem escala fixa: o mesmo componente serve de 16 a 96 e o traço acompanha.</span></div></a>
   </div>
 </section></div></div>
@@ -6484,7 +6631,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.17.1 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.17.2 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -6514,7 +6661,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.17.1 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.17.2 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -6723,31 +6870,34 @@ footer code{background:none; padding:0}
     Button já faz isso.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-motion" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Motion</h1><p class="lede">O que entra e sai da tela. A curva depende do tipo da ação — entrada desacelera, saída acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo.</p><div class="meta"><span class="badge on">4 tokens</span><span class="badge">2 tipos de ação</span><span class="badge">2 durações</span><span class="badge">0 componentes consomem ainda</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Motion"><button role="tab" id="t-motion-movimentos" aria-controls="p-motion-movimentos" aria-selected="true">Movimentos</button><button role="tab" id="t-motion-tokens" aria-controls="p-motion-tokens" aria-selected="false" tabindex=-1>Tokens</button></div><div class="panel" id="p-motion-movimentos" role="tabpanel" aria-labelledby="t-motion-movimentos" tabindex="0">
+<div class="page" id="pg-motion" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Motion</h1><p class="lede">O que entra e sai da tela, e o que gira. A curva depende do tipo da ação — entrada desacelera, saída acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo à mão.</p><div class="meta"><span class="badge on">8 tokens</span><span class="badge">2 tipos de ação</span><span class="badge">1 loop</span><span class="badge">5 durações</span><span class="badge">12 componentes consomem</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Motion"><button role="tab" id="t-motion-movimentos" aria-controls="p-motion-movimentos" aria-selected="true">Movimentos</button><button role="tab" id="t-motion-tokens" aria-controls="p-motion-tokens" aria-selected="false" tabindex=-1>Tokens</button></div><div class="panel" id="p-motion-movimentos" role="tabpanel" aria-labelledby="t-motion-movimentos" tabindex="0">
 <section>
-  <h2>Entrada e saída <span class="count">4 movimentos</span></h2>
-  <p>Dois tipos de ação, duas durações. O que entra desacelera e assenta; o que sai acelera e some.
+  <h2>Entrada e saída <span class="count">6 movimentos</span></h2>
+  <p>Dois tipos de ação, três durações. O que entra desacelera e assenta; o que sai acelera e some.
   O porte de quem se move decide o tempo: o que ocupa a tela leva 300ms, o que aparece
-  pequeno por cima dela leva 200ms.</p>
-  <div style="margin-top:18px"><div class="scroller"><table><thead><tr><th>Tipo de ação</th><th>Easing</th><th class="num">Modal e Drawer</th><th class="num">Tooltip e Toast</th></tr></thead><tbody><tr><td class="name">Entrada</td><td class="tok">ease-out</td><td class="num">300ms</td><td class="num">200ms</td></tr><tr><td class="name">Saída</td><td class="tok">ease-in</td><td class="num">300ms</td><td class="num">200ms</td></tr></tbody></table></div></div>
+  pequeno por cima dela leva 200ms, e a resposta de um controle ao ponteiro leva
+  120ms. A curva é a mesma para todos: entrar num estado (hover, foco, marcado) é
+  entrada, voltar dele é saída. O spinner fica à parte, porque loop não entra nem sai.</p>
+  <div style="margin-top:18px"><div class="scroller"><table><thead><tr><th>Tipo de ação</th><th>Easing</th><th class="num">Controles</th><th class="num">Tooltip e Toast</th><th class="num">Modal e Drawer</th></tr></thead><tbody><tr><td class="name">Entrada</td><td class="tok">ease-out</td><td class="num">120ms</td><td class="num">200ms</td><td class="num">300ms</td></tr><tr><td class="name">Saída</td><td class="tok">ease-in</td><td class="num">120ms</td><td class="num">200ms</td><td class="num">300ms</td></tr></tbody></table></div></div>
 </section>
 
 <section id="mo-root" data-speed="1">
   <h2>Veja se mexe do jeito certo</h2>
   <p>Cada palco usa os tokens reais: a transição lê <code>--al-motion-duration-*</code> e
   <code>--al-motion-easing-*</code> do <code>al-foundation.css</code> carregado nesta página. Abrir
-  usa a curva de entrada, fechar usa a de saída.</p>
+  usa a curva de entrada, fechar usa a de saída. O palco do controle liga e desliga com a curva de entrada e a de saída, e o do spinner é o
+  botão real em <code>aria-busy</code>.</p>
   <div class="mo-bar">
     <div class="ctl"><span class="ctl-name">Velocidade</span><div class="seg" role="radiogroup" aria-label="Velocidade da animação">
 <input type="radio" id="mospeed-1" name="mospeed" value="1" checked><label for="mospeed-1">1×</label>
 <input type="radio" id="mospeed-4" name="mospeed" value="4"><label for="mospeed-4">¼×</label>
 </div></div>
     <button type="button" class="al-btn al-btn--primary al-btn--sm" id="mo-all">
-      <span class="al-btn__label">Reproduzir os quatro</span></button>
+      <span class="al-btn__label">Reproduzir todos</span></button>
   </div>
-  <div class="dd"><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Modal</span><div class="mo-stage" data-mo="modal" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--modal mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i><b class="mo-pill"></b></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="modal"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Drawer</span><div class="mo-stage" data-mo="drawer" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--drawer mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="drawer"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Tooltip</span><div class="mo-stage" data-mo="tooltip" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><b class="mo-anchor"></b><div class="mo-box mo-box--tooltip mo-move"><i class="mo-l mo-l--90"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="tooltip"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Toast</span><div class="mo-stage" data-mo="toast" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-box mo-box--toast mo-move"><b class="mo-dot"></b><i class="mo-l mo-l--60"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="toast"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div></div>
+  <div class="dd"><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Modal</span><div class="mo-stage" data-mo="modal" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--modal mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i><b class="mo-pill"></b></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="modal" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Drawer</span><div class="mo-stage" data-mo="drawer" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--drawer mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="drawer" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Tooltip</span><div class="mo-stage" data-mo="tooltip" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><b class="mo-anchor"></b><div class="mo-box mo-box--tooltip mo-move"><i class="mo-l mo-l--90"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="tooltip" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Toast</span><div class="mo-stage" data-mo="toast" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-box mo-box--toast mo-move"><b class="mo-dot"></b><i class="mo-l mo-l--60"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="toast" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Controle</span><div class="mo-stage" data-mo="control" data-size="feedback" data-open="false"><div class="mo-scene" aria-hidden="true"><div class="mo-ctl-track"><i class="mo-ctl-thumb"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="control" data-off="Ativar" data-on="Desativar"><span class="al-btn__label">Ativar</span></button><p class="cap"><b>Entrada</b> · ease-out · 120ms<br><b>Saída</b> · ease-in · 120ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Spinner</span><div class="mo-stage" data-mo="spinner" data-size="spinner" data-open="false"><div class="mo-scene" aria-hidden="true"><button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1" data-mo-busy><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Salvando</span></button></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="spinner" data-off="Girar" data-on="Parar"><span class="al-btn__label">Girar</span></button><p class="cap"><b>Volta</b> · linear · 700ms<br><b>Movimento reduzido</b> · linear · 2400ms</p></div></div>
   <p class="mo-fine">Ilustração do movimento, não dos componentes: Modal, Drawer, Tooltip e Toast ainda
-  não existem no AL. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
+  não existem no AL, e o palco do controle é uma miniatura, não o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
   a Foundation fixa só a duração e a curva.</p>
   <p class="mo-fine" id="mo-reduced" hidden>Seu sistema pede movimento reduzido. Os palcos trocam de estado
   sem animar, que é exatamente o que um componente do AL faz nessa preferência.</p>
@@ -6768,32 +6918,48 @@ footer code{background:none; padding:0}
     todos os do AL já fazem. Duração zero não é um valor de escala: é ausência de movimento.</p>
   </div>
   <div class="note">
-    <b>Os 120ms dos componentes atuais continuam literais</b>
-    <p>Estes quatro tokens cobrem o que entra e sai da tela. Hover, pressed e troca de cor nos
-    componentes de hoje usam 120ms escritos à mão, e seguem como pendência consciente nos portões
-    até a escala de feedback existir.</p>
+    <b>O controle entra e sai como o resto</b>
+    <p>Hover, foco, seleção e pressed usam <code>ease-out</code> ao entrar no estado e
+    <code>ease-in</code> ao sair dele, com 120ms. No CSS isso vira duas declarações: a base
+    traz a curva de saída, e um bloco de estados de destino troca para a de entrada, porque a
+    transição usa a curva do estado para onde vai. 12 componentes consomem.</p>
+  </div>
+  <div class="note">
+    <b>O spinner é loop, e tem curva e durações próprias</b>
+    <p>Uma volta leva 700ms em <code>linear</code>: velocidade constante, sem aceleração nem
+    freio. Sob movimento reduzido ele não para, porque é a única pista de que algo está acontecendo, e
+    desacelera para 2400ms. Button e Icon Button consomem os três tokens; nenhuma
+    duração fica escrita à mão em componente algum.</p>
   </div>
 </section></div><div class="panel" id="p-motion-tokens" role="tabpanel" aria-labelledby="t-motion-tokens" tabindex="0" hidden>
 <section>
-  <h2>Duração <span class="count">2 degraus</span></h2>
+  <h2>Duração <span class="count">3 degraus</span></h2>
   <p>Nomeada pelo porte de quem se move, e não pelo componente: um Dialog ou um Sheet futuro
-  encontra o degrau sem token novo. A barra é proporcional ao tempo.</p>
-  <div style="margin-top:20px"><div class="bars mo-bars"><div class="bar-row"><span class="bar-name">duration-panel</span><span class="mo-track"><span class="bar" style="width:100.0%"></span></span><span class="bar-val">300ms</span></div><div class="bar-row"><span class="bar-name">duration-popup</span><span class="mo-track"><span class="bar" style="width:66.7%"></span></span><span class="bar-val">200ms</span></div></div></div>
+  encontra o degrau sem token novo. O <code>feedback</code> é nomeado pelo papel — a resposta do
+  controle ao ponteiro — porque não existe "porte" de um hover. A barra é proporcional ao tempo.</p>
+  <div style="margin-top:20px"><div class="bars mo-bars"><div class="bar-row"><span class="bar-name">duration-feedback</span><span class="mo-track"><span class="bar" style="width:40.0%"></span></span><span class="bar-val">120ms</span></div><div class="bar-row"><span class="bar-name">duration-popup</span><span class="mo-track"><span class="bar" style="width:66.7%"></span></span><span class="bar-val">200ms</span></div><div class="bar-row"><span class="bar-name">duration-panel</span><span class="mo-track"><span class="bar" style="width:100.0%"></span></span><span class="bar-val">300ms</span></div></div></div>
 </section>
 
 <section>
-  <h2>Easing <span class="count">2 curvas</span></h2>
+  <h2>Loop contínuo <span class="count">2 degraus</span></h2>
+  <p>Uma volta do spinner, no movimento normal e sob movimento reduzido. Escala própria na barra: perto
+  de 2400ms, os 700ms ficariam do tamanho de um traço ao lado dos degraus acima.</p>
+  <div style="margin-top:20px"><div class="bars mo-bars"><div class="bar-row"><span class="bar-name">duration-spinner</span><span class="mo-track"><span class="bar" style="width:29.2%"></span></span><span class="bar-val">700ms</span></div><div class="bar-row"><span class="bar-name">duration-spinner-reduced</span><span class="mo-track"><span class="bar" style="width:100.0%"></span></span><span class="bar-val">2400ms</span></div></div></div>
+</section>
+
+<section>
+  <h2>Easing <span class="count">3 curvas</span></h2>
   <p>As palavras-chave <code>ease-out</code> e <code>ease-in</code> do CSS, escritas com os quatro
   números. O Figma e o JavaScript pedem os números; o apelido não serve a eles. A diagonal tracejada
-  é o movimento linear, reservado a loops contínuos.</p>
-  <div class="mo-curves"><figure class="mo-curve"><svg viewBox="0 0 160 160" role="img" aria-label="Curva Entrada · ease-out: progresso do movimento ao longo do tempo, cubic-bezier(0, 0, 0.58, 1)"><rect class="mo-c-frame" x="14" y="14" width="132" height="132"/><line class="mo-c-lin" x1="14.0" y1="146.0" x2="146.0" y2="14.0"/><line class="mo-c-hnd" x1="14.0" y1="146.0" x2="14.0" y2="146.0"/><line class="mo-c-hnd" x1="146.0" y1="14.0" x2="90.6" y2="14.0"/><path class="mo-c-path" d="M14.0 146.0 C14.0 146.0, 90.6 14.0, 146.0 14.0"/><circle class="mo-c-pt" cx="14.0" cy="146.0" r="3.5"/><circle class="mo-c-pt" cx="90.6" cy="14.0" r="3.5"/><text class="mo-c-ax" x="14" y="158">tempo →</text></svg><figcaption><b>Entrada · ease-out</b><code>cubic-bezier(0, 0, 0.58, 1)</code></figcaption></figure><figure class="mo-curve"><svg viewBox="0 0 160 160" role="img" aria-label="Curva Saída · ease-in: progresso do movimento ao longo do tempo, cubic-bezier(0.42, 0, 1, 1)"><rect class="mo-c-frame" x="14" y="14" width="132" height="132"/><line class="mo-c-lin" x1="14.0" y1="146.0" x2="146.0" y2="14.0"/><line class="mo-c-hnd" x1="14.0" y1="146.0" x2="69.4" y2="146.0"/><line class="mo-c-hnd" x1="146.0" y1="14.0" x2="146.0" y2="14.0"/><path class="mo-c-path" d="M14.0 146.0 C69.4 146.0, 146.0 14.0, 146.0 14.0"/><circle class="mo-c-pt" cx="69.4" cy="146.0" r="3.5"/><circle class="mo-c-pt" cx="146.0" cy="14.0" r="3.5"/><text class="mo-c-ax" x="14" y="158">tempo →</text></svg><figcaption><b>Saída · ease-in</b><code>cubic-bezier(0.42, 0, 1, 1)</code></figcaption></figure></div>
+  é o movimento linear: é a própria curva do spinner, e fica reservada a loops contínuos.</p>
+  <div class="mo-curves"><figure class="mo-curve"><svg viewBox="0 0 160 160" role="img" aria-label="Curva Entrada · ease-out: progresso do movimento ao longo do tempo, cubic-bezier(0, 0, 0.58, 1)"><rect class="mo-c-frame" x="14" y="14" width="132" height="132"/><line class="mo-c-lin" x1="14.0" y1="146.0" x2="146.0" y2="14.0"/><line class="mo-c-hnd" x1="14.0" y1="146.0" x2="14.0" y2="146.0"/><line class="mo-c-hnd" x1="146.0" y1="14.0" x2="90.6" y2="14.0"/><path class="mo-c-path" d="M14.0 146.0 C14.0 146.0, 90.6 14.0, 146.0 14.0"/><circle class="mo-c-pt" cx="14.0" cy="146.0" r="3.5"/><circle class="mo-c-pt" cx="90.6" cy="14.0" r="3.5"/><text class="mo-c-ax" x="14" y="158">tempo →</text></svg><figcaption><b>Entrada · ease-out</b><code>cubic-bezier(0, 0, 0.58, 1)</code></figcaption></figure><figure class="mo-curve"><svg viewBox="0 0 160 160" role="img" aria-label="Curva Saída · ease-in: progresso do movimento ao longo do tempo, cubic-bezier(0.42, 0, 1, 1)"><rect class="mo-c-frame" x="14" y="14" width="132" height="132"/><line class="mo-c-lin" x1="14.0" y1="146.0" x2="146.0" y2="14.0"/><line class="mo-c-hnd" x1="14.0" y1="146.0" x2="69.4" y2="146.0"/><line class="mo-c-hnd" x1="146.0" y1="14.0" x2="146.0" y2="14.0"/><path class="mo-c-path" d="M14.0 146.0 C69.4 146.0, 146.0 14.0, 146.0 14.0"/><circle class="mo-c-pt" cx="69.4" cy="146.0" r="3.5"/><circle class="mo-c-pt" cx="146.0" cy="14.0" r="3.5"/><text class="mo-c-ax" x="14" y="158">tempo →</text></svg><figcaption><b>Saída · ease-in</b><code>cubic-bezier(0.42, 0, 1, 1)</code></figcaption></figure><figure class="mo-curve"><svg viewBox="0 0 160 160" role="img" aria-label="Curva Loop · linear: progresso do movimento ao longo do tempo, cubic-bezier(0, 0, 1, 1)"><rect class="mo-c-frame" x="14" y="14" width="132" height="132"/><line class="mo-c-lin" x1="14.0" y1="146.0" x2="146.0" y2="14.0"/><line class="mo-c-hnd" x1="14.0" y1="146.0" x2="14.0" y2="146.0"/><line class="mo-c-hnd" x1="146.0" y1="14.0" x2="146.0" y2="14.0"/><path class="mo-c-path" d="M14.0 146.0 C14.0 146.0, 146.0 14.0, 146.0 14.0"/><circle class="mo-c-pt" cx="14.0" cy="146.0" r="3.5"/><circle class="mo-c-pt" cx="146.0" cy="14.0" r="3.5"/><text class="mo-c-ax" x="14" y="158">tempo →</text></svg><figcaption><b>Loop · linear</b><code>cubic-bezier(0, 0, 1, 1)</code></figcaption></figure></div>
 </section>
 
 <section>
-  <h2>Tokens <span class="count">4 no total</span></h2>
+  <h2>Tokens <span class="count">8 no total</span></h2>
   <div class="scroller"><table>
     <thead><tr><th>Token</th><th>Valor</th><th>Quando usar</th></tr></thead>
-    <tbody><tr><td class="tok">--al-motion-duration-panel</td><td class="tok dim">300ms</td><td>Modal e Drawer: o que cobre a tela ou entra por uma borda dela. Entrada e saida.</td></tr><tr><td class="tok">--al-motion-duration-popup</td><td class="tok dim">200ms</td><td>Tooltip e Toast: o que aparece pequeno por cima da tela. Entrada e saida.</td></tr><tr><td class="tok">--al-motion-easing-enter</td><td class="tok dim">cubic-bezier(0, 0, 0.58, 1)</td><td>Tudo que entra (ease-out): chega rapido e assenta devagar.</td></tr><tr><td class="tok">--al-motion-easing-exit</td><td class="tok dim">cubic-bezier(0.42, 0, 1, 1)</td><td>Tudo que sai (ease-in): parte devagar e acelera ate sumir.</td></tr></tbody>
+    <tbody><tr><td class="tok">--al-motion-duration-feedback</td><td class="tok dim">120ms</td><td>Hover, pressed, foco e selecao em todo controle (Button, Input, Switch, Tab...). Entrar no estado usa easing-enter, sair usa easing-exit.</td></tr><tr><td class="tok">--al-motion-duration-popup</td><td class="tok dim">200ms</td><td>Tooltip e Toast: o que aparece pequeno por cima da tela. Entrada e saida.</td></tr><tr><td class="tok">--al-motion-duration-panel</td><td class="tok dim">300ms</td><td>Modal e Drawer: o que cobre a tela ou entra por uma borda dela. Entrada e saida.</td></tr><tr><td class="tok">--al-motion-duration-spinner</td><td class="tok dim">700ms</td><td>Uma volta do spinner (Button, Icon Button). Loop continuo: nao e entrada nem saida.</td></tr><tr><td class="tok">--al-motion-duration-spinner-reduced</td><td class="tok dim">2400ms</td><td>Uma volta do spinner sob prefers-reduced-motion. O spinner nao para, porque e a unica pista de que algo acontece; so desacelera.</td></tr><tr><td class="tok">--al-motion-easing-enter</td><td class="tok dim">cubic-bezier(0, 0, 0.58, 1)</td><td>Tudo que entra (ease-out): chega rapido e assenta devagar.</td></tr><tr><td class="tok">--al-motion-easing-exit</td><td class="tok dim">cubic-bezier(0.42, 0, 1, 1)</td><td>Tudo que sai (ease-in): parte devagar e acelera ate sumir.</td></tr><tr><td class="tok">--al-motion-easing-spinner</td><td class="tok dim">cubic-bezier(0, 0, 1, 1)</td><td>Loop continuo (linear): velocidade constante, sem aceleracao nem freio. Spinner e, no futuro, skeleton.</td></tr></tbody>
   </table></div>
 </section>
 
@@ -13396,7 +13562,7 @@ footer code{background:none; padding:0}
   </div>
 </section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.17.1</span>
+  <span><b>AL Design System</b> · v0.17.2</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -15131,12 +15297,18 @@ var AC_DEMOS = {"none|multi": {"html": "<div class=\"ac-stack\"><details class=\
 
   function setOpen(stage, on) {
     stage.setAttribute('data-open', on ? 'true' : 'false');
+    var busy = stage.querySelector('[data-mo-busy]');
+    if (busy) {
+      busy.setAttribute('aria-busy', on ? 'true' : 'false');
+      busy.setAttribute('aria-disabled', on ? 'true' : 'false');
+    }
     var label = root.querySelector('[data-mo-toggle="' + stage.getAttribute('data-mo') + '"] .al-btn__label');
-    if (label) label.textContent = on ? 'Fechar' : 'Abrir';
+    var btn = label && label.parentNode;
+    if (label) label.textContent = btn.getAttribute(on ? 'data-on' : 'data-off') || (on ? 'Fechar' : 'Abrir');
   }
   // a duração que o navegador está de fato usando, já com a velocidade
   function ms(stage) {
-    var el = stage.querySelector('.mo-move');
+    var el = stage.querySelector('.mo-move, .mo-ctl-track');
     return el ? parseFloat(getComputedStyle(el).transitionDuration) * 1000 : 0;
   }
   function longest() { return Math.max.apply(null, stages.map(ms)); }

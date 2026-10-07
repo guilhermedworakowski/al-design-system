@@ -4,8 +4,8 @@
  *
  * Nenhum valor aqui e literal: cor, espaco, raio, anel e tipografia entram por
  * var(--al-tab-*). O check.py ao lado recusa o arquivo se algum escapar.
- * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
- * de motion na Foundation - igual ao Button, ao Input e ao Card.
+ * Duracao e curva da transicao sao tokens de
+ * motion; o bloco ENTRADA, perto do fim, troca a curva nos estados de destino.
  *
  * CONTRATO DE MARCACAO
  *
@@ -111,7 +111,7 @@
   letter-spacing: var(--al-tab-label-tracking);
   white-space: nowrap;
   color: var(--al-tab-label);
-  transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+  transition: background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit), color var(--al-motion-duration-feedback) var(--al-motion-easing-exit), box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nao selecionada - hover e pressed escurecem o rotulo (bloqueante 1) */
@@ -169,6 +169,17 @@
 .al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):active .al-tab__label {
   background-color: var(--al-tab-square-bg-selected-active);
   color: var(--al-tab-square-label-selected-active);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-tab:hover .al-tab__label,
+.al-tab:active .al-tab__label,
+.al-tab:focus-visible .al-tab__label,
+.al-tab[aria-selected="true"] .al-tab__label,
+.al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 @media (prefers-reduced-motion: reduce) {

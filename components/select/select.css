@@ -73,10 +73,11 @@
  *   nao o obrigatorio - nao existe estilo de "obrigatorio" porque a ausencia
  *   da marca E o obrigatorio.
  *
- * EXCECAO CONSCIENTE - DURACAO LITERAL
- *   Os 120ms da transicao sao literais porque a Foundation ainda nao tem
- *   escala de motion. Mesma pendencia do Button e do Icon Button; aparece
- *   nomeada no relatorio do check.py, nunca como reprova silenciosa.
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
  *
  * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
  */
@@ -158,8 +159,8 @@
   -webkit-tap-highlight-color: transparent;
 
   transition:
-    border-color 120ms ease,
-    box-shadow 120ms ease;
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
 /* nada aqui e `outline`: o anel e sombra, para respeitar o raio do campo */
@@ -248,6 +249,16 @@
 
 .al-select:has(.al-select__field:disabled) .al-select__chevron {
   color: var(--al-select-icon-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-select__field:hover,
+.al-select__field:active,
+.al-select__field:focus-visible,
+.al-select__field[aria-invalid="true"] {
+  transition-timing-function: var(--al-motion-easing-enter);
 }
 
 /* ------------------------------------------------------------ ambiente */
