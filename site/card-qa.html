@@ -1,0 +1,1291 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AL Card QA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ================= foundation ================= */
+/* AL Design System - Foundation
+ * v0.14.0 - MIT
+ * GERADO por foundation/css.py. Nao editar a mao: rode o script.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* primitivas de cor - a rampa crua. Nao consumir direto num componente. */
+  --al-color-neutral-50: #F7F7F7;
+  --al-color-neutral-100: #EEEEEE;
+  --al-color-neutral-200: #E0E0E0;
+  --al-color-neutral-300: #CECECE;
+  --al-color-neutral-400: #B3B3B3;
+  --al-color-neutral-500: #949494;
+  --al-color-neutral-600: #717171;
+  --al-color-neutral-700: #565656;
+  --al-color-neutral-800: #3E3E3E;
+  --al-color-neutral-900: #292929;
+  --al-color-neutral-950: #181818;
+  --al-color-orange-50: #FFF5F0;
+  --al-color-orange-100: #FFEADE;
+  --al-color-orange-200: #FFD7C4;
+  --al-color-orange-300: #FFBDA0;
+  --al-color-orange-400: #FF9267;
+  --al-color-orange-500: #FC5000;
+  --al-color-orange-600: #C53900;
+  --al-color-orange-700: #992700;
+  --al-color-orange-800: #6C2100;
+  --al-color-orange-900: #4A1700;
+  --al-color-orange-950: #2D0D00;
+  --al-color-red-50: #FFF5F5;
+  --al-color-red-100: #FFE8E9;
+  --al-color-red-200: #FFD5D5;
+  --al-color-red-300: #FFBABB;
+  --al-color-red-400: #FF8D91;
+  --al-color-red-500: #F84F5D;
+  --al-color-red-600: #CA293F;
+  --al-color-red-700: #A00E27;
+  --al-color-red-800: #780014;
+  --al-color-red-900: #550007;
+  --al-color-red-950: #360001;
+  --al-color-amber-50: #FBF7EC;
+  --al-color-amber-100: #F7EED5;
+  --al-color-amber-200: #F2DFB0;
+  --al-color-amber-300: #EBCA7E;
+  --al-color-amber-400: #DCAC2E;
+  --al-color-amber-500: #BA8C00;
+  --al-color-amber-600: #916A00;
+  --al-color-amber-700: #704F00;
+  --al-color-amber-800: #523800;
+  --al-color-amber-900: #392500;
+  --al-color-amber-950: #221500;
+  --al-color-green-50: #EFFBF2;
+  --al-color-green-100: #DEF6E4;
+  --al-color-green-200: #C1EECA;
+  --al-color-green-300: #9DE2A9;
+  --al-color-green-400: #6ACD7C;
+  --al-color-green-500: #1BB14B;
+  --al-color-green-600: #008A2A;
+  --al-color-green-700: #006911;
+  --al-color-green-800: #004C03;
+  --al-color-green-900: #013400;
+  --al-color-green-950: #001F00;
+  --al-color-blue-50: #F1F8FF;
+  --al-color-blue-100: #E2F1FF;
+  --al-color-blue-200: #CAE4FF;
+  --al-color-blue-300: #A9D3FF;
+  --al-color-blue-400: #76B8FF;
+  --al-color-blue-500: #2696FF;
+  --al-color-blue-600: #0071D0;
+  --al-color-blue-700: #0055A3;
+  --al-color-blue-800: #003C7A;
+  --al-color-blue-900: #002858;
+  --al-color-blue-950: #001639;
+
+  /* semanticos de cor - TEMA CLARO. E aqui que o tema e resolvido. */
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-thumb: #B3B3B3;
+  --al-bg-thumb-disabled: #CECECE;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+
+  /* tipografia */
+  --al-font-sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --al-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-font-weight-regular: 400;
+  --al-font-weight-medium: 500;
+  --al-font-weight-semibold: 600;
+  --al-font-weight-bold: 700;
+  --al-font-size-xs: 12px;
+  --al-font-size-sm: 14px;
+  --al-font-size-md: 16px;
+  --al-font-size-lg: 18px;
+  --al-font-size-xl: 20px;
+  --al-font-size-2xl: 24px;
+  --al-font-size-3xl: 30px;
+  --al-font-size-4xl: 36px;
+  --al-font-size-5xl: 48px;
+  --al-font-size-6xl: 60px;
+  --al-line-height-xs: 16px;
+  --al-line-height-sm: 20px;
+  --al-line-height-md: 24px;
+  --al-line-height-lg: 28px;
+  --al-line-height-xl: 28px;
+  --al-line-height-2xl: 32px;
+  --al-line-height-3xl: 36px;
+  --al-line-height-4xl: 44px;
+  --al-line-height-5xl: 56px;
+  --al-line-height-6xl: 68px;
+
+  /* espacamento */
+  --al-space-0: 0px;
+  --al-space-2: 2px;
+  --al-space-4: 4px;
+  --al-space-8: 8px;
+  --al-space-12: 12px;
+  --al-space-16: 16px;
+  --al-space-20: 20px;
+  --al-space-24: 24px;
+  --al-space-32: 32px;
+  --al-space-40: 40px;
+  --al-space-48: 48px;
+  --al-space-64: 64px;
+  --al-space-80: 80px;
+  --al-space-96: 96px;
+
+  /* raio */
+  --al-radius-none: 0px;
+  --al-radius-xs: 2px;
+  --al-radius-sm: 4px;
+  --al-radius-md: 6px;
+  --al-radius-lg: 8px;
+  --al-radius-xl: 12px;
+  --al-radius-2xl: 16px;
+  --al-radius-3xl: 24px;
+  --al-radius-full: 9999px;
+
+  /* borda */
+  --al-border-width-0: 0px;
+  --al-border-width-1: 1px;
+  --al-border-width-2: 2px;
+  --al-border-width-focus: 2px;
+  --al-border-focus-offset: 2px;
+
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
+
+  /* elevacao - TEMA CLARO */
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+
+  /* anel de foco - composto uma vez, acompanha o tema sozinho.
+     Duas camadas: respiro na cor do fundo, depois o anel na cor do foco. */
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+}
+
+/* TEMA ESCURO. Tres estados, nao dois: sem carimbo no root, so o
+ * prefers-color-scheme separa; com carimbo, a escolha explicita vence. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --al-bg-canvas: #181818;
+    --al-bg-surface: #292929;
+    --al-bg-surface-raised: #3E3E3E;
+    --al-bg-subtle: #3E3E3E;
+    --al-bg-hover: #3E3E3E;
+    --al-bg-active: #565656;
+    --al-bg-disabled: #3E3E3E;
+    --al-bg-inverse: #F7F7F7;
+    --al-bg-thumb: #717171;
+    --al-bg-thumb-disabled: #565656;
+    --al-bg-brand: #FC5000;
+    --al-bg-brand-hover: #EA4900;
+    --al-bg-brand-active: #C53900;
+    --al-bg-brand-subtle: #2D0D00;
+    --al-bg-brand-strong: #992700;
+    --al-bg-danger: #F84F5D;
+    --al-bg-danger-hover: #FF8D91;
+    --al-bg-danger-active: #FFBABB;
+    --al-bg-danger-subtle: #360001;
+    --al-bg-success: #1BB14B;
+    --al-bg-success-hover: #6ACD7C;
+    --al-bg-success-subtle: #001F00;
+    --al-bg-warning: #DCAC2E;
+    --al-bg-warning-hover: #EBCA7E;
+    --al-bg-warning-subtle: #221500;
+    --al-bg-info: #2696FF;
+    --al-bg-info-hover: #76B8FF;
+    --al-bg-info-subtle: #001639;
+    --al-text-primary: #F7F7F7;
+    --al-text-secondary: #B3B3B3;
+    --al-text-placeholder: #B3B3B3;
+    --al-text-disabled: #717171;
+    --al-text-inverse: #292929;
+    --al-text-on-brand: #FFFFFF;
+    --al-text-on-solid: #181818;
+    --al-text-brand: #FF9267;
+    --al-text-danger: #FF8D91;
+    --al-text-success: #6ACD7C;
+    --al-text-warning: #EBCA7E;
+    --al-text-info: #76B8FF;
+    --al-border-subtle: #3E3E3E;
+    --al-border-default: #565656;
+    --al-border-strong: #949494;
+    --al-border-brand: #FC5000;
+    --al-border-focus: #FF9267;
+    --al-border-danger: #F84F5D;
+    --al-border-success: #1BB14B;
+    --al-border-warning: #DCAC2E;
+    --al-border-info: #2696FF;
+    --al-shadow-focus-default: #FF9267;
+    --al-shadow-focus-error: #FF8D91;
+    --al-elevation-0: none;
+    --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+    --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+    --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+    --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+    --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --al-bg-canvas: #181818;
+  --al-bg-surface: #292929;
+  --al-bg-surface-raised: #3E3E3E;
+  --al-bg-subtle: #3E3E3E;
+  --al-bg-hover: #3E3E3E;
+  --al-bg-active: #565656;
+  --al-bg-disabled: #3E3E3E;
+  --al-bg-inverse: #F7F7F7;
+  --al-bg-thumb: #717171;
+  --al-bg-thumb-disabled: #565656;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #EA4900;
+  --al-bg-brand-active: #C53900;
+  --al-bg-brand-subtle: #2D0D00;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #F84F5D;
+  --al-bg-danger-hover: #FF8D91;
+  --al-bg-danger-active: #FFBABB;
+  --al-bg-danger-subtle: #360001;
+  --al-bg-success: #1BB14B;
+  --al-bg-success-hover: #6ACD7C;
+  --al-bg-success-subtle: #001F00;
+  --al-bg-warning: #DCAC2E;
+  --al-bg-warning-hover: #EBCA7E;
+  --al-bg-warning-subtle: #221500;
+  --al-bg-info: #2696FF;
+  --al-bg-info-hover: #76B8FF;
+  --al-bg-info-subtle: #001639;
+  --al-text-primary: #F7F7F7;
+  --al-text-secondary: #B3B3B3;
+  --al-text-placeholder: #B3B3B3;
+  --al-text-disabled: #717171;
+  --al-text-inverse: #292929;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #181818;
+  --al-text-brand: #FF9267;
+  --al-text-danger: #FF8D91;
+  --al-text-success: #6ACD7C;
+  --al-text-warning: #EBCA7E;
+  --al-text-info: #76B8FF;
+  --al-border-subtle: #3E3E3E;
+  --al-border-default: #565656;
+  --al-border-strong: #949494;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FF9267;
+  --al-border-danger: #F84F5D;
+  --al-border-success: #1BB14B;
+  --al-border-warning: #DCAC2E;
+  --al-border-info: #2696FF;
+  --al-shadow-focus-default: #FF9267;
+  --al-shadow-focus-error: #FF8D91;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+  --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+  --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+  --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+  --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+}
+
+/* O carimbo tambem avisa o NAVEGADOR. `color-scheme: light dark` no :root
+ * deixa a UI nativa - puxador e barra de rolagem do Textarea, lista do
+ * Select - seguir o sistema; com o tema forcado, ela seguiria o sistema e
+ * nao a pagina. Sem carimbo nao precisa: o sistema e a pagina concordam. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* ================= icon - tokens ================= */
+/* AL Design System - tokens do Icon
+ * GERADO por components/icon/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada tinta aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados. Entao o
+ * :root re-substitui todos eles de uma vez.
+ */
+
+:root {
+
+  /* caixa - degrau recorrente, nao teto */
+  --al-icon-box-16: var(--al-icon-size-16);
+  --al-icon-box-20: var(--al-icon-size-20);
+  --al-icon-box-24: var(--al-icon-size-24);
+  --al-icon-box-32: var(--al-icon-size-32);
+
+  /* tinta - saida explicita. O default do componente e currentColor. */
+  --al-icon-ink-default: var(--al-text-primary);
+  --al-icon-ink-on-brand: var(--al-text-on-brand);
+  --al-icon-ink-on-solid: var(--al-text-on-solid);
+  --al-icon-ink-disabled: var(--al-text-disabled);
+}
+
+/* ================= icon ================= */
+/* AL Design System - Icon
+ *
+ * Depende de: foundation/al-foundation.css + components/icon/al-icon-tokens.css
+ *
+ * ANATOMIA
+ *   A classe vai no proprio <svg>, nao num involucro. O arquivo do icone mora
+ *   em components/icon/icons/ e e inserido inline no HTML - inline porque so
+ *   assim o traco herda a cor do texto ao redor, que e o mecanismo inteiro
+ *   deste componente. <img> nao herda cor; background-image tambem nao.
+ *
+ *     <svg class="al-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…</svg>
+ *
+ * TAMANHO
+ *   Nao existe escala fixa. O desenho e vetorizado no grid de 24, entao a mesma
+ *   marcacao serve em qualquer tamanho, e o traco engrossa junto porque o
+ *   viewBox escala o desenho inteiro - e por isso que a caixa e a unica coisa
+ *   que este CSS precisa definir.
+ *
+ *   Padrao 24. Os degraus recorrentes tem modificador:
+ *     .al-icon--16  .al-icon--20  .al-icon--32
+ *   Qualquer outro tamanho entra pela propria custom property, sem classe nova
+ *   e sem esperar a escala crescer:
+ *     <svg class="al-icon" style="--al-icon-box: 40px" aria-hidden="true" focusable="false">
+ *   O portao de CSS literal vale para o CSS do design system, nao para a
+ *   aplicacao que o consome. Este e o escape, e ele e de propósito.
+ *
+ * COR
+ *   Padrao e `currentColor`: o icone herda a cor de quem o contem. E por isso
+ *   que dentro do Button ele acerta os quatro estados sem uma linha a mais - o
+ *   rotulo ja resolveu a cor, e o icone segue. A collection `3. Icon ink` do
+ *   Figma existe com quatro modes justamente porque o Figma nao tem essa
+ *   palavra-chave; aqui ela substitui a collection inteira.
+ *   Para icone que vive fora de um acionavel e nao tem de quem herdar, os
+ *   quatro modificadores `--ink-*` dizem a cor explicitamente.
+ *
+ * ACESSIBILIDADE - contrato de marcacao
+ *   Icone do AL vive dentro de acionavel, e nesse lugar ele e quase sempre
+ *   DECORATIVO: quem carrega o sentido e o rotulo do botao. Icone decorativo
+ *   anunciado por leitor de tela vira ruido duplicado.
+ *
+ *     decorativo (padrao)  aria-hidden="true" focusable="false"
+ *     carrega o sentido    role="img" + aria-label="…"
+ *
+ *   Os dois atributos do caso decorativo fazem coisas diferentes: aria-hidden
+ *   tira do leitor de tela, focusable="false" tira da ordem de tabulacao (SVG
+ *   inline entra nela sozinho em alguns navegadores).
+ *   Botao so-icone e o caso limite: o nome acessivel vai no BOTAO, nunca no
+ *   svg - e o Icon Button que resolve isso, nao este componente.
+ *   Quem cobra isso e o a11y.py ao lado: ele le o HTML que o site emite e
+ *   reprova todo .al-icon sem contrato. Nao e regra escrita, e regra medida.
+ *
+ * NOTA DE GEOMETRIA
+ *   Este arquivo define cor e caixa, e nao define `stroke-width`. Nao e
+ *   esquecimento: a espessura do traco (2 no grid de 24) e parte do DESENHO e
+ *   viaja dentro do proprio arquivo .svg. Cor e caixa mudam com o contexto e
+ *   com o tema; o desenho, nao.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+.al-icon {
+  display: inline-block;
+
+  /* nunca encolhe: dentro de um flex apertado o icone e a ultima coisa que
+     deve ceder espaco - deformar o icone e pior do que quebrar o rotulo */
+  flex: none;
+
+  /* a caixa. Sem valor definido, cai no degrau padrao. */
+  inline-size: var(--al-icon-box, var(--al-icon-box-24));
+  block-size: var(--al-icon-box, var(--al-icon-box-24));
+
+  /* alinha ao centro da linha quando o icone aparece solto no meio de texto.
+     Dentro de um flex (o caso do Button) quem alinha e o container, e esta
+     declaracao nao atrapalha. */
+  vertical-align: middle;
+
+  /* o mecanismo: a cor vem de quem contem */
+  color: inherit;
+  fill: none;
+  stroke: currentColor;
+}
+
+/* ---------------------------------------------------------------- caixa
+   Degraus recorrentes. Vem depois da base de proposito: mesma especificidade,
+   entao quem vence e a ordem do arquivo. */
+
+.al-icon--16 { --al-icon-box: var(--al-icon-box-16); }
+.al-icon--20 { --al-icon-box: var(--al-icon-box-20); }
+.al-icon--24 { --al-icon-box: var(--al-icon-box-24); }
+.al-icon--32 { --al-icon-box: var(--al-icon-box-32); }
+
+/* ---------------------------------------------------------------- tinta
+   Saida explicita, para icone sem quem herdar. Dentro de um acionavel nao se
+   usa nenhuma destas: o padrao ja acerta. */
+
+.al-icon--ink-default  { color: var(--al-icon-ink-default); }
+.al-icon--ink-on-brand { color: var(--al-icon-ink-on-brand); }
+.al-icon--ink-on-solid { color: var(--al-icon-ink-on-solid); }
+.al-icon--ink-disabled { color: var(--al-icon-ink-disabled); }
+
+/* ================= card - tokens ================= */
+/* AL Design System - tokens do Card
+ * GERADO por components/card/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ */
+
+:root {
+
+  /* fundo - o mesmo nos tres tipos */
+  --al-card-bg: var(--al-bg-surface-raised);
+
+  /* borda do tipo Border - laranja so no foco */
+  --al-card-border: var(--al-border-default);
+  --al-card-border-hover: var(--al-border-strong);
+  --al-card-border-focus: var(--al-border-brand);
+
+  /* titulo e descricao - opcionais, substituiveis pelo slot */
+  --al-card-title: var(--al-text-primary);
+  --al-card-description: var(--al-text-secondary);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-card-ring: var(--al-focus-ring-default);
+
+  /* elevacao - altura, nao estado */
+  --al-card-elevated-shadow: var(--al-elevation-2);
+  --al-card-elevated-shadow-hover: var(--al-elevation-4);
+  --al-card-filled-shadow-hover: var(--al-elevation-2);
+
+  /* geometria */
+  --al-card-padding-spaced: var(--al-space-24);
+  --al-card-padding-default: var(--al-space-16);
+  --al-card-padding-tight: var(--al-space-8);
+  --al-card-gap: var(--al-space-8);
+  --al-card-text-gap: var(--al-space-4);
+  --al-card-radius: var(--al-radius-lg);
+  --al-card-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-card-title-font-size: var(--al-font-size-xl);
+  --al-card-title-line-height: var(--al-line-height-xl);
+  --al-card-title-font-weight: 600;
+  --al-card-title-tracking: -0.01em;
+  --al-card-description-font-size: var(--al-font-size-md);
+  --al-card-description-line-height: var(--al-line-height-md);
+  --al-card-description-font-weight: 400;
+  --al-card-description-tracking: 0em;
+}
+
+/* ================= card ================= */
+/* AL Design System - Card
+ * Escrito a mao. Depende de al-foundation.css e al-card-tokens.css, nesta
+ * ordem.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, sombra e tipografia entram
+ * por var(--al-card-*). O check.py ao lado recusa o arquivo se algum escapar.
+ * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
+ * de motion na Foundation - igual ao Button e ao Input.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   estatico (Filled, Default):
+ *     <div class="al-card">
+ *       <div class="al-card__header">
+ *         <h3 class="al-card__title">Pedido #1042</h3>
+ *         <p class="al-card__description">Entregue em 3 de outubro.</p>
+ *       </div>
+ *       ...qualquer conteudo, inclusive botoes no fim (regra 12)
+ *     </div>
+ *
+ *   clicavel (regras 13 a 17) - link real NO TITULO, esticado sobre o card:
+ *     <div class="al-card al-card--border al-card--clickable">
+ *       <div class="al-card__header">
+ *         <h3 class="al-card__title">
+ *           <a class="al-card__link" href="/pedidos/1042">Pedido #1042</a>
+ *         </h3>
+ *         <p class="al-card__description">Entregue em 3 de outubro.</p>
+ *       </div>
+ *     </div>
+ *     Nada clicavel alem do link (regra 15). Acao que nao navega troca o
+ *     <a> por <button class="al-card__link" type="button"> (regra 16).
+ *
+ *   lista de cards (regra 22): <ul> com <li class="al-card">.
+ *
+ *   modificadores - tipo:    (nenhum) = Filled | --border | --elevated
+ *                   padding: --spaced (24) | (nenhum) = Default (16) | --tight (8)
+ *
+ * TITULO E DESCRICAO SAO OPCIONAIS (DECISAO E)
+ *   `__header`, `__title` e `__description` sao orientacao: o card aceita
+ *   qualquer conteudo no lugar deles. O nivel do titulo (h2, h3...) e da
+ *   pagina, nunca do componente (regra 11) - por isso a classe nao prende tag.
+ *
+ * A BORDA E OUTSIDE (DECISAO F)
+ *   No Figma o stroke do Border e OUTSIDE: nao entra no layout. Aqui a borda e
+ *   uma sombra de 1px sem desfoque, desenhada FORA da caixa - os tres tipos
+ *   medem igual e o padding nao desconta nada. Por isso nao ha `border` nem
+ *   `calc(padding - border-width)`, ao contrario do Button e do Input.
+ *
+ * UMA PROPRIEDADE, TRES CAMADAS
+ *   Borda, anel de foco e elevacao sao todos box-shadow. Para nenhum estado
+ *   apagar o outro, cada um vive numa variavel interna e o box-shadow as
+ *   empilha numa ordem fixa: borda por cima, anel no meio, elevacao embaixo.
+ *   Com a borda por cima do respiro do anel, o foco do Border fica igual ao
+ *   Figma (1px de marca, 1px de respiro, 2px de anel). E e assim que o
+ *   Elevated com foco mantem a sombra (decisao D): o foco troca so o anel.
+ *
+ * O FOCO E DO LINK, O ANEL E DO CARD
+ *   Quem recebe o Tab e o link do titulo. `:has()` leva o anel para o card
+ *   inteiro (regra 17) e so entao some o contorno nativo do link - navegador
+ *   sem `:has()` mantem o contorno do proprio navegador, nunca fica sem foco.
+ *
+ * ALTO CONTRASTE
+ *   No `forced-colors` o sistema remove fundo e sombra: Filled e Elevated
+ *   sumiriam inteiros, e a borda do Border (que e sombra) junto. Ali os tres
+ *   tipos ganham contorno na cor do texto do sistema, e o foco ganha o
+ *   contorno `Highlight` - mesmo padrao do Button.
+ *
+ * SEM DISABLED NEM PRESSIONADO, POR DECISAO (regras 19 e 20).
+ */
+
+.al-card {
+  /* camadas de sombra - ver "Uma propriedade, tres camadas" */
+  --_edge: 0 0 0 0 transparent;
+  --_ring: 0 0 0 0 transparent;
+  --_lift: 0 0 0 0 transparent;
+
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-card-gap);
+  margin: 0;
+  padding: var(--al-card-padding-default);
+  border-radius: var(--al-card-radius);
+  background-color: var(--al-card-bg);
+  box-shadow: var(--_edge), var(--_ring), var(--_lift);
+  list-style: none;
+  transition: box-shadow 120ms ease;
+}
+
+/* ------------------------------------------------------------------ tipo */
+.al-card--border {
+  --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border);
+}
+
+.al-card--elevated {
+  --_lift: var(--al-card-elevated-shadow);
+}
+
+/* --------------------------------------------------------------- padding */
+.al-card--spaced {
+  padding: var(--al-card-padding-spaced);
+}
+
+.al-card--tight {
+  padding: var(--al-card-padding-tight);
+}
+
+/* ------------------------------------------------- titulo e descricao */
+.al-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-card-text-gap);
+}
+
+.al-card__title {
+  margin: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-card-title-font-size);
+  line-height: var(--al-card-title-line-height);
+  font-weight: var(--al-card-title-font-weight);
+  letter-spacing: var(--al-card-title-tracking);
+  color: var(--al-card-title);
+}
+
+.al-card__description {
+  margin: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-card-description-font-size);
+  line-height: var(--al-card-description-line-height);
+  font-weight: var(--al-card-description-font-weight);
+  letter-spacing: var(--al-card-description-tracking);
+  color: var(--al-card-description);
+}
+
+/* --------------------------------------------------------------- clicavel */
+/* O link herda a aparencia do titulo: quem diz que e clicavel e o destino
+   escrito no titulo, a seta recomendada (regra 14) e o hover. */
+.al-card__link {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* O pseudo-elemento cobre o card inteiro: o card todo e o alvo do clique,
+   mas o nome anunciado continua sendo so o titulo (regra 16). */
+.al-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* hover - o tipo decide o que muda */
+.al-card--clickable:hover {
+  --_lift: var(--al-card-filled-shadow-hover);
+}
+
+.al-card--clickable.al-card--elevated:hover {
+  --_lift: var(--al-card-elevated-shadow-hover);
+}
+
+.al-card--clickable.al-card--border:hover {
+  --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-hover);
+  --_lift: 0 0 0 0 transparent;
+}
+
+/* foco - so com :has(); sem ele, fica o contorno nativo do link */
+@supports selector(:has(*)) {
+  .al-card__link:focus {
+    outline: none;
+  }
+
+  .al-card--clickable:has(.al-card__link:focus-visible) {
+    --_ring: var(--al-card-ring);
+  }
+
+  .al-card--clickable.al-card--border:has(.al-card__link:focus-visible) {
+    --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-focus);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-card {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-card {
+    outline: var(--al-card-border-width) solid CanvasText;
+  }
+
+  .al-card--clickable:has(.al-card__link:focus-visible) {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}
+
+
+/* ================= cromo da pagina de QA =================
+   Usa os proprios tokens do AL. Nao ha paleta paralela aqui de proposito. */
+html, body { background: var(--al-bg-canvas); }
+body {
+  margin: 0;
+  color: var(--al-text-primary);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-font-size-md);
+  line-height: var(--al-line-height-md);
+}
+.qa-wrap {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-inline: var(--al-space-16);
+  padding-block: var(--al-space-32) var(--al-space-64);
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-space-48);
+}
+.qa-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; gap: var(--al-space-16);
+  border-bottom: 1px solid var(--al-border-subtle);
+  padding-bottom: var(--al-space-16);
+}
+.qa-head h1 {
+  margin: 0; font-size: var(--al-font-size-3xl); line-height: var(--al-line-height-3xl);
+  font-weight: 600; letter-spacing: -0.02em; text-wrap: balance;
+}
+.qa-sub { margin: var(--al-space-4) 0 0; color: var(--al-text-secondary); font-size: var(--al-font-size-sm); }
+.qa-btn {
+  display: inline-flex; align-items: center; gap: var(--al-space-8);
+  padding: var(--al-space-8) var(--al-space-16);
+  border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-full);
+  background: var(--al-bg-surface-raised); color: var(--al-text-primary);
+  font: inherit; font-size: var(--al-font-size-sm); cursor: pointer;
+}
+.qa-btn:focus-visible { outline: none; box-shadow: var(--al-focus-ring-default); }
+.qa-btn--primary { background: var(--al-bg-brand); border-color: var(--al-bg-brand); color: var(--al-text-on-brand); }
+section > h2 {
+  margin: 0 0 var(--al-space-4);
+  font-size: var(--al-font-size-xl); line-height: var(--al-line-height-xl);
+  font-weight: 600; letter-spacing: -0.01em;
+}
+section > p.qa-lede { margin: 0 0 var(--al-space-20); color: var(--al-text-secondary); max-width: 66ch; }
+.qa-tag {
+  font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs);
+  padding: 2px var(--al-space-8); border-radius: var(--al-radius-full);
+  border: 1px solid var(--al-border-default); color: var(--al-text-secondary);
+  white-space: nowrap; vertical-align: middle; margin-left: var(--al-space-8);
+  font-weight: 400; letter-spacing: 0;
+}
+.qa-tag--real { border-color: var(--al-border-success); color: var(--al-text-success); }
+.qa-tag--simulado { border-color: var(--al-border-warning); color: var(--al-text-warning); }
+.qa-checks { margin: 0; padding-left: var(--al-space-20); display: grid; gap: var(--al-space-8); max-width: 72ch; }
+.qa-checks li { color: var(--al-text-secondary); }
+.qa-checks strong { color: var(--al-text-primary); font-weight: 500; }
+.qa-tablewrap { overflow-x: auto; }
+table.qa-measure { border-collapse: collapse; width: 100%; font-size: var(--al-font-size-sm); font-variant-numeric: tabular-nums; }
+table.qa-measure th, table.qa-measure td { text-align: left; padding: var(--al-space-8) var(--al-space-12); border-bottom: 1px solid var(--al-border-subtle); white-space: nowrap; }
+table.qa-measure th { font-weight: 600; font-size: var(--al-font-size-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--al-text-secondary); }
+.qa-verdict { font-weight: 600; }
+.qa-verdict--ok { color: var(--al-text-success); }
+.qa-verdict--exc { color: var(--al-text-warning); }
+.qa-verdict--bad { color: var(--al-text-danger); }
+.qa-foot { color: var(--al-text-secondary); font-size: var(--al-font-size-sm); border-top: 1px solid var(--al-border-subtle); padding-top: var(--al-space-16); }
+code { font-family: var(--al-font-mono); font-size: 0.9em; }
+
+/* ---- especificos do Card ---- */
+.qa-panel {
+  padding: var(--al-space-24); border-radius: var(--al-radius-xl);
+  background: var(--al-bg-surface);
+}
+.qa-matrix { display: flex; flex-direction: column; gap: var(--al-space-20); }
+.qa-matrix__row { display: grid; gap: var(--al-space-20); grid-template-columns: 88px repeat(3, minmax(0, 1fr)); align-items: start; }
+.qa-matrix__label { margin: 0; font-size: var(--al-font-size-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--al-text-secondary); }
+.qa-matrix__row:not(.qa-matrix__row--head) > .qa-matrix__label { padding-top: var(--al-space-8); }
+.qa-cell { display: flex; flex-direction: column; gap: var(--al-space-8); min-width: 0; }
+.qa-cards { display: grid; gap: var(--al-space-20); grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.qa-cardrow { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--al-space-12); }
+.qa-chevron { flex-shrink: 0; margin-top: var(--al-space-4); color: var(--al-text-secondary); }
+.qa-pages { display: grid; gap: var(--al-space-20); grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.qa-page { display: flex; flex-direction: column; gap: var(--al-space-16); padding: var(--al-space-24); border-radius: var(--al-radius-xl); outline: 1px dashed var(--al-border-default); }
+.qa-page__name { margin: 0; font-size: var(--al-font-size-sm); font-weight: 600; }
+.qa-page__cards { display: flex; flex-direction: column; gap: var(--al-space-16); }
+.qa-pagenote { margin: 0; color: var(--al-text-secondary); font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); }
+.qa-pagenote--bad { color: var(--al-text-danger); }
+.qa-uses { display: grid; gap: var(--al-space-32); grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.qa-use { display: flex; flex-direction: column; gap: var(--al-space-12); }
+.qa-use > h3 { margin: 0; font-size: var(--al-font-size-sm); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.qa-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--al-space-16); }
+.qa-list--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--al-space-8); }
+.qa-actions { display: flex; gap: var(--al-space-8); justify-content: flex-end; flex-wrap: wrap; }
+.qa-log { margin: var(--al-space-12) 0 0; font-size: var(--al-font-size-sm); color: var(--al-text-secondary); min-height: var(--al-line-height-sm); }
+@media (max-width: 720px) {
+  .qa-matrix__row { grid-template-columns: minmax(0, 1fr); }
+  .qa-matrix__row--head { display: none; }
+  .qa-list--3 { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+
+<div class="qa-wrap">
+  <header class="qa-head">
+    <div>
+      <h1>Card — QA da etapa 6</h1>
+      <p class="qa-sub">AL Design System 0.14.0 · componente 0.1.0 ·
+      3 tipos × 3 paddings × estático/clicável · portão: 32 combinações, 22 passam, 10 exceções, 0 reprovas</p>
+    </div>
+    <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">
+      <span id="theme-label">Tema claro</span>
+    </button>
+  </header>
+
+  <section>
+    <h2>O que testar</h2>
+    <ol class="qa-checks">
+      <li><strong>Tabule pela página.</strong> Cada card clicável é <em>uma</em> parada de Tab, e o anel laranja envolve o card inteiro, não só o título (regra 17). Os cards estáticos nunca recebem foco.</li>
+      <li><strong>Aperte Enter num card focado</strong> ou clique em qualquer ponto dele (não só no título): a linha abaixo dos cards ao vivo diz qual abriu.</li>
+      <li><strong>Passe o ponteiro</strong> nos cards ao vivo: Filled ganha sombra, Border escurece a borda (não fica laranja), Elevated sobe a sombra.</li>
+      <li><strong>Tabule até o Elevated ao vivo</strong>: o anel aparece e a sombra continua (decisão D). No Figma ela some; aqui não pode sumir.</li>
+      <li><strong>Troque o tema</strong>: no escuro o card clareia em relação à página, e é isso que o separa, não a sombra (regra 23). Confira as duas páginas e a tabela de contraste no fim.</li>
+      <li><strong>Tente selecionar o texto de um card clicável</strong>: não dá. É o custo aceito do link esticado (regra 16) — o texto dos cards estáticos seleciona normalmente.</li>
+      <li><strong>Com leitor de tela</strong> (VoiceOver: Ctrl+Opção+→), percorra os atalhos: ele diz “lista, 3 itens” e anuncia só o título como link, não o card inteiro.</li>
+      <li><strong>Ative o alto contraste</strong> (Windows) ou “Aumentar contraste” (macOS): os três tipos ganham contorno e continuam visíveis.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Matriz estática <span class="qa-tag qa-tag--real">real</span></h2>
+    <p class="qa-lede">Os três tipos nos três paddings, sobre <code>bg-surface</code> — onde o Filled pode
+    ficar (regra 2). Repare que as três colunas medem igual em qualquer tipo: a borda do Border é
+    desenhada fora da caixa (decisão F).</p>
+    <div class="qa-panel"><div class="qa-matrix" id="matrix-static"><div class="qa-matrix__row qa-matrix__row--head"><span></span><p class="qa-matrix__label">Spaced · 24</p><p class="qa-matrix__label">Default · 16</p><p class="qa-matrix__label">Tight · 8</p></div><div class="qa-matrix__row"><p class="qa-matrix__label">Filled</p><div class="qa-cell"><div class="al-card al-card--spaced">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card al-card--tight">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div></div><div class="qa-matrix__row"><p class="qa-matrix__label">Border</p><div class="qa-cell"><div class="al-card al-card--border al-card--spaced">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card al-card--border">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card al-card--border al-card--tight">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div></div><div class="qa-matrix__row"><p class="qa-matrix__label">Elevated</p><div class="qa-cell"><div class="al-card al-card--elevated al-card--spaced">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card al-card--elevated">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card al-card--elevated al-card--tight">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div></div></div></div>
+  </section>
+
+  <section>
+    <h2>Clicável, ao vivo <span class="qa-tag qa-tag--real">real</span></h2>
+    <p class="qa-lede">Tabule, passe o ponteiro e aperte Enter. O link é o título, esticado sobre o card;
+    a seta à direita é a pista recomendada pela regra 14 (no toque não existe hover).</p>
+    <div class="qa-panel">
+      <div class="qa-cards"><div class="qa-cell"><div class="al-card al-card--clickable">
+    <div class="qa-cardrow">
+      <div class="al-card__header">
+        <h3 class="al-card__title"><a class="al-card__link" href="#pedido-filled">Pedido #1042</a></h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+      <svg class="al-icon al-icon--20 qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6" /></svg>
+    </div>
+  </div><p class="qa-pagenote">Filled</p></div>
+<div class="qa-cell"><div class="al-card al-card--border al-card--clickable">
+    <div class="qa-cardrow">
+      <div class="al-card__header">
+        <h3 class="al-card__title"><a class="al-card__link" href="#pedido-border">Pedido #1043</a></h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+      <svg class="al-icon al-icon--20 qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6" /></svg>
+    </div>
+  </div><p class="qa-pagenote">Border</p></div>
+<div class="qa-cell"><div class="al-card al-card--elevated al-card--clickable">
+    <div class="qa-cardrow">
+      <div class="al-card__header">
+        <h3 class="al-card__title"><a class="al-card__link" href="#pedido-elevated">Pedido #1044</a></h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+      <svg class="al-icon al-icon--20 qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6" /></svg>
+    </div>
+  </div><p class="qa-pagenote">Elevated</p></div></div>
+      <p class="qa-log" id="qa-log" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Estados congelados <span class="qa-tag qa-tag--simulado">simulado</span></h2>
+    <p class="qa-lede">Hover e foco só existem sob o ponteiro e o teclado. Aqui as camadas internas do
+    card (<code>--_edge</code>, <code>--_ring</code>, <code>--_lift</code>) foram escritas direto — as
+    mesmas que o seletor escreve — para comparar lado a lado com o Figma.</p>
+    <div class="qa-panel"><div class="qa-matrix"><div class="qa-matrix__row qa-matrix__row--head"><span></span><p class="qa-matrix__label">Repouso</p><p class="qa-matrix__label">Hover</p><p class="qa-matrix__label">Foco</p></div><div class="qa-matrix__row"><p class="qa-matrix__label">Filled</p><div class="qa-cell"><div class="al-card">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card" style="--_lift: var(--al-card-filled-shadow-hover)">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card" style="--_ring: var(--al-card-ring)">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div></div><div class="qa-matrix__row"><p class="qa-matrix__label">Border</p><div class="qa-cell"><div class="al-card al-card--border">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card al-card--border" style="--_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-hover)">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card al-card--border" style="--_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-focus); --_ring: var(--al-card-ring)">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div></div><div class="qa-matrix__row"><p class="qa-matrix__label">Elevated</p><div class="qa-cell"><div class="al-card al-card--elevated">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card al-card--elevated" style="--_lift: var(--al-card-elevated-shadow-hover)">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div><div class="qa-cell"><div class="al-card al-card--elevated" style="--_ring: var(--al-card-ring)">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div></div></div></div></div>
+  </section>
+
+  <section>
+    <h2>Nas duas páginas <span class="qa-tag qa-tag--real">real</span></h2>
+    <p class="qa-lede">O mesmo card sobre a tela e sobre superfície. Na tela clara o Filled fica 1,00:1 e
+    some — por isso a regra 2. Border e Elevated funcionam nas duas.</p>
+    <div class="qa-pages">
+      <div class="qa-page" style="background: var(--al-bg-canvas)" data-page="bg-canvas">
+        <p class="qa-page__name">Tela <code>bg-canvas</code></p>
+        <div class="qa-page__cards"><div class="qa-cell"><div class="al-card">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div><p class="qa-pagenote qa-pagenote--bad">Contraexemplo: Filled direto na tela some (regra 2).</p></div><div class="qa-cell"><div class="al-card al-card--border">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div><p class="qa-pagenote">Border</p></div><div class="qa-cell"><div class="al-card al-card--elevated">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div><p class="qa-pagenote">Elevated</p></div></div>
+      </div>
+      <div class="qa-page" style="background: var(--al-bg-surface)" data-page="bg-surface">
+        <p class="qa-page__name">Superfície <code>bg-surface</code></p>
+        <div class="qa-page__cards"><div class="qa-cell"><div class="al-card">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div><p class="qa-pagenote">Filled</p></div><div class="qa-cell"><div class="al-card al-card--border">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div><p class="qa-pagenote">Border</p></div><div class="qa-cell"><div class="al-card al-card--elevated">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Pedido #1042</h3>
+        <p class="al-card__description">Entregue em 3 de outubro.</p>
+      </div>
+    </div><p class="qa-pagenote">Elevated</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Usos reais</h2>
+    <p class="qa-lede">Tirados das regras de uso, cada um com a marcação que a regra pede.</p>
+    <div class="qa-uses">
+      <div class="qa-use">
+        <h3>Grade de atalhos</h3>
+        <ul class="qa-list">
+<li class="al-card al-card--border al-card--clickable">
+    <div class="qa-cardrow">
+      <div class="al-card__header">
+        <h3 class="al-card__title"><a class="al-card__link" href="#pedidos">Pedidos</a></h3>
+        <p class="al-card__description">Acompanhe entregas e devoluções.</p>
+      </div>
+      <svg class="al-icon al-icon--20 qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6" /></svg>
+    </div>
+  </li>
+<li class="al-card al-card--border al-card--clickable">
+    <div class="qa-cardrow">
+      <div class="al-card__header">
+        <h3 class="al-card__title"><a class="al-card__link" href="#clientes">Clientes</a></h3>
+        <p class="al-card__description">Cadastro, histórico e contatos.</p>
+      </div>
+      <svg class="al-icon al-icon--20 qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6" /></svg>
+    </div>
+  </li>
+<li class="al-card al-card--border al-card--clickable">
+    <div class="qa-cardrow">
+      <div class="al-card__header">
+        <h3 class="al-card__title"><a class="al-card__link" href="#relatorios">Relatórios</a></h3>
+        <p class="al-card__description">Vendas por período e por canal.</p>
+      </div>
+      <svg class="al-icon al-icon--20 qa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6" /></svg>
+    </div>
+  </li>
+        </ul>
+        <p class="qa-pagenote">Border clicável sobre a tela (regra 3), em <code>&lt;ul&gt;</code> (regra 22),
+        uma ação por card (regra 13), seta recomendada (regra 14).</p>
+      </div>
+
+      <div class="qa-use">
+        <h3>Card com ações</h3>
+        <div class="qa-panel">
+          <div class="al-card al-card--elevated al-card--spaced">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Plano Pro</h3>
+        <p class="al-card__description">Cobrança mensal, cancele quando quiser.</p>
+      </div>
+      <div class="qa-actions">
+        <button type="button" class="qa-btn">Ver detalhes</button>
+        <button type="button" class="qa-btn qa-btn--primary">Assinar</button>
+      </div>
+    </div>
+        </div>
+        <p class="qa-pagenote">Mais de uma ação: o card é estático e as ações são botões no fim,
+        uma primária (regras 12 e 13). Spaced: card isolado, de destaque (regra 8).</p>
+      </div>
+
+      <div class="qa-use">
+        <h3>Avisos</h3>
+        <ul class="qa-list">
+<li><article class="al-card al-card--border">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Nova política de frete</h3>
+        <p class="al-card__description">A partir de 1º de novembro, frete grátis acima de R$ 199.</p>
+      </div>
+    </article></li>
+<li><article class="al-card al-card--border">
+      <div class="al-card__header">
+        <h3 class="al-card__title">Manutenção programada</h3>
+        <p class="al-card__description">O painel fica fora do ar no domingo, das 2h às 4h.</p>
+      </div>
+    </article></li>
+        </ul>
+        <p class="qa-pagenote">Conteúdo autossuficiente: <code>&lt;article&gt;</code> dentro de
+        <code>&lt;li&gt;</code> (regra 22). Estático: o texto seleciona.</p>
+      </div>
+
+      <div class="qa-use">
+        <h3>Painel denso</h3>
+        <div class="qa-panel">
+          <ul class="qa-list qa-list--3">
+<li class="al-card al-card--tight">
+      <div class="al-card__header">
+        <h4 class="al-card__title">128</h4>
+        <p class="al-card__description">pedidos hoje</p>
+      </div>
+    </li>
+<li class="al-card al-card--tight">
+      <div class="al-card__header">
+        <h4 class="al-card__title">R$ 24 mil</h4>
+        <p class="al-card__description">faturados</p>
+      </div>
+    </li>
+<li class="al-card al-card--tight">
+      <div class="al-card__header">
+        <h4 class="al-card__title">3</h4>
+        <p class="al-card__description">devoluções</p>
+      </div>
+    </li>
+          </ul>
+        </div>
+        <p class="qa-pagenote">Tight para cards pequenos e densos (regra 8), Filled sobre
+        <code>bg-surface</code> (regra 2), mesmo tipo e padding na grade (regra 5).</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Contraste medido no navegador</h2>
+    <p class="qa-lede">Não são os números do <code>tokens.json</code>: o script lê a cor que o navegador
+    pintou — o texto, a borda (primeira camada do <code>box-shadow</code>) e o fundo do card — contra o
+    fundo efetivo, com <code>getComputedStyle</code>, depois da transição terminar.</p>
+    <div class="qa-tablewrap">
+      <table class="qa-measure">
+        <thead><tr><th>onde</th><th>o quê</th><th>cor</th><th>fundo</th><th>medido</th><th>piso</th><th>veredito</th></tr></thead>
+        <tbody id="measure-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="qa-foot">Gerado por <code>components/card/qa.py</code> a partir do CSS commitado em
+  <code>dev</code>. <code>al-foundation.css</code>, <code>al-icon-tokens.css</code>, <code>icon.css</code>,
+  <code>al-card-tokens.css</code> e <code>card.css</code> estão embutidos como estão no repositório.</p>
+</div>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  function r(id) { return document.getElementById(id); }
+
+  // ------------------------------------------------------------------ tema
+  var btn = r('theme-toggle');
+  var label = r('theme-label');
+  function escuro() {
+    if (root.dataset.theme) return root.dataset.theme === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function pintarBotao() {
+    var d = escuro();
+    label.textContent = d ? 'Tema escuro' : 'Tema claro';
+    btn.setAttribute('aria-pressed', String(d));
+  }
+  btn.addEventListener('click', function () {
+    root.dataset.theme = escuro() ? 'light' : 'dark';
+    pintarBotao();
+    setTimeout(medir, 350);
+  });
+  pintarBotao();
+
+  // ------------------------------------------------- ativacao dos cards
+  var log = r('qa-log');
+  document.querySelectorAll('.al-card__link').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      log.textContent = 'Abriu: ' + a.textContent.trim() + ' (' + a.getAttribute('href') + ')';
+    });
+  });
+
+  // ------------------------------------------------------------- contraste
+  function rgb(str) {
+    var m = str && str.match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(',').map(function (x) { return +x.trim(); });
+    return [p[0], p[1], p[2], p[3] === undefined ? 1 : p[3]];
+  }
+  function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(c) { return 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); }
+  function cr(a, b) {
+    var la = lum(a), lb = lum(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+  function fundo(el) {
+    for (var p = el.parentElement; p; p = p.parentElement) {
+      var c = rgb(getComputedStyle(p).backgroundColor);
+      if (c && c[3] > 0) return c;
+    }
+    return rgb(getComputedStyle(document.body).backgroundColor) || [255, 255, 255, 1];
+  }
+  function tipo(el) {
+    return el.classList.contains('al-card--border') ? 'Border'
+         : el.classList.contains('al-card--elevated') ? 'Elevated' : 'Filled';
+  }
+  function onde(el) {
+    var s = el.closest('section');
+    return (s ? s.querySelector('h2').firstChild.textContent.trim() : '—') + ' · ' + tipo(el);
+  }
+  function css(c) { return 'rgb(' + c.slice(0, 3).join(', ') + ')'; }
+  function linha(where, what, fg, bg, piso, exc, invisivel) {
+    var v = cr(fg, bg);
+    var classe = invisivel ? 'bad' : v >= piso ? 'ok' : exc ? 'exc' : 'bad';
+    var texto = invisivel ? 'INVISÍVEL (contraexemplo da regra 2)' : v >= piso ? 'passa' : exc ? 'exceção declarada' : 'REPROVA';
+    var tr = document.createElement('tr');
+    [where, what, css(fg), css(bg), v.toFixed(2) + ':1', piso.toFixed(1) + ':1'].forEach(function (x) {
+      var td = document.createElement('td'); td.textContent = x; tr.appendChild(td);
+    });
+    var td = document.createElement('td');
+    td.textContent = texto; td.className = 'qa-verdict qa-verdict--' + classe;
+    tr.appendChild(td);
+    r('measure-body').appendChild(tr);
+  }
+
+  function medir() {
+    r('measure-body').textContent = '';
+    // so a matriz, as duas paginas e os ao vivo: o resto repete as mesmas cores
+    document.querySelectorAll('#matrix-static .al-card, .qa-page .al-card, .qa-cards .al-card').forEach(function (el) {
+      var cs = getComputedStyle(el);
+      var bg = rgb(cs.backgroundColor);
+      var pg = fundo(el);
+      var where = onde(el);
+      var title = el.querySelector('.al-card__title');
+      if (title) linha(where, 'título', rgb(getComputedStyle(title).color), bg, 4.5);
+      var desc = el.querySelector('.al-card__description');
+      if (desc) linha(where, 'descrição', rgb(getComputedStyle(desc).color), bg, 4.5);
+      var edge = rgb(cs.boxShadow);
+      var temBorda = edge && edge[3] > 0;
+      var temSombra = el.classList.contains('al-card--elevated');
+      if (temBorda) {
+        linha(where, 'borda × card', edge, bg, 3, true);
+        linha(where, 'borda × página', edge, pg, 3, true);
+      } else {
+        var igual = bg[0] === pg[0] && bg[1] === pg[1] && bg[2] === pg[2];
+        linha(where, 'fundo × página', bg, pg, 3, true, igual && !temSombra);
+      }
+    });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { setTimeout(medir, 350); });
+  } else {
+    setTimeout(medir, 350);
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+    pintarBotao(); setTimeout(medir, 350);
+  });
+})();
+</script>
