@@ -1,0 +1,48 @@
+/* AL Design System - tokens do Card
+ * GERADO por components/card/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ */
+
+:root {
+
+  /* fundo - o mesmo nos tres tipos */
+  --al-card-bg: var(--al-bg-surface-raised);
+
+  /* borda do tipo Border - laranja so no foco */
+  --al-card-border: var(--al-border-default);
+  --al-card-border-hover: var(--al-border-strong);
+  --al-card-border-focus: var(--al-border-brand);
+
+  /* titulo e descricao - opcionais, substituiveis pelo slot */
+  --al-card-title: var(--al-text-primary);
+  --al-card-description: var(--al-text-secondary);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-card-ring: var(--al-focus-ring-default);
+
+  /* elevacao - altura, nao estado */
+  --al-card-elevated-shadow: var(--al-elevation-2);
+  --al-card-elevated-shadow-hover: var(--al-elevation-4);
+  --al-card-filled-shadow-hover: var(--al-elevation-2);
+
+  /* geometria */
+  --al-card-padding-spaced: var(--al-space-24);
+  --al-card-padding-default: var(--al-space-16);
+  --al-card-padding-tight: var(--al-space-8);
+  --al-card-gap: var(--al-space-8);
+  --al-card-text-gap: var(--al-space-4);
+  --al-card-radius: var(--al-radius-lg);
+  --al-card-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-card-title-font-size: var(--al-font-size-xl);
+  --al-card-title-line-height: var(--al-line-height-xl);
+  --al-card-title-font-weight: 600;
+  --al-card-title-tracking: -0.01em;
+  --al-card-description-font-size: var(--al-font-size-md);
+  --al-card-description-line-height: var(--al-line-height-md);
+  --al-card-description-font-weight: 400;
+  --al-card-description-tracking: 0em;
+}

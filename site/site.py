@@ -99,6 +99,10 @@ DIVIDER = json.load(open(os.path.join(ROOT, 'components', 'divider', 'tokens.jso
 DIVIDER_TOKENS = open(os.path.join(ROOT, 'components', 'divider', 'al-divider-tokens.css')).read()
 DIVIDER_CSS = open(os.path.join(ROOT, 'components', 'divider', 'divider.css')).read()
 DIVIDER_A11Y = json.load(open(os.path.join(ROOT, 'components', 'divider', 'a11y.json')))
+CARD = json.load(open(os.path.join(ROOT, 'components', 'card', 'tokens.json')))
+CARD_TOKENS = open(os.path.join(ROOT, 'components', 'card', 'al-card-tokens.css')).read()
+CARD_CSS = open(os.path.join(ROOT, 'components', 'card', 'card.css')).read()
+CARD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'card', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -126,6 +130,7 @@ N_INPUT_TOKENS = len(INPUT['alias'])
 N_TEXTAREA_TOKENS = len(TEXTAREA['alias'])
 N_PASSWORD_TOKENS = len(PASSWORD['alias'])
 N_DIVIDER_TOKENS = len(DIVIDER['alias'])
+N_CARD_TOKENS = len(CARD['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -169,7 +174,7 @@ def scope_themes(found_css, *token_blocks):
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
-                         PASSWORD_TOKENS, DIVIDER_TOKENS)
+                         PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -182,7 +187,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + INPUT_TOKENS + '\n' + INPUT_CSS
             + '\n' + TEXTAREA_TOKENS + '\n' + TEXTAREA_CSS
             + '\n' + PASSWORD_TOKENS + '\n' + PASSWORD_CSS
-            + '\n' + DIVIDER_TOKENS + '\n' + DIVIDER_CSS)
+            + '\n' + DIVIDER_TOKENS + '\n' + DIVIDER_CSS
+            + '\n' + CARD_TOKENS + '\n' + CARD_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -7107,6 +7113,438 @@ TH_DIVIDER = ('<div class="th-divider"><span></span><span></span>'
 
 
 
+# ═══════════════════════════════════════════════════════════════ Card · abas
+# Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
+# clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
+# sao montados com casca do site (cd-fake-*), nunca com .al-card errado - o
+# portao de marcacao le esta pagina e recusaria, com razao.
+CD_TYPES = [('filled', 'Filled'), ('border', 'Border'), ('elevated', 'Elevated')]
+CD_PADS = [('spaced', 'Spaced · 24'), ('default', 'Default · 16'), ('tight', 'Tight · 8')]
+CD_INTS = [('static', 'Estático'), ('clickable', 'Clicável')]
+CD_PAGES = [('surface', 'Superfície'), ('canvas', 'Tela')]
+CD_MOD_TYPE = {'filled': '', 'border': ' al-card--border', 'elevated': ' al-card--elevated'}
+CD_MOD_PAD = {'spaced': ' al-card--spaced', 'default': '', 'tight': ' al-card--tight'}
+
+N_CD_MEDIDAS = len(CARD_A11Y['rows'])
+N_CD_EXC = sum(1 for r in CARD_A11Y['rows'] if r['exception'])
+N_CD_PASS = sum(1 for r in CARD_A11Y['rows'] if r['pass'])
+N_CD_FAIL = sum(1 for r in CARD_A11Y['rows'] if not r['pass'] and not r['exception'])
+CD_CHEVRON = al_icon('chevron-right', cls='al-icon al-icon--20 cd-chevron')
+
+
+def cd_header(title, desc, link=None, h='h3'):
+    t = f'<a class="al-card__link" href="{link}">{title}</a>' if link else title
+    d = f'<p class="al-card__description">{desc}</p>' if desc else ''
+    return f'<div class="al-card__header"><{h} class="al-card__title">{t}</{h}>{d}</div>'
+
+
+def cd_card(tipo='filled', pad='default', clickable=False, title='Pedido #1042',
+            desc='Entregue em 3 de outubro.', tag='div', style='', extra=''):
+    cls = 'al-card' + CD_MOD_TYPE[tipo] + CD_MOD_PAD[pad] + (' al-card--clickable' if clickable else '')
+    st = f' style="{style}"' if style else ''
+    if clickable:
+        body = f'<div class="cd-row">{cd_header(title, desc, link="#/card")}{CD_CHEVRON}</div>'
+    else:
+        body = cd_header(title, desc)
+    return f'<{tag} class="{cls}"{st}>{body}{extra}</{tag}>'
+
+
+def cd_demo(tipo, pad, inter):
+    """O card do playground, devolvido como (html, codigo)."""
+    clk = inter == 'clickable'
+    html = cd_card(tipo, pad, clk)
+    cls = 'al-card' + CD_MOD_TYPE[tipo] + CD_MOD_PAD[pad] + (' al-card--clickable' if clk else '')
+    if clk:
+        code = [f'<div class="{cls}">',
+                '  <div class="al-card__header">',
+                '    <h3 class="al-card__title">',
+                '      <a class="al-card__link" href="/pedidos/1042">Pedido #1042</a>',
+                '    </h3>',
+                '    <p class="al-card__description">Entregue em 3 de outubro.</p>',
+                '  </div>',
+                '  <!-- seta recomendada (regra 14): <svg class="al-icon" aria-hidden="true">… -->',
+                '</div>']
+    else:
+        code = [f'<div class="{cls}">',
+                '  <div class="al-card__header">',
+                '    <h3 class="al-card__title">Pedido #1042</h3>',
+                '    <p class="al-card__description">Entregue em 3 de outubro.</p>',
+                '  </div>',
+                '</div>']
+    return html, '\n'.join(code)
+
+
+CD_DEMOS = {f'{t}|{p}|{i}': dict(zip(('html', 'code'), cd_demo(t, p, i)))
+            for t, _ in CD_TYPES for p, _ in CD_PADS for i, _ in CD_INTS}
+
+# estados congelados: o que o seletor escreve, escrito nas mesmas camadas internas
+CD_EDGE = '0 0 0 var(--al-card-border-width) var(--al-card-{})'
+CD_FROZEN = {
+    'filled':   {'hover': '--_lift: var(--al-card-filled-shadow-hover)',
+                 'focus': '--_ring: var(--al-card-ring)'},
+    'border':   {'hover': f'--_edge: {CD_EDGE.format("border-hover")}',
+                 'focus': f'--_edge: {CD_EDGE.format("border-focus")}; --_ring: var(--al-card-ring)'},
+    'elevated': {'hover': '--_lift: var(--al-card-elevated-shadow-hover)',
+                 'focus': '--_ring: var(--al-card-ring)'},
+}
+
+
+def cd_matrix():
+    head = ''.join(f'<span class="cd-mx-lab">{p}</span>' for _, p in CD_PADS)
+    rows = [f'<div class="cd-mx-row cd-mx-row--head"><span></span>{head}</div>']
+    for t, nome in CD_TYPES:
+        cels = ''.join(f'<div>{cd_card(t, p)}</div>' for p, _ in CD_PADS)
+        rows.append(f'<div class="cd-mx-row"><span class="cd-mx-lab">{nome}</span>{cels}</div>')
+    return '<div class="cd-mx">' + ''.join(rows) + '</div>'
+
+
+def cd_states():
+    head = ''.join(f'<span class="cd-mx-lab">{e}</span>' for e in ('Repouso', 'Hover', 'Foco'))
+    rows = [f'<div class="cd-mx-row cd-mx-row--head"><span></span>{head}</div>']
+    for t, nome in CD_TYPES:
+        cels = [f'<div>{cd_card(t)}</div>']
+        for e in ('hover', 'focus'):
+            cels.append(f'<div>{cd_card(t, style=CD_FROZEN[t][e])}</div>')
+        rows.append(f'<div class="cd-mx-row"><span class="cd-mx-lab">{nome}</span>{"".join(cels)}</div>')
+    return '<div class="cd-mx">' + ''.join(rows) + '</div>'
+
+
+def card_token_rows():
+    rows = []
+    for name in CARD['alias']:
+        res = CARD['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, dict):
+            light = dark = '<span class="dim">sombra composta</span>'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{CARD["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+def card_a11y_rows():
+    nomes = {'filled': 'Filled', 'border': 'Border', 'elevated': 'Elevated', 'todos': 'Todos'}
+    oque = {'titulo': 'título', 'descricao': 'descrição', 'borda': 'borda',
+            'limite-pelo-fundo': 'fundo × página', 'anel': 'anel de foco'}
+    out = []
+    for r in CARD_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        if r['invisible']:
+            v = '<span class="fail">invisível</span>'
+        elif r['pass']:
+            v = '<span class="pass">passa</span>'
+        else:
+            v = '<span class="exc">exceção declarada</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{nomes[r["type"]]}</td>'
+            f'<td class="tok dim">{r["state"]}</td><td class="tok dim">{oque[r["what"]]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+CARD_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="card-stage"><div class="cd-page" data-cdpage="surface">{CD_DEMOS["filled|default|static"]["html"]}</div></div>
+
+    <div class="controls" id="card-controls">
+      <div class="ctl"><span class="ctl-name">Tipo</span>{seg('cdtype', CD_TYPES, 'filled')}</div>
+      <div class="ctl"><span class="ctl-name">Padding</span>{seg('cdpad', CD_PADS, 'default')}</div>
+      <div class="ctl"><span class="ctl-name">Interação</span>{seg('cdint', CD_INTS, 'static')}</div>
+      <div class="ctl"><span class="ctl-name">Página</span>{seg('cdpage', CD_PAGES, 'surface')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('cdtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    </div>
+    <p class="cd-warn" id="card-warn" hidden>Filled direto na tela some — fundo e página têm a mesma cor no claro. A regra 2 manda pôr o Filled sobre <code>bg-surface</code>.</p>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="card-copy">Copiar</button></div>
+      <pre><code id="card-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Com <b>Clicável</b>, tabule até o card e passe o ponteiro: o anel envolve o card inteiro, e o
+    clique vale em qualquer ponto dele, mas quem recebe o foco é o link do título. Troque a
+    <b>Página</b> para tela com o Filled para ver por que a regra 2 existe, e o <b>Tema</b> para
+    escuro para ver o card clarear em relação à página.
+  </p>
+</section>
+
+<section>
+  <h2>Um tipo por contexto</h2>
+  <p>Os três tipos separam o card da página de jeitos diferentes, e por isso cada um tem o seu
+  lugar. Numa mesma grade, todos usam o mesmo tipo e o mesmo padding.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Filled · sobre superfície</span>
+      <div class="stage2 cd-stage" data-cdpage="surface">{cd_card('filled')}</div>
+      <p class="cap">O padrão para agrupar em páginas cinza. Na tela branca ele some.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Border · sobre a tela</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas">{cd_card('border')}</div>
+      <p class="cap">Para a tela branca e para grades densas, onde sombra repetida suja.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Elevated · destaque</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas">{cd_card('elevated')}</div>
+      <p class="cap">O card que precisa se destacar. Com parcimônia: se todos flutuam, nenhum se destaca.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Clicável inteiro, ou com botões</h2>
+  <p>O card inteiro só vira alvo de clique quando existe uma ação só. Com mais de uma, o card
+  fica estático e as ações viram botões no fim dele.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Uma ação: o card inteiro</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas">{cd_card('border', clickable=True, title='Pedidos', desc='Acompanhe entregas e devoluções.')}</div>
+      <p class="cap">O link é o título, esticado sobre o card. A seta diz que é clicável sem
+      depender do hover. <i>Material, Carbon.</i></p>
+    </div>
+    <div class="cell do">
+      <span class="lab">Mais de uma ação: estático com botões</span>
+      <div class="stage2 cd-stage" data-cdpage="surface">{cd_card('filled', title='Plano Pro', desc='Cobrança mensal, cancele quando quiser.', extra='<div class="cd-actions"><button type="button" class="al-btn al-btn--secondary al-btn--sm"><span class="al-btn__label">Detalhes</span></button><button type="button" class="al-btn al-btn--primary al-btn--sm"><span class="al-btn__label">Assinar</span></button></div>')}</div>
+      <p class="cap">Ações explícitas no fim, uma primária. O texto do card continua
+      selecionável.</p>
+    </div>
+  </div>
+</section>'''
+
+
+CARD_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-card</code> em <code>&lt;div&gt;</code>, <code>&lt;li&gt;</code> ou <code>&lt;article&gt;</code>. Coluna em flex, com <code>card-gap</code> entre os blocos.</span></div>
+    <div><b>Cabeçalho</b><span><code>__header</code> com <code>__title</code> e <code>__description</code>. Opcional, e substituível por qualquer conteúdo.</span></div>
+    <div><b>Título</b><span>Um <code>h2</code>…<code>h6</code> escolhido pela página. A classe não prende a tag.</span></div>
+    <div><b>Link</b><span>Só no clicável: <code>__link</code> dentro do título, esticado sobre o card por um pseudo-elemento.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As 36 variantes</h2>
+  <p>Três tipos nos três paddings, estáticos e sobre <code>bg-surface</code>. As colunas medem
+  igual em qualquer tipo: a borda do Border é desenhada fora da caixa.</p>
+  <div class="cd-panel" style="margin-top:16px">{cd_matrix()}</div>
+  <p style="margin-top:20px">No card clicável, cada tipo tem repouso, hover e foco. Hover e foco
+  estão congelados abaixo, escritos direto nas camadas internas do card.</p>
+  <div class="cd-panel" style="margin-top:16px">{cd_states()}</div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Card</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{card_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Fundo em <code>bg-surface-raised</code></b>
+    No claro é o mesmo branco da tela. No escuro a Foundation decidiu que a elevação aparece
+    porque a superfície clareia, e a sombra é a pista secundária. Com o fundo da tela, o card
+    escuro ficaria da cor da página.
+  </div>
+  <div class="note">
+    <b>Borda por fora, em três camadas de sombra</b>
+    No Figma o stroke é outside. No código a borda é uma sombra de 1px sem desfoque, e por isso não
+    ocupa espaço nem desconta padding. Borda, anel e elevação vivem em três camadas internas
+    (<code>--_edge</code>, <code>--_ring</code>, <code>--_lift</code>), empilhadas numa ordem fixa,
+    e um estado nunca apaga o outro.
+  </div>
+  <div class="note">
+    <b>O foco do Elevated mantém a sombra</b>
+    No Figma uma variante aceita um estilo de efeito só, e o Elevated com foco mostra só o anel.
+    No código o foco troca apenas a camada do anel, e a elevação continua.
+  </div>
+  <div class="note">
+    <b>Sem altura e sem largura</b>
+    A largura vem da grade e a altura do conteúdo. Os 320px do Figma são a medida do exemplo.
+  </div>
+</section>'''
+
+
+CD_RULES = [
+    ('Quando usar cada tipo', [
+        ('Um assunto por card', 'O card agrupa um assunto que se lê ou se resolve sozinho. Seção de página se separa com título e espaço, não com card. Precedentes: Material, Carbon.'),
+        ('Filled só sobre <code>bg-surface</code>', 'Na tela branca o card fica 1,00:1 e some. É a regra que sustenta a exceção de contraste do fundo. Precedente: Polaris.'),
+        ('Border sobre a tela ou em grades densas', 'Onde sombra repetida vira sujeira visual. Precedentes: Material Outlined, Carbon.'),
+        ('Elevated para destaque, com parcimônia', 'Se todos os cards flutuam, nenhum se destaca. Precedente: Material.'),
+    ]),
+    ('Combinação', [
+        ('Mesmo tipo e mesmo padding na grade', 'Misturar tipos sugere uma hierarquia que não existe. Precedente: Material.'),
+        ('Nada de card dentro de card', 'Para subdividir, Divider ou título. Precedente: Material.'),
+        ('O card não substitui modal, drawer, accordion ou tab', 'Cada um é componente próprio. Precedente: Carbon.'),
+    ]),
+    ('Padding e tamanho', [
+        ('O padding se escolhe pela densidade', 'Spaced (24) para o card isolado ou de destaque; Default (16) em grades e listas; Tight (8) para cards pequenos e densos. Precedentes: Primer, Polaris.'),
+        ('Largura da grade, altura do conteúdo', 'Na grade, os cards de uma linha esticam até a mesma altura.'),
+    ]),
+    ('Conteúdo', [
+        ('Título e descrição são orientação', 'Havendo título, use o do card, para todos os produtos falarem a mesma língua. A descrição complementa e não repete. O slot aceita qualquer outra coisa. Precedentes: Material, Spectrum.'),
+        ('O título é um título de verdade', '<code>h2</code>, <code>h3</code>… conforme a página, nunca parágrafo em negrito: quem usa leitor de tela navega pelos títulos. Precedente: Inclusive Components.'),
+        ('Ações explícitas no fim, uma primária', 'No card estático, botões ou links no fim do card. Precedentes: Material, Carbon.'),
+    ]),
+    ('Card clicável', [
+        ('Uma ação só, normalmente navegar', 'Com mais de uma ação, o card fica estático. Precedentes: Material, Carbon.'),
+        ('A seta é a pista sem hover', 'No toque não existe hover. O título diz o destino e uma seta no canto é recomendada, não obrigatória.'),
+        ('Nada clicável dentro do card clicável', 'Nem botão, nem link, nem checkbox: dois alvos sobrepostos confundem toque, Tab e leitor de tela. Precedente: Carbon. <b>Divergência consciente</b> da técnica que “levanta” botões sobre o link esticado.'),
+        ('O link é o título, esticado', 'Um <code>&lt;a href&gt;</code> real no título, nunca <code>onclick</code> numa <code>&lt;div&gt;</code> nem um link embrulhando o card. O custo é o texto deixar de ser selecionável. Precedentes: Inclusive Components, Kitty Giraudel.'),
+        ('O anel envolve o card inteiro', 'Uma parada de Tab por card. No Elevated, anel e sombra juntos. Precedentes: Material, Carbon.'),
+        ('Laranja é só foco', 'O hover do Border escurece a borda. Nunca use a cor de marca para destacar ou selecionar um card.'),
+    ]),
+    ('Estados', [
+        ('Não existe card desabilitado', 'O card some, ou explica no conteúdo por que não está disponível. <b>Divergência consciente</b> do Material.'),
+        ('Não existe pressionado', 'O feedback do clique é a navegação.'),
+    ]),
+    ('Acessibilidade', [
+        ('A borda pode ficar abaixo de 3:1', 'Porque o card se reconhece pelo conteúdo. Por isso nunca use card vazio delimitado só pela linha. Precedente: WCAG 1.4.11.'),
+        ('Lista de cards é lista', '<code>&lt;ul&gt;</code> e <code>&lt;li&gt;</code>, para o leitor anunciar quantos são. Card autossuficiente pode ser <code>&lt;article&gt;</code>.'),
+        ('No escuro, quem separa é o fundo', 'A sombra quase não aparece no escuro. Não compense escurecendo a página nem trocando o fundo do card.'),
+    ]),
+]
+
+
+def cd_rules_html():
+    out, n = [], 0
+    for grupo, regras in CD_RULES:
+        out.append(f'<h3 class="cd-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    n += 1
+    out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+               f'<h3>O que não existe, e o que fazer se a demanda aparecer</h3>'
+               f'<p>Veja abaixo.</p></div></div>')
+    assert n == 24, f'as regras aprovadas sao 24, o site tem {n}'
+    return '\n'.join(out)
+
+
+CARD_GUIDE = f'''
+<section>
+  <h2>O card se reconhece pelo conteúdo</h2>
+  <p>A borda do Border fica abaixo dos 3:1 do critério 1.4.11, e o fundo do Filled e do Elevated
+  quase não se separa da página. As duas coisas são exceção declarada, e só valem porque o card
+  sempre tem conteúdo que o identifica.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Filled sobre superfície</span>
+      <div class="stage2 cd-stage" data-cdpage="surface">{cd_card('filled')}</div>
+      <p class="cap">O cinza da página desenha o limite do card.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Filled direto na tela</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas">{cd_card('filled')}</div>
+      <p class="cap">Branco sobre branco: sobra um texto solto. Use Border ou mude a página.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Clicável com uma ação</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas">{cd_card('border', clickable=True, title='Clientes', desc='Cadastro, histórico e contatos.')}</div>
+      <p class="cap">Um alvo, um nome anunciado: o título.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Clicável com botões dentro</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas"><div class="cd-fake-card"><b>Clientes</b><span>Cadastro, histórico e contatos.</span><div class="cd-actions"><span class="cd-fake-btn">Editar</span><span class="cd-fake-btn">Excluir</span></div></div></div>
+      <p class="cap">O botão disputa o clique com o card inteiro. Tire o clique do card ou tire os botões.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {cd_rules_html()}
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Card selecionável</b><span>É Radio ou Checkbox.</span></div>
+    <div><b>Card expansível</b><span>É o Accordion.</span></div>
+    <div><b>Capa e ações fixas</b><span>Vão no slot, sem variante.</span></div>
+    <div><b>Pressionado e desabilitado</b><span>Não existem (regras 19 e 20).</span></div>
+    <div><b>Outro padding</b><span>Discute-se a escala, e com ela o nome.</span></div>
+  </div>
+</section>'''
+
+
+CARD_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede cada tema × tipo × estado × página onde o card pode ficar. O texto tem que
+  passar 4,5:1 sem exceção. Borda, anel e limite do card têm piso de 3:1: hover e foco passam,
+  e a borda e o fundo em repouso são as duas exceções declaradas. Um terceiro julgamento
+  reprova o card <b>invisível</b>, sem nada que o separe da página.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_CD_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_CD_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>{N_CD_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{N_CD_FAIL}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Tipo</th><th>Estado</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{card_a11y_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra dez regras lendo o HTML que este site emite:
+  <b>{CARD_A11Y['markupChecked'] or 0} cards</b> nesta página, nenhum fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Título</b><span><code>__title</code> é <code>h1</code>…<code>h6</code>.</span></div>
+    <div><b>b · Um link</b><span>O clicável tem exatamente um <code>__link</code>, dentro do título.</span></div>
+    <div><b>c · Elemento do link</b><span><code>&lt;a href&gt;</code> ou <code>&lt;button type="button"&gt;</code>, com nome.</span></div>
+    <div><b>d · Nada mais clicável</b><span>Nenhum link, botão, campo ou <code>tabindex</code> além dele.</span></div>
+    <div><b>e · O card não é acionável</b><span>Nem <code>&lt;a&gt;</code>, nem <code>&lt;button&gt;</code>, nem <code>onclick</code>, <code>tabindex</code> ou papel de acionável.</span></div>
+    <div><b>f · Link no lugar certo</b><span><code>__link</code> só em card clicável.</span></div>
+    <div><b>g · Lista</b><span><code>&lt;li class="al-card"&gt;</code> só dentro de <code>&lt;ul&gt;</code> ou <code>&lt;ol&gt;</code>.</span></div>
+    <div><b>h · Sem aninhar</b><span>Nada de card dentro de card.</span></div>
+    <div><b>i · Sem disabled</b><span>Nem <code>disabled</code>, nem <code>aria-disabled</code>.</span></div>
+    <div><b>j · Coerência</b><span>Um tipo e um padding por card.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Uma parada de Tab</b><span>Quem recebe o foco é o link do título. O card estático nunca recebe.</span></div>
+    <div><b>O anel no card</b><span>Com <code>:has()</code>, o anel sai do link e envolve o card. Sem <code>:has()</code>, fica o contorno do navegador.</span></div>
+    <div><b>Enter abre</b><span>É um link de verdade: Enter, clique do meio e abrir em nova aba funcionam.</span></div>
+    <div><b>Nome curto</b><span>O leitor anuncia só o título, não o card inteiro.</span></div>
+    <div><b>Alto contraste</b><span>Fundo e sombra somem nesse modo, então os três tipos ganham contorno na cor do texto do sistema.</span></div>
+    <div><b>Movimento reduzido</b><span>A transição de 120ms é desligada.</span></div>
+  </div>
+</section>'''
+
+
+TH_CARD = ('<div class="th-card">'
+           '<div class="al-card al-card--border al-card--tight"><span></span><span></span></div>'
+           '<div class="al-card al-card--elevated al-card--tight"><span></span><span></span></div>'
+           '</div>')
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -7123,6 +7561,7 @@ LANDING_COMPONENTES = f'''
     {card('password', 'Password', 'Senha com o olho de mostrar e ocultar. Input nativo de senha, um botão de verdade dentro da caixa, e um script que esconde de novo no envio.', TH_PASSWORD)}
     {card('textarea', 'Textarea', 'Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.', TH_TEXTAREA)}
     {card('divider', 'Divider', 'A linha entre dois grupos de conteúdo. É o &lt;hr&gt; nativo, horizontal ou vertical — e entra só quando o espaço não basta.', TH_DIVIDER)}
+    {card('card', 'Card', 'Um assunto num contêiner. Três tipos, três paddings, e o clicável inteiro feito com um link de verdade no título.', TH_CARD)}
   </div>
 </section>
 
@@ -7130,8 +7569,9 @@ LANDING_COMPONENTES = f'''
   <h2>O Tier 3 começou</h2>
   <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
   disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
-  sem documentação”. O tier de <b>estrutura</b> começa pela peça mais simples dele, o Divider,
-  e segue como todos os outros: pela etapa 1, definir e auditar.</p>
+  sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
+  e seguiu pelo Card. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
+  auditar.</p>
 </section>'''
 
 PAGES = [
@@ -7306,6 +7746,15 @@ PAGES = [
          (f'{N_DIVIDER_TOKENS} tokens', False), ('1 exceção declarada', False)],
         [('overview', 'Visão geral', DIVIDER_OVERVIEW), ('specs', 'Especificações', DIVIDER_SPECS),
          ('guide', 'Diretrizes', DIVIDER_GUIDE), ('a11y', 'Acessibilidade', DIVIDER_A11Y_TAB)])),
+    ('card', 'Componentes', page(
+        'card', 'Componentes', 'Card',
+        'Um contêiner para um assunto que se lê ou se resolve sozinho. Três tipos, três paddings, '
+        'estático ou clicável — e o clicável é um link de verdade no título, esticado sobre o '
+        'card inteiro.',
+        [('Estável', True), ('36 variantes no Figma', False),
+         (f'{N_CARD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', CARD_OVERVIEW), ('specs', 'Especificações', CARD_SPECS),
+         ('guide', 'Diretrizes', CARD_GUIDE), ('a11y', 'Acessibilidade', CARD_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -7346,6 +7795,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/textarea" data-page="textarea">Textarea</a>
         <a href="#/password" data-page="password">Password</a>
         <a href="#/divider" data-page="divider">Divider</a>
+        <a href="#/card" data-page="card">Card</a>
       </div>
     </div>
   </div>
@@ -9048,6 +9498,99 @@ CHROME_DIVIDER = """
 """
 
 
+JS_CARD_DATA = 'var CD_DEMOS = ' + json.dumps(CD_DEMOS, ensure_ascii=False) + ';\n'
+
+JS_CARD = r"""
+(function () {
+  // ── playground do Card ──
+  var stage = document.getElementById('card-stage');
+  if (!stage) return;
+  var code = document.getElementById('card-code');
+  var warn = document.getElementById('card-warn');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinacao vem pronto do site.py (CD_DEMOS) - o mesmo que
+  // a pagina emite parada, para o playground nao ensinar outro contrato.
+  function render() {
+    var t = pick('cdtype'), p = pick('cdpad'), i = pick('cdint'),
+        pg = pick('cdpage'), theme = pick('cdtheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = CD_DEMOS[t + '|' + p + '|' + i];
+    stage.innerHTML = '<div class="cd-page" data-cdpage="' + pg + '">' + demo.html + '</div>';
+    code.innerHTML = esc(demo.code);
+    warn.hidden = !(t === 'filled' && pg === 'canvas');
+  }
+
+  // o card do playground aponta para a propria pagina; o clique nao navega
+  stage.addEventListener('click', function (e) {
+    if (e.target.closest('.al-card__link')) e.preventDefault();
+  });
+
+  document.querySelectorAll('#card-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('card-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_CARD = """
+/* ── páginas do Card ──
+   Casca do site. O card em si é sempre o .al-card, do card.css real. Os
+   exemplos "a evitar" usam .cd-fake-*, nunca um .al-card errado. */
+.cd-page{width:100%; max-width:380px; padding:24px; border-radius:12px; text-align:left}
+.cd-page[data-cdpage="surface"], .cd-stage[data-cdpage="surface"]{background:var(--al-bg-surface)}
+.cd-page[data-cdpage="canvas"], .cd-stage[data-cdpage="canvas"]{background:var(--al-bg-canvas)}
+.cd-page[data-cdpage="canvas"]{outline:1px dashed var(--al-border-default); outline-offset:-1px}
+.dd .stage2.cd-stage{display:block; padding:20px}
+.cd-row{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+.cd-chevron{flex-shrink:0; margin-top:4px; color:var(--al-text-secondary)}
+.cd-actions{display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap}
+.cd-warn{margin:0; padding:12px 22px; border-top:1px solid var(--al-border-subtle);
+  background:var(--al-bg-danger-subtle); color:var(--al-text-danger); font-size:13px}
+.cd-panel{padding:20px; border-radius:12px; background:var(--al-bg-surface)}
+.cd-mx{display:flex; flex-direction:column; gap:16px}
+.cd-mx-row{display:grid; grid-template-columns:76px repeat(3, minmax(0,1fr)); gap:16px; align-items:start}
+.cd-mx-lab{font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary)}
+.cd-mx-row:not(.cd-mx-row--head) > .cd-mx-lab{padding-top:10px}
+.cd-rgroup{margin:28px 0 4px; font-family:var(--al-font-mono); font-size:10.5px; font-weight:500;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--al-text-secondary)}
+.cd-fake-card{display:flex; flex-direction:column; gap:4px; padding:16px; border-radius:8px;
+  background:var(--al-bg-surface-raised); box-shadow:0 0 0 1px var(--al-border-default)}
+.cd-fake-card b{font-size:20px; line-height:28px; font-weight:600; color:var(--al-text-primary)}
+.cd-fake-card > span{color:var(--al-text-secondary)}
+.cd-fake-card .cd-actions{margin-top:8px}
+.cd-fake-btn{padding:6px 14px; border-radius:9999px; font-size:13px;
+  border:1px solid var(--al-border-strong); color:var(--al-text-primary)}
+.th-card{display:flex; flex-direction:column; gap:10px; width:100%; max-width:180px}
+.th-card .al-card{gap:6px}
+.th-card .al-card span{display:block; height:7px; border-radius:4px; background:var(--al-bg-subtle)}
+.th-card .al-card span:first-child{width:56%; background:var(--al-border-default)}
+.th-card .al-card span:last-child{width:82%}
+@media (max-width: 720px){
+  .cd-mx-row{grid-template-columns:minmax(0,1fr)}
+  .cd-mx-row--head{display:none}
+}
+"""
+
+
 HTML = (
     '<meta charset="utf-8">\n'
     '<title>AL Design System</title>\n'
@@ -9059,7 +9602,7 @@ HTML = (
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER
+    + CHROME_DIVIDER + CHROME_CARD
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -9067,7 +9610,8 @@ HTML = (
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
-    + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + '</script>\n'
+    + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER
+    + JS_CARD_DATA + JS_CARD + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
@@ -9108,5 +9652,9 @@ print(f'  tokens do Divider : {N_DIVIDER_TOKENS}  '
       f'({len(DIVIDER_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in DIVIDER_A11Y["rows"] if r["invisible"])} invisiveis, '
       f'{sum(1 for r in DIVIDER_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
+print(f'  tokens do Card    : {N_CARD_TOKENS}  '
+      f'({len(CARD_A11Y["rows"])} combinacoes medidas, '
+      f'{sum(1 for r in CARD_A11Y["rows"] if r["invisible"])} invisiveis, '
+      f'{sum(1 for r in CARD_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
