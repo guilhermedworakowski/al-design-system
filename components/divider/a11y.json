@@ -2,8 +2,8 @@
   "component": "divider",
   "criterion": "WCAG 1.4.11 nao-textual + linha visivel",
   "floor": 3.0,
-  "markupSource": "site/divider-qa.html",
-  "markupChecked": 10,
+  "markupSource": "site/index.html",
+  "markupChecked": 12,
   "markupPending": false,
   "markupProblems": [],
   "rows": [
