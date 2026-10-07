@@ -7,7 +7,7 @@
 <style>
 /* ================= foundation ================= */
 /* AL Design System - Foundation
- * v0.15.0 - MIT
+ * v0.16.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -699,8 +699,8 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   <header class="qa-head">
     <div>
       <h1>Tab — QA da etapa 6</h1>
-      <p class="qa-sub">AL Design System 0.15.0 · componente 0.1.0 ·
-      Line e Square × 4 estados × selecionada · portão: 104 combinações, 89 passam, 14 exceções, 1 reprovas</p>
+      <p class="qa-sub">AL Design System 0.16.0 · componente 0.1.0 ·
+      Line e Square × 4 estados × selecionada · portão: 104 combinações, 89 passam, 15 exceções, 0 reprovas</p>
     </div>
     <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">
       <span id="theme-label">Tema claro</span>
@@ -895,7 +895,7 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
  * So o uso de PAINEL precisa deste arquivo. Navegacao por links (regra 22) e
  * <a> comum: o Tab do teclado passa por todos e nada aqui se aplica.
  *
- * O que ele faz em todo grupo [role="tablist"] dentro de `root`
+ * O que ele faz em todo grupo .al-tabs[role="tablist"] dentro de `root`
  * (padrao de abas da APG, regra 21):
  *   - so a aba selecionada fica em tabindex 0 (roving tabindex);
  *   - seta direita/esquerda vai para a proxima/anterior, dando a volta;
@@ -991,7 +991,7 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   }
 
   function init(root) {
-    [].slice.call((root || document).querySelectorAll('[role="tablist"]')).forEach(bind);
+    [].slice.call((root || document).querySelectorAll('.al-tabs[role="tablist"]')).forEach(bind);
   }
 
   window.alTabs = { init: init };
