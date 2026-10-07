@@ -1,0 +1,1876 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AL Modal QA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ================= foundation ================= */
+/* AL Design System - Foundation
+ * v0.18.0 - MIT
+ * GERADO por foundation/css.py. Nao editar a mao: rode o script.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* primitivas de cor - a rampa crua. Nao consumir direto num componente. */
+  --al-color-neutral-50: #F7F7F7;
+  --al-color-neutral-100: #EEEEEE;
+  --al-color-neutral-200: #E0E0E0;
+  --al-color-neutral-300: #CECECE;
+  --al-color-neutral-400: #B3B3B3;
+  --al-color-neutral-500: #949494;
+  --al-color-neutral-600: #717171;
+  --al-color-neutral-700: #565656;
+  --al-color-neutral-800: #3E3E3E;
+  --al-color-neutral-900: #292929;
+  --al-color-neutral-950: #181818;
+  --al-color-orange-50: #FFF5F0;
+  --al-color-orange-100: #FFEADE;
+  --al-color-orange-200: #FFD7C4;
+  --al-color-orange-300: #FFBDA0;
+  --al-color-orange-400: #FF9267;
+  --al-color-orange-500: #FC5000;
+  --al-color-orange-600: #C53900;
+  --al-color-orange-700: #992700;
+  --al-color-orange-800: #6C2100;
+  --al-color-orange-900: #4A1700;
+  --al-color-orange-950: #2D0D00;
+  --al-color-red-50: #FFF5F5;
+  --al-color-red-100: #FFE8E9;
+  --al-color-red-200: #FFD5D5;
+  --al-color-red-300: #FFBABB;
+  --al-color-red-400: #FF8D91;
+  --al-color-red-500: #F84F5D;
+  --al-color-red-600: #CA293F;
+  --al-color-red-700: #A00E27;
+  --al-color-red-800: #780014;
+  --al-color-red-900: #550007;
+  --al-color-red-950: #360001;
+  --al-color-amber-50: #FBF7EC;
+  --al-color-amber-100: #F7EED5;
+  --al-color-amber-200: #F2DFB0;
+  --al-color-amber-300: #EBCA7E;
+  --al-color-amber-400: #DCAC2E;
+  --al-color-amber-500: #BA8C00;
+  --al-color-amber-600: #916A00;
+  --al-color-amber-700: #704F00;
+  --al-color-amber-800: #523800;
+  --al-color-amber-900: #392500;
+  --al-color-amber-950: #221500;
+  --al-color-green-50: #EFFBF2;
+  --al-color-green-100: #DEF6E4;
+  --al-color-green-200: #C1EECA;
+  --al-color-green-300: #9DE2A9;
+  --al-color-green-400: #6ACD7C;
+  --al-color-green-500: #1BB14B;
+  --al-color-green-600: #008A2A;
+  --al-color-green-700: #006911;
+  --al-color-green-800: #004C03;
+  --al-color-green-900: #013400;
+  --al-color-green-950: #001F00;
+  --al-color-blue-50: #F1F8FF;
+  --al-color-blue-100: #E2F1FF;
+  --al-color-blue-200: #CAE4FF;
+  --al-color-blue-300: #A9D3FF;
+  --al-color-blue-400: #76B8FF;
+  --al-color-blue-500: #2696FF;
+  --al-color-blue-600: #0071D0;
+  --al-color-blue-700: #0055A3;
+  --al-color-blue-800: #003C7A;
+  --al-color-blue-900: #002858;
+  --al-color-blue-950: #001639;
+
+  /* semanticos de cor - TEMA CLARO. E aqui que o tema e resolvido. */
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-hover-raised: #EEEEEE;
+  --al-bg-active-raised: #E0E0E0;
+  --al-bg-thumb: #B3B3B3;
+  --al-bg-thumb-disabled: #CECECE;
+  --al-bg-scrim: #1818188F;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+
+  /* tipografia */
+  --al-font-sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --al-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-font-weight-regular: 400;
+  --al-font-weight-medium: 500;
+  --al-font-weight-semibold: 600;
+  --al-font-weight-bold: 700;
+  --al-font-size-xs: 12px;
+  --al-font-size-sm: 14px;
+  --al-font-size-md: 16px;
+  --al-font-size-lg: 18px;
+  --al-font-size-xl: 20px;
+  --al-font-size-2xl: 24px;
+  --al-font-size-3xl: 30px;
+  --al-font-size-4xl: 36px;
+  --al-font-size-5xl: 48px;
+  --al-font-size-6xl: 60px;
+  --al-line-height-xs: 16px;
+  --al-line-height-sm: 20px;
+  --al-line-height-md: 24px;
+  --al-line-height-lg: 28px;
+  --al-line-height-xl: 28px;
+  --al-line-height-2xl: 32px;
+  --al-line-height-3xl: 36px;
+  --al-line-height-4xl: 44px;
+  --al-line-height-5xl: 56px;
+  --al-line-height-6xl: 68px;
+
+  /* espacamento */
+  --al-space-0: 0px;
+  --al-space-2: 2px;
+  --al-space-4: 4px;
+  --al-space-8: 8px;
+  --al-space-12: 12px;
+  --al-space-16: 16px;
+  --al-space-20: 20px;
+  --al-space-24: 24px;
+  --al-space-32: 32px;
+  --al-space-40: 40px;
+  --al-space-48: 48px;
+  --al-space-64: 64px;
+  --al-space-80: 80px;
+  --al-space-96: 96px;
+
+  /* raio */
+  --al-radius-none: 0px;
+  --al-radius-xs: 2px;
+  --al-radius-sm: 4px;
+  --al-radius-md: 6px;
+  --al-radius-lg: 8px;
+  --al-radius-xl: 12px;
+  --al-radius-2xl: 16px;
+  --al-radius-3xl: 24px;
+  --al-radius-full: 9999px;
+
+  /* borda */
+  --al-border-width-0: 0px;
+  --al-border-width-1: 1px;
+  --al-border-width-2: 2px;
+  --al-border-width-focus: 2px;
+  --al-border-focus-offset: 2px;
+
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
+
+  /* motion - duracao pelo PORTE de quem se move (feedback, o resto, pelo papel),
+     curva pelo TIPO da acao. Entrada desacelera (ease-out), saida acelera (ease-in). */
+  --al-motion-duration-feedback: 120ms;
+  --al-motion-duration-popup: 200ms;
+  --al-motion-duration-panel: 300ms;
+  --al-motion-duration-spinner: 700ms;
+  --al-motion-duration-spinner-reduced: 2400ms;
+  --al-motion-easing-enter: cubic-bezier(0, 0, 0.58, 1);
+  --al-motion-easing-exit: cubic-bezier(0.42, 0, 1, 1);
+  --al-motion-easing-spinner: cubic-bezier(0, 0, 1, 1);
+
+  /* elevacao - TEMA CLARO */
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+
+  /* anel de foco - composto uma vez, acompanha o tema sozinho.
+     Duas camadas: respiro na cor do fundo, depois o anel na cor do foco. */
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+}
+
+/* TEMA ESCURO. Tres estados, nao dois: sem carimbo no root, so o
+ * prefers-color-scheme separa; com carimbo, a escolha explicita vence. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --al-bg-canvas: #181818;
+    --al-bg-surface: #292929;
+    --al-bg-surface-raised: #3E3E3E;
+    --al-bg-subtle: #3E3E3E;
+    --al-bg-hover: #3E3E3E;
+    --al-bg-active: #565656;
+    --al-bg-disabled: #3E3E3E;
+    --al-bg-inverse: #F7F7F7;
+    --al-bg-hover-raised: #565656;
+    --al-bg-active-raised: #717171;
+    --al-bg-thumb: #717171;
+    --al-bg-thumb-disabled: #565656;
+    --al-bg-scrim: #000000A3;
+    --al-bg-brand: #FC5000;
+    --al-bg-brand-hover: #EA4900;
+    --al-bg-brand-active: #C53900;
+    --al-bg-brand-subtle: #2D0D00;
+    --al-bg-brand-strong: #992700;
+    --al-bg-danger: #F84F5D;
+    --al-bg-danger-hover: #FF8D91;
+    --al-bg-danger-active: #FFBABB;
+    --al-bg-danger-subtle: #360001;
+    --al-bg-success: #1BB14B;
+    --al-bg-success-hover: #6ACD7C;
+    --al-bg-success-subtle: #001F00;
+    --al-bg-warning: #DCAC2E;
+    --al-bg-warning-hover: #EBCA7E;
+    --al-bg-warning-subtle: #221500;
+    --al-bg-info: #2696FF;
+    --al-bg-info-hover: #76B8FF;
+    --al-bg-info-subtle: #001639;
+    --al-text-primary: #F7F7F7;
+    --al-text-secondary: #B3B3B3;
+    --al-text-placeholder: #B3B3B3;
+    --al-text-disabled: #717171;
+    --al-text-inverse: #292929;
+    --al-text-on-brand: #FFFFFF;
+    --al-text-on-solid: #181818;
+    --al-text-brand: #FF9267;
+    --al-text-danger: #FF8D91;
+    --al-text-success: #6ACD7C;
+    --al-text-warning: #EBCA7E;
+    --al-text-info: #76B8FF;
+    --al-border-subtle: #3E3E3E;
+    --al-border-default: #565656;
+    --al-border-strong: #949494;
+    --al-border-brand: #FC5000;
+    --al-border-focus: #FF9267;
+    --al-border-danger: #F84F5D;
+    --al-border-success: #1BB14B;
+    --al-border-warning: #DCAC2E;
+    --al-border-info: #2696FF;
+    --al-shadow-focus-default: #FF9267;
+    --al-shadow-focus-error: #FF8D91;
+    --al-elevation-0: none;
+    --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+    --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+    --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+    --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+    --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --al-bg-canvas: #181818;
+  --al-bg-surface: #292929;
+  --al-bg-surface-raised: #3E3E3E;
+  --al-bg-subtle: #3E3E3E;
+  --al-bg-hover: #3E3E3E;
+  --al-bg-active: #565656;
+  --al-bg-disabled: #3E3E3E;
+  --al-bg-inverse: #F7F7F7;
+  --al-bg-hover-raised: #565656;
+  --al-bg-active-raised: #717171;
+  --al-bg-thumb: #717171;
+  --al-bg-thumb-disabled: #565656;
+  --al-bg-scrim: #000000A3;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #EA4900;
+  --al-bg-brand-active: #C53900;
+  --al-bg-brand-subtle: #2D0D00;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #F84F5D;
+  --al-bg-danger-hover: #FF8D91;
+  --al-bg-danger-active: #FFBABB;
+  --al-bg-danger-subtle: #360001;
+  --al-bg-success: #1BB14B;
+  --al-bg-success-hover: #6ACD7C;
+  --al-bg-success-subtle: #001F00;
+  --al-bg-warning: #DCAC2E;
+  --al-bg-warning-hover: #EBCA7E;
+  --al-bg-warning-subtle: #221500;
+  --al-bg-info: #2696FF;
+  --al-bg-info-hover: #76B8FF;
+  --al-bg-info-subtle: #001639;
+  --al-text-primary: #F7F7F7;
+  --al-text-secondary: #B3B3B3;
+  --al-text-placeholder: #B3B3B3;
+  --al-text-disabled: #717171;
+  --al-text-inverse: #292929;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #181818;
+  --al-text-brand: #FF9267;
+  --al-text-danger: #FF8D91;
+  --al-text-success: #6ACD7C;
+  --al-text-warning: #EBCA7E;
+  --al-text-info: #76B8FF;
+  --al-border-subtle: #3E3E3E;
+  --al-border-default: #565656;
+  --al-border-strong: #949494;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FF9267;
+  --al-border-danger: #F84F5D;
+  --al-border-success: #1BB14B;
+  --al-border-warning: #DCAC2E;
+  --al-border-info: #2696FF;
+  --al-shadow-focus-default: #FF9267;
+  --al-shadow-focus-error: #FF8D91;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+  --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+  --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+  --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+  --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+}
+
+/* O carimbo tambem avisa o NAVEGADOR. `color-scheme: light dark` no :root
+ * deixa a UI nativa - puxador e barra de rolagem do Textarea, lista do
+ * Select - seguir o sistema; com o tema forcado, ela seguiria o sistema e
+ * nao a pagina. Sem carimbo nao precisa: o sistema e a pagina concordam. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* ================= icon - tokens ================= */
+/* AL Design System - tokens do Icon
+ * GERADO por components/icon/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada tinta aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados. Entao o
+ * :root re-substitui todos eles de uma vez.
+ */
+
+:root {
+
+  /* caixa - degrau recorrente, nao teto */
+  --al-icon-box-16: var(--al-icon-size-16);
+  --al-icon-box-20: var(--al-icon-size-20);
+  --al-icon-box-24: var(--al-icon-size-24);
+  --al-icon-box-32: var(--al-icon-size-32);
+
+  /* tinta - saida explicita. O default do componente e currentColor. */
+  --al-icon-ink-default: var(--al-text-primary);
+  --al-icon-ink-on-brand: var(--al-text-on-brand);
+  --al-icon-ink-on-solid: var(--al-text-on-solid);
+  --al-icon-ink-disabled: var(--al-text-disabled);
+}
+
+/* ================= icon ================= */
+/* AL Design System - Icon
+ *
+ * Depende de: foundation/al-foundation.css + components/icon/al-icon-tokens.css
+ *
+ * ANATOMIA
+ *   A classe vai no proprio <svg>, nao num involucro. O arquivo do icone mora
+ *   em components/icon/icons/ e e inserido inline no HTML - inline porque so
+ *   assim o traco herda a cor do texto ao redor, que e o mecanismo inteiro
+ *   deste componente. <img> nao herda cor; background-image tambem nao.
+ *
+ *     <svg class="al-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…</svg>
+ *
+ * TAMANHO
+ *   Nao existe escala fixa. O desenho e vetorizado no grid de 24, entao a mesma
+ *   marcacao serve em qualquer tamanho, e o traco engrossa junto porque o
+ *   viewBox escala o desenho inteiro - e por isso que a caixa e a unica coisa
+ *   que este CSS precisa definir.
+ *
+ *   Padrao 24. Os degraus recorrentes tem modificador:
+ *     .al-icon--16  .al-icon--20  .al-icon--32
+ *   Qualquer outro tamanho entra pela propria custom property, sem classe nova
+ *   e sem esperar a escala crescer:
+ *     <svg class="al-icon" style="--al-icon-box: 40px" aria-hidden="true" focusable="false">
+ *   O portao de CSS literal vale para o CSS do design system, nao para a
+ *   aplicacao que o consome. Este e o escape, e ele e de propósito.
+ *
+ * COR
+ *   Padrao e `currentColor`: o icone herda a cor de quem o contem. E por isso
+ *   que dentro do Button ele acerta os quatro estados sem uma linha a mais - o
+ *   rotulo ja resolveu a cor, e o icone segue. A collection `3. Icon ink` do
+ *   Figma existe com quatro modes justamente porque o Figma nao tem essa
+ *   palavra-chave; aqui ela substitui a collection inteira.
+ *   Para icone que vive fora de um acionavel e nao tem de quem herdar, os
+ *   quatro modificadores `--ink-*` dizem a cor explicitamente.
+ *
+ * ACESSIBILIDADE - contrato de marcacao
+ *   Icone do AL vive dentro de acionavel, e nesse lugar ele e quase sempre
+ *   DECORATIVO: quem carrega o sentido e o rotulo do botao. Icone decorativo
+ *   anunciado por leitor de tela vira ruido duplicado.
+ *
+ *     decorativo (padrao)  aria-hidden="true" focusable="false"
+ *     carrega o sentido    role="img" + aria-label="…"
+ *
+ *   Os dois atributos do caso decorativo fazem coisas diferentes: aria-hidden
+ *   tira do leitor de tela, focusable="false" tira da ordem de tabulacao (SVG
+ *   inline entra nela sozinho em alguns navegadores).
+ *   Botao so-icone e o caso limite: o nome acessivel vai no BOTAO, nunca no
+ *   svg - e o Icon Button que resolve isso, nao este componente.
+ *   Quem cobra isso e o a11y.py ao lado: ele le o HTML que o site emite e
+ *   reprova todo .al-icon sem contrato. Nao e regra escrita, e regra medida.
+ *
+ * NOTA DE GEOMETRIA
+ *   Este arquivo define cor e caixa, e nao define `stroke-width`. Nao e
+ *   esquecimento: a espessura do traco (2 no grid de 24) e parte do DESENHO e
+ *   viaja dentro do proprio arquivo .svg. Cor e caixa mudam com o contexto e
+ *   com o tema; o desenho, nao.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+.al-icon {
+  display: inline-block;
+
+  /* nunca encolhe: dentro de um flex apertado o icone e a ultima coisa que
+     deve ceder espaco - deformar o icone e pior do que quebrar o rotulo */
+  flex: none;
+
+  /* a caixa. Sem valor definido, cai no degrau padrao. */
+  inline-size: var(--al-icon-box, var(--al-icon-box-24));
+  block-size: var(--al-icon-box, var(--al-icon-box-24));
+
+  /* alinha ao centro da linha quando o icone aparece solto no meio de texto.
+     Dentro de um flex (o caso do Button) quem alinha e o container, e esta
+     declaracao nao atrapalha. */
+  vertical-align: middle;
+
+  /* o mecanismo: a cor vem de quem contem */
+  color: inherit;
+  fill: none;
+  stroke: currentColor;
+}
+
+/* ---------------------------------------------------------------- caixa
+   Degraus recorrentes. Vem depois da base de proposito: mesma especificidade,
+   entao quem vence e a ordem do arquivo. */
+
+.al-icon--16 { --al-icon-box: var(--al-icon-box-16); }
+.al-icon--20 { --al-icon-box: var(--al-icon-box-20); }
+.al-icon--24 { --al-icon-box: var(--al-icon-box-24); }
+.al-icon--32 { --al-icon-box: var(--al-icon-box-32); }
+
+/* ---------------------------------------------------------------- tinta
+   Saida explicita, para icone sem quem herdar. Dentro de um acionavel nao se
+   usa nenhuma destas: o padrao ja acerta. */
+
+.al-icon--ink-default  { color: var(--al-icon-ink-default); }
+.al-icon--ink-on-brand { color: var(--al-icon-ink-on-brand); }
+.al-icon--ink-on-solid { color: var(--al-icon-ink-on-solid); }
+.al-icon--ink-disabled { color: var(--al-icon-ink-disabled); }
+
+/* ================= button - tokens ================= */
+/* AL Design System - tokens do Button
+ * GERADO por components/button/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez, e o
+ * Button inteiro acompanha sem uma linha a mais.
+ *
+ * Cuidado: substituicao de custom property acontece no elemento onde ela e
+ * DECLARADA, nao no ponto de uso. Um alias declarado aqui desce ja resolvido.
+ * Por isso tematizar um container solto (e nao o :root) exige re-declarar
+ * esta camada dentro do bloco daquele container - ver site/site.py.
+ */
+
+:root {
+
+  /* primary */
+  --al-button-primary-bg: var(--al-bg-brand);
+  --al-button-primary-bg-hover: var(--al-bg-brand-hover);
+  --al-button-primary-bg-active: var(--al-bg-brand-active);
+  --al-button-primary-bg-disabled: var(--al-bg-disabled);
+  --al-button-primary-label: var(--al-text-on-brand);
+  --al-button-primary-label-disabled: var(--al-text-disabled);
+  --al-button-primary-border: transparent;
+  --al-button-primary-border-disabled: var(--al-border-subtle);
+  --al-button-primary-ring: var(--al-focus-ring-default);
+
+  /* secondary */
+  --al-button-secondary-bg: transparent;
+  --al-button-secondary-bg-hover: var(--al-bg-hover);
+  --al-button-secondary-bg-active: var(--al-bg-active);
+  --al-button-secondary-bg-disabled: transparent;
+  --al-button-secondary-label: var(--al-text-primary);
+  --al-button-secondary-label-disabled: var(--al-text-disabled);
+  --al-button-secondary-border: var(--al-border-strong);
+  --al-button-secondary-border-disabled: var(--al-border-subtle);
+  --al-button-secondary-ring: var(--al-focus-ring-default);
+
+  /* ghost */
+  --al-button-ghost-bg: transparent;
+  --al-button-ghost-bg-hover: var(--al-bg-hover);
+  --al-button-ghost-bg-active: var(--al-bg-active);
+  --al-button-ghost-bg-disabled: transparent;
+  --al-button-ghost-label: var(--al-text-primary);
+  --al-button-ghost-label-disabled: var(--al-text-disabled);
+  --al-button-ghost-border: transparent;
+  --al-button-ghost-border-disabled: transparent;
+  --al-button-ghost-ring: var(--al-focus-ring-default);
+
+  /* danger */
+  --al-button-danger-bg: var(--al-bg-danger);
+  --al-button-danger-bg-hover: var(--al-bg-danger-hover);
+  --al-button-danger-bg-active: var(--al-bg-danger-active);
+  --al-button-danger-bg-disabled: var(--al-bg-disabled);
+  --al-button-danger-label: var(--al-text-on-solid);
+  --al-button-danger-label-disabled: var(--al-text-disabled);
+  --al-button-danger-border: transparent;
+  --al-button-danger-border-disabled: var(--al-border-subtle);
+  --al-button-danger-ring: var(--al-focus-ring-error);
+
+  /* tamanho sm - altura resultante: 36px */
+  --al-button-sm-padding-x: var(--al-space-12);
+  --al-button-sm-padding-y: var(--al-space-8);
+  --al-button-sm-gap: var(--al-space-8);
+  --al-button-sm-font-size: var(--al-font-size-sm);
+  --al-button-sm-line-height: var(--al-line-height-sm);
+  --al-button-sm-font-weight: var(--al-font-weight-medium);
+  --al-button-sm-icon-size: var(--al-icon-size-20);
+
+  /* tamanho md - altura resultante: 48px */
+  --al-button-md-padding-x: var(--al-space-16);
+  --al-button-md-padding-y: var(--al-space-12);
+  --al-button-md-gap: var(--al-space-8);
+  --al-button-md-font-size: var(--al-font-size-md);
+  --al-button-md-line-height: var(--al-line-height-md);
+  --al-button-md-font-weight: var(--al-font-weight-medium);
+  --al-button-md-icon-size: var(--al-icon-size-24);
+
+  /* compartilhado */
+  --al-button-radius: var(--al-radius-full);
+  --al-button-border-width: var(--al-border-width-1);
+}
+
+/* ================= button ================= */
+/* AL Design System - Button
+ * Escrito a mao. Depende de al-foundation.css e al-button-tokens.css, nesta ordem.
+ *
+ * Nenhum valor aqui e literal: toda cor, espaco, raio e tipografia entra por
+ * var(--al-button-*). O check.py ao lado recusa o arquivo se algum escapar.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   <button type="button" class="al-btn al-btn--primary al-btn--md">
+ *     <span class="al-btn__spinner" aria-hidden="true"></span>
+ *     <span class="al-btn__icon al-btn__icon--leading">
+ *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *     </span>
+ *     <span class="al-btn__label">Publicar</span>
+ *     <span class="al-btn__icon al-btn__icon--trailing">
+ *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *     </span>
+ *   </button>
+ *
+ *   variante : --primary | --secondary | --ghost | --danger
+ *   tamanho  : --sm | --md
+ *
+ *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *
+ * O ICONE
+ *   O desenho vem do componente Icon da Fundacao - o Button nao inventa icone.
+ *   O svg entra inline, com a classe .al-icon, e o contrato decorativo
+ *   (aria-hidden + focusable="false") vai NO SVG, nao no span: quem carrega o
+ *   sentido aqui e o rotulo, e o icone anunciado seria ruido duplicado.
+ *   O tamanho nao e escolha de quem consome: o Button impoe a caixa pelo
+ *   tamanho do botao, e o .al-icon obedece. Nao ponha .al-icon--20 aqui.
+ *
+ * CARREGANDO
+ *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
+ *   o handler no JS. Nao use o atributo disabled: ele tira o botao da ordem de
+ *   foco no meio da interacao e nada e anunciado. Anuncie o progresso por uma
+ *   regiao viva separada (role="status" aria-live="polite").
+ *   O spinner ocupa o lugar do icone da esquerda - se nao havia icone, a largura
+ *   muda; troque tambem o rotulo ("Publicar" -> "Publicando…") para absorver isso.
+ *
+ * DESABILITADO
+ *   Prefira aria-disabled="true" ao atributo disabled: o botao continua focavel
+ *   e um tooltip pode dizer o motivo. Com aria-disabled o clique AINDA dispara -
+ *   a trava e no JS.
+ */
+
+/* ---------------------------------------------------------------- base */
+.al-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  margin: 0;
+  /* A borda entra no calculo da altura: todo variante tem 1px, transparente ou
+     nao, entao descontar aqui mantem 36 e 48 exatos e impede o botao de pular
+     1px quando o disabled acrescenta borda. */
+  padding:
+    calc(var(--_pad-y) - var(--al-button-border-width))
+    calc(var(--_pad-x) - var(--al-button-border-width));
+  border: var(--al-button-border-width) solid var(--_border);
+  border-radius: var(--al-button-radius);
+
+  background-color: var(--_bg);
+  color: var(--_label);
+
+  font-family: var(--al-font-sans);
+  font-size: var(--_font-size);
+  line-height: var(--_line-height);
+  font-weight: var(--_font-weight);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* ---------------------------------------------------------------- variantes */
+.al-btn--primary {
+  --_bg: var(--al-button-primary-bg);
+  --_bg-hover: var(--al-button-primary-bg-hover);
+  --_bg-active: var(--al-button-primary-bg-active);
+  --_bg-disabled: var(--al-button-primary-bg-disabled);
+  --_label: var(--al-button-primary-label);
+  --_label-disabled: var(--al-button-primary-label-disabled);
+  --_border: var(--al-button-primary-border);
+  --_border-disabled: var(--al-button-primary-border-disabled);
+  --_ring: var(--al-button-primary-ring);
+}
+
+.al-btn--secondary {
+  --_bg: var(--al-button-secondary-bg);
+  --_bg-hover: var(--al-button-secondary-bg-hover);
+  --_bg-active: var(--al-button-secondary-bg-active);
+  --_bg-disabled: var(--al-button-secondary-bg-disabled);
+  --_label: var(--al-button-secondary-label);
+  --_label-disabled: var(--al-button-secondary-label-disabled);
+  --_border: var(--al-button-secondary-border);
+  --_border-disabled: var(--al-button-secondary-border-disabled);
+  --_ring: var(--al-button-secondary-ring);
+}
+
+.al-btn--ghost {
+  --_bg: var(--al-button-ghost-bg);
+  --_bg-hover: var(--al-button-ghost-bg-hover);
+  --_bg-active: var(--al-button-ghost-bg-active);
+  --_bg-disabled: var(--al-button-ghost-bg-disabled);
+  --_label: var(--al-button-ghost-label);
+  --_label-disabled: var(--al-button-ghost-label-disabled);
+  --_border: var(--al-button-ghost-border);
+  --_border-disabled: var(--al-button-ghost-border-disabled);
+  --_ring: var(--al-button-ghost-ring);
+}
+
+.al-btn--danger {
+  --_bg: var(--al-button-danger-bg);
+  --_bg-hover: var(--al-button-danger-bg-hover);
+  --_bg-active: var(--al-button-danger-bg-active);
+  --_bg-disabled: var(--al-button-danger-bg-disabled);
+  --_label: var(--al-button-danger-label);
+  --_label-disabled: var(--al-button-danger-label-disabled);
+  --_border: var(--al-button-danger-border);
+  --_border-disabled: var(--al-button-danger-border-disabled);
+  --_ring: var(--al-button-danger-ring);
+}
+
+/* ---------------------------------------------------------------- tamanhos */
+.al-btn--sm {
+  --_pad-x: var(--al-button-sm-padding-x);
+  --_pad-y: var(--al-button-sm-padding-y);
+  --_gap: var(--al-button-sm-gap);
+  --_font-size: var(--al-button-sm-font-size);
+  --_line-height: var(--al-button-sm-line-height);
+  --_font-weight: var(--al-button-sm-font-weight);
+  --_icon-size: var(--al-button-sm-icon-size);
+}
+
+.al-btn--md {
+  --_pad-x: var(--al-button-md-padding-x);
+  --_pad-y: var(--al-button-md-padding-y);
+  --_gap: var(--al-button-md-gap);
+  --_font-size: var(--al-button-md-font-size);
+  --_line-height: var(--al-button-md-line-height);
+  --_font-weight: var(--al-button-md-font-weight);
+  --_icon-size: var(--al-button-md-icon-size);
+}
+
+/* ---------------------------------------------------------------- estados */
+/* hover e pressed nunca valem quando o botao esta fora de acao */
+.al-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-hover);
+}
+
+.al-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-active);
+}
+
+/* :focus-visible, nao :focus - o anel aparece no teclado, nao no clique.
+   O anel e sombra, entao nao empurra layout e acompanha o raio da pilula. */
+.al-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--_ring);
+}
+
+.al-btn:disabled,
+.al-btn[aria-disabled="true"] {
+  background-color: var(--_bg-disabled);
+  color: var(--_label-disabled);
+  border-color: var(--_border-disabled);
+  cursor: not-allowed;
+}
+
+/* o anel continua valendo em cima do desabilitado: aria-disabled permanece
+   focavel de proposito, e quem chega nele de teclado precisa ver onde esta */
+.al-btn[aria-disabled="true"]:focus-visible {
+  box-shadow: var(--_ring);
+}
+
+/* ---------------------------------------------------------------- conteudo */
+/* A caixa do icone e a entrelinha do rotulo: 20 no sm, 24 no md. Por isso
+   ligar o icone nao muda a altura do botao - ele ocupa a mesma faixa vertical
+   que a linha de texto ja ocupava. */
+.al-btn__icon {
+  display: block;
+  flex: none;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+
+  /* o .al-icon la dentro le a propria caixa desta variavel. Sem isso ele cairia
+     no degrau padrao dele (24) e brigaria com o span no sm. Quem manda no
+     tamanho e o botao, nao o icone. */
+  --al-icon-box: var(--_icon-size);
+}
+
+/* rede de seguranca para svg que nao seja do componente Icon */
+.al-btn__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.al-btn__label {
+  display: block;
+}
+
+/* ---------------------------------------------------------------- carregando */
+/* mesma caixa do icone que ele substitui - se fosse menor, a largura do botao
+   pularia no instante em que o carregamento comeca */
+.al-btn__spinner {
+  display: none;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  border: var(--al-border-width-2) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--al-radius-full);
+  animation: al-btn-spin var(--al-motion-duration-spinner) var(--al-motion-easing-spinner) infinite;
+}
+
+.al-btn[aria-busy="true"] .al-btn__spinner {
+  display: block;
+}
+
+/* o spinner toma o lugar do icone da esquerda, para a largura nao pular */
+.al-btn[aria-busy="true"] .al-btn__icon--leading {
+  display: none;
+}
+
+@keyframes al-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-btn:hover,
+.al-btn:active,
+.al-btn:focus-visible {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* ---------------------------------------------------------------- ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-btn {
+    transition: none;
+  }
+  /* o spinner nao para: ele e a unica pista de que algo esta acontecendo.
+     Desacelera ate deixar de ser movimento agressivo. */
+  .al-btn__spinner {
+    animation-duration: var(--al-motion-duration-spinner-reduced);
+  }
+}
+
+/* No alto contraste do sistema a sombra e descartada - o anel some junto.
+   Aqui o foco volta como outline nativo, que o modo respeita. */
+@media (forced-colors: active) {
+  .al-btn {
+    border-color: currentColor;
+  }
+  .al-btn:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+  .al-btn:disabled,
+  .al-btn[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+}
+
+/* ================= input - tokens ================= */
+/* AL Design System - tokens do Input
+ * GERADO por components/input/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ *
+ * Altura do campo: 48px derivados, sem token.
+ */
+
+:root {
+
+  /* fundo - so o disabled e o readonly mudam */
+  --al-input-bg: var(--al-bg-surface-raised);
+  --al-input-bg-disabled: var(--al-bg-disabled);
+  --al-input-bg-readonly: var(--al-bg-subtle);
+
+  /* borda - o eixo que carrega o estado */
+  --al-input-border: var(--al-border-default);
+  --al-input-border-hover: var(--al-border-strong);
+  --al-input-border-focus: var(--al-border-brand);
+  --al-input-border-error: var(--al-border-danger);
+  --al-input-border-disabled: var(--al-border-default);
+  --al-input-border-readonly: var(--al-border-subtle);
+
+  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */
+  --al-input-text-placeholder: var(--al-text-placeholder);
+  --al-input-text-value: var(--al-text-primary);
+  --al-input-text-disabled: var(--al-text-disabled);
+
+  /* prefixo e sufixo - nao herdam a cor do placeholder */
+  --al-input-affix: var(--al-text-primary);
+
+  /* rotulo, marca, contador e apoio - vivem fora do campo, sobre a tela */
+  --al-input-label: var(--al-text-primary);
+  --al-input-label-error: var(--al-text-danger);
+  --al-input-label-disabled: var(--al-text-disabled);
+  --al-input-optional: var(--al-text-secondary);
+  --al-input-counter: var(--al-text-secondary);
+  --al-input-counter-error: var(--al-text-danger);
+  --al-input-help: var(--al-text-secondary);
+  --al-input-help-error: var(--al-text-danger);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-input-ring: var(--al-focus-ring-default);
+  --al-input-ring-error: var(--al-focus-ring-error);
+
+  /* geometria */
+  --al-input-padding-x: var(--al-space-12);
+  --al-input-padding-y: var(--al-space-12);
+  --al-input-gap: var(--al-space-8);
+  --al-input-radius: var(--al-radius-lg);
+  --al-input-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-input-font-size: var(--al-font-size-md);
+  --al-input-line-height: var(--al-line-height-md);
+  --al-input-font-weight: 400;
+  --al-input-tracking: 0em;
+  --al-input-label-font-size: var(--al-font-size-md);
+  --al-input-label-line-height: var(--al-line-height-md);
+  --al-input-label-font-weight: 400;
+  --al-input-label-tracking: 0em;
+  --al-input-optional-font-size: var(--al-font-size-sm);
+  --al-input-optional-line-height: var(--al-line-height-sm);
+  --al-input-optional-font-weight: 400;
+  --al-input-optional-tracking: 0em;
+  --al-input-counter-font-size: var(--al-font-size-sm);
+  --al-input-counter-line-height: var(--al-line-height-sm);
+  --al-input-counter-font-weight: 400;
+  --al-input-counter-tracking: 0em;
+  --al-input-help-font-size: var(--al-font-size-xs);
+  --al-input-help-line-height: var(--al-line-height-xs);
+  --al-input-help-font-weight: 400;
+  --al-input-help-tracking: 0.01em;
+}
+
+/* ================= input ================= */
+/* AL Design System - Input
+ *
+ * Depende de: foundation/al-foundation.css
+ *           + components/input/al-input-tokens.css
+ *
+ * CAMPO DE TEXTO DE UMA LINHA
+ *   <input> nativo, `type` text, email, url ou tel. Senha e o componente
+ *   Password; varias linhas e o Textarea. Nenhum dos dois estica este arquivo.
+ *
+ * ANATOMIA
+ *   <div class="al-input">
+ *     <div class="al-input__labelrow">
+ *       <label class="al-input__label" id="site-label" for="site">Site</label>
+ *       <span class="al-input__optional">(Opcional)</span>
+ *       <span class="al-input__counter" aria-live="off">0/100</span>
+ *     </div>
+ *     <div class="al-input__control">
+ *       <label class="al-input__affix" id="site-prefix" for="site">www.</label>
+ *       <input class="al-input__field" id="site" type="url"
+ *              aria-labelledby="site-label site-prefix site-suffix"
+ *              aria-describedby="site-help">
+ *       <label class="al-input__affix" id="site-suffix" for="site">.com</label>
+ *     </div>
+ *     <p class="al-input__help" id="site-help">Texto de apoio</p>
+ *   </div>
+ *
+ *   Marca "(Opcional)", contador, prefixo, sufixo e texto de apoio sao
+ *   MARCACAO, nao modificador: quem nao quer, nao escreve o elemento.
+ *
+ * A CAIXA E O `__control`, NAO O <input>
+ *   Prefixo e sufixo precisam ficar DENTRO da borda, e <input> nao aceita
+ *   filho. Entao borda, fundo, raio e anel moram no `__control`, e o <input>
+ *   e transparente, sem borda, ocupando o espaco que sobra. Consequencia: o
+ *   estado do campo e lido pelo conteiner via `:has()` - hover, foco, erro,
+ *   desabilitado e read-only.
+ *
+ *   Degradacao se `:has()` faltar: o campo fica sempre no estado de repouso -
+ *   sem anel de foco pintado pelo AL. Por isso o `outline` so e zerado DENTRO
+ *   de um `@supports selector(:has(*))`: sem `:has()` volta o anel nativo do
+ *   navegador, e o foco nunca some.
+ *
+ * O AFIXO E <label for>, E NAO <span>
+ *   Clicar em "www." precisa focar o campo, como clicar no rotulo. <label for>
+ *   faz isso sem uma linha de JavaScript. O nome anunciado continua
+ *   deterministico porque o <input> declara `aria-labelledby` = rotulo +
+ *   prefixo + sufixo ("Site, www., .com"), e aria-labelledby vence as labels -
+ *   solucao do Polaris, regra 29. Sem afixo, nao ha aria-labelledby: basta o
+ *   <label for>.
+ *
+ *   O afixo e visual e NAO vai no envio (regra 10): esta fora do <input>.
+ *
+ * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
+ *   Erro le `aria-invalid="true"`; desabilitado le `:disabled`; read-only le
+ *   o atributo `[readonly]` - NUNCA `:read-only`, que tambem casa campo
+ *   desabilitado e misturaria os dois estados. Mesmo motivo do Select: a cor
+ *   nao pode divergir do que o leitor de tela anuncia.
+ *
+ *   A unica excecao e o contador acima do limite, `data-over-limit`. Nao ha
+ *   atributo nativo para isso: sem `maxlength` (regra 14 - o limite nao trava
+ *   a digitacao) o navegador nao sabe que passou. O JavaScript que ja atualiza
+ *   o numero e o mesmo que liga o atributo.
+ *
+ * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE
+ *   Mesma mecanica do Select: interacao escreve em `--_border-state`; erro,
+ *   read-only e desabilitado escrevem em `--_border-force`, que vence sempre
+ *   por ser outra propriedade. Entre os tres decide a ordem do arquivo:
+ *   erro, read-only, desabilitado - o desabilitado ganha de todos.
+ *
+ * NAO EXISTE ACTIVE
+ *   Campo de texto SEMPRE casa `:focus-visible`, inclusive no clique de mouse
+ *   (a spec manda isso para todo elemento que aceita digitacao). A borda de
+ *   1px de um Active seria coberta pelo anel no mesmo instante. Regra 20.
+ *
+ * READ-ONLY NAO MOSTRA PLACEHOLDER
+ *   O cinza do placeholder sobre `bg-readonly` da 4.21:1, abaixo do piso. E
+ *   placeholder ensina a preencher, o que nao se aplica. O CSS o torna
+ *   transparente; a regra 22 manda o read-only vazio mostrar "—" como valor.
+ *
+ * ALTURA E CONSEQUENCIA, NAO `height`
+ *   48 = padding-y x2 + entrelinha, com a borda descontada do padding - a
+ *   mesma convencao do Button, do Tag e do Select. A borda de 1px existe em
+ *   todos os estados, entao o campo nunca "pula" quando o estado troca.
+ *
+ * LARGURA
+ *   100% do conteiner. Formulario decide largura (regra 26).
+ *
+ * DURACAO DA TRANSICAO
+ *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
+ *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
+ *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
+ *   usa a curva do estado para onde a transicao vai.
+ *
+ * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ */
+
+/* ---------------------------------------------------------------- raiz */
+.al-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-input-gap);
+}
+
+/* ------------------------------------------------------------ rotulo */
+/* baseline, nao center: rotulo tem entrelinha 24, marca e contador 20. */
+.al-input__labelrow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--al-input-gap);
+}
+
+.al-input__label {
+  color: var(--al-input-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-label-font-size);
+  line-height: var(--al-input-label-line-height);
+  font-weight: var(--al-input-label-font-weight);
+  letter-spacing: var(--al-input-label-tracking);
+}
+
+.al-input__optional {
+  color: var(--al-input-optional);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-optional-font-size);
+  line-height: var(--al-input-optional-line-height);
+  font-weight: var(--al-input-optional-font-weight);
+  letter-spacing: var(--al-input-optional-tracking);
+}
+
+/* empurrado para a direita da linha do rotulo - posicao do Carbon */
+.al-input__counter {
+  margin-left: auto;
+  color: var(--al-input-counter);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-counter-font-size);
+  line-height: var(--al-input-counter-line-height);
+  font-weight: var(--al-input-counter-font-weight);
+  letter-spacing: var(--al-input-counter-tracking);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------- caixa */
+.al-input__control {
+  --_border-state: var(--al-input-border);
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--al-input-gap);
+  width: 100%;
+
+  /* a borda entra na caixa, entao descontar aqui fecha 48 exatos */
+  padding: calc(var(--al-input-padding-y) - var(--al-input-border-width))
+           calc(var(--al-input-padding-x) - var(--al-input-border-width));
+
+  border: var(--al-input-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-input-radius);
+  background-color: var(--_bg-force, var(--al-input-bg));
+  cursor: text;
+
+  transition:
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* ------------------------------------------------------------- campo */
+.al-input__field {
+  --_text-state: var(--al-input-text-value);
+
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--_text-force, var(--_text-state));
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-font-size);
+  line-height: var(--al-input-line-height);
+  font-weight: var(--al-input-font-weight);
+  letter-spacing: var(--al-input-tracking);
+}
+
+/* Firefox baixa a opacidade do placeholder por conta propria; o token ja
+   carrega o cinza certo, entao a opacidade volta ao inteiro. */
+.al-input__field::placeholder {
+  color: var(--al-input-text-placeholder);
+  opacity: 1;
+}
+
+/* So zera o anel nativo onde o anel do AL existe - ver cabecalho. */
+@supports selector(:has(*)) {
+  .al-input__field:focus {
+    outline: none;
+  }
+}
+
+/* ---------------------------------------------------- prefixo e sufixo */
+.al-input__affix {
+  flex: none;
+  color: var(--al-input-affix);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-font-size);
+  line-height: var(--al-input-line-height);
+  font-weight: var(--al-input-font-weight);
+  letter-spacing: var(--al-input-tracking);
+  white-space: nowrap;
+  cursor: text;
+}
+
+/* -------------------------------------------------------- texto de apoio */
+.al-input__help {
+  color: var(--al-input-help);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-input-help-font-size);
+  line-height: var(--al-input-help-line-height);
+  font-weight: var(--al-input-help-font-weight);
+  letter-spacing: var(--al-input-help-tracking);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- estados */
+/* hover: nem desabilitado nem read-only reagem - regra 23 */
+.al-input__control:hover:not(:has(.al-input__field:disabled, .al-input__field[readonly])) {
+  --_border-state: var(--al-input-border-hover);
+}
+
+/* foco - por Tab OU por clique, e ele permanece. Nao ha Active. */
+.al-input__control:has(.al-input__field:focus-visible) {
+  --_border-state: var(--al-input-border-focus);
+  box-shadow: var(--_ring-force, var(--al-input-ring));
+}
+
+/* erro - vence hover e foco por escrever noutra propriedade */
+.al-input__control:has(.al-input__field[aria-invalid="true"]) {
+  --_border-force: var(--al-input-border-error);
+  --_ring-force: var(--al-input-ring-error);
+}
+
+.al-input:has(.al-input__field[aria-invalid="true"]) .al-input__label {
+  color: var(--al-input-label-error);
+}
+
+.al-input:has(.al-input__field[aria-invalid="true"]) .al-input__help {
+  color: var(--al-input-help-error);
+}
+
+/* O contador so fica vermelho quando o erro E o limite - regra 15.
+   Erro por outro motivo deixa o contador cinza. */
+.al-input__counter[data-over-limit] {
+  color: var(--al-input-counter-error);
+}
+
+/* read-only - `[readonly]`, nunca `:read-only` (casa o disabled tambem) */
+.al-input__control:has(.al-input__field[readonly]) {
+  --_border-force: var(--al-input-border-readonly);
+  --_bg-force: var(--al-input-bg-readonly);
+  cursor: default;
+}
+
+.al-input__control:has(.al-input__field[readonly]) .al-input__affix {
+  cursor: default;
+}
+
+.al-input__field[readonly]::placeholder {
+  color: transparent;
+}
+
+/* desabilitado - por ultimo, porque ganha de todos */
+.al-input__control:has(.al-input__field:disabled) {
+  --_border-force: var(--al-input-border-disabled);
+  --_bg-force: var(--al-input-bg-disabled);
+  cursor: not-allowed;
+}
+
+.al-input__field:disabled {
+  --_text-force: var(--al-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.al-input__field:disabled::placeholder,
+.al-input__control:has(.al-input__field:disabled) .al-input__affix {
+  color: var(--al-input-text-disabled);
+  cursor: not-allowed;
+}
+
+.al-input:has(.al-input__field:disabled) .al-input__label,
+.al-input:has(.al-input__field:disabled) .al-input__optional,
+.al-input:has(.al-input__field:disabled) .al-input__counter {
+  color: var(--al-input-label-disabled);
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-input__control:hover,
+.al-input__control:has(.al-input__field:focus-visible),
+.al-input__control:has(.al-input__field[aria-invalid="true"]) {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* ------------------------------------------------------------ ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-input__control {
+    transition: none;
+  }
+}
+
+/* ================= modal - tokens ================= */
+/* AL Design System - tokens do Modal
+ * GERADO por components/modal/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* cor - o scrim tem transparencia; o tema troca no :root */
+  --al-modal-bg: var(--al-bg-surface-raised);
+  --al-modal-title: var(--al-text-primary);
+  --al-modal-scrim: var(--al-bg-scrim);
+
+  /* elevacao */
+  --al-modal-shadow: var(--al-elevation-5);
+
+  /* geometria */
+  --al-modal-padding: var(--al-space-24);
+  --al-modal-gap: var(--al-space-24);
+  --al-modal-margin: var(--al-space-16);
+  --al-modal-offset: var(--al-space-96);
+  --al-modal-radius: var(--al-radius-2xl);
+
+  /* largura - valor declarado, sem escala na Foundation (decisao G) */
+  --al-modal-width-sm: 320px;
+  --al-modal-width-md: 480px;
+  --al-modal-width-lg: 640px;
+
+  /* movimento - easing vem direto da Foundation */
+  --al-modal-duration: var(--al-motion-duration-panel);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-modal-title-font-size: var(--al-font-size-2xl);
+  --al-modal-title-line-height: var(--al-line-height-2xl);
+  --al-modal-title-font-weight: 600;
+  --al-modal-title-tracking: -0.01em;
+}
+
+/* ================= modal ================= */
+/* AL Design System - Modal
+ * Escrito a mao. Depende de al-foundation.css, button.css e
+ * al-modal-tokens.css, nesta ordem. O comportamento (abrir, fechar no scrim,
+ * foco inicial) vive em modal.js.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, sombra, tipografia, largura e
+ * duracao entram por var(--al-modal-*). O check.py ao lado recusa o arquivo se
+ * algum escapar.
+ *
+ * CONTRATO DE MARCACAO - <dialog> NATIVO (DECISAO A, REGRA 24)
+ *
+ *   <dialog class="al-modal al-modal--md" aria-labelledby="t1">
+ *     <h2 class="al-modal__title" id="t1">Excluir cliente?</h2>
+ *     <div class="al-modal__content">…qualquer conteudo…</div>
+ *     <div class="al-modal__actions">
+ *       <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
+ *         <span class="al-btn__label">Cancelar</span></button>
+ *       <button type="button" class="al-btn al-btn--danger al-btn--md">
+ *         <span class="al-btn__label">Excluir cliente</span></button>
+ *     </div>
+ *   </dialog>
+ *
+ *   - Tamanho: --sm | --md | --lg. Sem modificador = md.
+ *   - Abrir: `data-al-modal-open="<id do dialog>"` no botao, ou showModal().
+ *     Sempre showModal(), nunca `open` na marcacao nem show() (regra 24).
+ *   - Fechar: `data-al-modal-close` no botao, ou <form method="dialog">.
+ *     Esc fecha sempre (regra 15); o <dialog> ja faz.
+ *   - Sem botao X (regra 16): o secundario do rodape e a saida. Sem divisoria
+ *     (regra 10): quem separa as partes e o espaco.
+ *   - Nome acessivel: aria-labelledby apontando para o titulo (regra 25).
+ *   - Acoes: a secundaria vem primeiro, a principal por ultimo (regra 19).
+ *
+ * ALTURA E ROLAGEM (DECISAO E, REGRA 28)
+ *   A altura e do conteudo (hug). Passou da tela, so o miolo rola; titulo e
+ *   acoes ficam fixos. O miolo ganha um respiro do tamanho do anel de foco e
+ *   desconta com margem negativa: o overflow cortaria o anel de um campo
+ *   encostado na borda do miolo, e o respiro devolve o espaco sem mexer no
+ *   layout. Derivado dos tokens de foco da Foundation, sem valor novo.
+ *
+ * LARGURA NO CELULAR (DECISOES F E H, REGRA 13)
+ *   Largura do tamanho, limitada a 100% menos a margem dos dois lados. Num
+ *   <dialog> modal o 100% e a viewport.
+ *
+ * ENTRADA E SAIDA (REGRA 17)
+ *   O card SOBE ao abrir e DESCE ao fechar, com fade, em 300ms
+ *   (modal-duration). O deslocamento e `modal-offset` (space.96): o card nasce
+ *   96 abaixo do lugar dele e volta para la. A curva e a do estado de destino:
+ *   entrada ease-out, saida ease-in. O scrim so aparece e some. Usa
+ *   @starting-style e transition-behavior: allow-discrete para animar o
+ *   display e a camada de topo; em navegador sem isso o Modal abre e fecha
+ *   sem animacao e continua funcionando.
+ *   O layout em coluna fica na base, nao no [open]: ao fechar o display segue
+ *   `flex` pela duracao da saida, e um layout so do [open] fazia o miolo ser
+ *   comprimido na frente do usuario.
+ *
+ * SCRIM (REGRA 27)
+ *   ::backdrop herda as custom properties do <dialog>. Decoracao: nao recebe
+ *   foco. O fechamento por clique nele (so sem campos, regra 14) e do JS.
+ *
+ * COR DO TEXTO DO MIOLO
+ *   O <dialog> ganha a cor do titulo (text-primary) e o miolo herda. Sem
+ *   isso o UA pinta CanvasText.
+ *
+ * ALTO CONTRASTE
+ *   Sem o fundo e a sombra o Modal se perderia: ganha contorno CanvasText.
+ */
+
+/* ---------------------------------------------------------------- caixa */
+.al-modal {
+  box-sizing: border-box;
+  inline-size: var(--al-modal-width-md);
+  max-inline-size: calc(100% - 2 * var(--al-modal-margin));
+  max-block-size: calc(100% - 2 * var(--al-modal-margin));
+  margin: auto;
+  padding: var(--al-modal-padding);
+  border: 0;
+  border-radius: var(--al-modal-radius);
+  background-color: var(--al-modal-bg);
+  box-shadow: var(--al-modal-shadow);
+  color: var(--al-modal-title);
+  font-family: var(--al-font-sans);
+  overflow: clip;
+}
+
+.al-modal--sm { inline-size: var(--al-modal-width-sm); }
+.al-modal--md { inline-size: var(--al-modal-width-md); }
+.al-modal--lg { inline-size: var(--al-modal-width-lg); }
+
+/* O layout (coluna, gap) fica na base e so o display depende do [open]: dialog
+   fechado precisa seguir display: none. Se o gap e a direcao ficassem no
+   [open], ao fechar o Modal voltaria a ser bloco durante a saida e o miolo
+   seria comprimido na frente do usuario. */
+.al-modal {
+  flex-direction: column;
+  gap: var(--al-modal-gap);
+}
+
+.al-modal[open] {
+  display: flex;
+}
+
+/* --------------------------------------------------------------- titulo */
+/* O titulo costuma ser um <h2>, e quem usa pode ter um estilo global de h2
+   (mono, caixa alta, cor, linha embaixo). Estes resets sao do componente: o
+   titulo do Modal e o que o modal.css diz, em qualquer pagina. */
+.al-modal__title {
+  flex: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font-family: inherit;
+  text-transform: none;
+  overflow-wrap: anywhere;
+  font-size: var(--al-modal-title-font-size);
+  line-height: var(--al-modal-title-line-height);
+  font-weight: var(--al-modal-title-font-weight);
+  letter-spacing: var(--al-modal-title-tracking);
+}
+
+/* ---------------------------------------------------------------- miolo */
+.al-modal__content {
+  --_ring-room: calc(var(--al-border-focus-offset) + var(--al-border-width-focus));
+  flex: 1 1 auto;
+  min-block-size: 0;
+  margin: calc(-1 * var(--_ring-room));
+  padding: var(--_ring-room);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ---------------------------------------------------------------- acoes */
+.al-modal__actions {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--al-modal-gap);
+}
+
+/* ---------------------------------------------------------- pagina atras */
+/* regra 28: a pagina nao rola com o Modal aberto. `:modal` e so o aberto por
+   showModal(): um <dialog open> solto, como os congelados da pagina de QA,
+   nao trava a rolagem */
+:root:has(.al-modal:modal) {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------ entrada e saida */
+/* O estado base e o de FORA: transparente e deslocado para baixo. Aberto, ele
+   sobe e aparece; ao fechar volta para o estado base e desce. A mesma regra
+   serve aos dois sentidos. */
+.al-modal {
+  opacity: 0;
+  translate: 0 var(--al-modal-offset);
+  transition:
+    opacity var(--al-modal-duration) var(--al-motion-easing-exit),
+    translate var(--al-modal-duration) var(--al-motion-easing-exit),
+    overlay var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-modal[open] {
+  opacity: 1;
+  translate: 0 0;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* o scrim so aparece e some; quem sobe e desce e o card */
+.al-modal::backdrop {
+  background-color: var(--al-modal-scrim);
+  opacity: 0;
+  transition:
+    opacity var(--al-modal-duration) var(--al-motion-easing-exit),
+    overlay var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-modal[open]::backdrop {
+  opacity: 1;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-modal[open] {
+    opacity: 0;
+    translate: 0 var(--al-modal-offset);
+  }
+
+  .al-modal[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-modal,
+  .al-modal::backdrop {
+    transition: none;
+  }
+
+  .al-modal {
+    translate: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-modal {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+}
+
+
+/* ================= cromo da pagina de QA =================
+   Usa os proprios tokens do AL. Nao ha paleta paralela aqui de proposito. */
+html, body { background: var(--al-bg-canvas); }
+body {
+  margin: 0;
+  color: var(--al-text-primary);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-font-size-md);
+  line-height: var(--al-line-height-md);
+}
+.qa-wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-inline: var(--al-space-16);
+  padding-block: var(--al-space-32) var(--al-space-64);
+  display: flex; flex-direction: column; gap: var(--al-space-48);
+}
+.qa-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; gap: var(--al-space-16);
+  border-bottom: 1px solid var(--al-border-subtle); padding-bottom: var(--al-space-16);
+}
+.qa-head h1 { margin: 0; font-size: var(--al-font-size-3xl); line-height: var(--al-line-height-3xl); font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+.qa-sub { margin: var(--al-space-4) 0 0; color: var(--al-text-secondary); font-size: var(--al-font-size-sm); }
+.qa-btn {
+  display: inline-flex; align-items: center; gap: var(--al-space-8);
+  padding: var(--al-space-8) var(--al-space-16);
+  border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-full);
+  background: var(--al-bg-surface-raised); color: var(--al-text-primary);
+  font: inherit; font-size: var(--al-font-size-sm); cursor: pointer;
+}
+.qa-btn:focus-visible { outline: none; box-shadow: var(--al-focus-ring-default); }
+section > h2 { margin: 0 0 var(--al-space-4); font-size: var(--al-font-size-xl); line-height: var(--al-line-height-xl); font-weight: 600; letter-spacing: -0.01em; }
+section > p.qa-lede { margin: 0 0 var(--al-space-20); color: var(--al-text-secondary); max-width: 66ch; }
+.qa-tag {
+  font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs);
+  padding: 2px var(--al-space-8); border-radius: var(--al-radius-full);
+  border: 1px solid var(--al-border-default); color: var(--al-text-secondary);
+  white-space: nowrap; vertical-align: middle; margin-left: var(--al-space-8); font-weight: 400; letter-spacing: 0;
+}
+.qa-tag--real { border-color: var(--al-border-success); color: var(--al-text-success); }
+.qa-tag--simulado { border-color: var(--al-border-warning); color: var(--al-text-warning); }
+.qa-checks { margin: 0; padding-left: var(--al-space-20); display: grid; gap: var(--al-space-8); max-width: 72ch; }
+.qa-checks li { color: var(--al-text-secondary); }
+.qa-checks strong { color: var(--al-text-primary); font-weight: 500; }
+.qa-tablewrap { overflow-x: auto; }
+table.qa-measure { border-collapse: collapse; width: 100%; font-size: var(--al-font-size-sm); font-variant-numeric: tabular-nums; }
+table.qa-measure th, table.qa-measure td { text-align: left; padding: var(--al-space-8) var(--al-space-12); border-bottom: 1px solid var(--al-border-subtle); white-space: nowrap; }
+table.qa-measure th { font-weight: 600; font-size: var(--al-font-size-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--al-text-secondary); }
+.qa-verdict { font-weight: 600; }
+.qa-verdict--ok { color: var(--al-text-success); }
+.qa-verdict--exc { color: var(--al-text-warning); }
+.qa-verdict--bad { color: var(--al-text-danger); }
+.qa-foot { color: var(--al-text-secondary); font-size: var(--al-font-size-sm); border-top: 1px solid var(--al-border-subtle); padding-top: var(--al-space-16); }
+code { font-family: var(--al-font-mono); font-size: 0.9em; }
+
+/* ---- especificos do Modal ---- */
+.qa-panel { padding: var(--al-space-24); border-radius: var(--al-radius-xl); background: var(--al-bg-surface); }
+.qa-matrix { display: flex; flex-wrap: wrap; gap: var(--al-space-24); align-items: flex-start; }
+.qa-matrix__label { margin: 0 0 var(--al-space-8); font-size: var(--al-font-size-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--al-text-secondary); }
+/* o <dialog open> do UA e absoluto e centrado; aqui ele e so uma caixa */
+.qa-cell { min-width: 0; max-width: 100%; }
+.qa-cell .al-modal { position: static; margin: 0; max-inline-size: 100%; opacity: 1; translate: none; transition: none; }
+.qa-copy { margin: 0; color: var(--al-text-secondary); }
+.qa-fields { display: flex; flex-direction: column; gap: var(--al-space-16); }
+.al-modal__content > .qa-copy + .qa-copy { margin-block-start: var(--al-space-12); }
+.qa-triggers { display: grid; gap: var(--al-space-20); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.qa-trigger { display: flex; flex-direction: column; gap: var(--al-space-8); align-items: flex-start; }
+.qa-pagenote { margin: 0; color: var(--al-text-secondary); font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); }
+.qa-log { margin: var(--al-space-16) 0 0; font-size: var(--al-font-size-sm); color: var(--al-text-secondary); min-height: var(--al-line-height-sm); }
+</style>
+
+<div class="qa-wrap">
+  <header class="qa-head">
+    <div>
+      <h1>Modal — QA da etapa 6</h1>
+      <p class="qa-sub">AL Design System 0.18.0 · componente 0.1.0 ·
+      3 tamanhos × 4 cenários × 2 temas · portão: 14 combinações, 12 passam, 2 exceções, 0 reprovas</p>
+    </div>
+    <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">
+      <span id="theme-label">Tema claro</span>
+    </button>
+  </header>
+
+  <section>
+    <h2>O que testar</h2>
+    <ol class="qa-checks">
+      <li><strong>Abra cada cenário</strong> e veja onde o foco cai: sem campos, no botão principal; com campos, no primeiro campo; no de exclusão, em “Cancelar” (regras 26 e 29).</li>
+      <li><strong>Tab e Shift+Tab</strong> rodam só dentro do Modal e dão a volta; a página atrás não recebe foco (regra 24).</li>
+      <li><strong>Esc fecha em todos</strong>, inclusive no formulário. O foco volta para o botão que abriu (regras 15 e 17) — a linha de registro abaixo diz onde ele caiu.</li>
+      <li><strong>Clique no fundo escurecido</strong>: fecha em “Sair da conta” e “Excluir cliente”; NÃO fecha em “Editar e-mail” (regra 14). Aperte dentro do campo, arraste e solte fora: não fecha.</li>
+      <li><strong>Role a roda do mouse</strong> sobre os “Termos de uso”: só o miolo rola, título e botões ficam (regra 28). Role fora do Modal: a página atrás não anda.</li>
+      <li><strong>Olhe a entrada e a saída</strong>: o card sobe ao abrir e desce ao fechar, com o fundo escurecendo e clareando. Ao fechar, nada dentro dele muda de forma: some inteiro.</li>
+      <li><strong>Não existe X.</strong> A saída visível é sempre um botão no rodapé (regra 16).</li>
+      <li><strong>Troque o tema</strong> com um Modal aberto e depois feche: no escuro o card clareia sobre o fundo escurecido, sem contorno (decisão G).</li>
+      <li><strong>Tela estreita</strong> (≈375px): o Modal nunca encosta na borda — fica 16 de cada lado (regra 13).</li>
+      <li><strong>Leitor de tela</strong> (VoiceOver: Ctrl+Opção+→): anuncia “diálogo”, o título como nome e o que está atrás fica mudo.</li>
+      <li><strong>“Reduzir movimento”</strong> ligado nas preferências do sistema: abre e fecha sem fade.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Tamanhos congelados <span class="qa-tag qa-tag--simulado">simulado</span></h2>
+    <p class="qa-lede">Um <code>&lt;dialog&gt;</code> real só existe aberto no topo da página. Aqui os três
+    tamanhos ficam inline, lado a lado, só para comparar com o Figma. Mesmo CSS; o que não existe é a camada
+    de cima. Não recebem foco.</p>
+    <div class="qa-panel"><div class="qa-matrix" id="matrix-frozen"><div class="qa-cell" inert aria-hidden="true" data-size="sm"><p class="qa-matrix__label">sm · 320</p><dialog class="al-modal al-modal--sm" id="frz-sm" aria-labelledby="frz-sm-t" open><h2 class="al-modal__title" id="frz-sm-t">Excluir cliente?</h2><div class="al-modal__content"><p class="qa-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md"><span class="al-btn__label">Excluir cliente</span></button></div></dialog></div><div class="qa-cell" inert aria-hidden="true" data-size="md"><p class="qa-matrix__label">md · 480</p><dialog class="al-modal al-modal--md" id="frz-md" aria-labelledby="frz-md-t" open><h2 class="al-modal__title" id="frz-md-t">Excluir cliente?</h2><div class="al-modal__content"><p class="qa-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md"><span class="al-btn__label">Excluir cliente</span></button></div></dialog></div><div class="qa-cell" inert aria-hidden="true" data-size="lg"><p class="qa-matrix__label">lg · 640</p><dialog class="al-modal al-modal--lg" id="frz-lg" aria-labelledby="frz-lg-t" open><h2 class="al-modal__title" id="frz-lg-t">Excluir cliente?</h2><div class="al-modal__content"><p class="qa-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md"><span class="al-btn__label">Excluir cliente</span></button></div></dialog></div></div></div>
+  </section>
+
+  <section>
+    <h2>Ao vivo <span class="qa-tag qa-tag--real">real</span></h2>
+    <p class="qa-lede">Abertos por <code>data-al-modal-open</code> → <code>showModal()</code>, do
+    <code>modal.js</code> inlinado.</p>
+    <div class="qa-panel">
+      <div class="qa-triggers"><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="m-confirma"><span class="al-btn__label">Sair da conta</span></button><p class="qa-pagenote">Sem campos: o clique no fundo fecha; o foco entra no botão principal.</p></div><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="m-excluir"><span class="al-btn__label">Excluir cliente</span></button><p class="qa-pagenote">Principal Danger: o foco entra em “Cancelar” (regra 29).</p></div><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="m-form"><span class="al-btn__label">Editar e-mail</span></button><p class="qa-pagenote">Com campos: o clique no fundo NÃO fecha; o foco entra no campo.</p></div><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="m-longo"><span class="al-btn__label">Termos de uso</span></button><p class="qa-pagenote">Conteúdo longo: só o miolo rola; título e botões ficam.</p></div></div>
+      <p class="qa-log" id="qa-log" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Contraste medido no navegador</h2>
+    <p class="qa-lede">Não são os números do <code>tokens.json</code>: o script lê a cor que o navegador
+    pintou nos Modais congelados e a do scrim composta sobre a página, com
+    <code>getComputedStyle</code>, depois da transição terminar.</p>
+    <div class="qa-tablewrap">
+      <table class="qa-measure">
+        <thead><tr><th>onde</th><th>o quê</th><th>cor</th><th>fundo</th><th>medido</th><th>piso</th><th>veredito</th></tr></thead>
+        <tbody id="measure-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="qa-foot">Gerado por <code>components/modal/qa.py</code> a partir do CSS e do JS commitados em
+  <code>dev</code>. Foundation, Icon, Button, Input, <code>al-modal-tokens.css</code>, <code>modal.css</code> e
+  <code>modal.js</code> estão embutidos como estão no repositório.</p>
+</div>
+
+<dialog class="al-modal al-modal--sm" id="m-confirma" aria-labelledby="m-confirma-t"><h2 class="al-modal__title" id="m-confirma-t">Sair da conta?</h2><div class="al-modal__content"><p class="qa-copy">Você vai precisar entrar de novo para ver os seus pedidos.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-modal-close><span class="al-btn__label">Sair</span></button></div></dialog>
+<dialog class="al-modal al-modal--md" id="m-excluir" aria-labelledby="m-excluir-t"><h2 class="al-modal__title" id="m-excluir-t">Excluir cliente?</h2><div class="al-modal__content"><p class="qa-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md" data-al-modal-close><span class="al-btn__label">Excluir cliente</span></button></div></dialog>
+<dialog class="al-modal al-modal--md" id="m-form" aria-labelledby="m-form-t"><h2 class="al-modal__title" id="m-form-t">Editar e-mail</h2><div class="al-modal__content"><div class="qa-fields"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" for="qa-email">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="qa-email" name="qa-email" type="email" value="ana@empresa.com" autocomplete="off"></div></div><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" for="qa-nome">Nome</label></div><div class="al-input__control"><input class="al-input__field" id="qa-nome" name="qa-nome" type="text" value="Ana Souza" autocomplete="off"></div></div></div></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-modal-close><span class="al-btn__label">Salvar</span></button></div></dialog>
+<dialog class="al-modal al-modal--lg" id="m-longo" aria-labelledby="m-longo-t"><h2 class="al-modal__title" id="m-longo-t">Termos de uso</h2><div class="al-modal__content"><p class="qa-copy"><strong>1.</strong> Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que esperamos de você e como resolvemos um problema quando ele acontece.</p><p class="qa-copy"><strong>2.</strong> Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. Se perceber um acesso que não foi seu, avise o atendimento na hora.</p><p class="qa-copy"><strong>3.</strong> Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com 30 dias de antecedência por e-mail e dentro do aplicativo.</p><p class="qa-copy"><strong>4.</strong> Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.</p><p class="qa-copy"><strong>5.</strong> Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e até 10 dias úteis no boleto, depois que o pedido é cancelado.</p><p class="qa-copy"><strong>6.</strong> Se uma parte destas condições não puder ser aplicada, o restante continua valendo. A lei aplicável é a brasileira e o foro é o da cidade do consumidor.</p><p class="qa-copy"><strong>7.</strong> Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até dois dias úteis, de segunda a sexta.</p><p class="qa-copy"><strong>8.</strong> Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que esperamos de você e como resolvemos um problema quando ele acontece.</p><p class="qa-copy"><strong>9.</strong> Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. Se perceber um acesso que não foi seu, avise o atendimento na hora.</p><p class="qa-copy"><strong>10.</strong> Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com 30 dias de antecedência por e-mail e dentro do aplicativo.</p><p class="qa-copy"><strong>11.</strong> Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.</p><p class="qa-copy"><strong>12.</strong> Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e até 10 dias úteis no boleto, depois que o pedido é cancelado.</p><p class="qa-copy"><strong>13.</strong> Se uma parte destas condições não puder ser aplicada, o restante continua valendo. A lei aplicável é a brasileira e o foro é o da cidade do consumidor.</p><p class="qa-copy"><strong>14.</strong> Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até dois dias úteis, de segunda a sexta.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Voltar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-modal-close><span class="al-btn__label">Aceitar</span></button></div></dialog>
+
+<script>
+/* AL Design System - Modal, comportamento
+ *
+ * O <dialog> nativo ja faz o grosso (regra 24): prende o foco, deixa a pagina
+ * inerte, fecha com Esc (regra 15) e devolve o foco a quem abriu (regra 17).
+ * Este arquivo cobre so o que o nativo nao faz:
+ *   - abrir e fechar por atributo, sem JS na pagina:
+ *       data-al-modal-open="<id>"   no botao que abre
+ *       data-al-modal-close         no botao que fecha (dentro do dialog)
+ *   - clique no scrim fecha SO quando nao ha campos (regra 14). Com campo, o
+ *     clique acidental perderia o que foi digitado;
+ *   - foco inicial (regras 26 e 29), quando a marcacao nao pede um com
+ *     `autofocus`:
+ *       com campo        -> o primeiro campo (o nativo ja faz, nao mexe)
+ *       sem campo        -> a acao principal (a ultima do rodape)
+ *       principal Danger -> a acao SECUNDARIA: o Enter nao pode ficar a um
+ *                           toque de apagar (regras 23 e 29)
+ *
+ * Uso:
+ *   carregar este arquivo com um script src       -> liga sozinho quando a pagina carrega
+ *   alModals.init(container)            -> liga em conteudo inserido depois
+ * Ligar duas vezes o mesmo dialog nao duplica nada.
+ */
+(function () {
+  'use strict';
+
+  var FIELDS = 'input:not([type="hidden"]), select, textarea, [contenteditable=""], [contenteditable="true"]';
+  var DANGER = '.al-btn--danger';
+
+  function hasFields(dialog) {
+    return !!dialog.querySelector(FIELDS);
+  }
+
+  function inside(dialog, x, y) {
+    var r = dialog.getBoundingClientRect();
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  }
+
+  function initialFocus(dialog) {
+    if (dialog.querySelector('[autofocus]')) return;   // a marcacao decidiu
+    if (hasFields(dialog)) return;                      // regra 26: o nativo foca o campo
+    var actions = dialog.querySelectorAll('.al-modal__actions button, .al-modal__actions a[href]');
+    if (!actions.length) return;
+    var primary = actions[actions.length - 1];
+    var target = primary.matches(DANGER) ? actions[0] : primary;   // regra 29
+    target.focus();
+  }
+
+  function bind(dialog) {
+    if (dialog.hasAttribute('data-al-modal')) return;
+    dialog.setAttribute('data-al-modal', '');
+
+    // O clique so conta se o aperto E a soltura foram no scrim: arrastar para
+    // selecionar texto dentro do Modal e soltar fora nao fecha nada.
+    var pressedOnScrim = false;
+    dialog.addEventListener('pointerdown', function (e) {
+      pressedOnScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
+    });
+    dialog.addEventListener('click', function (e) {
+      var onScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
+      if (onScrim && pressedOnScrim && !hasFields(dialog)) dialog.close();   // regra 14
+      pressedOnScrim = false;
+    });
+
+    // foco inicial: observa o `open`, porque quem abre pode ser o atributo de
+    // dados ou um showModal() de fora
+    new MutationObserver(function () {
+      if (dialog.open) initialFocus(dialog);
+    }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
+  }
+
+  function init(root) {
+    [].slice.call((root || document).querySelectorAll('dialog.al-modal')).forEach(bind);
+  }
+
+  // Abrir e fechar por atributo: delegado no documento, uma vez so, entao
+  // vale tambem para botao inserido depois.
+  document.addEventListener('click', function (e) {
+    var opener = e.target.closest && e.target.closest('[data-al-modal-open]');
+    if (opener) {
+      var dialog = document.getElementById(opener.getAttribute('data-al-modal-open'));
+      if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
+        bind(dialog);
+        dialog.showModal();
+      }
+      return;
+    }
+    var closer = e.target.closest && e.target.closest('[data-al-modal-close]');
+    if (closer) {
+      var host = closer.closest('dialog');
+      if (host) host.close();
+    }
+  });
+
+  window.alModals = { init: init };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { init(); });
+  } else {
+    init();
+  }
+})();
+
+</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  function r(id) { return document.getElementById(id); }
+
+  // ------------------------------------------------------------------ tema
+  var btn = r('theme-toggle');
+  var label = r('theme-label');
+  function escuro() {
+    if (root.dataset.theme) return root.dataset.theme === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function pintarBotao() {
+    var d = escuro();
+    label.textContent = d ? 'Tema escuro' : 'Tema claro';
+    btn.setAttribute('aria-pressed', String(d));
+  }
+  function depois() {
+    setTimeout(function () {
+      Promise.all(document.getAnimations().map(function (a) { return a.finished; }))
+        .then(medir, medir);
+    }, 50);
+  }
+  btn.addEventListener('click', function () {
+    root.dataset.theme = escuro() ? 'light' : 'dark';
+    pintarBotao();
+    depois();
+  });
+  pintarBotao();
+
+  // ------------------------------------------- registro (so cromo de QA)
+  var log = r('qa-log');
+  function nome(el) {
+    if (!el || el === document.body) return 'o corpo da página (foco perdido)';
+    var t = (el.textContent || '').trim().replace(/\s+/g, ' ');
+    return '“' + t + '”';
+  }
+  document.querySelectorAll('dialog.al-modal[id^="m-"]').forEach(function (d) {
+    d.addEventListener('close', function () {
+      var t = d.querySelector('.al-modal__title').textContent.trim();
+      setTimeout(function () {
+        log.textContent = 'Fechou “' + t + '” — o foco voltou para ' + nome(document.activeElement);
+      }, 0);
+    });
+  });
+  document.addEventListener('click', function (e) {
+    var o = e.target.closest && e.target.closest('[data-al-modal-open]');
+    if (!o) return;
+    var alvo = document.getElementById(o.getAttribute('data-al-modal-open'));
+    setTimeout(function () {
+      if (alvo && alvo.open) log.textContent = 'Abriu — o foco entrou em ' + nome(document.activeElement);
+    }, 50);
+  });
+
+  // ------------------------------------------------------------- contraste
+  function rgb(str) {
+    var m = str && str.match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(/[ ,\/]+/).filter(Boolean).map(function (x) { return +x; });
+    return [p[0], p[1], p[2], p[3] === undefined ? 1 : p[3]];
+  }
+  function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(c) { return 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); }
+  function cr(a, b) {
+    var la = lum(a), lb = lum(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+  function sobre(fg, base) {
+    var a = fg[3];
+    return [0, 1, 2].map(function (i) { return Math.round(fg[i] * a + base[i] * (1 - a)); }).concat([1]);
+  }
+  function css(c) { return 'rgb(' + c.slice(0, 3).join(', ') + ')'; }
+  function cor(tokenVar, prop) {
+    var t = document.createElement('div');
+    t.style.cssText = 'position:absolute;visibility:hidden;' + prop + ':var(' + tokenVar + ')';
+    document.body.appendChild(t);
+    var v = rgb(getComputedStyle(t)[prop === 'color' ? 'color' : 'backgroundColor']);
+    t.remove();
+    return v;
+  }
+  function linha(where, what, fg, bg, piso, exc) {
+    var v = cr(fg, bg);
+    var classe = v >= piso ? 'ok' : exc ? 'exc' : 'bad';
+    var texto = v >= piso ? 'passa' : exc ? 'exceção declarada' : 'REPROVA';
+    var tr = document.createElement('tr');
+    [where, what, css(fg), css(bg), v.toFixed(2) + ':1', piso.toFixed(1) + ':1'].forEach(function (x) {
+      var td = document.createElement('td'); td.textContent = x; tr.appendChild(td);
+    });
+    var td = document.createElement('td');
+    td.textContent = texto; td.className = 'qa-verdict qa-verdict--' + classe;
+    tr.appendChild(td);
+    r('measure-body').appendChild(tr);
+  }
+
+  function medir() {
+    r('measure-body').textContent = '';
+    var tema = escuro() ? 'escuro' : 'claro';
+    var scrim = cor('--al-modal-scrim', 'background-color');
+    document.querySelectorAll('#matrix-frozen .qa-cell').forEach(function (cell) {
+      var d = cell.querySelector('.al-modal');
+      var cs = getComputedStyle(d);
+      var card = rgb(cs.backgroundColor);
+      var onde = 'Modal ' + cell.dataset.size + ' · ' + tema;
+      linha(onde, 'título', rgb(getComputedStyle(d.querySelector('.al-modal__title')).color), card, 4.5);
+      linha(onde, 'texto do miolo', rgb(getComputedStyle(d.querySelector('.al-modal__content p')).color), card, 4.5);
+    });
+    ['--al-bg-canvas', '--al-bg-surface'].forEach(function (v) {
+      var pagina = cor(v, 'background-color');
+      var card = cor('--al-modal-bg', 'background-color');
+      linha('Card × página escurecida · ' + tema, v.replace('--al-', '') + ' + scrim',
+            card, sobre(scrim, pagina), 3, true);
+    });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(depois);
+  } else {
+    depois();
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+    pintarBotao(); depois();
+  });
+})();
+</script>

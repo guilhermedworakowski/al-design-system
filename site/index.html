@@ -7,7 +7,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.17.2 - MIT
+ * v0.18.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -95,6 +95,7 @@
   --al-bg-active-raised: #E0E0E0;
   --al-bg-thumb: #B3B3B3;
   --al-bg-thumb-disabled: #CECECE;
+  --al-bg-scrim: #1818188F;
   --al-bg-brand: #FC5000;
   --al-bg-brand-hover: #C53900;
   --al-bg-brand-active: #992700;
@@ -251,6 +252,7 @@
     --al-bg-active-raised: #717171;
     --al-bg-thumb: #717171;
     --al-bg-thumb-disabled: #565656;
+    --al-bg-scrim: #000000A3;
     --al-bg-brand: #FC5000;
     --al-bg-brand-hover: #EA4900;
     --al-bg-brand-active: #C53900;
@@ -315,6 +317,7 @@
   --al-bg-active-raised: #717171;
   --al-bg-thumb: #717171;
   --al-bg-thumb-disabled: #565656;
+  --al-bg-scrim: #000000A3;
   --al-bg-brand: #FC5000;
   --al-bg-brand-hover: #EA4900;
   --al-bg-brand-active: #C53900;
@@ -386,6 +389,7 @@
   --al-bg-active-raised: #E0E0E0;
   --al-bg-thumb: #B3B3B3;
   --al-bg-thumb-disabled: #CECECE;
+  --al-bg-scrim: #1818188F;
   --al-bg-brand: #FC5000;
   --al-bg-brand-hover: #C53900;
   --al-bg-brand-active: #992700;
@@ -1140,6 +1144,36 @@
   --al-accordion-title-line-height: var(--al-line-height-xl);
   --al-accordion-title-font-weight: 600;
   --al-accordion-title-tracking: -0.01em;
+
+
+  /* cor - o scrim tem transparencia; o tema troca no :root */
+  --al-modal-bg: var(--al-bg-surface-raised);
+  --al-modal-title: var(--al-text-primary);
+  --al-modal-scrim: var(--al-bg-scrim);
+
+  /* elevacao */
+  --al-modal-shadow: var(--al-elevation-5);
+
+  /* geometria */
+  --al-modal-padding: var(--al-space-24);
+  --al-modal-gap: var(--al-space-24);
+  --al-modal-margin: var(--al-space-16);
+  --al-modal-offset: var(--al-space-96);
+  --al-modal-radius: var(--al-radius-2xl);
+
+  /* largura - valor declarado, sem escala na Foundation (decisao G) */
+  --al-modal-width-sm: 320px;
+  --al-modal-width-md: 480px;
+  --al-modal-width-lg: 640px;
+
+  /* movimento - easing vem direto da Foundation */
+  --al-modal-duration: var(--al-motion-duration-panel);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-modal-title-font-size: var(--al-font-size-2xl);
+  --al-modal-title-line-height: var(--al-line-height-2xl);
+  --al-modal-title-font-weight: 600;
+  --al-modal-title-tracking: -0.01em;
 }
 
 /* AL Design System - tokens do Button
@@ -5660,6 +5694,254 @@
   }
 }
 
+/* AL Design System - tokens do Modal
+ * GERADO por components/modal/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* cor - o scrim tem transparencia; o tema troca no :root */
+  --al-modal-bg: var(--al-bg-surface-raised);
+  --al-modal-title: var(--al-text-primary);
+  --al-modal-scrim: var(--al-bg-scrim);
+
+  /* elevacao */
+  --al-modal-shadow: var(--al-elevation-5);
+
+  /* geometria */
+  --al-modal-padding: var(--al-space-24);
+  --al-modal-gap: var(--al-space-24);
+  --al-modal-margin: var(--al-space-16);
+  --al-modal-offset: var(--al-space-96);
+  --al-modal-radius: var(--al-radius-2xl);
+
+  /* largura - valor declarado, sem escala na Foundation (decisao G) */
+  --al-modal-width-sm: 320px;
+  --al-modal-width-md: 480px;
+  --al-modal-width-lg: 640px;
+
+  /* movimento - easing vem direto da Foundation */
+  --al-modal-duration: var(--al-motion-duration-panel);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-modal-title-font-size: var(--al-font-size-2xl);
+  --al-modal-title-line-height: var(--al-line-height-2xl);
+  --al-modal-title-font-weight: 600;
+  --al-modal-title-tracking: -0.01em;
+}
+
+/* AL Design System - Modal
+ * Escrito a mao. Depende de al-foundation.css, button.css e
+ * al-modal-tokens.css, nesta ordem. O comportamento (abrir, fechar no scrim,
+ * foco inicial) vive em modal.js.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, sombra, tipografia, largura e
+ * duracao entram por var(--al-modal-*). O check.py ao lado recusa o arquivo se
+ * algum escapar.
+ *
+ * CONTRATO DE MARCACAO - <dialog> NATIVO (DECISAO A, REGRA 24)
+ *
+ *   <dialog class="al-modal al-modal--md" aria-labelledby="t1">
+ *     <h2 class="al-modal__title" id="t1">Excluir cliente?</h2>
+ *     <div class="al-modal__content">…qualquer conteudo…</div>
+ *     <div class="al-modal__actions">
+ *       <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
+ *         <span class="al-btn__label">Cancelar</span></button>
+ *       <button type="button" class="al-btn al-btn--danger al-btn--md">
+ *         <span class="al-btn__label">Excluir cliente</span></button>
+ *     </div>
+ *   </dialog>
+ *
+ *   - Tamanho: --sm | --md | --lg. Sem modificador = md.
+ *   - Abrir: `data-al-modal-open="<id do dialog>"` no botao, ou showModal().
+ *     Sempre showModal(), nunca `open` na marcacao nem show() (regra 24).
+ *   - Fechar: `data-al-modal-close` no botao, ou <form method="dialog">.
+ *     Esc fecha sempre (regra 15); o <dialog> ja faz.
+ *   - Sem botao X (regra 16): o secundario do rodape e a saida. Sem divisoria
+ *     (regra 10): quem separa as partes e o espaco.
+ *   - Nome acessivel: aria-labelledby apontando para o titulo (regra 25).
+ *   - Acoes: a secundaria vem primeiro, a principal por ultimo (regra 19).
+ *
+ * ALTURA E ROLAGEM (DECISAO E, REGRA 28)
+ *   A altura e do conteudo (hug). Passou da tela, so o miolo rola; titulo e
+ *   acoes ficam fixos. O miolo ganha um respiro do tamanho do anel de foco e
+ *   desconta com margem negativa: o overflow cortaria o anel de um campo
+ *   encostado na borda do miolo, e o respiro devolve o espaco sem mexer no
+ *   layout. Derivado dos tokens de foco da Foundation, sem valor novo.
+ *
+ * LARGURA NO CELULAR (DECISOES F E H, REGRA 13)
+ *   Largura do tamanho, limitada a 100% menos a margem dos dois lados. Num
+ *   <dialog> modal o 100% e a viewport.
+ *
+ * ENTRADA E SAIDA (REGRA 17)
+ *   O card SOBE ao abrir e DESCE ao fechar, com fade, em 300ms
+ *   (modal-duration). O deslocamento e `modal-offset` (space.96): o card nasce
+ *   96 abaixo do lugar dele e volta para la. A curva e a do estado de destino:
+ *   entrada ease-out, saida ease-in. O scrim so aparece e some. Usa
+ *   @starting-style e transition-behavior: allow-discrete para animar o
+ *   display e a camada de topo; em navegador sem isso o Modal abre e fecha
+ *   sem animacao e continua funcionando.
+ *   O layout em coluna fica na base, nao no [open]: ao fechar o display segue
+ *   `flex` pela duracao da saida, e um layout so do [open] fazia o miolo ser
+ *   comprimido na frente do usuario.
+ *
+ * SCRIM (REGRA 27)
+ *   ::backdrop herda as custom properties do <dialog>. Decoracao: nao recebe
+ *   foco. O fechamento por clique nele (so sem campos, regra 14) e do JS.
+ *
+ * COR DO TEXTO DO MIOLO
+ *   O <dialog> ganha a cor do titulo (text-primary) e o miolo herda. Sem
+ *   isso o UA pinta CanvasText.
+ *
+ * ALTO CONTRASTE
+ *   Sem o fundo e a sombra o Modal se perderia: ganha contorno CanvasText.
+ */
+
+/* ---------------------------------------------------------------- caixa */
+.al-modal {
+  box-sizing: border-box;
+  inline-size: var(--al-modal-width-md);
+  max-inline-size: calc(100% - 2 * var(--al-modal-margin));
+  max-block-size: calc(100% - 2 * var(--al-modal-margin));
+  margin: auto;
+  padding: var(--al-modal-padding);
+  border: 0;
+  border-radius: var(--al-modal-radius);
+  background-color: var(--al-modal-bg);
+  box-shadow: var(--al-modal-shadow);
+  color: var(--al-modal-title);
+  font-family: var(--al-font-sans);
+  overflow: clip;
+}
+
+.al-modal--sm { inline-size: var(--al-modal-width-sm); }
+.al-modal--md { inline-size: var(--al-modal-width-md); }
+.al-modal--lg { inline-size: var(--al-modal-width-lg); }
+
+/* O layout (coluna, gap) fica na base e so o display depende do [open]: dialog
+   fechado precisa seguir display: none. Se o gap e a direcao ficassem no
+   [open], ao fechar o Modal voltaria a ser bloco durante a saida e o miolo
+   seria comprimido na frente do usuario. */
+.al-modal {
+  flex-direction: column;
+  gap: var(--al-modal-gap);
+}
+
+.al-modal[open] {
+  display: flex;
+}
+
+/* --------------------------------------------------------------- titulo */
+/* O titulo costuma ser um <h2>, e quem usa pode ter um estilo global de h2
+   (mono, caixa alta, cor, linha embaixo). Estes resets sao do componente: o
+   titulo do Modal e o que o modal.css diz, em qualquer pagina. */
+.al-modal__title {
+  flex: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font-family: inherit;
+  text-transform: none;
+  overflow-wrap: anywhere;
+  font-size: var(--al-modal-title-font-size);
+  line-height: var(--al-modal-title-line-height);
+  font-weight: var(--al-modal-title-font-weight);
+  letter-spacing: var(--al-modal-title-tracking);
+}
+
+/* ---------------------------------------------------------------- miolo */
+.al-modal__content {
+  --_ring-room: calc(var(--al-border-focus-offset) + var(--al-border-width-focus));
+  flex: 1 1 auto;
+  min-block-size: 0;
+  margin: calc(-1 * var(--_ring-room));
+  padding: var(--_ring-room);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ---------------------------------------------------------------- acoes */
+.al-modal__actions {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--al-modal-gap);
+}
+
+/* ---------------------------------------------------------- pagina atras */
+/* regra 28: a pagina nao rola com o Modal aberto. `:modal` e so o aberto por
+   showModal(): um <dialog open> solto, como os congelados da pagina de QA,
+   nao trava a rolagem */
+:root:has(.al-modal:modal) {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------ entrada e saida */
+/* O estado base e o de FORA: transparente e deslocado para baixo. Aberto, ele
+   sobe e aparece; ao fechar volta para o estado base e desce. A mesma regra
+   serve aos dois sentidos. */
+.al-modal {
+  opacity: 0;
+  translate: 0 var(--al-modal-offset);
+  transition:
+    opacity var(--al-modal-duration) var(--al-motion-easing-exit),
+    translate var(--al-modal-duration) var(--al-motion-easing-exit),
+    overlay var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-modal[open] {
+  opacity: 1;
+  translate: 0 0;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* o scrim so aparece e some; quem sobe e desce e o card */
+.al-modal::backdrop {
+  background-color: var(--al-modal-scrim);
+  opacity: 0;
+  transition:
+    opacity var(--al-modal-duration) var(--al-motion-easing-exit),
+    overlay var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-modal[open]::backdrop {
+  opacity: 1;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-modal[open] {
+    opacity: 0;
+    translate: 0 var(--al-modal-offset);
+  }
+
+  .al-modal[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-modal,
+  .al-modal::backdrop {
+    transition: none;
+  }
+
+  .al-modal {
+    translate: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-modal {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -6386,6 +6668,47 @@ footer code{background:none; padding:0}
   .ac-mx-row:not(.ac-mx-row--head) > .ac-mx-lab{padding-top:0}
 }
 
+/* ── páginas do Modal ──
+   Casca do site. O Modal em si é sempre o .al-modal, do modal.css real.
+   Os exemplos "a evitar" usam .md-fake-*, nunca um .al-modal errado. */
+.md-prev{position:relative; width:100%; display:flex; justify-content:center; padding:24px; border-radius:12px;
+  background:var(--al-bg-surface); text-align:left}
+/* o <dialog open> do UA e absoluto e centrado; na previa ele e so uma caixa desenhada */
+.md-prev .al-modal, .md-cell .al-modal{position:static; margin:0; max-inline-size:100%; opacity:1; translate:none; transition:none}
+.md-copy{margin:0; color:var(--al-text-secondary)}
+.al-modal__content > .md-copy + .md-copy{margin-block-start:var(--al-space-12)}
+.md-fields{display:flex; flex-direction:column; gap:var(--al-space-16)}
+.md-open{display:flex; flex-direction:column; align-items:flex-start; gap:12px}
+.md-open-note{margin:0; font-size:13px; line-height:20px; color:var(--al-text-secondary); max-width:none}
+.md-trigs{display:grid; gap:20px; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); margin-top:16px}
+.md-trig{display:flex; flex-direction:column; align-items:flex-start; gap:8px}
+.md-trig .cap{margin:0}
+.md-frozen{display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start}
+.md-cell{min-width:0; max-width:100%; display:flex; flex-direction:column; gap:8px}
+.md-lab{font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary)}
+.dd .stage2.md-stage2{display:block; padding:20px}
+.md-fake{position:relative; display:flex; flex-direction:column; gap:12px; padding:20px; border-radius:16px;
+  background:var(--al-bg-surface-raised); color:var(--al-text-primary); max-width:320px;
+  box-shadow:var(--al-elevation-3)}
+.md-fake-t{font-size:20px; line-height:28px; font-weight:600; letter-spacing:-.01em}
+.md-fake-p{font-size:14px; line-height:20px; color:var(--al-text-secondary)}
+.md-fake-a{display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin-top:4px}
+.md-fake-b{padding:6px 14px; border-radius:9999px; font-size:13px; font-weight:500}
+.md-fake-b--primary{background:var(--al-bg-brand); color:var(--al-text-on-brand)}
+.md-fake-b--danger{background:var(--al-bg-danger); color:var(--al-text-on-solid)}
+.md-fake-x{position:absolute; top:12px; right:16px; font-size:14px; color:var(--al-text-secondary)}
+.th-modal{display:grid; place-items:center; width:100%; height:100%; padding:10px; border-radius:6px;
+  background:var(--al-bg-scrim)}
+.th-md-card{display:flex; flex-direction:column; gap:6px; width:100%; max-width:130px; padding:10px;
+  border-radius:var(--al-modal-radius); background:var(--al-modal-bg)}
+.th-md-t{height:8px; width:55%; border-radius:4px; background:var(--al-modal-title)}
+.th-md-l{height:6px; width:90%; border-radius:3px; background:var(--al-border-default)}
+.th-md-l--s{width:60%}
+.th-md-a{display:flex; justify-content:flex-end; gap:5px; margin-top:4px}
+.th-md-a i{width:22px; height:10px; border-radius:5px; background:var(--al-bg-hover)}
+.th-md-a b{width:22px; height:10px; border-radius:5px; background:var(--al-bg-brand)}
+
 /* ── Motion ──
    O palco lê os tokens reais da Foundation. A velocidade (1× ou ¼×) só
    multiplica a duração, para dar tempo de ver a curva; ela não é um token. */
@@ -6413,14 +6736,13 @@ footer code{background:none; padding:0}
 .mo-stage[data-open="true"] .mo-move{
   opacity:1; transform:none;
   transition-timing-function:var(--al-motion-easing-enter)}
-/* preto puro nos dois temas: o véu escurece a tela, não a inverte. O AL ainda não tem token de scrim — nasce com o Modal. */
-.mo-scrim{position:absolute; inset:0; background:#000}
-.mo-stage[data-open="true"] .mo-scrim{opacity:.4}
+/* o véu é o bg-scrim da Foundation (nasceu com o Modal): escurece a tela nos dois temas, não a inverte. */
+.mo-scrim{position:absolute; inset:0; background:var(--al-bg-scrim)}
 .mo-box{
   position:absolute; display:flex; flex-direction:column; gap:8px; padding:14px;
   background:var(--al-bg-surface-raised); border:1px solid var(--al-border-subtle);
   border-radius:var(--al-radius-2xl); box-shadow:var(--al-elevation-4)}
-.mo-box--modal{inset:0; margin:auto; width:58%; height:fit-content; --mo-from:translateY(var(--al-space-12))}
+.mo-box--modal{inset:0; margin:auto; width:58%; height:fit-content; --mo-from:translateY(var(--al-modal-offset))}
 .mo-box--drawer{top:0; right:0; bottom:0; width:48%; border-radius:0; border-width:0 0 0 1px;
   --mo-from:translateX(100%)}
 .mo-anchor{position:absolute; left:50%; top:96px; width:64px; height:28px; margin-left:-32px;
@@ -6477,7 +6799,7 @@ footer code{background:none; padding:0}
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.17.2 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.18.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -6516,6 +6838,7 @@ footer code{background:none; padding:0}
         <a href="#/card" data-page="card">Card</a>
         <a href="#/tab" data-page="tab">Tab</a>
         <a href="#/accordion" data-page="accordion">Accordion</a>
+        <a href="#/modal" data-page="modal">Modal</a>
       </div>
     </div>
   </div>
@@ -6528,7 +6851,7 @@ footer code{background:none; padding:0}
 <div class="page" id="pg-fundacao"><header class="phead"><div class="eyebrow">Fundação</div><h1>Fundação</h1><p class="lede">A camada que decide antes de qualquer componente existir: a cor, a tipografia, a medida, o movimento e a prova de que tudo isso atravessa o portão. Nenhum componente inventa valor — todos consomem daqui, e é por isso que trocar o tema não é retrabalho.</p></header><div class="panel"><div class="stats">
   <div class="stat hl"><b>#FC5000</b><span>âncora de marca, preservada exata</span></div>
   <div class="stat"><b>66</b><span>primitivas em 6 famílias</span></div>
-  <div class="stat"><b>53</b><span>semânticos, cada um com dois temas</span></div>
+  <div class="stat"><b>54</b><span>semânticos, cada um com dois temas</span></div>
   <div class="stat hl"><b>81 / 84</b><span>pares em AA pleno · 3 exceções de marca</span></div>
 </div>
 <section>
@@ -6536,7 +6859,7 @@ footer code{background:none; padding:0}
   <div class="cards">
     <a class="card" href="#/principios" data-page="principios"><div class="card-thumb"><span class="th-anchor">#FC5000</span></div><div class="card-body"><span class="card-title">Princípios</span><span class="card-desc">As cinco decisões que travam o resto, o pipeline de oito etapas e os quatro portões de build.</span></div></a>
     <a class="card" href="#/prova" data-page="prova"><div class="card-thumb"><div class="th-split"><div style="background:#FFFFFF"><b style="background:#FC5000"></b></div><div style="background:#181818"><b style="background:#FC5000"></b></div></div></div><div class="card-body"><span class="card-title">A prova</span><span class="card-desc">Os mesmos tokens montados nos dois temas, lado a lado: botões, campos, foco e avisos.</span></div></a>
-    <a class="card" href="#/cor" data-page="cor"><div class="card-thumb"><div class="th-ramp"><span style="background:#FFF5F0"></span><span style="background:#FFEADE"></span><span style="background:#FFD7C4"></span><span style="background:#FFBDA0"></span><span style="background:#FF9267"></span><span style="background:#FC5000"></span><span style="background:#C53900"></span><span style="background:#992700"></span><span style="background:#6C2100"></span><span style="background:#4A1700"></span><span style="background:#2D0D00"></span></div></div><div class="card-body"><span class="card-title">Cor</span><span class="card-desc">66 primitivas em OKLCH, 53 semânticos com dois temas e os 84 pares medidos do portão de contraste.</span></div></a>
+    <a class="card" href="#/cor" data-page="cor"><div class="card-thumb"><div class="th-ramp"><span style="background:#FFF5F0"></span><span style="background:#FFEADE"></span><span style="background:#FFD7C4"></span><span style="background:#FFBDA0"></span><span style="background:#FF9267"></span><span style="background:#FC5000"></span><span style="background:#C53900"></span><span style="background:#992700"></span><span style="background:#6C2100"></span><span style="background:#4A1700"></span><span style="background:#2D0D00"></span></div></div><div class="card-body"><span class="card-title">Cor</span><span class="card-desc">66 primitivas em OKLCH, 54 semânticos com dois temas e os 84 pares medidos do portão de contraste.</span></div></a>
     <a class="card" href="#/tipografia" data-page="tipografia"><div class="card-thumb"><div class="th-aa">Aa<small>Inter · 14 estilos</small></div></div><div class="card-body"><span class="card-title">Tipografia</span><span class="card-desc">Inter e JetBrains Mono em 14 estilos fechados de tamanho, entrelinha, peso e tracking.</span></div></a>
     <a class="card" href="#/espacamento" data-page="espacamento"><div class="card-thumb"><div class="th-bars"><i style="width:14%"></i><i style="width:26%"></i><i style="width:48%"></i><i style="width:84%"></i></div></div><div class="card-body"><span class="card-title">Espaçamento e medidas</span><span class="card-desc">Base 4 com ritmo de 8, 9 raios, 6 elevações e o anel de foco de duas camadas.</span></div></a>
     <a class="card" href="#/motion" data-page="motion"><div class="card-thumb"><svg class="th-curve" viewBox="0 0 120 56" aria-hidden="true"><line x1="6" y1="50" x2="114" y2="6"/><path d="M6 50 C6 50, 74 6, 114 6"/></svg></div><div class="card-body"><span class="card-title">Motion</span><span class="card-desc">8 tokens para o que entra e sai da tela: cinco durações e três curvas: entrar, sair e girar.</span></div></a>
@@ -6601,7 +6924,7 @@ footer code{background:none; padding:0}
     </tbody>
   </table></div>
 </section></div></div>
-<div class="page" id="pg-prova" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>A prova</h1><p class="lede">A mesma interface montada com os mesmos tokens, nos dois temas, lado a lado. Se a camada semântica estiver certa, nada aqui precisou ser escrito duas vezes.</p><div class="meta"><span class="badge on">Dois temas</span><span class="badge">53 semânticos</span><span class="badge">0 valores literais</span></div></header><div class="panel">
+<div class="page" id="pg-prova" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>A prova</h1><p class="lede">A mesma interface montada com os mesmos tokens, nos dois temas, lado a lado. Se a camada semântica estiver certa, nada aqui precisou ser escrito duas vezes.</p><div class="meta"><span class="badge on">Dois temas</span><span class="badge">54 semânticos</span><span class="badge">0 valores literais</span></div></header><div class="panel">
 <section>
   <h2>Os mesmos tokens, os dois temas</h2>
   <p>Nada aqui usa valor literal: cada cor destes dois painéis sai da camada semântica, lida do
@@ -6631,7 +6954,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.17.2 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.18.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -6661,7 +6984,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.17.2 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.18.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -6669,7 +6992,7 @@ footer code{background:none; padding:0}
   </div>
 </div></div></div>
 </section></div></div>
-<div class="page" id="pg-cor" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Cor</h1><p class="lede">66 primitivas geradas em OKLCH a partir de #FC5000, 53 semânticos com dois temas cada, e 84 pares medidos antes de qualquer um virar token.</p><div class="meta"><span class="badge">66 primitivas</span><span class="badge on">53 semânticos</span><span class="badge">OKLCH</span><span class="badge">WCAG 2.1 AA</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Cor"><button role="tab" id="t-cor-escala" aria-controls="p-cor-escala" aria-selected="true">Escala</button><button role="tab" id="t-cor-semanticos" aria-controls="p-cor-semanticos" aria-selected="false" tabindex=-1>Semânticos</button><button role="tab" id="t-cor-contraste" aria-controls="p-cor-contraste" aria-selected="false" tabindex=-1>Contraste</button></div><div class="panel" id="p-cor-escala" role="tabpanel" aria-labelledby="t-cor-escala" tabindex="0">
+<div class="page" id="pg-cor" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Cor</h1><p class="lede">66 primitivas geradas em OKLCH a partir de #FC5000, 54 semânticos com dois temas cada, e 84 pares medidos antes de qualquer um virar token.</p><div class="meta"><span class="badge">66 primitivas</span><span class="badge on">54 semânticos</span><span class="badge">OKLCH</span><span class="badge">WCAG 2.1 AA</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Cor"><button role="tab" id="t-cor-escala" aria-controls="p-cor-escala" aria-selected="true">Escala</button><button role="tab" id="t-cor-semanticos" aria-controls="p-cor-semanticos" aria-selected="false" tabindex=-1>Semânticos</button><button role="tab" id="t-cor-contraste" aria-controls="p-cor-contraste" aria-selected="false" tabindex=-1>Contraste</button></div><div class="panel" id="p-cor-escala" role="tabpanel" aria-labelledby="t-cor-escala" tabindex="0">
 <section>
   <h2>Uma escada de lightness para todas as famílias</h2>
   <p>Cada degrau tem a mesma lightness OKLab nas seis famílias. O degrau 500 é <b>0,666</b> porque
@@ -6711,10 +7034,10 @@ footer code{background:none; padding:0}
 </section></div><div class="panel" id="p-cor-semanticos" role="tabpanel" aria-labelledby="t-cor-semanticos" tabindex="0" hidden>
 <section>
   <h2>A camada que troca com o tema</h2>
-  <p>53 tokens, cada um com um valor por tema. É esta camada que muda quando o tema vira, e é
+  <p>54 tokens, cada um com um valor por tema. É esta camada que muda quando o tema vira, e é
   aqui que a intenção fica registrada: <code>bg-danger</code> diz o que a cor <i>significa</i>,
   <code>red-700</code> diz apenas o que ela <i>é</i>.</p>
-  <div style="margin-top:22px"><h3 class="sub">Superfície e preenchimento <span class="count">30 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-bg-canvas</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-bg-surface</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-bg-surface-raised</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-subtle</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-hover</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-active</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-disabled</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-inverse</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-bg-hover-raised</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-active-raised</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-bg-thumb</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-bg-thumb-disabled</td><td class="chipcell"><span class="chip" style="background:#CECECE"></span></td><td class="tok dim">#CECECE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-bg-brand-hover</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td><td class="chipcell"><span class="chip" style="background:#EA4900"></span></td><td class="tok dim">#EA4900</td></tr><tr><td class="tok">--al-bg-brand-active</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td></tr><tr><td class="tok">--al-bg-brand-subtle</td><td class="chipcell"><span class="chip" style="background:#FFEADE"></span></td><td class="tok dim">#FFEADE</td><td class="chipcell"><span class="chip" style="background:#2D0D00"></span></td><td class="tok dim">#2D0D00</td></tr><tr><td class="tok">--al-bg-brand-strong</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td></tr><tr><td class="tok">--al-bg-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-bg-danger-hover</td><td class="chipcell"><span class="chip" style="background:#780014"></span></td><td class="tok dim">#780014</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-bg-danger-active</td><td class="chipcell"><span class="chip" style="background:#550007"></span></td><td class="tok dim">#550007</td><td class="chipcell"><span class="chip" style="background:#FFBABB"></span></td><td class="tok dim">#FFBABB</td></tr><tr><td class="tok">--al-bg-danger-subtle</td><td class="chipcell"><span class="chip" style="background:#FFE8E9"></span></td><td class="tok dim">#FFE8E9</td><td class="chipcell"><span class="chip" style="background:#360001"></span></td><td class="tok dim">#360001</td></tr><tr><td class="tok">--al-bg-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-bg-success-hover</td><td class="chipcell"><span class="chip" style="background:#004C03"></span></td><td class="tok dim">#004C03</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-bg-success-subtle</td><td class="chipcell"><span class="chip" style="background:#DEF6E4"></span></td><td class="tok dim">#DEF6E4</td><td class="chipcell"><span class="chip" style="background:#001F00"></span></td><td class="tok dim">#001F00</td></tr><tr><td class="tok">--al-bg-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-bg-warning-hover</td><td class="chipcell"><span class="chip" style="background:#523800"></span></td><td class="tok dim">#523800</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-bg-warning-subtle</td><td class="chipcell"><span class="chip" style="background:#F7EED5"></span></td><td class="tok dim">#F7EED5</td><td class="chipcell"><span class="chip" style="background:#221500"></span></td><td class="tok dim">#221500</td></tr><tr><td class="tok">--al-bg-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr><tr><td class="tok">--al-bg-info-hover</td><td class="chipcell"><span class="chip" style="background:#003C7A"></span></td><td class="tok dim">#003C7A</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr><tr><td class="tok">--al-bg-info-subtle</td><td class="chipcell"><span class="chip" style="background:#E2F1FF"></span></td><td class="tok dim">#E2F1FF</td><td class="chipcell"><span class="chip" style="background:#001639"></span></td><td class="tok dim">#001639</td></tr></tbody></table></div><h3 class="sub">Texto <span class="count">12 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-text-primary</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-text-secondary</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-placeholder</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-disabled</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-text-inverse</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-text-on-brand</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td></tr><tr><td class="tok">--al-text-on-solid</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-text-brand</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-text-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-text-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-text-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-text-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr></tbody></table></div><h3 class="sub">Borda <span class="count">9 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-border-subtle</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-border-default</td><td class="chipcell"><span class="chip" style="background:#CECECE"></span></td><td class="tok dim">#CECECE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-border-strong</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#949494"></span></td><td class="tok dim">#949494</td></tr><tr><td class="tok">--al-border-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-border-focus</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-border-danger</td><td class="chipcell"><span class="chip" style="background:#CA293F"></span></td><td class="tok dim">#CA293F</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-border-success</td><td class="chipcell"><span class="chip" style="background:#008A2A"></span></td><td class="tok dim">#008A2A</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-border-warning</td><td class="chipcell"><span class="chip" style="background:#916A00"></span></td><td class="tok dim">#916A00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-border-info</td><td class="chipcell"><span class="chip" style="background:#0071D0"></span></td><td class="tok dim">#0071D0</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr></tbody></table></div><h3 class="sub">Cor do anel de foco <span class="count">2 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-shadow-focus-default</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-shadow-focus-error</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr></tbody></table></div></div>
+  <div style="margin-top:22px"><h3 class="sub">Superfície e preenchimento <span class="count">31 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-bg-canvas</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-bg-surface</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-bg-surface-raised</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-subtle</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-hover</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-active</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-disabled</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-bg-inverse</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-bg-hover-raised</td><td class="chipcell"><span class="chip" style="background:#EEEEEE"></span></td><td class="tok dim">#EEEEEE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-active-raised</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-bg-thumb</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-bg-thumb-disabled</td><td class="chipcell"><span class="chip" style="background:#CECECE"></span></td><td class="tok dim">#CECECE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-bg-scrim</td><td class="chipcell"><span class="chip" style="background:#1818188F"></span></td><td class="tok dim">#1818188F</td><td class="chipcell"><span class="chip" style="background:#000000A3"></span></td><td class="tok dim">#000000A3</td></tr><tr><td class="tok">--al-bg-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-bg-brand-hover</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td><td class="chipcell"><span class="chip" style="background:#EA4900"></span></td><td class="tok dim">#EA4900</td></tr><tr><td class="tok">--al-bg-brand-active</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#C53900"></span></td><td class="tok dim">#C53900</td></tr><tr><td class="tok">--al-bg-brand-subtle</td><td class="chipcell"><span class="chip" style="background:#FFEADE"></span></td><td class="tok dim">#FFEADE</td><td class="chipcell"><span class="chip" style="background:#2D0D00"></span></td><td class="tok dim">#2D0D00</td></tr><tr><td class="tok">--al-bg-brand-strong</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td></tr><tr><td class="tok">--al-bg-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-bg-danger-hover</td><td class="chipcell"><span class="chip" style="background:#780014"></span></td><td class="tok dim">#780014</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-bg-danger-active</td><td class="chipcell"><span class="chip" style="background:#550007"></span></td><td class="tok dim">#550007</td><td class="chipcell"><span class="chip" style="background:#FFBABB"></span></td><td class="tok dim">#FFBABB</td></tr><tr><td class="tok">--al-bg-danger-subtle</td><td class="chipcell"><span class="chip" style="background:#FFE8E9"></span></td><td class="tok dim">#FFE8E9</td><td class="chipcell"><span class="chip" style="background:#360001"></span></td><td class="tok dim">#360001</td></tr><tr><td class="tok">--al-bg-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-bg-success-hover</td><td class="chipcell"><span class="chip" style="background:#004C03"></span></td><td class="tok dim">#004C03</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-bg-success-subtle</td><td class="chipcell"><span class="chip" style="background:#DEF6E4"></span></td><td class="tok dim">#DEF6E4</td><td class="chipcell"><span class="chip" style="background:#001F00"></span></td><td class="tok dim">#001F00</td></tr><tr><td class="tok">--al-bg-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-bg-warning-hover</td><td class="chipcell"><span class="chip" style="background:#523800"></span></td><td class="tok dim">#523800</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-bg-warning-subtle</td><td class="chipcell"><span class="chip" style="background:#F7EED5"></span></td><td class="tok dim">#F7EED5</td><td class="chipcell"><span class="chip" style="background:#221500"></span></td><td class="tok dim">#221500</td></tr><tr><td class="tok">--al-bg-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr><tr><td class="tok">--al-bg-info-hover</td><td class="chipcell"><span class="chip" style="background:#003C7A"></span></td><td class="tok dim">#003C7A</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr><tr><td class="tok">--al-bg-info-subtle</td><td class="chipcell"><span class="chip" style="background:#E2F1FF"></span></td><td class="tok dim">#E2F1FF</td><td class="chipcell"><span class="chip" style="background:#001639"></span></td><td class="tok dim">#001639</td></tr></tbody></table></div><h3 class="sub">Texto <span class="count">12 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-text-primary</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td></tr><tr><td class="tok">--al-text-secondary</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-placeholder</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td></tr><tr><td class="tok">--al-text-disabled</td><td class="chipcell"><span class="chip" style="background:#B3B3B3"></span></td><td class="tok dim">#B3B3B3</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td></tr><tr><td class="tok">--al-text-inverse</td><td class="chipcell"><span class="chip" style="background:#F7F7F7"></span></td><td class="tok dim">#F7F7F7</td><td class="chipcell"><span class="chip" style="background:#292929"></span></td><td class="tok dim">#292929</td></tr><tr><td class="tok">--al-text-on-brand</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td></tr><tr><td class="tok">--al-text-on-solid</td><td class="chipcell"><span class="chip" style="background:#FFFFFF"></span></td><td class="tok dim">#FFFFFF</td><td class="chipcell"><span class="chip" style="background:#181818"></span></td><td class="tok dim">#181818</td></tr><tr><td class="tok">--al-text-brand</td><td class="chipcell"><span class="chip" style="background:#992700"></span></td><td class="tok dim">#992700</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-text-danger</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr><tr><td class="tok">--al-text-success</td><td class="chipcell"><span class="chip" style="background:#006911"></span></td><td class="tok dim">#006911</td><td class="chipcell"><span class="chip" style="background:#6ACD7C"></span></td><td class="tok dim">#6ACD7C</td></tr><tr><td class="tok">--al-text-warning</td><td class="chipcell"><span class="chip" style="background:#704F00"></span></td><td class="tok dim">#704F00</td><td class="chipcell"><span class="chip" style="background:#EBCA7E"></span></td><td class="tok dim">#EBCA7E</td></tr><tr><td class="tok">--al-text-info</td><td class="chipcell"><span class="chip" style="background:#0055A3"></span></td><td class="tok dim">#0055A3</td><td class="chipcell"><span class="chip" style="background:#76B8FF"></span></td><td class="tok dim">#76B8FF</td></tr></tbody></table></div><h3 class="sub">Borda <span class="count">9 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-border-subtle</td><td class="chipcell"><span class="chip" style="background:#E0E0E0"></span></td><td class="tok dim">#E0E0E0</td><td class="chipcell"><span class="chip" style="background:#3E3E3E"></span></td><td class="tok dim">#3E3E3E</td></tr><tr><td class="tok">--al-border-default</td><td class="chipcell"><span class="chip" style="background:#CECECE"></span></td><td class="tok dim">#CECECE</td><td class="chipcell"><span class="chip" style="background:#565656"></span></td><td class="tok dim">#565656</td></tr><tr><td class="tok">--al-border-strong</td><td class="chipcell"><span class="chip" style="background:#717171"></span></td><td class="tok dim">#717171</td><td class="chipcell"><span class="chip" style="background:#949494"></span></td><td class="tok dim">#949494</td></tr><tr><td class="tok">--al-border-brand</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td></tr><tr><td class="tok">--al-border-focus</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-border-danger</td><td class="chipcell"><span class="chip" style="background:#CA293F"></span></td><td class="tok dim">#CA293F</td><td class="chipcell"><span class="chip" style="background:#F84F5D"></span></td><td class="tok dim">#F84F5D</td></tr><tr><td class="tok">--al-border-success</td><td class="chipcell"><span class="chip" style="background:#008A2A"></span></td><td class="tok dim">#008A2A</td><td class="chipcell"><span class="chip" style="background:#1BB14B"></span></td><td class="tok dim">#1BB14B</td></tr><tr><td class="tok">--al-border-warning</td><td class="chipcell"><span class="chip" style="background:#916A00"></span></td><td class="tok dim">#916A00</td><td class="chipcell"><span class="chip" style="background:#DCAC2E"></span></td><td class="tok dim">#DCAC2E</td></tr><tr><td class="tok">--al-border-info</td><td class="chipcell"><span class="chip" style="background:#0071D0"></span></td><td class="tok dim">#0071D0</td><td class="chipcell"><span class="chip" style="background:#2696FF"></span></td><td class="tok dim">#2696FF</td></tr></tbody></table></div><h3 class="sub">Cor do anel de foco <span class="count">2 tokens</span></h3><div class="scroller"><table><thead><tr><th>Token</th><th colspan="2">Tema claro</th><th colspan="2">Tema escuro</th></tr></thead><tbody><tr><td class="tok">--al-shadow-focus-default</td><td class="chipcell"><span class="chip" style="background:#FC5000"></span></td><td class="tok dim">#FC5000</td><td class="chipcell"><span class="chip" style="background:#FF9267"></span></td><td class="tok dim">#FF9267</td></tr><tr><td class="tok">--al-shadow-focus-error</td><td class="chipcell"><span class="chip" style="background:#A00E27"></span></td><td class="tok dim">#A00E27</td><td class="chipcell"><span class="chip" style="background:#FF8D91"></span></td><td class="tok dim">#FF8D91</td></tr></tbody></table></div></div>
 </section></div><div class="panel" id="p-cor-contraste" role="tabpanel" aria-labelledby="t-cor-contraste" tabindex="0" hidden>
 <section>
   <h2>O que o texto claro sobre a marca custa, medido</h2>
@@ -7381,7 +7704,7 @@ footer code{background:none; padding:0}
     renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">15 publicados</span><span class="badge">Tier 3 em andamento</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
+<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">16 publicados</span><span class="badge">Tier 3 em andamento</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
 <section>
   <h2>Publicados</h2>
   <div class="cards">
@@ -7400,6 +7723,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/card" data-page="card"><div class="card-thumb"><div class="th-card"><div class="al-card al-card--border al-card--tight"><span></span><span></span></div><div class="al-card al-card--elevated al-card--tight"><span></span><span></span></div></div></div><div class="card-body"><span class="card-title">Card</span><span class="card-desc">Um assunto num contêiner. Três tipos, três paddings, e o clicável inteiro feito com um link de verdade no título.</span></div></a>
     <a class="card" href="#/tab" data-page="tab"><div class="card-thumb"><div class="th-tab" aria-hidden="true" inert><div class="al-tabs"><span class="al-tab" aria-selected="true"><span class="al-tab__label">Resumo</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Entrega</span></span></div><div class="al-tabs al-tabs--square"><span class="al-tab" aria-selected="false"><span class="al-tab__label">Dia</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label">Semana</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Mês</span></span></div></div></div><div class="card-body"><span class="card-title">Tab</span><span class="card-desc">Troca de conteúdo na mesma tela, ou navegação entre páginas com o mesmo visual. Line e Square, e o primeiro componente com script próprio.</span></div></a>
     <a class="card" href="#/accordion" data-page="accordion"><div class="card-thumb"><div class="th-accordion" aria-hidden="true"><div class="th-ac-item"><span class="th-ac-t"></span><span class="th-ac-c"></span></div><div class="th-ac-item is-open"><span class="th-ac-t"></span><span class="th-ac-c"></span><span class="th-ac-body"></span></div><div class="th-ac-item"><span class="th-ac-t"></span><span class="th-ac-c"></span></div></div></div><div class="card-body"><span class="card-title">Accordion</span><span class="card-desc">Conteúdo secundário que abre e fecha no lugar. É o &lt;details&gt; nativo: sem script, vários abertos por padrão ou um por vez com name.</span></div></a>
+    <a class="card" href="#/modal" data-page="modal"><div class="card-thumb"><div class="th-modal" aria-hidden="true"><div class="th-md-card"><span class="th-md-t"></span><span class="th-md-l"></span><span class="th-md-l th-md-l--s"></span><span class="th-md-a"><i></i><b></b></span></div></div></div><div class="card-body"><span class="card-title">Modal</span><span class="card-desc">Uma tarefa curta que pede resposta antes de seguir. É o &lt;dialog&gt; nativo: sobe sobre a página, prende o foco e nunca tem botão X.</span></div></a>
   </div>
 </section>
 
@@ -7408,7 +7732,7 @@ footer code{background:none; padding:0}
   <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
   disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
   sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
-  seguiu pelo Card e pelo Tab e chegou ao Accordion. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
+  seguiu pelo Card, pelo Tab e pelo Accordion e chegou ao Modal. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
   auditar.</p>
 </section></div></div>
 <div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">48 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
@@ -11279,7 +11603,7 @@ footer code{background:none; padding:0}
     <div><b><code>id</code> único</b><span>Senão o <code>&lt;label for&gt;</code> liga no primeiro elemento com aquele id — a lição do playground do Select.</span></div>
   </div>
   <div class="stats" style="margin-top:16px">
-    <div class="stat hl"><b>24</b><span>campos conferidos no HTML</span></div>
+    <div class="stat hl"><b>26</b><span>campos conferidos no HTML</span></div>
     <div class="stat"><b>8</b><span>regras por campo</span></div>
     <div class="stat"><b>medido</b><span>estado do contrato</span></div>
   </div>
@@ -13561,8 +13885,300 @@ footer code{background:none; padding:0}
     <div><b>Movimento reduzido</b><span>O fundo e o chevron trocam sem transição.</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-modal" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Modal</h1><p class="lede">Uma tarefa curta que pede resposta antes de a pessoa seguir. É o &lt;dialog&gt; nativo aberto por showModal(): o card sobe sobre a página, o fundo escurece, o foco fica preso e Esc fecha. Nunca tem botão X: o rodapé sempre traz uma saída.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">3 variantes no Figma</span><span class="badge">14 tokens</span><span class="badge">1 exceção declarada</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Modal"><button role="tab" id="t-modal-overview" aria-controls="p-modal-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-modal-specs" aria-controls="p-modal-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-modal-guide" aria-controls="p-modal-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-modal-a11y" aria-controls="p-modal-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-modal-overview" role="tabpanel" aria-labelledby="t-modal-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="modal-stage"><div class="md-prev" id="modal-prev" aria-hidden="true"></div></div>
+
+    <div class="controls" id="modal-controls">
+      <div class="ctl"><span class="ctl-name">Tamanho</span><div class="seg" role="radiogroup" aria-label="mdsize">
+<input type="radio" id="mdsize-sm" name="mdsize" value="sm"><label for="mdsize-sm">sm · 320</label>
+<input type="radio" id="mdsize-md" name="mdsize" value="md" checked><label for="mdsize-md">md · 480</label>
+<input type="radio" id="mdsize-lg" name="mdsize" value="lg"><label for="mdsize-lg">lg · 640</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Conteúdo</span><div class="seg" role="radiogroup" aria-label="mdkind">
+<input type="radio" id="mdkind-confirm" name="mdkind" value="confirm"><label for="mdkind-confirm">Confirmação</label>
+<input type="radio" id="mdkind-delete" name="mdkind" value="delete" checked><label for="mdkind-delete">Exclusão</label>
+<input type="radio" id="mdkind-form" name="mdkind" value="form"><label for="mdkind-form">Formulário</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="mdtheme">
+<input type="radio" id="mdtheme-auto" name="mdtheme" value="auto" checked><label for="mdtheme-auto">Do sistema</label>
+<input type="radio" id="mdtheme-light" name="mdtheme" value="light"><label for="mdtheme-light">Claro</label>
+<input type="radio" id="mdtheme-dark" name="mdtheme" value="dark"><label for="mdtheme-dark">Escuro</label>
+</div></div>
+      <div class="md-open">
+        <p class="md-open-note">Abre o Modal escolhido sobre a página inteira. Esc, ou um botão, fecha.</p>
+        <button type="button" class="al-btn al-btn--primary al-btn--md" id="modal-open"><span class="al-btn__label">Abrir de verdade</span></button>
+      </div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="modal-copy">Copiar</button></div>
+      <pre><code id="modal-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    A prévia acima é só um desenho do Modal. <b>Abrir de verdade</b> faz o que o componente faz: o card
+    sobe, o fundo escurece e o resto da página fica inerte. Tabule: o foco não sai do Modal. No de
+    <b>Exclusão</b> ele entra em “Cancelar”; no <b>Formulário</b>, no primeiro campo.
+  </p>
+</section>
+
+<section>
+  <h2>Quatro cenários, abertos por atributo</h2>
+  <p>Nenhum precisa de script da página: <code>data-al-modal-open</code> no botão e
+  <code>data-al-modal-close</code> dentro do Modal bastam. O clique no fundo fecha só quando não há campos.</p>
+  <div class="md-trigs">
+    <div class="md-trig"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="md-ov-confirma"><span class="al-btn__label">Sair da conta</span></button><p class="cap">Sem campos: o clique no fundo fecha e o foco entra no botão principal.</p></div>
+    <div class="md-trig"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="md-ov-excluir"><span class="al-btn__label">Excluir cliente</span></button><p class="cap">Principal Danger: o foco entra em “Cancelar”. <i>Regra 29.</i></p></div>
+    <div class="md-trig"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="md-ov-form"><span class="al-btn__label">Editar e-mail</span></button><p class="cap">Com campos: o clique no fundo não fecha e o foco entra no campo.</p></div>
+    <div class="md-trig"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="md-ov-longo"><span class="al-btn__label">Termos de uso</span></button><p class="cap">Conteúdo longo: só o miolo rola; título e botões ficam.</p></div>
+  </div>
+  <dialog class="al-modal al-modal--sm" id="md-ov-confirma" aria-labelledby="md-ov-confirma-t"><h2 class="al-modal__title" id="md-ov-confirma-t">Sair da conta?</h2><div class="al-modal__content"><p class="md-copy">Você vai precisar entrar de novo para ver os seus pedidos.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-modal-close><span class="al-btn__label">Sair</span></button></div></dialog>
+  <dialog class="al-modal al-modal--md" id="md-ov-excluir" aria-labelledby="md-ov-excluir-t"><h2 class="al-modal__title" id="md-ov-excluir-t">Excluir cliente?</h2><div class="al-modal__content"><p class="md-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md" data-al-modal-close><span class="al-btn__label">Excluir cliente</span></button></div></dialog>
+  <dialog class="al-modal al-modal--md" id="md-ov-form" aria-labelledby="md-ov-form-t"><h2 class="al-modal__title" id="md-ov-form-t">Editar e-mail</h2><div class="al-modal__content"><div class="md-fields"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" for="md-ov-form-email">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="md-ov-form-email" name="md-ov-form-email" type="email" value="ana@empresa.com" autocomplete="off"></div></div><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" for="md-ov-form-nome">Nome</label></div><div class="al-input__control"><input class="al-input__field" id="md-ov-form-nome" name="md-ov-form-nome" type="text" value="Ana Souza" autocomplete="off"></div></div></div></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-modal-close><span class="al-btn__label">Salvar</span></button></div></dialog>
+  <dialog class="al-modal al-modal--lg" id="md-ov-longo" aria-labelledby="md-ov-longo-t"><h2 class="al-modal__title" id="md-ov-longo-t">Termos de uso</h2><div class="al-modal__content"><p class="md-copy">1. Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que esperamos de você e como resolvemos um problema quando ele acontece.</p><p class="md-copy">2. Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. Se perceber um acesso que não foi seu, avise o atendimento na hora.</p><p class="md-copy">3. Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com 30 dias de antecedência por e-mail e dentro do aplicativo.</p><p class="md-copy">4. Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.</p><p class="md-copy">5. Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e até 10 dias úteis no boleto, depois que o pedido é cancelado.</p><p class="md-copy">6. Se uma parte destas condições não puder ser aplicada, o restante continua valendo. A lei aplicável é a brasileira e o foro é o da cidade do consumidor.</p><p class="md-copy">7. Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até dois dias úteis, de segunda a sexta.</p><p class="md-copy">8. Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que esperamos de você e como resolvemos um problema quando ele acontece.</p><p class="md-copy">9. Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. Se perceber um acesso que não foi seu, avise o atendimento na hora.</p><p class="md-copy">10. Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com 30 dias de antecedência por e-mail e dentro do aplicativo.</p><p class="md-copy">11. Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.</p><p class="md-copy">12. Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e até 10 dias úteis no boleto, depois que o pedido é cancelado.</p><p class="md-copy">13. Se uma parte destas condições não puder ser aplicada, o restante continua valendo. A lei aplicável é a brasileira e o foro é o da cidade do consumidor.</p><p class="md-copy">14. Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até dois dias úteis, de segunda a sexta.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Voltar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-modal-close><span class="al-btn__label">Aceitar</span></button></div></dialog>
+</section></div><div class="panel" id="p-modal-specs" role="tabpanel" aria-labelledby="t-modal-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-modal</code> é o <code>&lt;dialog&gt;</code>, aberto por <code>showModal()</code>. Fundo <code>modal-bg</code>, raio <code>modal-radius</code>, sombra <code>modal-shadow</code>.</span></div>
+    <div><b>Título</b><span><code>__title</code>, Heading/sm. É ele que dá o nome ao Modal (<code>aria-labelledby</code>).</span></div>
+    <div><b>Miolo</b><span><code>__content</code>: slot livre. É o único que rola quando passa da tela.</span></div>
+    <div><b>Ações</b><span><code>__actions</code>: uma ou duas, a secundária antes da principal, alinhadas à direita.</span></div>
+    <div><b>Fundo escurecido</b><span>O <code>::backdrop</code>, com <code>modal-scrim</code>. Decorativo: não recebe foco.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Os três tamanhos</h2>
+  <p>Só a largura muda: 320, 480 e 640. A altura é do conteúdo. Estão congelados, com o mesmo
+  conteúdo, para comparar com o Figma.</p>
+  <div class="cd-panel md-frozen" style="margin-top:16px">
+    <div class="md-cell" inert aria-hidden="true"><span class="md-lab">sm · 320</span><dialog class="al-modal al-modal--sm" id="md-sp-sm" aria-labelledby="md-sp-sm-t" open><h2 class="al-modal__title" id="md-sp-sm-t">Excluir cliente?</h2><div class="al-modal__content"><p class="md-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md" data-al-modal-close><span class="al-btn__label">Excluir cliente</span></button></div></dialog></div>
+    <div class="md-cell" inert aria-hidden="true"><span class="md-lab">md · 480</span><dialog class="al-modal al-modal--md" id="md-sp-md" aria-labelledby="md-sp-md-t" open><h2 class="al-modal__title" id="md-sp-md-t">Excluir cliente?</h2><div class="al-modal__content"><p class="md-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md" data-al-modal-close><span class="al-btn__label">Excluir cliente</span></button></div></dialog></div>
+    <div class="md-cell" inert aria-hidden="true"><span class="md-lab">lg · 640</span><dialog class="al-modal al-modal--lg" id="md-sp-lg" aria-labelledby="md-sp-lg-t" open><h2 class="al-modal__title" id="md-sp-lg-t">Excluir cliente?</h2><div class="al-modal__content"><p class="md-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md" data-al-modal-close><span class="al-btn__label">Excluir cliente</span></button></div></dialog></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Modal</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody><tr><td class="tok">--al-modal-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td><td class="tok dim"><span class="chip sm" style="background:#3E3E3E"></span>#3E3E3E</td></tr>
+<tr><td class="tok">--al-modal-title</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td><td class="tok dim"><span class="chip sm" style="background:#F7F7F7"></span>#F7F7F7</td></tr>
+<tr><td class="tok">--al-modal-scrim</td><td class="tok dim">bg-scrim</td><td class="tok dim"><span class="chip sm" style="background:#1818188F"></span>#1818188F</td><td class="tok dim"><span class="chip sm" style="background:#000000A3"></span>#000000A3</td></tr>
+<tr><td class="tok">--al-modal-shadow</td><td class="tok dim">elevation.5</td><td class="tok dim"><span class="dim">sombra composta</span></td><td class="tok dim"><span class="dim">sombra composta</span></td></tr>
+<tr><td class="tok">--al-modal-padding</td><td class="tok dim">space.24</td><td class="tok dim">24px</td><td class="tok dim">24px</td></tr>
+<tr><td class="tok">--al-modal-gap</td><td class="tok dim">space.24</td><td class="tok dim">24px</td><td class="tok dim">24px</td></tr>
+<tr><td class="tok">--al-modal-margin</td><td class="tok dim">space.16</td><td class="tok dim">16px</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-modal-offset</td><td class="tok dim">space.96</td><td class="tok dim">96px</td><td class="tok dim">96px</td></tr>
+<tr><td class="tok">--al-modal-radius</td><td class="tok dim">radius.2xl</td><td class="tok dim">16px</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-modal-duration</td><td class="tok dim">motion.duration.panel</td><td class="tok dim">300ms</td><td class="tok dim">300ms</td></tr>
+<tr><td class="tok">--al-modal-title-font</td><td class="tok dim">type.styles.heading-sm</td><td class="tok dim">24/32 · 600</td><td class="tok dim">24/32 · 600</td></tr>
+<tr><td class="tok">--al-modal-width-sm</td><td class="tok dim">320px</td><td class="tok dim">320px</td><td class="tok dim">320px</td></tr>
+<tr><td class="tok">--al-modal-width-md</td><td class="tok dim">480px</td><td class="tok dim">480px</td><td class="tok dim">480px</td></tr>
+<tr><td class="tok">--al-modal-width-lg</td><td class="tok dim">640px</td><td class="tok dim">640px</td><td class="tok dim">640px</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O fundo escurecido nasceu para o Modal</b>
+    A Foundation ganhou <code>bg-scrim</code>, o único semântico com transparência: preto a 56% no claro
+    e a 64% no escuro. Ele serve também ao Drawer. No escuro, subir a opacidade quase não muda
+    nada, porque a página já é quase preta.
+  </div>
+  <div class="note">
+    <b>As larguras são o único valor declarado</b>
+    Todo token do Modal aponta para a Foundation, menos <code>modal-width-sm</code>, <code>-md</code> e
+    <code>-lg</code>: a Foundation ainda não tem uma escala de largura de contêiner. Quando existir,
+    viram alias.
+  </div>
+  <div class="note">
+    <b>O card sobe ao abrir e desce ao fechar</b>
+    São 300ms (<code>modal-duration</code>, a duração de painel da Foundation), com a curva do
+    estado de destino. O card nasce 96px abaixo do lugar dele (<code>modal-offset</code>); o fundo
+    só aparece e some. Em navegador sem suporte à transição de <code>display</code>, o Modal abre e
+    fecha sem animar. Com movimento reduzido, também.
+  </div>
+  <div class="note">
+    <b>O layout em coluna fica na base</b>
+    Ao fechar, o <code>display</code> segue como está pela duração da saída. Se a coluna e o espaço entre as
+    partes valessem só com o Modal aberto, o miolo seria comprimido na frente de quem está vendo.
+  </div>
+  <div class="note">
+    <b>Altura, rolagem e celular</b>
+    A altura é do conteúdo, com máximo de 100% da tela menos a margem; passou disso, só o miolo rola.
+    Em tela estreita a largura é a da tela menos <code>modal-margin</code> de cada lado. O miolo ganha um
+    respiro do tamanho do anel de foco, para o overflow não cortar o anel de um campo na borda.
+  </div>
+  <div class="note">
+    <b>A página atrás fica travada</b>
+    Com um Modal aberto por <code>showModal()</code>, a rolagem da página é desligada. Um
+    <code>&lt;dialog open&gt;</code> solto, como os congelados desta página, não trava nada.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>modal.js</code></b>
+    O <code>&lt;dialog&gt;</code> já prende o foco, deixa a página inerte, fecha com Esc e devolve o foco a quem
+    abriu. O script cobre só o que ele não faz: abrir e fechar por atributo, o clique no fundo e o foco
+    inicial. Ligar duas vezes o mesmo Modal não duplica nada.
+  </div>
+</section></div><div class="panel" id="p-modal-guide" role="tabpanel" aria-labelledby="t-modal-guide" tabindex="0" hidden>
+<section>
+  <h2>Como escrever</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Título e botão com a mesma ação</span>
+      <div class="stage2 md-stage2"><div class="md-fake md-fake--do"><span class="md-fake-t">Excluir cliente?</span><span class="md-fake-p">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</span><span class="md-fake-a"><span class="md-fake-b">Cancelar</span><span class="md-fake-b md-fake-b--danger">Excluir cliente</span></span></div></div>
+      <p class="cap">A pessoa sabe o que vai acontecer antes de clicar. <i>Polaris, Carbon.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Título vago e “OK”</span>
+      <div class="stage2 md-stage2"><div class="md-fake md-fake--no"><span class="md-fake-t">Atenção</span><span class="md-fake-p">Tem certeza?</span><span class="md-fake-a"><span class="md-fake-b">Não</span><span class="md-fake-b">OK</span></span></div></div>
+      <p class="cap">“OK” em quê? Quem lê só o botão não sabe se está apagando.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">A saída é um botão do rodapé</span>
+      <div class="stage2 md-stage2"><div class="md-fake md-fake--do"><span class="md-fake-t">Editar e-mail</span><span class="md-fake-p">…campos…</span><span class="md-fake-a"><span class="md-fake-b">Cancelar</span><span class="md-fake-b md-fake-b--primary">Salvar</span></span></div></div>
+      <p class="cap">Sempre há um botão para voltar.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">X no canto e três ações</span>
+      <div class="stage2 md-stage2"><div class="md-fake md-fake--no"><span class="md-fake-x" aria-hidden="true">✕</span><span class="md-fake-t">Editar e-mail</span><span class="md-fake-p">…campos…</span><span class="md-fake-a"><span class="md-fake-b">Descartar</span><span class="md-fake-b">Salvar rascunho</span><span class="md-fake-b md-fake-b--primary">Salvar</span></span></div></div>
+      <p class="cap">O AL não tem X, e três ações apertam o rodapé no celular.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  <h3 class="cd-rgroup">Quando usar</h3>
+<div class="rule"><div class="rn">01</div><div><h3>Tarefa curta que pede uma resposta</h3><p>Confirmação, edição rápida, escolha. O Modal bloqueia a página: a pessoa só volta ao fluxo depois de resolver ou dispensar. Precedentes: Carbon, Polaris.</p></div></div>
+<div class="rule"><div class="rn">02</div><div><h3>Nunca para o que precisa ficar à vista</h3><p>Ele é temporário. Informação ou ação que a pessoa consulta o tempo todo mora na página. Precedente: Polaris.</p></div></div>
+<div class="rule"><div class="rn">03</div><div><h3>Formulário longo não é Modal</h3><p>Se passa do tamanho <code>lg</code> e ainda rola demais, é página (e, quando existir, Drawer). Precedentes: Carbon, Polaris.</p></div></div>
+<div class="rule"><div class="rn">04</div><div><h3>Nunca um Modal dentro de outro</h3><p>Um de cada vez. Regra do AL, com o Bootstrap como único precedente achado sobre aninhamento.</p></div></div>
+<h3 class="cd-rgroup">Estrutura e conteúdo</h3>
+<div class="rule"><div class="rn">05</div><div><h3>O título é obrigatório e visível</h3><p>Ele dá o nome ao Modal para o leitor de tela e diz onde a pessoa está. Precedentes: Primer, Spectrum.</p></div></div>
+<div class="rule"><div class="rn">06</div><div><h3>Verbo e substantivo, ou pergunta curta</h3><p>“Editar e-mail”, “Excluir cliente?”. Sem frase longa e sem título vago como “Atenção”. Precedente: Polaris.</p></div></div>
+<div class="rule"><div class="rn">07</div><div><h3>Caixa de frase, textos curtos</h3><p>Título, texto e rótulos em sentence case. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">08</div><div><h3>Diga a consequência, não pergunte</h3><p>“Isso não pode ser desfeito”, não “Tem certeza?”. Precedentes: Polaris, Spectrum.</p></div></div>
+<div class="rule"><div class="rn">09</div><div><h3>O miolo é um slot livre</h3><p>O Modal só traz título e ações; o conteúdo é de quem usa.</p></div></div>
+<div class="rule"><div class="rn">10</div><div><h3>Sem divisória entre as partes</h3><p>Quem separa título, miolo e ações é o espaço de 24. Decisão do AL.</p></div></div>
+<h3 class="cd-rgroup">Tamanho</h3>
+<div class="rule"><div class="rn">11</div><div><h3>Escolha pelo conteúdo</h3><p><code>sm</code> para confirmação curta, <code>md</code> para formulário curto, <code>lg</code> para conteúdo mais denso. Nunca “o que parece melhor”. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">12</div><div><h3>Rola demais? Suba um tamanho</h3><p>Antes de aceitar a rolagem, tente o tamanho acima. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">13</div><div><h3>No celular, tela menos 16 de cada lado</h3><p>O <code>sm</code> de 320 numa tela de 375 não encosta na borda. Decisão do AL.</p></div></div>
+<h3 class="cd-rgroup">Fechar</h3>
+<div class="rule"><div class="rn">14</div><div><h3>Clique no fundo fecha só sem campos</h3><p>Com formulário, o clique acidental perderia o que foi digitado. <b>Divergência consciente:</b> Polaris e Carbon dizem nunca, o Primer diz sempre. O AL fica no meio.</p></div></div>
+<div class="rule"><div class="rn">15</div><div><h3>Esc sempre fecha</h3><p>Com ou sem campos. O <code>&lt;dialog&gt;</code> já faz. Precedentes: Carbon, Primer, Polaris.</p></div></div>
+<div class="rule"><div class="rn">16</div><div><h3>Não existe botão X</h3><p>Todo Modal tem ao menos um botão no rodapé, e o secundário (“Voltar”, “Cancelar”, “Fechar”) é a saída visível. Regra do AL.</p></div></div>
+<div class="rule"><div class="rn">17</div><div><h3>Fechar devolve o foco</h3><p>Para o elemento que abriu o Modal. Precedentes: Carbon, Primer.</p></div></div>
+<div class="rule"><div class="rn">18</div><div><h3>Modal fechado não fica na página</h3><p>Nem escondido por CSS: o <code>&lt;dialog&gt;</code> cuida disso.</p></div></div>
+<h3 class="cd-rgroup">Ações</h3>
+<div class="rule"><div class="rn">19</div><div><h3>No máximo duas, a principal à direita</h3><p>Mais que isso confunde a hierarquia e aperta no celular. Precedentes: Polaris, Agriculture AU.</p></div></div>
+<div class="rule"><div class="rn">20</div><div><h3>Primary para o que confirma, Danger para o que destrói</h3><p>Nunca um Primary para excluir. Precedentes: Carbon (variante de perigo), Spectrum (botão vermelho).</p></div></div>
+<div class="rule"><div class="rn">21</div><div><h3>Rótulo com verbo e substantivo</h3><p>O mesmo do título: “Excluir cliente”, não “OK”. Precedentes: Polaris, Carbon.</p></div></div>
+<div class="rule"><div class="rn">22</div><div><h3>Sem ações só com outra saída óbvia</h3><p>O rodapé pode ser desligado, mas pela regra do botão ele é a exceção. Na dúvida, mantenha o secundário.</p></div></div>
+<div class="rule"><div class="rn">23</div><div><h3>No Modal destrutivo, o Enter não destrói</h3><p>Quem confirma a exclusão faz um clique ou um Tab deliberado. <b>Precedente fraco:</b> só a documentação do Adobe XD.</p></div></div>
+<h3 class="cd-rgroup">Foco e leitor de tela</h3>
+<div class="rule"><div class="rn">24</div><div><h3><code>&lt;dialog&gt;</code> aberto por <code>showModal()</code></h3><p>Ele prende o foco, deixa o resto da página inerte e fecha com Esc. Precedente: MDN.</p></div></div>
+<div class="rule"><div class="rn">25</div><div><h3>O Modal tem nome</h3><p><code>aria-labelledby</code> aponta para o título: o <code>&lt;dialog&gt;</code> não se nomeia sozinho. Precedentes: APG, MDN.</p></div></div>
+<div class="rule"><div class="rn">26</div><div><h3>O foco inicial depende do conteúdo</h3><p>Com campos, o primeiro campo; sem campos, o botão principal. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">27</div><div><h3>O fundo escurecido é decoração</h3><p>Não recebe foco nem é anunciado.</p></div></div>
+<div class="rule"><div class="rn">28</div><div><h3>Só o miolo rola</h3><p>Título e ações ficam; a página atrás não rola. Precedente: Bootstrap (só o corpo rola).</p></div></div>
+<div class="rule"><div class="rn">29</div><div><h3>Modal destrutivo: o foco entra em “Cancelar”</h3><p>Quando a principal é Danger, o foco inicial vai para a secundária, para o Enter não ficar a um toque de apagar. <b>Regra própria do AL</b>, sem precedente confirmado.</p></div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Botão X de fechar</b><span>O AL exige ao menos um botão no rodapé (regra 16).</span></div>
+    <div><b>Divisórias entre as partes</b><span>O espaço separa; nada de linha.</span></div>
+    <div><b>Modal de várias etapas</b><span>O “anterior e próximo” do Carbon. Se a demanda aparecer, é componente novo.</span></div>
+    <div><b>Entrada pela lateral</b><span>É o Drawer, o próximo da fila no Tier 3.</span></div>
+    <div><b>Contorno no escuro</b><span>O card clareia contra o fundo escurecido, sem contorno.</span></div>
+  </div>
+</section></div><div class="panel" id="p-modal-a11y" role="tabpanel" aria-labelledby="t-modal-a11y" tabindex="0" hidden>
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede o que mora <b>dentro</b> do card, contra <code>bg-surface-raised</code>, e o card
+  contra a página <b>escurecida</b> pelo fundo (o scrim composto sobre a tela e sobre a superfície). O
+  título tem que passar 4,5:1 sem exceção; anel, botões e borda, 3:1. A separação do card no escuro é a
+  única exceção declarada. Um segundo julgamento reprova o card <b>invisível</b>.</p>
+  <div class="stats">
+    <div class="stat hl"><b>14</b><span>combinações medidas</span></div>
+    <div class="stat"><b>12</b><span>passam</span></div>
+    <div class="stat"><b>2</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">título e texto do miolo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">14.55:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">anel de foco no card</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">botão Primary no card</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">botão Danger no card</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">8.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">borda do Secondary no card</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.88:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">card × tela escurecida</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#7D7D7D"></span></td><td class="tok dim">bg-canvas+scrim</td><td class="num strong">4.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">card × superfície escurecida</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#7A7A7A"></span></td><td class="tok dim">bg-surface+scrim</td><td class="num strong">4.29:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">título e texto do miolo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">anel de foco no card</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.87:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">botão Primary no card</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.20:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">botão Danger no card</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.19:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">borda do Secondary no card</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.53:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">card × tela escurecida</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#090909"></span></td><td class="tok dim">bg-canvas+scrim</td><td class="num strong">1.86:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">card × superfície escurecida</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#0F0F0F"></span></td><td class="tok dim">bg-surface+scrim</td><td class="num strong">1.79:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr></tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Exceção declarada: o card não se separa do fundo escurecido no escuro</b>
+    O card (<code>bg-surface-raised</code>) contra a página escurecida fica em 1,79 a 1,86:1, abaixo de 3:1. Quem
+    separa é o card clarear mais a sombra, a regra da Foundation para o tema escuro. Subir a opacidade
+    do fundo não resolve (a 72% o par vai a 1,88:1) e o Modal nunca ganha contorno para compensar.
+  </div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra doze regras lendo o HTML que este site emite:
+  <b>7 Modais</b> nesta página, nenhum fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Nativo</b><span><code>.al-modal</code> é um <code>&lt;dialog&gt;</code>.</span></div>
+    <div><b>b · Aberto por script</b><span>Sem <code>open</code> na marcação. Só as amostras congeladas, sob <code>inert</code>, estão isentas.</span></div>
+    <div><b>c · Nome</b><span><code>aria-labelledby</code> aponta para o <code>__title</code> do próprio Modal.</span></div>
+    <div><b>d · Um título</b><span>Exatamente um <code>__title</code> com texto.</span></div>
+    <div><b>e · Ordem</b><span>Título, miolo, ações, sem peça solta nem divisória no meio.</span></div>
+    <div><b>f · Ações</b><span>Um <code>__actions</code> com uma ou duas ações.</span></div>
+    <div><b>g · Hierarquia</b><span>A secundária vem antes; a última é Primary ou Danger.</span></div>
+    <div><b>h · Saída</b><span>Um <code>data-al-modal-close</code>, ou um <code>&lt;form method="dialog"&gt;</code>.</span></div>
+    <div><b>i · Sem X</b><span>Nada de <code>__close</code> nem botão sem texto visível.</span></div>
+    <div><b>j · Sem aninhar</b><span>Nada de Modal dentro de Modal.</span></div>
+    <div><b>k · Gatilho</b><span>Todo <code>data-al-modal-open</code> aponta para um Modal que existe.</span></div>
+    <div><b>l · Botão com tipo</b><span><code>type="button"</code> nas ações, para não enviar formulário.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Foco inicial</b><span>No botão principal sem campos, em “Cancelar” no destrutivo, no primeiro campo com formulário.</span></div>
+    <div><b>Foco preso</b><span>Tab e Shift+Tab rodam só dentro do Modal; a página atrás fica inerte.</span></div>
+    <div><b>Esc</b><span>Fecha em todos e o foco volta ao botão que abriu.</span></div>
+    <div><b>Clique no fundo</b><span>Fecha sem campos; com campos, nunca. Arrastar dentro e soltar fora também não fecha.</span></div>
+    <div><b>Rolagem</b><span>Só o miolo rola, com título e ações parados. A página atrás não anda.</span></div>
+    <div><b>Celular</b><span>Margem de 16px de cada lado e sem rolagem lateral em 375px.</span></div>
+    <div><b>Movimento reduzido</b><span>Abre e fecha sem o card subir e descer.</span></div>
+    <div><b>Alto contraste</b><span>O card ganha contorno na cor do texto do sistema.</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.17.2</span>
+  <span><b>AL Design System</b> · v0.18.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -15272,6 +15888,173 @@ var AC_DEMOS = {"none|multi": {"html": "<div class=\"ac-stack\"><details class=\
     inp.addEventListener('input', render);
   });
   document.getElementById('accordion-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+/* AL Design System - Modal, comportamento
+ *
+ * O <dialog> nativo ja faz o grosso (regra 24): prende o foco, deixa a pagina
+ * inerte, fecha com Esc (regra 15) e devolve o foco a quem abriu (regra 17).
+ * Este arquivo cobre so o que o nativo nao faz:
+ *   - abrir e fechar por atributo, sem JS na pagina:
+ *       data-al-modal-open="<id>"   no botao que abre
+ *       data-al-modal-close         no botao que fecha (dentro do dialog)
+ *   - clique no scrim fecha SO quando nao ha campos (regra 14). Com campo, o
+ *     clique acidental perderia o que foi digitado;
+ *   - foco inicial (regras 26 e 29), quando a marcacao nao pede um com
+ *     `autofocus`:
+ *       com campo        -> o primeiro campo (o nativo ja faz, nao mexe)
+ *       sem campo        -> a acao principal (a ultima do rodape)
+ *       principal Danger -> a acao SECUNDARIA: o Enter nao pode ficar a um
+ *                           toque de apagar (regras 23 e 29)
+ *
+ * Uso:
+ *   carregar este arquivo com um script src       -> liga sozinho quando a pagina carrega
+ *   alModals.init(container)            -> liga em conteudo inserido depois
+ * Ligar duas vezes o mesmo dialog nao duplica nada.
+ */
+(function () {
+  'use strict';
+
+  var FIELDS = 'input:not([type="hidden"]), select, textarea, [contenteditable=""], [contenteditable="true"]';
+  var DANGER = '.al-btn--danger';
+
+  function hasFields(dialog) {
+    return !!dialog.querySelector(FIELDS);
+  }
+
+  function inside(dialog, x, y) {
+    var r = dialog.getBoundingClientRect();
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  }
+
+  function initialFocus(dialog) {
+    if (dialog.querySelector('[autofocus]')) return;   // a marcacao decidiu
+    if (hasFields(dialog)) return;                      // regra 26: o nativo foca o campo
+    var actions = dialog.querySelectorAll('.al-modal__actions button, .al-modal__actions a[href]');
+    if (!actions.length) return;
+    var primary = actions[actions.length - 1];
+    var target = primary.matches(DANGER) ? actions[0] : primary;   // regra 29
+    target.focus();
+  }
+
+  function bind(dialog) {
+    if (dialog.hasAttribute('data-al-modal')) return;
+    dialog.setAttribute('data-al-modal', '');
+
+    // O clique so conta se o aperto E a soltura foram no scrim: arrastar para
+    // selecionar texto dentro do Modal e soltar fora nao fecha nada.
+    var pressedOnScrim = false;
+    dialog.addEventListener('pointerdown', function (e) {
+      pressedOnScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
+    });
+    dialog.addEventListener('click', function (e) {
+      var onScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
+      if (onScrim && pressedOnScrim && !hasFields(dialog)) dialog.close();   // regra 14
+      pressedOnScrim = false;
+    });
+
+    // foco inicial: observa o `open`, porque quem abre pode ser o atributo de
+    // dados ou um showModal() de fora
+    new MutationObserver(function () {
+      if (dialog.open) initialFocus(dialog);
+    }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
+  }
+
+  function init(root) {
+    [].slice.call((root || document).querySelectorAll('dialog.al-modal')).forEach(bind);
+  }
+
+  // Abrir e fechar por atributo: delegado no documento, uma vez so, entao
+  // vale tambem para botao inserido depois.
+  document.addEventListener('click', function (e) {
+    var opener = e.target.closest && e.target.closest('[data-al-modal-open]');
+    if (opener) {
+      var dialog = document.getElementById(opener.getAttribute('data-al-modal-open'));
+      if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
+        bind(dialog);
+        dialog.showModal();
+      }
+      return;
+    }
+    var closer = e.target.closest && e.target.closest('[data-al-modal-close]');
+    if (closer) {
+      var host = closer.closest('dialog');
+      if (host) host.close();
+    }
+  });
+
+  window.alModals = { init: init };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { init(); });
+  } else {
+    init();
+  }
+})();
+var MD_DEMOS = {"sm|confirm": {"inner": "<h2 class=\"al-modal__title\" id=\"MDPID-t\">Sair da conta?<\/h2><div class=\"al-modal__content\"><p class=\"md-copy\">Você vai precisar entrar de novo para ver os seus pedidos.<\/p><\/div><div class=\"al-modal__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Cancelar<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Sair<\/span><\/button><\/div>", "code": "<button type=\"button\" class=\"al-btn al-btn--secondary al-btn--md\" data-al-modal-open=\"meu-modal\">\n  <span class=\"al-btn__label\">Abrir<\/span><\/button>\n\n<dialog class=\"al-modal al-modal--sm\" id=\"meu-modal\" aria-labelledby=\"meu-modal-t\">  <!-- sem campos: o foco entra na ação principal; o clique no fundo fecha -->\n  <h2 class=\"al-modal__title\" id=\"meu-modal-t\">Sair da conta?<\/h2>\n  <div class=\"al-modal__content\">\n    <p>Você vai precisar entrar de novo para ver os seus pedidos.<\/p>\n  <\/div>\n  <div class=\"al-modal__actions\">\n    <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Cancelar<\/span><\/button>\n    <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Sair<\/span><\/button>\n  <\/div>\n<\/dialog>\n<script src=\"modal.js\"><\/script>  <!-- abrir, fechar, clique no fundo e foco inicial -->"}, "sm|delete": {"inner": "<h2 class=\"al-modal__title\" id=\"MDPID-t\">Excluir cliente?<\/h2><div class=\"al-modal__content\"><p class=\"md-copy\">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.<\/p><\/div><div class=\"al-modal__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Cancelar<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--danger al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Excluir cliente<\/span><\/button><\/div>", "code": "<button type=\"button\" class=\"al-btn al-btn--secondary al-btn--md\" data-al-modal-open=\"meu-modal\">\n  <span class=\"al-btn__label\">Abrir<\/span><\/button>\n\n<dialog class=\"al-modal al-modal--sm\" id=\"meu-modal\" aria-labelledby=\"meu-modal-t\">  <!-- principal Danger: o foco entra em \"Cancelar\" (regra 29) -->\n  <h2 class=\"al-modal__title\" id=\"meu-modal-t\">Excluir cliente?<\/h2>\n  <div class=\"al-modal__content\">\n    <p>Isso não pode ser desfeito. Os pedidos dele continuam no histórico.<\/p>\n  <\/div>\n  <div class=\"al-modal__actions\">\n    <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Cancelar<\/span><\/button>\n    <button type=\"button\" class=\"al-btn al-btn--danger al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Excluir cliente<\/span><\/button>\n  <\/div>\n<\/dialog>\n<script src=\"modal.js\"><\/script>  <!-- abrir, fechar, clique no fundo e foco inicial -->"}, "sm|form": {"inner": "<h2 class=\"al-modal__title\" id=\"MDPID-t\">Editar e-mail<\/h2><div class=\"al-modal__content\"><div class=\"md-fields\"><div class=\"al-input\"><div class=\"al-input__labelrow\"><label class=\"al-input__label\" for=\"MDPID-email\">E-mail<\/label><\/div><div class=\"al-input__control\"><input class=\"al-input__field\" id=\"MDPID-email\" name=\"MDPID-email\" type=\"email\" value=\"ana@empresa.com\" autocomplete=\"off\"><\/div><\/div><div class=\"al-input\"><div class=\"al-input__labelrow\"><label class=\"al-input__label\" for=\"MDPID-nome\">Nome<\/label><\/div><div class=\"al-input__control\"><input class=\"al-input__field\" id=\"MDPID-nome\" name=\"MDPID-nome\" type=\"text\" value=\"Ana Souza\" autocomplete=\"off\"><\/div><\/div><\/div><\/div><div class=\"al-modal__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Cancelar<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Salvar<\/span><\/button><\/div>", "code": "<button type=\"button\" class=\"al-btn al-btn--secondary al-btn--md\" data-al-modal-open=\"meu-modal\">\n  <span class=\"al-btn__label\">Abrir<\/span><\/button>\n\n<dialog class=\"al-modal al-modal--sm\" id=\"meu-modal\" aria-labelledby=\"meu-modal-t\">  <!-- com campos: o foco entra no primeiro campo; o clique no fundo NÃO fecha -->\n  <h2 class=\"al-modal__title\" id=\"meu-modal-t\">Editar e-mail<\/h2>\n  <div class=\"al-modal__content\">\n    <!-- campos do formulário: um .al-input por campo -->\n  <\/div>\n  <div class=\"al-modal__actions\">\n    <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Cancelar<\/span><\/button>\n    <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Salvar<\/span><\/button>\n  <\/div>\n<\/dialog>\n<script src=\"modal.js\"><\/script>  <!-- abrir, fechar, clique no fundo e foco inicial -->"}, "md|confirm": {"inner": "<h2 class=\"al-modal__title\" id=\"MDPID-t\">Sair da conta?<\/h2><div class=\"al-modal__content\"><p class=\"md-copy\">Você vai precisar entrar de novo para ver os seus pedidos.<\/p><\/div><div class=\"al-modal__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Cancelar<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Sair<\/span><\/button><\/div>", "code": "<button type=\"button\" class=\"al-btn al-btn--secondary al-btn--md\" data-al-modal-open=\"meu-modal\">\n  <span class=\"al-btn__label\">Abrir<\/span><\/button>\n\n<dialog class=\"al-modal al-modal--md\" id=\"meu-modal\" aria-labelledby=\"meu-modal-t\">  <!-- sem campos: o foco entra na ação principal; o clique no fundo fecha -->\n  <h2 class=\"al-modal__title\" id=\"meu-modal-t\">Sair da conta?<\/h2>\n  <div class=\"al-modal__content\">\n    <p>Você vai precisar entrar de novo para ver os seus pedidos.<\/p>\n  <\/div>\n  <div class=\"al-modal__actions\">\n    <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Cancelar<\/span><\/button>\n    <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Sair<\/span><\/button>\n  <\/div>\n<\/dialog>\n<script src=\"modal.js\"><\/script>  <!-- abrir, fechar, clique no fundo e foco inicial -->"}, "md|delete": {"inner": "<h2 class=\"al-modal__title\" id=\"MDPID-t\">Excluir cliente?<\/h2><div class=\"al-modal__content\"><p class=\"md-copy\">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.<\/p><\/div><div class=\"al-modal__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Cancelar<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--danger al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Excluir cliente<\/span><\/button><\/div>", "code": "<button type=\"button\" class=\"al-btn al-btn--secondary al-btn--md\" data-al-modal-open=\"meu-modal\">\n  <span class=\"al-btn__label\">Abrir<\/span><\/button>\n\n<dialog class=\"al-modal al-modal--md\" id=\"meu-modal\" aria-labelledby=\"meu-modal-t\">  <!-- principal Danger: o foco entra em \"Cancelar\" (regra 29) -->\n  <h2 class=\"al-modal__title\" id=\"meu-modal-t\">Excluir cliente?<\/h2>\n  <div class=\"al-modal__content\">\n    <p>Isso não pode ser desfeito. Os pedidos dele continuam no histórico.<\/p>\n  <\/div>\n  <div class=\"al-modal__actions\">\n    <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Cancelar<\/span><\/button>\n    <button type=\"button\" class=\"al-btn al-btn--danger al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Excluir cliente<\/span><\/button>\n  <\/div>\n<\/dialog>\n<script src=\"modal.js\"><\/script>  <!-- abrir, fechar, clique no fundo e foco inicial -->"}, "md|form": {"inner": "<h2 class=\"al-modal__title\" id=\"MDPID-t\">Editar e-mail<\/h2><div class=\"al-modal__content\"><div class=\"md-fields\"><div class=\"al-input\"><div class=\"al-input__labelrow\"><label class=\"al-input__label\" for=\"MDPID-email\">E-mail<\/label><\/div><div class=\"al-input__control\"><input class=\"al-input__field\" id=\"MDPID-email\" name=\"MDPID-email\" type=\"email\" value=\"ana@empresa.com\" autocomplete=\"off\"><\/div><\/div><div class=\"al-input\"><div class=\"al-input__labelrow\"><label class=\"al-input__label\" for=\"MDPID-nome\">Nome<\/label><\/div><div class=\"al-input__control\"><input class=\"al-input__field\" id=\"MDPID-nome\" name=\"MDPID-nome\" type=\"text\" value=\"Ana Souza\" autocomplete=\"off\"><\/div><\/div><\/div><\/div><div class=\"al-modal__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Cancelar<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Salvar<\/span><\/button><\/div>", "code": "<button type=\"button\" class=\"al-btn al-btn--secondary al-btn--md\" data-al-modal-open=\"meu-modal\">\n  <span class=\"al-btn__label\">Abrir<\/span><\/button>\n\n<dialog class=\"al-modal al-modal--md\" id=\"meu-modal\" aria-labelledby=\"meu-modal-t\">  <!-- com campos: o foco entra no primeiro campo; o clique no fundo NÃO fecha -->\n  <h2 class=\"al-modal__title\" id=\"meu-modal-t\">Editar e-mail<\/h2>\n  <div class=\"al-modal__content\">\n    <!-- campos do formulário: um .al-input por campo -->\n  <\/div>\n  <div class=\"al-modal__actions\">\n    <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Cancelar<\/span><\/button>\n    <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Salvar<\/span><\/button>\n  <\/div>\n<\/dialog>\n<script src=\"modal.js\"><\/script>  <!-- abrir, fechar, clique no fundo e foco inicial -->"}, "lg|confirm": {"inner": "<h2 class=\"al-modal__title\" id=\"MDPID-t\">Sair da conta?<\/h2><div class=\"al-modal__content\"><p class=\"md-copy\">Você vai precisar entrar de novo para ver os seus pedidos.<\/p><\/div><div class=\"al-modal__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Cancelar<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Sair<\/span><\/button><\/div>", "code": "<button type=\"button\" class=\"al-btn al-btn--secondary al-btn--md\" data-al-modal-open=\"meu-modal\">\n  <span class=\"al-btn__label\">Abrir<\/span><\/button>\n\n<dialog class=\"al-modal al-modal--lg\" id=\"meu-modal\" aria-labelledby=\"meu-modal-t\">  <!-- sem campos: o foco entra na ação principal; o clique no fundo fecha -->\n  <h2 class=\"al-modal__title\" id=\"meu-modal-t\">Sair da conta?<\/h2>\n  <div class=\"al-modal__content\">\n    <p>Você vai precisar entrar de novo para ver os seus pedidos.<\/p>\n  <\/div>\n  <div class=\"al-modal__actions\">\n    <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Cancelar<\/span><\/button>\n    <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Sair<\/span><\/button>\n  <\/div>\n<\/dialog>\n<script src=\"modal.js\"><\/script>  <!-- abrir, fechar, clique no fundo e foco inicial -->"}, "lg|delete": {"inner": "<h2 class=\"al-modal__title\" id=\"MDPID-t\">Excluir cliente?<\/h2><div class=\"al-modal__content\"><p class=\"md-copy\">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.<\/p><\/div><div class=\"al-modal__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Cancelar<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--danger al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Excluir cliente<\/span><\/button><\/div>", "code": "<button type=\"button\" class=\"al-btn al-btn--secondary al-btn--md\" data-al-modal-open=\"meu-modal\">\n  <span class=\"al-btn__label\">Abrir<\/span><\/button>\n\n<dialog class=\"al-modal al-modal--lg\" id=\"meu-modal\" aria-labelledby=\"meu-modal-t\">  <!-- principal Danger: o foco entra em \"Cancelar\" (regra 29) -->\n  <h2 class=\"al-modal__title\" id=\"meu-modal-t\">Excluir cliente?<\/h2>\n  <div class=\"al-modal__content\">\n    <p>Isso não pode ser desfeito. Os pedidos dele continuam no histórico.<\/p>\n  <\/div>\n  <div class=\"al-modal__actions\">\n    <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Cancelar<\/span><\/button>\n    <button type=\"button\" class=\"al-btn al-btn--danger al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Excluir cliente<\/span><\/button>\n  <\/div>\n<\/dialog>\n<script src=\"modal.js\"><\/script>  <!-- abrir, fechar, clique no fundo e foco inicial -->"}, "lg|form": {"inner": "<h2 class=\"al-modal__title\" id=\"MDPID-t\">Editar e-mail<\/h2><div class=\"al-modal__content\"><div class=\"md-fields\"><div class=\"al-input\"><div class=\"al-input__labelrow\"><label class=\"al-input__label\" for=\"MDPID-email\">E-mail<\/label><\/div><div class=\"al-input__control\"><input class=\"al-input__field\" id=\"MDPID-email\" name=\"MDPID-email\" type=\"email\" value=\"ana@empresa.com\" autocomplete=\"off\"><\/div><\/div><div class=\"al-input\"><div class=\"al-input__labelrow\"><label class=\"al-input__label\" for=\"MDPID-nome\">Nome<\/label><\/div><div class=\"al-input__control\"><input class=\"al-input__field\" id=\"MDPID-nome\" name=\"MDPID-nome\" type=\"text\" value=\"Ana Souza\" autocomplete=\"off\"><\/div><\/div><\/div><\/div><div class=\"al-modal__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Cancelar<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close><span class=\"al-btn__label\">Salvar<\/span><\/button><\/div>", "code": "<button type=\"button\" class=\"al-btn al-btn--secondary al-btn--md\" data-al-modal-open=\"meu-modal\">\n  <span class=\"al-btn__label\">Abrir<\/span><\/button>\n\n<dialog class=\"al-modal al-modal--lg\" id=\"meu-modal\" aria-labelledby=\"meu-modal-t\">  <!-- com campos: o foco entra no primeiro campo; o clique no fundo NÃO fecha -->\n  <h2 class=\"al-modal__title\" id=\"meu-modal-t\">Editar e-mail<\/h2>\n  <div class=\"al-modal__content\">\n    <!-- campos do formulário: um .al-input por campo -->\n  <\/div>\n  <div class=\"al-modal__actions\">\n    <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Cancelar<\/span><\/button>\n    <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\" data-al-modal-close>\n      <span class=\"al-btn__label\">Salvar<\/span><\/button>\n  <\/div>\n<\/dialog>\n<script src=\"modal.js\"><\/script>  <!-- abrir, fechar, clique no fundo e foco inicial -->"}};
+
+(function () {
+  // ── playground do Modal ── o comportamento e o do modal.js real; isto e so o palco
+  var prev = document.getElementById('modal-prev');
+  if (!prev) return;
+  var code = document.getElementById('modal-code');
+  var live = null;
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function fill(inner, pid) { return inner.replace(/MDPID/g, pid); }
+
+  // A previa e um <dialog open> inerte, desenhado dentro do palco. O Modal de
+  // verdade e criado uma vez, ao abrir, e reaproveitado: o mesmo HTML da previa.
+  function render() {
+    var s = pick('mdsize'), k = pick('mdkind'), theme = pick('mdtheme');
+    var demo = MD_DEMOS[s + '|' + k];
+    var d = document.createElement('dialog');
+    d.className = 'al-modal al-modal--' + s;
+    d.setAttribute('open', '');
+    d.setAttribute('inert', '');
+    d.setAttribute('aria-labelledby', 'md-pv-t');
+    if (theme !== 'auto') d.setAttribute('data-theme', theme);
+    d.innerHTML = fill(demo.inner, 'md-pv');
+    prev.innerHTML = '';
+    prev.appendChild(d);
+    if (theme === 'auto') prev.removeAttribute('data-theme'); else prev.setAttribute('data-theme', theme);
+    code.innerHTML = esc(demo.code);
+  }
+
+  function open() {
+    var s = pick('mdsize'), k = pick('mdkind'), theme = pick('mdtheme');
+    var demo = MD_DEMOS[s + '|' + k];
+    if (!live) {
+      live = document.createElement('dialog');
+      live.id = 'md-pg-live';
+      document.body.appendChild(live);
+    }
+    live.className = 'al-modal al-modal--' + s;
+    live.setAttribute('aria-labelledby', 'md-live-t');
+    if (theme === 'auto') live.removeAttribute('data-theme'); else live.setAttribute('data-theme', theme);
+    live.innerHTML = fill(demo.inner, 'md-live');
+    if (window.alModals) window.alModals.init(document.body);
+    if (!live.open) live.showModal();
+  }
+
+  document.querySelectorAll('#modal-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('modal-open').addEventListener('click', open);
+  document.getElementById('modal-copy').addEventListener('click', function () {
     var btn = this;
     var done = function () {
       btn.textContent = 'Copiado';

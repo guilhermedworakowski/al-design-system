@@ -112,6 +112,11 @@ ACC = json.load(open(os.path.join(ROOT, 'components', 'accordion', 'tokens.json'
 ACC_TOKENS = open(os.path.join(ROOT, 'components', 'accordion', 'al-accordion-tokens.css')).read()
 ACC_CSS = open(os.path.join(ROOT, 'components', 'accordion', 'accordion.css')).read()
 ACC_A11Y = json.load(open(os.path.join(ROOT, 'components', 'accordion', 'a11y.json')))
+MOD = json.load(open(os.path.join(ROOT, 'components', 'modal', 'tokens.json')))
+MOD_TOKENS = open(os.path.join(ROOT, 'components', 'modal', 'al-modal-tokens.css')).read()
+MOD_CSS = open(os.path.join(ROOT, 'components', 'modal', 'modal.css')).read()
+MOD_JS = open(os.path.join(ROOT, 'components', 'modal', 'modal.js')).read()
+MOD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'modal', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -142,6 +147,7 @@ N_DIVIDER_TOKENS = len(DIVIDER['alias'])
 N_CARD_TOKENS = len(CARD['alias'])
 N_TAB_TOKENS = len(TAB['alias'])
 N_ACC_TOKENS = len(ACC['alias'])
+N_MOD_TOKENS = len(MOD['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -186,7 +192,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
-                         ACC_TOKENS)
+                         ACC_TOKENS, MOD_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -202,7 +208,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + DIVIDER_TOKENS + '\n' + DIVIDER_CSS
             + '\n' + CARD_TOKENS + '\n' + CARD_CSS
             + '\n' + TAB_TOKENS + '\n' + TAB_CSS
-            + '\n' + ACC_TOKENS + '\n' + ACC_CSS)
+            + '\n' + ACC_TOKENS + '\n' + ACC_CSS
+            + '\n' + MOD_TOKENS + '\n' + MOD_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1485,7 +1492,7 @@ def mo_curve(name, label):
 
 
 # Cena de cada componente. Tudo aria-hidden: é ilustração do movimento, não o
-# componente - o Modal e o Drawer de verdade ainda não existem.
+# componente. O Modal tem página própria; o Drawer ainda não existe.
 MO_DEMOS = [
     ('modal', 'Modal', 'panel',
      '<span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span>'
@@ -8696,6 +8703,590 @@ TH_ACCORDION = ('<div class="th-accordion" aria-hidden="true">'
                 '</div>')
 
 
+# ═══════════════════════════════════════════════════════════ Modal · abas
+# Quinto componente do Tier 3, e o segundo com script proprio (modal.js). E o
+# <dialog> nativo aberto por showModal(): prende o foco, deixa a pagina inerte
+# e fecha com Esc. O modal.js cobre abrir por atributo, o clique no fundo (so
+# sem campos) e o foco inicial. Todo Modal da pagina sai do modal.css real.
+# A amostra congelada e a previa do playground levam `open` + `inert` +
+# `aria-hidden` (o portao de marcacao isenta o `open` so sob `inert`); os "a
+# evitar" sao casca do site (md-fake-*), nunca um .al-modal errado.
+MD_SIZES = [('sm', 'sm · 320'), ('md', 'md · 480'), ('lg', 'lg · 640')]
+MD_KINDS = [('confirm', 'Confirmação'), ('delete', 'Exclusão'), ('form', 'Formulário')]
+
+N_MD_MEDIDAS = len(MOD_A11Y['rows'])
+N_MD_EXC = sum(1 for r in MOD_A11Y['rows'] if r['exception'])
+N_MD_PASS = sum(1 for r in MOD_A11Y['rows'] if r['pass'])
+N_MD_FAIL = sum(1 for r in MOD_A11Y['rows'] if not r['pass'] and not r['exception'])
+N_MD_EXC_KEYS = len(MOD['pending'])
+MD_OFFSET = MOD['resolved']['modal-offset']
+MD_DURATION = MOD['resolved']['modal-duration']
+
+
+def md_btn(label, variant, extra=''):
+    return (f'<button type="button" class="al-btn al-btn--{variant} al-btn--md"{extra}>'
+            f'<span class="al-btn__label">{label}</span></button>')
+
+
+def md_field(cid, label, tipo, valor):
+    return (f'<div class="al-input"><div class="al-input__labelrow">'
+            f'<label class="al-input__label" for="{cid}">{label}</label></div>'
+            f'<div class="al-input__control"><input class="al-input__field" id="{cid}" name="{cid}" '
+            f'type="{tipo}" value="{valor}" autocomplete="off"></div></div>')
+
+
+MD_COPY = {
+    'confirm': ('Sair da conta?', 'Você vai precisar entrar de novo para ver os seus pedidos.',
+                ('Cancelar', 'ghost'), ('Sair', 'primary')),
+    'delete': ('Excluir cliente?', 'Isso não pode ser desfeito. Os pedidos dele continuam no histórico.',
+               ('Cancelar', 'ghost'), ('Excluir cliente', 'danger')),
+    'form': ('Editar e-mail', None, ('Cancelar', 'ghost'), ('Salvar', 'primary')),
+}
+
+
+def md_inner(kind, pid, close=True):
+    """Titulo + miolo + acoes de um Modal. `pid` prefixa os ids; `close` poe
+    data-al-modal-close nos botoes (a previa congelada tambem leva: o contrato
+    de marcacao pede uma saida em todo Modal)."""
+    titulo, texto, sec, pri = MD_COPY[kind]
+    if kind == 'form':
+        corpo = ('<div class="md-fields">' + md_field(f'{pid}-email', 'E-mail', 'email', 'ana@empresa.com')
+                 + md_field(f'{pid}-nome', 'Nome', 'text', 'Ana Souza') + '</div>')
+    else:
+        corpo = f'<p class="md-copy">{texto}</p>'
+    cl = ' data-al-modal-close' if close else ''
+    return (f'<h2 class="al-modal__title" id="{pid}-t">{titulo}</h2>'
+            f'<div class="al-modal__content">{corpo}</div>'
+            f'<div class="al-modal__actions">{md_btn(sec[0], sec[1], cl)}{md_btn(pri[0], pri[1], cl)}</div>')
+
+
+def md_code(kind, size):
+    titulo, texto, sec, pri = MD_COPY[kind]
+    cls = f'al-modal al-modal--{size}'
+    corpo = ('    <!-- campos do formulário: um .al-input por campo -->' if kind == 'form'
+             else f'    <p>{texto}</p>')
+    foco = {'confirm': '<!-- sem campos: o foco entra na ação principal; o clique no fundo fecha -->',
+            'delete': '<!-- principal Danger: o foco entra em "Cancelar" (regra 29) -->',
+            'form': '<!-- com campos: o foco entra no primeiro campo; o clique no fundo NÃO fecha -->'}[kind]
+    return '\n'.join([
+        '<button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="meu-modal">',
+        '  <span class="al-btn__label">Abrir</span></button>',
+        '',
+        f'<dialog class="{cls}" id="meu-modal" aria-labelledby="meu-modal-t">  {foco}',
+        f'  <h2 class="al-modal__title" id="meu-modal-t">{titulo}</h2>',
+        '  <div class="al-modal__content">',
+        corpo,
+        '  </div>',
+        '  <div class="al-modal__actions">',
+        f'    <button type="button" class="al-btn al-btn--{sec[1]} al-btn--md" data-al-modal-close>',
+        f'      <span class="al-btn__label">{sec[0]}</span></button>',
+        f'    <button type="button" class="al-btn al-btn--{pri[1]} al-btn--md" data-al-modal-close>',
+        f'      <span class="al-btn__label">{pri[0]}</span></button>',
+        '  </div>',
+        '</dialog>',
+        '<script src="modal.js"></script>  <!-- abrir, fechar, clique no fundo e foco inicial -->'])
+
+
+MD_DEMOS = {f'{s}|{k}': {'inner': md_inner(k, 'MDPID', close=True), 'code': md_code(k, s)}
+            for s, _ in MD_SIZES for k, _ in MD_KINDS}
+
+MD_LONG = ''.join(
+    f'<p class="md-copy">{i}. {t}</p>' for i, t in enumerate([
+        'Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que '
+        'esperamos de você e como resolvemos um problema quando ele acontece.',
+        'Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. '
+        'Se perceber um acesso que não foi seu, avise o atendimento na hora.',
+        'Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com '
+        '30 dias de antecedência por e-mail e dentro do aplicativo.',
+        'Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir '
+        'fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.',
+        'Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e '
+        'até 10 dias úteis no boleto, depois que o pedido é cancelado.',
+        'Se uma parte destas condições não puder ser aplicada, o restante continua valendo. '
+        'A lei aplicável é a brasileira e o foro é o da cidade do consumidor.',
+        'Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até '
+        'dois dias úteis, de segunda a sexta.'] * 2, 1))
+
+
+def md_dialog(mid, size, kind, extra=''):
+    return (f'<dialog class="al-modal al-modal--{size}" id="{mid}" aria-labelledby="{mid}-t"{extra}>'
+            + md_inner(kind, mid) + '</dialog>')
+
+
+def md_long_dialog(mid):
+    return (f'<dialog class="al-modal al-modal--lg" id="{mid}" aria-labelledby="{mid}-t">'
+            f'<h2 class="al-modal__title" id="{mid}-t">Termos de uso</h2>'
+            f'<div class="al-modal__content">{MD_LONG}</div>'
+            f'<div class="al-modal__actions">{md_btn("Voltar", "ghost", " data-al-modal-close")}'
+            f'{md_btn("Aceitar", "primary", " data-al-modal-close")}</div></dialog>')
+
+
+def md_frozen(mid, size, kind='delete'):
+    """Modal inline, so para mostrar: `open` + inert + aria-hidden."""
+    return (f'<div class="md-cell" inert aria-hidden="true"><span class="md-lab">'
+            f'{dict(MD_SIZES)[size]}</span>' + md_dialog(mid, size, kind, ' open') + '</div>')
+
+
+def md_trigger(mid, rotulo, nota):
+    return (f'<div class="md-trig">{md_btn(rotulo, "secondary", f" data-al-modal-open={chr(34)}{mid}{chr(34)}")}'
+            f'<p class="cap">{nota}</p></div>')
+
+
+def modal_token_rows():
+    rows = []
+    for name in MOD['alias']:
+        res = MOD['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, dict):
+            light = dark = '<span class="dim">sombra composta</span>'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        elif name == 'modal-duration':
+            light = dark = f'{res}ms'
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{MOD["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+def modal_a11y_rows():
+    oque = {'titulo': 'título e texto do miolo', 'anel-no-card': 'anel de foco no card',
+            'botao-principal-no-card': 'botão Primary no card', 'botao-perigo-no-card': 'botão Danger no card',
+            'botao-secundario-borda-no-card': 'borda do Secondary no card',
+            'card-na-canvas-escurecida': 'card × tela escurecida',
+            'card-na-surface-escurecida': 'card × superfície escurecida'}
+    out = []
+    for r in MOD_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        if r['invisible']:
+            v = '<span class="fail">invisível</span>'
+        elif r['pass']:
+            v = '<span class="pass">passa</span>'
+        else:
+            v = '<span class="exc">exceção declarada</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{oque[r["what"]]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+MODAL_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="modal-stage"><div class="md-prev" id="modal-prev" aria-hidden="true"></div></div>
+
+    <div class="controls" id="modal-controls">
+      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('mdsize', MD_SIZES, 'md')}</div>
+      <div class="ctl"><span class="ctl-name">Conteúdo</span>{seg('mdkind', MD_KINDS, 'delete')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('mdtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="md-open">
+        <p class="md-open-note">Abre o Modal escolhido sobre a página inteira. Esc, ou um botão, fecha.</p>
+        <button type="button" class="al-btn al-btn--primary al-btn--md" id="modal-open"><span class="al-btn__label">Abrir de verdade</span></button>
+      </div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="modal-copy">Copiar</button></div>
+      <pre><code id="modal-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    A prévia acima é só um desenho do Modal. <b>Abrir de verdade</b> faz o que o componente faz: o card
+    sobe, o fundo escurece e o resto da página fica inerte. Tabule: o foco não sai do Modal. No de
+    <b>Exclusão</b> ele entra em “Cancelar”; no <b>Formulário</b>, no primeiro campo.
+  </p>
+</section>
+
+<section>
+  <h2>Quatro cenários, abertos por atributo</h2>
+  <p>Nenhum precisa de script da página: <code>data-al-modal-open</code> no botão e
+  <code>data-al-modal-close</code> dentro do Modal bastam. O clique no fundo fecha só quando não há campos.</p>
+  <div class="md-trigs">
+    {md_trigger('md-ov-confirma', 'Sair da conta', 'Sem campos: o clique no fundo fecha e o foco entra no botão principal.')}
+    {md_trigger('md-ov-excluir', 'Excluir cliente', 'Principal Danger: o foco entra em “Cancelar”. <i>Regra 29.</i>')}
+    {md_trigger('md-ov-form', 'Editar e-mail', 'Com campos: o clique no fundo não fecha e o foco entra no campo.')}
+    {md_trigger('md-ov-longo', 'Termos de uso', 'Conteúdo longo: só o miolo rola; título e botões ficam.')}
+  </div>
+  {md_dialog('md-ov-confirma', 'sm', 'confirm')}
+  {md_dialog('md-ov-excluir', 'md', 'delete')}
+  {md_dialog('md-ov-form', 'md', 'form')}
+  {md_long_dialog('md-ov-longo')}
+</section>'''
+
+
+MODAL_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-modal</code> é o <code>&lt;dialog&gt;</code>, aberto por <code>showModal()</code>. Fundo <code>modal-bg</code>, raio <code>modal-radius</code>, sombra <code>modal-shadow</code>.</span></div>
+    <div><b>Título</b><span><code>__title</code>, Heading/sm. É ele que dá o nome ao Modal (<code>aria-labelledby</code>).</span></div>
+    <div><b>Miolo</b><span><code>__content</code>: slot livre. É o único que rola quando passa da tela.</span></div>
+    <div><b>Ações</b><span><code>__actions</code>: uma ou duas, a secundária antes da principal, alinhadas à direita.</span></div>
+    <div><b>Fundo escurecido</b><span>O <code>::backdrop</code>, com <code>modal-scrim</code>. Decorativo: não recebe foco.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Os três tamanhos</h2>
+  <p>Só a largura muda: 320, 480 e 640. A altura é do conteúdo. Estão congelados, com o mesmo
+  conteúdo, para comparar com o Figma.</p>
+  <div class="cd-panel md-frozen" style="margin-top:16px">
+    {md_frozen('md-sp-sm', 'sm')}
+    {md_frozen('md-sp-md', 'md')}
+    {md_frozen('md-sp-lg', 'lg')}
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Modal</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{modal_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O fundo escurecido nasceu para o Modal</b>
+    A Foundation ganhou <code>bg-scrim</code>, o único semântico com transparência: preto a 56% no claro
+    e a 64% no escuro. Ele serve também ao Drawer. No escuro, subir a opacidade quase não muda
+    nada, porque a página já é quase preta.
+  </div>
+  <div class="note">
+    <b>As larguras são o único valor declarado</b>
+    Todo token do Modal aponta para a Foundation, menos <code>modal-width-sm</code>, <code>-md</code> e
+    <code>-lg</code>: a Foundation ainda não tem uma escala de largura de contêiner. Quando existir,
+    viram alias.
+  </div>
+  <div class="note">
+    <b>O card sobe ao abrir e desce ao fechar</b>
+    São {MD_DURATION}ms (<code>modal-duration</code>, a duração de painel da Foundation), com a curva do
+    estado de destino. O card nasce {MD_OFFSET}px abaixo do lugar dele (<code>modal-offset</code>); o fundo
+    só aparece e some. Em navegador sem suporte à transição de <code>display</code>, o Modal abre e
+    fecha sem animar. Com movimento reduzido, também.
+  </div>
+  <div class="note">
+    <b>O layout em coluna fica na base</b>
+    Ao fechar, o <code>display</code> segue como está pela duração da saída. Se a coluna e o espaço entre as
+    partes valessem só com o Modal aberto, o miolo seria comprimido na frente de quem está vendo.
+  </div>
+  <div class="note">
+    <b>Altura, rolagem e celular</b>
+    A altura é do conteúdo, com máximo de 100% da tela menos a margem; passou disso, só o miolo rola.
+    Em tela estreita a largura é a da tela menos <code>modal-margin</code> de cada lado. O miolo ganha um
+    respiro do tamanho do anel de foco, para o overflow não cortar o anel de um campo na borda.
+  </div>
+  <div class="note">
+    <b>A página atrás fica travada</b>
+    Com um Modal aberto por <code>showModal()</code>, a rolagem da página é desligada. Um
+    <code>&lt;dialog open&gt;</code> solto, como os congelados desta página, não trava nada.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>modal.js</code></b>
+    O <code>&lt;dialog&gt;</code> já prende o foco, deixa a página inerte, fecha com Esc e devolve o foco a quem
+    abriu. O script cobre só o que ele não faz: abrir e fechar por atributo, o clique no fundo e o foco
+    inicial. Ligar duas vezes o mesmo Modal não duplica nada.
+  </div>
+</section>'''
+
+
+MD_RULES = [
+    ('Quando usar', [
+        ('Tarefa curta que pede uma resposta', 'Confirmação, edição rápida, escolha. O Modal bloqueia a página: a pessoa só volta ao fluxo depois de resolver ou dispensar. Precedentes: Carbon, Polaris.'),
+        ('Nunca para o que precisa ficar à vista', 'Ele é temporário. Informação ou ação que a pessoa consulta o tempo todo mora na página. Precedente: Polaris.'),
+        ('Formulário longo não é Modal', 'Se passa do tamanho <code>lg</code> e ainda rola demais, é página (e, quando existir, Drawer). Precedentes: Carbon, Polaris.'),
+        ('Nunca um Modal dentro de outro', 'Um de cada vez. Regra do AL, com o Bootstrap como único precedente achado sobre aninhamento.'),
+    ]),
+    ('Estrutura e conteúdo', [
+        ('O título é obrigatório e visível', 'Ele dá o nome ao Modal para o leitor de tela e diz onde a pessoa está. Precedentes: Primer, Spectrum.'),
+        ('Verbo e substantivo, ou pergunta curta', '“Editar e-mail”, “Excluir cliente?”. Sem frase longa e sem título vago como “Atenção”. Precedente: Polaris.'),
+        ('Caixa de frase, textos curtos', 'Título, texto e rótulos em sentence case. Precedente: Carbon.'),
+        ('Diga a consequência, não pergunte', '“Isso não pode ser desfeito”, não “Tem certeza?”. Precedentes: Polaris, Spectrum.'),
+        ('O miolo é um slot livre', 'O Modal só traz título e ações; o conteúdo é de quem usa.'),
+        ('Sem divisória entre as partes', 'Quem separa título, miolo e ações é o espaço de 24. Decisão do AL.'),
+    ]),
+    ('Tamanho', [
+        ('Escolha pelo conteúdo', '<code>sm</code> para confirmação curta, <code>md</code> para formulário curto, <code>lg</code> para conteúdo mais denso. Nunca “o que parece melhor”. Precedente: Carbon.'),
+        ('Rola demais? Suba um tamanho', 'Antes de aceitar a rolagem, tente o tamanho acima. Precedente: Carbon.'),
+        ('No celular, tela menos 16 de cada lado', 'O <code>sm</code> de 320 numa tela de 375 não encosta na borda. Decisão do AL.'),
+    ]),
+    ('Fechar', [
+        ('Clique no fundo fecha só sem campos', 'Com formulário, o clique acidental perderia o que foi digitado. <b>Divergência consciente:</b> Polaris e Carbon dizem nunca, o Primer diz sempre. O AL fica no meio.'),
+        ('Esc sempre fecha', 'Com ou sem campos. O <code>&lt;dialog&gt;</code> já faz. Precedentes: Carbon, Primer, Polaris.'),
+        ('Não existe botão X', 'Todo Modal tem ao menos um botão no rodapé, e o secundário (“Voltar”, “Cancelar”, “Fechar”) é a saída visível. Regra do AL.'),
+        ('Fechar devolve o foco', 'Para o elemento que abriu o Modal. Precedentes: Carbon, Primer.'),
+        ('Modal fechado não fica na página', 'Nem escondido por CSS: o <code>&lt;dialog&gt;</code> cuida disso.'),
+    ]),
+    ('Ações', [
+        ('No máximo duas, a principal à direita', 'Mais que isso confunde a hierarquia e aperta no celular. Precedentes: Polaris, Agriculture AU.'),
+        ('Primary para o que confirma, Danger para o que destrói', 'Nunca um Primary para excluir. Precedentes: Carbon (variante de perigo), Spectrum (botão vermelho).'),
+        ('Rótulo com verbo e substantivo', 'O mesmo do título: “Excluir cliente”, não “OK”. Precedentes: Polaris, Carbon.'),
+        ('Sem ações só com outra saída óbvia', 'O rodapé pode ser desligado, mas pela regra do botão ele é a exceção. Na dúvida, mantenha o secundário.'),
+        ('No Modal destrutivo, o Enter não destrói', 'Quem confirma a exclusão faz um clique ou um Tab deliberado. <b>Precedente fraco:</b> só a documentação do Adobe XD.'),
+    ]),
+    ('Foco e leitor de tela', [
+        ('<code>&lt;dialog&gt;</code> aberto por <code>showModal()</code>', 'Ele prende o foco, deixa o resto da página inerte e fecha com Esc. Precedente: MDN.'),
+        ('O Modal tem nome', '<code>aria-labelledby</code> aponta para o título: o <code>&lt;dialog&gt;</code> não se nomeia sozinho. Precedentes: APG, MDN.'),
+        ('O foco inicial depende do conteúdo', 'Com campos, o primeiro campo; sem campos, o botão principal. Precedente: Carbon.'),
+        ('O fundo escurecido é decoração', 'Não recebe foco nem é anunciado.'),
+        ('Só o miolo rola', 'Título e ações ficam; a página atrás não rola. Precedente: Bootstrap (só o corpo rola).'),
+        ('Modal destrutivo: o foco entra em “Cancelar”', 'Quando a principal é Danger, o foco inicial vai para a secundária, para o Enter não ficar a um toque de apagar. <b>Regra própria do AL</b>, sem precedente confirmado.'),
+    ]),
+]
+
+
+def md_rules_html():
+    out, n = [], 0
+    for grupo, regras in MD_RULES:
+        out.append(f'<h3 class="cd-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    assert n == 29, f'as regras aprovadas sao 29, o site tem {n}'
+    return '\n'.join(out)
+
+
+MODAL_GUIDE = f'''
+<section>
+  <h2>Como escrever</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Título e botão com a mesma ação</span>
+      <div class="stage2 md-stage2"><div class="md-fake md-fake--do"><span class="md-fake-t">Excluir cliente?</span><span class="md-fake-p">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</span><span class="md-fake-a"><span class="md-fake-b">Cancelar</span><span class="md-fake-b md-fake-b--danger">Excluir cliente</span></span></div></div>
+      <p class="cap">A pessoa sabe o que vai acontecer antes de clicar. <i>Polaris, Carbon.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Título vago e “OK”</span>
+      <div class="stage2 md-stage2"><div class="md-fake md-fake--no"><span class="md-fake-t">Atenção</span><span class="md-fake-p">Tem certeza?</span><span class="md-fake-a"><span class="md-fake-b">Não</span><span class="md-fake-b">OK</span></span></div></div>
+      <p class="cap">“OK” em quê? Quem lê só o botão não sabe se está apagando.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">A saída é um botão do rodapé</span>
+      <div class="stage2 md-stage2"><div class="md-fake md-fake--do"><span class="md-fake-t">Editar e-mail</span><span class="md-fake-p">…campos…</span><span class="md-fake-a"><span class="md-fake-b">Cancelar</span><span class="md-fake-b md-fake-b--primary">Salvar</span></span></div></div>
+      <p class="cap">Sempre há um botão para voltar.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">X no canto e três ações</span>
+      <div class="stage2 md-stage2"><div class="md-fake md-fake--no"><span class="md-fake-x" aria-hidden="true">✕</span><span class="md-fake-t">Editar e-mail</span><span class="md-fake-p">…campos…</span><span class="md-fake-a"><span class="md-fake-b">Descartar</span><span class="md-fake-b">Salvar rascunho</span><span class="md-fake-b md-fake-b--primary">Salvar</span></span></div></div>
+      <p class="cap">O AL não tem X, e três ações apertam o rodapé no celular.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {md_rules_html()}
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Botão X de fechar</b><span>O AL exige ao menos um botão no rodapé (regra 16).</span></div>
+    <div><b>Divisórias entre as partes</b><span>O espaço separa; nada de linha.</span></div>
+    <div><b>Modal de várias etapas</b><span>O “anterior e próximo” do Carbon. Se a demanda aparecer, é componente novo.</span></div>
+    <div><b>Entrada pela lateral</b><span>É o Drawer, o próximo da fila no Tier 3.</span></div>
+    <div><b>Contorno no escuro</b><span>O card clareia contra o fundo escurecido, sem contorno.</span></div>
+  </div>
+</section>'''
+
+
+MODAL_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede o que mora <b>dentro</b> do card, contra <code>bg-surface-raised</code>, e o card
+  contra a página <b>escurecida</b> pelo fundo (o scrim composto sobre a tela e sobre a superfície). O
+  título tem que passar 4,5:1 sem exceção; anel, botões e borda, 3:1. A separação do card no escuro é a
+  única exceção declarada. Um segundo julgamento reprova o card <b>invisível</b>.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_MD_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_MD_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>{N_MD_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{N_MD_FAIL}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{modal_a11y_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Exceção declarada: o card não se separa do fundo escurecido no escuro</b>
+    O card (<code>bg-surface-raised</code>) contra a página escurecida fica em 1,79 a 1,86:1, abaixo de 3:1. Quem
+    separa é o card clarear mais a sombra, a regra da Foundation para o tema escuro. Subir a opacidade
+    do fundo não resolve (a 72% o par vai a 1,88:1) e o Modal nunca ganha contorno para compensar.
+  </div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra doze regras lendo o HTML que este site emite:
+  <b>{MOD_A11Y['markupChecked'] or 0} Modais</b> nesta página, nenhum fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Nativo</b><span><code>.al-modal</code> é um <code>&lt;dialog&gt;</code>.</span></div>
+    <div><b>b · Aberto por script</b><span>Sem <code>open</code> na marcação. Só as amostras congeladas, sob <code>inert</code>, estão isentas.</span></div>
+    <div><b>c · Nome</b><span><code>aria-labelledby</code> aponta para o <code>__title</code> do próprio Modal.</span></div>
+    <div><b>d · Um título</b><span>Exatamente um <code>__title</code> com texto.</span></div>
+    <div><b>e · Ordem</b><span>Título, miolo, ações, sem peça solta nem divisória no meio.</span></div>
+    <div><b>f · Ações</b><span>Um <code>__actions</code> com uma ou duas ações.</span></div>
+    <div><b>g · Hierarquia</b><span>A secundária vem antes; a última é Primary ou Danger.</span></div>
+    <div><b>h · Saída</b><span>Um <code>data-al-modal-close</code>, ou um <code>&lt;form method="dialog"&gt;</code>.</span></div>
+    <div><b>i · Sem X</b><span>Nada de <code>__close</code> nem botão sem texto visível.</span></div>
+    <div><b>j · Sem aninhar</b><span>Nada de Modal dentro de Modal.</span></div>
+    <div><b>k · Gatilho</b><span>Todo <code>data-al-modal-open</code> aponta para um Modal que existe.</span></div>
+    <div><b>l · Botão com tipo</b><span><code>type="button"</code> nas ações, para não enviar formulário.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Foco inicial</b><span>No botão principal sem campos, em “Cancelar” no destrutivo, no primeiro campo com formulário.</span></div>
+    <div><b>Foco preso</b><span>Tab e Shift+Tab rodam só dentro do Modal; a página atrás fica inerte.</span></div>
+    <div><b>Esc</b><span>Fecha em todos e o foco volta ao botão que abriu.</span></div>
+    <div><b>Clique no fundo</b><span>Fecha sem campos; com campos, nunca. Arrastar dentro e soltar fora também não fecha.</span></div>
+    <div><b>Rolagem</b><span>Só o miolo rola, com título e ações parados. A página atrás não anda.</span></div>
+    <div><b>Celular</b><span>Margem de 16px de cada lado e sem rolagem lateral em 375px.</span></div>
+    <div><b>Movimento reduzido</b><span>Abre e fecha sem o card subir e descer.</span></div>
+    <div><b>Alto contraste</b><span>O card ganha contorno na cor do texto do sistema.</span></div>
+  </div>
+</section>'''
+
+
+# A miniatura mora dentro do link do card do indice: <dialog> ali seria
+# interativo dentro de link. Entao e casca pintada com os tokens do Modal.
+TH_MODAL = ('<div class="th-modal" aria-hidden="true"><div class="th-md-card">'
+            '<span class="th-md-t"></span><span class="th-md-l"></span><span class="th-md-l th-md-l--s"></span>'
+            '<span class="th-md-a"><i></i><b></b></span></div></div>')
+
+
+CHROME_MODAL = """
+/* ── páginas do Modal ──
+   Casca do site. O Modal em si é sempre o .al-modal, do modal.css real.
+   Os exemplos "a evitar" usam .md-fake-*, nunca um .al-modal errado. */
+.md-prev{position:relative; width:100%; display:flex; justify-content:center; padding:24px; border-radius:12px;
+  background:var(--al-bg-surface); text-align:left}
+/* o <dialog open> do UA e absoluto e centrado; na previa ele e so uma caixa desenhada */
+.md-prev .al-modal, .md-cell .al-modal{position:static; margin:0; max-inline-size:100%; opacity:1; translate:none; transition:none}
+.md-copy{margin:0; color:var(--al-text-secondary)}
+.al-modal__content > .md-copy + .md-copy{margin-block-start:var(--al-space-12)}
+.md-fields{display:flex; flex-direction:column; gap:var(--al-space-16)}
+.md-open{display:flex; flex-direction:column; align-items:flex-start; gap:12px}
+.md-open-note{margin:0; font-size:13px; line-height:20px; color:var(--al-text-secondary); max-width:none}
+.md-trigs{display:grid; gap:20px; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); margin-top:16px}
+.md-trig{display:flex; flex-direction:column; align-items:flex-start; gap:8px}
+.md-trig .cap{margin:0}
+.md-frozen{display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start}
+.md-cell{min-width:0; max-width:100%; display:flex; flex-direction:column; gap:8px}
+.md-lab{font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary)}
+.dd .stage2.md-stage2{display:block; padding:20px}
+.md-fake{position:relative; display:flex; flex-direction:column; gap:12px; padding:20px; border-radius:16px;
+  background:var(--al-bg-surface-raised); color:var(--al-text-primary); max-width:320px;
+  box-shadow:var(--al-elevation-3)}
+.md-fake-t{font-size:20px; line-height:28px; font-weight:600; letter-spacing:-.01em}
+.md-fake-p{font-size:14px; line-height:20px; color:var(--al-text-secondary)}
+.md-fake-a{display:flex; flex-wrap:wrap; justify-content:flex-end; gap:8px; margin-top:4px}
+.md-fake-b{padding:6px 14px; border-radius:9999px; font-size:13px; font-weight:500}
+.md-fake-b--primary{background:var(--al-bg-brand); color:var(--al-text-on-brand)}
+.md-fake-b--danger{background:var(--al-bg-danger); color:var(--al-text-on-solid)}
+.md-fake-x{position:absolute; top:12px; right:16px; font-size:14px; color:var(--al-text-secondary)}
+.th-modal{display:grid; place-items:center; width:100%; height:100%; padding:10px; border-radius:6px;
+  background:var(--al-bg-scrim)}
+.th-md-card{display:flex; flex-direction:column; gap:6px; width:100%; max-width:130px; padding:10px;
+  border-radius:var(--al-modal-radius); background:var(--al-modal-bg)}
+.th-md-t{height:8px; width:55%; border-radius:4px; background:var(--al-modal-title)}
+.th-md-l{height:6px; width:90%; border-radius:3px; background:var(--al-border-default)}
+.th-md-l--s{width:60%}
+.th-md-a{display:flex; justify-content:flex-end; gap:5px; margin-top:4px}
+.th-md-a i{width:22px; height:10px; border-radius:5px; background:var(--al-bg-hover)}
+.th-md-a b{width:22px; height:10px; border-radius:5px; background:var(--al-bg-brand)}
+"""
+
+
+JS_MODAL_DATA = 'var MD_DEMOS = ' + json.dumps(MD_DEMOS, ensure_ascii=False).replace('</', '<\\/') + ';\n'
+
+JS_MODAL = r"""
+(function () {
+  // ── playground do Modal ── o comportamento e o do modal.js real; isto e so o palco
+  var prev = document.getElementById('modal-prev');
+  if (!prev) return;
+  var code = document.getElementById('modal-code');
+  var live = null;
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function fill(inner, pid) { return inner.replace(/MDPID/g, pid); }
+
+  // A previa e um <dialog open> inerte, desenhado dentro do palco. O Modal de
+  // verdade e criado uma vez, ao abrir, e reaproveitado: o mesmo HTML da previa.
+  function render() {
+    var s = pick('mdsize'), k = pick('mdkind'), theme = pick('mdtheme');
+    var demo = MD_DEMOS[s + '|' + k];
+    var d = document.createElement('dialog');
+    d.className = 'al-modal al-modal--' + s;
+    d.setAttribute('open', '');
+    d.setAttribute('inert', '');
+    d.setAttribute('aria-labelledby', 'md-pv-t');
+    if (theme !== 'auto') d.setAttribute('data-theme', theme);
+    d.innerHTML = fill(demo.inner, 'md-pv');
+    prev.innerHTML = '';
+    prev.appendChild(d);
+    if (theme === 'auto') prev.removeAttribute('data-theme'); else prev.setAttribute('data-theme', theme);
+    code.innerHTML = esc(demo.code);
+  }
+
+  function open() {
+    var s = pick('mdsize'), k = pick('mdkind'), theme = pick('mdtheme');
+    var demo = MD_DEMOS[s + '|' + k];
+    if (!live) {
+      live = document.createElement('dialog');
+      live.id = 'md-pg-live';
+      document.body.appendChild(live);
+    }
+    live.className = 'al-modal al-modal--' + s;
+    live.setAttribute('aria-labelledby', 'md-live-t');
+    if (theme === 'auto') live.removeAttribute('data-theme'); else live.setAttribute('data-theme', theme);
+    live.innerHTML = fill(demo.inner, 'md-live');
+    if (window.alModals) window.alModals.init(document.body);
+    if (!live.open) live.showModal();
+  }
+
+  document.querySelectorAll('#modal-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('modal-open').addEventListener('click', open);
+  document.getElementById('modal-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -8715,6 +9306,7 @@ LANDING_COMPONENTES = f'''
     {card('card', 'Card', 'Um assunto num contêiner. Três tipos, três paddings, e o clicável inteiro feito com um link de verdade no título.', TH_CARD)}
     {card('tab', 'Tab', 'Troca de conteúdo na mesma tela, ou navegação entre páginas com o mesmo visual. Line e Square, e o primeiro componente com script próprio.', TH_TAB)}
     {card('accordion', 'Accordion', 'Conteúdo secundário que abre e fecha no lugar. É o &lt;details&gt; nativo: sem script, vários abertos por padrão ou um por vez com name.', TH_ACCORDION)}
+    {card('modal', 'Modal', 'Uma tarefa curta que pede resposta antes de seguir. É o &lt;dialog&gt; nativo: sobe sobre a página, prende o foco e nunca tem botão X.', TH_MODAL)}
   </div>
 </section>
 
@@ -8723,7 +9315,7 @@ LANDING_COMPONENTES = f'''
   <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
   disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
   sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
-  seguiu pelo Card e pelo Tab e chegou ao Accordion. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
+  seguiu pelo Card, pelo Tab e pelo Accordion e chegou ao Modal. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
   auditar.</p>
 </section>'''
 
@@ -8938,6 +9530,15 @@ PAGES = [
          (f'{N_ACC_TOKENS} tokens', False), (f'{N_AC_EXC_KEYS} exceções declaradas', False)],
         [('overview', 'Visão geral', ACCORDION_OVERVIEW), ('specs', 'Especificações', ACCORDION_SPECS),
          ('guide', 'Diretrizes', ACCORDION_GUIDE), ('a11y', 'Acessibilidade', ACCORDION_A11Y_TAB)])),
+    ('modal', 'Componentes', page(
+        'modal', 'Componentes', 'Modal',
+        'Uma tarefa curta que pede resposta antes de a pessoa seguir. É o &lt;dialog&gt; nativo aberto por '
+        'showModal(): o card sobe sobre a página, o fundo escurece, o foco fica preso e Esc fecha. Nunca tem '
+        'botão X: o rodapé sempre traz uma saída.',
+        [('Estável', True), ('3 variantes no Figma', False),
+         (f'{N_MOD_TOKENS} tokens', False), (f'{N_MD_EXC_KEYS} exceção declarada', False)],
+        [('overview', 'Visão geral', MODAL_OVERVIEW), ('specs', 'Especificações', MODAL_SPECS),
+         ('guide', 'Diretrizes', MODAL_GUIDE), ('a11y', 'Acessibilidade', MODAL_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -8982,6 +9583,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/card" data-page="card">Card</a>
         <a href="#/tab" data-page="tab">Tab</a>
         <a href="#/accordion" data-page="accordion">Accordion</a>
+        <a href="#/modal" data-page="modal">Modal</a>
       </div>
     </div>
   </div>
@@ -10984,14 +11586,13 @@ CHROME_MOTION = """
 .mo-stage[data-open="true"] .mo-move{
   opacity:1; transform:none;
   transition-timing-function:var(--al-motion-easing-enter)}
-/* preto puro nos dois temas: o véu escurece a tela, não a inverte. O AL ainda não tem token de scrim — nasce com o Modal. */
-.mo-scrim{position:absolute; inset:0; background:#000}
-.mo-stage[data-open="true"] .mo-scrim{opacity:.4}
+/* o véu é o bg-scrim da Foundation (nasceu com o Modal): escurece a tela nos dois temas, não a inverte. */
+.mo-scrim{position:absolute; inset:0; background:var(--al-bg-scrim)}
 .mo-box{
   position:absolute; display:flex; flex-direction:column; gap:8px; padding:14px;
   background:var(--al-bg-surface-raised); border:1px solid var(--al-border-subtle);
   border-radius:var(--al-radius-2xl); box-shadow:var(--al-elevation-4)}
-.mo-box--modal{inset:0; margin:auto; width:58%; height:fit-content; --mo-from:translateY(var(--al-space-12))}
+.mo-box--modal{inset:0; margin:auto; width:58%; height:fit-content; --mo-from:translateY(var(--al-modal-offset))}
 .mo-box--drawer{top:0; right:0; bottom:0; width:48%; border-radius:0; border-width:0 0 0 1px;
   --mo-from:translateX(100%)}
 .mo-anchor{position:absolute; left:50%; top:96px; width:64px; height:28px; margin-left:-32px;
@@ -11115,7 +11716,7 @@ HTML = (
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -11126,7 +11727,8 @@ HTML = (
     + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
-    + JS_ACCORDION_DATA + JS_ACCORDION + JS_MOTION + '</script>\n'
+    + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
+    + JS_MOTION + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
@@ -11179,6 +11781,10 @@ print(f'  tokens do Accord. : {N_ACC_TOKENS}  '
       f'({len(ACC_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in ACC_A11Y["rows"] if r["invisible"])} invisiveis, '
       f'{sum(1 for r in ACC_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
+print(f'  tokens do Modal   : {N_MOD_TOKENS}  '
+      f'({len(MOD_A11Y["rows"])} combinacoes medidas, '
+      f'{sum(1 for r in MOD_A11Y["rows"] if r["invisible"])} invisiveis, '
+      f'{sum(1 for r in MOD_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
 print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
