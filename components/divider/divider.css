@@ -29,7 +29,7 @@
  *   uma caixa de espessura zero, por dois motivos: o `<hr>` do navegador ja e
  *   desenhado assim (so trocamos estilo e cor), e no modo de alto contraste
  *   do sistema a borda e repintada com a cor do texto - um fundo sumiria.
- *   O resultado visual e o mesmo: 1px em border-subtle.
+ *   O resultado visual e o mesmo: 1px em border-default.
  *
  * COMPRIMENTO E MARGEM SAO DO LAYOUT
  *   A horizontal ocupa a largura do conteiner (comportamento de bloco). A

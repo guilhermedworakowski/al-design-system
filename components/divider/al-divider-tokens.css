@@ -6,6 +6,6 @@
  */
 
 :root {
-  --al-divider-color: var(--al-border-subtle);
+  --al-divider-color: var(--al-border-default);
   --al-divider-thickness: var(--al-border-width-1);
 }

@@ -16,6 +16,14 @@ PRIMEIRO COMPONENTE DO TIER 3 (07/10/2026)
   `Orientation` (Horizontal / Vertical). Uma espessura so (precedente Polaris),
   sem recuo, sem texto no meio, sem cor de marca ou de status.
 
+A COR E `border-default`, NAO `border-subtle` (opcao A de Gui, etapa 6)
+
+  Nasceu `border-subtle`. O portao da etapa 6 mediu a terceira superficie do
+  sistema e achou a linha INVISIVEL no escuro sobre card e modal:
+  `border-subtle` e `bg-surface-raised` sao o mesmo neutral-800 ali. Trocar so
+  o Divider resolve sem mexer na Foundation nem nos outros componentes que
+  usam `border-subtle`.
+
 A LINHA E O COMPONENTE - POR ISSO `color` E `thickness`
 
   Nos outros componentes a borda contorna uma caixa e o token se chama
@@ -52,7 +60,7 @@ FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))   # noqa: E402
 
 # --------------------------------------------------------------- cor
 COLOR = {
-    'color': 'border-subtle',
+    'color': 'border-default',   # era border-subtle - ver cabecalho
 }
 
 # ------------------------------------------------------------ geometria
@@ -62,11 +70,12 @@ GEOM = {
 
 PENDING = {
     'linha-abaixo-de-3-1': (
-        'A linha usa `border-subtle`: 1.32:1 sobre a tela e 1.23:1 sobre superficie no claro, '
-        '1.66:1 / 1.36:1 no escuro - abaixo dos 3:1 do WCAG 1.4.11. O criterio so vale para '
+        'A linha usa `border-default`: 1.57:1 sobre a tela, 1.47:1 sobre superficie e 1.57:1 sobre '
+        'card no claro; 2.42:1 / 1.98:1 / 1.46:1 no escuro - abaixo dos 3:1 do WCAG 1.4.11. O criterio so vale para '
         'objeto grafico NECESSARIO para entender o conteudo, e o divisor nunca pode ser a '
         'unica pista do agrupamento: espaco ou titulo fazem esse papel, e o leitor de tela '
-        'ouve "separador" no <hr>. Decisao de Gui na etapa 1 (07/10/2026): manter o subtle. '
+        'ouve "separador" no <hr>. A excecao cobre linha DISCRETA, nunca linha invisivel: o subtle '
+        'da etapa 1 sumia sobre card no escuro e foi trocado na etapa 6 (opcao A de Gui, 07/10/2026). '
         'Quem sustenta a excecao e a regra de uso da etapa 4. NAO "corrigir" escurecendo.'
     ),
 }
@@ -75,12 +84,14 @@ PENDING = {
 BACKGROUNDS = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
+    'raised':  'bg-surface-raised',   # card e modal - entrou na etapa 6
 }
 
 # (papel, token do divider, fundo, piso, chave da excecao em PENDING)
 COMBOS = [
     ('linha-na-tela',       'color', 'canvas',  3.0, 'linha-abaixo-de-3-1'),
     ('linha-em-superficie', 'color', 'surface', 3.0, 'linha-abaixo-de-3-1'),
+    ('linha-em-card',       'color', 'raised',  3.0, 'linha-abaixo-de-3-1'),
 ]
 
 
@@ -179,7 +190,7 @@ def run():
             'sizes': [],
             'states': [],
             'nota': (
-                'Linha de 1px em border-subtle, horizontal ou vertical. Sem estado, sem '
+                'Linha de 1px em border-default, horizontal ou vertical. Sem estado, sem '
                 'tamanho, sem recuo: comprimento e margem sao do layout. <hr> anunciado e o '
                 'padrao (opcao A); decorativo e marcacao, nao token. Uma excecao de '
                 'contraste declarada em pending.'
