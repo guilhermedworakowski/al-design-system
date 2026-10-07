@@ -57,7 +57,11 @@ TOKENS = {
     # (#RRGGBBAA): o fundo escurecido atras de uma camada modal. Fora de PAIRS,
     # porque o contraste dele so existe composto sobre a pagina; o portao do
     # Modal mede. Nenhum valor de token existente muda.
-    "name": "AL Design System", "version": "0.18.0", "license": "MIT",
+    # 0.18.1: ajuste no Modal, terceira casa. No escuro o fundo do Modal
+    # (surface-raised) era igual ao bg-hover, e o hover do ghost e do secondary
+    # sumia no rodape. O modal.css passa a usar bg-hover-raised e
+    # bg-active-raised nesses botoes. Nenhum token novo.
+    "name": "AL Design System", "version": "0.18.1", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
