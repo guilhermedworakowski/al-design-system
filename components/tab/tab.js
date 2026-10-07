@@ -3,7 +3,7 @@
  * So o uso de PAINEL precisa deste arquivo. Navegacao por links (regra 22) e
  * <a> comum: o Tab do teclado passa por todos e nada aqui se aplica.
  *
- * O que ele faz em todo grupo [role="tablist"] dentro de `root`
+ * O que ele faz em todo grupo .al-tabs[role="tablist"] dentro de `root`
  * (padrao de abas da APG, regra 21):
  *   - so a aba selecionada fica em tabindex 0 (roving tabindex);
  *   - seta direita/esquerda vai para a proxima/anterior, dando a volta;
@@ -99,7 +99,7 @@
   }
 
   function init(root) {
-    [].slice.call((root || document).querySelectorAll('[role="tablist"]')).forEach(bind);
+    [].slice.call((root || document).querySelectorAll('.al-tabs[role="tablist"]')).forEach(bind);
   }
 
   window.alTabs = { init: init };
