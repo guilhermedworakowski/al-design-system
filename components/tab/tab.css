@@ -148,7 +148,11 @@
   border-bottom: 0;
 }
 
-/* selecionada: tonal em repouso e foco, marca no hover e no pressed (C, F, G) */
+/* selecionada: tonal em repouso e foco, marca no hover e no pressed (C, F, G).
+   O pressed de selecionada vale so para a aba que JA estava aberta: a que o
+   clique acabou de abrir leva data-al-just-selected (tab.js) e fica no hover.
+   Sem isso, no Safari, a aba nao selecionada apertada ia de bg-active para
+   brand-active - o Figma pede bg-active ate soltar. */
 .al-tabs--square .al-tab[aria-selected="true"] .al-tab__label,
 .al-tabs--square .al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
   background-color: var(--al-tab-square-bg-selected);
@@ -161,7 +165,7 @@
   color: var(--al-tab-square-label-selected-hover);
 }
 
-.al-tabs--square .al-tab[aria-selected="true"]:active .al-tab__label,
+.al-tabs--square .al-tab[aria-selected="true"]:active:not([data-al-just-selected]) .al-tab__label,
 .al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):active .al-tab__label {
   background-color: var(--al-tab-square-bg-selected-active);
   color: var(--al-tab-square-label-selected-active);

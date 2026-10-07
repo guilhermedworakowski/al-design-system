@@ -49,7 +49,7 @@ SEM TOKEN, DE PROPOSITO
   Altura: Square 32 = 4 + 24 + 4; Line 42 = 32 + 8 + 2. Largura: o rotulo.
   Fundo em repouso: transparente, nao ha o que tokenizar. Gap entre abas: zero.
 
-TRES EXCECOES DECLARADAS DE CONTRASTE
+QUATRO EXCECOES DECLARADAS DE CONTRASTE
 
   Ver PENDING.
 """
@@ -124,6 +124,13 @@ PENDING = {
         'e marcada pelo matiz. Decisao H de Gui (07/10/2026, opcao a), tomada sabendo disso. '
         'Quem sustenta: regra de uso da etapa 4.'
     ),
+    'pressed-na-superficie-escura': (
+        'O fundo do Square selecionado PRESSIONADO (`bg-brand-active`) contra `bg-surface` no '
+        'escuro = 2.74:1. E o numero que a decisao H cobria quando a selecionada era toda '
+        'brand-active; Gui aceitou H(a) e reconfirmou na etapa 6 (07/10/2026). O estado so dura '
+        'enquanto o clique esta apertado, a selecao aparece antes e depois, e o rotulo dentro '
+        'passa (5.30:1). Sobre a tela escura passa (3.35:1). NAO escurecer o semantico.'
+    ),
     'marca-no-hover-escuro': (
         'Branco sobre `bg-brand-hover` no escuro = 3.85:1. E a excecao de marca que a '
         'Foundation ja declara (dark text-on-brand / bg-brand-hover), herdada do Button, com '
@@ -151,6 +158,7 @@ COMBOS = [
     ('square-rotulo-sel-hover',      'square-label-selected-hover',  'square-bg-selected-hover', 4.5, 'marca-no-hover-escuro'),
     ('square-rotulo-sel-pressed',    'square-label-selected-active', 'square-bg-selected-active', 4.5, None),
     ('square-fundo-selecionado',     'square-bg-selected',           ('canvas', 'surface'), 3.0, 'selecao-tonal'),
+    ('square-fundo-sel-pressed',     'square-bg-selected-active',    ('canvas', 'surface'), 3.0, 'pressed-na-superficie-escura'),
     ('anel-foco',                    'ring',                         ('canvas', 'surface'), 3.0, None),
 ]
 
@@ -291,7 +299,7 @@ def run():
                 'Aba para trocar conteudo na mesma tela (e, com links, montar sidebar/navbar). '
                 'Line marca a selecao pela linha laranja, rotulo text-primary. Square selecionado '
                 'e tonal em repouso e escurece na marca no hover/pressed. Foco = repouso + anel. '
-                'Um tamanho, sem disabled. Tres excecoes de contraste declaradas em pending.'
+                'Um tamanho, sem disabled. Quatro excecoes de contraste declaradas em pending.'
             ),
         },
         'alias': alias,

@@ -13,7 +13,9 @@
  *     do <button>) abre. Use manual quando o painel carrega da rede;
  *   - painel e escondido com `hidden`, nunca removido: o que foi digitado
  *     nele continua la (regra 20);
- *   - clicar na aba ja aberta nao faz nada (regra 19).
+ *   - clicar na aba ja aberta nao faz nada (regra 19);
+ *   - a aba aberta pelo clique recebe `data-al-just-selected` ate o proximo
+ *     aperto, para nao pintar o pressed de selecionada (ver o click abaixo).
  *
  * Uso:
  *   <script src="tab.js"></script>   -> liga sozinho quando a pagina carrega
@@ -57,7 +59,19 @@
     select(start);
 
     tabs.forEach(function (tab, i) {
-      tab.addEventListener('click', function () { select(tab); });
+      // A aba selecionada PELO PROPRIO clique nao pinta o pressed de
+      // selecionada: alguns navegadores (Safari) ainda a consideram :active
+      // quando o clique dispara, e ela iria de bg-active para brand-active
+      // no meio do aperto. A marca some no proximo aperto - ai sim e o
+      // pressed da aba que ja estava aberta.
+      tab.addEventListener('pointerdown', function () {
+        tab.removeAttribute('data-al-just-selected');
+      });
+      tab.addEventListener('click', function () {
+        if (tab.getAttribute('aria-selected') === 'true') return;  // regra 19
+        select(tab);
+        tab.setAttribute('data-al-just-selected', '');
+      });
       tab.addEventListener('keydown', function (e) {
         var k = KEYS[e.key];
         if (!k) return;

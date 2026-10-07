@@ -1,0 +1,1113 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AL Tab QA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* ================= foundation ================= */
+/* AL Design System - Foundation
+ * v0.15.0 - MIT
+ * GERADO por foundation/css.py. Nao editar a mao: rode o script.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  /* primitivas de cor - a rampa crua. Nao consumir direto num componente. */
+  --al-color-neutral-50: #F7F7F7;
+  --al-color-neutral-100: #EEEEEE;
+  --al-color-neutral-200: #E0E0E0;
+  --al-color-neutral-300: #CECECE;
+  --al-color-neutral-400: #B3B3B3;
+  --al-color-neutral-500: #949494;
+  --al-color-neutral-600: #717171;
+  --al-color-neutral-700: #565656;
+  --al-color-neutral-800: #3E3E3E;
+  --al-color-neutral-900: #292929;
+  --al-color-neutral-950: #181818;
+  --al-color-orange-50: #FFF5F0;
+  --al-color-orange-100: #FFEADE;
+  --al-color-orange-200: #FFD7C4;
+  --al-color-orange-300: #FFBDA0;
+  --al-color-orange-400: #FF9267;
+  --al-color-orange-500: #FC5000;
+  --al-color-orange-600: #C53900;
+  --al-color-orange-700: #992700;
+  --al-color-orange-800: #6C2100;
+  --al-color-orange-900: #4A1700;
+  --al-color-orange-950: #2D0D00;
+  --al-color-red-50: #FFF5F5;
+  --al-color-red-100: #FFE8E9;
+  --al-color-red-200: #FFD5D5;
+  --al-color-red-300: #FFBABB;
+  --al-color-red-400: #FF8D91;
+  --al-color-red-500: #F84F5D;
+  --al-color-red-600: #CA293F;
+  --al-color-red-700: #A00E27;
+  --al-color-red-800: #780014;
+  --al-color-red-900: #550007;
+  --al-color-red-950: #360001;
+  --al-color-amber-50: #FBF7EC;
+  --al-color-amber-100: #F7EED5;
+  --al-color-amber-200: #F2DFB0;
+  --al-color-amber-300: #EBCA7E;
+  --al-color-amber-400: #DCAC2E;
+  --al-color-amber-500: #BA8C00;
+  --al-color-amber-600: #916A00;
+  --al-color-amber-700: #704F00;
+  --al-color-amber-800: #523800;
+  --al-color-amber-900: #392500;
+  --al-color-amber-950: #221500;
+  --al-color-green-50: #EFFBF2;
+  --al-color-green-100: #DEF6E4;
+  --al-color-green-200: #C1EECA;
+  --al-color-green-300: #9DE2A9;
+  --al-color-green-400: #6ACD7C;
+  --al-color-green-500: #1BB14B;
+  --al-color-green-600: #008A2A;
+  --al-color-green-700: #006911;
+  --al-color-green-800: #004C03;
+  --al-color-green-900: #013400;
+  --al-color-green-950: #001F00;
+  --al-color-blue-50: #F1F8FF;
+  --al-color-blue-100: #E2F1FF;
+  --al-color-blue-200: #CAE4FF;
+  --al-color-blue-300: #A9D3FF;
+  --al-color-blue-400: #76B8FF;
+  --al-color-blue-500: #2696FF;
+  --al-color-blue-600: #0071D0;
+  --al-color-blue-700: #0055A3;
+  --al-color-blue-800: #003C7A;
+  --al-color-blue-900: #002858;
+  --al-color-blue-950: #001639;
+
+  /* semanticos de cor - TEMA CLARO. E aqui que o tema e resolvido. */
+  --al-bg-canvas: #FFFFFF;
+  --al-bg-surface: #F7F7F7;
+  --al-bg-surface-raised: #FFFFFF;
+  --al-bg-subtle: #EEEEEE;
+  --al-bg-hover: #EEEEEE;
+  --al-bg-active: #E0E0E0;
+  --al-bg-disabled: #E0E0E0;
+  --al-bg-inverse: #292929;
+  --al-bg-thumb: #B3B3B3;
+  --al-bg-thumb-disabled: #CECECE;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #C53900;
+  --al-bg-brand-active: #992700;
+  --al-bg-brand-subtle: #FFEADE;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #A00E27;
+  --al-bg-danger-hover: #780014;
+  --al-bg-danger-active: #550007;
+  --al-bg-danger-subtle: #FFE8E9;
+  --al-bg-success: #006911;
+  --al-bg-success-hover: #004C03;
+  --al-bg-success-subtle: #DEF6E4;
+  --al-bg-warning: #704F00;
+  --al-bg-warning-hover: #523800;
+  --al-bg-warning-subtle: #F7EED5;
+  --al-bg-info: #0055A3;
+  --al-bg-info-hover: #003C7A;
+  --al-bg-info-subtle: #E2F1FF;
+  --al-text-primary: #292929;
+  --al-text-secondary: #717171;
+  --al-text-placeholder: #717171;
+  --al-text-disabled: #B3B3B3;
+  --al-text-inverse: #F7F7F7;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #FFFFFF;
+  --al-text-brand: #992700;
+  --al-text-danger: #A00E27;
+  --al-text-success: #006911;
+  --al-text-warning: #704F00;
+  --al-text-info: #0055A3;
+  --al-border-subtle: #E0E0E0;
+  --al-border-default: #CECECE;
+  --al-border-strong: #717171;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FC5000;
+  --al-border-danger: #CA293F;
+  --al-border-success: #008A2A;
+  --al-border-warning: #916A00;
+  --al-border-info: #0071D0;
+  --al-shadow-focus-default: #FC5000;
+  --al-shadow-focus-error: #A00E27;
+
+  /* tipografia */
+  --al-font-sans: 'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --al-font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --al-font-weight-regular: 400;
+  --al-font-weight-medium: 500;
+  --al-font-weight-semibold: 600;
+  --al-font-weight-bold: 700;
+  --al-font-size-xs: 12px;
+  --al-font-size-sm: 14px;
+  --al-font-size-md: 16px;
+  --al-font-size-lg: 18px;
+  --al-font-size-xl: 20px;
+  --al-font-size-2xl: 24px;
+  --al-font-size-3xl: 30px;
+  --al-font-size-4xl: 36px;
+  --al-font-size-5xl: 48px;
+  --al-font-size-6xl: 60px;
+  --al-line-height-xs: 16px;
+  --al-line-height-sm: 20px;
+  --al-line-height-md: 24px;
+  --al-line-height-lg: 28px;
+  --al-line-height-xl: 28px;
+  --al-line-height-2xl: 32px;
+  --al-line-height-3xl: 36px;
+  --al-line-height-4xl: 44px;
+  --al-line-height-5xl: 56px;
+  --al-line-height-6xl: 68px;
+
+  /* espacamento */
+  --al-space-0: 0px;
+  --al-space-2: 2px;
+  --al-space-4: 4px;
+  --al-space-8: 8px;
+  --al-space-12: 12px;
+  --al-space-16: 16px;
+  --al-space-20: 20px;
+  --al-space-24: 24px;
+  --al-space-32: 32px;
+  --al-space-40: 40px;
+  --al-space-48: 48px;
+  --al-space-64: 64px;
+  --al-space-80: 80px;
+  --al-space-96: 96px;
+
+  /* raio */
+  --al-radius-none: 0px;
+  --al-radius-xs: 2px;
+  --al-radius-sm: 4px;
+  --al-radius-md: 6px;
+  --al-radius-lg: 8px;
+  --al-radius-xl: 12px;
+  --al-radius-2xl: 16px;
+  --al-radius-3xl: 24px;
+  --al-radius-full: 9999px;
+
+  /* borda */
+  --al-border-width-0: 0px;
+  --al-border-width-1: 1px;
+  --al-border-width-2: 2px;
+  --al-border-width-focus: 2px;
+  --al-border-focus-offset: 2px;
+
+  /* tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon
+     nao tem escala fixa: isto nomeia os tamanhos recorrentes. */
+  --al-icon-size-16: 16px;
+  --al-icon-size-20: 20px;
+  --al-icon-size-24: 24px;
+  --al-icon-size-32: 32px;
+
+  /* elevacao - TEMA CLARO */
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(24, 24, 24,0.06), 0 1px 3px 0 rgba(24, 24, 24,0.10);
+  --al-elevation-2: 0 2px 4px -1px rgba(24, 24, 24,0.06), 0 4px 8px -2px rgba(24, 24, 24,0.10);
+  --al-elevation-3: 0 4px 8px -2px rgba(24, 24, 24,0.06), 0 8px 16px -4px rgba(24, 24, 24,0.12);
+  --al-elevation-4: 0 8px 16px -4px rgba(24, 24, 24,0.08), 0 16px 32px -8px rgba(24, 24, 24,0.14);
+  --al-elevation-5: 0 16px 32px -8px rgba(24, 24, 24,0.10), 0 32px 64px -16px rgba(24, 24, 24,0.18);
+
+  /* anel de foco - composto uma vez, acompanha o tema sozinho.
+     Duas camadas: respiro na cor do fundo, depois o anel na cor do foco. */
+  --al-focus-ring-default:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-default);
+  --al-focus-ring-error:
+    0 0 0 var(--al-border-focus-offset) var(--al-bg-canvas),
+    0 0 0 calc(var(--al-border-focus-offset) + var(--al-border-width-focus)) var(--al-shadow-focus-error);
+}
+
+/* TEMA ESCURO. Tres estados, nao dois: sem carimbo no root, so o
+ * prefers-color-scheme separa; com carimbo, a escolha explicita vence. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --al-bg-canvas: #181818;
+    --al-bg-surface: #292929;
+    --al-bg-surface-raised: #3E3E3E;
+    --al-bg-subtle: #3E3E3E;
+    --al-bg-hover: #3E3E3E;
+    --al-bg-active: #565656;
+    --al-bg-disabled: #3E3E3E;
+    --al-bg-inverse: #F7F7F7;
+    --al-bg-thumb: #717171;
+    --al-bg-thumb-disabled: #565656;
+    --al-bg-brand: #FC5000;
+    --al-bg-brand-hover: #EA4900;
+    --al-bg-brand-active: #C53900;
+    --al-bg-brand-subtle: #2D0D00;
+    --al-bg-brand-strong: #992700;
+    --al-bg-danger: #F84F5D;
+    --al-bg-danger-hover: #FF8D91;
+    --al-bg-danger-active: #FFBABB;
+    --al-bg-danger-subtle: #360001;
+    --al-bg-success: #1BB14B;
+    --al-bg-success-hover: #6ACD7C;
+    --al-bg-success-subtle: #001F00;
+    --al-bg-warning: #DCAC2E;
+    --al-bg-warning-hover: #EBCA7E;
+    --al-bg-warning-subtle: #221500;
+    --al-bg-info: #2696FF;
+    --al-bg-info-hover: #76B8FF;
+    --al-bg-info-subtle: #001639;
+    --al-text-primary: #F7F7F7;
+    --al-text-secondary: #B3B3B3;
+    --al-text-placeholder: #B3B3B3;
+    --al-text-disabled: #717171;
+    --al-text-inverse: #292929;
+    --al-text-on-brand: #FFFFFF;
+    --al-text-on-solid: #181818;
+    --al-text-brand: #FF9267;
+    --al-text-danger: #FF8D91;
+    --al-text-success: #6ACD7C;
+    --al-text-warning: #EBCA7E;
+    --al-text-info: #76B8FF;
+    --al-border-subtle: #3E3E3E;
+    --al-border-default: #565656;
+    --al-border-strong: #949494;
+    --al-border-brand: #FC5000;
+    --al-border-focus: #FF9267;
+    --al-border-danger: #F84F5D;
+    --al-border-success: #1BB14B;
+    --al-border-warning: #DCAC2E;
+    --al-border-info: #2696FF;
+    --al-shadow-focus-default: #FF9267;
+    --al-shadow-focus-error: #FF8D91;
+    --al-elevation-0: none;
+    --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+    --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+    --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+    --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+    --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --al-bg-canvas: #181818;
+  --al-bg-surface: #292929;
+  --al-bg-surface-raised: #3E3E3E;
+  --al-bg-subtle: #3E3E3E;
+  --al-bg-hover: #3E3E3E;
+  --al-bg-active: #565656;
+  --al-bg-disabled: #3E3E3E;
+  --al-bg-inverse: #F7F7F7;
+  --al-bg-thumb: #717171;
+  --al-bg-thumb-disabled: #565656;
+  --al-bg-brand: #FC5000;
+  --al-bg-brand-hover: #EA4900;
+  --al-bg-brand-active: #C53900;
+  --al-bg-brand-subtle: #2D0D00;
+  --al-bg-brand-strong: #992700;
+  --al-bg-danger: #F84F5D;
+  --al-bg-danger-hover: #FF8D91;
+  --al-bg-danger-active: #FFBABB;
+  --al-bg-danger-subtle: #360001;
+  --al-bg-success: #1BB14B;
+  --al-bg-success-hover: #6ACD7C;
+  --al-bg-success-subtle: #001F00;
+  --al-bg-warning: #DCAC2E;
+  --al-bg-warning-hover: #EBCA7E;
+  --al-bg-warning-subtle: #221500;
+  --al-bg-info: #2696FF;
+  --al-bg-info-hover: #76B8FF;
+  --al-bg-info-subtle: #001639;
+  --al-text-primary: #F7F7F7;
+  --al-text-secondary: #B3B3B3;
+  --al-text-placeholder: #B3B3B3;
+  --al-text-disabled: #717171;
+  --al-text-inverse: #292929;
+  --al-text-on-brand: #FFFFFF;
+  --al-text-on-solid: #181818;
+  --al-text-brand: #FF9267;
+  --al-text-danger: #FF8D91;
+  --al-text-success: #6ACD7C;
+  --al-text-warning: #EBCA7E;
+  --al-text-info: #76B8FF;
+  --al-border-subtle: #3E3E3E;
+  --al-border-default: #565656;
+  --al-border-strong: #949494;
+  --al-border-brand: #FC5000;
+  --al-border-focus: #FF9267;
+  --al-border-danger: #F84F5D;
+  --al-border-success: #1BB14B;
+  --al-border-warning: #DCAC2E;
+  --al-border-info: #2696FF;
+  --al-shadow-focus-default: #FF9267;
+  --al-shadow-focus-error: #FF8D91;
+  --al-elevation-0: none;
+  --al-elevation-1: 0 1px 2px 0 rgba(0,0,0,0.30), 0 1px 3px 0 rgba(0,0,0,0.40);
+  --al-elevation-2: 0 2px 4px -1px rgba(0,0,0,0.32), 0 4px 8px -2px rgba(0,0,0,0.44);
+  --al-elevation-3: 0 4px 8px -2px rgba(0,0,0,0.34), 0 8px 16px -4px rgba(0,0,0,0.48);
+  --al-elevation-4: 0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52);
+  --al-elevation-5: 0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56);
+}
+
+/* O carimbo tambem avisa o NAVEGADOR. `color-scheme: light dark` no :root
+ * deixa a UI nativa - puxador e barra de rolagem do Textarea, lista do
+ * Select - seguir o sistema; com o tema forcado, ela seguiria o sistema e
+ * nao a pagina. Sem carimbo nao precisa: o sistema e a pagina concordam. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* ================= tab - tokens ================= */
+/* AL Design System - tokens do Tab
+ * GERADO por components/tab/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ */
+
+:root {
+
+  /* os dois tipos, aba nao selecionada - hover e pressed escurecem o rotulo */
+  --al-tab-label: var(--al-text-secondary);
+  --al-tab-label-hover: var(--al-text-primary);
+  --al-tab-label-active: var(--al-text-primary);
+  --al-tab-bg-hover: var(--al-bg-hover);
+  --al-tab-bg-active: var(--al-bg-active);
+
+  /* Line - a linha e de cada aba; a laranja e quem marca a selecao */
+  --al-tab-line-label-selected: var(--al-text-primary);
+  --al-tab-line-indicator: var(--al-border-subtle);
+  --al-tab-line-indicator-selected: var(--al-border-brand);
+
+  /* Square selecionado - tonal em repouso, marca no hover e no pressed */
+  --al-tab-square-bg-selected: var(--al-bg-brand-subtle);
+  --al-tab-square-label-selected: var(--al-text-brand);
+  --al-tab-square-bg-selected-hover: var(--al-bg-brand-hover);
+  --al-tab-square-label-selected-hover: var(--al-text-on-brand);
+  --al-tab-square-bg-selected-active: var(--al-bg-brand-active);
+  --al-tab-square-label-selected-active: var(--al-text-on-brand);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-tab-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-tab-padding-x: var(--al-space-12);
+  --al-tab-padding-y: var(--al-space-4);
+  --al-tab-radius: var(--al-radius-lg);
+  --al-tab-line-gap: var(--al-space-8);
+  --al-tab-line-indicator-width: var(--al-border-width-2);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-tab-label-font-size: var(--al-font-size-md);
+  --al-tab-label-line-height: var(--al-line-height-md);
+  --al-tab-label-font-weight: 400;
+  --al-tab-label-tracking: 0em;
+}
+
+/* ================= tab ================= */
+/* AL Design System - Tab
+ * Escrito a mao. Depende de al-foundation.css e al-tab-tokens.css, nesta
+ * ordem.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, anel e tipografia entram por
+ * var(--al-tab-*). O check.py ao lado recusa o arquivo se algum escapar.
+ * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
+ * de motion na Foundation - igual ao Button, ao Input e ao Card.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   O tipo e do GRUPO, nao da aba: um grupo nunca mistura Line e Square
+ *   (regra 6). (nenhum) = Line | .al-tabs--square = Square.
+ *
+ *   painel na mesma tela (regra 21) - padrao de abas da APG:
+ *     <div class="al-tabs" role="tablist" aria-label="Pedido">
+ *       <button class="al-tab" role="tab" type="button" id="t-resumo"
+ *               aria-selected="true" aria-controls="p-resumo">
+ *         <span class="al-tab__label">Resumo</span>
+ *       </button>
+ *       <button class="al-tab" role="tab" type="button" id="t-hist"
+ *               aria-selected="false" aria-controls="p-hist" tabindex="-1">
+ *         <span class="al-tab__label">Histórico</span>
+ *       </button>
+ *     </div>
+ *     <div role="tabpanel" id="p-resumo" aria-labelledby="t-resumo" tabindex="0">
+ *       ...comeca com um titulo igual ao rotulo da aba (regra 25)
+ *     </div>
+ *     So a aba selecionada fica em tabindex 0; setas, Home e End movem o foco
+ *     e ativam a aba (automatica) - ou so movem, e Enter/Espaco ativam quando o
+ *     painel carrega da rede. Isso e comportamento: vive no script da pagina.
+ *
+ *   navegacao entre paginas (regra 22) - links, nunca role="tab":
+ *     <nav aria-label="Configurações">
+ *       <ul class="al-tabs al-tabs--square">
+ *         <li><a class="al-tab" href="/conta" aria-current="page">
+ *           <span class="al-tab__label">Conta</span></a></li>
+ *         <li><a class="al-tab" href="/equipe">
+ *           <span class="al-tab__label">Equipe</span></a></li>
+ *       </ul>
+ *     </nav>
+ *
+ * POR QUE O VISUAL MORA NO __label
+ *   No Figma o Line e uma caixa de rotulo (fundo, raio, anel) com a linha 8px
+ *   abaixo dela. O fundo do hover pinta so a caixa, nunca o espaco ate a
+ *   linha. Por isso fundo, raio, padding, cor e anel ficam no __label; a aba
+ *   (.al-tab) e so o alvo de clique e, no Line, carrega o espaco e a linha.
+ *   Alturas: Square 32 = 4 + 24 + 4; Line 42 = 32 + 8 + 2 - derivadas, sem
+ *   height fixo.
+ *
+ * SELECIONADA = aria-selected="true" (painel) OU aria-current (navegacao)
+ *   O estado sai da marcacao que o leitor de tela ja le - nunca de uma classe,
+ *   que poderia discordar do que e anunciado.
+ *
+ * FOCO E REPOUSO + ANEL
+ *   O fundo nao muda no foco; o anel e desenhado na caixa do rotulo, como no
+ *   Figma. So aparece por teclado (:focus-visible). O bg/canvas que o Figma
+ *   usa nas variantes de foco e so para o Figma projetar o anel.
+ *
+ * ALTO CONTRASTE (regra 24)
+ *   `forced-colors` apaga fundos e pinta toda borda com a cor do texto - o
+ *   Line perderia a diferenca entre linha cinza e laranja, e a Square
+ *   selecionada perderia o fundo. Ali a linha comum some (cor do fundo), a
+ *   selecionada fica `Highlight`, a Square selecionada ganha contorno e o foco
+ *   ganha o contorno `Highlight` - mesmo padrao do Button e do Card.
+ *
+ * SEM DISABLED, POR DECISAO (regra 18).
+ */
+
+/* ----------------------------------------------------------------- grupo */
+.al-tabs {
+  display: flex;
+  align-items: flex-end;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.al-tabs > li {
+  display: flex;
+}
+
+/* ------------------------------------------------------------------- aba */
+.al-tab {
+  box-sizing: border-box;
+  display: flex;
+  margin: 0;
+  padding: 0 0 var(--al-tab-line-gap);
+  border: 0;
+  border-bottom: var(--al-tab-line-indicator-width) solid var(--al-tab-line-indicator);
+  background: none;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.al-tab:focus-visible {
+  outline: none;
+}
+
+.al-tab__label {
+  display: block;
+  padding: var(--al-tab-padding-y) var(--al-tab-padding-x);
+  border-radius: var(--al-tab-radius);
+  background-color: transparent;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-tab-label-font-size);
+  line-height: var(--al-tab-label-line-height);
+  font-weight: var(--al-tab-label-font-weight);
+  letter-spacing: var(--al-tab-label-tracking);
+  white-space: nowrap;
+  color: var(--al-tab-label);
+  transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+/* nao selecionada - hover e pressed escurecem o rotulo (bloqueante 1) */
+.al-tab:hover .al-tab__label {
+  background-color: var(--al-tab-bg-hover);
+  color: var(--al-tab-label-hover);
+}
+
+.al-tab:active .al-tab__label {
+  background-color: var(--al-tab-bg-active);
+  color: var(--al-tab-label-active);
+}
+
+.al-tab:focus-visible .al-tab__label {
+  box-shadow: var(--al-tab-ring);
+}
+
+/* -------------------------------------------------------- Line selecionada */
+/* A linha laranja marca; o rotulo e text-primary em todo estado (decisao A).
+   Hover e pressed mantem os fundos neutros de cima. */
+.al-tab[aria-selected="true"],
+.al-tab[aria-current]:not([aria-current="false"]) {
+  border-bottom-color: var(--al-tab-line-indicator-selected);
+}
+
+.al-tab[aria-selected="true"] .al-tab__label,
+.al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  color: var(--al-tab-line-label-selected);
+}
+
+/* ------------------------------------------------------------------ Square */
+.al-tabs--square .al-tab {
+  padding: 0;
+  border-bottom: 0;
+}
+
+/* selecionada: tonal em repouso e foco, marca no hover e no pressed (C, F, G).
+   O pressed de selecionada vale so para a aba que JA estava aberta: a que o
+   clique acabou de abrir leva data-al-just-selected (tab.js) e fica no hover.
+   Sem isso, no Safari, a aba nao selecionada apertada ia de bg-active para
+   brand-active - o Figma pede bg-active ate soltar. */
+.al-tabs--square .al-tab[aria-selected="true"] .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected);
+  color: var(--al-tab-square-label-selected);
+}
+
+.al-tabs--square .al-tab[aria-selected="true"]:hover .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):hover .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected-hover);
+  color: var(--al-tab-square-label-selected-hover);
+}
+
+.al-tabs--square .al-tab[aria-selected="true"]:active:not([data-al-just-selected]) .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):active .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected-active);
+  color: var(--al-tab-square-label-selected-active);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-tab__label {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-tab {
+    border-bottom-color: Canvas;
+  }
+
+  .al-tab[aria-selected="true"],
+  .al-tab[aria-current]:not([aria-current="false"]) {
+    border-bottom-color: Highlight;
+  }
+
+  .al-tabs--square .al-tab[aria-selected="true"] .al-tab__label,
+  .al-tabs--square .al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+
+  .al-tab:focus-visible .al-tab__label {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}
+
+
+/* ================= cromo da pagina de QA =================
+   Usa os proprios tokens do AL. Nao ha paleta paralela aqui de proposito. */
+html, body { background: var(--al-bg-canvas); }
+body {
+  margin: 0;
+  color: var(--al-text-primary);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-font-size-md);
+  line-height: var(--al-line-height-md);
+}
+.qa-wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-inline: var(--al-space-16);
+  padding-block: var(--al-space-32) var(--al-space-64);
+  display: flex; flex-direction: column; gap: var(--al-space-48);
+}
+.qa-head {
+  display: flex; flex-wrap: wrap; align-items: flex-end;
+  justify-content: space-between; gap: var(--al-space-16);
+  border-bottom: 1px solid var(--al-border-subtle); padding-bottom: var(--al-space-16);
+}
+.qa-head h1 {
+  margin: 0; font-size: var(--al-font-size-3xl); line-height: var(--al-line-height-3xl);
+  font-weight: 600; letter-spacing: -0.02em; text-wrap: balance;
+}
+.qa-sub { margin: var(--al-space-4) 0 0; color: var(--al-text-secondary); font-size: var(--al-font-size-sm); }
+.qa-btn {
+  display: inline-flex; align-items: center; gap: var(--al-space-8);
+  padding: var(--al-space-8) var(--al-space-16);
+  border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-full);
+  background: var(--al-bg-surface-raised); color: var(--al-text-primary);
+  font: inherit; font-size: var(--al-font-size-sm); cursor: pointer;
+}
+.qa-btn:focus-visible { outline: none; box-shadow: var(--al-focus-ring-default); }
+section > h2 {
+  margin: 0 0 var(--al-space-4);
+  font-size: var(--al-font-size-xl); line-height: var(--al-line-height-xl);
+  font-weight: 600; letter-spacing: -0.01em;
+}
+section > p.qa-lede { margin: 0 0 var(--al-space-20); color: var(--al-text-secondary); max-width: 66ch; }
+.qa-tag {
+  font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs);
+  padding: 2px var(--al-space-8); border-radius: var(--al-radius-full);
+  border: 1px solid var(--al-border-default); color: var(--al-text-secondary);
+  white-space: nowrap; vertical-align: middle; margin-left: var(--al-space-8);
+  font-weight: 400; letter-spacing: 0;
+}
+.qa-tag--real { border-color: var(--al-border-success); color: var(--al-text-success); }
+.qa-tag--simulado { border-color: var(--al-border-warning); color: var(--al-text-warning); }
+.qa-checks { margin: 0; padding-left: var(--al-space-20); display: grid; gap: var(--al-space-8); max-width: 72ch; }
+.qa-checks li { color: var(--al-text-secondary); }
+.qa-checks strong { color: var(--al-text-primary); font-weight: 500; }
+.qa-tablewrap { overflow-x: auto; }
+table.qa-measure { border-collapse: collapse; width: 100%; font-size: var(--al-font-size-sm); font-variant-numeric: tabular-nums; }
+table.qa-measure th, table.qa-measure td { text-align: left; padding: var(--al-space-8) var(--al-space-12); border-bottom: 1px solid var(--al-border-subtle); white-space: nowrap; }
+table.qa-measure th { font-weight: 600; font-size: var(--al-font-size-xs); text-transform: uppercase; letter-spacing: 0.04em; color: var(--al-text-secondary); }
+.qa-verdict { font-weight: 600; }
+.qa-verdict--ok { color: var(--al-text-success); }
+.qa-verdict--exc { color: var(--al-text-warning); }
+.qa-verdict--bad { color: var(--al-text-danger); }
+.qa-foot { color: var(--al-text-secondary); font-size: var(--al-font-size-sm); border-top: 1px solid var(--al-border-subtle); padding-top: var(--al-space-16); }
+code { font-family: var(--al-font-mono); font-size: 0.9em; }
+
+/* ---- especificos do Tab ---- */
+.qa-panel { padding: var(--al-space-24); border-radius: var(--al-radius-xl); background: var(--al-bg-surface); }
+.qa-panel--canvas { background: var(--al-bg-canvas); outline: 1px dashed var(--al-border-default); }
+.qa-pages { display: grid; gap: var(--al-space-20); }
+.qa-page { display: flex; flex-direction: column; gap: var(--al-space-16); padding: var(--al-space-24); border-radius: var(--al-radius-xl); outline: 1px dashed var(--al-border-default); overflow-x: auto; }
+.qa-page__name { margin: 0; font-size: var(--al-font-size-sm); font-weight: 600; }
+.qa-matrix { display: flex; flex-direction: column; gap: var(--al-space-20); }
+.qa-matrix__row { display: grid; gap: var(--al-space-20); grid-template-columns: 72px repeat(4, minmax(170px, 1fr)); align-items: end; }
+.qa-matrix__label { margin: 0; font-size: var(--al-font-size-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--al-text-secondary); align-self: center; }
+.qa-cell { display: flex; min-width: 0; }
+.qa-live { display: grid; gap: var(--al-space-32); grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); }
+.qa-use { display: flex; flex-direction: column; gap: var(--al-space-12); min-width: 0; }
+.qa-use > h3 { margin: 0; font-size: var(--al-font-size-sm); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.qa-tabpanel { padding-top: var(--al-space-16); }
+.qa-tabpanel:focus-visible { outline: none; box-shadow: var(--al-focus-ring-default); border-radius: var(--al-radius-md); }
+.qa-tabpanel p { margin: var(--al-space-4) 0 0; color: var(--al-text-secondary); }
+.qa-panel-title { margin: 0; font-size: var(--al-font-size-md); line-height: var(--al-line-height-md); font-weight: 600; }
+.qa-field { display: flex; flex-direction: column; gap: var(--al-space-4); margin-top: var(--al-space-12); font-size: var(--al-font-size-sm); color: var(--al-text-primary); }
+.qa-input { font: inherit; padding: var(--al-space-8) var(--al-space-12); border: 1px solid var(--al-border-strong); border-radius: var(--al-radius-md); background: var(--al-bg-canvas); color: var(--al-text-primary); }
+.qa-input:focus-visible { outline: none; box-shadow: var(--al-focus-ring-default); }
+.qa-stack { flex-direction: column; align-items: flex-start; }
+.qa-pagenote { margin: 0; color: var(--al-text-secondary); font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); }
+.qa-sidebar { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: var(--al-space-24); }
+@media (max-width: 720px) {
+  .qa-sidebar { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+
+<div class="qa-wrap">
+  <header class="qa-head">
+    <div>
+      <h1>Tab — QA da etapa 6</h1>
+      <p class="qa-sub">AL Design System 0.15.0 · componente 0.1.0 ·
+      Line e Square × 4 estados × selecionada · portão: 104 combinações, 89 passam, 14 exceções, 1 reprovas</p>
+    </div>
+    <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">
+      <span id="theme-label">Tema claro</span>
+    </button>
+  </header>
+
+  <section>
+    <h2>O que testar</h2>
+    <ol class="qa-checks">
+      <li><strong>Tabule até o grupo “Pedido”.</strong> O Tab para <em>uma</em> vez no grupo, na aba selecionada. As setas ← → passam de aba e já abrem o painel; Home e End vão para a primeira e a última. Mais um Tab vai para o painel, não para a próxima aba.</li>
+      <li><strong>Escreva na aba Entrega</strong>, vá para outra aba e volte: o texto continua lá (regra 20).</li>
+      <li><strong>No grupo “Relatório” (Square, manual)</strong>, as setas só movem o foco; Enter ou Espaço abrem. Saia do grupo com Tab e volte: a entrada é de novo a aba aberta.</li>
+      <li><strong>Clique na aba que já está aberta</strong>: nada acontece (regra 19).</li>
+      <li><strong>Passe o ponteiro e segure o clique</strong>: a não selecionada escurece o rótulo; a Square selecionada vai para o laranja de hover e, apertada, para o mais escuro.</li>
+      <li><strong>No aninhado “Cliente”</strong>, o primeiro nível é Line e o de dentro é Square (decisão I).</li>
+      <li><strong>Na navegação</strong>, o Tab passa por todos os links e as setas não fazem nada: é lista de links, não grupo de abas (regra 22).</li>
+      <li><strong>Troque o tema</strong> e confira a matriz nas duas páginas e a tabela de contraste no fim. No escuro, a Square selecionada em repouso se distingue pelo matiz (exceção <code>selecao-tonal</code>).</li>
+      <li><strong>Com leitor de tela</strong> (VoiceOver: Ctrl+Opção+→): “Resumo, selecionada, aba 1 de 4” no painel; “Perfil, página atual, link” na navegação.</li>
+      <li><strong>Ative o alto contraste</strong> (Windows) ou “Aumentar contraste” (macOS): a linha da selecionada fica na cor de destaque do sistema e a Square selecionada ganha contorno.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Painel, ao vivo <span class="qa-tag qa-tag--real">real</span></h2>
+    <p class="qa-lede">Com o <code>tab.js</code> do componente. Cada painel começa com um título igual ao
+    rótulo da aba (regra 25).</p>
+    <div class="qa-live">
+      <div class="qa-use">
+        <h3>Line · ativação automática</h3>
+        <div class="qa-panel qa-panel--canvas">
+      <div class="al-tabs" role="tablist" aria-label="Pedido #1042">
+        <button class="al-tab" role="tab" type="button" id="ped-t-resumo" aria-selected="true" aria-controls="ped-p-resumo"><span class="al-tab__label">Resumo</span></button>
+        <button class="al-tab" role="tab" type="button" id="ped-t-itens" aria-selected="false" aria-controls="ped-p-itens" tabindex="-1"><span class="al-tab__label">Itens</span></button>
+        <button class="al-tab" role="tab" type="button" id="ped-t-entrega" aria-selected="false" aria-controls="ped-p-entrega" tabindex="-1"><span class="al-tab__label">Entrega</span></button>
+        <button class="al-tab" role="tab" type="button" id="ped-t-historico" aria-selected="false" aria-controls="ped-p-historico" tabindex="-1"><span class="al-tab__label">Histórico</span></button>
+      </div>
+      <div class="qa-tabpanel" role="tabpanel" id="ped-p-resumo" aria-labelledby="ped-t-resumo" tabindex="0">
+          <h4 class="qa-panel-title">Resumo</h4>
+          <p>3 itens · R$ 412,00 · pago no cartão.</p>
+        </div>
+      <div class="qa-tabpanel" role="tabpanel" id="ped-p-itens" aria-labelledby="ped-t-itens" tabindex="0" hidden>
+          <h4 class="qa-panel-title">Itens</h4>
+          <p>Conteúdo de itens.</p>
+        </div>
+      <div class="qa-tabpanel" role="tabpanel" id="ped-p-entrega" aria-labelledby="ped-t-entrega" tabindex="0" hidden>
+          <h4 class="qa-panel-title">Entrega</h4>
+          <p>Anote algo, troque de aba e volte: o texto continua aqui (regra 20).</p>
+          <label class="qa-field">Observação para o entregador <input type="text" id="obs-entrega" class="qa-input"></label>
+        </div>
+      <div class="qa-tabpanel" role="tabpanel" id="ped-p-historico" aria-labelledby="ped-t-historico" tabindex="0" hidden>
+          <h4 class="qa-panel-title">Histórico</h4>
+          <p>Conteúdo de histórico.</p>
+        </div>
+        </div>
+      </div>
+      <div class="qa-use">
+        <h3>Square · ativação manual</h3>
+        <div class="qa-panel qa-panel--canvas">
+      <div class="al-tabs al-tabs--square" role="tablist" aria-label="Relatório de vendas" data-activation="manual">
+        <button class="al-tab" role="tab" type="button" id="rel-t-diario" aria-selected="true" aria-controls="rel-p-diario"><span class="al-tab__label">Diário</span></button>
+        <button class="al-tab" role="tab" type="button" id="rel-t-semanal" aria-selected="false" aria-controls="rel-p-semanal" tabindex="-1"><span class="al-tab__label">Semanal</span></button>
+        <button class="al-tab" role="tab" type="button" id="rel-t-mensal" aria-selected="false" aria-controls="rel-p-mensal" tabindex="-1"><span class="al-tab__label">Mensal</span></button>
+      </div>
+      <div class="qa-tabpanel" role="tabpanel" id="rel-p-diario" aria-labelledby="rel-t-diario" tabindex="0">
+          <h4 class="qa-panel-title">Diário</h4>
+          <p>Conteúdo de diário.</p>
+        </div>
+      <div class="qa-tabpanel" role="tabpanel" id="rel-p-semanal" aria-labelledby="rel-t-semanal" tabindex="0" hidden>
+          <h4 class="qa-panel-title">Semanal</h4>
+          <p>Com ativação manual, as setas só movem o foco: Enter ou Espaço abrem.</p>
+        </div>
+      <div class="qa-tabpanel" role="tabpanel" id="rel-p-mensal" aria-labelledby="rel-t-mensal" tabindex="0" hidden>
+          <h4 class="qa-panel-title">Mensal</h4>
+          <p>Conteúdo de mensal.</p>
+        </div>
+        </div>
+      </div>
+      <div class="qa-use">
+        <h3>Aninhado · Line &gt; Square</h3>
+        <div class="qa-panel qa-panel--canvas">
+      <div class="al-tabs" role="tablist" aria-label="Cliente">
+        <button class="al-tab" role="tab" type="button" id="cli-t-cadastro" aria-selected="true" aria-controls="cli-p-cadastro"><span class="al-tab__label">Cadastro</span></button>
+        <button class="al-tab" role="tab" type="button" id="cli-t-pedidos" aria-selected="false" aria-controls="cli-p-pedidos" tabindex="-1"><span class="al-tab__label">Pedidos</span></button>
+        <button class="al-tab" role="tab" type="button" id="cli-t-notas" aria-selected="false" aria-controls="cli-p-notas" tabindex="-1"><span class="al-tab__label">Notas</span></button>
+      </div>
+      <div class="qa-tabpanel" role="tabpanel" id="cli-p-cadastro" aria-labelledby="cli-t-cadastro" tabindex="0">
+          <h4 class="qa-panel-title">Cadastro</h4>
+          <div class="al-tabs al-tabs--square" role="tablist" aria-label="Dados do cliente">
+        <button class="al-tab" role="tab" type="button" id="cli-dados-t-pessoais" aria-selected="true" aria-controls="cli-dados-p-pessoais"><span class="al-tab__label">Pessoais</span></button>
+        <button class="al-tab" role="tab" type="button" id="cli-dados-t-endereco" aria-selected="false" aria-controls="cli-dados-p-endereco" tabindex="-1"><span class="al-tab__label">Endereço</span></button>
+        <button class="al-tab" role="tab" type="button" id="cli-dados-t-pagamento" aria-selected="false" aria-controls="cli-dados-p-pagamento" tabindex="-1"><span class="al-tab__label">Pagamento</span></button>
+      </div>
+      <div class="qa-tabpanel" role="tabpanel" id="cli-dados-p-pessoais" aria-labelledby="cli-dados-t-pessoais" tabindex="0">
+          <h4 class="qa-panel-title">Pessoais</h4>
+          <p>Conteúdo de pessoais.</p>
+        </div>
+      <div class="qa-tabpanel" role="tabpanel" id="cli-dados-p-endereco" aria-labelledby="cli-dados-t-endereco" tabindex="0" hidden>
+          <h4 class="qa-panel-title">Endereço</h4>
+          <p>Conteúdo de endereço.</p>
+        </div>
+      <div class="qa-tabpanel" role="tabpanel" id="cli-dados-p-pagamento" aria-labelledby="cli-dados-t-pagamento" tabindex="0" hidden>
+          <h4 class="qa-panel-title">Pagamento</h4>
+          <p>Conteúdo de pagamento.</p>
+        </div>
+        </div>
+      <div class="qa-tabpanel" role="tabpanel" id="cli-p-pedidos" aria-labelledby="cli-t-pedidos" tabindex="0" hidden>
+          <h4 class="qa-panel-title">Pedidos</h4>
+          <p>Conteúdo de pedidos.</p>
+        </div>
+      <div class="qa-tabpanel" role="tabpanel" id="cli-p-notas" aria-labelledby="cli-t-notas" tabindex="0" hidden>
+          <h4 class="qa-panel-title">Notas</h4>
+          <p>Conteúdo de notas.</p>
+        </div>
+        </div>
+        <p class="qa-pagenote">No máximo dois níveis: Line fora, Square dentro (decisão I).</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Navegação, ao vivo <span class="qa-tag qa-tag--real">real</span></h2>
+    <p class="qa-lede">O mesmo visual, marcação de links: <code>&lt;nav&gt;</code> com nome e
+    <code>aria-current="page"</code> no atual (regra 22). A sidebar empilha as abas por layout da página
+    (decisão J: o item de largura cheia fica para o Tier 4) e fica sobre a superfície.</p>
+    <div class="qa-live">
+      <div class="qa-use">
+        <h3>Navbar · Line</h3>
+        <div class="qa-panel qa-panel--canvas">
+      <nav aria-label="Seções da conta">
+        <ul class="al-tabs">
+          <li><a class="al-tab" href="#perfil" aria-current="page"><span class="al-tab__label">Perfil</span></a></li>
+          <li><a class="al-tab" href="#seguranca"><span class="al-tab__label">Segurança</span></a></li>
+          <li><a class="al-tab" href="#faturas"><span class="al-tab__label">Faturas</span></a></li>
+        </ul>
+      </nav>
+        </div>
+      </div>
+      <div class="qa-use">
+        <h3>Sidebar · Square</h3>
+        <div class="qa-panel">
+      <nav aria-label="Configurações">
+        <ul class="al-tabs al-tabs--square qa-stack">
+          <li><a class="al-tab" href="#geral"><span class="al-tab__label">Geral</span></a></li>
+          <li><a class="al-tab" href="#equipe" aria-current="page"><span class="al-tab__label">Equipe</span></a></li>
+          <li><a class="al-tab" href="#integracoes"><span class="al-tab__label">Integrações</span></a></li>
+          <li><a class="al-tab" href="#cobranca"><span class="al-tab__label">Cobrança</span></a></li>
+        </ul>
+      </nav>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Estados nas duas páginas <span class="qa-tag qa-tag--simulado">simulado</span></h2>
+    <p class="qa-lede">Em cada célula, “Itens” é a não selecionada e “Resumo” a selecionada. Hover, pressed
+    e foco foram escritos direto na caixa do rótulo, com os mesmos tokens que o seletor usa, para comparar
+    lado a lado com o Figma.</p>
+    <div class="qa-pages">
+      <div class="qa-page" style="background: var(--al-bg-canvas)" data-page="bg-canvas">
+        <p class="qa-page__name">Tela <code>bg-canvas</code></p>
+        <div class="qa-matrix"><div class="qa-matrix__row qa-matrix__row--head"><span></span><p class="qa-matrix__label">Repouso</p><p class="qa-matrix__label">Hover</p><p class="qa-matrix__label">Pressed</p><p class="qa-matrix__label">Foco</p></div><div class="qa-matrix__row"><p class="qa-matrix__label">Line</p><div class="qa-cell"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="line" data-state="repouso"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="true" data-type="line" data-state="repouso"><span class="al-tab__label">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="line" data-state="hover"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-label-hover)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="line" data-state="hover"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-line-label-selected)">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="line" data-state="pressed"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-label-active)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="line" data-state="pressed"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-line-label-selected)">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="line" data-state="foco"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="line" data-state="foco"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Resumo</span></span></div></div></div><div class="qa-matrix__row"><p class="qa-matrix__label">Square</p><div class="qa-cell"><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="square" data-state="repouso"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="true" data-type="square" data-state="repouso"><span class="al-tab__label">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="square" data-state="hover"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-label-hover)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="square" data-state="hover"><span class="al-tab__label" style="background-color: var(--al-tab-square-bg-selected-hover); color: var(--al-tab-square-label-selected-hover)">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="square" data-state="pressed"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-label-active)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="square" data-state="pressed"><span class="al-tab__label" style="background-color: var(--al-tab-square-bg-selected-active); color: var(--al-tab-square-label-selected-active)">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="square" data-state="foco"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="square" data-state="foco"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Resumo</span></span></div></div></div></div>
+      </div>
+      <div class="qa-page" style="background: var(--al-bg-surface)" data-page="bg-surface">
+        <p class="qa-page__name">Superfície <code>bg-surface</code></p>
+        <div class="qa-matrix"><div class="qa-matrix__row qa-matrix__row--head"><span></span><p class="qa-matrix__label">Repouso</p><p class="qa-matrix__label">Hover</p><p class="qa-matrix__label">Pressed</p><p class="qa-matrix__label">Foco</p></div><div class="qa-matrix__row"><p class="qa-matrix__label">Line</p><div class="qa-cell"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="line" data-state="repouso"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="true" data-type="line" data-state="repouso"><span class="al-tab__label">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="line" data-state="hover"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-label-hover)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="line" data-state="hover"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-line-label-selected)">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="line" data-state="pressed"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-label-active)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="line" data-state="pressed"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-line-label-selected)">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="line" data-state="foco"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="line" data-state="foco"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Resumo</span></span></div></div></div><div class="qa-matrix__row"><p class="qa-matrix__label">Square</p><div class="qa-cell"><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="square" data-state="repouso"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="true" data-type="square" data-state="repouso"><span class="al-tab__label">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="square" data-state="hover"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-label-hover)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="square" data-state="hover"><span class="al-tab__label" style="background-color: var(--al-tab-square-bg-selected-hover); color: var(--al-tab-square-label-selected-hover)">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="square" data-state="pressed"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-label-active)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="square" data-state="pressed"><span class="al-tab__label" style="background-color: var(--al-tab-square-bg-selected-active); color: var(--al-tab-square-label-selected-active)">Resumo</span></span></div></div><div class="qa-cell"><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false" data-type="square" data-state="foco"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Itens</span></span><span class="al-tab" aria-selected="true" data-type="square" data-state="foco"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Resumo</span></span></div></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Contraste medido no navegador</h2>
+    <p class="qa-lede">Não são os números do <code>tokens.json</code>: o script lê a cor que o navegador
+    pintou — rótulo, linha e fundo da selecionada — contra o fundo efetivo, com
+    <code>getComputedStyle</code>, depois da transição terminar.</p>
+    <div class="qa-tablewrap">
+      <table class="qa-measure">
+        <thead><tr><th>onde</th><th>o quê</th><th>cor</th><th>fundo</th><th>medido</th><th>piso</th><th>veredito</th></tr></thead>
+        <tbody id="measure-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="qa-foot">Gerado por <code>components/tab/qa.py</code> a partir do código commitado em
+  <code>dev</code>. <code>al-foundation.css</code>, <code>al-tab-tokens.css</code>, <code>tab.css</code> e
+  <code>tab.js</code> estão embutidos como estão no repositório.</p>
+</div>
+
+<script>
+/* AL Design System - Tab, comportamento de teclado (decisao de Gui na etapa 5)
+ *
+ * So o uso de PAINEL precisa deste arquivo. Navegacao por links (regra 22) e
+ * <a> comum: o Tab do teclado passa por todos e nada aqui se aplica.
+ *
+ * O que ele faz em todo grupo [role="tablist"] dentro de `root`
+ * (padrao de abas da APG, regra 21):
+ *   - so a aba selecionada fica em tabindex 0 (roving tabindex);
+ *   - seta direita/esquerda vai para a proxima/anterior, dando a volta;
+ *     Home e End vao para a primeira e a ultima;
+ *   - ativacao AUTOMATICA: a aba que recebe o foco abre o painel. Grupo com
+ *     data-activation="manual" so move o foco - Enter/Espaco (o clique nativo
+ *     do <button>) abre. Use manual quando o painel carrega da rede;
+ *   - painel e escondido com `hidden`, nunca removido: o que foi digitado
+ *     nele continua la (regra 20);
+ *   - clicar na aba ja aberta nao faz nada (regra 19);
+ *   - a aba aberta pelo clique recebe `data-al-just-selected` ate o proximo
+ *     aperto, para nao pintar o pressed de selecionada (ver o click abaixo).
+ *
+ * Uso:
+ *   <script src="tab.js"><\/script>   -> liga sozinho quando a pagina carrega
+ *   alTabs.init(container)            -> liga em conteudo inserido depois
+ * Ligar duas vezes o mesmo grupo nao duplica nada.
+ */
+(function () {
+  'use strict';
+
+  var KEYS = { ArrowRight: 1, ArrowLeft: -1, Home: 'first', End: 'last' };
+
+  function bind(list) {
+    if (list.hasAttribute('data-al-tabs')) return;
+    list.setAttribute('data-al-tabs', '');
+
+    var tabs = [].slice.call(list.querySelectorAll('[role="tab"]'));
+    if (!tabs.length) return;
+    var manual = list.getAttribute('data-activation') === 'manual';
+
+    function panel(tab) {
+      var id = tab.getAttribute('aria-controls');
+      return id ? document.getElementById(id) : null;
+    }
+
+    function select(tab) {
+      if (tab.getAttribute('aria-selected') === 'true') return;  // regra 19
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        var p = panel(t);
+        if (p) p.hidden = !on;
+      });
+    }
+
+    // estado inicial coerente: exatamente uma selecionada (regra 7)
+    var start = tabs.filter(function (t) {
+      return t.getAttribute('aria-selected') === 'true';
+    })[0] || tabs[0];
+    tabs.forEach(function (t) { t.setAttribute('aria-selected', 'false'); });
+    select(start);
+
+    tabs.forEach(function (tab, i) {
+      // A aba selecionada PELO PROPRIO clique nao pinta o pressed de
+      // selecionada: alguns navegadores (Safari) ainda a consideram :active
+      // quando o clique dispara, e ela iria de bg-active para brand-active
+      // no meio do aperto. A marca some no proximo aperto - ai sim e o
+      // pressed da aba que ja estava aberta.
+      tab.addEventListener('pointerdown', function () {
+        tab.removeAttribute('data-al-just-selected');
+      });
+      tab.addEventListener('click', function () {
+        if (tab.getAttribute('aria-selected') === 'true') return;  // regra 19
+        select(tab);
+        tab.setAttribute('data-al-just-selected', '');
+      });
+      tab.addEventListener('keydown', function (e) {
+        var k = KEYS[e.key];
+        if (!k) return;
+        var next = k === 'first' ? tabs[0]
+          : k === 'last' ? tabs[tabs.length - 1]
+          : tabs[(i + k + tabs.length) % tabs.length];
+        e.preventDefault();
+        if (manual) {
+          tabs.forEach(function (t) { t.tabIndex = t === next ? 0 : -1; });
+        } else {
+          select(next);
+        }
+        next.focus();
+      });
+    });
+
+    // no manual o foco pode sair de uma aba nao aberta; ao sair do grupo, a
+    // entrada pelo Tab volta a ser a aba selecionada
+    list.addEventListener('focusout', function (e) {
+      if (list.contains(e.relatedTarget)) return;
+      tabs.forEach(function (t) {
+        t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1;
+      });
+    });
+  }
+
+  function init(root) {
+    [].slice.call((root || document).querySelectorAll('[role="tablist"]')).forEach(bind);
+  }
+
+  window.alTabs = { init: init };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { init(); });
+  } else {
+    init();
+  }
+})();
+
+</script>
+<script>
+(function () {
+  var root = document.documentElement;
+  function r(id) { return document.getElementById(id); }
+
+  // ------------------------------------------------------------------ tema
+  var btn = r('theme-toggle');
+  var label = r('theme-label');
+  function escuro() {
+    if (root.dataset.theme) return root.dataset.theme === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  function pintarBotao() {
+    var d = escuro();
+    label.textContent = d ? 'Tema escuro' : 'Tema claro';
+    btn.setAttribute('aria-pressed', String(d));
+  }
+  btn.addEventListener('click', function () {
+    root.dataset.theme = escuro() ? 'light' : 'dark';
+    pintarBotao();
+    setTimeout(medir, 350);
+  });
+  pintarBotao();
+
+  // a navegacao de exemplo nao sai da pagina
+  document.querySelectorAll('nav a.al-tab').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      a.closest('ul').querySelectorAll('a.al-tab').forEach(function (x) {
+        if (x === a) x.setAttribute('aria-current', 'page'); else x.removeAttribute('aria-current');
+      });
+    });
+  });
+
+  // ------------------------------------------------------------- contraste
+  function rgb(str) {
+    var m = str && str.match(/rgba?\(([^)]+)\)/);
+    if (!m) return null;
+    var p = m[1].split(',').map(function (x) { return +x.trim(); });
+    return [p[0], p[1], p[2], p[3] === undefined ? 1 : p[3]];
+  }
+  function lin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(c) { return 0.2126 * lin(c[0]) + 0.7152 * lin(c[1]) + 0.0722 * lin(c[2]); }
+  function cr(a, b) {
+    var la = lum(a), lb = lum(b);
+    return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
+  }
+  function fundo(el) {
+    for (var p = el; p; p = p.parentElement) {
+      var c = rgb(getComputedStyle(p).backgroundColor);
+      if (c && c[3] > 0) return c;
+    }
+    return rgb(getComputedStyle(document.body).backgroundColor) || [255, 255, 255, 1];
+  }
+  function css(c) { return 'rgb(' + c.slice(0, 3).join(', ') + ')'; }
+  function linha(where, what, fg, bg, piso, exc) {
+    var v = cr(fg, bg);
+    var classe = v >= piso ? 'ok' : exc ? 'exc' : 'bad';
+    var texto = v >= piso ? 'passa' : exc ? 'exceção "' + exc + '"' : 'REPROVA';
+    var tr = document.createElement('tr');
+    [where, what, css(fg), css(bg), v.toFixed(2) + ':1', piso.toFixed(1) + ':1'].forEach(function (x) {
+      var td = document.createElement('td'); td.textContent = x; tr.appendChild(td);
+    });
+    var td = document.createElement('td');
+    td.textContent = texto; td.className = 'qa-verdict qa-verdict--' + classe;
+    tr.appendChild(td);
+    r('measure-body').appendChild(tr);
+  }
+
+  function medir() {
+    r('measure-body').textContent = '';
+    var dark = escuro();
+    document.querySelectorAll('.qa-page .al-tab').forEach(function (tab) {
+      var page = tab.closest('.qa-page');
+      var pg = rgb(getComputedStyle(page).backgroundColor);
+      var lab = tab.querySelector('.al-tab__label');
+      var sel = tab.getAttribute('aria-selected') === 'true';
+      var tipo = tab.dataset.type, estado = tab.dataset.state;
+      var where = (page.dataset.page === 'bg-canvas' ? 'Tela' : 'Superfície') + ' · '
+        + (tipo === 'line' ? 'Line' : 'Square') + ' · ' + estado + (sel ? ' · selecionada' : '');
+      var ls = getComputedStyle(lab);
+      var bg = rgb(ls.backgroundColor);
+      var efetivo = bg && bg[3] > 0 ? bg : pg;
+      var excMarca = dark && tipo === 'square' && sel && estado === 'hover' ? 'marca-no-hover-escuro' : null;
+      linha(where, 'rótulo', rgb(ls.color), efetivo, 4.5, excMarca);
+      if (tipo === 'line' && estado === 'repouso') {
+        linha(where, 'linha', rgb(getComputedStyle(tab).borderBottomColor), pg, 3,
+              sel ? null : 'trilho-decorativo');
+      }
+      if (tipo === 'square' && sel) {
+        linha(where, 'fundo × página', bg, pg, 3,
+              estado === 'repouso' || estado === 'foco' ? 'selecao-tonal'
+              : estado === 'pressed' ? 'pressed-na-superficie-escura' : null);
+      }
+    });
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { setTimeout(medir, 350); });
+  } else {
+    setTimeout(medir, 350);
+  }
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function () {
+    pintarBotao(); setTimeout(medir, 350);
+  });
+})();
+</script>
