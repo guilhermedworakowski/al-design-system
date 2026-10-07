@@ -103,6 +103,11 @@ CARD = json.load(open(os.path.join(ROOT, 'components', 'card', 'tokens.json')))
 CARD_TOKENS = open(os.path.join(ROOT, 'components', 'card', 'al-card-tokens.css')).read()
 CARD_CSS = open(os.path.join(ROOT, 'components', 'card', 'card.css')).read()
 CARD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'card', 'a11y.json')))
+TAB = json.load(open(os.path.join(ROOT, 'components', 'tab', 'tokens.json')))
+TAB_TOKENS = open(os.path.join(ROOT, 'components', 'tab', 'al-tab-tokens.css')).read()
+TAB_CSS = open(os.path.join(ROOT, 'components', 'tab', 'tab.css')).read()
+TAB_JS = open(os.path.join(ROOT, 'components', 'tab', 'tab.js')).read()
+TAB_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tab', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -131,6 +136,7 @@ N_TEXTAREA_TOKENS = len(TEXTAREA['alias'])
 N_PASSWORD_TOKENS = len(PASSWORD['alias'])
 N_DIVIDER_TOKENS = len(DIVIDER['alias'])
 N_CARD_TOKENS = len(CARD['alias'])
+N_TAB_TOKENS = len(TAB['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -174,7 +180,7 @@ def scope_themes(found_css, *token_blocks):
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
-                         PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS)
+                         PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -188,7 +194,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + TEXTAREA_TOKENS + '\n' + TEXTAREA_CSS
             + '\n' + PASSWORD_TOKENS + '\n' + PASSWORD_CSS
             + '\n' + DIVIDER_TOKENS + '\n' + DIVIDER_CSS
-            + '\n' + CARD_TOKENS + '\n' + CARD_CSS)
+            + '\n' + CARD_TOKENS + '\n' + CARD_CSS
+            + '\n' + TAB_TOKENS + '\n' + TAB_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -7545,6 +7552,480 @@ TH_CARD = ('<div class="th-card">'
            '</div>')
 
 
+# ═══════════════════════════════════════════════════════════════ Tab · abas
+# Terceiro componente do Tier 3, e o primeiro do AL com comportamento em JS
+# proprio (tab.js). Toda aba da pagina sai do tab.css real. Exemplo ilustrativo
+# e AMOSTRA - `aria-hidden` + `inert`, como o portao de marcacao exige; aba de
+# verdade so onde da para usar (playground e exemplos ao vivo), e ai ela vem
+# com painel e titulo igual ao rotulo (regra 25). Os "a evitar" sao casca do
+# site (tb-fake-*), nunca um .al-tab errado.
+TB_TYPES = [('line', 'Line'), ('square', 'Square')]
+TB_USES = [('panel', 'Painel'), ('nav', 'Navegação')]
+TB_PAGES = [('canvas', 'Tela'), ('surface', 'Superfície')]
+TB_MOD = {'line': '', 'square': ' al-tabs--square'}
+TB_STATES = [('repouso', 'Repouso'), ('hover', 'Hover'), ('pressed', 'Pressed'), ('foco', 'Foco')]
+
+N_TB_MEDIDAS = len(TAB_A11Y['rows'])
+N_TB_EXC = sum(1 for r in TAB_A11Y['rows'] if r['exception'])
+N_TB_PASS = sum(1 for r in TAB_A11Y['rows'] if r['pass'])
+N_TB_FAIL = sum(1 for r in TAB_A11Y['rows'] if not r['pass'] and not r['exception'])
+N_TB_EXC_KEYS = len(TAB['pending'])
+
+
+def tb_slug(s):
+    import unicodedata
+    return re.sub(r'[^a-z0-9]+', '-', unicodedata.normalize('NFKD', s.lower())
+                  .encode('ascii', 'ignore').decode()).strip('-')
+
+
+def tb_panel_group(gid, tipo, nome, rotulos, textos=None, sel=0):
+    """Grupo de painel de verdade: tablist + paineis, cada painel comecando com
+    titulo igual ao rotulo (regra 25). Devolve (html, codigo)."""
+    textos = textos or {}
+    bt, pn, cb, cp = [], [], [], []
+    for i, rot in enumerate(rotulos):
+        s = tb_slug(rot)
+        tid, pid = f'{gid}-t-{s}', f'{gid}-p-{s}'
+        on = i == sel
+        ti = '' if on else ' tabindex="-1"'
+        bt.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
+                  f'aria-selected="{"true" if on else "false"}" aria-controls="{pid}"{ti}>'
+                  f'<span class="al-tab__label">{rot}</span></button>')
+        corpo = textos.get(rot, f'Conteúdo de {rot.lower()}.')
+        pn.append(f'<div class="tb-tabpanel" role="tabpanel" id="{pid}" aria-labelledby="{tid}" '
+                  f'tabindex="0"{"" if on else " hidden"}><h4 class="tb-ptitle">{rot}</h4>'
+                  f'<p>{corpo}</p></div>')
+        cb.append(f'  <button class="al-tab" role="tab" type="button" id="t-{s}"\n'
+                  f'          aria-selected="{"true" if on else "false"}" aria-controls="p-{s}"{ti}>\n'
+                  f'    <span class="al-tab__label">{rot}</span>\n  </button>')
+        cp.append(f'<div role="tabpanel" id="p-{s}" aria-labelledby="t-{s}" tabindex="0"'
+                  f'{"" if on else " hidden"}>\n  <h3>{rot}</h3>\n  …\n</div>')
+    html = (f'<div class="al-tabs{TB_MOD[tipo]}" role="tablist" aria-label="{nome}">'
+            + ''.join(bt) + '</div>' + ''.join(pn))
+    code = (f'<div class="al-tabs{TB_MOD[tipo]}" role="tablist" aria-label="{nome}">\n'
+            + '\n'.join(cb) + '\n</div>\n' + '\n'.join(cp)
+            + '\n<script src="tab.js"></script>  <!-- setas, Home, End e painel -->')
+    return html, code
+
+
+def tb_nav_group(tipo, nome, rotulos, sel=0, stack=False):
+    """Navegacao entre paginas: <nav> com links e aria-current (regra 22)."""
+    li, cl = [], []
+    for i, rot in enumerate(rotulos):
+        cur = ' aria-current="page"' if i == sel else ''
+        li.append(f'<li><a class="al-tab" href="#/tab"{cur}><span class="al-tab__label">{rot}</span></a></li>')
+        cl.append(f'    <li><a class="al-tab" href="/{tb_slug(rot)}"{cur}>\n'
+                  f'      <span class="al-tab__label">{rot}</span></a></li>')
+    extra = ' tb-stack' if stack else ''
+    html = (f'<nav aria-label="{nome}"><ul class="al-tabs{TB_MOD[tipo]}{extra}">'
+            + ''.join(li) + '</ul></nav>')
+    code = (f'<nav aria-label="{nome}">\n  <ul class="al-tabs{TB_MOD[tipo]}">\n'
+            + '\n'.join(cl) + '\n  </ul>\n</nav>')
+    return html, code
+
+
+TB_DEMO_TEXT = {
+    'Resumo': '3 itens · R$ 412,00 · pago no cartão.',
+    'Itens': 'Caneca, camiseta e adesivos.',
+    'Entrega': 'Chega entre 9 e 11 de outubro.',
+}
+
+
+def tb_demo(tipo, uso):
+    if uso == 'panel':
+        return tb_panel_group(f'tbpg', tipo, 'Pedido #1042', ['Resumo', 'Itens', 'Entrega'], TB_DEMO_TEXT)
+    return tb_nav_group(tipo, 'Seções da conta', ['Perfil', 'Segurança', 'Faturas'])
+
+
+TB_DEMOS = {f'{t}|{u}': dict(zip(('html', 'code'), tb_demo(t, u)))
+            for t, _ in TB_TYPES for u, _ in TB_USES}
+
+
+def tb_frozen(tipo, sel, estado):
+    """O que o seletor escreve naquele estado, escrito a mao no __label."""
+    if estado == 'repouso':
+        return ''
+    if estado == 'foco':
+        return 'box-shadow: var(--al-tab-ring)'
+    suf = 'hover' if estado == 'hover' else 'active'
+    if tipo == 'square' and sel:
+        return (f'background-color: var(--al-tab-square-bg-selected-{suf}); '
+                f'color: var(--al-tab-square-label-selected-{suf})')
+    cor = 'line-label-selected' if sel else f'label-{suf}'
+    return f'background-color: var(--al-tab-bg-{suf}); color: var(--al-tab-{cor})'
+
+
+def tb_sample(tipo, rotulos=('Itens', 'Resumo'), sel=1, estado='repouso', stack=False):
+    """Amostra: grupo congelado, fora do teclado e do leitor de tela."""
+    abas = []
+    for i, rot in enumerate(rotulos):
+        on = i == sel
+        st = tb_frozen(tipo, on, estado)
+        st = f' style="{st}"' if st else ''
+        abas.append(f'<span class="al-tab" aria-selected="{"true" if on else "false"}">'
+                    f'<span class="al-tab__label"{st}>{rot}</span></span>')
+    extra = ' tb-stack' if stack else ''
+    return f'<div class="al-tabs{TB_MOD[tipo]}{extra}" aria-hidden="true" inert>{"".join(abas)}</div>'
+
+
+def tb_matrix():
+    head = ''.join(f'<span class="tb-mx-lab">{n}</span>' for _, n in TB_STATES)
+    rows = [f'<div class="tb-mx-row tb-mx-row--head"><span></span>{head}</div>']
+    for t, nome in TB_TYPES:
+        cels = ''.join(f'<div>{tb_sample(t, estado=e)}</div>' for e, _ in TB_STATES)
+        rows.append(f'<div class="tb-mx-row"><span class="tb-mx-lab">{nome}</span>{cels}</div>')
+    return '<div class="tb-mx">' + ''.join(rows) + '</div>'
+
+
+def tab_token_rows():
+    rows = []
+    for name in TAB['alias']:
+        res = TAB['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, dict):
+            light = dark = '<span class="dim">sombra composta</span>'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{TAB["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+def tab_a11y_rows():
+    oque = {'rotulo': 'rótulo', 'linha': 'linha', 'fundo-selecionado': 'fundo × página',
+            'anel': 'anel de foco', 'selecao': 'seleção'}
+    out = []
+    for r in TAB_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        if r['indistinct']:
+            v = '<span class="fail">indistinguível</span>'
+        elif r['pass']:
+            v = '<span class="pass">passa</span>'
+        elif r['exception']:
+            v = f'<span class="exc">{r["exception"]}</span>'
+        else:
+            v = '<span class="fail">reprova</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="tok dim">{"tela" if r["page"] == "bg-canvas" else "superfície"}</td>'
+            f'<td class="name">{"Line" if r["type"] == "line" else "Square"}</td>'
+            f'<td class="tok dim">{"sim" if r["selected"] else "não"}</td>'
+            f'<td class="tok dim">{r["state"]}</td><td class="tok dim">{oque[r["what"]]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+TB_LIVE_PEDIDO = tb_panel_group('tbov', 'line', 'Cliente', ['Cadastro', 'Pedidos', 'Notas'], {
+    'Cadastro': 'Nome, documento e contatos.',
+    'Pedidos': 'Os 12 pedidos dos últimos seis meses.',
+    'Notas': 'Observações da equipe de atendimento.',
+})[0]
+TB_LIVE_SIDEBAR = tb_nav_group('square', 'Configurações', ['Geral', 'Equipe', 'Integrações', 'Cobrança'],
+                               sel=1, stack=True)[0]
+
+
+TAB_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="tab-stage"><div class="tb-page" data-tbpage="canvas">{TB_DEMOS["line|panel"]["html"]}</div></div>
+    <div class="controls" id="tab-controls">
+      <div class="ctl"><span class="ctl-name">Tipo</span>{seg('tbtype', TB_TYPES, 'line')}</div>
+      <div class="ctl"><span class="ctl-name">Uso</span>{seg('tbuse', TB_USES, 'panel')}</div>
+      <div class="ctl"><span class="ctl-name">Página</span>{seg('tbpage', TB_PAGES, 'canvas')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tbtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="tab-copy">Copiar</button></div>
+      <pre><code id="tab-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Em <b>Painel</b>, tabule até o grupo: o Tab para uma vez, na aba aberta, e as setas trocam de
+    aba e de painel. Em <b>Navegação</b>, o mesmo visual vira lista de links, e o Tab passa por
+    todos. Troque o <b>Tema</b> para escuro com a Square para ver a seleção tonal.
+  </p>
+</section>
+
+<section>
+  <h2>Line ou Square</h2>
+  <p>O tipo é do grupo, não da aba. Um grupo nunca mistura os dois.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Line · seções de uma página</span>
+      <div class="stage2 tb-stage" data-tbpage="canvas">{tb_sample('line', ('Visão geral', 'Atividade', 'Arquivos'), sel=0)}</div>
+      <p class="cap">Seções de página, de dentro de um card ou modal, e a navbar horizontal. Quem
+      marca a selecionada é a linha laranja.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Square · área delimitada e sidebar</span>
+      <div class="stage2 tb-stage" data-tbpage="surface">{tb_sample('square', ('Diário', 'Semanal', 'Mensal'), sel=1)}</div>
+      <p class="cap">Grupo com mais ênfase, o segundo nível dentro de um painel, e os itens de
+      sidebar. Selecionada tonal; no hover e no pressed, a marca.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Painel ou navegação</h2>
+  <p>O mesmo componente serve aos dois usos, com marcações diferentes. Quando o conteúdo troca na
+  mesma tela, é grupo de abas. Quando cada item leva a outra página, é lista de links.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Painel · ao vivo</span>
+      <div class="stage2 tb-stage tb-live" data-tbpage="canvas">{TB_LIVE_PEDIDO}</div>
+      <p class="cap"><code>role="tablist"</code>, uma parada de Tab, setas para trocar. O painel
+      começa com o mesmo nome da aba. <i>APG, Primer.</i></p>
+    </div>
+    <div class="cell do">
+      <span class="lab">Navegação · ao vivo</span>
+      <div class="stage2 tb-stage tb-live" data-tbpage="surface">{TB_LIVE_SIDEBAR}</div>
+      <p class="cap"><code>&lt;nav&gt;</code> com links e <code>aria-current="page"</code> no
+      atual. Sidebar sempre em Square. <i>Primer NavList.</i></p>
+    </div>
+  </div>
+</section>'''
+
+
+TAB_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Grupo</b><span><code>.al-tabs</code>. Leva o tipo: nenhum modificador é Line, <code>--square</code> é Square.</span></div>
+    <div><b>Aba</b><span><code>.al-tab</code>: <code>&lt;button role="tab"&gt;</code> no painel, <code>&lt;a href&gt;</code> na navegação. É o alvo do clique e, no Line, carrega o espaço e a linha.</span></div>
+    <div><b>Caixa do rótulo</b><span><code>.al-tab__label</code>: fundo, canto, padding, cor e anel de foco. O hover pinta só ela, nunca o espaço até a linha.</span></div>
+    <div><b>Linha</b><span>Só no Line: 2px, cinza na aba comum e laranja na selecionada, 8px abaixo da caixa.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As 16 variantes</h2>
+  <p>Em cada célula, “Itens” é a aba não selecionada e “Resumo” a selecionada. Hover, pressed e
+  foco estão congelados, escritos direto na caixa do rótulo com os mesmos tokens que o seletor
+  usa.</p>
+  <div class="tb-panel" data-tbpage="canvas" style="margin-top:16px">{tb_matrix()}</div>
+  <div class="tb-panel" data-tbpage="surface" style="margin-top:12px">{tb_matrix()}</div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Tab</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{tab_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Selecionada vem da marcação, nunca de classe</b>
+    O CSS lê <code>aria-selected="true"</code> no painel e <code>aria-current</code> na navegação:
+    o que o leitor de tela anuncia e o que a tela pinta não podem discordar.
+  </div>
+  <div class="note">
+    <b>Alturas derivadas</b>
+    Square tem 32px (4 + 24 + 4) e Line 42px (32 + 8 de espaço + 2 de linha). Nenhuma altura é
+    fixa: tudo sai do padding e da entrelinha.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>tab.js</code></b>
+    É o primeiro componente do AL com script próprio. Ele liga todo <code>.al-tabs[role="tablist"]</code>:
+    só a aba aberta entra no Tab, as setas trocam de aba e dão a volta, Home e End vão às pontas.
+    Com <code>data-activation="manual"</code> no grupo, as setas só movem o foco e Enter abre.
+    O painel que sai é escondido, nunca apagado. A navegação por links não precisa dele.
+  </div>
+  <div class="note">
+    <b>A aba aberta pelo clique não pinta o pressed de selecionada</b>
+    Alguns navegadores ainda consideram a aba apertada quando o clique a seleciona. O
+    <code>tab.js</code> marca essa aba com <code>data-al-just-selected</code> até o próximo aperto,
+    e ela fica no hover. Sem isso, a aba apertada ia do cinza para o laranja escuro antes de soltar.
+  </div>
+  <div class="note">
+    <b>Foco no Figma e no código</b>
+    No Figma as variantes de foco sem fundo levam <code>bg/canvas</code>, só para o anel aparecer.
+    No código a aba continua transparente e o anel é desenhado em volta da caixa do rótulo.
+  </div>
+</section>'''
+
+
+TB_RULES = [
+    ('Quando usar', [
+        ('Conteúdos relacionados, do mesmo nível, na mesma tela', 'Abas organizam irmãos, não pai e filho. Precedentes: Polaris, Carbon, Material.'),
+        ('Não use para comparar', 'Se a pessoa precisa ver duas abas ao mesmo tempo, mostre lado a lado. Precedentes: Carbon, Polaris.'),
+        ('Não use para passos em sequência', 'Abas não têm ordem obrigatória, e quem pula uma aba não pode deixar a tarefa quebrada. Precedente: Polaris.'),
+        ('Line para página e navbar; Square para área delimitada e sidebar', 'A linha só faz sentido na horizontal, por isso a sidebar é sempre Square. Precedentes: Carbon Line/Contained, Material.'),
+        ('Item que leva a outra página é link', 'Mesmo visual, marcação de navegação (regra 22). <b>Divergência consciente</b> do Primer, que tem dois componentes para isso.'),
+    ]),
+    ('Hierarquia e combinação', [
+        ('Um tipo por grupo', 'Misturar Line e Square faz a seleção ser lida de dois jeitos. Precedentes: Carbon, Material.'),
+        ('Exatamente uma selecionada', 'Ao abrir, a primeira, a não ser que a tela lembre a última. Precedentes: Polaris, APG.'),
+        ('De 2 a 6 abas', 'Com uma só, é título. Acima de seis, navegação lateral. Precedente: Carbon.'),
+        ('O grupo cabe na largura', 'Não há rolagem nesta versão. Se não cabe, encurte os rótulos ou troque de padrão; nunca duas linhas de abas. Precedente: Spectrum.'),
+    ]),
+    ('Tamanho e layout', [
+        ('Um tamanho', 'Square 32px e Line 42px. Não redimensione: 32px já passa o alvo mínimo de 24px do WCAG 2.5.8.'),
+        ('Abas coladas, sem espaço entre elas', 'O respiro entre rótulos vem do padding de cada aba, e é isso que deixa a linha do Line contínua.'),
+        ('A linha termina na última aba', 'Não complete com um Divider: ele tem 1px e a linha da aba tem 2px, e o degrau aparece.'),
+        ('O painel vem logo abaixo do grupo', 'Nada entre as abas e o conteúdo que elas trocam. Precedentes: APG, Carbon.'),
+    ]),
+    ('Conteúdo', [
+        ('Rótulo de uma ou duas palavras', 'Um substantivo que diga o que tem dentro: “Histórico”, não “Ver histórico”. Precedentes: Carbon, Polaris.'),
+        ('Só a primeira letra maiúscula', '“Dados pessoais”, não “Dados Pessoais”. Precedente: Spectrum.'),
+        ('O rótulo cabe numa linha', 'Ele não quebra e não leva reticências. Se não cabe, reescreva, e conte com a tradução esticando o texto. Precedentes: Carbon, Spectrum.'),
+        ('Rótulos paralelos', 'Mesmo tipo de palavra e mesmo nível de detalhe no grupo. Precedente: Polaris.'),
+    ]),
+    ('Estados', [
+        ('Não existe aba desabilitada', 'Conteúdo indisponível sai do grupo. Conteúdo vazio fica, e o painel explica o vazio. Precedentes: Primer, Polaris.'),
+        ('Clicar na aba aberta não faz nada', 'Não recarrega nem volta o painel para o topo.'),
+        ('Trocar de aba não apaga o que foi digitado', 'O painel que sai é escondido, nunca destruído.'),
+    ]),
+    ('Acessibilidade', [
+        ('Painel segue o padrão de abas da APG', 'Grupo com nome, uma parada de Tab, setas, Home e End. A aba abre ao receber o foco quando o conteúdo já está na página; quando carrega da rede, só com Enter ou Espaço. Precedentes: APG, Primer.'),
+        ('Navegação é lista de links', '<code>&lt;nav&gt;</code> com nome, <code>aria-current="page"</code> no atual, o Tab passa por todos e as setas não fazem nada. Nunca <code>role="tab"</code> num link: promete um painel que não existe. Precedentes: Primer, APG.'),
+        ('Foco é o repouso mais o anel', 'O fundo não muda, e o anel só aparece pelo teclado. Precedentes: WCAG 2.4.7, Button, Input e Card do AL.'),
+        ('No alto contraste a seleção continua visível', 'A linha da selecionada fica na cor de destaque do sistema e a Square selecionada ganha contorno. Mesma lição do Divider.'),
+    ]),
+    ('Exceções de contraste, e o que as paga', [
+        ('O painel começa com um título igual ao rótulo', 'É o que paga a <code>selecao-tonal</code>: no escuro a Square selecionada se distingue só pelo matiz, e o título diz onde a pessoa está. O leitor de tela já ouve “selecionada” ou “página atual”. Precedentes: Material, Carbon.'),
+        ('A linha cinza é só trilho', '<code>trilho-decorativo</code>: ela não comunica estado, então não use a cor para mais nada e não escureça para “corrigir”. <code>marca-no-hover-escuro</code> e <code>pressed-na-superficie-escura</code> são da marca, herdadas da Foundation e do Button.'),
+    ]),
+]
+
+
+def tb_rules_html():
+    out, n = [], 0
+    for grupo, regras in TB_RULES:
+        out.append(f'<h3 class="tb-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    assert n == 26, f'as regras aprovadas sao 26, o site tem {n}'
+    return '\n'.join(out)
+
+
+TAB_GUIDE = f'''
+<section>
+  <h2>Abas dentro de abas: no máximo dois níveis</h2>
+  <p>O primeiro nível é Line, o de dentro é Square, morando no painel da aba de cima. Um terceiro
+  nível pede outro padrão.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Line por fora, Square por dentro</span>
+      <div class="stage2 tb-stage tb-col" data-tbpage="canvas">{tb_sample('line', ('Cadastro', 'Pedidos', 'Notas'), sel=0)}{tb_sample('square', ('Pessoais', 'Endereço', 'Pagamento'), sel=1)}</div>
+      <p class="cap">A linha separa as seções da página; o bloco tonal escolhe dentro delas.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Square por fora, Line por dentro</span>
+      <div class="stage2 tb-stage tb-col" data-tbpage="canvas"><div class="tb-fake tb-fake--square"><span class="on">Cadastro</span><span>Pedidos</span><span>Notas</span></div><div class="tb-fake"><span class="on">Pessoais</span><span>Endereço</span><span>Pagamento</span></div></div>
+      <p class="cap">O nível de dentro fica com mais peso que o de fora, e a hierarquia se inverte.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Rótulos curtos e paralelos</span>
+      <div class="stage2 tb-stage" data-tbpage="canvas">{tb_sample('line', ('Resumo', 'Itens', 'Entrega', 'Histórico'), sel=0)}</div>
+      <p class="cap">Substantivos de uma palavra, todos do mesmo tipo.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Rótulo que vira frase</span>
+      <div class="stage2 tb-stage" data-tbpage="canvas"><div class="tb-fake"><span class="on">Resumo</span><span>Ver os itens do pedido</span><span>Entrega</span></div></div>
+      <p class="cap">Verbo, frase longa, nível diferente dos vizinhos. Escreva “Itens”.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {tb_rules_html()}
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Ícone e contador</b><span>Não entram nesta versão.</span></div>
+    <div><b>Rolagem</b><span>O grupo cabe na largura (regra 9).</span></div>
+    <div><b>Abas verticais</b><span>Grupo de painel vertical não existe. Sidebar empilhada é lista de links.</span></div>
+    <div><b>Fechar aba</b><span>Não existe.</span></div>
+    <div><b>Segundo tamanho</b><span>Um tamanho só (regra 10).</span></div>
+    <div><b>Desabilitada</b><span>Não existe (regra 18).</span></div>
+    <div><b>Item de sidebar cheio</b><span>Largura total com rótulo à esquerda fica para a sidebar do Tier 4.</span></div>
+  </div>
+</section>'''
+
+
+TAB_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede cada tema × página × tipo × selecionada × estado. O rótulo mede contra o fundo
+  da caixa quando ela tem fundo, e contra a página quando não tem. Linha, fundo da selecionada e
+  anel têm piso de 3:1. Um terceiro julgamento reprova a seleção <b>indistinguível</b>: a
+  selecionada igual à não selecionada no mesmo estado.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_TB_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_TB_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>{N_TB_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{N_TB_FAIL}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Página</th><th>Tipo</th><th>Sel.</th><th>Estado</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{tab_a11y_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra doze regras lendo o HTML que este site emite:
+  <b>{TAB_A11Y['markupChecked'] or 0} grupos</b> e <b>{TAB_A11Y.get('markupSamples', 0)} amostras</b>
+  nesta página, nenhum fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Nome do grupo</b><span><code>role="tablist"</code> com <code>aria-label</code> ou <code>aria-labelledby</code>.</span></div>
+    <div><b>b · Aba e painel</b><span><code>&lt;button type="button" role="tab"&gt;</code> com <code>aria-selected</code>, ligado ao <code>tabpanel</code> nos dois sentidos.</span></div>
+    <div><b>c · Uma selecionada</b><span>Exatamente uma, a única fora do <code>tabindex="-1"</code>.</span></div>
+    <div><b>d · Navegação</b><span>Em <code>&lt;nav&gt;</code> com nome, <code>&lt;a href&gt;</code>, no máximo um <code>aria-current</code>, nunca <code>role="tab"</code>.</span></div>
+    <div><b>e · Nome da aba</b><span><code>__label</code> com texto.</span></div>
+    <div><b>f · Sem disabled</b><span>Nem <code>disabled</code>, nem <code>aria-disabled</code>.</span></div>
+    <div><b>g · Dois níveis</b><span>Line por fora, Square por dentro, nunca três.</span></div>
+    <div><b>h · Lista</b><span><code>&lt;ul class="al-tabs"&gt;</code> só com <code>&lt;li&gt;</code>; nenhuma aba fora de grupo.</span></div>
+    <div><b>i · Id único</b><span>Aba e painel se ligam por id.</span></div>
+    <div><b>j · Quantidade</b><span>De 2 a 6 abas por grupo.</span></div>
+    <div><b>k · Título no painel</b><span>O painel começa com o rótulo da aba.</span></div>
+    <div><b>l · Amostra inerte</b><span>Amostra <code>aria-hidden</code> também é <code>inert</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Uma parada de Tab</b><span>O Tab entra pela aba aberta e sai para o painel.</span></div>
+    <div><b>Setas, Home, End</b><span>Trocam de aba e dão a volta nas pontas.</span></div>
+    <div><b>Manual</b><span>Com <code>data-activation="manual"</code>, as setas só movem o foco; ao sair e voltar, a entrada é de novo a aba aberta.</span></div>
+    <div><b>Texto preservado</b><span>O que foi digitado num painel continua lá depois de trocar.</span></div>
+    <div><b>Anúncio</b><span>“Resumo, selecionada, aba 1 de 3” no painel; “Perfil, página atual, link” na navegação.</span></div>
+    <div><b>Alto contraste</b><span>Linha da selecionada em <code>Highlight</code>, Square selecionada com contorno.</span></div>
+    <div><b>Movimento reduzido</b><span>A transição de 120ms é desligada.</span></div>
+  </div>
+</section>'''
+
+
+TH_TAB = ('<div class="th-tab" aria-hidden="true" inert>'
+          + tb_sample('line', ('Resumo', 'Itens', 'Entrega'), sel=0).replace(' aria-hidden="true" inert', '')
+          + tb_sample('square', ('Dia', 'Semana', 'Mês'), sel=1).replace(' aria-hidden="true" inert', '')
+          + '</div>')
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -7562,6 +8043,7 @@ LANDING_COMPONENTES = f'''
     {card('textarea', 'Textarea', 'Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.', TH_TEXTAREA)}
     {card('divider', 'Divider', 'A linha entre dois grupos de conteúdo. É o &lt;hr&gt; nativo, horizontal ou vertical — e entra só quando o espaço não basta.', TH_DIVIDER)}
     {card('card', 'Card', 'Um assunto num contêiner. Três tipos, três paddings, e o clicável inteiro feito com um link de verdade no título.', TH_CARD)}
+    {card('tab', 'Tab', 'Troca de conteúdo na mesma tela, ou navegação entre páginas com o mesmo visual. Line e Square, e o primeiro componente com script próprio.', TH_TAB)}
   </div>
 </section>
 
@@ -7570,7 +8052,7 @@ LANDING_COMPONENTES = f'''
   <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
   disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
   sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
-  e seguiu pelo Card. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
+  seguiu pelo Card e chegou ao Tab. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
   auditar.</p>
 </section>'''
 
@@ -7755,6 +8237,15 @@ PAGES = [
          (f'{N_CARD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
         [('overview', 'Visão geral', CARD_OVERVIEW), ('specs', 'Especificações', CARD_SPECS),
          ('guide', 'Diretrizes', CARD_GUIDE), ('a11y', 'Acessibilidade', CARD_A11Y_TAB)])),
+    ('tab', 'Componentes', page(
+        'tab', 'Componentes', 'Tab',
+        'Troca o conteúdo na mesma tela sem sair dela, ou leva a outra página com o mesmo visual. '
+        'Line marca a selecionada com a linha; Square, com o bloco tonal. É o primeiro componente '
+        'do AL com script próprio, que liga o teclado do padrão de abas.',
+        [('Estável', True), ('16 variantes no Figma', False),
+         (f'{N_TAB_TOKENS} tokens', False), (f'{N_TB_EXC_KEYS} exceções declaradas', False)],
+        [('overview', 'Visão geral', TAB_OVERVIEW), ('specs', 'Especificações', TAB_SPECS),
+         ('guide', 'Diretrizes', TAB_GUIDE), ('a11y', 'Acessibilidade', TAB_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -7796,6 +8287,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/password" data-page="password">Password</a>
         <a href="#/divider" data-page="divider">Divider</a>
         <a href="#/card" data-page="card">Card</a>
+        <a href="#/tab" data-page="tab">Tab</a>
       </div>
     </div>
   </div>
@@ -9591,6 +10083,99 @@ CHROME_CARD = """
 """
 
 
+# O tab.js entra inteiro, e o cabecalho dele mostra `<script src="tab.js"></script>`
+# como exemplo de uso: cru dentro da <script> da pagina, esse texto fecharia a
+# tag e nada depois rodaria (achado da etapa 6). `<\/` e o mesmo texto para o JS.
+TAB_JS_INLINE = TAB_JS.replace('</', '<\\/')
+
+JS_TAB_DATA = ('var TB_DEMOS = '
+               + json.dumps(TB_DEMOS, ensure_ascii=False).replace('</', '<\\/') + ';\n')
+
+JS_TAB = r"""
+(function () {
+  // ── playground do Tab ──
+  var stage = document.getElementById('tab-stage');
+  if (!stage) return;
+  var code = document.getElementById('tab-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinacao vem pronto do site.py (TB_DEMOS) - o mesmo que
+  // a pagina emite parada. Depois de trocar, o tab.js liga o grupo novo.
+  function render() {
+    var t = pick('tbtype'), u = pick('tbuse'), pg = pick('tbpage'), theme = pick('tbtheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = TB_DEMOS[t + '|' + u];
+    stage.innerHTML = '<div class="tb-page" data-tbpage="' + pg + '">' + demo.html + '</div>';
+    if (window.alTabs) window.alTabs.init(stage);
+    code.innerHTML = esc(demo.code);
+  }
+
+  // os links de exemplo nao navegam: o clique so troca a pagina atual
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('.tb-stage a.al-tab, #tab-stage a.al-tab');
+    if (!a) return;
+    e.preventDefault();
+    a.closest('ul').querySelectorAll('a.al-tab').forEach(function (x) {
+      if (x === a) x.setAttribute('aria-current', 'page'); else x.removeAttribute('aria-current');
+    });
+  });
+
+  document.querySelectorAll('#tab-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('tab-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_TAB = """
+/* ── páginas do Tab ──
+   Casca do site. A aba em si é sempre o .al-tab, do tab.css real. Os exemplos
+   "a evitar" usam .tb-fake, nunca um .al-tab errado. */
+.tb-page{width:100%; max-width:440px; padding:24px; border-radius:12px; text-align:left}
+.tb-page[data-tbpage="surface"], .tb-stage[data-tbpage="surface"], .tb-panel[data-tbpage="surface"]{background:var(--al-bg-surface)}
+.tb-page[data-tbpage="canvas"], .tb-stage[data-tbpage="canvas"], .tb-panel[data-tbpage="canvas"]{background:var(--al-bg-canvas)}
+.tb-page[data-tbpage="canvas"], .tb-panel[data-tbpage="canvas"]{outline:1px dashed var(--al-border-default); outline-offset:-1px}
+.dd .stage2.tb-stage{display:block; padding:20px; overflow-x:auto}
+.dd .stage2.tb-col{display:flex; flex-direction:column; align-items:flex-start; gap:16px}
+.tb-tabpanel{padding-top:16px}
+.tb-tabpanel:focus-visible{outline:none; box-shadow:var(--al-focus-ring-default); border-radius:6px}
+.tb-tabpanel p{margin:4px 0 0; font-size:14px; color:var(--al-text-secondary)}
+.tb-ptitle{margin:0; font-size:16px; line-height:24px; font-weight:600; letter-spacing:0}
+.tb-stack{flex-direction:column; align-items:flex-start}
+.tb-panel{padding:20px; border-radius:12px; overflow-x:auto}
+.tb-mx{display:flex; flex-direction:column; gap:16px; min-width:620px}
+.tb-mx-row{display:grid; grid-template-columns:64px repeat(4, minmax(0,1fr)); gap:16px; align-items:end}
+.tb-mx-lab{font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary); align-self:center}
+.tb-rgroup{margin:28px 0 4px; font-family:var(--al-font-mono); font-size:10.5px; font-weight:500;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--al-text-secondary)}
+.tb-fake{display:flex; font-size:16px; line-height:24px}
+.tb-fake span{padding:4px 12px 8px; color:var(--al-text-secondary); white-space:nowrap;
+  border-bottom:2px solid var(--al-border-subtle)}
+.tb-fake span.on{color:var(--al-text-primary); border-bottom-color:var(--al-border-brand)}
+.tb-fake--square span{padding:4px 12px; border-bottom:0; border-radius:8px}
+.tb-fake--square span.on{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+.th-tab{display:flex; flex-direction:column; align-items:flex-start; gap:12px; transform:scale(.8); transform-origin:center}
+"""
+
+
 HTML = (
     '<meta charset="utf-8">\n'
     '<title>AL Design System</title>\n'
@@ -9602,7 +10187,7 @@ HTML = (
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD
+    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -9611,7 +10196,8 @@ HTML = (
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
     + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER
-    + JS_CARD_DATA + JS_CARD + '</script>\n'
+    + JS_CARD_DATA + JS_CARD
+    + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
@@ -9656,5 +10242,9 @@ print(f'  tokens do Card    : {N_CARD_TOKENS}  '
       f'({len(CARD_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in CARD_A11Y["rows"] if r["invisible"])} invisiveis, '
       f'{sum(1 for r in CARD_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
+print(f'  tokens do Tab     : {N_TAB_TOKENS}  '
+      f'({len(TAB_A11Y["rows"])} combinacoes medidas, '
+      f'{sum(1 for r in TAB_A11Y["rows"] if r["indistinct"])} indistinguiveis, '
+      f'{sum(1 for r in TAB_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

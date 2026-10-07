@@ -3,7 +3,7 @@
 Design system open source, do Figma ao código. Construído em público, uma camada de cada vez.
 
 - **Licença:** MIT
-- **Versão:** `0.15.0`
+- **Versão:** `0.16.0`
 - **Figma:** biblioteca privada por enquanto — primitivas, semânticos e tokens de componente documentados abaixo
 
 ## Estado atual
@@ -40,12 +40,14 @@ O **Divider** abre o Tier 3 (estrutura). É o `<hr>` nativo, horizontal ou verti
 
 O **Card** é o segundo do Tier 3: um contêiner para um assunto que se lê ou se resolve sozinho. Três tipos (Filled, Border, Elevated), três paddings (24, 16, 8), estático ou clicável. O fundo é `bg-surface-raised`, porque no tema escuro quem separa o card da página é a superfície que clareia, não a sombra. A borda do Border é desenhada **fora** da caixa, como o stroke outside do Figma: uma sombra de 1px que não ocupa espaço, e por isso os três tipos medem igual. Borda, anel de foco e elevação vivem em três camadas internas de `box-shadow` empilhadas numa ordem fixa — é assim que o Elevated com foco mantém a sombra, coisa que o Figma não consegue mostrar. O card clicável é um **link de verdade no título**, esticado sobre o card por um pseudo-elemento: o card inteiro é o alvo, mas o leitor de tela anuncia só o título, e nada mais clicável pode morar dentro dele. Não existe card desabilitado nem pressionado. Duas exceções declaradas: a borda em repouso abaixo de 3:1 e o fundo que mal se separa da página — as duas sustentadas pela regra de que o card se reconhece pelo conteúdo, e pela de que o Filled só fica sobre `bg-surface`. O portão de acessibilidade reprova o card **invisível**, sem nada que o separe da página.
 
+O **Tab** é o terceiro do Tier 3 e o primeiro componente do AL com **script próprio**. Ele serve a dois usos com o mesmo visual: trocar o conteúdo na mesma tela, com o padrão de abas da APG (`role="tablist"`, uma parada de Tab, setas, Home e End), ou navegar entre páginas, como lista de links dentro de `<nav>` com `aria-current="page"` — nunca `role="tab"` num link, que promete um painel que não existe. Dois tipos, definidos no **grupo** e não na aba, para um grupo nunca misturar os dois: **Line**, em que a linha laranja marca a selecionada e o rótulo fica no preto principal, e **Square**, em que a selecionada é um bloco tonal que vai para a marca no hover e no pressed. A selecionada sai de `aria-selected` ou de `aria-current`, nunca de uma classe. O `tab.js` liga todo `.al-tabs[role="tablist"]`: só a aba aberta entra no Tab, as setas trocam de aba e dão a volta, `data-activation="manual"` faz as setas só moverem o foco, e o painel que sai é escondido, nunca apagado. A aba aberta pelo próprio clique não pinta o pressed de selecionada até o próximo aperto, porque o Safari ainda a considera apertada quando o clique a seleciona. No máximo dois níveis: Line por fora, Square por dentro. Um tamanho, sem desabilitado. Quatro exceções declaradas: a seleção tonal, que no escuro se distingue só pelo matiz e é paga pela regra de o painel começar com um título igual ao rótulo; a linha cinza, que é só trilho; e duas da marca herdadas do Button. O portão reprova a seleção **indistinguível** — a selecionada pintada igual à não selecionada no mesmo estado.
+
 | | |
 |---|---|
 | Primitivas de cor | 66 (6 famílias × 11 degraus) |
 | Tokens semânticos | 51 × 2 temas |
 | Pares de contraste validados | 80 — 77 em AA pleno, 3 exceções de marca nomeadas, 0 abaixo do piso |
-| Componentes prontos | 13 (Button, Icon Button, Tag, Avatar, Select, Checkbox, Radio, Switch, Input, Textarea, Password, Divider, Card) |
+| Componentes prontos | 14 (Button, Icon Button, Tag, Avatar, Select, Checkbox, Radio, Switch, Input, Textarea, Password, Divider, Card, Tab) |
 | Ícones | 70 — Lucide, grid 24, sem escala fixa |
 | Tokens do Button | 48 — 40 alias, 8 transparentes, 0 valores soltos |
 | Tokens do Icon Button | 42 — 34 alias, 8 transparentes, 0 valores soltos |
@@ -60,6 +62,7 @@ O **Card** é o segundo do Tier 3: um contêiner para um assunto que se lê ou s
 | Tokens do Password | 29 — 29 alias, 0 transparentes, 0 valores soltos |
 | Tokens do Divider | 2 — 2 alias, 0 transparentes, 0 valores soltos |
 | Tokens do Card | 19 — 19 alias, 0 transparentes, 0 valores soltos |
+| Tokens do Tab | 21 — 21 alias, 0 transparentes, 0 valores soltos |
 
 O plano de evolução completo — divisão de trabalho, pipeline por componente e roadmap em tiers — está no [playbook](https://claude.ai/code/artifact/18a0c1ed-949c-4c8d-8906-93c21ed560a3).
 
@@ -68,7 +71,7 @@ O plano de evolução completo — divisão de trabalho, pipeline por componente
 O AL é consumido como pacote npm instalado direto deste repositório, sempre fixado numa tag. Ele não é publicado no registro do npm: o `"private": true` do `package.json` impede publicação acidental, e a instalação por Git não depende disso.
 
 ```bash
-npm install github:guilhermedworakowski/al-design-system#v0.15.0
+npm install github:guilhermedworakowski/al-design-system#v0.16.0
 ```
 
 A tag no fim não é opcional. Sem ela, cada instalação puxa o que estiver na `main` naquele dia, e o produto muda sem que ninguém tenha decidido mudar. Com a tag, atualizar é uma decisão explícita: trocar o número, reinstalar e revisar.
@@ -243,6 +246,14 @@ components/card/
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
   qa.py          # gera site/card-qa.html, a visualização da etapa 6
 
+components/tab/
+  tokens.py      # camada de alias do Tab + portão de alias + portão de contraste, gera tokens.json e o CSS
+  tab.css        # o componente, escrito à mão
+  tab.js         # o teclado do padrão de abas: roving tabindex, setas, Home, End, ativação manual
+  check.py       # portão do CSS: recusa valor literal e token órfão em tab.css
+  a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
+  qa.py          # gera site/tab-qa.html, a visualização da etapa 6
+
 site/
   site.py        # gera index.html: o site — Foundation + componentes, navegação e playground
 ```
@@ -290,6 +301,8 @@ python3 components/divider/tokens.py  # tokens do Divider + portão de alias + p
 python3 components/divider/check.py   # portão do CSS do Divider + token órfão
 python3 components/card/tokens.py     # tokens do Card + portão de alias + portão de contraste + CSS
 python3 components/card/check.py      # portão do CSS do Card + token órfão
+python3 components/tab/tokens.py      # tokens do Tab + portão de alias + portão de contraste + CSS
+python3 components/tab/check.py       # portão do CSS do Tab + token órfão
 python3 site/site.py               # o site: Foundation + componentes
 python3 components/icon/a11y.py      # QA do Icon — depois do site, ver abaixo
 python3 components/icon-button/a11y.py    # QA do Icon Button — idem
@@ -304,6 +317,7 @@ python3 components/textarea/a11y.py  # QA do Textarea — idem
 python3 components/password/a11y.py  # QA do Password — idem
 python3 components/divider/a11y.py   # QA do Divider — idem
 python3 components/card/a11y.py      # QA do Card — idem
+python3 components/tab/a11y.py       # QA do Tab — idem
 python3 site/site.py               # de novo, para o site ler os a11y.json atualizados
 ```
 
@@ -324,7 +338,7 @@ dentro do `<label>`, rótulo visível sem `aria-label`, glifos decorativos e nen
 `indeterminate` na marcação; o do Radio cobra a pergunta — todo `name` com duas opções ou mais,
 dentro de um só `<fieldset>` com `<legend>` visível — e o erro no `fieldset`, nunca no radio; o do Switch cobra `role="switch"` só no input nativo,
 rótulo visível, nada de `aria-checked`, `required` ou `aria-invalid`, e a bolinha decorativa; o do Input cobra
-o rótulo ligado, a mensagem de erro não vazia, os afixos no `aria-labelledby`, nenhum `maxlength`, contador com `aria-live` e read-only nunca vazio; o do Textarea cobra o mesmo sem os afixos, e mais a `<textarea>` nativa (nada de `contenteditable`) e `rows` de 3 ou mais; o do Password cobra o campo nascendo `type="password"`, `autocomplete` de senha, `spellcheck="false"` e `autocapitalize="none"`, e o olho como `<button type="button">` com `aria-controls` e `aria-label`, ícones decorativos e desabilitado junto com o campo; o do Divider cobra `<hr>` ou `<li role="separator">` (nunca `<hr>` solto em lista), separador sem texto, `aria-orientation` só na vertical, nunca focável, decorativo só por `aria-hidden="true"`, e nenhum divisor no começo ou no fim do contêiner nem dois seguidos; o do Card cobra título em `h1`…`h6`, exatamente um link dentro do título no card clicável (`<a href>` ou `<button type="button">`, com nome), nada mais clicável dentro dele, o card em si nunca acionável, `<li class="al-card">` só dentro de lista, nada de card dentro de card, nada de disabled e um tipo e um padding por card. Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar
+o rótulo ligado, a mensagem de erro não vazia, os afixos no `aria-labelledby`, nenhum `maxlength`, contador com `aria-live` e read-only nunca vazio; o do Textarea cobra o mesmo sem os afixos, e mais a `<textarea>` nativa (nada de `contenteditable`) e `rows` de 3 ou mais; o do Password cobra o campo nascendo `type="password"`, `autocomplete` de senha, `spellcheck="false"` e `autocapitalize="none"`, e o olho como `<button type="button">` com `aria-controls` e `aria-label`, ícones decorativos e desabilitado junto com o campo; o do Divider cobra `<hr>` ou `<li role="separator">` (nunca `<hr>` solto em lista), separador sem texto, `aria-orientation` só na vertical, nunca focável, decorativo só por `aria-hidden="true"`, e nenhum divisor no começo ou no fim do contêiner nem dois seguidos; o do Card cobra título em `h1`…`h6`, exatamente um link dentro do título no card clicável (`<a href>` ou `<button type="button">`, com nome), nada mais clicável dentro dele, o card em si nunca acionável, `<li class="al-card">` só dentro de lista, nada de card dentro de card, nada de disabled e um tipo e um padding por card; o do Tab cobra o grupo de painel com nome, a aba como `<button type="button" role="tab">` ligada ao painel nos dois sentidos, exatamente uma selecionada e só ela fora do `tabindex="-1"`, a navegação em `<nav>` com links e no máximo um `aria-current`, no máximo dois níveis (Line por fora, Square por dentro), de 2 a 6 abas, o painel começando com o rótulo da aba, e amostra `aria-hidden` sempre `inert`. Cada um escreve seu `a11y.json`, que o site lê na próxima geração para montar
 a aba de acessibilidade. As duas gerações convergem numa passada; não há loop.
 
 ## Os portões
@@ -341,7 +355,7 @@ Validação é parte do build, não checagem opcional. Cada camada tem o seu, e 
 | Marcação · Icon | `components/icon/a11y.py` | `.al-icon` no HTML emitido sem contrato de acessibilidade, ou com `aria-hidden` junto de um rótulo. |
 | Marcação · Tag | `components/tag/a11y.py` | `.al-tag` no HTML emitido que seja `<button>`, tenha `role="button"` ou `tabindex`, ou cujo X esteja sem `type="button"`, sem `aria-label`, ou com um `aria-label` que não contenha o rótulo da tag. |
 | Marcação · Icon Button | `components/icon-button/a11y.py` | `.al-icon-btn` no HTML emitido sem `aria-label`, com `aria-hidden` no próprio botão, com `aria-busy` solto sem `aria-disabled`, ou usando o atributo `disabled`. Esse contrato não vive no CSS, então o portão de literal não alcança — é aqui que ele é cobrado. |
-| Token órfão | `components/select/check.py`, `components/checkbox/check.py`, `components/radio/check.py`, `components/switch/check.py`, `components/input/check.py`, `components/textarea/check.py`, `components/password/check.py`, `components/divider/check.py`, `components/card/check.py` | Token declarado no `tokens.py` que o CSS do componente nunca consome — ou o CSS esqueceu de aplicar, ou o token não devia ter nascido. |
+| Token órfão | `components/select/check.py`, `components/checkbox/check.py`, `components/radio/check.py`, `components/switch/check.py`, `components/input/check.py`, `components/textarea/check.py`, `components/password/check.py`, `components/divider/check.py`, `components/card/check.py`, `components/tab/check.py` | Token declarado no `tokens.py` que o CSS do componente nunca consome — ou o CSS esqueceu de aplicar, ou o token não devia ter nascido. |
 | Marcação · Select | `components/select/a11y.py` | Campo sem `<label for>` ligado ao `id`, erro sem `aria-describedby` que exista, placeholder que não seja a primeira `<option value="">` selecionada, seta sem contrato decorativo, ou `aria-label` havendo rótulo visível. |
 | Marcação · Checkbox | `components/checkbox/a11y.py` | Checkbox fora de `<label class="al-checkbox">` ou sem `type="checkbox"`, `role="checkbox"` em qualquer tag, rótulo vazio ou `aria-label`, erro sem `aria-describedby` que exista, glifo sem contrato decorativo, ou `indeterminate` escrito como atributo. |
 | Marcação · Radio | `components/radio/a11y.py` | Radio fora de `<label class="al-radio">` ou sem `type="radio"`, `role="radio"` em qualquer tag, rótulo vazio ou `aria-label`, radio sem `name` ou sozinho no seu `name`, pergunta fora de `<fieldset>` ou sem `<legend>`, `aria-invalid` no radio em vez do `fieldset`, erro sem `aria-describedby` que exista, ou ponto sem `aria-hidden`. |
@@ -351,6 +365,7 @@ Validação é parte do build, não checagem opcional. Cada camada tem o seu, e 
 | Marcação · Password | `components/password/a11y.py` | Campo sem `<label for>` de rótulo, `id` repetido, `aria-label` havendo rótulo visível, `maxlength`, campo que não nasce `type="password"`, `autocomplete` que não seja `current-password` ou `new-password`, falta de `spellcheck="false"` ou `autocapitalize="none"`, erro sem mensagem não vazia, olho sem `type="button"` (enviaria o formulário), sem `aria-controls` no campo ou sem `aria-label`, ícone do olho sem contrato decorativo, ou campo desabilitado com o olho habilitado. |
 | Marcação · Divider | `components/divider/a11y.py` | `.al-divider` que não seja `<hr>` ou `<li role="separator">`, `<hr>` filho direto de `<ul>`/`<ol>`, separador com texto, vertical anunciada sem `aria-orientation="vertical"` (ou horizontal com ela), `tabindex`, evento de clique ou papel que não seja `separator`, `aria-hidden` diferente de `"true"`, e divisor no começo ou no fim do contêiner ou dois seguidos. Também reprova a linha **invisível** — da mesma cor da superfície onde ela é colocada. |
 | Marcação · Card | `components/card/a11y.py` | `.al-card__title` que não seja `h1`…`h6`; card clicável sem exatamente um `.al-card__link` dentro do título, link sem `href`, `<button>` sem `type="button"` ou sem nome; qualquer outro elemento interativo dentro do card clicável; o card em `<a>`/`<button>`, com `tabindex`, evento de clique ou papel de acionável; `.al-card__link` fora de card clicável; `<li class="al-card">` fora de lista; card dentro de card; `disabled`/`aria-disabled`; e tipo ou padding contraditórios. Também reprova o card **invisível** — sem borda, sem sombra e com o fundo igual ao da página. |
+| Marcação · Tab | `components/tab/a11y.py` | Grupo de painel sem nome; aba que não seja `<button type="button" role="tab">` com `aria-selected`, ou sem `aria-controls` para um `tabpanel` ligado de volta; nenhuma ou mais de uma selecionada, ou `tabindex` inicial que não rola; navegação fora de `<nav>` com nome, aba que não seja `<a href>`, `role="tab"`/`aria-selected` em link ou mais de um `aria-current`; aba sem rótulo; `disabled`/`aria-disabled`; três níveis, ou Line dentro de Square; `<ul class="al-tabs">` com filho que não seja `<li>`; `id` repetido; menos de 2 ou mais de 6 abas; painel que não começa com o rótulo da aba; e amostra `aria-hidden` sem `inert`. Também reprova a seleção **indistinguível**. |
 | Piso de linhas | `components/textarea/check.py` | O multiplicador do `min-height` no `textarea.css` diferente do `ROWS` do `tokens.py` — o mesmo número escrito em dois lugares. |
 | Marcação · Avatar | `components/avatar/a11y.py` | `.al-avatar` no HTML emitido com `aria-hidden` e `role="img"` juntos, ou nenhum dos dois; `role="img"` sem `aria-label`; a foto interna sem `alt=""`; ou o ícone interno sem `aria-hidden`/`focusable="false"`. |
 

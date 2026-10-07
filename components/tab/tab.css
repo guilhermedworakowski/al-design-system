@@ -1,0 +1,199 @@
+/* AL Design System - Tab
+ * Escrito a mao. Depende de al-foundation.css e al-tab-tokens.css, nesta
+ * ordem.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, anel e tipografia entram por
+ * var(--al-tab-*). O check.py ao lado recusa o arquivo se algum escapar.
+ * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
+ * de motion na Foundation - igual ao Button, ao Input e ao Card.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   O tipo e do GRUPO, nao da aba: um grupo nunca mistura Line e Square
+ *   (regra 6). (nenhum) = Line | .al-tabs--square = Square.
+ *
+ *   painel na mesma tela (regra 21) - padrao de abas da APG:
+ *     <div class="al-tabs" role="tablist" aria-label="Pedido">
+ *       <button class="al-tab" role="tab" type="button" id="t-resumo"
+ *               aria-selected="true" aria-controls="p-resumo">
+ *         <span class="al-tab__label">Resumo</span>
+ *       </button>
+ *       <button class="al-tab" role="tab" type="button" id="t-hist"
+ *               aria-selected="false" aria-controls="p-hist" tabindex="-1">
+ *         <span class="al-tab__label">Histórico</span>
+ *       </button>
+ *     </div>
+ *     <div role="tabpanel" id="p-resumo" aria-labelledby="t-resumo" tabindex="0">
+ *       ...comeca com um titulo igual ao rotulo da aba (regra 25)
+ *     </div>
+ *     So a aba selecionada fica em tabindex 0; setas, Home e End movem o foco
+ *     e ativam a aba (automatica) - ou so movem, e Enter/Espaco ativam quando o
+ *     painel carrega da rede. Isso e comportamento: vive no script da pagina.
+ *
+ *   navegacao entre paginas (regra 22) - links, nunca role="tab":
+ *     <nav aria-label="Configurações">
+ *       <ul class="al-tabs al-tabs--square">
+ *         <li><a class="al-tab" href="/conta" aria-current="page">
+ *           <span class="al-tab__label">Conta</span></a></li>
+ *         <li><a class="al-tab" href="/equipe">
+ *           <span class="al-tab__label">Equipe</span></a></li>
+ *       </ul>
+ *     </nav>
+ *
+ * POR QUE O VISUAL MORA NO __label
+ *   No Figma o Line e uma caixa de rotulo (fundo, raio, anel) com a linha 8px
+ *   abaixo dela. O fundo do hover pinta so a caixa, nunca o espaco ate a
+ *   linha. Por isso fundo, raio, padding, cor e anel ficam no __label; a aba
+ *   (.al-tab) e so o alvo de clique e, no Line, carrega o espaco e a linha.
+ *   Alturas: Square 32 = 4 + 24 + 4; Line 42 = 32 + 8 + 2 - derivadas, sem
+ *   height fixo.
+ *
+ * SELECIONADA = aria-selected="true" (painel) OU aria-current (navegacao)
+ *   O estado sai da marcacao que o leitor de tela ja le - nunca de uma classe,
+ *   que poderia discordar do que e anunciado.
+ *
+ * FOCO E REPOUSO + ANEL
+ *   O fundo nao muda no foco; o anel e desenhado na caixa do rotulo, como no
+ *   Figma. So aparece por teclado (:focus-visible). O bg/canvas que o Figma
+ *   usa nas variantes de foco e so para o Figma projetar o anel.
+ *
+ * ALTO CONTRASTE (regra 24)
+ *   `forced-colors` apaga fundos e pinta toda borda com a cor do texto - o
+ *   Line perderia a diferenca entre linha cinza e laranja, e a Square
+ *   selecionada perderia o fundo. Ali a linha comum some (cor do fundo), a
+ *   selecionada fica `Highlight`, a Square selecionada ganha contorno e o foco
+ *   ganha o contorno `Highlight` - mesmo padrao do Button e do Card.
+ *
+ * SEM DISABLED, POR DECISAO (regra 18).
+ */
+
+/* ----------------------------------------------------------------- grupo */
+.al-tabs {
+  display: flex;
+  align-items: flex-end;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.al-tabs > li {
+  display: flex;
+}
+
+/* ------------------------------------------------------------------- aba */
+.al-tab {
+  box-sizing: border-box;
+  display: flex;
+  margin: 0;
+  padding: 0 0 var(--al-tab-line-gap);
+  border: 0;
+  border-bottom: var(--al-tab-line-indicator-width) solid var(--al-tab-line-indicator);
+  background: none;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.al-tab:focus-visible {
+  outline: none;
+}
+
+.al-tab__label {
+  display: block;
+  padding: var(--al-tab-padding-y) var(--al-tab-padding-x);
+  border-radius: var(--al-tab-radius);
+  background-color: transparent;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-tab-label-font-size);
+  line-height: var(--al-tab-label-line-height);
+  font-weight: var(--al-tab-label-font-weight);
+  letter-spacing: var(--al-tab-label-tracking);
+  white-space: nowrap;
+  color: var(--al-tab-label);
+  transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+/* nao selecionada - hover e pressed escurecem o rotulo (bloqueante 1) */
+.al-tab:hover .al-tab__label {
+  background-color: var(--al-tab-bg-hover);
+  color: var(--al-tab-label-hover);
+}
+
+.al-tab:active .al-tab__label {
+  background-color: var(--al-tab-bg-active);
+  color: var(--al-tab-label-active);
+}
+
+.al-tab:focus-visible .al-tab__label {
+  box-shadow: var(--al-tab-ring);
+}
+
+/* -------------------------------------------------------- Line selecionada */
+/* A linha laranja marca; o rotulo e text-primary em todo estado (decisao A).
+   Hover e pressed mantem os fundos neutros de cima. */
+.al-tab[aria-selected="true"],
+.al-tab[aria-current]:not([aria-current="false"]) {
+  border-bottom-color: var(--al-tab-line-indicator-selected);
+}
+
+.al-tab[aria-selected="true"] .al-tab__label,
+.al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  color: var(--al-tab-line-label-selected);
+}
+
+/* ------------------------------------------------------------------ Square */
+.al-tabs--square .al-tab {
+  padding: 0;
+  border-bottom: 0;
+}
+
+/* selecionada: tonal em repouso e foco, marca no hover e no pressed (C, F, G).
+   O pressed de selecionada vale so para a aba que JA estava aberta: a que o
+   clique acabou de abrir leva data-al-just-selected (tab.js) e fica no hover.
+   Sem isso, no Safari, a aba nao selecionada apertada ia de bg-active para
+   brand-active - o Figma pede bg-active ate soltar. */
+.al-tabs--square .al-tab[aria-selected="true"] .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected);
+  color: var(--al-tab-square-label-selected);
+}
+
+.al-tabs--square .al-tab[aria-selected="true"]:hover .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):hover .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected-hover);
+  color: var(--al-tab-square-label-selected-hover);
+}
+
+.al-tabs--square .al-tab[aria-selected="true"]:active:not([data-al-just-selected]) .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):active .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected-active);
+  color: var(--al-tab-square-label-selected-active);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-tab__label {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-tab {
+    border-bottom-color: Canvas;
+  }
+
+  .al-tab[aria-selected="true"],
+  .al-tab[aria-current]:not([aria-current="false"]) {
+    border-bottom-color: Highlight;
+  }
+
+  .al-tabs--square .al-tab[aria-selected="true"] .al-tab__label,
+  .al-tabs--square .al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+
+  .al-tab:focus-visible .al-tab__label {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}

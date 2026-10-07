@@ -7,7 +7,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.15.0 - MIT
+ * v0.16.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -1055,6 +1055,43 @@
   --al-card-description-line-height: var(--al-line-height-md);
   --al-card-description-font-weight: 400;
   --al-card-description-tracking: 0em;
+
+
+  /* os dois tipos, aba nao selecionada - hover e pressed escurecem o rotulo */
+  --al-tab-label: var(--al-text-secondary);
+  --al-tab-label-hover: var(--al-text-primary);
+  --al-tab-label-active: var(--al-text-primary);
+  --al-tab-bg-hover: var(--al-bg-hover);
+  --al-tab-bg-active: var(--al-bg-active);
+
+  /* Line - a linha e de cada aba; a laranja e quem marca a selecao */
+  --al-tab-line-label-selected: var(--al-text-primary);
+  --al-tab-line-indicator: var(--al-border-subtle);
+  --al-tab-line-indicator-selected: var(--al-border-brand);
+
+  /* Square selecionado - tonal em repouso, marca no hover e no pressed */
+  --al-tab-square-bg-selected: var(--al-bg-brand-subtle);
+  --al-tab-square-label-selected: var(--al-text-brand);
+  --al-tab-square-bg-selected-hover: var(--al-bg-brand-hover);
+  --al-tab-square-label-selected-hover: var(--al-text-on-brand);
+  --al-tab-square-bg-selected-active: var(--al-bg-brand-active);
+  --al-tab-square-label-selected-active: var(--al-text-on-brand);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-tab-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-tab-padding-x: var(--al-space-12);
+  --al-tab-padding-y: var(--al-space-4);
+  --al-tab-radius: var(--al-radius-lg);
+  --al-tab-line-gap: var(--al-space-8);
+  --al-tab-line-indicator-width: var(--al-border-width-2);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-tab-label-font-size: var(--al-font-size-md);
+  --al-tab-label-line-height: var(--al-line-height-md);
+  --al-tab-label-font-weight: 400;
+  --al-tab-label-tracking: 0em;
 }
 
 /* AL Design System - tokens do Button
@@ -4995,6 +5032,252 @@
   }
 }
 
+/* AL Design System - tokens do Tab
+ * GERADO por components/tab/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ */
+
+:root {
+
+  /* os dois tipos, aba nao selecionada - hover e pressed escurecem o rotulo */
+  --al-tab-label: var(--al-text-secondary);
+  --al-tab-label-hover: var(--al-text-primary);
+  --al-tab-label-active: var(--al-text-primary);
+  --al-tab-bg-hover: var(--al-bg-hover);
+  --al-tab-bg-active: var(--al-bg-active);
+
+  /* Line - a linha e de cada aba; a laranja e quem marca a selecao */
+  --al-tab-line-label-selected: var(--al-text-primary);
+  --al-tab-line-indicator: var(--al-border-subtle);
+  --al-tab-line-indicator-selected: var(--al-border-brand);
+
+  /* Square selecionado - tonal em repouso, marca no hover e no pressed */
+  --al-tab-square-bg-selected: var(--al-bg-brand-subtle);
+  --al-tab-square-label-selected: var(--al-text-brand);
+  --al-tab-square-bg-selected-hover: var(--al-bg-brand-hover);
+  --al-tab-square-label-selected-hover: var(--al-text-on-brand);
+  --al-tab-square-bg-selected-active: var(--al-bg-brand-active);
+  --al-tab-square-label-selected-active: var(--al-text-on-brand);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-tab-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-tab-padding-x: var(--al-space-12);
+  --al-tab-padding-y: var(--al-space-4);
+  --al-tab-radius: var(--al-radius-lg);
+  --al-tab-line-gap: var(--al-space-8);
+  --al-tab-line-indicator-width: var(--al-border-width-2);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-tab-label-font-size: var(--al-font-size-md);
+  --al-tab-label-line-height: var(--al-line-height-md);
+  --al-tab-label-font-weight: 400;
+  --al-tab-label-tracking: 0em;
+}
+
+/* AL Design System - Tab
+ * Escrito a mao. Depende de al-foundation.css e al-tab-tokens.css, nesta
+ * ordem.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, anel e tipografia entram por
+ * var(--al-tab-*). O check.py ao lado recusa o arquivo se algum escapar.
+ * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
+ * de motion na Foundation - igual ao Button, ao Input e ao Card.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   O tipo e do GRUPO, nao da aba: um grupo nunca mistura Line e Square
+ *   (regra 6). (nenhum) = Line | .al-tabs--square = Square.
+ *
+ *   painel na mesma tela (regra 21) - padrao de abas da APG:
+ *     <div class="al-tabs" role="tablist" aria-label="Pedido">
+ *       <button class="al-tab" role="tab" type="button" id="t-resumo"
+ *               aria-selected="true" aria-controls="p-resumo">
+ *         <span class="al-tab__label">Resumo</span>
+ *       </button>
+ *       <button class="al-tab" role="tab" type="button" id="t-hist"
+ *               aria-selected="false" aria-controls="p-hist" tabindex="-1">
+ *         <span class="al-tab__label">Histórico</span>
+ *       </button>
+ *     </div>
+ *     <div role="tabpanel" id="p-resumo" aria-labelledby="t-resumo" tabindex="0">
+ *       ...comeca com um titulo igual ao rotulo da aba (regra 25)
+ *     </div>
+ *     So a aba selecionada fica em tabindex 0; setas, Home e End movem o foco
+ *     e ativam a aba (automatica) - ou so movem, e Enter/Espaco ativam quando o
+ *     painel carrega da rede. Isso e comportamento: vive no script da pagina.
+ *
+ *   navegacao entre paginas (regra 22) - links, nunca role="tab":
+ *     <nav aria-label="Configurações">
+ *       <ul class="al-tabs al-tabs--square">
+ *         <li><a class="al-tab" href="/conta" aria-current="page">
+ *           <span class="al-tab__label">Conta</span></a></li>
+ *         <li><a class="al-tab" href="/equipe">
+ *           <span class="al-tab__label">Equipe</span></a></li>
+ *       </ul>
+ *     </nav>
+ *
+ * POR QUE O VISUAL MORA NO __label
+ *   No Figma o Line e uma caixa de rotulo (fundo, raio, anel) com a linha 8px
+ *   abaixo dela. O fundo do hover pinta so a caixa, nunca o espaco ate a
+ *   linha. Por isso fundo, raio, padding, cor e anel ficam no __label; a aba
+ *   (.al-tab) e so o alvo de clique e, no Line, carrega o espaco e a linha.
+ *   Alturas: Square 32 = 4 + 24 + 4; Line 42 = 32 + 8 + 2 - derivadas, sem
+ *   height fixo.
+ *
+ * SELECIONADA = aria-selected="true" (painel) OU aria-current (navegacao)
+ *   O estado sai da marcacao que o leitor de tela ja le - nunca de uma classe,
+ *   que poderia discordar do que e anunciado.
+ *
+ * FOCO E REPOUSO + ANEL
+ *   O fundo nao muda no foco; o anel e desenhado na caixa do rotulo, como no
+ *   Figma. So aparece por teclado (:focus-visible). O bg/canvas que o Figma
+ *   usa nas variantes de foco e so para o Figma projetar o anel.
+ *
+ * ALTO CONTRASTE (regra 24)
+ *   `forced-colors` apaga fundos e pinta toda borda com a cor do texto - o
+ *   Line perderia a diferenca entre linha cinza e laranja, e a Square
+ *   selecionada perderia o fundo. Ali a linha comum some (cor do fundo), a
+ *   selecionada fica `Highlight`, a Square selecionada ganha contorno e o foco
+ *   ganha o contorno `Highlight` - mesmo padrao do Button e do Card.
+ *
+ * SEM DISABLED, POR DECISAO (regra 18).
+ */
+
+/* ----------------------------------------------------------------- grupo */
+.al-tabs {
+  display: flex;
+  align-items: flex-end;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.al-tabs > li {
+  display: flex;
+}
+
+/* ------------------------------------------------------------------- aba */
+.al-tab {
+  box-sizing: border-box;
+  display: flex;
+  margin: 0;
+  padding: 0 0 var(--al-tab-line-gap);
+  border: 0;
+  border-bottom: var(--al-tab-line-indicator-width) solid var(--al-tab-line-indicator);
+  background: none;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.al-tab:focus-visible {
+  outline: none;
+}
+
+.al-tab__label {
+  display: block;
+  padding: var(--al-tab-padding-y) var(--al-tab-padding-x);
+  border-radius: var(--al-tab-radius);
+  background-color: transparent;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-tab-label-font-size);
+  line-height: var(--al-tab-label-line-height);
+  font-weight: var(--al-tab-label-font-weight);
+  letter-spacing: var(--al-tab-label-tracking);
+  white-space: nowrap;
+  color: var(--al-tab-label);
+  transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+/* nao selecionada - hover e pressed escurecem o rotulo (bloqueante 1) */
+.al-tab:hover .al-tab__label {
+  background-color: var(--al-tab-bg-hover);
+  color: var(--al-tab-label-hover);
+}
+
+.al-tab:active .al-tab__label {
+  background-color: var(--al-tab-bg-active);
+  color: var(--al-tab-label-active);
+}
+
+.al-tab:focus-visible .al-tab__label {
+  box-shadow: var(--al-tab-ring);
+}
+
+/* -------------------------------------------------------- Line selecionada */
+/* A linha laranja marca; o rotulo e text-primary em todo estado (decisao A).
+   Hover e pressed mantem os fundos neutros de cima. */
+.al-tab[aria-selected="true"],
+.al-tab[aria-current]:not([aria-current="false"]) {
+  border-bottom-color: var(--al-tab-line-indicator-selected);
+}
+
+.al-tab[aria-selected="true"] .al-tab__label,
+.al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  color: var(--al-tab-line-label-selected);
+}
+
+/* ------------------------------------------------------------------ Square */
+.al-tabs--square .al-tab {
+  padding: 0;
+  border-bottom: 0;
+}
+
+/* selecionada: tonal em repouso e foco, marca no hover e no pressed (C, F, G).
+   O pressed de selecionada vale so para a aba que JA estava aberta: a que o
+   clique acabou de abrir leva data-al-just-selected (tab.js) e fica no hover.
+   Sem isso, no Safari, a aba nao selecionada apertada ia de bg-active para
+   brand-active - o Figma pede bg-active ate soltar. */
+.al-tabs--square .al-tab[aria-selected="true"] .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected);
+  color: var(--al-tab-square-label-selected);
+}
+
+.al-tabs--square .al-tab[aria-selected="true"]:hover .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):hover .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected-hover);
+  color: var(--al-tab-square-label-selected-hover);
+}
+
+.al-tabs--square .al-tab[aria-selected="true"]:active:not([data-al-just-selected]) .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):active .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected-active);
+  color: var(--al-tab-square-label-selected-active);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-tab__label {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-tab {
+    border-bottom-color: Canvas;
+  }
+
+  .al-tab[aria-selected="true"],
+  .al-tab[aria-current]:not([aria-current="false"]) {
+    border-bottom-color: Highlight;
+  }
+
+  .al-tabs--square .al-tab[aria-selected="true"] .al-tab__label,
+  .al-tabs--square .al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+
+  .al-tab:focus-visible .al-tab__label {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -5654,13 +5937,42 @@ footer code{background:none; padding:0}
   .cd-mx-row{grid-template-columns:minmax(0,1fr)}
   .cd-mx-row--head{display:none}
 }
+
+/* ── páginas do Tab ──
+   Casca do site. A aba em si é sempre o .al-tab, do tab.css real. Os exemplos
+   "a evitar" usam .tb-fake, nunca um .al-tab errado. */
+.tb-page{width:100%; max-width:440px; padding:24px; border-radius:12px; text-align:left}
+.tb-page[data-tbpage="surface"], .tb-stage[data-tbpage="surface"], .tb-panel[data-tbpage="surface"]{background:var(--al-bg-surface)}
+.tb-page[data-tbpage="canvas"], .tb-stage[data-tbpage="canvas"], .tb-panel[data-tbpage="canvas"]{background:var(--al-bg-canvas)}
+.tb-page[data-tbpage="canvas"], .tb-panel[data-tbpage="canvas"]{outline:1px dashed var(--al-border-default); outline-offset:-1px}
+.dd .stage2.tb-stage{display:block; padding:20px; overflow-x:auto}
+.dd .stage2.tb-col{display:flex; flex-direction:column; align-items:flex-start; gap:16px}
+.tb-tabpanel{padding-top:16px}
+.tb-tabpanel:focus-visible{outline:none; box-shadow:var(--al-focus-ring-default); border-radius:6px}
+.tb-tabpanel p{margin:4px 0 0; font-size:14px; color:var(--al-text-secondary)}
+.tb-ptitle{margin:0; font-size:16px; line-height:24px; font-weight:600; letter-spacing:0}
+.tb-stack{flex-direction:column; align-items:flex-start}
+.tb-panel{padding:20px; border-radius:12px; overflow-x:auto}
+.tb-mx{display:flex; flex-direction:column; gap:16px; min-width:620px}
+.tb-mx-row{display:grid; grid-template-columns:64px repeat(4, minmax(0,1fr)); gap:16px; align-items:end}
+.tb-mx-lab{font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary); align-self:center}
+.tb-rgroup{margin:28px 0 4px; font-family:var(--al-font-mono); font-size:10.5px; font-weight:500;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--al-text-secondary)}
+.tb-fake{display:flex; font-size:16px; line-height:24px}
+.tb-fake span{padding:4px 12px 8px; color:var(--al-text-secondary); white-space:nowrap;
+  border-bottom:2px solid var(--al-border-subtle)}
+.tb-fake span.on{color:var(--al-text-primary); border-bottom-color:var(--al-border-brand)}
+.tb-fake--square span{padding:4px 12px; border-bottom:0; border-radius:8px}
+.tb-fake--square span.on{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+.th-tab{display:flex; flex-direction:column; align-items:flex-start; gap:12px; transform:scale(.8); transform-origin:center}
 </style>
 
 <div class="shell">
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.15.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.16.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -5696,6 +6008,7 @@ footer code{background:none; padding:0}
         <a href="#/password" data-page="password">Password</a>
         <a href="#/divider" data-page="divider">Divider</a>
         <a href="#/card" data-page="card">Card</a>
+        <a href="#/tab" data-page="tab">Tab</a>
       </div>
     </div>
   </div>
@@ -5810,7 +6123,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.15.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.16.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -5840,7 +6153,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.15.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.16.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -6470,6 +6783,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/textarea" data-page="textarea"><div class="card-thumb"><div class="th-textarea" aria-hidden="true"><span class="th-textarea__label">Descrição</span><span class="th-textarea__field">O que aconteceu<br>e quando</span></div></div><div class="card-body"><span class="card-title">Textarea</span><span class="card-desc">Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.</span></div></a>
     <a class="card" href="#/divider" data-page="divider"><div class="card-thumb"><div class="th-divider"><span></span><span></span><hr class="al-divider" aria-hidden="true"><span></span></div></div><div class="card-body"><span class="card-title">Divider</span><span class="card-desc">A linha entre dois grupos de conteúdo. É o &lt;hr&gt; nativo, horizontal ou vertical — e entra só quando o espaço não basta.</span></div></a>
     <a class="card" href="#/card" data-page="card"><div class="card-thumb"><div class="th-card"><div class="al-card al-card--border al-card--tight"><span></span><span></span></div><div class="al-card al-card--elevated al-card--tight"><span></span><span></span></div></div></div><div class="card-body"><span class="card-title">Card</span><span class="card-desc">Um assunto num contêiner. Três tipos, três paddings, e o clicável inteiro feito com um link de verdade no título.</span></div></a>
+    <a class="card" href="#/tab" data-page="tab"><div class="card-thumb"><div class="th-tab" aria-hidden="true" inert><div class="al-tabs"><span class="al-tab" aria-selected="true"><span class="al-tab__label">Resumo</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Entrega</span></span></div><div class="al-tabs al-tabs--square"><span class="al-tab" aria-selected="false"><span class="al-tab__label">Dia</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label">Semana</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Mês</span></span></div></div></div><div class="card-body"><span class="card-title">Tab</span><span class="card-desc">Troca de conteúdo na mesma tela, ou navegação entre páginas com o mesmo visual. Line e Square, e o primeiro componente com script próprio.</span></div></a>
   </div>
 </section>
 
@@ -6478,7 +6792,7 @@ footer code{background:none; padding:0}
   <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
   disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
   sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
-  e seguiu pelo Card. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
+  seguiu pelo Card e chegou ao Tab. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
   auditar.</p>
 </section></div></div>
 <div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">48 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
@@ -11951,8 +12265,397 @@ footer code{background:none; padding:0}
     <div><b>Movimento reduzido</b><span>A transição de 120ms é desligada.</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-tab" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Tab</h1><p class="lede">Troca o conteúdo na mesma tela sem sair dela, ou leva a outra página com o mesmo visual. Line marca a selecionada com a linha; Square, com o bloco tonal. É o primeiro componente do AL com script próprio, que liga o teclado do padrão de abas.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">16 variantes no Figma</span><span class="badge">21 tokens</span><span class="badge">4 exceções declaradas</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Tab"><button role="tab" id="t-tab-overview" aria-controls="p-tab-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-tab-specs" aria-controls="p-tab-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-tab-guide" aria-controls="p-tab-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-tab-a11y" aria-controls="p-tab-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-tab-overview" role="tabpanel" aria-labelledby="t-tab-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="tab-stage"><div class="tb-page" data-tbpage="canvas"><div class="al-tabs" role="tablist" aria-label="Pedido #1042"><button class="al-tab" role="tab" type="button" id="tbpg-t-resumo" aria-selected="true" aria-controls="tbpg-p-resumo"><span class="al-tab__label">Resumo</span></button><button class="al-tab" role="tab" type="button" id="tbpg-t-itens" aria-selected="false" aria-controls="tbpg-p-itens" tabindex="-1"><span class="al-tab__label">Itens</span></button><button class="al-tab" role="tab" type="button" id="tbpg-t-entrega" aria-selected="false" aria-controls="tbpg-p-entrega" tabindex="-1"><span class="al-tab__label">Entrega</span></button></div><div class="tb-tabpanel" role="tabpanel" id="tbpg-p-resumo" aria-labelledby="tbpg-t-resumo" tabindex="0"><h4 class="tb-ptitle">Resumo</h4><p>3 itens · R$ 412,00 · pago no cartão.</p></div><div class="tb-tabpanel" role="tabpanel" id="tbpg-p-itens" aria-labelledby="tbpg-t-itens" tabindex="0" hidden><h4 class="tb-ptitle">Itens</h4><p>Caneca, camiseta e adesivos.</p></div><div class="tb-tabpanel" role="tabpanel" id="tbpg-p-entrega" aria-labelledby="tbpg-t-entrega" tabindex="0" hidden><h4 class="tb-ptitle">Entrega</h4><p>Chega entre 9 e 11 de outubro.</p></div></div></div>
+    <div class="controls" id="tab-controls">
+      <div class="ctl"><span class="ctl-name">Tipo</span><div class="seg" role="radiogroup" aria-label="tbtype">
+<input type="radio" id="tbtype-line" name="tbtype" value="line" checked><label for="tbtype-line">Line</label>
+<input type="radio" id="tbtype-square" name="tbtype" value="square"><label for="tbtype-square">Square</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Uso</span><div class="seg" role="radiogroup" aria-label="tbuse">
+<input type="radio" id="tbuse-panel" name="tbuse" value="panel" checked><label for="tbuse-panel">Painel</label>
+<input type="radio" id="tbuse-nav" name="tbuse" value="nav"><label for="tbuse-nav">Navegação</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Página</span><div class="seg" role="radiogroup" aria-label="tbpage">
+<input type="radio" id="tbpage-canvas" name="tbpage" value="canvas" checked><label for="tbpage-canvas">Tela</label>
+<input type="radio" id="tbpage-surface" name="tbpage" value="surface"><label for="tbpage-surface">Superfície</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="tbtheme">
+<input type="radio" id="tbtheme-auto" name="tbtheme" value="auto" checked><label for="tbtheme-auto">Do sistema</label>
+<input type="radio" id="tbtheme-light" name="tbtheme" value="light"><label for="tbtheme-light">Claro</label>
+<input type="radio" id="tbtheme-dark" name="tbtheme" value="dark"><label for="tbtheme-dark">Escuro</label>
+</div></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="tab-copy">Copiar</button></div>
+      <pre><code id="tab-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Em <b>Painel</b>, tabule até o grupo: o Tab para uma vez, na aba aberta, e as setas trocam de
+    aba e de painel. Em <b>Navegação</b>, o mesmo visual vira lista de links, e o Tab passa por
+    todos. Troque o <b>Tema</b> para escuro com a Square para ver a seleção tonal.
+  </p>
+</section>
+
+<section>
+  <h2>Line ou Square</h2>
+  <p>O tipo é do grupo, não da aba. Um grupo nunca mistura os dois.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Line · seções de uma página</span>
+      <div class="stage2 tb-stage" data-tbpage="canvas"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="true"><span class="al-tab__label">Visão geral</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Atividade</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Arquivos</span></span></div></div>
+      <p class="cap">Seções de página, de dentro de um card ou modal, e a navbar horizontal. Quem
+      marca a selecionada é a linha laranja.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Square · área delimitada e sidebar</span>
+      <div class="stage2 tb-stage" data-tbpage="surface"><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label">Diário</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label">Semanal</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Mensal</span></span></div></div>
+      <p class="cap">Grupo com mais ênfase, o segundo nível dentro de um painel, e os itens de
+      sidebar. Selecionada tonal; no hover e no pressed, a marca.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Painel ou navegação</h2>
+  <p>O mesmo componente serve aos dois usos, com marcações diferentes. Quando o conteúdo troca na
+  mesma tela, é grupo de abas. Quando cada item leva a outra página, é lista de links.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Painel · ao vivo</span>
+      <div class="stage2 tb-stage tb-live" data-tbpage="canvas"><div class="al-tabs" role="tablist" aria-label="Cliente"><button class="al-tab" role="tab" type="button" id="tbov-t-cadastro" aria-selected="true" aria-controls="tbov-p-cadastro"><span class="al-tab__label">Cadastro</span></button><button class="al-tab" role="tab" type="button" id="tbov-t-pedidos" aria-selected="false" aria-controls="tbov-p-pedidos" tabindex="-1"><span class="al-tab__label">Pedidos</span></button><button class="al-tab" role="tab" type="button" id="tbov-t-notas" aria-selected="false" aria-controls="tbov-p-notas" tabindex="-1"><span class="al-tab__label">Notas</span></button></div><div class="tb-tabpanel" role="tabpanel" id="tbov-p-cadastro" aria-labelledby="tbov-t-cadastro" tabindex="0"><h4 class="tb-ptitle">Cadastro</h4><p>Nome, documento e contatos.</p></div><div class="tb-tabpanel" role="tabpanel" id="tbov-p-pedidos" aria-labelledby="tbov-t-pedidos" tabindex="0" hidden><h4 class="tb-ptitle">Pedidos</h4><p>Os 12 pedidos dos últimos seis meses.</p></div><div class="tb-tabpanel" role="tabpanel" id="tbov-p-notas" aria-labelledby="tbov-t-notas" tabindex="0" hidden><h4 class="tb-ptitle">Notas</h4><p>Observações da equipe de atendimento.</p></div></div>
+      <p class="cap"><code>role="tablist"</code>, uma parada de Tab, setas para trocar. O painel
+      começa com o mesmo nome da aba. <i>APG, Primer.</i></p>
+    </div>
+    <div class="cell do">
+      <span class="lab">Navegação · ao vivo</span>
+      <div class="stage2 tb-stage tb-live" data-tbpage="surface"><nav aria-label="Configurações"><ul class="al-tabs al-tabs--square tb-stack"><li><a class="al-tab" href="#/tab"><span class="al-tab__label">Geral</span></a></li><li><a class="al-tab" href="#/tab" aria-current="page"><span class="al-tab__label">Equipe</span></a></li><li><a class="al-tab" href="#/tab"><span class="al-tab__label">Integrações</span></a></li><li><a class="al-tab" href="#/tab"><span class="al-tab__label">Cobrança</span></a></li></ul></nav></div>
+      <p class="cap"><code>&lt;nav&gt;</code> com links e <code>aria-current="page"</code> no
+      atual. Sidebar sempre em Square. <i>Primer NavList.</i></p>
+    </div>
+  </div>
+</section></div><div class="panel" id="p-tab-specs" role="tabpanel" aria-labelledby="t-tab-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Grupo</b><span><code>.al-tabs</code>. Leva o tipo: nenhum modificador é Line, <code>--square</code> é Square.</span></div>
+    <div><b>Aba</b><span><code>.al-tab</code>: <code>&lt;button role="tab"&gt;</code> no painel, <code>&lt;a href&gt;</code> na navegação. É o alvo do clique e, no Line, carrega o espaço e a linha.</span></div>
+    <div><b>Caixa do rótulo</b><span><code>.al-tab__label</code>: fundo, canto, padding, cor e anel de foco. O hover pinta só ela, nunca o espaço até a linha.</span></div>
+    <div><b>Linha</b><span>Só no Line: 2px, cinza na aba comum e laranja na selecionada, 8px abaixo da caixa.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As 16 variantes</h2>
+  <p>Em cada célula, “Itens” é a aba não selecionada e “Resumo” a selecionada. Hover, pressed e
+  foco estão congelados, escritos direto na caixa do rótulo com os mesmos tokens que o seletor
+  usa.</p>
+  <div class="tb-panel" data-tbpage="canvas" style="margin-top:16px"><div class="tb-mx"><div class="tb-mx-row tb-mx-row--head"><span></span><span class="tb-mx-lab">Repouso</span><span class="tb-mx-lab">Hover</span><span class="tb-mx-lab">Pressed</span><span class="tb-mx-lab">Foco</span></div><div class="tb-mx-row"><span class="tb-mx-lab">Line</span><div><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label">Resumo</span></span></div></div><div><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-label-hover)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-line-label-selected)">Resumo</span></span></div></div><div><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-label-active)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-line-label-selected)">Resumo</span></span></div></div><div><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Resumo</span></span></div></div></div><div class="tb-mx-row"><span class="tb-mx-lab">Square</span><div><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label">Resumo</span></span></div></div><div><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-label-hover)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="background-color: var(--al-tab-square-bg-selected-hover); color: var(--al-tab-square-label-selected-hover)">Resumo</span></span></div></div><div><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-label-active)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="background-color: var(--al-tab-square-bg-selected-active); color: var(--al-tab-square-label-selected-active)">Resumo</span></span></div></div><div><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Resumo</span></span></div></div></div></div></div>
+  <div class="tb-panel" data-tbpage="surface" style="margin-top:12px"><div class="tb-mx"><div class="tb-mx-row tb-mx-row--head"><span></span><span class="tb-mx-lab">Repouso</span><span class="tb-mx-lab">Hover</span><span class="tb-mx-lab">Pressed</span><span class="tb-mx-lab">Foco</span></div><div class="tb-mx-row"><span class="tb-mx-lab">Line</span><div><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label">Resumo</span></span></div></div><div><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-label-hover)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-line-label-selected)">Resumo</span></span></div></div><div><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-label-active)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-line-label-selected)">Resumo</span></span></div></div><div><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Resumo</span></span></div></div></div><div class="tb-mx-row"><span class="tb-mx-lab">Square</span><div><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label">Resumo</span></span></div></div><div><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="background-color: var(--al-tab-bg-hover); color: var(--al-tab-label-hover)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="background-color: var(--al-tab-square-bg-selected-hover); color: var(--al-tab-square-label-selected-hover)">Resumo</span></span></div></div><div><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="background-color: var(--al-tab-bg-active); color: var(--al-tab-label-active)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="background-color: var(--al-tab-square-bg-selected-active); color: var(--al-tab-square-label-selected-active)">Resumo</span></span></div></div><div><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Itens</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label" style="box-shadow: var(--al-tab-ring)">Resumo</span></span></div></div></div></div></div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Tab</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody><tr><td class="tok">--al-tab-label</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-tab-label-hover</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td><td class="tok dim"><span class="chip sm" style="background:#F7F7F7"></span>#F7F7F7</td></tr>
+<tr><td class="tok">--al-tab-label-active</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td><td class="tok dim"><span class="chip sm" style="background:#F7F7F7"></span>#F7F7F7</td></tr>
+<tr><td class="tok">--al-tab-bg-hover</td><td class="tok dim">bg-hover</td><td class="tok dim"><span class="chip sm" style="background:#EEEEEE"></span>#EEEEEE</td><td class="tok dim"><span class="chip sm" style="background:#3E3E3E"></span>#3E3E3E</td></tr>
+<tr><td class="tok">--al-tab-bg-active</td><td class="tok dim">bg-active</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td><td class="tok dim"><span class="chip sm" style="background:#565656"></span>#565656</td></tr>
+<tr><td class="tok">--al-tab-line-label-selected</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td><td class="tok dim"><span class="chip sm" style="background:#F7F7F7"></span>#F7F7F7</td></tr>
+<tr><td class="tok">--al-tab-line-indicator</td><td class="tok dim">border-subtle</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td><td class="tok dim"><span class="chip sm" style="background:#3E3E3E"></span>#3E3E3E</td></tr>
+<tr><td class="tok">--al-tab-line-indicator-selected</td><td class="tok dim">border-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-tab-square-bg-selected</td><td class="tok dim">bg-brand-subtle</td><td class="tok dim"><span class="chip sm" style="background:#FFEADE"></span>#FFEADE</td><td class="tok dim"><span class="chip sm" style="background:#2D0D00"></span>#2D0D00</td></tr>
+<tr><td class="tok">--al-tab-square-label-selected</td><td class="tok dim">text-brand</td><td class="tok dim"><span class="chip sm" style="background:#992700"></span>#992700</td><td class="tok dim"><span class="chip sm" style="background:#FF9267"></span>#FF9267</td></tr>
+<tr><td class="tok">--al-tab-square-bg-selected-hover</td><td class="tok dim">bg-brand-hover</td><td class="tok dim"><span class="chip sm" style="background:#C53900"></span>#C53900</td><td class="tok dim"><span class="chip sm" style="background:#EA4900"></span>#EA4900</td></tr>
+<tr><td class="tok">--al-tab-square-label-selected-hover</td><td class="tok dim">text-on-brand</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr><td class="tok">--al-tab-square-bg-selected-active</td><td class="tok dim">bg-brand-active</td><td class="tok dim"><span class="chip sm" style="background:#992700"></span>#992700</td><td class="tok dim"><span class="chip sm" style="background:#C53900"></span>#C53900</td></tr>
+<tr><td class="tok">--al-tab-square-label-selected-active</td><td class="tok dim">text-on-brand</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td></tr>
+<tr><td class="tok">--al-tab-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim"><span class="dim">sombra composta</span></td><td class="tok dim"><span class="dim">sombra composta</span></td></tr>
+<tr><td class="tok">--al-tab-padding-x</td><td class="tok dim">space.12</td><td class="tok dim">12px</td><td class="tok dim">12px</td></tr>
+<tr><td class="tok">--al-tab-padding-y</td><td class="tok dim">space.4</td><td class="tok dim">4px</td><td class="tok dim">4px</td></tr>
+<tr><td class="tok">--al-tab-radius</td><td class="tok dim">radius.lg</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-tab-line-gap</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-tab-line-indicator-width</td><td class="tok dim">border.width.2</td><td class="tok dim">2px</td><td class="tok dim">2px</td></tr>
+<tr><td class="tok">--al-tab-label-font</td><td class="tok dim">type.styles.body-md</td><td class="tok dim">16/24 · 400</td><td class="tok dim">16/24 · 400</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Selecionada vem da marcação, nunca de classe</b>
+    O CSS lê <code>aria-selected="true"</code> no painel e <code>aria-current</code> na navegação:
+    o que o leitor de tela anuncia e o que a tela pinta não podem discordar.
+  </div>
+  <div class="note">
+    <b>Alturas derivadas</b>
+    Square tem 32px (4 + 24 + 4) e Line 42px (32 + 8 de espaço + 2 de linha). Nenhuma altura é
+    fixa: tudo sai do padding e da entrelinha.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>tab.js</code></b>
+    É o primeiro componente do AL com script próprio. Ele liga todo <code>.al-tabs[role="tablist"]</code>:
+    só a aba aberta entra no Tab, as setas trocam de aba e dão a volta, Home e End vão às pontas.
+    Com <code>data-activation="manual"</code> no grupo, as setas só movem o foco e Enter abre.
+    O painel que sai é escondido, nunca apagado. A navegação por links não precisa dele.
+  </div>
+  <div class="note">
+    <b>A aba aberta pelo clique não pinta o pressed de selecionada</b>
+    Alguns navegadores ainda consideram a aba apertada quando o clique a seleciona. O
+    <code>tab.js</code> marca essa aba com <code>data-al-just-selected</code> até o próximo aperto,
+    e ela fica no hover. Sem isso, a aba apertada ia do cinza para o laranja escuro antes de soltar.
+  </div>
+  <div class="note">
+    <b>Foco no Figma e no código</b>
+    No Figma as variantes de foco sem fundo levam <code>bg/canvas</code>, só para o anel aparecer.
+    No código a aba continua transparente e o anel é desenhado em volta da caixa do rótulo.
+  </div>
+</section></div><div class="panel" id="p-tab-guide" role="tabpanel" aria-labelledby="t-tab-guide" tabindex="0" hidden>
+<section>
+  <h2>Abas dentro de abas: no máximo dois níveis</h2>
+  <p>O primeiro nível é Line, o de dentro é Square, morando no painel da aba de cima. Um terceiro
+  nível pede outro padrão.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Line por fora, Square por dentro</span>
+      <div class="stage2 tb-stage tb-col" data-tbpage="canvas"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="true"><span class="al-tab__label">Cadastro</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Pedidos</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Notas</span></span></div><div class="al-tabs al-tabs--square" aria-hidden="true" inert><span class="al-tab" aria-selected="false"><span class="al-tab__label">Pessoais</span></span><span class="al-tab" aria-selected="true"><span class="al-tab__label">Endereço</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Pagamento</span></span></div></div>
+      <p class="cap">A linha separa as seções da página; o bloco tonal escolhe dentro delas.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Square por fora, Line por dentro</span>
+      <div class="stage2 tb-stage tb-col" data-tbpage="canvas"><div class="tb-fake tb-fake--square"><span class="on">Cadastro</span><span>Pedidos</span><span>Notas</span></div><div class="tb-fake"><span class="on">Pessoais</span><span>Endereço</span><span>Pagamento</span></div></div>
+      <p class="cap">O nível de dentro fica com mais peso que o de fora, e a hierarquia se inverte.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Rótulos curtos e paralelos</span>
+      <div class="stage2 tb-stage" data-tbpage="canvas"><div class="al-tabs" aria-hidden="true" inert><span class="al-tab" aria-selected="true"><span class="al-tab__label">Resumo</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Itens</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Entrega</span></span><span class="al-tab" aria-selected="false"><span class="al-tab__label">Histórico</span></span></div></div>
+      <p class="cap">Substantivos de uma palavra, todos do mesmo tipo.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Rótulo que vira frase</span>
+      <div class="stage2 tb-stage" data-tbpage="canvas"><div class="tb-fake"><span class="on">Resumo</span><span>Ver os itens do pedido</span><span>Entrega</span></div></div>
+      <p class="cap">Verbo, frase longa, nível diferente dos vizinhos. Escreva “Itens”.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  <h3 class="tb-rgroup">Quando usar</h3>
+<div class="rule"><div class="rn">01</div><div><h3>Conteúdos relacionados, do mesmo nível, na mesma tela</h3><p>Abas organizam irmãos, não pai e filho. Precedentes: Polaris, Carbon, Material.</p></div></div>
+<div class="rule"><div class="rn">02</div><div><h3>Não use para comparar</h3><p>Se a pessoa precisa ver duas abas ao mesmo tempo, mostre lado a lado. Precedentes: Carbon, Polaris.</p></div></div>
+<div class="rule"><div class="rn">03</div><div><h3>Não use para passos em sequência</h3><p>Abas não têm ordem obrigatória, e quem pula uma aba não pode deixar a tarefa quebrada. Precedente: Polaris.</p></div></div>
+<div class="rule"><div class="rn">04</div><div><h3>Line para página e navbar; Square para área delimitada e sidebar</h3><p>A linha só faz sentido na horizontal, por isso a sidebar é sempre Square. Precedentes: Carbon Line/Contained, Material.</p></div></div>
+<div class="rule"><div class="rn">05</div><div><h3>Item que leva a outra página é link</h3><p>Mesmo visual, marcação de navegação (regra 22). <b>Divergência consciente</b> do Primer, que tem dois componentes para isso.</p></div></div>
+<h3 class="tb-rgroup">Hierarquia e combinação</h3>
+<div class="rule"><div class="rn">06</div><div><h3>Um tipo por grupo</h3><p>Misturar Line e Square faz a seleção ser lida de dois jeitos. Precedentes: Carbon, Material.</p></div></div>
+<div class="rule"><div class="rn">07</div><div><h3>Exatamente uma selecionada</h3><p>Ao abrir, a primeira, a não ser que a tela lembre a última. Precedentes: Polaris, APG.</p></div></div>
+<div class="rule"><div class="rn">08</div><div><h3>De 2 a 6 abas</h3><p>Com uma só, é título. Acima de seis, navegação lateral. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">09</div><div><h3>O grupo cabe na largura</h3><p>Não há rolagem nesta versão. Se não cabe, encurte os rótulos ou troque de padrão; nunca duas linhas de abas. Precedente: Spectrum.</p></div></div>
+<h3 class="tb-rgroup">Tamanho e layout</h3>
+<div class="rule"><div class="rn">10</div><div><h3>Um tamanho</h3><p>Square 32px e Line 42px. Não redimensione: 32px já passa o alvo mínimo de 24px do WCAG 2.5.8.</p></div></div>
+<div class="rule"><div class="rn">11</div><div><h3>Abas coladas, sem espaço entre elas</h3><p>O respiro entre rótulos vem do padding de cada aba, e é isso que deixa a linha do Line contínua.</p></div></div>
+<div class="rule"><div class="rn">12</div><div><h3>A linha termina na última aba</h3><p>Não complete com um Divider: ele tem 1px e a linha da aba tem 2px, e o degrau aparece.</p></div></div>
+<div class="rule"><div class="rn">13</div><div><h3>O painel vem logo abaixo do grupo</h3><p>Nada entre as abas e o conteúdo que elas trocam. Precedentes: APG, Carbon.</p></div></div>
+<h3 class="tb-rgroup">Conteúdo</h3>
+<div class="rule"><div class="rn">14</div><div><h3>Rótulo de uma ou duas palavras</h3><p>Um substantivo que diga o que tem dentro: “Histórico”, não “Ver histórico”. Precedentes: Carbon, Polaris.</p></div></div>
+<div class="rule"><div class="rn">15</div><div><h3>Só a primeira letra maiúscula</h3><p>“Dados pessoais”, não “Dados Pessoais”. Precedente: Spectrum.</p></div></div>
+<div class="rule"><div class="rn">16</div><div><h3>O rótulo cabe numa linha</h3><p>Ele não quebra e não leva reticências. Se não cabe, reescreva, e conte com a tradução esticando o texto. Precedentes: Carbon, Spectrum.</p></div></div>
+<div class="rule"><div class="rn">17</div><div><h3>Rótulos paralelos</h3><p>Mesmo tipo de palavra e mesmo nível de detalhe no grupo. Precedente: Polaris.</p></div></div>
+<h3 class="tb-rgroup">Estados</h3>
+<div class="rule"><div class="rn">18</div><div><h3>Não existe aba desabilitada</h3><p>Conteúdo indisponível sai do grupo. Conteúdo vazio fica, e o painel explica o vazio. Precedentes: Primer, Polaris.</p></div></div>
+<div class="rule"><div class="rn">19</div><div><h3>Clicar na aba aberta não faz nada</h3><p>Não recarrega nem volta o painel para o topo.</p></div></div>
+<div class="rule"><div class="rn">20</div><div><h3>Trocar de aba não apaga o que foi digitado</h3><p>O painel que sai é escondido, nunca destruído.</p></div></div>
+<h3 class="tb-rgroup">Acessibilidade</h3>
+<div class="rule"><div class="rn">21</div><div><h3>Painel segue o padrão de abas da APG</h3><p>Grupo com nome, uma parada de Tab, setas, Home e End. A aba abre ao receber o foco quando o conteúdo já está na página; quando carrega da rede, só com Enter ou Espaço. Precedentes: APG, Primer.</p></div></div>
+<div class="rule"><div class="rn">22</div><div><h3>Navegação é lista de links</h3><p><code>&lt;nav&gt;</code> com nome, <code>aria-current="page"</code> no atual, o Tab passa por todos e as setas não fazem nada. Nunca <code>role="tab"</code> num link: promete um painel que não existe. Precedentes: Primer, APG.</p></div></div>
+<div class="rule"><div class="rn">23</div><div><h3>Foco é o repouso mais o anel</h3><p>O fundo não muda, e o anel só aparece pelo teclado. Precedentes: WCAG 2.4.7, Button, Input e Card do AL.</p></div></div>
+<div class="rule"><div class="rn">24</div><div><h3>No alto contraste a seleção continua visível</h3><p>A linha da selecionada fica na cor de destaque do sistema e a Square selecionada ganha contorno. Mesma lição do Divider.</p></div></div>
+<h3 class="tb-rgroup">Exceções de contraste, e o que as paga</h3>
+<div class="rule"><div class="rn">25</div><div><h3>O painel começa com um título igual ao rótulo</h3><p>É o que paga a <code>selecao-tonal</code>: no escuro a Square selecionada se distingue só pelo matiz, e o título diz onde a pessoa está. O leitor de tela já ouve “selecionada” ou “página atual”. Precedentes: Material, Carbon.</p></div></div>
+<div class="rule"><div class="rn">26</div><div><h3>A linha cinza é só trilho</h3><p><code>trilho-decorativo</code>: ela não comunica estado, então não use a cor para mais nada e não escureça para “corrigir”. <code>marca-no-hover-escuro</code> e <code>pressed-na-superficie-escura</code> são da marca, herdadas da Foundation e do Button.</p></div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Ícone e contador</b><span>Não entram nesta versão.</span></div>
+    <div><b>Rolagem</b><span>O grupo cabe na largura (regra 9).</span></div>
+    <div><b>Abas verticais</b><span>Grupo de painel vertical não existe. Sidebar empilhada é lista de links.</span></div>
+    <div><b>Fechar aba</b><span>Não existe.</span></div>
+    <div><b>Segundo tamanho</b><span>Um tamanho só (regra 10).</span></div>
+    <div><b>Desabilitada</b><span>Não existe (regra 18).</span></div>
+    <div><b>Item de sidebar cheio</b><span>Largura total com rótulo à esquerda fica para a sidebar do Tier 4.</span></div>
+  </div>
+</section></div><div class="panel" id="p-tab-a11y" role="tabpanel" aria-labelledby="t-tab-a11y" tabindex="0" hidden>
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede cada tema × página × tipo × selecionada × estado. O rótulo mede contra o fundo
+  da caixa quando ela tem fundo, e contra a página quando não tem. Linha, fundo da selecionada e
+  anel têm piso de 3:1. Um terceiro julgamento reprova a seleção <b>indistinguível</b>: a
+  selecionada igual à não selecionada no mesmo estado.</p>
+  <div class="stats">
+    <div class="stat hl"><b>104</b><span>combinações medidas</span></div>
+    <div class="stat"><b>89</b><span>passam</span></div>
+    <div class="stat"><b>15</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Página</th><th>Tipo</th><th>Sel.</th><th>Estado</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">linha</td><td class="chipcell"><span class="chip sm" style="background:#E0E0E0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.32:1</td><td class="tok dim">3.0:1</td><td><span class="exc">trilho-decorativo</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover</td><td class="num strong">12.54:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active</td><td class="num strong">11.02:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">14.55:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">linha</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover</td><td class="num strong">12.54:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active</td><td class="num strong">11.02:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">14.55:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover</td><td class="num strong">12.54:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active</td><td class="num strong">11.02:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#FFEADE"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">6.83:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#FFEADE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.16:1</td><td class="tok dim">3.0:1</td><td><span class="exc">selecao-tonal</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">bg-brand-hover</td><td class="num strong">5.30:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#C53900"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">5.30:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#992700"></span></td><td class="tok dim">bg-brand-active</td><td class="num strong">7.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">7.94:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#FFEADE"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">6.83:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#FFEADE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.16:1</td><td class="tok dim">3.0:1</td><td><span class="exc">selecao-tonal</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.56:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">linha</td><td class="chipcell"><span class="chip sm" style="background:#E0E0E0"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.23:1</td><td class="tok dim">3.0:1</td><td><span class="exc">trilho-decorativo</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover</td><td class="num strong">12.54:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active</td><td class="num strong">11.02:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.56:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">13.58:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">linha</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover</td><td class="num strong">12.54:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active</td><td class="num strong">11.02:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">13.58:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.56:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover</td><td class="num strong">12.54:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active</td><td class="num strong">11.02:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.56:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#FFEADE"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">6.83:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#FFEADE"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.08:1</td><td class="tok dim">3.0:1</td><td><span class="exc">selecao-tonal</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">bg-brand-hover</td><td class="num strong">5.30:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#C53900"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.95:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#992700"></span></td><td class="tok dim">bg-brand-active</td><td class="num strong">7.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">7.41:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#FFEADE"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">6.83:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#FFEADE"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.08:1</td><td class="tok dim">3.0:1</td><td><span class="exc">selecao-tonal</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.47:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">linha</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.66:1</td><td class="tok dim">3.0:1</td><td><span class="exc">trilho-decorativo</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-hover</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-active</td><td class="num strong">6.85:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.47:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">16.57:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">linha</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">5.32:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-hover</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-active</td><td class="num strong">6.85:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">16.57:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.47:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-hover</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-active</td><td class="num strong">6.85:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.47:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#2D0D00"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">8.18:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#2D0D00"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.01:1</td><td class="tok dim">3.0:1</td><td><span class="exc">selecao-tonal</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#EA4900"></span></td><td class="tok dim">bg-brand-hover</td><td class="num strong">3.85:1</td><td class="tok dim">4.5:1</td><td><span class="exc">marca-no-hover-escuro</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#EA4900"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.61:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">bg-brand-active</td><td class="num strong">5.30:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#C53900"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.35:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#2D0D00"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">8.18:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#2D0D00"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.01:1</td><td class="tok dim">3.0:1</td><td><span class="exc">selecao-tonal</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">tela</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">linha</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.36:1</td><td class="tok dim">3.0:1</td><td><span class="exc">trilho-decorativo</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-hover</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-active</td><td class="num strong">6.85:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.62:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">13.58:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">linha</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.36:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-hover</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-active</td><td class="num strong">6.85:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">13.58:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Line</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.62:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-hover</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-active</td><td class="num strong">6.85:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">não</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.62:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#2D0D00"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">8.18:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#2D0D00"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.23:1</td><td class="tok dim">3.0:1</td><td><span class="exc">selecao-tonal</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#EA4900"></span></td><td class="tok dim">bg-brand-hover</td><td class="num strong">3.85:1</td><td class="tok dim">4.5:1</td><td><span class="exc">marca-no-hover-escuro</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">hover</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#EA4900"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.78:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">bg-brand-active</td><td class="num strong">5.30:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">pressed</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#C53900"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">2.74:1</td><td class="tok dim">3.0:1</td><td><span class="exc">pressed-na-superficie-escura</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">rótulo</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#2D0D00"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">8.18:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#2D0D00"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.23:1</td><td class="tok dim">3.0:1</td><td><span class="exc">selecao-tonal</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="tok dim">superfície</td><td class="name">Square</td><td class="tok dim">sim</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.62:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra doze regras lendo o HTML que este site emite:
+  <b>3 grupos</b> e <b>23 amostras</b>
+  nesta página, nenhum fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Nome do grupo</b><span><code>role="tablist"</code> com <code>aria-label</code> ou <code>aria-labelledby</code>.</span></div>
+    <div><b>b · Aba e painel</b><span><code>&lt;button type="button" role="tab"&gt;</code> com <code>aria-selected</code>, ligado ao <code>tabpanel</code> nos dois sentidos.</span></div>
+    <div><b>c · Uma selecionada</b><span>Exatamente uma, a única fora do <code>tabindex="-1"</code>.</span></div>
+    <div><b>d · Navegação</b><span>Em <code>&lt;nav&gt;</code> com nome, <code>&lt;a href&gt;</code>, no máximo um <code>aria-current</code>, nunca <code>role="tab"</code>.</span></div>
+    <div><b>e · Nome da aba</b><span><code>__label</code> com texto.</span></div>
+    <div><b>f · Sem disabled</b><span>Nem <code>disabled</code>, nem <code>aria-disabled</code>.</span></div>
+    <div><b>g · Dois níveis</b><span>Line por fora, Square por dentro, nunca três.</span></div>
+    <div><b>h · Lista</b><span><code>&lt;ul class="al-tabs"&gt;</code> só com <code>&lt;li&gt;</code>; nenhuma aba fora de grupo.</span></div>
+    <div><b>i · Id único</b><span>Aba e painel se ligam por id.</span></div>
+    <div><b>j · Quantidade</b><span>De 2 a 6 abas por grupo.</span></div>
+    <div><b>k · Título no painel</b><span>O painel começa com o rótulo da aba.</span></div>
+    <div><b>l · Amostra inerte</b><span>Amostra <code>aria-hidden</code> também é <code>inert</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Uma parada de Tab</b><span>O Tab entra pela aba aberta e sai para o painel.</span></div>
+    <div><b>Setas, Home, End</b><span>Trocam de aba e dão a volta nas pontas.</span></div>
+    <div><b>Manual</b><span>Com <code>data-activation="manual"</code>, as setas só movem o foco; ao sair e voltar, a entrada é de novo a aba aberta.</span></div>
+    <div><b>Texto preservado</b><span>O que foi digitado num painel continua lá depois de trocar.</span></div>
+    <div><b>Anúncio</b><span>“Resumo, selecionada, aba 1 de 3” no painel; “Perfil, página atual, link” na navegação.</span></div>
+    <div><b>Alto contraste</b><span>Linha da selecionada em <code>Highlight</code>, Square selecionada com contorno.</span></div>
+    <div><b>Movimento reduzido</b><span>A transição de 120ms é desligada.</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.15.0</span>
+  <span><b>AL Design System</b> · v0.16.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -13457,6 +14160,169 @@ var CD_DEMOS = {"filled|spaced|static": {"html": "<div class=\"al-card al-card--
     inp.addEventListener('input', render);
   });
   document.getElementById('card-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+/* AL Design System - Tab, comportamento de teclado (decisao de Gui na etapa 5)
+ *
+ * So o uso de PAINEL precisa deste arquivo. Navegacao por links (regra 22) e
+ * <a> comum: o Tab do teclado passa por todos e nada aqui se aplica.
+ *
+ * O que ele faz em todo grupo .al-tabs[role="tablist"] dentro de `root`
+ * (padrao de abas da APG, regra 21):
+ *   - so a aba selecionada fica em tabindex 0 (roving tabindex);
+ *   - seta direita/esquerda vai para a proxima/anterior, dando a volta;
+ *     Home e End vao para a primeira e a ultima;
+ *   - ativacao AUTOMATICA: a aba que recebe o foco abre o painel. Grupo com
+ *     data-activation="manual" so move o foco - Enter/Espaco (o clique nativo
+ *     do <button>) abre. Use manual quando o painel carrega da rede;
+ *   - painel e escondido com `hidden`, nunca removido: o que foi digitado
+ *     nele continua la (regra 20);
+ *   - clicar na aba ja aberta nao faz nada (regra 19);
+ *   - a aba aberta pelo clique recebe `data-al-just-selected` ate o proximo
+ *     aperto, para nao pintar o pressed de selecionada (ver o click abaixo).
+ *
+ * Uso:
+ *   <script src="tab.js"><\/script>   -> liga sozinho quando a pagina carrega
+ *   alTabs.init(container)            -> liga em conteudo inserido depois
+ * Ligar duas vezes o mesmo grupo nao duplica nada.
+ */
+(function () {
+  'use strict';
+
+  var KEYS = { ArrowRight: 1, ArrowLeft: -1, Home: 'first', End: 'last' };
+
+  function bind(list) {
+    if (list.hasAttribute('data-al-tabs')) return;
+    list.setAttribute('data-al-tabs', '');
+
+    var tabs = [].slice.call(list.querySelectorAll('[role="tab"]'));
+    if (!tabs.length) return;
+    var manual = list.getAttribute('data-activation') === 'manual';
+
+    function panel(tab) {
+      var id = tab.getAttribute('aria-controls');
+      return id ? document.getElementById(id) : null;
+    }
+
+    function select(tab) {
+      if (tab.getAttribute('aria-selected') === 'true') return;  // regra 19
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        var p = panel(t);
+        if (p) p.hidden = !on;
+      });
+    }
+
+    // estado inicial coerente: exatamente uma selecionada (regra 7)
+    var start = tabs.filter(function (t) {
+      return t.getAttribute('aria-selected') === 'true';
+    })[0] || tabs[0];
+    tabs.forEach(function (t) { t.setAttribute('aria-selected', 'false'); });
+    select(start);
+
+    tabs.forEach(function (tab, i) {
+      // A aba selecionada PELO PROPRIO clique nao pinta o pressed de
+      // selecionada: alguns navegadores (Safari) ainda a consideram :active
+      // quando o clique dispara, e ela iria de bg-active para brand-active
+      // no meio do aperto. A marca some no proximo aperto - ai sim e o
+      // pressed da aba que ja estava aberta.
+      tab.addEventListener('pointerdown', function () {
+        tab.removeAttribute('data-al-just-selected');
+      });
+      tab.addEventListener('click', function () {
+        if (tab.getAttribute('aria-selected') === 'true') return;  // regra 19
+        select(tab);
+        tab.setAttribute('data-al-just-selected', '');
+      });
+      tab.addEventListener('keydown', function (e) {
+        var k = KEYS[e.key];
+        if (!k) return;
+        var next = k === 'first' ? tabs[0]
+          : k === 'last' ? tabs[tabs.length - 1]
+          : tabs[(i + k + tabs.length) % tabs.length];
+        e.preventDefault();
+        if (manual) {
+          tabs.forEach(function (t) { t.tabIndex = t === next ? 0 : -1; });
+        } else {
+          select(next);
+        }
+        next.focus();
+      });
+    });
+
+    // no manual o foco pode sair de uma aba nao aberta; ao sair do grupo, a
+    // entrada pelo Tab volta a ser a aba selecionada
+    list.addEventListener('focusout', function (e) {
+      if (list.contains(e.relatedTarget)) return;
+      tabs.forEach(function (t) {
+        t.tabIndex = t.getAttribute('aria-selected') === 'true' ? 0 : -1;
+      });
+    });
+  }
+
+  function init(root) {
+    [].slice.call((root || document).querySelectorAll('.al-tabs[role="tablist"]')).forEach(bind);
+  }
+
+  window.alTabs = { init: init };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { init(); });
+  } else {
+    init();
+  }
+})();
+var TB_DEMOS = {"line|panel": {"html": "<div class=\"al-tabs\" role=\"tablist\" aria-label=\"Pedido #1042\"><button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"tbpg-t-resumo\" aria-selected=\"true\" aria-controls=\"tbpg-p-resumo\"><span class=\"al-tab__label\">Resumo<\/span><\/button><button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"tbpg-t-itens\" aria-selected=\"false\" aria-controls=\"tbpg-p-itens\" tabindex=\"-1\"><span class=\"al-tab__label\">Itens<\/span><\/button><button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"tbpg-t-entrega\" aria-selected=\"false\" aria-controls=\"tbpg-p-entrega\" tabindex=\"-1\"><span class=\"al-tab__label\">Entrega<\/span><\/button><\/div><div class=\"tb-tabpanel\" role=\"tabpanel\" id=\"tbpg-p-resumo\" aria-labelledby=\"tbpg-t-resumo\" tabindex=\"0\"><h4 class=\"tb-ptitle\">Resumo<\/h4><p>3 itens · R$ 412,00 · pago no cartão.<\/p><\/div><div class=\"tb-tabpanel\" role=\"tabpanel\" id=\"tbpg-p-itens\" aria-labelledby=\"tbpg-t-itens\" tabindex=\"0\" hidden><h4 class=\"tb-ptitle\">Itens<\/h4><p>Caneca, camiseta e adesivos.<\/p><\/div><div class=\"tb-tabpanel\" role=\"tabpanel\" id=\"tbpg-p-entrega\" aria-labelledby=\"tbpg-t-entrega\" tabindex=\"0\" hidden><h4 class=\"tb-ptitle\">Entrega<\/h4><p>Chega entre 9 e 11 de outubro.<\/p><\/div>", "code": "<div class=\"al-tabs\" role=\"tablist\" aria-label=\"Pedido #1042\">\n  <button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"t-resumo\"\n          aria-selected=\"true\" aria-controls=\"p-resumo\">\n    <span class=\"al-tab__label\">Resumo<\/span>\n  <\/button>\n  <button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"t-itens\"\n          aria-selected=\"false\" aria-controls=\"p-itens\" tabindex=\"-1\">\n    <span class=\"al-tab__label\">Itens<\/span>\n  <\/button>\n  <button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"t-entrega\"\n          aria-selected=\"false\" aria-controls=\"p-entrega\" tabindex=\"-1\">\n    <span class=\"al-tab__label\">Entrega<\/span>\n  <\/button>\n<\/div>\n<div role=\"tabpanel\" id=\"p-resumo\" aria-labelledby=\"t-resumo\" tabindex=\"0\">\n  <h3>Resumo<\/h3>\n  …\n<\/div>\n<div role=\"tabpanel\" id=\"p-itens\" aria-labelledby=\"t-itens\" tabindex=\"0\" hidden>\n  <h3>Itens<\/h3>\n  …\n<\/div>\n<div role=\"tabpanel\" id=\"p-entrega\" aria-labelledby=\"t-entrega\" tabindex=\"0\" hidden>\n  <h3>Entrega<\/h3>\n  …\n<\/div>\n<script src=\"tab.js\"><\/script>  <!-- setas, Home, End e painel -->"}, "line|nav": {"html": "<nav aria-label=\"Seções da conta\"><ul class=\"al-tabs\"><li><a class=\"al-tab\" href=\"#/tab\" aria-current=\"page\"><span class=\"al-tab__label\">Perfil<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#/tab\"><span class=\"al-tab__label\">Segurança<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#/tab\"><span class=\"al-tab__label\">Faturas<\/span><\/a><\/li><\/ul><\/nav>", "code": "<nav aria-label=\"Seções da conta\">\n  <ul class=\"al-tabs\">\n    <li><a class=\"al-tab\" href=\"/perfil\" aria-current=\"page\">\n      <span class=\"al-tab__label\">Perfil<\/span><\/a><\/li>\n    <li><a class=\"al-tab\" href=\"/seguranca\">\n      <span class=\"al-tab__label\">Segurança<\/span><\/a><\/li>\n    <li><a class=\"al-tab\" href=\"/faturas\">\n      <span class=\"al-tab__label\">Faturas<\/span><\/a><\/li>\n  <\/ul>\n<\/nav>"}, "square|panel": {"html": "<div class=\"al-tabs al-tabs--square\" role=\"tablist\" aria-label=\"Pedido #1042\"><button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"tbpg-t-resumo\" aria-selected=\"true\" aria-controls=\"tbpg-p-resumo\"><span class=\"al-tab__label\">Resumo<\/span><\/button><button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"tbpg-t-itens\" aria-selected=\"false\" aria-controls=\"tbpg-p-itens\" tabindex=\"-1\"><span class=\"al-tab__label\">Itens<\/span><\/button><button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"tbpg-t-entrega\" aria-selected=\"false\" aria-controls=\"tbpg-p-entrega\" tabindex=\"-1\"><span class=\"al-tab__label\">Entrega<\/span><\/button><\/div><div class=\"tb-tabpanel\" role=\"tabpanel\" id=\"tbpg-p-resumo\" aria-labelledby=\"tbpg-t-resumo\" tabindex=\"0\"><h4 class=\"tb-ptitle\">Resumo<\/h4><p>3 itens · R$ 412,00 · pago no cartão.<\/p><\/div><div class=\"tb-tabpanel\" role=\"tabpanel\" id=\"tbpg-p-itens\" aria-labelledby=\"tbpg-t-itens\" tabindex=\"0\" hidden><h4 class=\"tb-ptitle\">Itens<\/h4><p>Caneca, camiseta e adesivos.<\/p><\/div><div class=\"tb-tabpanel\" role=\"tabpanel\" id=\"tbpg-p-entrega\" aria-labelledby=\"tbpg-t-entrega\" tabindex=\"0\" hidden><h4 class=\"tb-ptitle\">Entrega<\/h4><p>Chega entre 9 e 11 de outubro.<\/p><\/div>", "code": "<div class=\"al-tabs al-tabs--square\" role=\"tablist\" aria-label=\"Pedido #1042\">\n  <button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"t-resumo\"\n          aria-selected=\"true\" aria-controls=\"p-resumo\">\n    <span class=\"al-tab__label\">Resumo<\/span>\n  <\/button>\n  <button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"t-itens\"\n          aria-selected=\"false\" aria-controls=\"p-itens\" tabindex=\"-1\">\n    <span class=\"al-tab__label\">Itens<\/span>\n  <\/button>\n  <button class=\"al-tab\" role=\"tab\" type=\"button\" id=\"t-entrega\"\n          aria-selected=\"false\" aria-controls=\"p-entrega\" tabindex=\"-1\">\n    <span class=\"al-tab__label\">Entrega<\/span>\n  <\/button>\n<\/div>\n<div role=\"tabpanel\" id=\"p-resumo\" aria-labelledby=\"t-resumo\" tabindex=\"0\">\n  <h3>Resumo<\/h3>\n  …\n<\/div>\n<div role=\"tabpanel\" id=\"p-itens\" aria-labelledby=\"t-itens\" tabindex=\"0\" hidden>\n  <h3>Itens<\/h3>\n  …\n<\/div>\n<div role=\"tabpanel\" id=\"p-entrega\" aria-labelledby=\"t-entrega\" tabindex=\"0\" hidden>\n  <h3>Entrega<\/h3>\n  …\n<\/div>\n<script src=\"tab.js\"><\/script>  <!-- setas, Home, End e painel -->"}, "square|nav": {"html": "<nav aria-label=\"Seções da conta\"><ul class=\"al-tabs al-tabs--square\"><li><a class=\"al-tab\" href=\"#/tab\" aria-current=\"page\"><span class=\"al-tab__label\">Perfil<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#/tab\"><span class=\"al-tab__label\">Segurança<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#/tab\"><span class=\"al-tab__label\">Faturas<\/span><\/a><\/li><\/ul><\/nav>", "code": "<nav aria-label=\"Seções da conta\">\n  <ul class=\"al-tabs al-tabs--square\">\n    <li><a class=\"al-tab\" href=\"/perfil\" aria-current=\"page\">\n      <span class=\"al-tab__label\">Perfil<\/span><\/a><\/li>\n    <li><a class=\"al-tab\" href=\"/seguranca\">\n      <span class=\"al-tab__label\">Segurança<\/span><\/a><\/li>\n    <li><a class=\"al-tab\" href=\"/faturas\">\n      <span class=\"al-tab__label\">Faturas<\/span><\/a><\/li>\n  <\/ul>\n<\/nav>"}};
+
+(function () {
+  // ── playground do Tab ──
+  var stage = document.getElementById('tab-stage');
+  if (!stage) return;
+  var code = document.getElementById('tab-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinacao vem pronto do site.py (TB_DEMOS) - o mesmo que
+  // a pagina emite parada. Depois de trocar, o tab.js liga o grupo novo.
+  function render() {
+    var t = pick('tbtype'), u = pick('tbuse'), pg = pick('tbpage'), theme = pick('tbtheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = TB_DEMOS[t + '|' + u];
+    stage.innerHTML = '<div class="tb-page" data-tbpage="' + pg + '">' + demo.html + '</div>';
+    if (window.alTabs) window.alTabs.init(stage);
+    code.innerHTML = esc(demo.code);
+  }
+
+  // os links de exemplo nao navegam: o clique so troca a pagina atual
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('.tb-stage a.al-tab, #tab-stage a.al-tab');
+    if (!a) return;
+    e.preventDefault();
+    a.closest('ul').querySelectorAll('a.al-tab').forEach(function (x) {
+      if (x === a) x.setAttribute('aria-current', 'page'); else x.removeAttribute('aria-current');
+    });
+  });
+
+  document.querySelectorAll('#tab-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('tab-copy').addEventListener('click', function () {
     var btn = this;
     var done = function () {
       btn.textContent = 'Copiado';

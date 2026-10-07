@@ -1,0 +1,45 @@
+/* AL Design System - tokens do Tab
+ * GERADO por components/tab/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ */
+
+:root {
+
+  /* os dois tipos, aba nao selecionada - hover e pressed escurecem o rotulo */
+  --al-tab-label: var(--al-text-secondary);
+  --al-tab-label-hover: var(--al-text-primary);
+  --al-tab-label-active: var(--al-text-primary);
+  --al-tab-bg-hover: var(--al-bg-hover);
+  --al-tab-bg-active: var(--al-bg-active);
+
+  /* Line - a linha e de cada aba; a laranja e quem marca a selecao */
+  --al-tab-line-label-selected: var(--al-text-primary);
+  --al-tab-line-indicator: var(--al-border-subtle);
+  --al-tab-line-indicator-selected: var(--al-border-brand);
+
+  /* Square selecionado - tonal em repouso, marca no hover e no pressed */
+  --al-tab-square-bg-selected: var(--al-bg-brand-subtle);
+  --al-tab-square-label-selected: var(--al-text-brand);
+  --al-tab-square-bg-selected-hover: var(--al-bg-brand-hover);
+  --al-tab-square-label-selected-hover: var(--al-text-on-brand);
+  --al-tab-square-bg-selected-active: var(--al-bg-brand-active);
+  --al-tab-square-label-selected-active: var(--al-text-on-brand);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-tab-ring: var(--al-focus-ring-default);
+
+  /* geometria */
+  --al-tab-padding-x: var(--al-space-12);
+  --al-tab-padding-y: var(--al-space-4);
+  --al-tab-radius: var(--al-radius-lg);
+  --al-tab-line-gap: var(--al-space-8);
+  --al-tab-line-indicator-width: var(--al-border-width-2);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-tab-label-font-size: var(--al-font-size-md);
+  --al-tab-label-line-height: var(--al-line-height-md);
+  --al-tab-label-font-weight: 400;
+  --al-tab-label-tracking: 0em;
+}

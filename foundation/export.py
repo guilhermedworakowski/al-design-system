@@ -38,7 +38,9 @@ TOKENS = {
     # (estrutura); nenhum token da Foundation muda.
     # 0.15.0: o Card - componente novo, casa do meio. Segundo do Tier 3;
     # nenhum token da Foundation muda.
-    "name": "AL Design System", "version": "0.15.0", "license": "MIT",
+    # 0.16.0: o Tab - componente novo, casa do meio. Terceiro do Tier 3 e o
+    # primeiro com script proprio (tab.js); nenhum token da Foundation muda.
+    "name": "AL Design System", "version": "0.16.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
