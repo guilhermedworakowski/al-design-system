@@ -100,9 +100,17 @@
 }
 
 /* --------------------------------------------------------------- titulo */
+/* O titulo costuma ser um <h2>, e quem usa pode ter um estilo global de h2
+   (mono, caixa alta, cor, linha embaixo). Estes resets sao do componente: o
+   titulo do Modal e o que o modal.css diz, em qualquer pagina. */
 .al-modal__title {
   flex: none;
   margin: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font-family: inherit;
+  text-transform: none;
   overflow-wrap: anywhere;
   font-size: var(--al-modal-title-font-size);
   line-height: var(--al-modal-title-line-height);

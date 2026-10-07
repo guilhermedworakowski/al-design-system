@@ -52,7 +52,12 @@ TOKENS = {
     # easing-spinner) e os 12 componentes com transicao passam a consumir
     # motion: nenhuma duracao nem curva literal. Valor renderizado igual, exceto
     # a curva dos controles, que agora e ease-out ao entrar e ease-in ao sair.
-    "name": "AL Design System", "version": "0.17.2", "license": "MIT",
+    # 0.18.0: Modal, quinto componente do Tier 3 - casa do meio, componente novo.
+    # A Foundation ganha bg-scrim, o primeiro semantico com transparencia
+    # (#RRGGBBAA): o fundo escurecido atras de uma camada modal. Fora de PAIRS,
+    # porque o contraste dele so existe composto sobre a pagina; o portao do
+    # Modal mede. Nenhum valor de token existente muda.
+    "name": "AL Design System", "version": "0.18.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
