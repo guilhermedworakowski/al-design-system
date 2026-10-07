@@ -1015,6 +1015,46 @@
 
   --al-divider-color: var(--al-border-default);
   --al-divider-thickness: var(--al-border-width-1);
+
+
+  /* fundo - o mesmo nos tres tipos */
+  --al-card-bg: var(--al-bg-surface-raised);
+
+  /* borda do tipo Border - laranja so no foco */
+  --al-card-border: var(--al-border-default);
+  --al-card-border-hover: var(--al-border-strong);
+  --al-card-border-focus: var(--al-border-brand);
+
+  /* titulo e descricao - opcionais, substituiveis pelo slot */
+  --al-card-title: var(--al-text-primary);
+  --al-card-description: var(--al-text-secondary);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-card-ring: var(--al-focus-ring-default);
+
+  /* elevacao - altura, nao estado */
+  --al-card-elevated-shadow: var(--al-elevation-2);
+  --al-card-elevated-shadow-hover: var(--al-elevation-4);
+  --al-card-filled-shadow-hover: var(--al-elevation-2);
+
+  /* geometria */
+  --al-card-padding-spaced: var(--al-space-24);
+  --al-card-padding-default: var(--al-space-16);
+  --al-card-padding-tight: var(--al-space-8);
+  --al-card-gap: var(--al-space-8);
+  --al-card-text-gap: var(--al-space-4);
+  --al-card-radius: var(--al-radius-lg);
+  --al-card-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-card-title-font-size: var(--al-font-size-xl);
+  --al-card-title-line-height: var(--al-line-height-xl);
+  --al-card-title-font-weight: 600;
+  --al-card-title-tracking: -0.01em;
+  --al-card-description-font-size: var(--al-font-size-md);
+  --al-card-description-line-height: var(--al-line-height-md);
+  --al-card-description-font-weight: 400;
+  --al-card-description-tracking: 0em;
 }
 
 /* AL Design System - tokens do Button
@@ -4700,6 +4740,261 @@
   border-inline-start: var(--al-divider-thickness) solid var(--al-divider-color);
 }
 
+/* AL Design System - tokens do Card
+ * GERADO por components/card/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema
+ * troca no :root - o mesmo elemento onde estes alias sao declarados.
+ */
+
+:root {
+
+  /* fundo - o mesmo nos tres tipos */
+  --al-card-bg: var(--al-bg-surface-raised);
+
+  /* borda do tipo Border - laranja so no foco */
+  --al-card-border: var(--al-border-default);
+  --al-card-border-hover: var(--al-border-strong);
+  --al-card-border-focus: var(--al-border-brand);
+
+  /* titulo e descricao - opcionais, substituiveis pelo slot */
+  --al-card-title: var(--al-text-primary);
+  --al-card-description: var(--al-text-secondary);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-card-ring: var(--al-focus-ring-default);
+
+  /* elevacao - altura, nao estado */
+  --al-card-elevated-shadow: var(--al-elevation-2);
+  --al-card-elevated-shadow-hover: var(--al-elevation-4);
+  --al-card-filled-shadow-hover: var(--al-elevation-2);
+
+  /* geometria */
+  --al-card-padding-spaced: var(--al-space-24);
+  --al-card-padding-default: var(--al-space-16);
+  --al-card-padding-tight: var(--al-space-8);
+  --al-card-gap: var(--al-space-8);
+  --al-card-text-gap: var(--al-space-4);
+  --al-card-radius: var(--al-radius-lg);
+  --al-card-border-width: var(--al-border-width-1);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-card-title-font-size: var(--al-font-size-xl);
+  --al-card-title-line-height: var(--al-line-height-xl);
+  --al-card-title-font-weight: 600;
+  --al-card-title-tracking: -0.01em;
+  --al-card-description-font-size: var(--al-font-size-md);
+  --al-card-description-line-height: var(--al-line-height-md);
+  --al-card-description-font-weight: 400;
+  --al-card-description-tracking: 0em;
+}
+
+/* AL Design System - Card
+ * Escrito a mao. Depende de al-foundation.css e al-card-tokens.css, nesta
+ * ordem.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, sombra e tipografia entram
+ * por var(--al-card-*). O check.py ao lado recusa o arquivo se algum escapar.
+ * Unica excecao consciente: a duracao da transicao (120ms), que espera escala
+ * de motion na Foundation - igual ao Button e ao Input.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   estatico (Filled, Default):
+ *     <div class="al-card">
+ *       <div class="al-card__header">
+ *         <h3 class="al-card__title">Pedido #1042</h3>
+ *         <p class="al-card__description">Entregue em 3 de outubro.</p>
+ *       </div>
+ *       ...qualquer conteudo, inclusive botoes no fim (regra 12)
+ *     </div>
+ *
+ *   clicavel (regras 13 a 17) - link real NO TITULO, esticado sobre o card:
+ *     <div class="al-card al-card--border al-card--clickable">
+ *       <div class="al-card__header">
+ *         <h3 class="al-card__title">
+ *           <a class="al-card__link" href="/pedidos/1042">Pedido #1042</a>
+ *         </h3>
+ *         <p class="al-card__description">Entregue em 3 de outubro.</p>
+ *       </div>
+ *     </div>
+ *     Nada clicavel alem do link (regra 15). Acao que nao navega troca o
+ *     <a> por <button class="al-card__link" type="button"> (regra 16).
+ *
+ *   lista de cards (regra 22): <ul> com <li class="al-card">.
+ *
+ *   modificadores - tipo:    (nenhum) = Filled | --border | --elevated
+ *                   padding: --spaced (24) | (nenhum) = Default (16) | --tight (8)
+ *
+ * TITULO E DESCRICAO SAO OPCIONAIS (DECISAO E)
+ *   `__header`, `__title` e `__description` sao orientacao: o card aceita
+ *   qualquer conteudo no lugar deles. O nivel do titulo (h2, h3...) e da
+ *   pagina, nunca do componente (regra 11) - por isso a classe nao prende tag.
+ *
+ * A BORDA E OUTSIDE (DECISAO F)
+ *   No Figma o stroke do Border e OUTSIDE: nao entra no layout. Aqui a borda e
+ *   uma sombra de 1px sem desfoque, desenhada FORA da caixa - os tres tipos
+ *   medem igual e o padding nao desconta nada. Por isso nao ha `border` nem
+ *   `calc(padding - border-width)`, ao contrario do Button e do Input.
+ *
+ * UMA PROPRIEDADE, TRES CAMADAS
+ *   Borda, anel de foco e elevacao sao todos box-shadow. Para nenhum estado
+ *   apagar o outro, cada um vive numa variavel interna e o box-shadow as
+ *   empilha numa ordem fixa: borda por cima, anel no meio, elevacao embaixo.
+ *   Com a borda por cima do respiro do anel, o foco do Border fica igual ao
+ *   Figma (1px de marca, 1px de respiro, 2px de anel). E e assim que o
+ *   Elevated com foco mantem a sombra (decisao D): o foco troca so o anel.
+ *
+ * O FOCO E DO LINK, O ANEL E DO CARD
+ *   Quem recebe o Tab e o link do titulo. `:has()` leva o anel para o card
+ *   inteiro (regra 17) e so entao some o contorno nativo do link - navegador
+ *   sem `:has()` mantem o contorno do proprio navegador, nunca fica sem foco.
+ *
+ * ALTO CONTRASTE
+ *   No `forced-colors` o sistema remove fundo e sombra: Filled e Elevated
+ *   sumiriam inteiros, e a borda do Border (que e sombra) junto. Ali os tres
+ *   tipos ganham contorno na cor do texto do sistema, e o foco ganha o
+ *   contorno `Highlight` - mesmo padrao do Button.
+ *
+ * SEM DISABLED NEM PRESSIONADO, POR DECISAO (regras 19 e 20).
+ */
+
+.al-card {
+  /* camadas de sombra - ver "Uma propriedade, tres camadas" */
+  --_edge: 0 0 0 0 transparent;
+  --_ring: 0 0 0 0 transparent;
+  --_lift: 0 0 0 0 transparent;
+
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-card-gap);
+  margin: 0;
+  padding: var(--al-card-padding-default);
+  border-radius: var(--al-card-radius);
+  background-color: var(--al-card-bg);
+  box-shadow: var(--_edge), var(--_ring), var(--_lift);
+  list-style: none;
+  transition: box-shadow 120ms ease;
+}
+
+/* ------------------------------------------------------------------ tipo */
+.al-card--border {
+  --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border);
+}
+
+.al-card--elevated {
+  --_lift: var(--al-card-elevated-shadow);
+}
+
+/* --------------------------------------------------------------- padding */
+.al-card--spaced {
+  padding: var(--al-card-padding-spaced);
+}
+
+.al-card--tight {
+  padding: var(--al-card-padding-tight);
+}
+
+/* ------------------------------------------------- titulo e descricao */
+.al-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-card-text-gap);
+}
+
+.al-card__title {
+  margin: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-card-title-font-size);
+  line-height: var(--al-card-title-line-height);
+  font-weight: var(--al-card-title-font-weight);
+  letter-spacing: var(--al-card-title-tracking);
+  color: var(--al-card-title);
+}
+
+.al-card__description {
+  margin: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-card-description-font-size);
+  line-height: var(--al-card-description-line-height);
+  font-weight: var(--al-card-description-font-weight);
+  letter-spacing: var(--al-card-description-tracking);
+  color: var(--al-card-description);
+}
+
+/* --------------------------------------------------------------- clicavel */
+/* O link herda a aparencia do titulo: quem diz que e clicavel e o destino
+   escrito no titulo, a seta recomendada (regra 14) e o hover. */
+.al-card__link {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* O pseudo-elemento cobre o card inteiro: o card todo e o alvo do clique,
+   mas o nome anunciado continua sendo so o titulo (regra 16). */
+.al-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* hover - o tipo decide o que muda */
+.al-card--clickable:hover {
+  --_lift: var(--al-card-filled-shadow-hover);
+}
+
+.al-card--clickable.al-card--elevated:hover {
+  --_lift: var(--al-card-elevated-shadow-hover);
+}
+
+.al-card--clickable.al-card--border:hover {
+  --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-hover);
+  --_lift: 0 0 0 0 transparent;
+}
+
+/* foco - so com :has(); sem ele, fica o contorno nativo do link */
+@supports selector(:has(*)) {
+  .al-card__link:focus {
+    outline: none;
+  }
+
+  .al-card--clickable:has(.al-card__link:focus-visible) {
+    --_ring: var(--al-card-ring);
+  }
+
+  .al-card--clickable.al-card--border:has(.al-card__link:focus-visible) {
+    --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-focus);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-card {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-card {
+    outline: var(--al-card-border-width) solid CanvasText;
+  }
+
+  .al-card--clickable:has(.al-card__link:focus-visible) {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}
+
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -5321,6 +5616,44 @@ footer code{background:none; padding:0}
 .th-divider span{display:block; height:8px; border-radius:4px; background:var(--al-bg-subtle)}
 .th-divider span:nth-child(2){width:62%}
 .th-divider span:last-child{width:78%}
+
+/* ── páginas do Card ──
+   Casca do site. O card em si é sempre o .al-card, do card.css real. Os
+   exemplos "a evitar" usam .cd-fake-*, nunca um .al-card errado. */
+.cd-page{width:100%; max-width:380px; padding:24px; border-radius:12px; text-align:left}
+.cd-page[data-cdpage="surface"], .cd-stage[data-cdpage="surface"]{background:var(--al-bg-surface)}
+.cd-page[data-cdpage="canvas"], .cd-stage[data-cdpage="canvas"]{background:var(--al-bg-canvas)}
+.cd-page[data-cdpage="canvas"]{outline:1px dashed var(--al-border-default); outline-offset:-1px}
+.dd .stage2.cd-stage{display:block; padding:20px}
+.cd-row{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+.cd-chevron{flex-shrink:0; margin-top:4px; color:var(--al-text-secondary)}
+.cd-actions{display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap}
+.cd-warn{margin:0; padding:12px 22px; border-top:1px solid var(--al-border-subtle);
+  background:var(--al-bg-danger-subtle); color:var(--al-text-danger); font-size:13px}
+.cd-panel{padding:20px; border-radius:12px; background:var(--al-bg-surface)}
+.cd-mx{display:flex; flex-direction:column; gap:16px}
+.cd-mx-row{display:grid; grid-template-columns:76px repeat(3, minmax(0,1fr)); gap:16px; align-items:start}
+.cd-mx-lab{font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--al-text-secondary)}
+.cd-mx-row:not(.cd-mx-row--head) > .cd-mx-lab{padding-top:10px}
+.cd-rgroup{margin:28px 0 4px; font-family:var(--al-font-mono); font-size:10.5px; font-weight:500;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--al-text-secondary)}
+.cd-fake-card{display:flex; flex-direction:column; gap:4px; padding:16px; border-radius:8px;
+  background:var(--al-bg-surface-raised); box-shadow:0 0 0 1px var(--al-border-default)}
+.cd-fake-card b{font-size:20px; line-height:28px; font-weight:600; color:var(--al-text-primary)}
+.cd-fake-card > span{color:var(--al-text-secondary)}
+.cd-fake-card .cd-actions{margin-top:8px}
+.cd-fake-btn{padding:6px 14px; border-radius:9999px; font-size:13px;
+  border:1px solid var(--al-border-strong); color:var(--al-text-primary)}
+.th-card{display:flex; flex-direction:column; gap:10px; width:100%; max-width:180px}
+.th-card .al-card{gap:6px}
+.th-card .al-card span{display:block; height:7px; border-radius:4px; background:var(--al-bg-subtle)}
+.th-card .al-card span:first-child{width:56%; background:var(--al-border-default)}
+.th-card .al-card span:last-child{width:82%}
+@media (max-width: 720px){
+  .cd-mx-row{grid-template-columns:minmax(0,1fr)}
+  .cd-mx-row--head{display:none}
+}
 </style>
 
 <div class="shell">
@@ -5362,6 +5695,7 @@ footer code{background:none; padding:0}
         <a href="#/textarea" data-page="textarea">Textarea</a>
         <a href="#/password" data-page="password">Password</a>
         <a href="#/divider" data-page="divider">Divider</a>
+        <a href="#/card" data-page="card">Card</a>
       </div>
     </div>
   </div>
@@ -6031,9 +6365,9 @@ footer code{background:none; padding:0}
   consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
   normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
   <div class="stats">
-    <div class="stat hl"><b>292</b><span>verificações</span></div>
+    <div class="stat hl"><b>294</b><span>verificações</span></div>
     <div class="stat"><b>0</b><span>reprovas</span></div>
-    <div class="stat"><b>250</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>252</b><span>elementos com contrato conferido</span></div>
     <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
   </div>
 </section>
@@ -6108,7 +6442,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
   O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
-  <code>.al-icon</code>: 250 elementos nesta página, nenhum fora.
+  <code>.al-icon</code>: 252 elementos nesta página, nenhum fora.
   Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
   <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
   porque o rótulo nunca seria lido.</p>
@@ -6135,6 +6469,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/password" data-page="password"><div class="card-thumb"><div class="th-password" aria-hidden="true"><span class="th-password__label">Senha</span><span class="th-password__field"><span>••••••••</span><svg class="al-icon th-password__eye" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" /><circle cx="12" cy="12" r="3" /></svg></span></div></div><div class="card-body"><span class="card-title">Password</span><span class="card-desc">Senha com o olho de mostrar e ocultar. Input nativo de senha, um botão de verdade dentro da caixa, e um script que esconde de novo no envio.</span></div></a>
     <a class="card" href="#/textarea" data-page="textarea"><div class="card-thumb"><div class="th-textarea" aria-hidden="true"><span class="th-textarea__label">Descrição</span><span class="th-textarea__field">O que aconteceu<br>e quando</span></div></div><div class="card-body"><span class="card-title">Textarea</span><span class="card-desc">Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.</span></div></a>
     <a class="card" href="#/divider" data-page="divider"><div class="card-thumb"><div class="th-divider"><span></span><span></span><hr class="al-divider" aria-hidden="true"><span></span></div></div><div class="card-body"><span class="card-title">Divider</span><span class="card-desc">A linha entre dois grupos de conteúdo. É o &lt;hr&gt; nativo, horizontal ou vertical — e entra só quando o espaço não basta.</span></div></a>
+    <a class="card" href="#/card" data-page="card"><div class="card-thumb"><div class="th-card"><div class="al-card al-card--border al-card--tight"><span></span><span></span></div><div class="al-card al-card--elevated al-card--tight"><span></span><span></span></div></div></div><div class="card-body"><span class="card-title">Card</span><span class="card-desc">Um assunto num contêiner. Três tipos, três paddings, e o clicável inteiro feito com um link de verdade no título.</span></div></a>
   </div>
 </section>
 
@@ -6142,8 +6477,9 @@ footer code{background:none; padding:0}
   <h2>O Tier 3 começou</h2>
   <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
   disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
-  sem documentação”. O tier de <b>estrutura</b> começa pela peça mais simples dele, o Divider,
-  e segue como todos os outros: pela etapa 1, definir e auditar.</p>
+  sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
+  e seguiu pelo Card. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
+  auditar.</p>
 </section></div></div>
 <div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">48 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
 <section>
@@ -11299,6 +11635,322 @@ footer code{background:none; padding:0}
     <div><b>Alto contraste</b><span>A linha é borda, e borda é repintada com a cor do sistema — continua visível.</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-card" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Card</h1><p class="lede">Um contêiner para um assunto que se lê ou se resolve sozinho. Três tipos, três paddings, estático ou clicável — e o clicável é um link de verdade no título, esticado sobre o card inteiro.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">36 variantes no Figma</span><span class="badge">19 tokens</span><span class="badge">2 exceções declaradas</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Card"><button role="tab" id="t-card-overview" aria-controls="p-card-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-card-specs" aria-controls="p-card-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-card-guide" aria-controls="p-card-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-card-a11y" aria-controls="p-card-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-card-overview" role="tabpanel" aria-labelledby="t-card-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="card-stage"><div class="cd-page" data-cdpage="surface"><div class="al-card"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div></div>
+
+    <div class="controls" id="card-controls">
+      <div class="ctl"><span class="ctl-name">Tipo</span><div class="seg" role="radiogroup" aria-label="cdtype">
+<input type="radio" id="cdtype-filled" name="cdtype" value="filled" checked><label for="cdtype-filled">Filled</label>
+<input type="radio" id="cdtype-border" name="cdtype" value="border"><label for="cdtype-border">Border</label>
+<input type="radio" id="cdtype-elevated" name="cdtype" value="elevated"><label for="cdtype-elevated">Elevated</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Padding</span><div class="seg" role="radiogroup" aria-label="cdpad">
+<input type="radio" id="cdpad-spaced" name="cdpad" value="spaced"><label for="cdpad-spaced">Spaced · 24</label>
+<input type="radio" id="cdpad-default" name="cdpad" value="default" checked><label for="cdpad-default">Default · 16</label>
+<input type="radio" id="cdpad-tight" name="cdpad" value="tight"><label for="cdpad-tight">Tight · 8</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Interação</span><div class="seg" role="radiogroup" aria-label="cdint">
+<input type="radio" id="cdint-static" name="cdint" value="static" checked><label for="cdint-static">Estático</label>
+<input type="radio" id="cdint-clickable" name="cdint" value="clickable"><label for="cdint-clickable">Clicável</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Página</span><div class="seg" role="radiogroup" aria-label="cdpage">
+<input type="radio" id="cdpage-surface" name="cdpage" value="surface" checked><label for="cdpage-surface">Superfície</label>
+<input type="radio" id="cdpage-canvas" name="cdpage" value="canvas"><label for="cdpage-canvas">Tela</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="cdtheme">
+<input type="radio" id="cdtheme-auto" name="cdtheme" value="auto" checked><label for="cdtheme-auto">Do sistema</label>
+<input type="radio" id="cdtheme-light" name="cdtheme" value="light"><label for="cdtheme-light">Claro</label>
+<input type="radio" id="cdtheme-dark" name="cdtheme" value="dark"><label for="cdtheme-dark">Escuro</label>
+</div></div>
+    </div>
+    <p class="cd-warn" id="card-warn" hidden>Filled direto na tela some — fundo e página têm a mesma cor no claro. A regra 2 manda pôr o Filled sobre <code>bg-surface</code>.</p>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="card-copy">Copiar</button></div>
+      <pre><code id="card-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Com <b>Clicável</b>, tabule até o card e passe o ponteiro: o anel envolve o card inteiro, e o
+    clique vale em qualquer ponto dele, mas quem recebe o foco é o link do título. Troque a
+    <b>Página</b> para tela com o Filled para ver por que a regra 2 existe, e o <b>Tema</b> para
+    escuro para ver o card clarear em relação à página.
+  </p>
+</section>
+
+<section>
+  <h2>Um tipo por contexto</h2>
+  <p>Os três tipos separam o card da página de jeitos diferentes, e por isso cada um tem o seu
+  lugar. Numa mesma grade, todos usam o mesmo tipo e o mesmo padding.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Filled · sobre superfície</span>
+      <div class="stage2 cd-stage" data-cdpage="surface"><div class="al-card"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div>
+      <p class="cap">O padrão para agrupar em páginas cinza. Na tela branca ele some.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Border · sobre a tela</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas"><div class="al-card al-card--border"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div>
+      <p class="cap">Para a tela branca e para grades densas, onde sombra repetida suja.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Elevated · destaque</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas"><div class="al-card al-card--elevated"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div>
+      <p class="cap">O card que precisa se destacar. Com parcimônia: se todos flutuam, nenhum se destaca.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Clicável inteiro, ou com botões</h2>
+  <p>O card inteiro só vira alvo de clique quando existe uma ação só. Com mais de uma, o card
+  fica estático e as ações viram botões no fim dele.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Uma ação: o card inteiro</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas"><div class="al-card al-card--border al-card--clickable"><div class="cd-row"><div class="al-card__header"><h3 class="al-card__title"><a class="al-card__link" href="#/card">Pedidos</a></h3><p class="al-card__description">Acompanhe entregas e devoluções.</p></div><svg class="al-icon al-icon--20 cd-chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></div></div></div>
+      <p class="cap">O link é o título, esticado sobre o card. A seta diz que é clicável sem
+      depender do hover. <i>Material, Carbon.</i></p>
+    </div>
+    <div class="cell do">
+      <span class="lab">Mais de uma ação: estático com botões</span>
+      <div class="stage2 cd-stage" data-cdpage="surface"><div class="al-card"><div class="al-card__header"><h3 class="al-card__title">Plano Pro</h3><p class="al-card__description">Cobrança mensal, cancele quando quiser.</p></div><div class="cd-actions"><button type="button" class="al-btn al-btn--secondary al-btn--sm"><span class="al-btn__label">Detalhes</span></button><button type="button" class="al-btn al-btn--primary al-btn--sm"><span class="al-btn__label">Assinar</span></button></div></div></div>
+      <p class="cap">Ações explícitas no fim, uma primária. O texto do card continua
+      selecionável.</p>
+    </div>
+  </div>
+</section></div><div class="panel" id="p-card-specs" role="tabpanel" aria-labelledby="t-card-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-card</code> em <code>&lt;div&gt;</code>, <code>&lt;li&gt;</code> ou <code>&lt;article&gt;</code>. Coluna em flex, com <code>card-gap</code> entre os blocos.</span></div>
+    <div><b>Cabeçalho</b><span><code>__header</code> com <code>__title</code> e <code>__description</code>. Opcional, e substituível por qualquer conteúdo.</span></div>
+    <div><b>Título</b><span>Um <code>h2</code>…<code>h6</code> escolhido pela página. A classe não prende a tag.</span></div>
+    <div><b>Link</b><span>Só no clicável: <code>__link</code> dentro do título, esticado sobre o card por um pseudo-elemento.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>As 36 variantes</h2>
+  <p>Três tipos nos três paddings, estáticos e sobre <code>bg-surface</code>. As colunas medem
+  igual em qualquer tipo: a borda do Border é desenhada fora da caixa.</p>
+  <div class="cd-panel" style="margin-top:16px"><div class="cd-mx"><div class="cd-mx-row cd-mx-row--head"><span></span><span class="cd-mx-lab">Spaced · 24</span><span class="cd-mx-lab">Default · 16</span><span class="cd-mx-lab">Tight · 8</span></div><div class="cd-mx-row"><span class="cd-mx-lab">Filled</span><div><div class="al-card al-card--spaced"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card al-card--tight"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div></div><div class="cd-mx-row"><span class="cd-mx-lab">Border</span><div><div class="al-card al-card--border al-card--spaced"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card al-card--border"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card al-card--border al-card--tight"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div></div><div class="cd-mx-row"><span class="cd-mx-lab">Elevated</span><div><div class="al-card al-card--elevated al-card--spaced"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card al-card--elevated"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card al-card--elevated al-card--tight"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div></div></div></div>
+  <p style="margin-top:20px">No card clicável, cada tipo tem repouso, hover e foco. Hover e foco
+  estão congelados abaixo, escritos direto nas camadas internas do card.</p>
+  <div class="cd-panel" style="margin-top:16px"><div class="cd-mx"><div class="cd-mx-row cd-mx-row--head"><span></span><span class="cd-mx-lab">Repouso</span><span class="cd-mx-lab">Hover</span><span class="cd-mx-lab">Foco</span></div><div class="cd-mx-row"><span class="cd-mx-lab">Filled</span><div><div class="al-card"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card" style="--_lift: var(--al-card-filled-shadow-hover)"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card" style="--_ring: var(--al-card-ring)"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div></div><div class="cd-mx-row"><span class="cd-mx-lab">Border</span><div><div class="al-card al-card--border"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card al-card--border" style="--_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-hover)"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card al-card--border" style="--_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-focus); --_ring: var(--al-card-ring)"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div></div><div class="cd-mx-row"><span class="cd-mx-lab">Elevated</span><div><div class="al-card al-card--elevated"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card al-card--elevated" style="--_lift: var(--al-card-elevated-shadow-hover)"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div><div><div class="al-card al-card--elevated" style="--_ring: var(--al-card-ring)"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div></div></div></div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Card</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody><tr><td class="tok">--al-card-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td><td class="tok dim"><span class="chip sm" style="background:#3E3E3E"></span>#3E3E3E</td></tr>
+<tr><td class="tok">--al-card-border</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td><td class="tok dim"><span class="chip sm" style="background:#565656"></span>#565656</td></tr>
+<tr><td class="tok">--al-card-border-hover</td><td class="tok dim">border-strong</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#949494"></span>#949494</td></tr>
+<tr><td class="tok">--al-card-border-focus</td><td class="tok dim">border-brand</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td><td class="tok dim"><span class="chip sm" style="background:#FC5000"></span>#FC5000</td></tr>
+<tr><td class="tok">--al-card-title</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td><td class="tok dim"><span class="chip sm" style="background:#F7F7F7"></span>#F7F7F7</td></tr>
+<tr><td class="tok">--al-card-description</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-card-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim"><span class="dim">sombra composta</span></td><td class="tok dim"><span class="dim">sombra composta</span></td></tr>
+<tr><td class="tok">--al-card-elevated-shadow</td><td class="tok dim">elevation.2</td><td class="tok dim"><span class="dim">sombra composta</span></td><td class="tok dim"><span class="dim">sombra composta</span></td></tr>
+<tr><td class="tok">--al-card-elevated-shadow-hover</td><td class="tok dim">elevation.4</td><td class="tok dim"><span class="dim">sombra composta</span></td><td class="tok dim"><span class="dim">sombra composta</span></td></tr>
+<tr><td class="tok">--al-card-filled-shadow-hover</td><td class="tok dim">elevation.2</td><td class="tok dim"><span class="dim">sombra composta</span></td><td class="tok dim"><span class="dim">sombra composta</span></td></tr>
+<tr><td class="tok">--al-card-padding-spaced</td><td class="tok dim">space.24</td><td class="tok dim">24px</td><td class="tok dim">24px</td></tr>
+<tr><td class="tok">--al-card-padding-default</td><td class="tok dim">space.16</td><td class="tok dim">16px</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-card-padding-tight</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-card-gap</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-card-text-gap</td><td class="tok dim">space.4</td><td class="tok dim">4px</td><td class="tok dim">4px</td></tr>
+<tr><td class="tok">--al-card-radius</td><td class="tok dim">radius.lg</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-card-border-width</td><td class="tok dim">border.width.1</td><td class="tok dim">1px</td><td class="tok dim">1px</td></tr>
+<tr><td class="tok">--al-card-title-font</td><td class="tok dim">type.styles.heading-xs</td><td class="tok dim">20/28 · 600</td><td class="tok dim">20/28 · 600</td></tr>
+<tr><td class="tok">--al-card-description-font</td><td class="tok dim">type.styles.body-md</td><td class="tok dim">16/24 · 400</td><td class="tok dim">16/24 · 400</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Fundo em <code>bg-surface-raised</code></b>
+    No claro é o mesmo branco da tela. No escuro a Foundation decidiu que a elevação aparece
+    porque a superfície clareia, e a sombra é a pista secundária. Com o fundo da tela, o card
+    escuro ficaria da cor da página.
+  </div>
+  <div class="note">
+    <b>Borda por fora, em três camadas de sombra</b>
+    No Figma o stroke é outside. No código a borda é uma sombra de 1px sem desfoque, e por isso não
+    ocupa espaço nem desconta padding. Borda, anel e elevação vivem em três camadas internas
+    (<code>--_edge</code>, <code>--_ring</code>, <code>--_lift</code>), empilhadas numa ordem fixa,
+    e um estado nunca apaga o outro.
+  </div>
+  <div class="note">
+    <b>O foco do Elevated mantém a sombra</b>
+    No Figma uma variante aceita um estilo de efeito só, e o Elevated com foco mostra só o anel.
+    No código o foco troca apenas a camada do anel, e a elevação continua.
+  </div>
+  <div class="note">
+    <b>Sem altura e sem largura</b>
+    A largura vem da grade e a altura do conteúdo. Os 320px do Figma são a medida do exemplo.
+  </div>
+</section></div><div class="panel" id="p-card-guide" role="tabpanel" aria-labelledby="t-card-guide" tabindex="0" hidden>
+<section>
+  <h2>O card se reconhece pelo conteúdo</h2>
+  <p>A borda do Border fica abaixo dos 3:1 do critério 1.4.11, e o fundo do Filled e do Elevated
+  quase não se separa da página. As duas coisas são exceção declarada, e só valem porque o card
+  sempre tem conteúdo que o identifica.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Filled sobre superfície</span>
+      <div class="stage2 cd-stage" data-cdpage="surface"><div class="al-card"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div>
+      <p class="cap">O cinza da página desenha o limite do card.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Filled direto na tela</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas"><div class="al-card"><div class="al-card__header"><h3 class="al-card__title">Pedido #1042</h3><p class="al-card__description">Entregue em 3 de outubro.</p></div></div></div>
+      <p class="cap">Branco sobre branco: sobra um texto solto. Use Border ou mude a página.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Clicável com uma ação</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas"><div class="al-card al-card--border al-card--clickable"><div class="cd-row"><div class="al-card__header"><h3 class="al-card__title"><a class="al-card__link" href="#/card">Clientes</a></h3><p class="al-card__description">Cadastro, histórico e contatos.</p></div><svg class="al-icon al-icon--20 cd-chevron" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></div></div></div>
+      <p class="cap">Um alvo, um nome anunciado: o título.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Clicável com botões dentro</span>
+      <div class="stage2 cd-stage" data-cdpage="canvas"><div class="cd-fake-card"><b>Clientes</b><span>Cadastro, histórico e contatos.</span><div class="cd-actions"><span class="cd-fake-btn">Editar</span><span class="cd-fake-btn">Excluir</span></div></div></div>
+      <p class="cap">O botão disputa o clique com o card inteiro. Tire o clique do card ou tire os botões.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  <h3 class="cd-rgroup">Quando usar cada tipo</h3>
+<div class="rule"><div class="rn">01</div><div><h3>Um assunto por card</h3><p>O card agrupa um assunto que se lê ou se resolve sozinho. Seção de página se separa com título e espaço, não com card. Precedentes: Material, Carbon.</p></div></div>
+<div class="rule"><div class="rn">02</div><div><h3>Filled só sobre <code>bg-surface</code></h3><p>Na tela branca o card fica 1,00:1 e some. É a regra que sustenta a exceção de contraste do fundo. Precedente: Polaris.</p></div></div>
+<div class="rule"><div class="rn">03</div><div><h3>Border sobre a tela ou em grades densas</h3><p>Onde sombra repetida vira sujeira visual. Precedentes: Material Outlined, Carbon.</p></div></div>
+<div class="rule"><div class="rn">04</div><div><h3>Elevated para destaque, com parcimônia</h3><p>Se todos os cards flutuam, nenhum se destaca. Precedente: Material.</p></div></div>
+<h3 class="cd-rgroup">Combinação</h3>
+<div class="rule"><div class="rn">05</div><div><h3>Mesmo tipo e mesmo padding na grade</h3><p>Misturar tipos sugere uma hierarquia que não existe. Precedente: Material.</p></div></div>
+<div class="rule"><div class="rn">06</div><div><h3>Nada de card dentro de card</h3><p>Para subdividir, Divider ou título. Precedente: Material.</p></div></div>
+<div class="rule"><div class="rn">07</div><div><h3>O card não substitui modal, drawer, accordion ou tab</h3><p>Cada um é componente próprio. Precedente: Carbon.</p></div></div>
+<h3 class="cd-rgroup">Padding e tamanho</h3>
+<div class="rule"><div class="rn">08</div><div><h3>O padding se escolhe pela densidade</h3><p>Spaced (24) para o card isolado ou de destaque; Default (16) em grades e listas; Tight (8) para cards pequenos e densos. Precedentes: Primer, Polaris.</p></div></div>
+<div class="rule"><div class="rn">09</div><div><h3>Largura da grade, altura do conteúdo</h3><p>Na grade, os cards de uma linha esticam até a mesma altura.</p></div></div>
+<h3 class="cd-rgroup">Conteúdo</h3>
+<div class="rule"><div class="rn">10</div><div><h3>Título e descrição são orientação</h3><p>Havendo título, use o do card, para todos os produtos falarem a mesma língua. A descrição complementa e não repete. O slot aceita qualquer outra coisa. Precedentes: Material, Spectrum.</p></div></div>
+<div class="rule"><div class="rn">11</div><div><h3>O título é um título de verdade</h3><p><code>h2</code>, <code>h3</code>… conforme a página, nunca parágrafo em negrito: quem usa leitor de tela navega pelos títulos. Precedente: Inclusive Components.</p></div></div>
+<div class="rule"><div class="rn">12</div><div><h3>Ações explícitas no fim, uma primária</h3><p>No card estático, botões ou links no fim do card. Precedentes: Material, Carbon.</p></div></div>
+<h3 class="cd-rgroup">Card clicável</h3>
+<div class="rule"><div class="rn">13</div><div><h3>Uma ação só, normalmente navegar</h3><p>Com mais de uma ação, o card fica estático. Precedentes: Material, Carbon.</p></div></div>
+<div class="rule"><div class="rn">14</div><div><h3>A seta é a pista sem hover</h3><p>No toque não existe hover. O título diz o destino e uma seta no canto é recomendada, não obrigatória.</p></div></div>
+<div class="rule"><div class="rn">15</div><div><h3>Nada clicável dentro do card clicável</h3><p>Nem botão, nem link, nem checkbox: dois alvos sobrepostos confundem toque, Tab e leitor de tela. Precedente: Carbon. <b>Divergência consciente</b> da técnica que “levanta” botões sobre o link esticado.</p></div></div>
+<div class="rule"><div class="rn">16</div><div><h3>O link é o título, esticado</h3><p>Um <code>&lt;a href&gt;</code> real no título, nunca <code>onclick</code> numa <code>&lt;div&gt;</code> nem um link embrulhando o card. O custo é o texto deixar de ser selecionável. Precedentes: Inclusive Components, Kitty Giraudel.</p></div></div>
+<div class="rule"><div class="rn">17</div><div><h3>O anel envolve o card inteiro</h3><p>Uma parada de Tab por card. No Elevated, anel e sombra juntos. Precedentes: Material, Carbon.</p></div></div>
+<div class="rule"><div class="rn">18</div><div><h3>Laranja é só foco</h3><p>O hover do Border escurece a borda. Nunca use a cor de marca para destacar ou selecionar um card.</p></div></div>
+<h3 class="cd-rgroup">Estados</h3>
+<div class="rule"><div class="rn">19</div><div><h3>Não existe card desabilitado</h3><p>O card some, ou explica no conteúdo por que não está disponível. <b>Divergência consciente</b> do Material.</p></div></div>
+<div class="rule"><div class="rn">20</div><div><h3>Não existe pressionado</h3><p>O feedback do clique é a navegação.</p></div></div>
+<h3 class="cd-rgroup">Acessibilidade</h3>
+<div class="rule"><div class="rn">21</div><div><h3>A borda pode ficar abaixo de 3:1</h3><p>Porque o card se reconhece pelo conteúdo. Por isso nunca use card vazio delimitado só pela linha. Precedente: WCAG 1.4.11.</p></div></div>
+<div class="rule"><div class="rn">22</div><div><h3>Lista de cards é lista</h3><p><code>&lt;ul&gt;</code> e <code>&lt;li&gt;</code>, para o leitor anunciar quantos são. Card autossuficiente pode ser <code>&lt;article&gt;</code>.</p></div></div>
+<div class="rule"><div class="rn">23</div><div><h3>No escuro, quem separa é o fundo</h3><p>A sombra quase não aparece no escuro. Não compense escurecendo a página nem trocando o fundo do card.</p></div></div>
+<div class="rule"><div class="rn">24</div><div><h3>O que não existe, e o que fazer se a demanda aparecer</h3><p>Veja abaixo.</p></div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Card selecionável</b><span>É Radio ou Checkbox.</span></div>
+    <div><b>Card expansível</b><span>É o Accordion.</span></div>
+    <div><b>Capa e ações fixas</b><span>Vão no slot, sem variante.</span></div>
+    <div><b>Pressionado e desabilitado</b><span>Não existem (regras 19 e 20).</span></div>
+    <div><b>Outro padding</b><span>Discute-se a escala, e com ela o nome.</span></div>
+  </div>
+</section></div><div class="panel" id="p-card-a11y" role="tabpanel" aria-labelledby="t-card-a11y" tabindex="0" hidden>
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede cada tema × tipo × estado × página onde o card pode ficar. O texto tem que
+  passar 4,5:1 sem exceção. Borda, anel e limite do card têm piso de 3:1: hover e foco passam,
+  e a borda e o fundo em repouso são as duas exceções declaradas. Um terceiro julgamento
+  reprova o card <b>invisível</b>, sem nada que o separe da página.</p>
+  <div class="stats">
+    <div class="stat hl"><b>32</b><span>combinações medidas</span></div>
+    <div class="stat"><b>22</b><span>passam</span></div>
+    <div class="stat"><b>10</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Tipo</th><th>Estado</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">Todos</td><td class="tok dim">todos</td><td class="tok dim">título</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">card-bg</td><td class="num strong">14.55:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Todos</td><td class="tok dim">todos</td><td class="tok dim">descrição</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">card-bg</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Filled</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.07:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Filled</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Border</td><td class="tok dim">repouso</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.57:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Border</td><td class="tok dim">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Border</td><td class="tok dim">foco</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Border</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Border</td><td class="tok dim">repouso</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.47:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Border</td><td class="tok dim">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.56:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Border</td><td class="tok dim">foco</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Border</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Elevated</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.00:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Elevated</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Elevated</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.07:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Elevated</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Todos</td><td class="tok dim">todos</td><td class="tok dim">título</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">card-bg</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Todos</td><td class="tok dim">todos</td><td class="tok dim">descrição</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">card-bg</td><td class="num strong">5.10:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Filled</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.36:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Filled</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.62:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Border</td><td class="tok dim">repouso</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">card-bg</td><td class="num strong">1.46:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Border</td><td class="tok dim">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">card-bg</td><td class="num strong">3.53:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Border</td><td class="tok dim">foco</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">card-bg</td><td class="num strong">3.20:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Border</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Border</td><td class="tok dim">repouso</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">card-bg</td><td class="num strong">1.46:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Border</td><td class="tok dim">hover</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#949494"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">card-bg</td><td class="num strong">3.53:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Border</td><td class="tok dim">foco</td><td class="tok dim">borda</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">card-bg</td><td class="num strong">3.20:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Border</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.62:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Elevated</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.66:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Elevated</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Elevated</td><td class="tok dim">repouso</td><td class="tok dim">fundo × página</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.36:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Elevated</td><td class="tok dim">foco</td><td class="tok dim">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.62:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra dez regras lendo o HTML que este site emite:
+  <b>29 cards</b> nesta página, nenhum fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Título</b><span><code>__title</code> é <code>h1</code>…<code>h6</code>.</span></div>
+    <div><b>b · Um link</b><span>O clicável tem exatamente um <code>__link</code>, dentro do título.</span></div>
+    <div><b>c · Elemento do link</b><span><code>&lt;a href&gt;</code> ou <code>&lt;button type="button"&gt;</code>, com nome.</span></div>
+    <div><b>d · Nada mais clicável</b><span>Nenhum link, botão, campo ou <code>tabindex</code> além dele.</span></div>
+    <div><b>e · O card não é acionável</b><span>Nem <code>&lt;a&gt;</code>, nem <code>&lt;button&gt;</code>, nem <code>onclick</code>, <code>tabindex</code> ou papel de acionável.</span></div>
+    <div><b>f · Link no lugar certo</b><span><code>__link</code> só em card clicável.</span></div>
+    <div><b>g · Lista</b><span><code>&lt;li class="al-card"&gt;</code> só dentro de <code>&lt;ul&gt;</code> ou <code>&lt;ol&gt;</code>.</span></div>
+    <div><b>h · Sem aninhar</b><span>Nada de card dentro de card.</span></div>
+    <div><b>i · Sem disabled</b><span>Nem <code>disabled</code>, nem <code>aria-disabled</code>.</span></div>
+    <div><b>j · Coerência</b><span>Um tipo e um padding por card.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Uma parada de Tab</b><span>Quem recebe o foco é o link do título. O card estático nunca recebe.</span></div>
+    <div><b>O anel no card</b><span>Com <code>:has()</code>, o anel sai do link e envolve o card. Sem <code>:has()</code>, fica o contorno do navegador.</span></div>
+    <div><b>Enter abre</b><span>É um link de verdade: Enter, clique do meio e abrir em nova aba funcionam.</span></div>
+    <div><b>Nome curto</b><span>O leitor anuncia só o título, não o card inteiro.</span></div>
+    <div><b>Alto contraste</b><span>Fundo e sombra somem nesse modo, então os três tipos ganham contorno na cor do texto do sistema.</span></div>
+    <div><b>Movimento reduzido</b><span>A transição de 120ms é desligada.</span></div>
+  </div>
+</section></div></div>
 <footer>
   <span><b>AL Design System</b> · v0.14.0</span>
   <span>Licença MIT</span>
@@ -12757,6 +13409,54 @@ var DV_DEMOS = {"sections|announced": {"html": "<div class=\"dv-sec\"><b>Dados p
     i.addEventListener('input', render);
   });
   document.getElementById('divider-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+var CD_DEMOS = {"filled|spaced|static": {"html": "<div class=\"al-card al-card--spaced\"><div class=\"al-card__header\"><h3 class=\"al-card__title\">Pedido #1042</h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div></div>", "code": "<div class=\"al-card al-card--spaced\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">Pedido #1042</h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n</div>"}, "filled|spaced|clickable": {"html": "<div class=\"al-card al-card--spaced al-card--clickable\"><div class=\"cd-row\"><div class=\"al-card__header\"><h3 class=\"al-card__title\"><a class=\"al-card__link\" href=\"#/card\">Pedido #1042</a></h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div><svg class=\"al-icon al-icon--20 cd-chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /></svg></div></div>", "code": "<div class=\"al-card al-card--spaced al-card--clickable\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">\n      <a class=\"al-card__link\" href=\"/pedidos/1042\">Pedido #1042</a>\n    </h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n  <!-- seta recomendada (regra 14): <svg class=\"al-icon\" aria-hidden=\"true\">… -->\n</div>"}, "filled|default|static": {"html": "<div class=\"al-card\"><div class=\"al-card__header\"><h3 class=\"al-card__title\">Pedido #1042</h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div></div>", "code": "<div class=\"al-card\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">Pedido #1042</h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n</div>"}, "filled|default|clickable": {"html": "<div class=\"al-card al-card--clickable\"><div class=\"cd-row\"><div class=\"al-card__header\"><h3 class=\"al-card__title\"><a class=\"al-card__link\" href=\"#/card\">Pedido #1042</a></h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div><svg class=\"al-icon al-icon--20 cd-chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /></svg></div></div>", "code": "<div class=\"al-card al-card--clickable\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">\n      <a class=\"al-card__link\" href=\"/pedidos/1042\">Pedido #1042</a>\n    </h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n  <!-- seta recomendada (regra 14): <svg class=\"al-icon\" aria-hidden=\"true\">… -->\n</div>"}, "filled|tight|static": {"html": "<div class=\"al-card al-card--tight\"><div class=\"al-card__header\"><h3 class=\"al-card__title\">Pedido #1042</h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div></div>", "code": "<div class=\"al-card al-card--tight\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">Pedido #1042</h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n</div>"}, "filled|tight|clickable": {"html": "<div class=\"al-card al-card--tight al-card--clickable\"><div class=\"cd-row\"><div class=\"al-card__header\"><h3 class=\"al-card__title\"><a class=\"al-card__link\" href=\"#/card\">Pedido #1042</a></h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div><svg class=\"al-icon al-icon--20 cd-chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /></svg></div></div>", "code": "<div class=\"al-card al-card--tight al-card--clickable\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">\n      <a class=\"al-card__link\" href=\"/pedidos/1042\">Pedido #1042</a>\n    </h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n  <!-- seta recomendada (regra 14): <svg class=\"al-icon\" aria-hidden=\"true\">… -->\n</div>"}, "border|spaced|static": {"html": "<div class=\"al-card al-card--border al-card--spaced\"><div class=\"al-card__header\"><h3 class=\"al-card__title\">Pedido #1042</h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div></div>", "code": "<div class=\"al-card al-card--border al-card--spaced\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">Pedido #1042</h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n</div>"}, "border|spaced|clickable": {"html": "<div class=\"al-card al-card--border al-card--spaced al-card--clickable\"><div class=\"cd-row\"><div class=\"al-card__header\"><h3 class=\"al-card__title\"><a class=\"al-card__link\" href=\"#/card\">Pedido #1042</a></h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div><svg class=\"al-icon al-icon--20 cd-chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /></svg></div></div>", "code": "<div class=\"al-card al-card--border al-card--spaced al-card--clickable\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">\n      <a class=\"al-card__link\" href=\"/pedidos/1042\">Pedido #1042</a>\n    </h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n  <!-- seta recomendada (regra 14): <svg class=\"al-icon\" aria-hidden=\"true\">… -->\n</div>"}, "border|default|static": {"html": "<div class=\"al-card al-card--border\"><div class=\"al-card__header\"><h3 class=\"al-card__title\">Pedido #1042</h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div></div>", "code": "<div class=\"al-card al-card--border\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">Pedido #1042</h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n</div>"}, "border|default|clickable": {"html": "<div class=\"al-card al-card--border al-card--clickable\"><div class=\"cd-row\"><div class=\"al-card__header\"><h3 class=\"al-card__title\"><a class=\"al-card__link\" href=\"#/card\">Pedido #1042</a></h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div><svg class=\"al-icon al-icon--20 cd-chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /></svg></div></div>", "code": "<div class=\"al-card al-card--border al-card--clickable\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">\n      <a class=\"al-card__link\" href=\"/pedidos/1042\">Pedido #1042</a>\n    </h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n  <!-- seta recomendada (regra 14): <svg class=\"al-icon\" aria-hidden=\"true\">… -->\n</div>"}, "border|tight|static": {"html": "<div class=\"al-card al-card--border al-card--tight\"><div class=\"al-card__header\"><h3 class=\"al-card__title\">Pedido #1042</h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div></div>", "code": "<div class=\"al-card al-card--border al-card--tight\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">Pedido #1042</h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n</div>"}, "border|tight|clickable": {"html": "<div class=\"al-card al-card--border al-card--tight al-card--clickable\"><div class=\"cd-row\"><div class=\"al-card__header\"><h3 class=\"al-card__title\"><a class=\"al-card__link\" href=\"#/card\">Pedido #1042</a></h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div><svg class=\"al-icon al-icon--20 cd-chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /></svg></div></div>", "code": "<div class=\"al-card al-card--border al-card--tight al-card--clickable\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">\n      <a class=\"al-card__link\" href=\"/pedidos/1042\">Pedido #1042</a>\n    </h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n  <!-- seta recomendada (regra 14): <svg class=\"al-icon\" aria-hidden=\"true\">… -->\n</div>"}, "elevated|spaced|static": {"html": "<div class=\"al-card al-card--elevated al-card--spaced\"><div class=\"al-card__header\"><h3 class=\"al-card__title\">Pedido #1042</h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div></div>", "code": "<div class=\"al-card al-card--elevated al-card--spaced\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">Pedido #1042</h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n</div>"}, "elevated|spaced|clickable": {"html": "<div class=\"al-card al-card--elevated al-card--spaced al-card--clickable\"><div class=\"cd-row\"><div class=\"al-card__header\"><h3 class=\"al-card__title\"><a class=\"al-card__link\" href=\"#/card\">Pedido #1042</a></h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div><svg class=\"al-icon al-icon--20 cd-chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /></svg></div></div>", "code": "<div class=\"al-card al-card--elevated al-card--spaced al-card--clickable\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">\n      <a class=\"al-card__link\" href=\"/pedidos/1042\">Pedido #1042</a>\n    </h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n  <!-- seta recomendada (regra 14): <svg class=\"al-icon\" aria-hidden=\"true\">… -->\n</div>"}, "elevated|default|static": {"html": "<div class=\"al-card al-card--elevated\"><div class=\"al-card__header\"><h3 class=\"al-card__title\">Pedido #1042</h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div></div>", "code": "<div class=\"al-card al-card--elevated\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">Pedido #1042</h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n</div>"}, "elevated|default|clickable": {"html": "<div class=\"al-card al-card--elevated al-card--clickable\"><div class=\"cd-row\"><div class=\"al-card__header\"><h3 class=\"al-card__title\"><a class=\"al-card__link\" href=\"#/card\">Pedido #1042</a></h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div><svg class=\"al-icon al-icon--20 cd-chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /></svg></div></div>", "code": "<div class=\"al-card al-card--elevated al-card--clickable\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">\n      <a class=\"al-card__link\" href=\"/pedidos/1042\">Pedido #1042</a>\n    </h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n  <!-- seta recomendada (regra 14): <svg class=\"al-icon\" aria-hidden=\"true\">… -->\n</div>"}, "elevated|tight|static": {"html": "<div class=\"al-card al-card--elevated al-card--tight\"><div class=\"al-card__header\"><h3 class=\"al-card__title\">Pedido #1042</h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div></div>", "code": "<div class=\"al-card al-card--elevated al-card--tight\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">Pedido #1042</h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n</div>"}, "elevated|tight|clickable": {"html": "<div class=\"al-card al-card--elevated al-card--tight al-card--clickable\"><div class=\"cd-row\"><div class=\"al-card__header\"><h3 class=\"al-card__title\"><a class=\"al-card__link\" href=\"#/card\">Pedido #1042</a></h3><p class=\"al-card__description\">Entregue em 3 de outubro.</p></div><svg class=\"al-icon al-icon--20 cd-chevron\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /></svg></div></div>", "code": "<div class=\"al-card al-card--elevated al-card--tight al-card--clickable\">\n  <div class=\"al-card__header\">\n    <h3 class=\"al-card__title\">\n      <a class=\"al-card__link\" href=\"/pedidos/1042\">Pedido #1042</a>\n    </h3>\n    <p class=\"al-card__description\">Entregue em 3 de outubro.</p>\n  </div>\n  <!-- seta recomendada (regra 14): <svg class=\"al-icon\" aria-hidden=\"true\">… -->\n</div>"}};
+
+(function () {
+  // ── playground do Card ──
+  var stage = document.getElementById('card-stage');
+  if (!stage) return;
+  var code = document.getElementById('card-code');
+  var warn = document.getElementById('card-warn');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinacao vem pronto do site.py (CD_DEMOS) - o mesmo que
+  // a pagina emite parada, para o playground nao ensinar outro contrato.
+  function render() {
+    var t = pick('cdtype'), p = pick('cdpad'), i = pick('cdint'),
+        pg = pick('cdpage'), theme = pick('cdtheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = CD_DEMOS[t + '|' + p + '|' + i];
+    stage.innerHTML = '<div class="cd-page" data-cdpage="' + pg + '">' + demo.html + '</div>';
+    code.innerHTML = esc(demo.code);
+    warn.hidden = !(t === 'filled' && pg === 'canvas');
+  }
+
+  // o card do playground aponta para a propria pagina; o clique nao navega
+  stage.addEventListener('click', function (e) {
+    if (e.target.closest('.al-card__link')) e.preventDefault();
+  });
+
+  document.querySelectorAll('#card-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('card-copy').addEventListener('click', function () {
     var btn = this;
     var done = function () {
       btn.textContent = 'Copiado';

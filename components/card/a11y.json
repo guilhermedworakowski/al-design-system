@@ -5,8 +5,8 @@
     "text": 4.5,
     "nonText": 3.0
   },
-  "markupSource": "site/card-qa.html",
-  "markupChecked": 36,
+  "markupSource": "site/index.html",
+  "markupChecked": 29,
   "markupPending": false,
   "markupProblems": [],
   "rows": [
