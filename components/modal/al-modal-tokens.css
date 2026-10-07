@@ -16,6 +16,7 @@
   --al-modal-padding: var(--al-space-24);
   --al-modal-gap: var(--al-space-24);
   --al-modal-margin: var(--al-space-16);
+  --al-modal-offset: var(--al-space-96);
   --al-modal-radius: var(--al-radius-2xl);
 
   /* largura - valor declarado, sem escala na Foundation (decisao G) */

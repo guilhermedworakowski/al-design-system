@@ -27,6 +27,10 @@ SCRIM
 
 SEM TOKEN, DE PROPOSITO
 
+  Entrada e saida: o card sobe ao abrir e desce ao fechar (Gui, 07/10/2026),
+  `modal-offset` = space.96. A Foundation nao tem escala de deslocamento de
+  movimento; o espacamento serve de alias.
+
   Altura: hug com maximo (decisao E: so o miolo rola). Largura no celular:
   100vw - 2 x modal-margin (decisao F/H). Botoes do rodape: tokens do Button.
   Alinhamento das acoes: layout. Easing: easing-enter na abertura, easing-exit
@@ -60,6 +64,7 @@ GEOM = {
     'padding': 'space.24',
     'gap':     'space.24',              # titulo / miolo / acoes
     'margin':  'space.16',              # contra a borda da tela (decisao H)
+    'offset':  'space.96',              # quanto o card sobe ao abrir e desce ao fechar
     'radius':  'radius.2xl',
 }
 

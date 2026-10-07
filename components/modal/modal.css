@@ -13,8 +13,10 @@
  *     <h2 class="al-modal__title" id="t1">Excluir cliente?</h2>
  *     <div class="al-modal__content">…qualquer conteudo…</div>
  *     <div class="al-modal__actions">
- *       <button class="al-btn al-btn--ghost">Cancelar</button>
- *       <button class="al-btn al-btn--danger">Excluir cliente</button>
+ *       <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
+ *         <span class="al-btn__label">Cancelar</span></button>
+ *       <button type="button" class="al-btn al-btn--danger al-btn--md">
+ *         <span class="al-btn__label">Excluir cliente</span></button>
  *     </div>
  *   </dialog>
  *
@@ -40,12 +42,16 @@
  *   <dialog> modal o 100% e a viewport.
  *
  * ENTRADA E SAIDA (REGRA 17)
- *   So opacidade, em 300ms (modal-duration), com a curva do estado de
- *   destino: entrada ease-out, saida ease-in. O Figma nao desenha
- *   deslocamento nem escala, entao nenhum foi inventado. Usa @starting-style
- *   e transition-behavior: allow-discrete para animar o display e a camada
- *   de topo; em navegador sem isso o Modal abre e fecha sem animacao e
- *   continua funcionando.
+ *   O card SOBE ao abrir e DESCE ao fechar, com fade, em 300ms
+ *   (modal-duration). O deslocamento e `modal-offset` (space.96): o card nasce
+ *   96 abaixo do lugar dele e volta para la. A curva e a do estado de destino:
+ *   entrada ease-out, saida ease-in. O scrim so aparece e some. Usa
+ *   @starting-style e transition-behavior: allow-discrete para animar o
+ *   display e a camada de topo; em navegador sem isso o Modal abre e fecha
+ *   sem animacao e continua funcionando.
+ *   O layout em coluna fica na base, nao no [open]: ao fechar o display segue
+ *   `flex` pela duracao da saida, e um layout so do [open] fazia o miolo ser
+ *   comprimido na frente do usuario.
  *
  * SCRIM (REGRA 27)
  *   ::backdrop herda as custom properties do <dialog>. Decoracao: nao recebe
@@ -80,11 +86,17 @@
 .al-modal--md { inline-size: var(--al-modal-width-md); }
 .al-modal--lg { inline-size: var(--al-modal-width-lg); }
 
-/* display so quando aberto: dialog fechado precisa seguir display: none */
-.al-modal[open] {
-  display: flex;
+/* O layout (coluna, gap) fica na base e so o display depende do [open]: dialog
+   fechado precisa seguir display: none. Se o gap e a direcao ficassem no
+   [open], ao fechar o Modal voltaria a ser bloco durante a saida e o miolo
+   seria comprimido na frente do usuario. */
+.al-modal {
   flex-direction: column;
   gap: var(--al-modal-gap);
+}
+
+.al-modal[open] {
+  display: flex;
 }
 
 /* --------------------------------------------------------------- titulo */
@@ -120,14 +132,36 @@
 }
 
 /* ---------------------------------------------------------- pagina atras */
-/* regra 28: a pagina nao rola com o Modal aberto */
-:root:has(.al-modal[open]) {
+/* regra 28: a pagina nao rola com o Modal aberto. `:modal` e so o aberto por
+   showModal(): um <dialog open> solto, como os congelados da pagina de QA,
+   nao trava a rolagem */
+:root:has(.al-modal:modal) {
   overflow: hidden;
 }
 
 /* ------------------------------------------------------ entrada e saida */
-.al-modal,
+/* O estado base e o de FORA: transparente e deslocado para baixo. Aberto, ele
+   sobe e aparece; ao fechar volta para o estado base e desce. A mesma regra
+   serve aos dois sentidos. */
+.al-modal {
+  opacity: 0;
+  translate: 0 var(--al-modal-offset);
+  transition:
+    opacity var(--al-modal-duration) var(--al-motion-easing-exit),
+    translate var(--al-modal-duration) var(--al-motion-easing-exit),
+    overlay var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-modal[open] {
+  opacity: 1;
+  translate: 0 0;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* o scrim so aparece e some; quem sobe e desce e o card */
 .al-modal::backdrop {
+  background-color: var(--al-modal-scrim);
   opacity: 0;
   transition:
     opacity var(--al-modal-duration) var(--al-motion-easing-exit),
@@ -135,18 +169,17 @@
     display var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete;
 }
 
-.al-modal::backdrop {
-  background-color: var(--al-modal-scrim);
-}
-
-.al-modal[open],
 .al-modal[open]::backdrop {
   opacity: 1;
   transition-timing-function: var(--al-motion-easing-enter);
 }
 
 @starting-style {
-  .al-modal[open],
+  .al-modal[open] {
+    opacity: 0;
+    translate: 0 var(--al-modal-offset);
+  }
+
   .al-modal[open]::backdrop {
     opacity: 0;
   }
@@ -156,6 +189,10 @@
   .al-modal,
   .al-modal::backdrop {
     transition: none;
+  }
+
+  .al-modal {
+    translate: none;
   }
 }
 

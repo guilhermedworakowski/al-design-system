@@ -16,7 +16,7 @@
  *                           toque de apagar (regras 23 e 29)
  *
  * Uso:
- *   <script src="modal.js"></script>   -> liga sozinho quando a pagina carrega
+ *   carregar este arquivo com um script src       -> liga sozinho quando a pagina carrega
  *   alModals.init(container)            -> liga em conteudo inserido depois
  * Ligar duas vezes o mesmo dialog nao duplica nada.
  */
