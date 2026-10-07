@@ -143,8 +143,10 @@
    bg-surface. No escuro o fundo do Modal (surface-raised) e igual ao bg-hover,
    e o hover sumia. Aqui o estado vem dos semanticos -raised, os mesmos
    que o Accordion ja usa. So muda o fundo de hover/pressed; o resto e do Button. */
-.al-modal__actions .al-btn--ghost,
-.al-modal__actions .al-btn--secondary {
+.al-modal .al-btn--ghost,
+.al-modal .al-btn--secondary,
+.al-modal .al-icon-btn--ghost,
+.al-modal .al-icon-btn--secondary {
   --_bg-hover: var(--al-bg-hover-raised);
   --_bg-active: var(--al-bg-active-raised);
 }
