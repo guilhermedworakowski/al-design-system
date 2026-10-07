@@ -34,7 +34,9 @@ TOKENS = {
     # 0.11.1: package.json — distribuição; nenhum token muda
     # 0.13.0: o Password - componente novo, casa do meio. Primeiro componente
     # com JavaScript proprio (password.js), que passa a ir no pacote.
-    "name": "AL Design System", "version": "0.13.0", "license": "MIT",
+    # 0.14.0: o Divider - componente novo, casa do meio. Primeiro do Tier 3
+    # (estrutura); nenhum token da Foundation muda.
+    "name": "AL Design System", "version": "0.14.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },

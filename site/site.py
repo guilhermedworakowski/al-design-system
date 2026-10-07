@@ -95,6 +95,10 @@ PASSWORD_TOKENS = open(os.path.join(ROOT, 'components', 'password', 'al-password
 PASSWORD_CSS = open(os.path.join(ROOT, 'components', 'password', 'password.css')).read()
 PASSWORD_JS = open(os.path.join(ROOT, 'components', 'password', 'password.js')).read()
 PASSWORD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'password', 'a11y.json')))
+DIVIDER = json.load(open(os.path.join(ROOT, 'components', 'divider', 'tokens.json')))
+DIVIDER_TOKENS = open(os.path.join(ROOT, 'components', 'divider', 'al-divider-tokens.css')).read()
+DIVIDER_CSS = open(os.path.join(ROOT, 'components', 'divider', 'divider.css')).read()
+DIVIDER_A11Y = json.load(open(os.path.join(ROOT, 'components', 'divider', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -121,6 +125,7 @@ N_SWITCH_TOKENS = len(SWITCH['alias'])
 N_INPUT_TOKENS = len(INPUT['alias'])
 N_TEXTAREA_TOKENS = len(TEXTAREA['alias'])
 N_PASSWORD_TOKENS = len(PASSWORD['alias'])
+N_DIVIDER_TOKENS = len(DIVIDER['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -164,7 +169,7 @@ def scope_themes(found_css, *token_blocks):
 CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKENS,
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
-                         PASSWORD_TOKENS)
+                         PASSWORD_TOKENS, DIVIDER_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -176,7 +181,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + SWITCH_TOKENS + '\n' + SWITCH_CSS
             + '\n' + INPUT_TOKENS + '\n' + INPUT_CSS
             + '\n' + TEXTAREA_TOKENS + '\n' + TEXTAREA_CSS
-            + '\n' + PASSWORD_TOKENS + '\n' + PASSWORD_CSS)
+            + '\n' + PASSWORD_TOKENS + '\n' + PASSWORD_CSS
+            + '\n' + DIVIDER_TOKENS + '\n' + DIVIDER_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -6681,6 +6687,426 @@ PASSWORD_A11Y_TAB = f'''
 
 
 
+# ═══════════════════════════════════════════════════════════════ Divider · abas
+# Primeiro componente do Tier 3. Sem estado e sem tamanho: o que varia e a
+# orientacao e o contrato de marcacao. Toda linha da pagina sai do divider.css
+# real - nenhuma e desenhada com borda de chrome.
+DV_HR = '<hr class="al-divider">'
+DV_HR_DECO = '<hr class="al-divider" aria-hidden="true">'
+DV_HR_V = '<hr class="al-divider al-divider--vertical" aria-orientation="vertical">'
+DV_HR_V_DECO = '<hr class="al-divider al-divider--vertical" aria-hidden="true">'
+DV_LI = '<li class="al-divider" role="separator"></li>'
+DV_LI_DECO = '<li class="al-divider" aria-hidden="true"></li>'
+
+DV_CTX = [('sections', 'Seções'), ('list', 'Lista em grupos'), ('toolbar', 'Barra de ações')]
+DV_SR = [('announced', 'Anunciado'), ('decorative', 'Decorativo')]
+DV_SURF = [('canvas', 'Tela'), ('surface', 'Faixa de seção'), ('raised', 'Card ou modal')]
+
+N_DV_MEDIDAS = len(DIVIDER_A11Y['rows'])
+N_DV_EXC = sum(1 for r in DIVIDER_A11Y['rows'] if r['exception'])
+DV_PIOR = min(DIVIDER_A11Y['rows'], key=lambda r: r['ratio'])
+
+
+def dv_btn(label):
+    return (f'<button type="button" class="al-btn al-btn--secondary al-btn--sm">'
+            f'<span class="al-btn__label">{label}</span></button>')
+
+
+def dv_demo(ctx, sr):
+    """O mesmo uso que o playground mostra, devolvido como (html, codigo).
+
+    O contexto decide a orientacao e o elemento (regras 5 e 15); o leitor de
+    tela decide so o atributo (regras 12 a 14)."""
+    deco = sr == 'decorative'
+    if ctx == 'list':
+        sep = DV_LI_DECO if deco else DV_LI
+        html = ('<ul class="dv-menu" aria-label="Ações do arquivo">'
+                '<li>Editar</li><li>Duplicar</li><li>Mover para…</li>'
+                f'{sep}<li class="dv-danger">Excluir</li></ul>')
+        code = ['<ul aria-label="Ações do arquivo">',
+                '  <li>Editar</li>', '  <li>Duplicar</li>', '  <li>Mover para…</li>',
+                '  ' + sep, '  <li>Excluir</li>', '</ul>']
+    elif ctx == 'toolbar':
+        sep = DV_HR_V_DECO if deco else DV_HR_V
+        html = ('<div class="dv-toolbar">' + dv_btn('Negrito') + dv_btn('Itálico')
+                + sep + dv_btn('Lista') + dv_btn('Citação') + '</div>')
+        code = ['<div class="barra">  <!-- flex em linha: a vertical estica na altura dela -->',
+                '  <button …>Negrito</button>', '  <button …>Itálico</button>',
+                '  ' + sep, '  <button …>Lista</button>', '  <button …>Citação</button>',
+                '</div>']
+    else:
+        sep = DV_HR_DECO if deco else DV_HR
+        html = ('<div class="dv-sec"><b>Dados pessoais</b><span>Nome, documento e data de '
+                'nascimento.</span></div>' + sep
+                + '<div class="dv-sec"><b>Endereço</b><span>Onde entregamos as notas e os '
+                'cartões.</span></div>')
+        code = ['<section>…Dados pessoais…</section>', sep, '<section>…Endereço…</section>']
+    return html, '\n'.join(code)
+
+
+def dv_box(ctx, sr, surf='canvas'):
+    return f'<div class="dv-box dv-box--{ctx}" data-surf="{surf}">{dv_demo(ctx, sr)[0]}</div>'
+
+
+DV_DEMOS = {f'{c}|{s}': dict(zip(('html', 'code'), dv_demo(c, s)))
+            for c, _ in DV_CTX for s, _ in DV_SR}
+
+
+def divider_token_rows():
+    rows = []
+    for name in ('divider-color', 'divider-thickness'):
+        res = DIVIDER['resolved'][name]
+        if isinstance(res, dict):
+            light = (f'<span class="chip sm" style="background:{res["light"]}"></span>'
+                     f'{res["light"]}')
+            dark = (f'<span class="chip sm" style="background:{res["dark"]}"></span>'
+                    f'{res["dark"]}')
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{DIVIDER["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+def divider_a11y_rows():
+    nomes = {'bg-canvas': 'Tela', 'bg-surface': 'Faixa de seção',
+             'bg-surface-raised': 'Card ou modal'}
+    out = []
+    for r in DIVIDER_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fg"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        if r['invisible']:
+            veredito = '<span class="fail">invisível</span>'
+        elif r['pass']:
+            veredito = '<span class="pass">passa</span>'
+        else:
+            veredito = '<span class="exc">exceção declarada</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{nomes[r["bg"]]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["fg"]} / {r["bgHex"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{veredito}</td></tr>')
+    return '\n'.join(out)
+
+
+DIVIDER_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="divider-stage">{dv_box('sections', 'announced')}</div>
+
+    <div class="controls" id="divider-controls">
+      <div class="ctl"><span class="ctl-name">Contexto</span>{seg('dvctx', DV_CTX, 'sections')}</div>
+      <div class="ctl"><span class="ctl-name">Leitor de tela</span>{seg('dvsr', DV_SR, 'announced')}</div>
+      <div class="ctl"><span class="ctl-name">Superfície</span>{seg('dvsurf', DV_SURF, 'canvas')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('dvtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="divider-copy">Copiar</button></div>
+      <pre><code id="divider-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O <b>Contexto</b> decide a orientação e o elemento: entre seções empilhadas a linha é
+    horizontal; numa lista ela vira um item, <code>&lt;li role="separator"&gt;</code>, porque
+    <code>&lt;ul&gt;</code> só aceita <code>&lt;li&gt;</code>; entre botões lado a lado ela é
+    vertical. O <b>Leitor de tela</b> não muda nada que se vê — só o que se ouve. Troque a
+    <b>Superfície</b> para card no tema escuro: foi ali que a linha sumia antes da etapa 6.
+  </p>
+</section>
+
+<section>
+  <h2>Espaço primeiro, linha depois</h2>
+  <p>A pergunta antes de pôr um divisor é se o espaço já não separa. Na maioria das vezes
+  separa — e cada linha a mais é mais um elemento disputando a atenção. O divisor entra quando
+  o espaço e o alinhamento não bastam, e entra entre <b>grupos</b>, nunca entre cada item.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Uma linha entre os grupos</span>
+      <div class="stage2" style="display:block">{dv_box('list', 'announced')}</div>
+      <p class="cap">Editar, duplicar e mover são um grupo; excluir é outro. A linha marca a
+      fronteira — e é a única. <i>Material, Primer.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Uma linha entre cada item</span>
+      <div class="stage2" style="display:block">
+        <ul class="dv-menu" aria-label="Exemplo a evitar">
+          <li>Editar</li>{DV_LI_DECO}<li>Duplicar</li>{DV_LI_DECO}<li>Mover para…</li>{DV_LI_DECO}<li class="dv-danger">Excluir</li>
+        </ul>
+      </div>
+      <p class="cap">Vira listra: todas as fronteiras pesam igual, e o grupo de excluir deixa
+      de se destacar.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As duas orientações</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Horizontal · blocos empilhados</span>
+      <div class="stage2" style="display:block">{dv_box('sections', 'announced')}</div>
+      <p class="cap">Seções de uma página, grupos de um menu, o rodapé de um card. Ocupa a
+      largura do contêiner sozinha.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Vertical · itens lado a lado</span>
+      <div class="stage2" style="display:block">{dv_box('toolbar', 'decorative')}</div>
+      <p class="cap">Grupos de ações numa barra, metadados na mesma linha. Estica na altura da
+      linha de conteúdo — por isso precisa de um pai em flex ou grid.</p>
+    </div>
+  </div>
+</section>'''
+
+
+DIVIDER_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Elemento</b><span><code>&lt;hr&gt;</code> nas duas orientações. Dentro de lista, <code>&lt;li role="separator"&gt;</code>.</span></div>
+    <div><b>A linha</b><span>A borda de uma caixa de espessura zero — a de cima na horizontal, a do início na vertical. Não é fundo.</span></div>
+    <div><b>Comprimento</b><span>Vem do contêiner: largura toda na horizontal, altura da linha (<code>align-self: stretch</code>) na vertical.</span></div>
+    <div><b>Margem</b><span>Zero. O <code>&lt;hr&gt;</code> do navegador traz uma própria; o espaço em volta é de quem monta a tela.</span></div>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Borda, e não fundo, de propósito</b>
+    No Figma a linha é um retângulo preenchido de 1px. No código ela é borda por dois motivos:
+    o <code>&lt;hr&gt;</code> do navegador já é desenhado assim, e no modo de alto contraste do
+    sistema a borda é repintada com a cor do texto — um fundo simplesmente sumiria. Na tela, o
+    resultado é o mesmo.
+  </div>
+</section>
+
+<section>
+  <h2>As duas variantes</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Orientation = Horizontal</span>
+      <div class="stage2" style="display:block"><div class="dv-spec"><span>Bloco de cima</span>{DV_HR_DECO}<span>Bloco de baixo</span></div></div>
+      <p class="cap"><code>.al-divider</code></p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Orientation = Vertical</span>
+      <div class="stage2" style="display:block"><div class="dv-spec dv-spec--row"><span>Entrada</span>{DV_HR_V_DECO}<span>Saída</span></div></div>
+      <p class="cap"><code>.al-divider .al-divider--vertical</code></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Divider</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{divider_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b><code>color</code> e <code>thickness</code>, não <code>border</code></b>
+    Nos outros componentes a borda contorna uma caixa. Aqui a linha <i>é</i> o componente — e
+    os nomes do Spectrum e do Material leem igual nas duas orientações.
+  </div>
+  <div class="note">
+    <b>Nasceu <code>border-subtle</code>, virou <code>border-default</code></b>
+    A etapa 6 mediu a linha na terceira superfície do sistema, card e modal, e achou a linha
+    <b>invisível</b> no tema escuro: <code>border-subtle</code> e <code>bg-surface-raised</code>
+    são o mesmo <code>neutral-800</code> ali. A troca ficou só no Divider — a Foundation e os
+    outros componentes que usam <code>border-subtle</code> não mudaram.
+  </div>
+  <div class="note">
+    <b>Comprimento e margem não têm token</b>
+    O comprimento é do contêiner e a margem é do layout. Os 158 e 160px do Figma são só a
+    medida do exemplo desenhado.
+  </div>
+</section>'''
+
+
+DIVIDER_GUIDE = f'''
+<section>
+  <h2>A linha nunca é a única pista</h2>
+  <p>A regra que sustenta a exceção de contraste do componente. A linha fica abaixo dos 3:1 do
+  critério 1.4.11 em toda superfície — e isso só é aceitável porque o critério vale para o que
+  é <b>necessário</b> para entender a tela. Se o agrupamento depender só da linha, a exceção
+  deixa de valer.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Título e espaço também separam</span>
+      <div class="stage2" style="display:block">{dv_box('sections', 'announced')}</div>
+      <p class="cap">Quem não enxerga a linha ainda vê dois blocos com dois títulos.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Só a linha separa</span>
+      <div class="stage2" style="display:block"><div class="dv-box dv-box--tight" data-surf="canvas"><span>Boleto</span><span>Pix</span>{DV_HR_DECO}<span>Cartão de crédito</span><span>Cartão de débito</span></div></div>
+      <p class="cap">Sem a linha, quatro itens iguais. Com ela, dois grupos que só ela conta.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+
+  <div class="rule"><div class="rn">01</div><div>
+    <h3>Espaço antes de linha</h3>
+    <p>Use o divisor só quando espaço e alinhamento não bastam. Nem todo bloco precisa de
+    linha. Precedente: Material, “use dividers sparingly”.</p></div></div>
+
+  <div class="rule"><div class="rn">02</div><div>
+    <h3>Grupos, não itens</h3>
+    <p>Nada de linha entre cada item de uma lista ou menu — ela fica entre um grupo e o
+    próximo. Precedentes: Material e o ActionList do Primer.</p></div></div>
+
+  <div class="rule"><div class="rn">03</div><div>
+    <h3>Não substitui borda de contêiner</h3>
+    <p>Card, campo e modal têm borda própria, com o token deles. Precedente: Carbon e Primer,
+    onde cada componente usa o token de borda e não um divisor.</p></div></div>
+
+  <div class="rule"><div class="rn">04</div><div>
+    <h3>Nada de divisor no começo ou no fim, nem dois seguidos</h3>
+    <p>Colado na borda do contêiner vira linha dupla; nas pontas, não separa nada. O portão de
+    marcação recusa os três casos. Precedente: Primer, que só põe divisor entre grupos.</p></div></div>
+
+  <div class="rule"><div class="rn">05</div><div>
+    <h3>Horizontal entre blocos empilhados, vertical entre itens lado a lado</h3>
+    <p>Seções, grupos de menu e rodapé de card de um lado; ações numa barra e metadados na
+    mesma linha do outro. Precedentes: Spectrum e Material.</p></div></div>
+
+  <div class="rule"><div class="rn">06</div><div>
+    <h3>O comprimento vem do contêiner</h3>
+    <p>Não fixe largura nem altura. A vertical precisa de um pai em flex ou grid para ter
+    altura — e só existe entre itens lado a lado.</p></div></div>
+
+  <div class="rule"><div class="rn">07</div><div>
+    <h3>Uma cor e uma espessura, sempre</h3>
+    <p><code>border-default</code> e 1px. Não troque por <code>border-subtle</code>,
+    <code>border-strong</code> ou cor de marca para “dar destaque” — hierarquia vem de título e
+    espaço. Precedente: Polaris. <b>Divergência consciente</b> do Spectrum, que tem três
+    espessuras.</p></div></div>
+
+  <div class="rule"><div class="rn">08</div><div>
+    <h3>A linha nunca é a única pista do agrupamento</h3>
+    <p>Espaço, título ou estrutura também mostram a separação. É o que sustenta a exceção de
+    contraste — ver acima e a aba Acessibilidade. Precedente: WCAG 1.4.11.</p></div></div>
+
+  <div class="rule"><div class="rn">09</div><div>
+    <h3>Mesmo espaço dos dois lados</h3>
+    <p>Sempre da escala <code>space-*</code>. Espaço desigual “gruda” a linha num dos grupos.
+    Quanto espaço é decisão do layout — o AL não fixa valor.</p></div></div>
+
+  <div class="rule"><div class="rn">10</div><div>
+    <h3>Recuo é margem, não variante</h3>
+    <p>Numa lista com ícone ou avatar, a linha pode começar alinhada ao texto. Precedente: o
+    divisor recuado do Material — aqui feito com margem.</p></div></div>
+
+  <div class="rule"><div class="rn">11</div><div>
+    <h3>Sem texto dentro do divisor</h3>
+    <p>Para nomear o grupo, um título de seção acima dele. Precedente: Material, que acompanha
+    o divisor de subtítulo.</p></div></div>
+
+  <div class="rule"><div class="rn">12</div><div>
+    <h3>O padrão é <code>&lt;hr&gt;</code>, anunciado</h3>
+    <p>O leitor de tela diz “separador”. Use quando a linha marca mudança de assunto ou de
+    seção. Precedentes: a quebra temática do HTML e o papel <code>separator</code> do
+    WAI-ARIA.</p></div></div>
+
+  <div class="rule"><div class="rn">13</div><div>
+    <h3>Decorativo leva <code>aria-hidden="true"</code></h3>
+    <p>Quando a estrutura já separa — entre botões, num card com títulos, entre grupos que já
+    são listas. Ouvir “separador” ali é ruído. Precedentes: Queensland Design System e Sara
+    Soueidan.</p></div></div>
+
+  <div class="rule"><div class="rn">14</div><div>
+    <h3>Vertical anunciada informa a orientação</h3>
+    <p><code>aria-orientation="vertical"</code> — o separador é horizontal por padrão.
+    Precedente: WAI-ARIA.</p></div></div>
+
+  <div class="rule"><div class="rn">15</div><div>
+    <h3>Em lista, a linha também é item</h3>
+    <p><code>&lt;li role="separator"&gt;</code>, nunca um <code>&lt;hr&gt;</code> solto dentro de
+    <code>&lt;ul&gt;</code> — HTML inválido quebra a contagem de itens que o leitor anuncia.
+    Precedentes: o padrão de menu do WAI-ARIA e o Primer.</p></div></div>
+
+  <div class="rule"><div class="rn">16</div><div>
+    <h3>Nunca focável nem clicável</h3>
+    <p>Separador focável no ARIA é outra coisa: o splitter que redimensiona painéis. Precedente:
+    o padrão Window Splitter do WAI-ARIA.</p></div></div>
+
+  <div class="rule"><div class="rn">17</div><div>
+    <h3>O que não existe, e o que fazer se a demanda aparecer</h3>
+    <p>Veja abaixo.</p></div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Espessuras e cores extras</b><span>Destaque vem de título e espaço, não de uma linha mais grossa ou laranja.</span></div>
+    <div><b>Texto no meio</b><span>O “ou” entre duas opções é um título de seção, não um divisor.</span></div>
+    <div><b>Recuo como variante</b><span>É margem do layout.</span></div>
+    <div><b>Divisor arrastável</b><span>Redimensionar painéis é outro componente, com foco e teclado próprios — a discutir quando a demanda vier.</span></div>
+  </div>
+</section>'''
+
+
+DIVIDER_A11Y_TAB = f'''
+<section>
+  <h2>Uma exceção, medida em três superfícies</h2>
+  <p>O divisor é <b>não-textual</b>: o piso seria 3:1 do critério 1.4.11. A linha fica abaixo
+  disso em toda superfície, e é exceção declarada — o critério só vale para o que é necessário
+  para entender a tela, e a regra 8 garante que a linha nunca seja.</p>
+  <p style="margin-top:12px">A exceção cobre uma linha <b>discreta</b>. Não cobre uma linha que
+  não existe: por isso o portão tem um segundo julgamento, que reprova linha da mesma cor do
+  fundo. Foi ele que pegou o <code>border-subtle</code> sumindo no card escuro na etapa 6.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_DV_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_DV_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{sum(1 for r in DIVIDER_A11Y['rows'] if r['invisible'])}</b><span>linhas invisíveis</span></div>
+    <div class="stat"><b>{DV_PIOR['ratio']:.2f}:1</b><span>a mais discreta</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>Superfície</th><th></th><th>Linha / fundo</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{divider_a11y_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Quase tudo que pode dar errado num divisor é marcação, não estilo. O <code>a11y.py</code>
+  cobra sete regras lendo o HTML que este site emite: <b>{DIVIDER_A11Y['markupChecked'] or 0}
+  divisores</b> nesta página, nenhum fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Elemento</b><span><code>&lt;hr&gt;</code> ou <code>&lt;li role="separator"&gt;</code>. Nada de <code>&lt;div&gt;</code> pintado.</span></div>
+    <div><b>b · Lista</b><span><code>&lt;hr&gt;</code> nunca é filho direto de <code>&lt;ul&gt;</code> ou <code>&lt;ol&gt;</code>.</span></div>
+    <div><b>c · Sem texto</b><span>O separador em lista é vazio.</span></div>
+    <div><b>d · Orientação</b><span>Vertical anunciada leva <code>aria-orientation="vertical"</code>; horizontal não.</span></div>
+    <div><b>e · Nunca focável</b><span>Sem <code>tabindex</code>, sem evento de clique, sem papel que não seja <code>separator</code>.</span></div>
+    <div><b>f · Decorativo</b><span><code>aria-hidden="true"</code>, e nada além disso.</span></div>
+    <div><b>g · Posição</b><span>Nem no começo, nem no fim do contêiner, nem dois seguidos.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>O Tab passa direto</b><span>Nenhum divisor recebe foco: o <code>&lt;hr&gt;</code> não é focável, e o portão recusa <code>tabindex</code>.</span></div>
+    <div><b>“Separador”</b><span>O <code>&lt;hr&gt;</code> é anunciado sem atributo nenhum. O decorativo some da árvore de acessibilidade.</span></div>
+    <div><b>Sem anel de foco</b><span>Não há foco, então não há anel para medir.</span></div>
+    <div><b>Alto contraste</b><span>A linha é borda, e borda é repintada com a cor do sistema — continua visível.</span></div>
+  </div>
+</section>'''
+
+
+TH_DIVIDER = ('<div class="th-divider"><span></span><span></span>'
+              '<hr class="al-divider" aria-hidden="true"><span></span></div>')
+
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -6696,15 +7122,16 @@ LANDING_COMPONENTES = f'''
     {card('input', 'Input', 'Resposta livre de uma linha. Input nativo dentro de uma caixa que aceita prefixo, sufixo e contador — e um read-only que se lê.', TH_INPUT)}
     {card('password', 'Password', 'Senha com o olho de mostrar e ocultar. Input nativo de senha, um botão de verdade dentro da caixa, e um script que esconde de novo no envio.', TH_PASSWORD)}
     {card('textarea', 'Textarea', 'Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.', TH_TEXTAREA)}
+    {card('divider', 'Divider', 'A linha entre dois grupos de conteúdo. É o &lt;hr&gt; nativo, horizontal ou vertical — e entra só quando o espaço não basta.', TH_DIVIDER)}
   </div>
 </section>
 
 <section>
-  <h2>O Tier 1 fechou</h2>
-  <p>Os quatro primitivos atravessaram as oito etapas, um de cada vez — e a disciplina de fechar
-  um antes de abrir o outro é a resposta à dívida de “componente pronto sem documentação”. O
-  próximo tier é o de <b>formulário</b>, e ele começa como todos os outros: pela etapa 1,
-  definir e auditar.</p>
+  <h2>O Tier 3 começou</h2>
+  <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
+  disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
+  sem documentação”. O tier de <b>estrutura</b> começa pela peça mais simples dele, o Divider,
+  e segue como todos os outros: pela etapa 1, definir e auditar.</p>
 </section>'''
 
 PAGES = [
@@ -6870,6 +7297,15 @@ PAGES = [
          (f'{N_PASSWORD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
         [('overview', 'Visão geral', PASSWORD_OVERVIEW), ('specs', 'Especificações', PASSWORD_SPECS),
          ('guide', 'Diretrizes', PASSWORD_GUIDE), ('a11y', 'Acessibilidade', PASSWORD_A11Y_TAB)])),
+    ('divider', 'Componentes', page(
+        'divider', 'Componentes', 'Divider',
+        'A linha que separa dois grupos de conteúdo quando o espaço sozinho não basta. É o '
+        '<code>&lt;hr&gt;</code> nativo, horizontal ou vertical: anunciado como “separador” por '
+        'padrão, e decorativo quando a estrutura já separa.',
+        [('Estável', True), ('2 variantes no Figma', False),
+         (f'{N_DIVIDER_TOKENS} tokens', False), ('1 exceção declarada', False)],
+        [('overview', 'Visão geral', DIVIDER_OVERVIEW), ('specs', 'Especificações', DIVIDER_SPECS),
+         ('guide', 'Diretrizes', DIVIDER_GUIDE), ('a11y', 'Acessibilidade', DIVIDER_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -6909,6 +7345,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/input" data-page="input">Input</a>
         <a href="#/textarea" data-page="textarea">Textarea</a>
         <a href="#/password" data-page="password">Password</a>
+        <a href="#/divider" data-page="divider">Divider</a>
       </div>
     </div>
   </div>
@@ -8533,6 +8970,84 @@ JS_PASSWORD = r"""
 """
 
 
+JS_DIVIDER_DATA = 'var DV_DEMOS = ' + json.dumps(DV_DEMOS, ensure_ascii=False) + ';\n'
+
+JS_DIVIDER = r"""
+(function () {
+  // ── playground do Divider ──
+  var stage = document.getElementById('divider-stage');
+  if (!stage) return;
+  var code = document.getElementById('divider-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinação vem pronto do site.py (DV_DEMOS) - o mesmo que
+  // a página emite parada, para o playground não ensinar outro contrato.
+  function render() {
+    var ctx = pick('dvctx'), sr = pick('dvsr'), surf = pick('dvsurf'), theme = pick('dvtheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = DV_DEMOS[ctx + '|' + sr];
+    stage.innerHTML = '<div class="dv-box dv-box--' + ctx + '" data-surf="' + surf + '">' +
+                      demo.html + '</div>';
+    code.innerHTML = esc(demo.code);
+  }
+
+  document.querySelectorAll('#divider-controls input').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('divider-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_DIVIDER = """
+/* ── páginas do Divider ──
+   Casca do site. A linha em si é sempre o .al-divider, do divider.css real. */
+.fail{display:inline-block; font-family:var(--al-font-mono); font-size:9.5px; font-weight:500;
+  letter-spacing:.06em; text-transform:uppercase; padding:3px 7px; border-radius:4px;
+  background:var(--al-bg-danger-subtle); color:var(--al-text-danger)}
+.dv-box{width:100%; max-width:420px; margin:0 auto; display:flex; flex-direction:column;
+  gap:16px; padding:20px; border-radius:12px; text-align:left}
+.dv-box[data-surf="canvas"]{background:var(--al-bg-canvas); border:1px solid var(--al-border-subtle)}
+.dv-box[data-surf="surface"]{background:var(--al-bg-surface)}
+.dv-box[data-surf="raised"]{background:var(--al-bg-surface-raised); box-shadow:var(--al-elevation-2)}
+.dv-box--list{padding:4px 0}
+.dv-box--toolbar{padding:8px}
+.dv-box--tight{gap:8px; font-size:14px}
+.dv-sec{display:flex; flex-direction:column; gap:2px}
+.dv-sec b{font-size:15px; font-weight:600; color:var(--al-text-primary)}
+.dv-sec span{font-size:13px; color:var(--al-text-secondary)}
+.dv-menu{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; width:100%}
+.dv-menu > li:not(.al-divider){padding:8px 16px; font-size:14px; color:var(--al-text-primary)}
+.dv-menu > .al-divider{margin-block:4px}
+.dv-menu .dv-danger{color:var(--al-text-danger)}
+.stage2 .dv-menu{background:var(--al-bg-surface-raised); border-radius:10px; padding:4px 0}
+.dv-toolbar{display:flex; align-items:stretch; gap:8px; flex-wrap:wrap}
+.dv-spec{display:flex; flex-direction:column; gap:12px; font-size:13px; color:var(--al-text-secondary)}
+.dv-spec--row{flex-direction:row; align-items:stretch; gap:16px}
+.dv-spec--row span{padding-block:10px}
+.th-divider{display:flex; flex-direction:column; gap:8px; width:100%; max-width:180px}
+.th-divider span{display:block; height:8px; border-radius:4px; background:var(--al-bg-subtle)}
+.th-divider span:nth-child(2){width:62%}
+.th-divider span:last-child{width:78%}
+"""
+
+
 HTML = (
     '<meta charset="utf-8">\n'
     '<title>AL Design System</title>\n'
@@ -8544,6 +9059,7 @@ HTML = (
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
+    + CHROME_DIVIDER
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -8551,7 +9067,7 @@ HTML = (
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
-    + PASSWORD_JS + JS_PASSWORD + '</script>\n'
+    + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + '</script>\n'
 )
 
 open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
@@ -8588,5 +9104,9 @@ print(f'  tokens do Textarea: {N_TEXTAREA_TOKENS}  '
 print(f'  tokens do Password: {N_PASSWORD_TOKENS}  '
       f'({len(PASSWORD_A11Y["rows"])} combinacoes medidas, {PASSWORD_A11Y["fails"]} reprovas, '
       f'{sum(PASSWORD_A11Y["exceptions"].values())} medicoes em excecao declarada)')
+print(f'  tokens do Divider : {N_DIVIDER_TOKENS}  '
+      f'({len(DIVIDER_A11Y["rows"])} combinacoes medidas, '
+      f'{sum(1 for r in DIVIDER_A11Y["rows"] if r["invisible"])} invisiveis, '
+      f'{sum(1 for r in DIVIDER_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
