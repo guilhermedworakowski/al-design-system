@@ -30,6 +30,13 @@ SEM = {
   # Switch declara a excecao no portao dele (decisao de Gui, 25/09/2026).
   'bg-thumb':           (c('neutral',400), c('neutral',600)),
   'bg-thumb-disabled':  (c('neutral',300), c('neutral',700)),
+  # fundo escurecido atras de uma camada modal (Modal; serve ao Drawer). E o
+  # unico semantico com transparencia: #RRGGBBAA, 56% no claro e 64% no escuro.
+  # Fica fora de PAIRS porque o contraste dele so existe composto sobre a pagina;
+  # quem mede e o portao do componente (components/modal/tokens.py). No escuro
+  # subir a opacidade quase nao muda nada (72% = 1,88:1) - o fundo ja e quase
+  # preto. Decisao D de Gui, 07/10/2026.
+  'bg-scrim':           ('#181818' + '8F', '#000000' + 'A3'),
   # marca
   'bg-brand':           (c('orange',500),  c('orange',500)),
   'bg-brand-hover':     (c('orange',600),  BRAND_HOVER),
