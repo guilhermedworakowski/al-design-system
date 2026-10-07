@@ -3,12 +3,12 @@
 Design system open source, do Figma ao código. Construído em público, uma camada de cada vez.
 
 - **Licença:** MIT
-- **Versão:** `0.17.0`
+- **Versão:** `0.17.1`
 - **Figma:** biblioteca privada por enquanto — primitivas, semânticos e tokens de componente documentados abaixo
 
 ## Estado atual
 
-A **Foundation** está fechada: primitivas de cor, camada semântica (dois temas), tipografia, espaçamento, radius, tamanho de ícone, elevação e anel de foco — tudo gerado por código, nada digitado à mão no Figma ou na página de referência.
+A **Foundation** está fechada: primitivas de cor, camada semântica (dois temas), tipografia, espaçamento, radius, tamanho de ícone, elevação, anel de foco e motion — tudo gerado por código, nada digitado à mão no Figma ou na página de referência.
 
 O **Button** é o primeiro componente a fechar as oito etapas do pipeline: auditado, tokenizado, documentado, codado, com playground e QA de acessibilidade.
 
@@ -44,10 +44,13 @@ O **Tab** é o terceiro do Tier 3 e o primeiro componente do AL com **script pr�
 
 O **Accordion** é o quarto do Tier 3 e volta ao nativo: é o `<details>` com o `<summary>`, e por isso não tem script — o navegador abre, fecha, responde a Enter e Espaço e anuncia "recolhido" ou "expandido". Um item só, sem componente de grupo: a pilha são itens lado a lado, e o espaço entre eles é do layout, como no Radio. Vários abertos por padrão; um por vez só quando os itens são alternativas, com o mesmo `name` em cada `<details>`. Só o cabeçalho reage — hover, pressed e o anel de foco, que sobe uma camada para o conteúdo aberto não cobrir a base dele —, e o conteúdo fica parado no fundo de repouso. O título é visual: nada de `<h3>` dentro do `<summary>`, porque em parte dos leitores de tela ele sai da lista de títulos; quem precisa ser achado por título ganha um título de verdade antes da pilha. O chevron espelha em 120ms e a altura não anima. Um tamanho, sem desabilitado. Ele trouxe dois semânticos novos para a Foundation, `bg-hover-raised` e `bg-active-raised`: o item mora na superfície elevada, e no escuro o `bg-hover` comum era a mesma cor dela — o hover sumia. Duas exceções declaradas: a divisória entre cabeçalho e conteúdo, que só separa, e o fundo do item, que mal se separa da página e por isso mora sobre `bg-surface`. O portão de tokens trava a regressão: hover e pressed precisam se distinguir do repouso nos dois temas.
 
+**Motion** entrou no 0.17.1, antes do Modal e do Drawer. A curva depende do tipo da ação — entrada desacelera (`ease-out`), saída acelera (`ease-in`) — e a duração, do porte de quem se move: `panel` (300ms) para o que cobre a tela, `popup` (200ms) para o que aparece pequeno por cima dela. A duração leva o nome do porte e não do componente, para um Dialog ou Sheet futuro achar o degrau sem token novo. Entrada e saída têm a mesma duração por decisão; sob `prefers-reduced-motion` o componente zera a transição, e não existe token para isso. Os 120ms literais dos componentes de hoje seguem como pendência consciente.
+
 | | |
 |---|---|
 | Primitivas de cor | 66 (6 famílias × 11 degraus) |
 | Tokens semânticos | 53 × 2 temas |
+| Tokens de motion | 4 — duas durações (`panel` 300ms, `popup` 200ms) e duas curvas (`enter` ease-out, `exit` ease-in); nenhum componente consome ainda |
 | Pares de contraste validados | 84 — 81 em AA pleno, 3 exceções de marca nomeadas, 0 abaixo do piso |
 | Componentes prontos | 15 (Button, Icon Button, Tag, Avatar, Select, Checkbox, Radio, Switch, Input, Textarea, Password, Divider, Card, Tab, Accordion) |
 | Ícones | 70 — Lucide, grid 24, sem escala fixa |
@@ -74,7 +77,7 @@ O plano de evolução completo — divisão de trabalho, pipeline por componente
 O AL é consumido como pacote npm instalado direto deste repositório, sempre fixado numa tag. Ele não é publicado no registro do npm: o `"private": true` do `package.json` impede publicação acidental, e a instalação por Git não depende disso.
 
 ```bash
-npm install github:guilhermedworakowski/al-design-system#v0.17.0
+npm install github:guilhermedworakowski/al-design-system#v0.17.1
 ```
 
 A tag no fim não é opcional. Sem ela, cada instalação puxa o que estiver na `main` naquele dia, e o produto muda sem que ninguém tenha decidido mudar. Com a tag, atualizar é uma decisão explícita: trocar o número, reinstalar e revisar.
@@ -83,7 +86,7 @@ A tag no fim não é opcional. Sem ela, cada instalação puxa o que estiver na 
 
 Só a saída que um produto consome:
 
-- `foundation/al-foundation.css` — primitivas, semânticos (claro e escuro), tipografia, espaçamento, radius, tamanho de ícone, elevação e anel de foco
+- `foundation/al-foundation.css` — primitivas, semânticos (claro e escuro), tipografia, espaçamento, radius, tamanho de ícone, elevação, anel de foco e motion
 - `components/<c>/al-<c>-tokens.css` e `components/<c>/<c>.css` — tokens e CSS de cada componente
 - `components/password/password.js` — o comportamento do olho do Password, o único componente com script
 - `components/icon/icons/*.svg` e `icons.json` — os 70 ícones (Lucide, ISC — ver `components/icon/NOTICE`)

@@ -78,6 +78,14 @@ block('tamanho de icone - degrau nomeado pelo proprio valor. O componente Icon\n
 for k, v in T['iconSize'].items():
     w(f'  --al-icon-size-{k}: {v}px;')
 
+# ---------------- motion ----------------
+block('motion - duracao pelo PORTE de quem se move, curva pelo TIPO da acao.\n'
+      '     Entrada desacelera (ease-out), saida acelera (ease-in).')
+for k, v in T['motion']['duration'].items():
+    w(f'  --al-motion-duration-{k}: {v}ms;')
+for k, v in T['motion']['easing'].items():
+    w(f'  --al-motion-easing-{k}: cubic-bezier({", ".join(str(n) for n in v)});')
+
 # ---------------- elevacao ----------------
 block('elevacao - TEMA CLARO')
 for k, v in T['elevation'].items():
@@ -140,5 +148,6 @@ print(f'{OUT} escrito')
 print(f'  primitivas de cor : {n_prim}')
 print(f'  semanticos de cor : {n_sem} x 2 temas')
 print(f'  tamanhos de icone : {len(T["iconSize"])}')
+print(f'  motion            : {len(T["motion"]["duration"])} duracoes, {len(T["motion"]["easing"])} curvas')
 print(f'  aneis de foco     : 2 (compostos, resolvem sozinhos no tema)')
 print(f'  bytes             : {os.path.getsize(OUT)}')
