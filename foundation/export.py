@@ -44,7 +44,10 @@ TOKENS = {
     # <details>/<summary> nativo, sem script. A Foundation ganha dois
     # semanticos, bg-hover-raised e bg-active-raised: no escuro o bg-hover era
     # a mesma cor da superficie elevada e o hover sumia.
-    "name": "AL Design System", "version": "0.17.0", "license": "MIT",
+    # 0.17.1: Motion - atualizacao da Foundation, terceira casa. Quatro tokens
+    # (duration-panel/popup, easing-enter/exit) para o que entra e sai da tela;
+    # nenhum componente consome ainda, e os 120ms literais seguem pendentes.
+    "name": "AL Design System", "version": "0.17.1", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
@@ -91,6 +94,30 @@ TOKENS = {
   # contra o que validar.
   "iconSize": {"16":16, "20":20, "24":24, "32":32},
   "border": {"width": {"0":0,"1":1,"2":2,"focus":2}, "focusOffset": 2},
+  # Motion. Dois eixos, e o segundo e escolha de quem consome:
+  #   easing   -> o TIPO DA ACAO (entrada ou saida). Entrada desacelera
+  #               (ease-out): o elemento chega e assenta. Saida acelera
+  #               (ease-in): o elemento parte e some.
+  #   duration -> o PORTE de quem se move, nao o nome do componente. Nome de
+  #               componente obrigaria um token novo a cada componente novo;
+  #               porte nao. `panel` cobre o que ocupa a tela (Modal, Drawer),
+  #               `popup` o que aparece pequeno por cima dela (Tooltip, Toast).
+  # Entrada e saida tem a mesma duracao por decisao de Gui (08/10/2026); se
+  # um dia divergirem, o token novo e `duration-panel-exit`, sem renomear.
+  # As curvas sao as palavras-chave do CSS escritas por extenso: o Figma, o
+  # JS e o grafico do site precisam dos quatro numeros, nao do apelido.
+  "motion": {
+    "duration": {"panel": 300, "popup": 200},
+    "easing": {"enter": [0, 0, 0.58, 1], "exit": [0.42, 0, 1, 1]},
+    "uso": {
+      "duration-panel": "Modal e Drawer: o que cobre a tela ou entra por uma borda dela. Entrada e saida.",
+      "duration-popup": "Tooltip e Toast: o que aparece pequeno por cima da tela. Entrada e saida.",
+      "easing-enter": "Tudo que entra (ease-out): chega rapido e assenta devagar.",
+      "easing-exit": "Tudo que sai (ease-in): parte devagar e acelera ate sumir.",
+    },
+    "_note": "Sob prefers-reduced-motion o componente zera a transicao (transition: none). "
+             "Nao existe token de duracao zero: ausencia de movimento nao e um valor de escala.",
+  },
   "focusRing": {
     # Duas camadas na mesma sombra, sem offset:
     #   interna  -> spread 2, na cor do fundo. E o respiro. Impede o anel de

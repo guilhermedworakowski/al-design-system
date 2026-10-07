@@ -7,7 +7,7 @@
 <style>
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.17.0 - MIT
+ * v0.17.1 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -205,6 +205,13 @@
   --al-icon-size-20: 20px;
   --al-icon-size-24: 24px;
   --al-icon-size-32: 32px;
+
+  /* motion - duracao pelo PORTE de quem se move, curva pelo TIPO da acao.
+     Entrada desacelera (ease-out), saida acelera (ease-in). */
+  --al-motion-duration-panel: 300ms;
+  --al-motion-duration-popup: 200ms;
+  --al-motion-easing-enter: cubic-bezier(0, 0, 0.58, 1);
+  --al-motion-easing-exit: cubic-bezier(0.42, 0, 1, 1);
 
   /* elevacao - TEMA CLARO */
   --al-elevation-0: none;
@@ -6246,13 +6253,84 @@ footer code{background:none; padding:0}
   .ac-mx-row--head{display:none}
   .ac-mx-row:not(.ac-mx-row--head) > .ac-mx-lab{padding-top:0}
 }
+
+/* ── Motion ──
+   O palco lê os tokens reais da Foundation. A velocidade (1× ou ¼×) só
+   multiplica a duração, para dar tempo de ver a curva; ela não é um token. */
+.mo-bar{display:flex; flex-wrap:wrap; gap:14px 28px; align-items:center; margin:18px 0 16px}
+.mo-bar .ctl{grid-template-columns:auto 1fr}
+.mo-stage{
+  --mo-dur:var(--al-motion-duration-panel); --mo-speed:1;
+  position:relative; height:176px; overflow:hidden; border-radius:8px;
+  background:var(--al-bg-surface); border:1px solid var(--al-border-subtle)}
+#mo-root[data-speed="4"] .mo-stage{--mo-speed:4}
+.mo-stage[data-size="popup"]{--mo-dur:var(--al-motion-duration-popup)}
+.mo-scene{position:absolute; inset:0}
+.mo-sk{position:absolute; left:14px; height:8px; border-radius:4px; background:var(--al-border-default)}
+.mo-sk--a{top:16px; width:46%}
+.mo-sk--b{top:32px; width:30%}
+.mo-move{
+  opacity:0; transform:var(--mo-from, none);
+  transition-property:opacity, transform;
+  transition-duration:calc(var(--mo-dur) * var(--mo-speed));
+  transition-timing-function:var(--al-motion-easing-exit)}
+.mo-stage[data-open="true"] .mo-move{
+  opacity:1; transform:none;
+  transition-timing-function:var(--al-motion-easing-enter)}
+/* preto puro nos dois temas: o véu escurece a tela, não a inverte. O AL ainda não tem token de scrim — nasce com o Modal. */
+.mo-scrim{position:absolute; inset:0; background:#000}
+.mo-stage[data-open="true"] .mo-scrim{opacity:.4}
+.mo-box{
+  position:absolute; display:flex; flex-direction:column; gap:8px; padding:14px;
+  background:var(--al-bg-surface-raised); border:1px solid var(--al-border-subtle);
+  border-radius:var(--al-radius-2xl); box-shadow:var(--al-elevation-4)}
+.mo-box--modal{inset:0; margin:auto; width:58%; height:fit-content; --mo-from:translateY(var(--al-space-12))}
+.mo-box--drawer{top:0; right:0; bottom:0; width:48%; border-radius:0; border-width:0 0 0 1px;
+  --mo-from:translateX(100%)}
+.mo-anchor{position:absolute; left:50%; top:96px; width:64px; height:28px; margin-left:-32px;
+  border-radius:var(--al-radius-full); background:var(--al-bg-brand)}
+.mo-box--tooltip{left:50%; top:46px; width:104px; margin-left:-52px; padding:10px 12px;
+  border-radius:var(--al-radius-lg); background:var(--al-bg-inverse); border-color:transparent;
+  --mo-from:translateY(var(--al-space-4))}
+.mo-box--toast{left:14px; right:14px; bottom:14px; flex-direction:row; align-items:center; gap:10px;
+  padding:12px 14px; border-radius:var(--al-radius-xl); background:var(--al-bg-inverse);
+  border-color:transparent; --mo-from:translateY(var(--al-space-16))}
+.mo-l{display:block; height:7px; border-radius:4px; background:var(--al-border-default)}
+.mo-l--40{width:40%} .mo-l--60{width:60%} .mo-l--90{width:90%}
+.mo-box--tooltip .mo-l, .mo-box--toast .mo-l{background:var(--al-text-inverse); opacity:.7}
+.mo-pill{align-self:flex-end; width:44px; height:16px; margin-top:4px;
+  border-radius:var(--al-radius-full); background:var(--al-bg-brand)}
+.mo-dot{width:10px; height:10px; flex:none; border-radius:50%; background:var(--al-bg-success)}
+.mo-cell .al-btn{align-self:flex-start}
+.mo-fine{font-size:13px; color:var(--al-text-secondary); margin-top:14px; max-width:74ch}
+
+.mo-bars .bar-name{width:132px}
+.mo-track, .mo-track .bar{display:block}
+.mo-track{flex:1; min-width:0; max-width:420px}
+.mo-curves{display:flex; flex-wrap:wrap; gap:28px; margin-top:20px}
+.mo-curve{margin:0; display:flex; flex-direction:column; gap:10px; width:200px}
+.mo-curve svg{width:200px; height:200px; display:block}
+.mo-curve figcaption{display:flex; flex-direction:column; gap:3px; font-size:13px}
+.mo-curve figcaption code{font-size:12px; color:var(--al-text-secondary)}
+.mo-c-frame{fill:var(--al-bg-surface); stroke:var(--al-border-default); stroke-width:1}
+.mo-c-lin{stroke:var(--al-border-strong); stroke-width:1; stroke-dasharray:3 3}
+.mo-c-hnd{stroke:var(--al-text-secondary); stroke-width:1}
+.mo-c-path{fill:none; stroke:var(--al-bg-brand); stroke-width:2.5; stroke-linecap:round}
+.mo-c-pt{fill:var(--al-bg-canvas); stroke:var(--al-bg-brand); stroke-width:2}
+.mo-c-ax{font-family:var(--al-font-mono); font-size:7px; fill:var(--al-text-secondary)}
+.th-curve{width:100%; height:56px}
+.th-curve path{fill:none; stroke:var(--al-bg-brand); stroke-width:3; stroke-linecap:round}
+.th-curve line{stroke:var(--al-border-strong); stroke-width:1.5; stroke-dasharray:3 4}
+@media (prefers-reduced-motion: reduce){
+  .mo-move{transition:none}
+}
 </style>
 
 <div class="shell">
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.17.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.17.1 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -6266,6 +6344,7 @@ footer code{background:none; padding:0}
         <a href="#/cor" data-page="cor">Cor</a>
         <a href="#/tipografia" data-page="tipografia">Tipografia</a>
         <a href="#/espacamento" data-page="espacamento">Espaçamento</a>
+        <a href="#/motion" data-page="motion">Motion</a>
         <a href="#/icon" data-page="icon">Ícones</a>
       </div>
     </div>
@@ -6299,20 +6378,21 @@ footer code{background:none; padding:0}
   </div>
 </nav>
 <main class="main"><div class="inner">
-<div class="page" id="pg-fundacao"><header class="phead"><div class="eyebrow">Fundação</div><h1>Fundação</h1><p class="lede">A camada que decide antes de qualquer componente existir: a cor, a tipografia, a medida e a prova de que tudo isso atravessa o portão. Nenhum componente inventa valor — todos consomem daqui, e é por isso que trocar o tema não é retrabalho.</p></header><div class="panel"><div class="stats">
+<div class="page" id="pg-fundacao"><header class="phead"><div class="eyebrow">Fundação</div><h1>Fundação</h1><p class="lede">A camada que decide antes de qualquer componente existir: a cor, a tipografia, a medida, o movimento e a prova de que tudo isso atravessa o portão. Nenhum componente inventa valor — todos consomem daqui, e é por isso que trocar o tema não é retrabalho.</p></header><div class="panel"><div class="stats">
   <div class="stat hl"><b>#FC5000</b><span>âncora de marca, preservada exata</span></div>
   <div class="stat"><b>66</b><span>primitivas em 6 famílias</span></div>
   <div class="stat"><b>53</b><span>semânticos, cada um com dois temas</span></div>
   <div class="stat hl"><b>81 / 84</b><span>pares em AA pleno · 3 exceções de marca</span></div>
 </div>
 <section>
-  <h2>Os seis assuntos da Fundação</h2>
+  <h2>Os sete assuntos da Fundação</h2>
   <div class="cards">
     <a class="card" href="#/principios" data-page="principios"><div class="card-thumb"><span class="th-anchor">#FC5000</span></div><div class="card-body"><span class="card-title">Princípios</span><span class="card-desc">As cinco decisões que travam o resto, o pipeline de oito etapas e os quatro portões de build.</span></div></a>
     <a class="card" href="#/prova" data-page="prova"><div class="card-thumb"><div class="th-split"><div style="background:#FFFFFF"><b style="background:#FC5000"></b></div><div style="background:#181818"><b style="background:#FC5000"></b></div></div></div><div class="card-body"><span class="card-title">A prova</span><span class="card-desc">Os mesmos tokens montados nos dois temas, lado a lado: botões, campos, foco e avisos.</span></div></a>
     <a class="card" href="#/cor" data-page="cor"><div class="card-thumb"><div class="th-ramp"><span style="background:#FFF5F0"></span><span style="background:#FFEADE"></span><span style="background:#FFD7C4"></span><span style="background:#FFBDA0"></span><span style="background:#FF9267"></span><span style="background:#FC5000"></span><span style="background:#C53900"></span><span style="background:#992700"></span><span style="background:#6C2100"></span><span style="background:#4A1700"></span><span style="background:#2D0D00"></span></div></div><div class="card-body"><span class="card-title">Cor</span><span class="card-desc">66 primitivas em OKLCH, 53 semânticos com dois temas e os 84 pares medidos do portão de contraste.</span></div></a>
     <a class="card" href="#/tipografia" data-page="tipografia"><div class="card-thumb"><div class="th-aa">Aa<small>Inter · 14 estilos</small></div></div><div class="card-body"><span class="card-title">Tipografia</span><span class="card-desc">Inter e JetBrains Mono em 14 estilos fechados de tamanho, entrelinha, peso e tracking.</span></div></a>
     <a class="card" href="#/espacamento" data-page="espacamento"><div class="card-thumb"><div class="th-bars"><i style="width:14%"></i><i style="width:26%"></i><i style="width:48%"></i><i style="width:84%"></i></div></div><div class="card-body"><span class="card-title">Espaçamento e medidas</span><span class="card-desc">Base 4 com ritmo de 8, 9 raios, 6 elevações e o anel de foco de duas camadas.</span></div></a>
+    <a class="card" href="#/motion" data-page="motion"><div class="card-thumb"><svg class="th-curve" viewBox="0 0 120 56" aria-hidden="true"><line x1="6" y1="50" x2="114" y2="6"/><path d="M6 50 C6 50, 74 6, 114 6"/></svg></div><div class="card-body"><span class="card-title">Motion</span><span class="card-desc">4 tokens para o que entra e sai da tela: duas durações pelo porte, uma curva para entrar e outra para sair.</span></div></a>
     <a class="card" href="#/icon" data-page="icon"><div class="card-thumb"><div class="th-icons"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21 21-4.34-4.34" /><circle cx="11" cy="11" r="8" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10.268 21a2 2 0 0 0 3.464 0" /><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /></svg><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M10 11v6" /><path d="M14 11v6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" /><path d="M3 6h18" /><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg></div></div><div class="card-body"><span class="card-title">Ícones</span><span class="card-desc">70 ícones no grid de 24, sem escala fixa: o mesmo componente serve de 16 a 96 e o traço acompanha.</span></div></a>
   </div>
 </section></div></div>
@@ -6404,7 +6484,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.17.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.17.1 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -6434,7 +6514,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.17.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.17.1 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -6642,6 +6722,94 @@ footer code{background:none; padding:0}
     Todo componente do AL devolve o foco como <code>outline</code> nativo dentro desse modo — o
     Button já faz isso.</p>
   </div>
+</section></div></div>
+<div class="page" id="pg-motion" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Motion</h1><p class="lede">O que entra e sai da tela. A curva depende do tipo da ação — entrada desacelera, saída acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo.</p><div class="meta"><span class="badge on">4 tokens</span><span class="badge">2 tipos de ação</span><span class="badge">2 durações</span><span class="badge">0 componentes consomem ainda</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Motion"><button role="tab" id="t-motion-movimentos" aria-controls="p-motion-movimentos" aria-selected="true">Movimentos</button><button role="tab" id="t-motion-tokens" aria-controls="p-motion-tokens" aria-selected="false" tabindex=-1>Tokens</button></div><div class="panel" id="p-motion-movimentos" role="tabpanel" aria-labelledby="t-motion-movimentos" tabindex="0">
+<section>
+  <h2>Entrada e saída <span class="count">4 movimentos</span></h2>
+  <p>Dois tipos de ação, duas durações. O que entra desacelera e assenta; o que sai acelera e some.
+  O porte de quem se move decide o tempo: o que ocupa a tela leva 300ms, o que aparece
+  pequeno por cima dela leva 200ms.</p>
+  <div style="margin-top:18px"><div class="scroller"><table><thead><tr><th>Tipo de ação</th><th>Easing</th><th class="num">Modal e Drawer</th><th class="num">Tooltip e Toast</th></tr></thead><tbody><tr><td class="name">Entrada</td><td class="tok">ease-out</td><td class="num">300ms</td><td class="num">200ms</td></tr><tr><td class="name">Saída</td><td class="tok">ease-in</td><td class="num">300ms</td><td class="num">200ms</td></tr></tbody></table></div></div>
+</section>
+
+<section id="mo-root" data-speed="1">
+  <h2>Veja se mexe do jeito certo</h2>
+  <p>Cada palco usa os tokens reais: a transição lê <code>--al-motion-duration-*</code> e
+  <code>--al-motion-easing-*</code> do <code>al-foundation.css</code> carregado nesta página. Abrir
+  usa a curva de entrada, fechar usa a de saída.</p>
+  <div class="mo-bar">
+    <div class="ctl"><span class="ctl-name">Velocidade</span><div class="seg" role="radiogroup" aria-label="Velocidade da animação">
+<input type="radio" id="mospeed-1" name="mospeed" value="1" checked><label for="mospeed-1">1×</label>
+<input type="radio" id="mospeed-4" name="mospeed" value="4"><label for="mospeed-4">¼×</label>
+</div></div>
+    <button type="button" class="al-btn al-btn--primary al-btn--sm" id="mo-all">
+      <span class="al-btn__label">Reproduzir os quatro</span></button>
+  </div>
+  <div class="dd"><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Modal</span><div class="mo-stage" data-mo="modal" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--modal mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i><b class="mo-pill"></b></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="modal"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Drawer</span><div class="mo-stage" data-mo="drawer" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--drawer mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="drawer"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Tooltip</span><div class="mo-stage" data-mo="tooltip" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><b class="mo-anchor"></b><div class="mo-box mo-box--tooltip mo-move"><i class="mo-l mo-l--90"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="tooltip"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Toast</span><div class="mo-stage" data-mo="toast" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-box mo-box--toast mo-move"><b class="mo-dot"></b><i class="mo-l mo-l--60"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="toast"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div></div>
+  <p class="mo-fine">Ilustração do movimento, não dos componentes: Modal, Drawer, Tooltip e Toast ainda
+  não existem no AL. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
+  a Foundation fixa só a duração e a curva.</p>
+  <p class="mo-fine" id="mo-reduced" hidden>Seu sistema pede movimento reduzido. Os palcos trocam de estado
+  sem animar, que é exatamente o que um componente do AL faz nessa preferência.</p>
+</section>
+
+<section>
+  <h2>Onde a decisão é do componente</h2>
+  <div class="note">
+    <b>Entrada e saída têm a mesma duração, por escolha</b>
+    <p>Muitos sistemas encurtam a saída, porque quem fecha já decidiu e não quer esperar. Aqui as duas
+    valem o mesmo, e o que as separa é só a curva. Se um dia a saída precisar ser mais curta, nasce
+    <code>duration-panel-exit</code> — nenhum token existente muda de nome.</p>
+  </div>
+  <div class="note">
+    <b>Movimento reduzido zera a transição, e não existe token para isso</b>
+    <p>Quem tem desordem vestibular sente animação como sintoma físico (WCAG 2.3.3). Sob
+    <code>prefers-reduced-motion: reduce</code> o componente declara <code>transition: none</code>, como
+    todos os do AL já fazem. Duração zero não é um valor de escala: é ausência de movimento.</p>
+  </div>
+  <div class="note">
+    <b>Os 120ms dos componentes atuais continuam literais</b>
+    <p>Estes quatro tokens cobrem o que entra e sai da tela. Hover, pressed e troca de cor nos
+    componentes de hoje usam 120ms escritos à mão, e seguem como pendência consciente nos portões
+    até a escala de feedback existir.</p>
+  </div>
+</section></div><div class="panel" id="p-motion-tokens" role="tabpanel" aria-labelledby="t-motion-tokens" tabindex="0" hidden>
+<section>
+  <h2>Duração <span class="count">2 degraus</span></h2>
+  <p>Nomeada pelo porte de quem se move, e não pelo componente: um Dialog ou um Sheet futuro
+  encontra o degrau sem token novo. A barra é proporcional ao tempo.</p>
+  <div style="margin-top:20px"><div class="bars mo-bars"><div class="bar-row"><span class="bar-name">duration-panel</span><span class="mo-track"><span class="bar" style="width:100.0%"></span></span><span class="bar-val">300ms</span></div><div class="bar-row"><span class="bar-name">duration-popup</span><span class="mo-track"><span class="bar" style="width:66.7%"></span></span><span class="bar-val">200ms</span></div></div></div>
+</section>
+
+<section>
+  <h2>Easing <span class="count">2 curvas</span></h2>
+  <p>As palavras-chave <code>ease-out</code> e <code>ease-in</code> do CSS, escritas com os quatro
+  números. O Figma e o JavaScript pedem os números; o apelido não serve a eles. A diagonal tracejada
+  é o movimento linear, reservado a loops contínuos.</p>
+  <div class="mo-curves"><figure class="mo-curve"><svg viewBox="0 0 160 160" role="img" aria-label="Curva Entrada · ease-out: progresso do movimento ao longo do tempo, cubic-bezier(0, 0, 0.58, 1)"><rect class="mo-c-frame" x="14" y="14" width="132" height="132"/><line class="mo-c-lin" x1="14.0" y1="146.0" x2="146.0" y2="14.0"/><line class="mo-c-hnd" x1="14.0" y1="146.0" x2="14.0" y2="146.0"/><line class="mo-c-hnd" x1="146.0" y1="14.0" x2="90.6" y2="14.0"/><path class="mo-c-path" d="M14.0 146.0 C14.0 146.0, 90.6 14.0, 146.0 14.0"/><circle class="mo-c-pt" cx="14.0" cy="146.0" r="3.5"/><circle class="mo-c-pt" cx="90.6" cy="14.0" r="3.5"/><text class="mo-c-ax" x="14" y="158">tempo →</text></svg><figcaption><b>Entrada · ease-out</b><code>cubic-bezier(0, 0, 0.58, 1)</code></figcaption></figure><figure class="mo-curve"><svg viewBox="0 0 160 160" role="img" aria-label="Curva Saída · ease-in: progresso do movimento ao longo do tempo, cubic-bezier(0.42, 0, 1, 1)"><rect class="mo-c-frame" x="14" y="14" width="132" height="132"/><line class="mo-c-lin" x1="14.0" y1="146.0" x2="146.0" y2="14.0"/><line class="mo-c-hnd" x1="14.0" y1="146.0" x2="69.4" y2="146.0"/><line class="mo-c-hnd" x1="146.0" y1="14.0" x2="146.0" y2="14.0"/><path class="mo-c-path" d="M14.0 146.0 C69.4 146.0, 146.0 14.0, 146.0 14.0"/><circle class="mo-c-pt" cx="69.4" cy="146.0" r="3.5"/><circle class="mo-c-pt" cx="146.0" cy="14.0" r="3.5"/><text class="mo-c-ax" x="14" y="158">tempo →</text></svg><figcaption><b>Saída · ease-in</b><code>cubic-bezier(0.42, 0, 1, 1)</code></figcaption></figure></div>
+</section>
+
+<section>
+  <h2>Tokens <span class="count">4 no total</span></h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Token</th><th>Valor</th><th>Quando usar</th></tr></thead>
+    <tbody><tr><td class="tok">--al-motion-duration-panel</td><td class="tok dim">300ms</td><td>Modal e Drawer: o que cobre a tela ou entra por uma borda dela. Entrada e saida.</td></tr><tr><td class="tok">--al-motion-duration-popup</td><td class="tok dim">200ms</td><td>Tooltip e Toast: o que aparece pequeno por cima da tela. Entrada e saida.</td></tr><tr><td class="tok">--al-motion-easing-enter</td><td class="tok dim">cubic-bezier(0, 0, 0.58, 1)</td><td>Tudo que entra (ease-out): chega rapido e assenta devagar.</td></tr><tr><td class="tok">--al-motion-easing-exit</td><td class="tok dim">cubic-bezier(0.42, 0, 1, 1)</td><td>Tudo que sai (ease-in): parte devagar e acelera ate sumir.</td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Como um componente consome</h2>
+  <p>A curva muda conforme o estado de destino, e é isso que faz o mesmo elemento abrir e fechar com
+  curvas diferentes. A duração é a do porte, nas duas direções.</p>
+  <pre><code>.painel {
+  transition: opacity var(--al-motion-duration-panel) var(--al-motion-easing-exit);
+}
+.painel[data-open] {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+@media (prefers-reduced-motion: reduce) {
+  .painel { transition: none; }
+}</code></pre>
 </section></div></div>
 <div class="page" id="pg-icon" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Ícones</h1><p class="lede">70 ícones no grid de 24, com o traço vetorizado. Não há escala fixa: o mesmo componente serve em 16 ou em 96, e o peso da linha acompanha em vez de ficar para trás.</p><div class="meta"><span class="badge on">70 ícones</span><span class="badge">Grid 24 · traço 2</span><span class="badge">8 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Ícones"><button role="tab" id="t-icon-overview" aria-controls="p-icon-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-icon-specs" aria-controls="p-icon-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-icon-a11y" aria-controls="p-icon-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-icon-overview" role="tabpanel" aria-labelledby="t-icon-overview" tabindex="0">
 <section>
@@ -13228,7 +13396,7 @@ footer code{background:none; padding:0}
   </div>
 </section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.17.0</span>
+  <span><b>AL Design System</b> · v0.17.1</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -14948,5 +15116,56 @@ var AC_DEMOS = {"none|multi": {"html": "<div class=\"ac-stack\"><details class=\
     }
   });
   render();
+})();
+
+(function () {
+  // ── Motion ── o palco só alterna data-open; quem anima é a transição do CSS,
+  // com os tokens da Foundation. Nada aqui calcula curva ou duração.
+  var root = document.getElementById('mo-root');
+  if (!root) return;
+  var stages = [].slice.call(root.querySelectorAll('.mo-stage'));
+  var timers = [];
+
+  function stop() { timers.forEach(clearTimeout); timers = []; }
+  function later(fn, ms) { timers.push(setTimeout(fn, ms)); }
+
+  function setOpen(stage, on) {
+    stage.setAttribute('data-open', on ? 'true' : 'false');
+    var label = root.querySelector('[data-mo-toggle="' + stage.getAttribute('data-mo') + '"] .al-btn__label');
+    if (label) label.textContent = on ? 'Fechar' : 'Abrir';
+  }
+  // a duração que o navegador está de fato usando, já com a velocidade
+  function ms(stage) {
+    var el = stage.querySelector('.mo-move');
+    return el ? parseFloat(getComputedStyle(el).transitionDuration) * 1000 : 0;
+  }
+  function longest() { return Math.max.apply(null, stages.map(ms)); }
+
+  [].slice.call(root.querySelectorAll('[data-mo-toggle]')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      stop();
+      var st = root.querySelector('.mo-stage[data-mo="' + btn.getAttribute('data-mo-toggle') + '"]');
+      setOpen(st, st.getAttribute('data-open') !== 'true');
+    });
+  });
+
+  [].slice.call(root.querySelectorAll('input[name="mospeed"]')).forEach(function (inp) {
+    inp.addEventListener('input', function () { root.setAttribute('data-speed', inp.value); });
+  });
+
+  // Fecha tudo, espera o fechamento terminar, abre, espera o tempo de ler, fecha.
+  document.getElementById('mo-all').addEventListener('click', function () {
+    stop();
+    var wasOpen = stages.some(function (s) { return s.getAttribute('data-open') === 'true'; });
+    stages.forEach(function (s) { setOpen(s, false); });
+    later(function () {
+      stages.forEach(function (s) { setOpen(s, true); });
+      later(function () { stages.forEach(function (s) { setOpen(s, false); }); }, longest() + 900);
+    }, wasOpen ? longest() + 80 : 60);
+  });
+
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.getElementById('mo-reduced').hidden = false;
+  }
 })();
 </script>
