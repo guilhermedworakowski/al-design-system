@@ -65,7 +65,11 @@ TOKENS = {
     # (Button e Icon Button) dentro do Card, e Icon Button em qualquer parte do
     # Modal, usam bg-hover-raised e bg-active-raised: o fundo e surface-raised e,
     # no escuro, igual ao bg-hover. Nenhum token novo.
-    "name": "AL Design System", "version": "0.18.2", "license": "MIT",
+    # 0.19.0: Drawer, sexto e ultimo componente do Tier 3 - casa do meio,
+    # componente novo. <dialog> nativo colado na direita, com drawer.js proprio
+    # (abrir por atributo, clique no fundo so sem campos, foco inicial). Reusa
+    # bg-scrim e motion.duration.panel; nenhum token da Foundation muda.
+    "name": "AL Design System", "version": "0.19.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },

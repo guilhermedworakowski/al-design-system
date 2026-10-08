@@ -117,6 +117,11 @@ MOD_TOKENS = open(os.path.join(ROOT, 'components', 'modal', 'al-modal-tokens.css
 MOD_CSS = open(os.path.join(ROOT, 'components', 'modal', 'modal.css')).read()
 MOD_JS = open(os.path.join(ROOT, 'components', 'modal', 'modal.js')).read()
 MOD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'modal', 'a11y.json')))
+DRW = json.load(open(os.path.join(ROOT, 'components', 'drawer', 'tokens.json')))
+DRW_TOKENS = open(os.path.join(ROOT, 'components', 'drawer', 'al-drawer-tokens.css')).read()
+DRW_CSS = open(os.path.join(ROOT, 'components', 'drawer', 'drawer.css')).read()
+DRW_JS = open(os.path.join(ROOT, 'components', 'drawer', 'drawer.js')).read()
+DRW_A11Y = json.load(open(os.path.join(ROOT, 'components', 'drawer', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -148,6 +153,7 @@ N_CARD_TOKENS = len(CARD['alias'])
 N_TAB_TOKENS = len(TAB['alias'])
 N_ACC_TOKENS = len(ACC['alias'])
 N_MOD_TOKENS = len(MOD['alias'])
+N_DRW_TOKENS = len(DRW['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -192,7 +198,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
-                         ACC_TOKENS, MOD_TOKENS)
+                         ACC_TOKENS, MOD_TOKENS, DRW_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -209,7 +215,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + CARD_TOKENS + '\n' + CARD_CSS
             + '\n' + TAB_TOKENS + '\n' + TAB_CSS
             + '\n' + ACC_TOKENS + '\n' + ACC_CSS
-            + '\n' + MOD_TOKENS + '\n' + MOD_CSS)
+            + '\n' + MOD_TOKENS + '\n' + MOD_CSS
+            + '\n' + DRW_TOKENS + '\n' + DRW_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1492,7 +1499,7 @@ def mo_curve(name, label):
 
 
 # Cena de cada componente. Tudo aria-hidden: é ilustração do movimento, não o
-# componente. O Modal tem página própria; o Drawer ainda não existe.
+# componente. O Modal e o Drawer têm página própria; esta é só a ilustração do movimento.
 MO_DEMOS = [
     ('modal', 'Modal', 'panel',
      '<span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span>'
@@ -1603,8 +1610,8 @@ TAB_MOTION_MOVIMENTOS = f'''
       <span class="al-btn__label">Reproduzir todos</span></button>
   </div>
   <div class="dd">{mo_cells()}</div>
-  <p class="mo-fine">Ilustração do movimento, não dos componentes: Modal, Drawer, Tooltip e Toast ainda
-  não existem no AL, e o palco do controle é uma miniatura, não o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
+  <p class="mo-fine">Ilustração do movimento, não dos componentes: Tooltip e Toast ainda
+  não existem no AL, os palcos do Modal e do Drawer são miniaturas, e o do controle também não é o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
   a Foundation fixa só a duração e a curva.</p>
   <p class="mo-fine" id="mo-reduced" hidden>Seu sistema pede movimento reduzido. Os palcos trocam de estado
   sem animar, que é exatamente o que um componente do AL faz nessa preferência.</p>
@@ -9003,7 +9010,7 @@ MD_RULES = [
     ('Quando usar', [
         ('Tarefa curta que pede uma resposta', 'Confirmação, edição rápida, escolha. O Modal bloqueia a página: a pessoa só volta ao fluxo depois de resolver ou dispensar. Precedentes: Carbon, Polaris.'),
         ('Nunca para o que precisa ficar à vista', 'Ele é temporário. Informação ou ação que a pessoa consulta o tempo todo mora na página. Precedente: Polaris.'),
-        ('Formulário longo não é Modal', 'Se passa do tamanho <code>lg</code> e ainda rola demais, é página (e, quando existir, Drawer). Precedentes: Carbon, Polaris.'),
+        ('Formulário longo não é Modal', 'Se passa do tamanho <code>lg</code> e ainda rola demais, é página (ou Drawer, quando a página atrás precisa ficar à vista). Precedentes: Carbon, Polaris.'),
         ('Nunca um Modal dentro de outro', 'Um de cada vez. Regra do AL, com o Bootstrap como único precedente achado sobre aninhamento.'),
     ]),
     ('Estrutura e conteúdo', [
@@ -9096,7 +9103,7 @@ MODAL_GUIDE = f'''
     <div><b>Botão X de fechar</b><span>O AL exige ao menos um botão no rodapé (regra 16).</span></div>
     <div><b>Divisórias entre as partes</b><span>O espaço separa; nada de linha.</span></div>
     <div><b>Modal de várias etapas</b><span>O “anterior e próximo” do Carbon. Se a demanda aparecer, é componente novo.</span></div>
-    <div><b>Entrada pela lateral</b><span>É o Drawer, o próximo da fila no Tier 3.</span></div>
+    <div><b>Entrada pela lateral</b><span>É o Drawer, que tem página própria.</span></div>
     <div><b>Contorno no escuro</b><span>O card clareia contra o fundo escurecido, sem contorno.</span></div>
   </div>
 </section>'''
@@ -9287,6 +9294,637 @@ JS_MODAL = r"""
 """
 
 
+# ═══════════════════════════════════════════════════════════ Drawer · abas
+# Sexto e ultimo componente do Tier 3, e o terceiro com script proprio
+# (drawer.js). E o <dialog> nativo aberto por showModal(), colado na direita:
+# prende o foco, deixa a pagina inerte e fecha com Esc. O drawer.js cobre abrir
+# por atributo, o clique no fundo (so sem campos) e o foco inicial. Todo Drawer
+# da pagina sai do drawer.css real. A amostra congelada e a previa do
+# playground levam `open` + `inert` + `aria-hidden` (o portao de marcacao isenta
+# o `open` so sob `inert`); os "a evitar" sao casca do site (dw-fake-*), nunca
+# um .al-drawer errado.
+DW_SIZES = [('sm', 'sm · 320'), ('md', 'md · 480'), ('lg', 'lg · 640')]
+DW_KINDS = [('detail', 'Detalhes'), ('form', 'Formulário'), ('notice', 'Notificações')]
+
+N_DW_MEDIDAS = len(DRW_A11Y['rows'])
+N_DW_EXC = sum(1 for r in DRW_A11Y['rows'] if r['exception'])
+N_DW_PASS = sum(1 for r in DRW_A11Y['rows'] if r['pass'])
+N_DW_FAIL = sum(1 for r in DRW_A11Y['rows'] if not r['pass'] and not r['exception'])
+N_DW_EXC_KEYS = len(DRW['pending'])
+DW_DURATION = DRW['resolved']['drawer-duration']
+
+DW_X = ('<svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+        'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'
+        '<path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>')
+
+DW_DETAIL = (
+    '<dl class="dw-dl">'
+    '<div><dt>Nome</dt><dd>Ana Souza</dd></div>'
+    '<div><dt>E-mail</dt><dd>ana@empresa.com</dd></div>'
+    '<div><dt>Cliente desde</dt><dd>12 de março de 2024</dd></div>'
+    '<div><dt>Pedidos</dt><dd>38, o último em 02/10</dd></div>'
+    '</dl>')
+
+
+def dw_btn(label, variant, extra=''):
+    return md_btn(label, variant, extra)
+
+
+def dw_close_btn():
+    return ('<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" '
+            f'aria-label="Fechar" data-al-drawer-close>{DW_X}</button>')
+
+
+# titulo, corpo, (secundaria, principal) ou None, com X
+DW_COPY = {
+    'detail': ('Detalhes do cliente', None, None, True),
+    'form': ('Editar cliente', None, (('Cancelar', 'ghost'), ('Salvar cliente', 'primary')), True),
+    'notice': ('Notificações', '<p class="md-copy">Você tem 3 avisos novos: duas respostas ao seu '
+               'pedido e uma promoção que termina hoje.</p>',
+     (('Dispensar', 'ghost'), ('Ver todas', 'primary')), False),
+}
+
+
+def dw_body(kind, pid):
+    if kind == 'detail':
+        return DW_DETAIL + dw_btn('Excluir cliente', 'danger', ' data-al-modal-open="dw-ov-excluir"')
+    if kind == 'form':
+        return ('<div class="md-fields">' + md_field(f'{pid}-nome', 'Nome', 'text', 'Ana Souza')
+                + md_field(f'{pid}-email', 'E-mail', 'email', 'ana@empresa.com')
+                + md_field(f'{pid}-tel', 'Telefone', 'tel', '(11) 98888-7777') + '</div>')
+    return DW_COPY[kind][1]
+
+
+def dw_inner(kind, pid, close=True):
+    """Cabecalho + miolo + acoes de um Drawer. `pid` prefixa os ids."""
+    titulo, _, acoes, com_x = DW_COPY[kind]
+    cl = ' data-al-drawer-close' if close else ''
+    x = dw_close_btn() if com_x else ''
+    rodape = ''
+    if acoes:
+        sec, pri = acoes
+        rodape = (f'<div class="al-drawer__actions">{dw_btn(sec[0], sec[1], cl)}'
+                  f'{dw_btn(pri[0], pri[1], cl)}</div>')
+    return (f'<header class="al-drawer__header"><h2 class="al-drawer__title" id="{pid}-t">{titulo}</h2>{x}</header>'
+            f'<div class="al-drawer__content">{dw_body(kind, pid)}</div>{rodape}')
+
+
+def dw_code(kind, size):
+    titulo, _, acoes, com_x = DW_COPY[kind]
+    cls = f'al-drawer al-drawer--{size}'
+    foco = {'detail': '<!-- sem campos e sem rodapé: o foco entra no X; o clique no fundo fecha -->',
+            'form': '<!-- com campos: o foco entra no primeiro campo; o clique no fundo NÃO fecha -->',
+            'notice': '<!-- sem X: a saída visível é o rodapé; o foco entra na ação principal -->'}[kind]
+    corpo = {'detail': '    <!-- o que a pessoa consulta: lista de dados, texto, o que for -->',
+             'form': '    <!-- campos do formulário: um .al-input por campo -->',
+             'notice': '    <p>Você tem 3 avisos novos…</p>'}[kind]
+    L = ['<button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-drawer-open="meu-drawer">',
+         '  <span class="al-btn__label">Abrir</span></button>', '',
+         f'<dialog class="{cls}" id="meu-drawer" aria-labelledby="meu-drawer-t">  {foco}',
+         '  <header class="al-drawer__header">',
+         f'    <h2 class="al-drawer__title" id="meu-drawer-t">{titulo}</h2>']
+    if com_x:
+        L += ['    <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm"',
+              '            aria-label="Fechar" data-al-drawer-close>',
+              '      <svg class="al-icon" aria-hidden="true" focusable="false">…x…</svg></button>']
+    L += ['  </header>', '  <div class="al-drawer__content">', corpo, '  </div>']
+    if acoes:
+        sec, pri = acoes
+        L += ['  <div class="al-drawer__actions">',
+              f'    <button type="button" class="al-btn al-btn--{sec[1]} al-btn--md" data-al-drawer-close>',
+              f'      <span class="al-btn__label">{sec[0]}</span></button>',
+              f'    <button type="button" class="al-btn al-btn--{pri[1]} al-btn--md" data-al-drawer-close>',
+              f'      <span class="al-btn__label">{pri[0]}</span></button>',
+              '  </div>']
+    L += ['</dialog>',
+          '<script src="drawer.js"></script>  <!-- abrir, fechar, clique no fundo e foco inicial -->']
+    return '\n'.join(L)
+
+
+DW_DEMOS = {f'{s}|{k}': {'inner': dw_inner(k, 'DWPID', close=True), 'code': dw_code(k, s)}
+            for s, _ in DW_SIZES for k, _ in DW_KINDS}
+
+DW_LONG = ''.join(
+    f'<p class="md-copy">{i}. {t}</p>' for i, t in enumerate([
+        'Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que '
+        'esperamos de você e como resolvemos um problema quando ele acontece.',
+        'Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. '
+        'Se perceber um acesso que não foi seu, avise o atendimento na hora.',
+        'Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com '
+        '30 dias de antecedência por e-mail e dentro do aplicativo.',
+        'Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir '
+        'fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.',
+        'Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e '
+        'até 10 dias úteis no boleto, depois que o pedido é cancelado.',
+        'Se uma parte destas condições não puder ser aplicada, o restante continua valendo. '
+        'A lei aplicável é a brasileira e o foro é o da cidade do consumidor.',
+        'Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até '
+        'dois dias úteis, de segunda a sexta.'] * 2, 1))
+
+
+def dw_dialog(did, size, kind, extra=''):
+    return (f'<dialog class="al-drawer al-drawer--{size}" id="{did}" aria-labelledby="{did}-t"{extra}>'
+            + dw_inner(kind, did) + '</dialog>')
+
+
+def dw_long_dialog(did):
+    return (f'<dialog class="al-drawer al-drawer--lg" id="{did}" aria-labelledby="{did}-t">'
+            f'<header class="al-drawer__header"><h2 class="al-drawer__title" id="{did}-t">Termos de uso</h2>'
+            f'{dw_close_btn()}</header>'
+            f'<div class="al-drawer__content">{DW_LONG}</div>'
+            f'<div class="al-drawer__actions">{dw_btn("Voltar", "ghost", " data-al-drawer-close")}'
+            f'{dw_btn("Aceitar", "primary", " data-al-drawer-close")}</div></dialog>')
+
+
+def dw_frozen(did, size, kind='form'):
+    """Drawer inline, so para mostrar: `open` + inert + aria-hidden."""
+    return (f'<div class="dw-cell" inert aria-hidden="true"><span class="md-lab">'
+            f'{dict(DW_SIZES)[size]}</span>' + dw_dialog(did, size, kind, ' open') + '</div>')
+
+
+def dw_trigger(did, rotulo, nota):
+    return (f'<div class="md-trig">{md_btn(rotulo, "secondary", f" data-al-drawer-open={chr(34)}{did}{chr(34)}")}'
+            f'<p class="cap">{nota}</p></div>')
+
+
+def drawer_token_rows():
+    rows = []
+    for name in DRW['alias']:
+        res = DRW['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, dict):
+            light = dark = '<span class="dim">sombra composta</span>'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        elif name == 'drawer-duration':
+            light = dark = f'{res}ms'
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{DRW["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+def drawer_a11y_rows():
+    oque = {'titulo': 'título e texto do miolo', 'x-icone-no-painel': 'ícone do X no painel',
+            'anel-no-painel': 'anel de foco no painel', 'botao-principal-no-painel': 'botão Primary no painel',
+            'botao-secundario-borda-no-painel': 'borda do Secondary no painel',
+            'ghost-hover-texto': 'texto do Ghost em hover', 'ghost-hover-distinto-do-painel': 'hover do Ghost × painel',
+            'ghost-active-texto': 'texto do Ghost pressionado', 'ghost-active-distinto-do-painel': 'pressed do Ghost × painel',
+            'painel-na-canvas-escurecida': 'painel × tela escurecida',
+            'painel-na-surface-escurecida': 'painel × superfície escurecida'}
+    out = []
+    for r in DRW_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        if r['invisible']:
+            v = '<span class="fail">invisível</span>'
+        elif r['pass']:
+            v = '<span class="pass">passa</span>'
+        else:
+            v = '<span class="exc">exceção declarada</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{oque[r["what"]]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+DRAWER_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="drawer-stage"><div class="dw-prev" id="drawer-prev" aria-hidden="true"></div></div>
+
+    <div class="controls" id="drawer-controls">
+      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('dwsize', DW_SIZES, 'md')}</div>
+      <div class="ctl"><span class="ctl-name">Conteúdo</span>{seg('dwkind', DW_KINDS, 'form')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('dwtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="md-open">
+        <p class="md-open-note">Abre o Drawer escolhido sobre a página inteira, colado na direita. Esc, o X ou um botão fecha.</p>
+        <button type="button" class="al-btn al-btn--primary al-btn--md" id="drawer-open"><span class="al-btn__label">Abrir de verdade</span></button>
+      </div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="drawer-copy">Copiar</button></div>
+      <pre><code id="drawer-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    A prévia acima é só um desenho do Drawer, com uma altura de exemplo. <b>Abrir de verdade</b> faz o que o
+    componente faz: o painel entra pela direita, o fundo escurece e o resto da página fica inerte. Tabule: o foco
+    não sai do Drawer. Em <b>Detalhes</b> ele entra no X; em <b>Formulário</b>, no primeiro campo; em
+    <b>Notificações</b>, que não tem X, na ação principal.
+  </p>
+</section>
+
+<section>
+  <h2>Quatro cenários, abertos por atributo</h2>
+  <p>Nenhum precisa de script da página: <code>data-al-drawer-open</code> no botão e
+  <code>data-al-drawer-close</code> dentro do Drawer bastam. O clique no fundo fecha só quando não há campos.</p>
+  <div class="md-trigs">
+    {dw_trigger('dw-ov-detalhe', 'Detalhes do cliente', 'Sem campos e sem rodapé: o foco entra no X e o clique no fundo fecha. “Excluir cliente” abre um Modal por cima.')}
+    {dw_trigger('dw-ov-editar', 'Editar cliente', 'Com campos: o clique no fundo não fecha e o foco entra no primeiro campo.')}
+    {dw_trigger('dw-ov-termos', 'Termos de uso', 'Tamanho lg, conteúdo longo: só o miolo rola; cabeçalho e botões ficam.')}
+    {dw_trigger('dw-ov-aviso', 'Notificações', 'Sem X: a saída visível é o rodapé. <i>Regra 14.</i>')}
+  </div>
+  {dw_dialog('dw-ov-detalhe', 'md', 'detail')}
+  {dw_dialog('dw-ov-editar', 'md', 'form')}
+  {dw_long_dialog('dw-ov-termos')}
+  {dw_dialog('dw-ov-aviso', 'sm', 'notice')}
+  {md_dialog('dw-ov-excluir', 'sm', 'delete')}
+</section>'''
+
+
+DRAWER_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-drawer</code> é o <code>&lt;dialog&gt;</code>, aberto por <code>showModal()</code> e colado no topo, na direita e na base. Fundo <code>drawer-bg</code>, raio <code>drawer-radius</code> só nos cantos da esquerda, sombra <code>drawer-shadow</code>.</span></div>
+    <div><b>Cabeçalho</b><span><code>__header</code>: o título à esquerda e o X à direita (Icon Button Ghost sm, com nome “Fechar”).</span></div>
+    <div><b>Título</b><span><code>__title</code>, Heading/sm. É ele que dá o nome ao Drawer (<code>aria-labelledby</code>).</span></div>
+    <div><b>Miolo</b><span><code>__content</code>: slot livre. É o único que rola quando passa da tela.</span></div>
+    <div><b>Ações</b><span><code>__actions</code>, opcional: uma ou duas, a secundária antes da principal, e os botões esticam e dividem a largura.</span></div>
+    <div><b>Fundo escurecido</b><span>O <code>::backdrop</code>, com <code>drawer-scrim</code>. Decorativo: não recebe foco.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Os três tamanhos</h2>
+  <p>Só a largura muda: 320, 480 e 640. A altura é sempre a da tela; aqui os três estão congelados com uma
+  altura de exemplo, com o mesmo conteúdo, para comparar com o Figma.</p>
+  <div class="cd-panel dw-frozen" style="margin-top:16px">
+    {dw_frozen('dw-sp-sm', 'sm')}
+    {dw_frozen('dw-sp-md', 'md')}
+    {dw_frozen('dw-sp-lg', 'lg')}
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Drawer</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{drawer_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O fundo escurecido é o do Modal</b>
+    O Drawer reaproveita o <code>bg-scrim</code> que nasceu com o Modal: preto a 56% no claro e a 64% no
+    escuro. Nenhum semântico novo foi criado para o Drawer.
+  </div>
+  <div class="note">
+    <b>As larguras são o único valor declarado, repetido do Modal</b>
+    Todo token do Drawer aponta para a Foundation, menos <code>drawer-width-sm</code>, <code>-md</code> e
+    <code>-lg</code>: a Foundation ainda não tem uma escala de largura de contêiner. A exceção foi repetida de
+    propósito: cada componente fica independente e, quando a escala existir, os seis tokens viram alias de uma vez.
+  </div>
+  <div class="note">
+    <b>Entra e sai pela direita</b>
+    São {DW_DURATION}ms (<code>drawer-duration</code>, a duração de painel da Foundation), com a curva do
+    estado de destino. O painel desliza a própria largura (<code>translate: 100%</code>), então não existe token
+    de deslocamento: entra da direita para a esquerda e sai da esquerda para a direita. O fade existe por causa da
+    sombra, que vazaria para dentro da tela com o painel parado logo fora dela. O fundo só aparece e some. Em
+    navegador sem suporte à transição de <code>display</code>, o Drawer abre e fecha sem animar. Com
+    movimento reduzido, também.
+  </div>
+  <div class="note">
+    <b>O layout em coluna fica na base</b>
+    Ao fechar, o <code>display</code> segue como está pela duração da saída. Se a coluna e o espaço entre as
+    partes valessem só com o Drawer aberto, o miolo seria comprimido na frente de quem está vendo (o mesmo achado do Modal).
+  </div>
+  <div class="note">
+    <b>Altura, rolagem e celular</b>
+    A altura é sempre a da tela (o painel é fixo no topo e na base). Passou disso, só o miolo rola. Em tela
+    estreita a largura é a da tela menos <code>drawer-margin</code>, um respiro à esquerda que mostra a
+    página atrás e deixa tocar nela para fechar. O miolo ganha um respiro do tamanho do anel de foco, para o
+    overflow não cortar o anel de um campo na borda.
+  </div>
+  <div class="note">
+    <b>Botões sobre o painel usam os estados <code>-raised</code></b>
+    O fundo do Drawer (<code>bg-surface-raised</code>) é igual ao <code>bg-hover</code> no escuro, e o hover do
+    Ghost e do Secondary sumia. Dentro do Drawer, Button e Icon Button trocam hover e pressed por
+    <code>bg-hover-raised</code> e <code>bg-active-raised</code>. É só CSS, sem token novo, e o portão tranca o defeito.
+  </div>
+  <div class="note">
+    <b>A página atrás fica travada</b>
+    Com um Drawer aberto por <code>showModal()</code>, a rolagem da página é desligada. Um
+    <code>&lt;dialog open&gt;</code> solto, como os congelados desta página, não trava nada.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>drawer.js</code></b>
+    O <code>&lt;dialog&gt;</code> já prende o foco, deixa a página inerte, fecha com Esc e devolve o foco a quem
+    abriu. O script cobre só o que ele não faz: abrir e fechar por atributo, o clique no fundo e o foco
+    inicial. O foco precisa de regra própria porque o X vem antes do miolo no documento: sem ela o nativo
+    focaria sempre o X. Fechar com mudança não salva é do formulário, que escuta o evento <code>cancel</code>.
+  </div>
+</section>'''
+
+
+DW_RULES = [
+    ('Quando usar', [
+        ('Ver ou editar sem perder a página de vista', 'Detalhe de uma linha, filtros, configurações, edição rápida ao lado de uma lista. A página atrás continua à vista. Precedentes: Primer, Material 3, Evergreen, Design System de Singapura.'),
+        ('Decisão que trava, ou confirmação, é Modal', 'O Drawer não interrompe: ele acompanha a página. Precedentes: SAP, Design System de Singapura.'),
+        ('Fluxo longo, de várias etapas, ou com URL própria, é página', 'Formulário curto de edição no contexto cabe no Drawer; passou do <code>lg</code> com rolagem demais, vire página. <b>Divergência consciente:</b> o Primer proíbe formulário em painel lateral; Ant Design e Singapura o permitem, e o AL fica com eles. Precedentes: Primer, Evergreen, Smashing Magazine.'),
+        ('Nunca um Drawer sobre outro', 'O usuário se perde na camada. Precedentes: Primer (o fundo escurecido impede dois painéis ao mesmo tempo), Moon.'),
+        ('Só entra pela direita', 'A esquerda é de navegação, que é do Tier 4. Precedentes: Primer, Carbon (painel direito do UI shell).'),
+    ]),
+    ('Estrutura e conteúdo', [
+        ('O título é obrigatório e visível', 'Ele nomeia o painel para todo mundo. Precedentes: Primer, APG.'),
+        ('Curto, em caixa de frase, com o nome do objeto ou da tarefa', '“Filtros”, “Editar cliente”. Mesma regra do título do Modal.'),
+        ('O miolo é um slot livre', 'O Drawer só traz cabeçalho e ações; o conteúdo é de quem usa.'),
+        ('Sem divisória entre as partes', 'Quem separa cabeçalho, miolo e ações é o espaço de 24. Decisão do AL; se o QA mostrar o título “sumindo” sob o texto rolando, reabre.'),
+    ]),
+    ('Tamanho', [
+        ('Escolha pelo conteúdo', '<code>sm</code> para filtros e ações curtas, <code>md</code> para detalhe e formulário curto, <code>lg</code> para conteúdo denso. Critério do AL, espelhado do Modal; o Material só diz que a largura é fixa.'),
+        ('Rola demais? Suba um tamanho', 'Passou do <code>lg</code>, vire página.'),
+        ('No celular, tela menos 16 de respiro à esquerda', 'O respiro mostra a página atrás, deixa tocar nela para fechar e preserva o raio. Precedente: Material 3 (a versão modal é a do celular).'),
+        ('A altura é sempre a da tela', 'Colado no topo e na base. Precedentes: Primer, Material 3.'),
+    ]),
+    ('Fechar', [
+        ('Sempre existe uma saída visível', 'O X, ou o rodapé com um secundário que fecha. O X pode ser desligado, mas aí o rodapé fica. Precedentes: Primer (o X é obrigatório), Jellyvision.'),
+        ('Esc sempre fecha', 'Com ou sem campos. O <code>&lt;dialog&gt;</code> já faz. Precedentes: APG, Evergreen.'),
+        ('Clique no fundo fecha só sem campos', '<b>Divergência consciente, herdada do Modal:</b> o Primer fecha no fundo mas bloqueia com mudança não salva; Material 3 e Evergreen fecham sempre. O AL é mais estrito: qualquer campo basta para impedir.'),
+        ('Fechar devolve o foco a quem abriu', 'Precedentes: APG, Primer, Evergreen, Workday.'),
+        ('Drawer fechado não fica na página', 'Nem escondido por CSS: o <code>&lt;dialog&gt;</code> cuida disso.'),
+        ('X e Esc fecham e descartam', 'Quem tem formulário com mudança não salva avisa antes, no próprio formulário, escutando o evento <code>cancel</code>. O Drawer não decide por você o que é perda de dado. Precedente: Primer.'),
+    ]),
+    ('Ações', [
+        ('No máximo duas, a principal à direita', 'Mesma regra do Modal. Precedente: Material 3 (confirmar e cancelar).'),
+        ('Os botões esticam e dividem a largura', 'Nos três tamanhos. <b>Decisão do desenho, sem precedente de mercado:</b> o painel é estreito, e o rodapé alinha com o conteúdo e dá alvo de toque grande. No Modal os botões ficam do tamanho do texto, à direita.'),
+        ('Ação destrutiva não é o principal do Drawer', '“Excluir cliente” abre um Modal de confirmação, uma camada só. Precedentes: SAP, Design System de Singapura.'),
+        ('Rótulo com verbo e substantivo, rodapé fixo', 'O mesmo rótulo do Modal; só o miolo rola.'),
+    ]),
+    ('Foco e leitor de tela', [
+        ('<code>&lt;dialog&gt;</code> aberto por <code>showModal()</code>', 'Prende o foco, deixa o resto da página inerte e fecha com Esc. Precedentes: APG, MDN.'),
+        ('O Drawer tem nome', '<code>aria-labelledby</code> aponta para o título. Precedentes: APG, Primer.'),
+        ('O X tem nome', '“Fechar”, no próprio botão. É regra do Icon Button: sem nome, o botão é mudo.'),
+        ('O foco inicial depende do conteúdo', 'Primeiro campo, senão o botão principal do rodapé, senão o X. O APG alerta para não focar o X quando há algo mais relevante.'),
+        ('O fundo escurecido é decoração', 'Não recebe foco nem é anunciado.'),
+        ('Só o miolo rola', 'Cabeçalho e ações ficam; a página atrás não rola. Precedente: Material 3 (rolagem só vertical).'),
+        ('Entra e sai pela direita, em 300ms', 'Entra da direita para a esquerda e sai da esquerda para a direita; com movimento reduzido, sem deslizar. <b>Decisão do AL</b>, sem precedente pesquisado além de “painel que desliza da borda”.'),
+    ]),
+]
+
+
+def dw_rules_html():
+    out, n = [], 0
+    for grupo, regras in DW_RULES:
+        out.append(f'<h3 class="cd-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    assert n == 30, f'as regras aprovadas sao 30, o site tem {n}'
+    return '\n'.join(out)
+
+
+DRAWER_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Detalhe ao lado da lista</span>
+      <div class="stage2 dw-stage2"><div class="dw-fake dw-fake--do"><span class="dw-fake-list"><i></i><i></i><i></i></span><span class="dw-fake-panel"><span class="dw-fake-t">Detalhes do cliente</span><span class="dw-fake-p">Ana Souza · 38 pedidos</span></span></div></div>
+      <p class="cap">A pessoa vê o dado sem perder a lista. <i>Primer, Evergreen.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Confirmação num painel lateral</span>
+      <div class="stage2 dw-stage2"><div class="dw-fake dw-fake--no"><span class="dw-fake-list"><i></i><i></i><i></i></span><span class="dw-fake-panel"><span class="dw-fake-t">Excluir cliente?</span><span class="dw-fake-p">Tem certeza?</span><span class="dw-fake-a"><span class="dw-fake-b">Não</span><span class="dw-fake-b dw-fake-b--danger">Sim</span></span></span></div></div>
+      <p class="cap">Decisão que trava o fluxo é Modal. <i>SAP, Singapura.</i></p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">“Excluir” abre um Modal</span>
+      <div class="stage2 dw-stage2"><div class="dw-fake dw-fake--do"><span class="dw-fake-list"><i></i><i></i><i></i></span><span class="dw-fake-panel"><span class="dw-fake-t">Detalhes do cliente</span><span class="dw-fake-p">…dados…</span><span class="dw-fake-a"><span class="dw-fake-b">Excluir cliente</span></span></span></div></div>
+      <p class="cap">O botão fica no miolo e abre a confirmação num Modal, uma camada só.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Danger como botão principal do painel</span>
+      <div class="stage2 dw-stage2"><div class="dw-fake dw-fake--no"><span class="dw-fake-list"><i></i><i></i><i></i></span><span class="dw-fake-panel"><span class="dw-fake-t">Detalhes do cliente</span><span class="dw-fake-p">…dados…</span><span class="dw-fake-a"><span class="dw-fake-b">Cancelar</span><span class="dw-fake-b dw-fake-b--danger">Excluir cliente</span></span></span></div></div>
+      <p class="cap">Um clique no rodapé destrói sem a pessoa parar para confirmar.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {dw_rules_html()}
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Outros lados</b><span>Esquerda, de cima e de baixo. A esquerda é navegação, que é do Tier 4.</span></div>
+    <div><b>Drawer persistente, sem fundo escurecido</b><span>O “standard” do Material é layout de página, não componente de overlay.</span></div>
+    <div><b>Drawer redimensionável</b><span>Os três tamanhos são fixos.</span></div>
+    <div><b>Drawer sobre Drawer</b><span>Nunca. Se a demanda aparecer, o fluxo é página.</span></div>
+    <div><b>Descrição sob o título</b><span>O título basta; o resto é do miolo.</span></div>
+    <div><b>Divisórias entre as partes</b><span>O espaço separa; nada de linha.</span></div>
+    <div><b>Fluxo de várias etapas</b><span>É página.</span></div>
+  </div>
+</section>'''
+
+
+DRAWER_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede o que mora <b>dentro</b> do painel, contra <code>bg-surface-raised</code>, e o painel
+  contra a página <b>escurecida</b> pelo fundo (o scrim composto sobre a tela e sobre a superfície). O
+  título e o texto do hover têm que passar 4,5:1 sem exceção; ícone do X, anel, botões e borda, 3:1. Um
+  julgamento a mais tranca o defeito do Modal 0.18.1: o hover e o pressed do Ghost e do Secondary têm que ser
+  <b>diferentes</b> do painel. A separação do painel no escuro é a única exceção declarada, e um julgamento
+  reprova o painel <b>invisível</b>.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_DW_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_DW_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>{N_DW_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{N_DW_FAIL}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{drawer_a11y_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Exceção declarada: o painel não se separa do fundo escurecido no escuro</b>
+    O painel (<code>bg-surface-raised</code>) contra a página escurecida fica em 1,79 a 1,86:1, abaixo de 3:1, na
+    borda de dentro. Quem separa é o painel clarear mais a sombra, a regra da Foundation para o tema escuro. Subir a
+    opacidade do fundo não resolve (a 72% o par vai a 1,88:1) e o Drawer nunca ganha contorno para compensar. É a
+    mesma exceção do Modal e do Card.
+  </div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra treze regras lendo o HTML da visualização de QA:
+  <b>{DRW_A11Y['markupChecked'] or 0} Drawers</b> ali, nenhum fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Nativo</b><span><code>.al-drawer</code> é um <code>&lt;dialog&gt;</code>.</span></div>
+    <div><b>b · Aberto por script</b><span>Sem <code>open</code> na marcação. Só as amostras congeladas, sob <code>inert</code>, estão isentas.</span></div>
+    <div><b>c · Nome</b><span><code>aria-labelledby</code> aponta para o <code>__title</code> do próprio Drawer.</span></div>
+    <div><b>d · Um título</b><span>Exatamente um <code>__title</code> com texto, dentro do cabeçalho.</span></div>
+    <div><b>e · Ordem</b><span>Cabeçalho, miolo, ações (opcionais), sem peça solta nem divisória no meio.</span></div>
+    <div><b>f · Ações</b><span>Quando há <code>__actions</code>, uma ou duas ações.</span></div>
+    <div><b>g · Hierarquia</b><span>A secundária vem antes; a última é Primary, nunca Danger.</span></div>
+    <div><b>h · Saída visível</b><span>O X, ou um <code>data-al-drawer-close</code> no rodapé, ou um <code>&lt;form method="dialog"&gt;</code>.</span></div>
+    <div><b>i · O X</b><span>Icon Button com <code>aria-label</code>, <code>type="button"</code>, <code>data-al-drawer-close</code> e ícone <code>aria-hidden</code>; nenhum outro botão sem texto.</span></div>
+    <div><b>j · Sem aninhar</b><span>Nada de Drawer dentro de Drawer.</span></div>
+    <div><b>k · Gatilho</b><span>Todo <code>data-al-drawer-open</code> aponta para um Drawer que existe.</span></div>
+    <div><b>l · Botão com tipo</b><span><code>type="button"</code> nas ações, para não enviar formulário.</span></div>
+    <div><b>m · Tamanho</b><span>No máximo um de <code>--sm</code>, <code>--md</code> ou <code>--lg</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Foco inicial</b><span>No X sem campos nem rodapé, no primeiro campo com formulário, na ação principal com rodapé e sem campos.</span></div>
+    <div><b>Foco preso</b><span>Tab e Shift+Tab rodam só dentro do Drawer; a página atrás fica inerte.</span></div>
+    <div><b>Esc</b><span>Fecha em todos e o foco volta ao botão que abriu. Com um Modal aberto por cima, fecha só o Modal.</span></div>
+    <div><b>Clique no fundo</b><span>Fecha sem campos; com campos, nunca. Arrastar dentro e soltar fora também não fecha.</span></div>
+    <div><b>Rolagem</b><span>Só o miolo rola, com cabeçalho e ações parados. A página atrás não anda.</span></div>
+    <div><b>Entrada e saída</b><span>Entra da direita para a esquerda e sai da esquerda para a direita, com o fundo escurecendo e clareando.</span></div>
+    <div><b>Celular</b><span>Respiro de 16px à esquerda e sem rolagem lateral em 375px.</span></div>
+    <div><b>Movimento reduzido</b><span>Abre e fecha sem deslizar.</span></div>
+    <div><b>Alto contraste</b><span>O painel ganha contorno na cor do texto do sistema.</span></div>
+  </div>
+</section>'''
+
+
+# A miniatura mora dentro do link do card do indice: <dialog> ali seria
+# interativo dentro de link. Entao e casca pintada com os tokens do Drawer.
+TH_DRAWER = ('<div class="th-drawer" aria-hidden="true"><div class="th-dw-panel">'
+             '<span class="th-dw-t"></span><span class="th-dw-l"></span><span class="th-dw-l th-dw-l--s"></span>'
+             '<span class="th-dw-a"><i></i><b></b></span></div></div>')
+
+
+CHROME_DRAWER = """
+/* ── páginas do Drawer ──
+   Casca do site. O Drawer em si é sempre o .al-drawer, do drawer.css real.
+   Os exemplos "a evitar" usam .dw-fake-*, nunca um .al-drawer errado. */
+.dw-prev{position:relative; width:100%; display:flex; justify-content:center; padding:24px; border-radius:12px;
+  background:var(--al-bg-surface); text-align:left; overflow-x:auto}
+/* o <dialog open> do UA e fixo e colado na direita; na previa ele e so uma caixa desenhada,
+   com uma altura de exemplo no lugar da altura da tela */
+.dw-prev .al-drawer, .dw-cell .al-drawer{position:static; inset:auto; max-inline-size:100%; block-size:460px;
+  opacity:1; translate:none; transition:none}
+.dw-dl{margin:0 0 var(--al-space-24); display:grid; gap:var(--al-space-12)}
+.dw-dl div{display:grid; gap:var(--al-space-4)}
+.dw-dl dt{font-size:var(--al-font-size-xs); line-height:var(--al-line-height-xs); color:var(--al-text-secondary)}
+.dw-dl dd{margin:0}
+.dw-frozen{display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start}
+.dw-cell{min-width:0; max-width:100%; display:flex; flex-direction:column; gap:8px}
+.dd .stage2.dw-stage2{display:block; padding:0; overflow:hidden}
+.dw-fake{position:relative; display:flex; height:170px; overflow:hidden; border-radius:inherit;
+  background:var(--al-bg-surface)}
+.dw-fake-list{flex:1; display:flex; flex-direction:column; gap:10px; padding:16px}
+.dw-fake-list i{display:block; height:8px; border-radius:4px; background:var(--al-border-default)}
+.dw-fake-list i:nth-child(2){width:70%}
+.dw-fake-list i:nth-child(3){width:50%}
+.dw-fake-panel{display:flex; flex-direction:column; gap:8px; width:58%; padding:16px;
+  border-radius:var(--al-radius-2xl) 0 0 var(--al-radius-2xl); background:var(--al-bg-surface-raised);
+  color:var(--al-text-primary); box-shadow:var(--al-elevation-3)}
+.dw-fake-t{font-size:15px; line-height:22px; font-weight:600; letter-spacing:-.01em}
+.dw-fake-p{font-size:12.5px; line-height:18px; color:var(--al-text-secondary)}
+.dw-fake-a{display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; margin-top:auto}
+.dw-fake-b{padding:5px 12px; border-radius:9999px; font-size:12px; font-weight:500}
+.dw-fake-b--danger{background:var(--al-bg-danger); color:var(--al-text-on-solid)}
+.th-drawer{display:flex; justify-content:flex-end; width:100%; height:100%; border-radius:6px;
+  background:var(--al-bg-scrim)}
+.th-dw-panel{display:flex; flex-direction:column; gap:6px; width:62%; max-width:120px; height:100%; padding:10px;
+  border-radius:var(--al-drawer-radius) 0 0 var(--al-drawer-radius); background:var(--al-drawer-bg)}
+.th-dw-t{height:8px; width:55%; border-radius:4px; background:var(--al-drawer-title)}
+.th-dw-l{height:6px; width:90%; border-radius:3px; background:var(--al-border-default)}
+.th-dw-l--s{width:60%}
+.th-dw-a{display:flex; gap:5px; margin-top:auto}
+.th-dw-a i, .th-dw-a b{flex:1; height:10px; border-radius:5px}
+.th-dw-a i{background:var(--al-bg-hover)}
+.th-dw-a b{background:var(--al-bg-brand)}
+"""
+
+
+JS_DRAWER_DATA = 'var DW_DEMOS = ' + json.dumps(DW_DEMOS, ensure_ascii=False).replace('</', '<\\/') + ';\n'
+
+JS_DRAWER = r"""
+(function () {
+  // ── playground do Drawer ── o comportamento e o do drawer.js real; isto e so o palco
+  var prev = document.getElementById('drawer-prev');
+  if (!prev) return;
+  var code = document.getElementById('drawer-code');
+  var live = null;
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function fill(inner, pid) { return inner.replace(/DWPID/g, pid); }
+
+  // A previa e um <dialog open> inerte, desenhado dentro do palco. O Drawer de
+  // verdade e criado uma vez, ao abrir, e reaproveitado: o mesmo HTML da previa.
+  function render() {
+    var s = pick('dwsize'), k = pick('dwkind'), theme = pick('dwtheme');
+    var demo = DW_DEMOS[s + '|' + k];
+    var d = document.createElement('dialog');
+    d.className = 'al-drawer al-drawer--' + s;
+    d.setAttribute('open', '');
+    d.setAttribute('inert', '');
+    d.setAttribute('aria-labelledby', 'dw-pv-t');
+    if (theme !== 'auto') d.setAttribute('data-theme', theme);
+    d.innerHTML = fill(demo.inner, 'dw-pv');
+    prev.innerHTML = '';
+    prev.appendChild(d);
+    if (theme === 'auto') prev.removeAttribute('data-theme'); else prev.setAttribute('data-theme', theme);
+    code.innerHTML = esc(demo.code);
+  }
+
+  function open() {
+    var s = pick('dwsize'), k = pick('dwkind'), theme = pick('dwtheme');
+    var demo = DW_DEMOS[s + '|' + k];
+    if (!live) {
+      live = document.createElement('dialog');
+      live.id = 'dw-pg-live';
+      document.body.appendChild(live);
+    }
+    live.className = 'al-drawer al-drawer--' + s;
+    live.setAttribute('aria-labelledby', 'dw-live-t');
+    if (theme === 'auto') live.removeAttribute('data-theme'); else live.setAttribute('data-theme', theme);
+    live.innerHTML = fill(demo.inner, 'dw-live');
+    if (window.alDrawers) window.alDrawers.init(document.body);
+    if (!live.open) live.showModal();
+  }
+
+  document.querySelectorAll('#drawer-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('drawer-open').addEventListener('click', open);
+  document.getElementById('drawer-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -9307,15 +9945,16 @@ LANDING_COMPONENTES = f'''
     {card('tab', 'Tab', 'Troca de conteúdo na mesma tela, ou navegação entre páginas com o mesmo visual. Line e Square, e o primeiro componente com script próprio.', TH_TAB)}
     {card('accordion', 'Accordion', 'Conteúdo secundário que abre e fecha no lugar. É o &lt;details&gt; nativo: sem script, vários abertos por padrão ou um por vez com name.', TH_ACCORDION)}
     {card('modal', 'Modal', 'Uma tarefa curta que pede resposta antes de seguir. É o &lt;dialog&gt; nativo: sobe sobre a página, prende o foco e nunca tem botão X.', TH_MODAL)}
+    {card('drawer', 'Drawer', 'Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo colado na direita: entra pela lateral, prende o foco e sempre tem uma saída visível.', TH_DRAWER)}
   </div>
 </section>
 
 <section>
-  <h2>O Tier 3 começou</h2>
+  <h2>O Tier 3 fechou</h2>
   <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
   disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
   sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
-  seguiu pelo Card, pelo Tab e pelo Accordion e chegou ao Modal. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e
+  seguiu pelo Card, pelo Tab, pelo Accordion e pelo Modal e fechou no Drawer. Cada um passou pelas mesmas oito etapas, a começar pela 1, definir e
   auditar.</p>
 </section>'''
 
@@ -9539,6 +10178,15 @@ PAGES = [
          (f'{N_MOD_TOKENS} tokens', False), (f'{N_MD_EXC_KEYS} exceção declarada', False)],
         [('overview', 'Visão geral', MODAL_OVERVIEW), ('specs', 'Especificações', MODAL_SPECS),
          ('guide', 'Diretrizes', MODAL_GUIDE), ('a11y', 'Acessibilidade', MODAL_A11Y_TAB)])),
+    ('drawer', 'Componentes', page(
+        'drawer', 'Componentes', 'Drawer',
+        'Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo aberto por showModal() e '
+        'colado na direita: o painel entra pela lateral, o fundo escurece, o foco fica preso e Esc fecha. '
+        'Sempre tem uma saída visível: o X ou o rodapé.',
+        [('Estável', True), ('3 variantes no Figma', False),
+         (f'{N_DRW_TOKENS} tokens', False), (f'{N_DW_EXC_KEYS} exceção declarada', False)],
+        [('overview', 'Visão geral', DRAWER_OVERVIEW), ('specs', 'Especificações', DRAWER_SPECS),
+         ('guide', 'Diretrizes', DRAWER_GUIDE), ('a11y', 'Acessibilidade', DRAWER_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -9584,6 +10232,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/tab" data-page="tab">Tab</a>
         <a href="#/accordion" data-page="accordion">Accordion</a>
         <a href="#/modal" data-page="modal">Modal</a>
+        <a href="#/drawer" data-page="drawer">Drawer</a>
       </div>
     </div>
   </div>
@@ -11716,7 +12365,7 @@ HTML = (
     + CSS_REAL +
     '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -11728,6 +12377,7 @@ HTML = (
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
+    + DRW_JS.replace('</', '<\\/') + JS_DRAWER_DATA + JS_DRAWER
     + JS_MOTION + '</script>\n'
 )
 
@@ -11785,6 +12435,10 @@ print(f'  tokens do Modal   : {N_MOD_TOKENS}  '
       f'({len(MOD_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in MOD_A11Y["rows"] if r["invisible"])} invisiveis, '
       f'{sum(1 for r in MOD_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
+print(f'  tokens do Drawer  : {N_DRW_TOKENS}  '
+      f'({len(DRW_A11Y["rows"])} combinacoes medidas, '
+      f'{sum(1 for r in DRW_A11Y["rows"] if r["invisible"])} invisiveis, '
+      f'{sum(1 for r in DRW_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
 print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

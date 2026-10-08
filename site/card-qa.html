@@ -7,7 +7,7 @@
 <style>
 /* ================= foundation ================= */
 /* AL Design System - Foundation
- * v0.18.0 - MIT
+ * v0.19.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -686,6 +686,19 @@
   color: var(--al-card-description);
 }
 
+/* --------------------------------------------------- botoes dentro do card */
+/* Ghost e secondary (Button e Icon Button) leem bg-hover/bg-active, feitos
+   para bg-surface. O fundo do Card e surface-raised, que no escuro e igual ao
+   bg-hover: o hover sumia. Aqui o estado vem dos semanticos -raised, os mesmos
+   do Modal e do Accordion. So muda o fundo de hover/pressed. */
+.al-card .al-btn--ghost,
+.al-card .al-btn--secondary,
+.al-card .al-icon-btn--ghost,
+.al-card .al-icon-btn--secondary {
+  --_bg-hover: var(--al-bg-hover-raised);
+  --_bg-active: var(--al-bg-active-raised);
+}
+
 /* --------------------------------------------------------------- clicavel */
 /* O link herda a aparencia do titulo: quem diz que e clicavel e o destino
    escrito no titulo, a seta recomendada (regra 14) e o hover. */
@@ -871,7 +884,7 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   <header class="qa-head">
     <div>
       <h1>Card — QA da etapa 6</h1>
-      <p class="qa-sub">AL Design System 0.18.0 · componente 0.1.0 ·
+      <p class="qa-sub">AL Design System 0.19.0 · componente 0.1.0 ·
       3 tipos × 3 paddings × estático/clicável · portão: 32 combinações, 22 passam, 10 exceções, 0 reprovas</p>
     </div>
     <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">
