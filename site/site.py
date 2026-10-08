@@ -127,6 +127,11 @@ SBR_TOKENS = open(os.path.join(ROOT, 'components', 'sidebar', 'al-sidebar-tokens
 SBR_CSS = open(os.path.join(ROOT, 'components', 'sidebar', 'sidebar.css')).read()
 SBR_JS = open(os.path.join(ROOT, 'components', 'sidebar', 'sidebar.js')).read()
 SBR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'sidebar', 'a11y.json')))
+BCR = json.load(open(os.path.join(ROOT, 'components', 'breadcrumb', 'tokens.json')))
+BCR_TOKENS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'al-breadcrumb-tokens.css')).read()
+BCR_CSS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'breadcrumb.css')).read()
+BCR_JS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'breadcrumb.js')).read()
+BCR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'breadcrumb', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -160,6 +165,7 @@ N_ACC_TOKENS = len(ACC['alias'])
 N_MOD_TOKENS = len(MOD['alias'])
 N_DRW_TOKENS = len(DRW['alias'])
 N_SBR_TOKENS = len(SBR['alias'])
+N_BCR_TOKENS = len(BCR['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -204,7 +210,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
-                         ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS)
+                         ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -223,7 +229,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + ACC_TOKENS + '\n' + ACC_CSS
             + '\n' + MOD_TOKENS + '\n' + MOD_CSS
             + '\n' + DRW_TOKENS + '\n' + DRW_CSS
-            + '\n' + SBR_TOKENS + '\n' + SBR_CSS)
+            + '\n' + SBR_TOKENS + '\n' + SBR_CSS
+            + '\n' + BCR_TOKENS + '\n' + BCR_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -10579,6 +10586,511 @@ JS_SIDEBAR = r"""
 """
 
 
+# ═══════════════════════════════════════════════════════════ Breadcrumb · abas
+# Ultimo componente do Tier 4, junto com o _breadcrumb-more (o `…` e o menu),
+# que vivem na mesma pagina porque se complementam. Toda trilha da pagina sai do
+# breadcrumb.css real e o menu do breadcrumb.js real. So o PLAYGROUND reage
+# (regra 7: um breadcrumb por pagina); amostras ficam `aria-hidden` + `inert`, e
+# os "a evitar" sao casca do site (bc-fake-*), nunca uma .al-breadcrumb errada -
+# o portao de marcacao le esta pagina e recusaria, com razao.
+BC_DEPTHS = [('2', 'Short · 2'), ('3', 'Medium · 3'), ('4', '4 níveis'), ('6', 'Large · 6')]
+BC_PAGES = [('canvas', 'Tela'), ('surface', 'Superfície')]
+BC_LEVELS = ['Início', 'Vendas', 'Pedidos', 'Março de 2026', 'Loja Centro', 'Pedido 1042']
+
+N_BC_MEDIDAS = len(BCR_A11Y['rows'])
+N_BC_EXC = sum(1 for r in BCR_A11Y['rows'] if r['exception'])
+N_BC_PASS = sum(1 for r in BCR_A11Y['rows'] if r['pass'])
+N_BC_FAIL = sum(1 for r in BCR_A11Y['rows'] if not r['pass'] and not r['exception'])
+N_BC_EXC_KEYS = len(BCR['pending'])
+BC_MIN_W = BCR['resolved']['breadcrumb-menu-min-width']
+
+BC_SEP = al_icon('chevron-right', 'al-icon al-icon--16 al-breadcrumb__separator')
+
+
+def bc_slug(s):
+    return ''.join(c if c.isalnum() else '-' for c in s.lower()).strip('-')
+
+
+def bc_levels(n):
+    """n niveis tirados de BC_LEVELS, sempre terminando no pedido."""
+    return BC_LEVELS[:n - 1] + [BC_LEVELS[-1]]
+
+
+def bc_trail(levels, mid, aria='Trilha de navegação', frozen_open=False, sample=False):
+    """A marcacao do contrato. Ate 4 niveis: tudo. 5+: Large (regras 5 e 6)."""
+    *pais, atual = levels
+
+    def link(rot):
+        return (f'<li class="al-breadcrumb__item"><a class="al-breadcrumb__link" '
+                f'href="#/breadcrumb">{rot}</a>{BC_SEP}</li>')
+
+    li = []
+    if len(levels) >= 5:
+        li += [link(pais[0]), link(pais[1])]
+        itens = ''.join(f'<li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">{h}</span></a></li>'
+                        for h in pais[2:])
+        exp = 'true' if frozen_open else 'false'
+        ligado = ' data-al-breadcrumb' if frozen_open else ''
+        li.append(f'<li class="al-breadcrumb__item al-breadcrumb__more">'
+                  f'<button class="al-breadcrumb__more-button" type="button" aria-label="Mostrar mais páginas" '
+                  f'aria-expanded="{exp}" aria-controls="{mid}"{ligado}>…</button>'
+                  f'<ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="{mid}"'
+                  f'{"" if frozen_open else " hidden"}>{itens}</ul>{BC_SEP}</li>')
+    else:
+        li += [link(p) for p in pais]
+    li.append(f'<li class="al-breadcrumb__item"><span class="al-breadcrumb__current" '
+              f'aria-current="page">{atual}</span></li>')
+    hide = ' aria-hidden="true" inert' if sample else ''
+    return (f'<nav class="al-breadcrumb" aria-label="{aria}"{hide}><ol class="al-breadcrumb__list">'
+            + ''.join(li) + '</ol></nav>')
+
+
+def bc_code(n):
+    levels = bc_levels(n)
+    *pais, atual = levels
+    sep = ('<svg class="al-icon al-icon--16 al-breadcrumb__separator" viewBox="0 0 24 24"\n'
+           '           aria-hidden="true" focusable="false">…</svg>')
+    L = ['<nav class="al-breadcrumb" aria-label="Trilha de navegação">',
+         '  <ol class="al-breadcrumb__list">']
+    vis = pais[:2] if n >= 5 else pais
+    for p in vis:
+        L += ['    <li class="al-breadcrumb__item">',
+              f'      <a class="al-breadcrumb__link" href="/{bc_slug(p)}">{p}</a>',
+              f'      {sep}', '    </li>']
+    if n >= 5:
+        L += ['    <li class="al-breadcrumb__item al-breadcrumb__more">',
+              '      <button class="al-breadcrumb__more-button" type="button"',
+              '              aria-label="Mostrar mais páginas"',
+              '              aria-expanded="false" aria-controls="bc-mais">…</button>',
+              '      <ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-mais" hidden>']
+        L += [f'        <li><a class="al-tab" href="/{bc_slug(h)}"><span class="al-tab__label">{h}</span></a></li>'
+              for h in pais[2:]]
+        L += ['      </ul>', f'      {sep}', '    </li>']
+    L += ['    <li class="al-breadcrumb__item">',
+          f'      <span class="al-breadcrumb__current" aria-current="page">{atual}</span>',
+          '    </li>', '  </ol>', '</nav>']
+    if n >= 5:
+        L += ['<script src="breadcrumb.js"></script>  <!-- o menu do “…” -->']
+    return '\n'.join(L)
+
+
+BC_DEMOS = {d: {'html': bc_trail(bc_levels(int(d)), 'bc-pg'), 'code': bc_code(int(d))}
+            for d, _ in BC_DEPTHS}
+
+
+def bc_frozen_open(mid, levels=BC_LEVELS):
+    return f'<div class="bc-open">{bc_trail(levels, mid, aria="Exemplo com o menu aberto", frozen_open=True, sample=True)}</div>'
+
+
+def breadcrumb_token_rows():
+    rows = []
+    for name in BCR['alias']:
+        res = BCR['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, dict):
+            light = dark = '<span class="dim">sombra composta</span>'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{BCR["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+def breadcrumb_a11y_rows():
+    out = []
+    for r in BCR_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        diff = r['floor'] == 1.0
+        if r['invisible']:
+            v = '<span class="fail">invisível</span>'
+        elif r['pass']:
+            v = '<span class="pass">passa</span>'
+        elif r['exception']:
+            v = f'<span class="exc">{r["exception"]}</span>'
+        else:
+            v = '<span class="fail">reprova</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{r["what"]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{"—" if diff else format(r["ratio"], ".2f") + ":1"}</td>'
+            f'<td class="tok dim">{"diferente" if diff else str(r["floor"]) + ":1"}</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+BREADCRUMB_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage bc-stage" id="breadcrumb-stage"><div class="bc-page" data-bcpage="canvas">{BC_DEMOS["6"]["html"]}</div></div>
+    <div class="controls" id="breadcrumb-controls">
+      <div class="ctl"><span class="ctl-name">Profundidade</span>{seg('bcdepth', BC_DEPTHS, '6')}</div>
+      <div class="ctl"><span class="ctl-name">Página</span>{seg('bcpage', BC_PAGES, 'canvas')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('bctheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="breadcrumb-copy">Copiar</button></div>
+      <pre><code id="breadcrumb-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Em <b>Large</b>, tabule até o <b>…</b> e aperte Enter: o menu abre e o foco fica no botão; o Tab
+    entra nos links, o Esc fecha e devolve o foco. Passe o mouse na trilha — só o cursor muda — e
+    nos itens do menu, que têm hover. Troque o <b>Tema</b> para escuro e repita no menu.
+  </p>
+</section>
+
+<section>
+  <h2>Profundidade, não tamanho</h2>
+  <p>Short, Medium e Large são o número de níveis, não um tamanho. Até 4, a trilha mostra tudo;
+  com 5 ou mais, os do meio vão para o menu do “…”.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Short · 2 níveis</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas">{bc_trail(bc_levels(2), 'bc-s2', aria='Exemplo Short', sample=True)}</div>
+      <p class="cap">A página logo abaixo da raiz.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Medium · 3 níveis</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas">{bc_trail(bc_levels(3), 'bc-s3', aria='Exemplo Medium', sample=True)}</div>
+      <p class="cap">O caso mais comum.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">4 níveis · ainda sem “…”</span>
+      <div class="stage2 bc-stage2" data-bcpage="surface">{bc_trail(bc_levels(4), 'bc-s4', aria='Exemplo com 4 níveis', sample=True)}</div>
+      <p class="cap">Colapsar aqui esconderia um item só. É o Medium com um nível a mais.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Large · 5 níveis ou mais</span>
+      <div class="stage2 bc-stage2" data-bcpage="surface">{bc_trail(BC_LEVELS, 'bc-s6', aria='Exemplo Large', sample=True)}</div>
+      <p class="cap">Primeiro, segundo, “…” e a atual. Os do meio, em ordem, no menu.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>O menu do “…”</h2>
+  <p>É o <code>_breadcrumb-more</code> do Figma: um botão e uma lista de links que abre 8 abaixo
+  dele, centralizada, com a sombra Elevation/3. Os itens são o Tab Square de navegação.</p>
+  <div class="cd-panel" style="margin-top:16px">{bc_frozen_open('bc-ov-open')}</div>
+</section>'''
+
+
+BREADCRUMB_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Trilha</b><span><code>&lt;nav class="al-breadcrumb"&gt;</code> com nome e uma <code>&lt;ol&gt;</code>: a ordem tem significado.</span></div>
+    <div><b>Link</b><span><code>.al-breadcrumb__link</code>, Label/md em <code>breadcrumb-link</code>. Sem sublinhado e sem hover: só o cursor muda.</span></div>
+    <div><b>Separador</b><span>O chevron-right de 16, em <code>breadcrumb-separator</code>, dentro do item que ele fecha e fora do leitor de tela.</span></div>
+    <div><b>Página atual</b><span><code>&lt;span aria-current="page"&gt;</code> em <code>breadcrumb-current</code>. Não é link e não recebe foco.</span></div>
+    <div><b>“…”</b><span><code>&lt;button&gt;</code> “Mostrar mais páginas”, com <code>aria-expanded</code>. Só na Large, sempre o terceiro item.</span></div>
+    <div><b>Menu</b><span><code>&lt;ul class="al-tabs al-tabs--square"&gt;</code> de links, <code>bg-surface-raised</code>, borda, raio xl, Elevation/3. Largura mínima {BC_MIN_W}, cresce com o rótulo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Menu aberto</h2>
+  <p>Congelado, sobre os dois fundos. No segundo, um rótulo longo: o menu passa de {BC_MIN_W} e cresce.</p>
+  <div class="dd bc-dd-1" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Tela</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas">{bc_frozen_open('bc-sp-a')}</div></div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Superfície · rótulo longo</span>
+      <div class="stage2 bc-stage2" data-bcpage="surface">{bc_frozen_open('bc-sp-b', ['Início', 'Vendas', 'Relatórios', 'Configurações da conta', 'Pedido 1042'])}</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Breadcrumb</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{breadcrumb_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Um valor declarado</b>
+    Todo token aponta para a Foundation, menos <code>breadcrumb-menu-min-width</code> ({BC_MIN_W}px): a
+    Foundation ainda não tem escala de largura de contêiner. É a mesma exceção da Sidebar, do Modal e
+    do Drawer, e é mínima, não fixa.
+  </div>
+  <div class="note">
+    <b>O hover do menu é <code>-raised</code></b>
+    O menu mora em <code>bg-surface-raised</code>, onde o hover do Tab sumia no escuro. Em vez de
+    reescrever o Tab, o menu redefine dentro dele as duas cores de hover e pressed do Tab para
+    <code>breadcrumb-menu-item-bg-hover</code> e <code>-active</code>.
+  </div>
+  <div class="note">
+    <b>O menu se posiciona pelo “…”, não pelo item</b>
+    O item do “…” também carrega o separador. Ele é uma grade de duas colunas, e o menu se centraliza
+    na primeira — a do botão. Sem isso, ele ficava 12px para a direita.
+  </div>
+  <div class="note">
+    <b>Abre e fecha em 120ms</b>
+    Um fade de opacidade em <code>motion-duration-feedback</code>, a duração do Button: curva de entrada
+    ao abrir, de saída ao fechar. Sem deslocamento, e sem fade com movimento reduzido.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>breadcrumb.js</code></b>
+    Só a Large precisa dele. O “…” abre e fecha a lista e mantém <code>aria-expanded</code>; o foco fica
+    no botão. Esc fecha e devolve o foco; clique fora, foco saindo e clique num item também fecham.
+  </div>
+</section>'''
+
+
+BC_RULES = [
+    ('Quando usar', [
+        ('Hierarquia com 3 níveis ou mais', 'Com um nível só, a trilha vira ruído. Precedente: Carbon.'),
+        ('Não para progresso de um fluxo linear', 'Cadastro em etapas pede indicador de progresso. Precedentes: GOV.UK, Carbon.'),
+        ('Com a Sidebar, só dois níveis abaixo dela', 'Se a Sidebar já mostra onde a pessoa está, a trilha repete. Precedente: GOV.UK.'),
+        ('Hierarquia, não histórico', 'O caminho é o mesmo por onde quer que a pessoa tenha chegado, e é um modelo só no produto. Precedente: Carbon.'),
+    ]),
+    ('Profundidade', [
+        ('Short, Medium e Large são profundidade', 'Até 4 níveis, tudo à mostra; com 5 ou mais, Large. Precedentes: Spectrum (máximo de 4 visíveis), eBay.'),
+        ('Large: primeiro, segundo, “…” e a atual', 'Os do meio vão para o menu, do mais alto para o mais baixo. <b>Divergência consciente</b> da Carbon, que mostra o primeiro e os dois últimos.'),
+    ]),
+    ('Posição', [
+        ('Um por página, no topo, acima do título', 'Sobre <code>bg-canvas</code> ou <code>bg-surface</code>, nunca dentro de Card, Modal ou Drawer. Precedentes: GOV.UK, Carbon.'),
+        ('O primeiro item é a raiz real', '“Início” ou o nome da área, nunca o logo. Precedente: GOV.UK.'),
+        ('Nada clicável colado ao “…”', 'Ele tem 12×20 e só passa no alvo mínimo do WCAG 2.5.8 pelo espaço de 24 em volta.'),
+    ]),
+    ('Conteúdo', [
+        ('O rótulo repete o título da página de destino', 'Curto e sem pontuação. Precedentes: GOV.UK, Carbon.'),
+        ('A página atual é o último item', 'Com o mesmo nome do título da página. <b>Divergência consciente</b> da GOV.UK e da Carbon v10, que a omitem.'),
+        ('Sem reticências na trilha', 'Em tela estreita ela quebra para a linha de baixo; no menu, a largura cresce. Precedente: Terra. <b>Divergência consciente</b> de Queensland, que não quebra.'),
+        ('O separador é sempre o chevron', 'Nem barra, nem ícone nos itens. Precedente: Spectrum.'),
+    ]),
+    ('Comportamento', [
+        ('A trilha não tem hover', 'Só o cursor muda: é navegação secundária e o contexto já diz que são links. A Carbon sublinha; aqui é decisão de desenho.'),
+        ('A atual não é link', 'Não clica e não recebe foco. Precedente: Carbon.'),
+        ('O “…” abre o menu', 'Fecha com Esc (o foco volta ao “…”), com clique fora ou ao escolher um link. Precedente: Carbon.'),
+        ('Os itens do menu são links, não ações', 'Sem <code>role="menu"</code>; o Tab percorre. Precedente: W3C, padrão de disclosure.'),
+        ('Sem desabilitado nem carregando', 'Página sem pai não tem breadcrumb. Nenhum sistema de referência prevê esses estados.'),
+    ]),
+    ('Acessibilidade', [
+        ('<code>&lt;nav aria-label="Trilha de navegação"&gt;</code> com <code>&lt;ol&gt;</code>', 'A ordem tem significado. Precedentes: Carbon, Primer, W3C.'),
+        ('<code>aria-current="page"</code> no último', 'Precedentes: Primer, W3C.'),
+        ('O separador é decorativo', 'Fora do leitor de tela, para não ouvir “seta” a cada nível. Precedente: W3C.'),
+        ('O “…” é um botão com nome', '“Mostrar mais páginas”, com <code>aria-expanded</code> e <code>aria-controls</code>. Precedente: Carbon (“more breadcrumbs”).'),
+        ('A cor nunca é a única pista da atual', 'Ela também é a última, é marcada para o leitor de tela e não é link. WCAG 1.4.1.'),
+        ('Anel de foco em links e no “…”', 'O padrão, com canto de 4. Os itens do menu usam o do Tab Square.'),
+    ]),
+    ('Exceções e o que as paga', [
+        ('A borda do menu fica abaixo de 3:1', '<code>borda-de-regiao</code>: o menu é caixa de conteúdo, não controle, e se separa pela sombra. Não escureça. Mesmo caso da Sidebar e do Card.'),
+        ('O fundo do menu é sempre <code>bg-surface-raised</code>', 'Com hover e pressed <code>-raised</code>. Trocar o fundo faz o hover sumir no escuro (Modal 0.18.1).'),
+    ]),
+    ('Fora de escopo', [
+        ('Sem casa, sem menu por item, sem histórico, sem tamanho maior', 'Se a demanda aparecer, abre uma rodada nova na etapa 1. A Spectrum tem menu por item; o AL não.'),
+        ('Não substitui o botão de voltar', 'A Polaris trocou a trilha por uma ação de voltar. No AL as duas coisas são separadas.'),
+    ]),
+]
+
+
+def bc_rules_html():
+    out, n = [], 0
+    for grupo, regras in BC_RULES:
+        out.append(f'<h3 class="tb-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    assert n == 28, f'as regras aprovadas sao 28, o site tem {n}'
+    return '\n'.join(out)
+
+
+def bc_fake(itens):
+    """Casca do site para os 'a evitar'. Nunca uma .al-breadcrumb errada."""
+    partes = []
+    for i, (t, atual) in enumerate(itens):
+        if i:
+            partes.append('<i aria-hidden="true">›</i>')
+        partes.append(f'<span class="{"on" if atual else ""}">{t}</span>')
+    return f'<div class="bc-fake">{"".join(partes)}</div>'
+
+
+BREADCRUMB_GUIDE = f'''
+<section>
+  <h2>Colapsar só a partir de 5 níveis</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">4 níveis, tudo à mostra</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas">{bc_trail(bc_levels(4), 'bc-g1', aria='Exemplo com 4 níveis', sample=True)}</div>
+      <p class="cap">Ainda cabe, e cada nível está a um clique.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">“…” escondendo um item só</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas">{bc_fake([('Início', False), ('Vendas', False), ('…', False), ('Pedido 1042', True)])}</div>
+      <p class="cap">Um clique a mais para um nível que caberia na linha.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Rótulo inteiro, a trilha quebra</span>
+      <div class="stage2 bc-stage2 bc-narrow" data-bcpage="canvas">{bc_trail(['Início', 'Configurações da conta', 'Integrações e aplicativos', 'Notificações por e-mail'], 'bc-g2', aria='Exemplo estreito', sample=True)}</div>
+      <p class="cap">Em tela estreita, a linha de baixo. Link e setinha andam juntos.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Rótulo cortado</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas">{bc_fake([('Início', False), ('Configuraçõ…', False), ('Integraç…', False), ('Notificações por e-mail', True)])}</div>
+      <p class="cap">Reticências escondem justamente a palavra que diferencia o nível.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {bc_rules_html()}
+</section>'''
+
+
+BREADCRUMB_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede cada papel contra o fundo que ele tem na tela: a trilha contra a tela e a
+  superfície; o item do menu contra o fundo que o menu injeta em cada estado; e o hover e o pressed
+  do item contra o fundo do menu — iguais seria um item que não reage.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_BC_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_BC_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>{N_BC_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{N_BC_FAIL}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{breadcrumb_a11y_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra dez regras lendo o HTML que este site emite:
+  <b>{BCR_A11Y['markupChecked'] or 0} trilhas</b>, nenhuma fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Região</b><span><code>&lt;nav&gt;</code> com <code>aria-label</code>.</span></div>
+    <div><b>b · Uma por página</b><span>Uma trilha viva; amostras ficam sob <code>inert</code>.</span></div>
+    <div><b>c · Lista</b><span>Uma <code>&lt;ol class="al-breadcrumb__list"&gt;</code> só com <code>__item</code>.</span></div>
+    <div><b>d · Atual</b><span>Último item: <code>&lt;span aria-current="page"&gt;</code> com texto, sem link e sem separador.</span></div>
+    <div><b>e · Separador</b><span>Todo item antes do último termina num <code>&lt;svg&gt;</code> <code>aria-hidden</code> e <code>focusable="false"</code>.</span></div>
+    <div><b>f · Links</b><span><code>&lt;a href&gt;</code> com texto; <code>aria-current</code> só na atual.</span></div>
+    <div><b>g · “…”</b><span>Só com 5 níveis ou mais, no terceiro item: <code>&lt;button type="button"&gt;</code> com nome, <code>aria-expanded</code> e <code>aria-controls</code>.</span></div>
+    <div><b>h · Menu</b><span><code>&lt;ul class="al-tabs al-tabs--square"&gt;</code> de links <code>.al-tab</code>, sem <code>role</code>.</span></div>
+    <div><b>i · Lugar</b><span>Nunca dentro de Card, Modal ou Drawer.</span></div>
+    <div><b>j · Rótulos</b><span>Nenhum vazio.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Ordem do Tab</b><span>Início, Vendas, “…”, e sai. A página atual não para.</span></div>
+    <div><b>Abrir</b><span>Enter ou Espaço no “…”; o foco fica no botão e o Tab entra nos links.</span></div>
+    <div><b>Fechar</b><span>Esc devolve o foco ao “…”. Tab depois do último item, Shift+Tab antes do “…”, clique fora ou num item também fecham.</span></div>
+    <div><b>Anúncio</b><span>“Trilha de navegação”, “Mostrar mais páginas, recolhido/expandido”, “Pedido 1042, página atual”. As setas não são lidas.</span></div>
+    <div><b>Celular</b><span>Em 375 a página não rola na horizontal e o menu cabe na tela.</span></div>
+    <div><b>Alto contraste</b><span>O anel vira contorno <code>Highlight</code>.</span></div>
+    <div><b>Movimento reduzido</b><span>O menu aparece e some sem fade.</span></div>
+  </div>
+</section>'''
+
+
+# Miniatura do card: casca (o card inteiro ja e um link - trilha de verdade
+# poria link e botao dentro de link).
+TH_BREADCRUMB = ('<div class="th-bc" aria-hidden="true">'
+                 + bc_fake([('Início', False), ('Vendas', False), ('…', False), ('Pedido 1042', True)])
+                 + '<div class="th-bc-menu"><span></span><span></span><span></span></div></div>')
+
+
+CHROME_BREADCRUMB = """
+/* ── páginas do Breadcrumb ──
+   Casca do site. A trilha em si é sempre a .al-breadcrumb, do breadcrumb.css
+   real. Os exemplos "a evitar" usam .bc-fake, nunca uma .al-breadcrumb errada. */
+.bc-stage{align-items:start; padding-top:56px; min-height:260px}
+.bc-page{width:100%; max-width:560px; padding:24px; border-radius:12px; text-align:left}
+.bc-page[data-bcpage="surface"], .bc-stage2[data-bcpage="surface"]{background:var(--al-bg-surface)}
+.bc-page[data-bcpage="canvas"], .bc-stage2[data-bcpage="canvas"]{background:var(--al-bg-canvas)}
+.bc-page[data-bcpage="canvas"]{outline:1px dashed var(--al-border-default); outline-offset:-1px}
+.dd .stage2.bc-stage2{display:block; padding:20px}
+.dd .stage2.bc-narrow{max-width:280px}
+.dd.bc-dd-1{grid-template-columns:1fr}
+.bc-open{min-height:200px; display:flex; justify-content:center; padding-top:8px}
+.bc-fake{display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:14px; line-height:20px;
+  font-weight:500; color:var(--al-text-secondary)}
+.bc-fake span.on{color:var(--al-text-brand)}
+.bc-fake i{font-style:normal}
+.th-bc{position:relative; display:flex; flex-direction:column; align-items:center; gap:8px; width:100%;
+  height:100%; padding-top:18px; overflow:hidden}
+.th-bc .bc-fake{flex-wrap:nowrap; font-size:12px; gap:6px}
+.th-bc .bc-fake span.on{color:var(--al-breadcrumb-current)}
+.th-bc-menu{display:flex; flex-direction:column; gap:5px; width:84px; padding:6px; margin-left:22px;
+  border:1px solid var(--al-breadcrumb-menu-border); border-radius:8px; background:var(--al-breadcrumb-menu-bg);
+  box-shadow:var(--al-breadcrumb-menu-shadow)}
+.th-bc-menu span{height:7px; border-radius:3px; background:var(--al-border-default)}
+.th-bc-menu span:nth-child(2){width:70%}
+"""
+
+
+JS_BREADCRUMB_DATA = ('var BC_DEMOS = ' + json.dumps(BC_DEMOS, ensure_ascii=False).replace('</', '<\\/') + ';\n')
+
+JS_BREADCRUMB = r"""
+(function () {
+  // ── playground do Breadcrumb ──
+  var stage = document.getElementById('breadcrumb-stage');
+  if (!stage) return;
+  var code = document.getElementById('breadcrumb-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada profundidade vem pronto do site.py (BC_DEMOS). Depois de
+  // trocar, o breadcrumb.js real liga o `…` novo.
+  function render() {
+    var theme = pick('bctheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = BC_DEMOS[pick('bcdepth')];
+    stage.innerHTML = '<div class="bc-page" data-bcpage="' + pick('bcpage') + '">' + demo.html + '</div>';
+    if (window.alBreadcrumb) window.alBreadcrumb.init(stage);
+    code.innerHTML = esc(demo.code);
+  }
+
+  // os links de exemplo nao navegam; o menu fecha pelo proprio breadcrumb.js
+  stage.addEventListener('click', function (e) {
+    if (e.target.closest('a[href]')) e.preventDefault();
+  });
+
+  document.querySelectorAll('#breadcrumb-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('breadcrumb-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -10601,16 +11113,17 @@ LANDING_COMPONENTES = f'''
     {card('modal', 'Modal', 'Uma tarefa curta que pede resposta antes de seguir. É o &lt;dialog&gt; nativo: sobe sobre a página, prende o foco e nunca tem botão X.', TH_MODAL)}
     {card('drawer', 'Drawer', 'Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo colado na direita: entra pela lateral, prende o foco e sempre tem uma saída visível.', TH_DRAWER)}
     {card('sidebar', 'Sidebar', 'A navegação principal, presa à esquerda na altura da tela. Os itens são o Tab, e abaixo de 1024px ela vira painel modal pela esquerda — a mesma &lt;aside&gt;, nunca uma cópia.', TH_SIDEBAR)}
+    {card('breadcrumb', 'Breadcrumb', 'Onde a pessoa está na hierarquia, com um link para cada nível acima. Com 5 níveis ou mais, os do meio vão para o menu do “…”.', TH_BREADCRUMB)}
   </div>
 </section>
 
 <section>
-  <h2>O Tier 4 abriu</h2>
-  <p>Os primitivos, o formulário e a estrutura atravessaram as oito etapas, um componente de cada
-  vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente
-  pronto sem documentação”. O Tier 3 começou pelo Divider e fechou no Drawer. O tier de
-  <b>navegação</b> ficou curto, com dois componentes, e abriu pela Sidebar; o próximo é o
-  Breadcrumb. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e auditar.</p>
+  <h2>O Tier 4 fechou</h2>
+  <p>Os primitivos, o formulário, a estrutura e a navegação atravessaram as oito etapas, um
+  componente de cada vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida
+  de “componente pronto sem documentação”. O tier de <b>navegação</b> ficou curto, com dois
+  componentes: abriu pela Sidebar e fechou no Breadcrumb. O próximo é o Tier 5, de feedback, e cada
+  componente dele passa pelas mesmas oito etapas, a começar pela 1, definir e auditar.</p>
 </section>'''
 
 # O selo da pagina Componentes conta os cards publicados do indice - era um
@@ -10851,6 +11364,15 @@ PAGES = [
          (f'{N_SBR_TOKENS} tokens', False), (f'{N_SB_EXC_KEYS} exceções declaradas', False)],
         [('overview', 'Visão geral', SIDEBAR_OVERVIEW), ('specs', 'Especificações', SIDEBAR_SPECS),
          ('guide', 'Diretrizes', SIDEBAR_GUIDE), ('a11y', 'Acessibilidade', SIDEBAR_A11Y_TAB)])),
+    ('breadcrumb', 'Componentes', page(
+        'breadcrumb', 'Componentes', 'Breadcrumb',
+        'Mostra onde a pessoa está na hierarquia e leva a qualquer nível acima com um clique. É um '
+        '&lt;nav&gt; com uma lista ordenada; a página atual é texto, não link. Com 5 níveis ou mais, '
+        'os do meio vão para o menu do “…” — o _breadcrumb-more do Figma, documentado aqui junto.',
+        [('Estável', True), ('3 + 2 variantes no Figma', False),
+         (f'{N_BCR_TOKENS} tokens', False), (f'{N_BC_EXC_KEYS} exceção declarada', False)],
+        [('overview', 'Visão geral', BREADCRUMB_OVERVIEW), ('specs', 'Especificações', BREADCRUMB_SPECS),
+         ('guide', 'Diretrizes', BREADCRUMB_GUIDE), ('a11y', 'Acessibilidade', BREADCRUMB_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -10898,6 +11420,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/modal" data-page="modal">Modal</a>
         <a href="#/drawer" data-page="drawer">Drawer</a>
         <a href="#/sidebar" data-page="sidebar">Sidebar</a>
+        <a href="#/breadcrumb" data-page="breadcrumb">Breadcrumb</a>
       </div>
     </div>
   </div>
@@ -13030,7 +13553,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -13044,6 +13567,7 @@ HTML = (
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
     + DRW_JS.replace('</', '<\\/') + JS_DRAWER_DATA + JS_DRAWER
     + JS_SIDEBAR_DATA + JS_SIDEBAR
+    + BCR_JS.replace('</', '<\\/') + JS_BREADCRUMB_DATA + JS_BREADCRUMB
     + JS_MOTION + '</script>\n'
 )
 
@@ -13109,6 +13633,9 @@ print(f'  tokens da Sidebar : {N_SBR_TOKENS}  '
       f'({len(SBR_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in SBR_A11Y["rows"] if r["invisible"])} invisiveis, '
       f'{sum(1 for r in SBR_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
+print(f'  tokens do Breadcrumb: {N_BCR_TOKENS}  '
+      f'({len(BCR_A11Y["rows"])} combinacoes medidas, '
+      f'{sum(1 for r in BCR_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
 print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
