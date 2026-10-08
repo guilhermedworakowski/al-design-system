@@ -1,0 +1,34 @@
+/* AL Design System - tokens do Drawer
+ * GERADO por components/drawer/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* cor - o scrim tem transparencia; o tema troca no :root */
+  --al-drawer-bg: var(--al-bg-surface-raised);
+  --al-drawer-title: var(--al-text-primary);
+  --al-drawer-scrim: var(--al-bg-scrim);
+
+  /* elevacao */
+  --al-drawer-shadow: var(--al-elevation-5);
+
+  /* geometria */
+  --al-drawer-padding: var(--al-space-24);
+  --al-drawer-gap: var(--al-space-24);
+  --al-drawer-margin: var(--al-space-16);
+  --al-drawer-radius: var(--al-radius-2xl);
+
+  /* largura - valor declarado, sem escala na Foundation (decisao G, repetida do Modal) */
+  --al-drawer-width-sm: 320px;
+  --al-drawer-width-md: 480px;
+  --al-drawer-width-lg: 640px;
+
+  /* movimento - easing vem direto da Foundation */
+  --al-drawer-duration: var(--al-motion-duration-panel);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-drawer-title-font-size: var(--al-font-size-2xl);
+  --al-drawer-title-line-height: var(--al-line-height-2xl);
+  --al-drawer-title-font-weight: 600;
+  --al-drawer-title-tracking: -0.01em;
+}

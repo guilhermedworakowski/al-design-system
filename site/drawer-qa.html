@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AL Modal QA</title>
+<title>AL Drawer QA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -866,6 +866,351 @@
   }
 }
 
+/* ================= icon-button - tokens ================= */
+/* AL Design System - tokens do Icon Button
+ * GERADO por components/icon-button/tokens.py. Nao editar a mao.
+ *
+ * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um
+ * semantico, e o tema troca no :root - o mesmo elemento onde estes alias
+ * sao declarados. Entao o :root re-substitui todos eles de uma vez.
+ *
+ * Cuidado: substituicao de custom property acontece no elemento onde ela e
+ * DECLARADA, nao no ponto de uso. Tematizar um container solto exige
+ * re-declarar esta camada dentro dele - ver site/site.py.
+ */
+
+:root {
+
+  /* primary */
+  --al-icon-button-primary-bg: var(--al-bg-brand);
+  --al-icon-button-primary-bg-hover: var(--al-bg-brand-hover);
+  --al-icon-button-primary-bg-active: var(--al-bg-brand-active);
+  --al-icon-button-primary-bg-disabled: var(--al-bg-disabled);
+  --al-icon-button-primary-ink: var(--al-text-on-brand);
+  --al-icon-button-primary-ink-disabled: var(--al-text-disabled);
+  --al-icon-button-primary-border: transparent;
+  --al-icon-button-primary-border-disabled: var(--al-border-subtle);
+  --al-icon-button-primary-ring: var(--al-focus-ring-default);
+
+  /* secondary */
+  --al-icon-button-secondary-bg: transparent;
+  --al-icon-button-secondary-bg-hover: var(--al-bg-hover);
+  --al-icon-button-secondary-bg-active: var(--al-bg-active);
+  --al-icon-button-secondary-bg-disabled: transparent;
+  --al-icon-button-secondary-ink: var(--al-text-primary);
+  --al-icon-button-secondary-ink-disabled: var(--al-text-disabled);
+  --al-icon-button-secondary-border: var(--al-border-strong);
+  --al-icon-button-secondary-border-disabled: var(--al-border-subtle);
+  --al-icon-button-secondary-ring: var(--al-focus-ring-default);
+
+  /* ghost */
+  --al-icon-button-ghost-bg: transparent;
+  --al-icon-button-ghost-bg-hover: var(--al-bg-hover);
+  --al-icon-button-ghost-bg-active: var(--al-bg-active);
+  --al-icon-button-ghost-bg-disabled: transparent;
+  --al-icon-button-ghost-ink: var(--al-text-primary);
+  --al-icon-button-ghost-ink-disabled: var(--al-text-disabled);
+  --al-icon-button-ghost-border: transparent;
+  --al-icon-button-ghost-border-disabled: transparent;
+  --al-icon-button-ghost-ring: var(--al-focus-ring-default);
+
+  /* danger */
+  --al-icon-button-danger-bg: var(--al-bg-danger);
+  --al-icon-button-danger-bg-hover: var(--al-bg-danger-hover);
+  --al-icon-button-danger-bg-active: var(--al-bg-danger-active);
+  --al-icon-button-danger-bg-disabled: var(--al-bg-disabled);
+  --al-icon-button-danger-ink: var(--al-text-on-solid);
+  --al-icon-button-danger-ink-disabled: var(--al-text-disabled);
+  --al-icon-button-danger-border: transparent;
+  --al-icon-button-danger-border-disabled: var(--al-border-subtle);
+  --al-icon-button-danger-ring: var(--al-focus-ring-error);
+
+  /* tamanho sm - caixa resultante: 36x36px */
+  --al-icon-button-sm-padding: var(--al-space-8);
+  --al-icon-button-sm-icon-size: var(--al-icon-size-20);
+
+  /* tamanho md - caixa resultante: 48x48px */
+  --al-icon-button-md-padding: var(--al-space-12);
+  --al-icon-button-md-icon-size: var(--al-icon-size-24);
+
+  /* compartilhado */
+  --al-icon-button-radius: var(--al-radius-full);
+  --al-icon-button-border-width: var(--al-border-width-1);
+}
+
+/* ================= icon-button ================= */
+/* AL Design System - Icon Button
+ * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css, icon.css e
+ * al-icon-button-tokens.css, nesta ordem.
+ *
+ * Nenhum valor aqui e literal: toda cor, espaco e raio entra por
+ * var(--al-icon-button-*) ou por um token da Foundation. O check.py ao lado
+ * recusa o arquivo se algum escapar - com uma excecao nomeada, no fim.
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   <button type="button"
+ *           class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"
+ *           aria-label="Buscar">
+ *     <span class="al-icon-btn__spinner" aria-hidden="true"></span>
+ *     <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *   </button>
+ *
+ *   variante : --primary | --secondary | --ghost | --danger
+ *   tamanho  : --sm | --md
+ *
+ *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *
+ * O NOME ACESSIVEL
+ *   aria-label e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
+ *   contrato deste componente que nao tem alternativa. Ele descreve a ACAO,
+ *   nao o desenho: "Buscar", nunca "Lupa".
+ *   O nome vai no BOTAO, nunca no svg. O svg e decorativo aqui pelo mesmo
+ *   motivo de sempre - aria-hidden tira do leitor de tela, focusable="false"
+ *   tira da ordem de tabulacao - e anunciar os dois seria ruido duplicado.
+ *
+ * O ICONE
+ *   O desenho vem do componente Icon da Fundacao. O tamanho nao e escolha de
+ *   quem consome: o botao impoe a caixa por --al-icon-box, e o .al-icon
+ *   obedece. Nao ponha .al-icon--20 aqui.
+ *
+ * A CAIXA
+ *   Nao ha width nem height. O botao e quadrado por consequencia: padding x2
+ *   mais a caixa do icone. sm = 8+20+8 = 36. md = 12+24+12 = 48 - as mesmas
+ *   alturas do Button, que e o que faz os dois conviverem numa toolbar.
+ *   Fixar a medida aqui seria cravar em dois lugares a mesma decisao.
+ *
+ * CARREGANDO
+ *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
+ *   o handler no JS. Nao use o atributo disabled: ele tira o botao da ordem de
+ *   foco no meio da interacao e nada e anunciado.
+ *
+ *   Diferenca em relacao ao Button, e ela importa: la o spinner toma o lugar do
+ *   icone da esquerda e a largura pode pular, por isso a orientacao e trocar o
+ *   rotulo junto ("Publicar" -> "Publicando…"). AQUI NAO EXISTE ROTULO PARA
+ *   TROCAR. O spinner ocupa exatamente a caixa do icone, entao a geometria nao
+ *   se mexe - mas em compensacao a regiao viva deixa de ser complemento e passa
+ *   a ser o UNICO canal que informa que algo comecou:
+ *
+ *     <p role="status" aria-live="polite" class="visually-hidden">Buscando…</p>
+ *
+ * DESABILITADO
+ *   Prefira aria-disabled="true" ao atributo disabled: o botao continua focavel
+ *   e um tooltip pode dizer o motivo. Com aria-disabled o clique AINDA dispara -
+ *   a trava e no JS.
+ *
+ * ALVO DE TOQUE
+ *   O sm tem 36x36. Passa o WCAG 2.5.8 (minimo 24) e fica abaixo dos 44
+ *   recomendados pelo Carbon. Decisao consciente: nao ha expansao de area por
+ *   pseudo-elemento. A regra de uso que decorre disso e nao usar sm em
+ *   interface primariamente de toque.
+ */
+
+/* ---------------------------------------------------------------- base */
+.al-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  margin: 0;
+  /* A borda entra no calculo da caixa: toda variante tem 1px, transparente ou
+     nao, entao descontar aqui mantem 36 e 48 exatos e impede o botao de pular
+     1px quando o disabled acrescenta borda visivel. */
+  padding: calc(var(--_pad) - var(--al-icon-button-border-width));
+  border: var(--al-icon-button-border-width) solid var(--_border);
+  border-radius: var(--al-icon-button-radius);
+
+  background-color: var(--_bg);
+  color: var(--_ink);
+
+  /* quem manda no tamanho do icone e o botao. O .al-icon la dentro le esta
+     propriedade herdada; sem ela cairia no degrau padrao dele (24) e brigaria
+     com a caixa no sm. */
+  --al-icon-box: var(--_icon-size);
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* ---------------------------------------------------------------- variantes */
+.al-icon-btn--primary {
+  --_bg: var(--al-icon-button-primary-bg);
+  --_bg-hover: var(--al-icon-button-primary-bg-hover);
+  --_bg-active: var(--al-icon-button-primary-bg-active);
+  --_bg-disabled: var(--al-icon-button-primary-bg-disabled);
+  --_ink: var(--al-icon-button-primary-ink);
+  --_ink-disabled: var(--al-icon-button-primary-ink-disabled);
+  --_border: var(--al-icon-button-primary-border);
+  --_border-disabled: var(--al-icon-button-primary-border-disabled);
+  --_ring: var(--al-icon-button-primary-ring);
+}
+
+.al-icon-btn--secondary {
+  --_bg: var(--al-icon-button-secondary-bg);
+  --_bg-hover: var(--al-icon-button-secondary-bg-hover);
+  --_bg-active: var(--al-icon-button-secondary-bg-active);
+  --_bg-disabled: var(--al-icon-button-secondary-bg-disabled);
+  --_ink: var(--al-icon-button-secondary-ink);
+  --_ink-disabled: var(--al-icon-button-secondary-ink-disabled);
+  --_border: var(--al-icon-button-secondary-border);
+  --_border-disabled: var(--al-icon-button-secondary-border-disabled);
+  --_ring: var(--al-icon-button-secondary-ring);
+}
+
+.al-icon-btn--ghost {
+  --_bg: var(--al-icon-button-ghost-bg);
+  --_bg-hover: var(--al-icon-button-ghost-bg-hover);
+  --_bg-active: var(--al-icon-button-ghost-bg-active);
+  --_bg-disabled: var(--al-icon-button-ghost-bg-disabled);
+  --_ink: var(--al-icon-button-ghost-ink);
+  --_ink-disabled: var(--al-icon-button-ghost-ink-disabled);
+  --_border: var(--al-icon-button-ghost-border);
+  --_border-disabled: var(--al-icon-button-ghost-border-disabled);
+  --_ring: var(--al-icon-button-ghost-ring);
+}
+
+.al-icon-btn--danger {
+  --_bg: var(--al-icon-button-danger-bg);
+  --_bg-hover: var(--al-icon-button-danger-bg-hover);
+  --_bg-active: var(--al-icon-button-danger-bg-active);
+  --_bg-disabled: var(--al-icon-button-danger-bg-disabled);
+  --_ink: var(--al-icon-button-danger-ink);
+  --_ink-disabled: var(--al-icon-button-danger-ink-disabled);
+  --_border: var(--al-icon-button-danger-border);
+  --_border-disabled: var(--al-icon-button-danger-border-disabled);
+  --_ring: var(--al-icon-button-danger-ring);
+}
+
+/* ---------------------------------------------------------------- tamanhos */
+/* Um padding so por tamanho, nos quatro lados - o botao e quadrado. E por isso
+   que aqui nao ha padding-x e padding-y como no Button. */
+.al-icon-btn--sm {
+  --_pad: var(--al-icon-button-sm-padding);
+  --_icon-size: var(--al-icon-button-sm-icon-size);
+}
+
+.al-icon-btn--md {
+  --_pad: var(--al-icon-button-md-padding);
+  --_icon-size: var(--al-icon-button-md-icon-size);
+}
+
+/* ---------------------------------------------------------------- estados */
+/* hover e pressed nunca valem quando o botao esta fora de acao */
+.al-icon-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-hover);
+}
+
+.al-icon-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-active);
+}
+
+/* :focus-visible, nao :focus - o anel aparece no teclado, nao no clique.
+   O anel e sombra, entao nao empurra layout e acompanha o raio do circulo. */
+.al-icon-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--_ring);
+}
+
+.al-icon-btn:disabled,
+.al-icon-btn[aria-disabled="true"] {
+  background-color: var(--_bg-disabled);
+  color: var(--_ink-disabled);
+  border-color: var(--_border-disabled);
+  cursor: not-allowed;
+}
+
+/* o anel continua valendo em cima do desabilitado: aria-disabled permanece
+   focavel de proposito, e quem chega nele de teclado precisa ver onde esta */
+.al-icon-btn[aria-disabled="true"]:focus-visible {
+  box-shadow: var(--_ring);
+}
+
+/* ---------------------------------------------------------------- conteudo */
+/* rede de seguranca para svg que nao seja do componente Icon */
+.al-icon-btn > svg {
+  display: block;
+  flex: none;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+}
+
+/* ---------------------------------------------------------------- carregando */
+/* Mesma caixa do icone que ele substitui. Aqui isso e mais do que higiene de
+   layout: como nao ha rotulo, o spinner e a unica coisa visivel no botao
+   durante o carregamento - se ele fosse menor, o desenho encolheria no
+   instante em que a acao comeca. */
+.al-icon-btn__spinner {
+  display: none;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  border: var(--al-border-width-2) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--al-radius-full);
+  animation: al-icon-btn-spin var(--al-motion-duration-spinner) var(--al-motion-easing-spinner) infinite;
+}
+
+.al-icon-btn[aria-busy="true"] .al-icon-btn__spinner {
+  display: block;
+}
+
+/* o spinner ocupa o lugar do unico icone - a caixa e a mesma, nada se move */
+.al-icon-btn[aria-busy="true"] > svg {
+  display: none;
+}
+
+@keyframes al-icon-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in); estes estados de destino declaram a de
+   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+.al-icon-btn:hover,
+.al-icon-btn:active,
+.al-icon-btn:focus-visible {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* ---------------------------------------------------------------- ambiente */
+@media (prefers-reduced-motion: reduce) {
+  .al-icon-btn {
+    transition: none;
+  }
+  /* o spinner nao para: sem rotulo, ele e a unica pista visual de que algo
+     esta acontecendo. Desacelera ate deixar de ser movimento agressivo. */
+  .al-icon-btn__spinner {
+    animation-duration: var(--al-motion-duration-spinner-reduced);
+  }
+}
+
+/* No alto contraste do sistema a sombra e descartada - o anel some junto.
+   Aqui o foco volta como outline nativo, que o modo respeita. */
+@media (forced-colors: active) {
+  .al-icon-btn {
+    border-color: currentColor;
+  }
+  .al-icon-btn:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+  .al-icon-btn:disabled,
+  .al-icon-btn[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+}
+
 /* ================= input - tokens ================= */
 /* AL Design System - tokens do Input
  * GERADO por components/input/tokens.py. Nao editar a mao.
@@ -1516,6 +1861,303 @@
   }
 }
 
+/* ================= drawer - tokens ================= */
+/* AL Design System - tokens do Drawer
+ * GERADO por components/drawer/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* cor - o scrim tem transparencia; o tema troca no :root */
+  --al-drawer-bg: var(--al-bg-surface-raised);
+  --al-drawer-title: var(--al-text-primary);
+  --al-drawer-scrim: var(--al-bg-scrim);
+
+  /* elevacao */
+  --al-drawer-shadow: var(--al-elevation-5);
+
+  /* geometria */
+  --al-drawer-padding: var(--al-space-24);
+  --al-drawer-gap: var(--al-space-24);
+  --al-drawer-margin: var(--al-space-16);
+  --al-drawer-radius: var(--al-radius-2xl);
+
+  /* largura - valor declarado, sem escala na Foundation (decisao G, repetida do Modal) */
+  --al-drawer-width-sm: 320px;
+  --al-drawer-width-md: 480px;
+  --al-drawer-width-lg: 640px;
+
+  /* movimento - easing vem direto da Foundation */
+  --al-drawer-duration: var(--al-motion-duration-panel);
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-drawer-title-font-size: var(--al-font-size-2xl);
+  --al-drawer-title-line-height: var(--al-line-height-2xl);
+  --al-drawer-title-font-weight: 600;
+  --al-drawer-title-tracking: -0.01em;
+}
+
+/* ================= drawer ================= */
+/* AL Design System - Drawer
+ * Escrito a mao. Depende de al-foundation.css, button.css, icon-button.css,
+ * icon.css e al-drawer-tokens.css. O comportamento (abrir, fechar no scrim,
+ * foco inicial) vive em drawer.js.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, sombra, tipografia, largura e
+ * duracao entram por var(--al-drawer-*). O check.py ao lado recusa o arquivo se
+ * algum escapar.
+ *
+ * CONTRATO DE MARCACAO - <dialog> NATIVO (REGRA 24)
+ *
+ *   <dialog class="al-drawer al-drawer--md" aria-labelledby="d1">
+ *     <header class="al-drawer__header">
+ *       <h2 class="al-drawer__title" id="d1">Editar cliente</h2>
+ *       <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm"
+ *               aria-label="Fechar" data-al-drawer-close>
+ *         <svg class="al-icon" aria-hidden="true" focusable="false">…x…</svg></button>
+ *     </header>
+ *     <div class="al-drawer__content">…qualquer conteudo…</div>
+ *     <div class="al-drawer__actions">
+ *       <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-drawer-close>
+ *         <span class="al-btn__label">Cancelar</span></button>
+ *       <button type="submit" class="al-btn al-btn--primary al-btn--md">
+ *         <span class="al-btn__label">Salvar cliente</span></button>
+ *     </div>
+ *   </dialog>
+ *
+ *   - Tamanho: --sm | --md | --lg. Sem modificador = md.
+ *   - So na direita (decisao B): nao existe propriedade de lado.
+ *   - Abrir: `data-al-drawer-open="<id do dialog>"` no botao, ou showModal().
+ *     Sempre showModal(), nunca `open` na marcacao nem show() (regra 24).
+ *   - Fechar: `data-al-drawer-close`, ou <form method="dialog">. Esc fecha
+ *     sempre (regra 15); o <dialog> ja faz.
+ *   - Sempre ao menos uma saida visivel (regra 14): o X, ou o rodape com um
+ *     secundario que fecha. O X e o Icon Button Ghost sm, com aria-label
+ *     "Fechar" (regra 26). Sem divisoria (regra 9): o espaco separa.
+ *   - Nome acessivel: aria-labelledby apontando para o titulo (regra 25).
+ *   - Acoes: a secundaria vem primeiro, a principal por ultimo (regra 20). Os
+ *     botoes esticam e dividem a largura em partes iguais, nos tres tamanhos
+ *     (regra 21). Acao destrutiva nao e a principal do Drawer (regra 22).
+ *
+ * ALTURA E ROLAGEM (REGRAS 13 E 29)
+ *   A altura e sempre a da tela: o painel e fixo no topo e na base. So o miolo
+ *   rola; cabecalho e acoes ficam fixos. O miolo ganha um respiro do tamanho do
+ *   anel de foco e desconta com margem negativa: o overflow cortaria o anel de
+ *   um campo encostado na borda do miolo. Derivado dos tokens de foco da
+ *   Foundation, sem valor novo.
+ *
+ * LARGURA NO CELULAR (REGRA 12)
+ *   Largura do tamanho, limitada a 100% menos drawer-margin: o respiro a
+ *   esquerda mostra a pagina atras e deixa tocar nela para fechar. Num <dialog>
+ *   modal o 100% e a viewport.
+ *
+ * RAIO
+ *   So nos dois cantos da esquerda, os de dentro. O lado da borda da tela e
+ *   reto.
+ *
+ * ENTRADA E SAIDA (REGRA 30)
+ *   O painel ENTRA pela direita (da direita para a esquerda) e SAI pela direita
+ *   (da esquerda para a direita), com fade, em 300ms (drawer-duration). Ele
+ *   desliza a propria largura (translate 100%), entao nao existe token de
+ *   deslocamento. O fade esta ali por causa da sombra: com o painel parado
+ *   logo fora da tela, ela vazaria para dentro. A curva e a do estado de
+ *   destino: entrada ease-out, saida ease-in. O scrim so aparece e some. Usa
+ *   @starting-style e transition-behavior: allow-discrete; em navegador sem
+ *   isso o Drawer abre e fecha sem animacao e continua funcionando.
+ *   O layout em coluna fica na base, nao no [open]: ao fechar o display segue
+ *   `flex` pela duracao da saida, e um layout so do [open] fazia o miolo ser
+ *   comprimido na frente do usuario (mesmo achado do Modal).
+ *
+ * SCRIM (REGRA 28)
+ *   ::backdrop herda as custom properties do <dialog>. Decoracao: nao recebe
+ *   foco. O fechamento por clique nele (so sem campos, regra 16) e do JS.
+ *
+ * COR DO TEXTO DO MIOLO
+ *   O <dialog> ganha a cor do titulo (text-primary) e o miolo herda. Sem
+ *   isso o UA pinta CanvasText.
+ *
+ * ALTO CONTRASTE
+ *   Sem o fundo e a sombra o Drawer se perderia: ganha contorno CanvasText.
+ */
+
+/* ---------------------------------------------------------------- caixa */
+.al-drawer {
+  box-sizing: border-box;
+  inline-size: var(--al-drawer-width-md);
+  max-inline-size: calc(100% - var(--al-drawer-margin));
+  /* fixo no topo, na direita e na base; o UA centraliza o dialog com
+     margin: auto, aqui a margem sai e a esquerda e quem sobra */
+  inset: 0 0 0 auto;
+  block-size: auto;
+  max-block-size: none;
+  margin: 0;
+  padding: var(--al-drawer-padding);
+  border: 0;
+  border-start-start-radius: var(--al-drawer-radius);
+  border-end-start-radius: var(--al-drawer-radius);
+  background-color: var(--al-drawer-bg);
+  box-shadow: var(--al-drawer-shadow);
+  color: var(--al-drawer-title);
+  font-family: var(--al-font-sans);
+  overflow: clip;
+}
+
+.al-drawer--sm { inline-size: var(--al-drawer-width-sm); }
+.al-drawer--md { inline-size: var(--al-drawer-width-md); }
+.al-drawer--lg { inline-size: var(--al-drawer-width-lg); }
+
+/* O layout (coluna, gap) fica na base e so o display depende do [open]: dialog
+   fechado precisa seguir display: none. */
+.al-drawer {
+  flex-direction: column;
+  gap: var(--al-drawer-gap);
+}
+
+.al-drawer[open] {
+  display: flex;
+}
+
+/* ------------------------------------------------------------- cabecalho */
+.al-drawer__header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--al-drawer-gap);
+}
+
+/* O titulo costuma ser um <h2>, e quem usa pode ter um estilo global de h2
+   (mono, caixa alta, cor, linha embaixo). Estes resets sao do componente: o
+   titulo do Drawer e o que o drawer.css diz, em qualquer pagina. */
+.al-drawer__title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font-family: inherit;
+  text-transform: none;
+  overflow-wrap: anywhere;
+  font-size: var(--al-drawer-title-font-size);
+  line-height: var(--al-drawer-title-line-height);
+  font-weight: var(--al-drawer-title-font-weight);
+  letter-spacing: var(--al-drawer-title-tracking);
+}
+
+.al-drawer__header .al-icon-btn {
+  flex: none;
+}
+
+/* ---------------------------------------------------------------- miolo */
+.al-drawer__content {
+  --_ring-room: calc(var(--al-border-focus-offset) + var(--al-border-width-focus));
+  flex: 1 1 auto;
+  min-block-size: 0;
+  margin: calc(-1 * var(--_ring-room));
+  padding: var(--_ring-room);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* ---------------------------------------------------------------- acoes */
+.al-drawer__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--al-drawer-gap);
+}
+
+/* regra 21: os botoes esticam e dividem a largura em partes iguais */
+.al-drawer__actions > * {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+/* Botoes ghost e secondary sobre o fundo elevado: o Button e o Icon Button
+   leem bg-hover/bg-active, feitos para bg-surface. No escuro o fundo do Drawer
+   (surface-raised) e igual ao bg-hover, e o hover sumia. Aqui o estado vem dos
+   semanticos -raised, os mesmos do Modal, do Card e do Accordion. So muda o
+   fundo de hover/pressed; o resto e do botao. */
+.al-drawer .al-btn--ghost,
+.al-drawer .al-btn--secondary,
+.al-drawer .al-icon-btn--ghost,
+.al-drawer .al-icon-btn--secondary {
+  --_bg-hover: var(--al-bg-hover-raised);
+  --_bg-active: var(--al-bg-active-raised);
+}
+
+/* ---------------------------------------------------------- pagina atras */
+/* regra 29: a pagina nao rola com o Drawer aberto. `:modal` e so o aberto por
+   showModal(): um <dialog open> solto, como os congelados da pagina de QA,
+   nao trava a rolagem */
+:root:has(.al-drawer:modal) {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------ entrada e saida */
+/* O estado base e o de FORA: transparente e empurrado uma largura para a
+   direita. Aberto, ele entra e aparece; ao fechar volta para o estado base e
+   sai pelo mesmo lado. A mesma regra serve aos dois sentidos. */
+.al-drawer {
+  opacity: 0;
+  translate: 100% 0;
+  transition:
+    opacity var(--al-drawer-duration) var(--al-motion-easing-exit),
+    translate var(--al-drawer-duration) var(--al-motion-easing-exit),
+    overlay var(--al-drawer-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-drawer-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-drawer[open] {
+  opacity: 1;
+  translate: 0 0;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* o scrim so aparece e some; quem entra e sai e o painel */
+.al-drawer::backdrop {
+  background-color: var(--al-drawer-scrim);
+  opacity: 0;
+  transition:
+    opacity var(--al-drawer-duration) var(--al-motion-easing-exit),
+    overlay var(--al-drawer-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-drawer-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-drawer[open]::backdrop {
+  opacity: 1;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-drawer[open] {
+    opacity: 0;
+    translate: 100% 0;
+  }
+
+  .al-drawer[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-drawer,
+  .al-drawer::backdrop {
+    transition: none;
+  }
+
+  .al-drawer {
+    translate: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-drawer {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+}
+
 
 /* ================= cromo da pagina de QA =================
    Usa os proprios tokens do AL. Nao ha paleta paralela aqui de proposito. */
@@ -1572,16 +2214,21 @@ table.qa-measure th { font-weight: 600; font-size: var(--al-font-size-xs); text-
 .qa-foot { color: var(--al-text-secondary); font-size: var(--al-font-size-sm); border-top: 1px solid var(--al-border-subtle); padding-top: var(--al-space-16); }
 code { font-family: var(--al-font-mono); font-size: 0.9em; }
 
-/* ---- especificos do Modal ---- */
+/* ---- especificos do Drawer ---- */
 .qa-panel { padding: var(--al-space-24); border-radius: var(--al-radius-xl); background: var(--al-bg-surface); }
 .qa-matrix { display: flex; flex-wrap: wrap; gap: var(--al-space-24); align-items: flex-start; }
 .qa-matrix__label { margin: 0 0 var(--al-space-8); font-size: var(--al-font-size-xs); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--al-text-secondary); }
-/* o <dialog open> do UA e absoluto e centrado; aqui ele e so uma caixa */
+/* o <dialog open> do UA e fixo e colado na direita; aqui ele e so uma caixa,
+   com uma altura de exemplo no lugar da altura da tela */
 .qa-cell { min-width: 0; max-width: 100%; }
-.qa-cell .al-modal { position: static; margin: 0; max-inline-size: 100%; opacity: 1; translate: none; transition: none; }
+.qa-cell .al-drawer { position: static; inset: auto; max-inline-size: 100%; block-size: 360px; opacity: 1; translate: none; transition: none; }
 .qa-copy { margin: 0; color: var(--al-text-secondary); }
 .qa-fields { display: flex; flex-direction: column; gap: var(--al-space-16); }
-.al-modal__content > .qa-copy + .qa-copy { margin-block-start: var(--al-space-12); }
+.al-drawer__content > .qa-copy + .qa-copy { margin-block-start: var(--al-space-12); }
+.qa-dl { margin: 0 0 var(--al-space-24); display: grid; gap: var(--al-space-12); }
+.qa-dl div { display: grid; gap: var(--al-space-4); }
+.qa-dl dt { font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); color: var(--al-text-secondary); }
+.qa-dl dd { margin: 0; }
 .qa-triggers { display: grid; gap: var(--al-space-20); grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .qa-trigger { display: flex; flex-direction: column; gap: var(--al-space-8); align-items: flex-start; }
 .qa-pagenote { margin: 0; color: var(--al-text-secondary); font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); }
@@ -1591,9 +2238,9 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
 <div class="qa-wrap">
   <header class="qa-head">
     <div>
-      <h1>Modal — QA da etapa 6</h1>
+      <h1>Drawer — QA da etapa 6</h1>
       <p class="qa-sub">AL Design System 0.19.0 · componente 0.1.0 ·
-      3 tamanhos × 4 cenários × 2 temas · portão: 14 combinações, 12 passam, 2 exceções, 0 reprovas</p>
+      3 tamanhos × 4 cenários × 2 temas · portão: 22 combinações, 20 passam, 2 exceções, 0 reprovas</p>
     </div>
     <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">
       <span id="theme-label">Tema claro</span>
@@ -1603,34 +2250,34 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   <section>
     <h2>O que testar</h2>
     <ol class="qa-checks">
-      <li><strong>Abra cada cenário</strong> e veja onde o foco cai: sem campos, no botão principal; com campos, no primeiro campo; no de exclusão, em “Cancelar” (regras 26 e 29).</li>
-      <li><strong>Tab e Shift+Tab</strong> rodam só dentro do Modal e dão a volta; a página atrás não recebe foco (regra 24).</li>
+      <li><strong>Abra cada cenário</strong> e veja onde o foco cai: sem campos e sem rodapé, no X; com campos, no primeiro campo; com rodapé e sem campos, no botão principal (regra 27).</li>
+      <li><strong>Tab e Shift+Tab</strong> rodam só dentro do Drawer e dão a volta; a página atrás não recebe foco (regra 24).</li>
       <li><strong>Esc fecha em todos</strong>, inclusive no formulário. O foco volta para o botão que abriu (regras 15 e 17) — a linha de registro abaixo diz onde ele caiu.</li>
-      <li><strong>Clique no fundo escurecido</strong>: fecha em “Sair da conta” e “Excluir cliente”; NÃO fecha em “Editar e-mail” (regra 14). Aperte dentro do campo, arraste e solte fora: não fecha.</li>
-      <li><strong>Role a roda do mouse</strong> sobre os “Termos de uso”: só o miolo rola, título e botões ficam (regra 28). Role fora do Modal: a página atrás não anda.</li>
-      <li><strong>Olhe a entrada e a saída</strong>: o card sobe ao abrir e desce ao fechar, com o fundo escurecendo e clareando. Ao fechar, nada dentro dele muda de forma: some inteiro.</li>
-      <li><strong>Não existe X.</strong> A saída visível é sempre um botão no rodapé (regra 16).</li>
-      <li><strong>Troque o tema</strong> com um Modal aberto e depois feche: no escuro o card clareia sobre o fundo escurecido, sem contorno (decisão G).</li>
-      <li><strong>Tela estreita</strong> (≈375px): o Modal nunca encosta na borda — fica 16 de cada lado (regra 13).</li>
-      <li><strong>Leitor de tela</strong> (VoiceOver: Ctrl+Opção+→): anuncia “diálogo”, o título como nome e o que está atrás fica mudo.</li>
-      <li><strong>“Reduzir movimento”</strong> ligado nas preferências do sistema: abre e fecha sem fade.</li>
+      <li><strong>Clique no fundo escurecido</strong>: fecha em “Detalhes”, “Termos” e “Notificações”; NÃO fecha em “Editar cliente” (regra 16). Aperte dentro do campo, arraste e solte fora: não fecha.</li>
+      <li><strong>Entrada e saída</strong>: o painel entra pela direita (da direita para a esquerda) e sai pela direita (da esquerda para a direita), com o fundo escurecendo e clareando. Ao fechar, nada dentro dele muda de forma (regra 30).</li>
+      <li><strong>Role a roda do mouse</strong> sobre os “Termos de uso”: só o miolo rola, cabeçalho e botões ficam (regra 29). Role fora do Drawer: a página atrás não anda.</li>
+      <li><strong>Em “Detalhes do cliente”, clique em “Excluir cliente”</strong>: um Modal abre por cima do Drawer. Esc fecha só o Modal e o foco volta para “Excluir cliente” (regras 22 e 17).</li>
+      <li><strong>Troque o tema</strong> com um Drawer aberto, passe o mouse sobre o X e sobre “Cancelar”: no escuro o fundo do hover tem que aparecer (os estados -raised). Feche: o painel clareia sobre o fundo escurecido, sem contorno.</li>
+      <li><strong>Tela estreita</strong> (≈375px): o Drawer deixa 16 de respiro à esquerda e nunca passa da tela (regra 12).</li>
+      <li><strong>Leitor de tela</strong> (VoiceOver: Ctrl+Opção+→): anuncia “diálogo”, o título como nome, o X como “Fechar”, e o que está atrás fica mudo.</li>
+      <li><strong>“Reduzir movimento”</strong> ligado nas preferências do sistema: abre e fecha sem deslizar.</li>
     </ol>
   </section>
 
   <section>
     <h2>Tamanhos congelados <span class="qa-tag qa-tag--simulado">simulado</span></h2>
-    <p class="qa-lede">Um <code>&lt;dialog&gt;</code> real só existe aberto no topo da página. Aqui os três
-    tamanhos ficam inline, lado a lado, só para comparar com o Figma. Mesmo CSS; o que não existe é a camada
-    de cima. Não recebem foco.</p>
-    <div class="qa-panel"><div class="qa-matrix" id="matrix-frozen"><div class="qa-cell" inert aria-hidden="true" data-size="sm"><p class="qa-matrix__label">sm · 320</p><dialog class="al-modal al-modal--sm" id="frz-sm" aria-labelledby="frz-sm-t" open><h2 class="al-modal__title" id="frz-sm-t">Excluir cliente?</h2><div class="al-modal__content"><p class="qa-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md"><span class="al-btn__label">Excluir cliente</span></button></div></dialog></div><div class="qa-cell" inert aria-hidden="true" data-size="md"><p class="qa-matrix__label">md · 480</p><dialog class="al-modal al-modal--md" id="frz-md" aria-labelledby="frz-md-t" open><h2 class="al-modal__title" id="frz-md-t">Excluir cliente?</h2><div class="al-modal__content"><p class="qa-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md"><span class="al-btn__label">Excluir cliente</span></button></div></dialog></div><div class="qa-cell" inert aria-hidden="true" data-size="lg"><p class="qa-matrix__label">lg · 640</p><dialog class="al-modal al-modal--lg" id="frz-lg" aria-labelledby="frz-lg-t" open><h2 class="al-modal__title" id="frz-lg-t">Excluir cliente?</h2><div class="al-modal__content"><p class="qa-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md"><span class="al-btn__label">Excluir cliente</span></button></div></dialog></div></div></div>
+    <p class="qa-lede">Um <code>&lt;dialog&gt;</code> real só existe aberto no topo da página, colado na
+    direita e com a altura da tela. Aqui os três tamanhos ficam inline, lado a lado, com uma altura de exemplo,
+    só para comparar com o Figma. Mesmo CSS; o que não existe é a camada de cima. Não recebem foco.</p>
+    <div class="qa-panel"><div class="qa-matrix" id="matrix-frozen"><div class="qa-cell" inert aria-hidden="true" data-size="sm"><p class="qa-matrix__label">sm · 320</p><dialog class="al-drawer al-drawer--sm" id="frz-sm" aria-labelledby="frz-sm-t" open><header class="al-drawer__header"><h2 class="al-drawer__title" id="frz-sm-t">Editar cliente</h2><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" aria-label="Fechar" data-al-drawer-close><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></header><div class="al-drawer__content"><p class="qa-copy">Conteúdo do painel. O miolo ocupa o que sobra e é o único que rola.</p></div><div class="al-drawer__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-drawer-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Salvar</span></button></div></dialog></div><div class="qa-cell" inert aria-hidden="true" data-size="md"><p class="qa-matrix__label">md · 480</p><dialog class="al-drawer al-drawer--md" id="frz-md" aria-labelledby="frz-md-t" open><header class="al-drawer__header"><h2 class="al-drawer__title" id="frz-md-t">Editar cliente</h2><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" aria-label="Fechar" data-al-drawer-close><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></header><div class="al-drawer__content"><p class="qa-copy">Conteúdo do painel. O miolo ocupa o que sobra e é o único que rola.</p></div><div class="al-drawer__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-drawer-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Salvar</span></button></div></dialog></div><div class="qa-cell" inert aria-hidden="true" data-size="lg"><p class="qa-matrix__label">lg · 640</p><dialog class="al-drawer al-drawer--lg" id="frz-lg" aria-labelledby="frz-lg-t" open><header class="al-drawer__header"><h2 class="al-drawer__title" id="frz-lg-t">Editar cliente</h2><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" aria-label="Fechar" data-al-drawer-close><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></header><div class="al-drawer__content"><p class="qa-copy">Conteúdo do painel. O miolo ocupa o que sobra e é o único que rola.</p></div><div class="al-drawer__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-drawer-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Salvar</span></button></div></dialog></div></div></div>
   </section>
 
   <section>
     <h2>Ao vivo <span class="qa-tag qa-tag--real">real</span></h2>
-    <p class="qa-lede">Abertos por <code>data-al-modal-open</code> → <code>showModal()</code>, do
-    <code>modal.js</code> inlinado.</p>
+    <p class="qa-lede">Abertos por <code>data-al-drawer-open</code> → <code>showModal()</code>, do
+    <code>drawer.js</code> inlinado.</p>
     <div class="qa-panel">
-      <div class="qa-triggers"><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="m-confirma"><span class="al-btn__label">Sair da conta</span></button><p class="qa-pagenote">Sem campos: o clique no fundo fecha; o foco entra no botão principal.</p></div><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="m-excluir"><span class="al-btn__label">Excluir cliente</span></button><p class="qa-pagenote">Principal Danger: o foco entra em “Cancelar” (regra 29).</p></div><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="m-form"><span class="al-btn__label">Editar e-mail</span></button><p class="qa-pagenote">Com campos: o clique no fundo NÃO fecha; o foco entra no campo.</p></div><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-modal-open="m-longo"><span class="al-btn__label">Termos de uso</span></button><p class="qa-pagenote">Conteúdo longo: só o miolo rola; título e botões ficam.</p></div></div>
+      <div class="qa-triggers"><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-drawer-open="d-detalhe"><span class="al-btn__label">Detalhes do cliente</span></button><p class="qa-pagenote">Sem campos e sem rodapé: o foco entra no X; o clique no fundo fecha. “Excluir” abre um Modal por cima.</p></div><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-drawer-open="d-editar"><span class="al-btn__label">Editar cliente</span></button><p class="qa-pagenote">Com campos: o foco entra no primeiro campo; o clique no fundo NÃO fecha.</p></div><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-drawer-open="d-termos"><span class="al-btn__label">Termos de uso</span></button><p class="qa-pagenote">lg, conteúdo longo: só o miolo rola; cabeçalho e botões ficam. O foco entra em “Aceitar”.</p></div><div class="qa-trigger"><button type="button" class="al-btn al-btn--secondary al-btn--md" data-al-drawer-open="d-notifica"><span class="al-btn__label">Notificações</span></button><p class="qa-pagenote">Sem X: a saída visível é o rodapé (regra 14).</p></div></div>
       <p class="qa-log" id="qa-log" role="status" aria-live="polite"></p>
     </div>
   </section>
@@ -1638,7 +2285,7 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   <section>
     <h2>Contraste medido no navegador</h2>
     <p class="qa-lede">Não são os números do <code>tokens.json</code>: o script lê a cor que o navegador
-    pintou nos Modais congelados e a do scrim composta sobre a página, com
+    pintou nos Drawers congelados e a do scrim composta sobre a página, com
     <code>getComputedStyle</code>, depois da transição terminar.</p>
     <div class="qa-tablewrap">
       <table class="qa-measure">
@@ -1648,15 +2295,16 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
     </div>
   </section>
 
-  <p class="qa-foot">Gerado por <code>components/modal/qa.py</code> a partir do CSS e do JS commitados em
-  <code>dev</code>. Foundation, Icon, Button, Input, <code>al-modal-tokens.css</code>, <code>modal.css</code> e
-  <code>modal.js</code> estão embutidos como estão no repositório.</p>
+  <p class="qa-foot">Gerado por <code>components/drawer/qa.py</code> a partir do CSS e do JS commitados em
+  <code>dev</code>. Foundation, Icon, Button, Icon Button, Input, Modal, <code>al-drawer-tokens.css</code>,
+  <code>drawer.css</code> e <code>drawer.js</code> estão embutidos como estão no repositório.</p>
 </div>
 
-<dialog class="al-modal al-modal--sm" id="m-confirma" aria-labelledby="m-confirma-t"><h2 class="al-modal__title" id="m-confirma-t">Sair da conta?</h2><div class="al-modal__content"><p class="qa-copy">Você vai precisar entrar de novo para ver os seus pedidos.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-modal-close><span class="al-btn__label">Sair</span></button></div></dialog>
-<dialog class="al-modal al-modal--md" id="m-excluir" aria-labelledby="m-excluir-t"><h2 class="al-modal__title" id="m-excluir-t">Excluir cliente?</h2><div class="al-modal__content"><p class="qa-copy">Isso não pode ser desfeito. Os pedidos dele continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md" data-al-modal-close><span class="al-btn__label">Excluir cliente</span></button></div></dialog>
-<dialog class="al-modal al-modal--md" id="m-form" aria-labelledby="m-form-t"><h2 class="al-modal__title" id="m-form-t">Editar e-mail</h2><div class="al-modal__content"><div class="qa-fields"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" for="qa-email">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="qa-email" name="qa-email" type="email" value="ana@empresa.com" autocomplete="off"></div></div><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" for="qa-nome">Nome</label></div><div class="al-input__control"><input class="al-input__field" id="qa-nome" name="qa-nome" type="text" value="Ana Souza" autocomplete="off"></div></div></div></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-modal-close><span class="al-btn__label">Salvar</span></button></div></dialog>
-<dialog class="al-modal al-modal--lg" id="m-longo" aria-labelledby="m-longo-t"><h2 class="al-modal__title" id="m-longo-t">Termos de uso</h2><div class="al-modal__content"><p class="qa-copy"><strong>1.</strong> Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que esperamos de você e como resolvemos um problema quando ele acontece.</p><p class="qa-copy"><strong>2.</strong> Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. Se perceber um acesso que não foi seu, avise o atendimento na hora.</p><p class="qa-copy"><strong>3.</strong> Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com 30 dias de antecedência por e-mail e dentro do aplicativo.</p><p class="qa-copy"><strong>4.</strong> Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.</p><p class="qa-copy"><strong>5.</strong> Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e até 10 dias úteis no boleto, depois que o pedido é cancelado.</p><p class="qa-copy"><strong>6.</strong> Se uma parte destas condições não puder ser aplicada, o restante continua valendo. A lei aplicável é a brasileira e o foro é o da cidade do consumidor.</p><p class="qa-copy"><strong>7.</strong> Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até dois dias úteis, de segunda a sexta.</p><p class="qa-copy"><strong>8.</strong> Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que esperamos de você e como resolvemos um problema quando ele acontece.</p><p class="qa-copy"><strong>9.</strong> Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. Se perceber um acesso que não foi seu, avise o atendimento na hora.</p><p class="qa-copy"><strong>10.</strong> Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com 30 dias de antecedência por e-mail e dentro do aplicativo.</p><p class="qa-copy"><strong>11.</strong> Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.</p><p class="qa-copy"><strong>12.</strong> Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e até 10 dias úteis no boleto, depois que o pedido é cancelado.</p><p class="qa-copy"><strong>13.</strong> Se uma parte destas condições não puder ser aplicada, o restante continua valendo. A lei aplicável é a brasileira e o foro é o da cidade do consumidor.</p><p class="qa-copy"><strong>14.</strong> Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até dois dias úteis, de segunda a sexta.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Voltar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-modal-close><span class="al-btn__label">Aceitar</span></button></div></dialog>
+<dialog class="al-drawer al-drawer--md" id="d-detalhe" aria-labelledby="d-detalhe-t"><header class="al-drawer__header"><h2 class="al-drawer__title" id="d-detalhe-t">Detalhes do cliente</h2><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" aria-label="Fechar" data-al-drawer-close><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></header><div class="al-drawer__content"><dl class="qa-dl"><div><dt>Nome</dt><dd>Ana Souza</dd></div><div><dt>E-mail</dt><dd>ana@empresa.com</dd></div><div><dt>Cliente desde</dt><dd>12 de março de 2024</dd></div><div><dt>Pedidos</dt><dd>38, o último em 02/10</dd></div></dl><button type="button" class="al-btn al-btn--danger al-btn--md" data-al-modal-open="m-excluir"><span class="al-btn__label">Excluir cliente</span></button></div></dialog>
+<dialog class="al-drawer al-drawer--md" id="d-editar" aria-labelledby="d-editar-t"><header class="al-drawer__header"><h2 class="al-drawer__title" id="d-editar-t">Editar cliente</h2><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" aria-label="Fechar" data-al-drawer-close><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></header><div class="al-drawer__content"><div class="qa-fields"><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" for="qa-nome">Nome</label></div><div class="al-input__control"><input class="al-input__field" id="qa-nome" name="qa-nome" type="text" value="Ana Souza" autocomplete="off"></div></div><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" for="qa-email">E-mail</label></div><div class="al-input__control"><input class="al-input__field" id="qa-email" name="qa-email" type="email" value="ana@empresa.com" autocomplete="off"></div></div><div class="al-input"><div class="al-input__labelrow"><label class="al-input__label" for="qa-tel">Telefone</label></div><div class="al-input__control"><input class="al-input__field" id="qa-tel" name="qa-tel" type="tel" value="(11) 98888-7777" autocomplete="off"></div></div></div></div><div class="al-drawer__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-drawer-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-drawer-close><span class="al-btn__label">Salvar cliente</span></button></div></dialog>
+<dialog class="al-drawer al-drawer--lg" id="d-termos" aria-labelledby="d-termos-t"><header class="al-drawer__header"><h2 class="al-drawer__title" id="d-termos-t">Termos de uso</h2><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" aria-label="Fechar" data-al-drawer-close><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></header><div class="al-drawer__content"><p class="qa-copy"><strong>1.</strong> Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que esperamos de você e como resolvemos um problema quando ele acontece.</p><p class="qa-copy"><strong>2.</strong> Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. Se perceber um acesso que não foi seu, avise o atendimento na hora.</p><p class="qa-copy"><strong>3.</strong> Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com 30 dias de antecedência por e-mail e dentro do aplicativo.</p><p class="qa-copy"><strong>4.</strong> Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.</p><p class="qa-copy"><strong>5.</strong> Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e até 10 dias úteis no boleto, depois que o pedido é cancelado.</p><p class="qa-copy"><strong>6.</strong> Se uma parte destas condições não puder ser aplicada, o restante continua valendo. A lei aplicável é a brasileira e o foro é o da cidade do consumidor.</p><p class="qa-copy"><strong>7.</strong> Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até dois dias úteis, de segunda a sexta.</p><p class="qa-copy"><strong>8.</strong> Ao usar o serviço você concorda com estas condições. Elas descrevem o que oferecemos, o que esperamos de você e como resolvemos um problema quando ele acontece.</p><p class="qa-copy"><strong>9.</strong> Você é responsável por manter a sua senha em segredo e por tudo o que acontece na sua conta. Se perceber um acesso que não foi seu, avise o atendimento na hora.</p><p class="qa-copy"><strong>10.</strong> Podemos mudar o serviço ou estas condições. Quando a mudança for relevante, avisamos com 30 dias de antecedência por e-mail e dentro do aplicativo.</p><p class="qa-copy"><strong>11.</strong> Os dados que você cadastra são usados para entregar o pedido, emitir a nota e prevenir fraude. Não vendemos os seus dados e você pode pedir a exclusão a qualquer momento.</p><p class="qa-copy"><strong>12.</strong> Reembolsos seguem o prazo da forma de pagamento: até 7 dias úteis no cartão e no Pix, e até 10 dias úteis no boleto, depois que o pedido é cancelado.</p><p class="qa-copy"><strong>13.</strong> Se uma parte destas condições não puder ser aplicada, o restante continua valendo. A lei aplicável é a brasileira e o foro é o da cidade do consumidor.</p><p class="qa-copy"><strong>14.</strong> Dúvidas? Fale com o atendimento pelo aplicativo, em Conta › Ajuda. Respondemos em até dois dias úteis, de segunda a sexta.</p></div><div class="al-drawer__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-drawer-close><span class="al-btn__label">Voltar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-drawer-close><span class="al-btn__label">Aceitar</span></button></div></dialog>
+<dialog class="al-drawer al-drawer--sm" id="d-notifica" aria-labelledby="d-notifica-t"><header class="al-drawer__header"><h2 class="al-drawer__title" id="d-notifica-t">Notificações</h2></header><div class="al-drawer__content"><p class="qa-copy">Você tem 3 avisos novos: duas respostas ao seu pedido e uma promoção que termina hoje.</p></div><div class="al-drawer__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-drawer-close><span class="al-btn__label">Dispensar</span></button><button type="button" class="al-btn al-btn--primary al-btn--md" data-al-drawer-close><span class="al-btn__label">Ver todas</span></button></div></dialog>
+<dialog class="al-modal al-modal--sm" id="m-excluir" aria-labelledby="m-excluir-t"><h2 class="al-modal__title" id="m-excluir-t">Excluir cliente?</h2><div class="al-modal__content"><p class="qa-copy">Isso não pode ser desfeito. Os pedidos dela continuam no histórico.</p></div><div class="al-modal__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close><span class="al-btn__label">Cancelar</span></button><button type="button" class="al-btn al-btn--danger al-btn--md" data-al-modal-close><span class="al-btn__label">Excluir cliente</span></button></div></dialog>
 
 <script>
 /* AL Design System - Modal, comportamento
@@ -1761,6 +2409,110 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   }
 })();
 
+/* AL Design System - Drawer, comportamento
+ *
+ * O <dialog> nativo ja faz o grosso (regra 24): prende o foco, deixa a pagina
+ * inerte, fecha com Esc (regra 15) e devolve o foco a quem abriu (regra 17).
+ * Este arquivo cobre so o que o nativo nao faz:
+ *   - abrir e fechar por atributo, sem JS na pagina:
+ *       data-al-drawer-open="<id>"   no botao que abre
+ *       data-al-drawer-close         no botao que fecha (dentro do dialog)
+ *   - clique no scrim fecha SO quando nao ha campos (regra 16). Com campo, o
+ *     clique acidental perderia o que foi digitado;
+ *   - foco inicial (regra 27), quando a marcacao nao pede um com `autofocus`.
+ *     O nativo foca o primeiro focavel na ordem do documento, e no Drawer esse
+ *     e o X do cabecalho; por isso a ordem aqui e explicita:
+ *       com campo        -> o primeiro campo do miolo
+ *       sem campo        -> a acao principal (a ultima do rodape)
+ *       sem rodape       -> o X (o nativo ja faz, nao mexe)
+ *
+ * Fechar com mudanca nao salva e do formulario, nao deste arquivo (regra 19):
+ * ele escuta o evento `cancel` do <dialog> e decide.
+ *
+ * Uso:
+ *   carregar este arquivo com um script src  -> liga sozinho quando a pagina carrega
+ *   alDrawers.init(container)                -> liga em conteudo inserido depois
+ * Ligar duas vezes o mesmo dialog nao duplica nada.
+ */
+(function () {
+  'use strict';
+
+  var FIELDS = 'input:not([type="hidden"]), select, textarea, [contenteditable=""], [contenteditable="true"]';
+  var FOCUSABLE_FIELD = 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), [contenteditable=""], [contenteditable="true"]';
+
+  function hasFields(dialog) {
+    return !!dialog.querySelector(FIELDS);
+  }
+
+  function inside(dialog, x, y) {
+    var r = dialog.getBoundingClientRect();
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  }
+
+  function initialFocus(dialog) {
+    if (dialog.querySelector('[autofocus]')) return;   // a marcacao decidiu
+    var content = dialog.querySelector('.al-drawer__content');
+    var field = content && content.querySelector(FOCUSABLE_FIELD);
+    if (field) { field.focus(); return; }               // regra 27: o primeiro campo
+    var actions = dialog.querySelectorAll('.al-drawer__actions button, .al-drawer__actions a[href]');
+    if (actions.length) actions[actions.length - 1].focus();   // regra 27: a principal
+  }
+
+  function bind(dialog) {
+    if (dialog.hasAttribute('data-al-drawer')) return;
+    dialog.setAttribute('data-al-drawer', '');
+
+    // O clique so conta se o aperto E a soltura foram no scrim: arrastar para
+    // selecionar texto dentro do Drawer e soltar fora nao fecha nada.
+    var pressedOnScrim = false;
+    dialog.addEventListener('pointerdown', function (e) {
+      pressedOnScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
+    });
+    dialog.addEventListener('click', function (e) {
+      var onScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
+      if (onScrim && pressedOnScrim && !hasFields(dialog)) dialog.close();   // regra 16
+      pressedOnScrim = false;
+    });
+
+    // foco inicial: observa o `open`, porque quem abre pode ser o atributo de
+    // dados ou um showModal() de fora
+    new MutationObserver(function () {
+      if (dialog.open) initialFocus(dialog);
+    }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
+  }
+
+  function init(root) {
+    [].slice.call((root || document).querySelectorAll('dialog.al-drawer')).forEach(bind);
+  }
+
+  // Abrir e fechar por atributo: delegado no documento, uma vez so, entao
+  // vale tambem para botao inserido depois.
+  document.addEventListener('click', function (e) {
+    var opener = e.target.closest && e.target.closest('[data-al-drawer-open]');
+    if (opener) {
+      var dialog = document.getElementById(opener.getAttribute('data-al-drawer-open'));
+      if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
+        bind(dialog);
+        dialog.showModal();
+      }
+      return;
+    }
+    var closer = e.target.closest && e.target.closest('[data-al-drawer-close]');
+    if (closer) {
+      var host = closer.closest('dialog');
+      if (host) host.close();
+    }
+  });
+
+  window.alDrawers = { init: init };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { init(); });
+  } else {
+    init();
+  }
+})();
+
 </script>
 <script>
 (function () {
@@ -1796,21 +2548,22 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   var log = r('qa-log');
   function nome(el) {
     if (!el || el === document.body) return 'o corpo da página (foco perdido)';
-    var t = (el.textContent || '').trim().replace(/\s+/g, ' ');
-    return '“' + t + '”';
+    if (el.labels && el.labels.length) return 'o campo “' + el.labels[0].textContent.trim() + '”';
+    var t =(el.textContent || '').trim().replace(/\s+/g, ' ');
+    return t ? '“' + t + '”' : (el.getAttribute('aria-label') ? 'o botão “' + el.getAttribute('aria-label') + '”' : '<' + el.tagName.toLowerCase() + '>');
   }
-  document.querySelectorAll('dialog.al-modal[id^="m-"]').forEach(function (d) {
+  document.querySelectorAll('dialog.al-drawer[id^="d-"], dialog.al-modal[id^="m-"]').forEach(function (d) {
     d.addEventListener('close', function () {
-      var t = d.querySelector('.al-modal__title').textContent.trim();
+      var t = d.querySelector('.al-drawer__title, .al-modal__title').textContent.trim();
       setTimeout(function () {
         log.textContent = 'Fechou “' + t + '” — o foco voltou para ' + nome(document.activeElement);
       }, 0);
     });
   });
   document.addEventListener('click', function (e) {
-    var o = e.target.closest && e.target.closest('[data-al-modal-open]');
+    var o = e.target.closest && e.target.closest('[data-al-drawer-open], [data-al-modal-open]');
     if (!o) return;
-    var alvo = document.getElementById(o.getAttribute('data-al-modal-open'));
+    var alvo = document.getElementById(o.getAttribute('data-al-drawer-open') || o.getAttribute('data-al-modal-open'));
     setTimeout(function () {
       if (alvo && alvo.open) log.textContent = 'Abriu — o foco entrou em ' + nome(document.activeElement);
     }, 50);
@@ -1842,12 +2595,14 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
     t.remove();
     return v;
   }
-  function linha(where, what, fg, bg, piso, exc) {
+  function linha(where, what, fg, bg, piso, exc, modo) {
     var v = cr(fg, bg);
-    var classe = v >= piso ? 'ok' : exc ? 'exc' : 'bad';
-    var texto = v >= piso ? 'passa' : exc ? 'exceção declarada' : 'REPROVA';
+    var distinto = css(fg) !== css(bg);
+    var ok = modo === 'distinto' ? distinto : v >= piso;
+    var classe = ok ? 'ok' : exc ? 'exc' : 'bad';
+    var texto = ok ? (modo === 'distinto' ? 'diferente do painel' : 'passa') : exc ? 'exceção declarada' : (modo === 'distinto' ? 'IGUAL AO PAINEL' : 'REPROVA');
     var tr = document.createElement('tr');
-    [where, what, css(fg), css(bg), v.toFixed(2) + ':1', piso.toFixed(1) + ':1'].forEach(function (x) {
+    [where, what, css(fg), css(bg), v.toFixed(2) + ':1', modo === 'distinto' ? '≠' : piso.toFixed(1) + ':1'].forEach(function (x) {
       var td = document.createElement('td'); td.textContent = x; tr.appendChild(td);
     });
     var td = document.createElement('td');
@@ -1856,22 +2611,41 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
     r('measure-body').appendChild(tr);
   }
 
+  // le a cor que uma custom property do botao resolve (o hover -raised), pondo
+  // uma sonda DENTRO do botao: a propriedade nao herda para fora dele
+  function viaBotao(btnEl, prop) {
+    var t = document.createElement('i');
+    t.style.cssText = 'position:absolute;visibility:hidden;background-color:var(' + prop + ')';
+    btnEl.appendChild(t);
+    var v = rgb(getComputedStyle(t).backgroundColor);
+    t.remove();
+    return v;
+  }
+
   function medir() {
     r('measure-body').textContent = '';
     var tema = escuro() ? 'escuro' : 'claro';
-    var scrim = cor('--al-modal-scrim', 'background-color');
+    var scrim = cor('--al-drawer-scrim', 'background-color');
     document.querySelectorAll('#matrix-frozen .qa-cell').forEach(function (cell) {
-      var d = cell.querySelector('.al-modal');
+      var d = cell.querySelector('.al-drawer');
       var cs = getComputedStyle(d);
       var card = rgb(cs.backgroundColor);
-      var onde = 'Modal ' + cell.dataset.size + ' · ' + tema;
-      linha(onde, 'título', rgb(getComputedStyle(d.querySelector('.al-modal__title')).color), card, 4.5);
-      linha(onde, 'texto do miolo', rgb(getComputedStyle(d.querySelector('.al-modal__content p')).color), card, 4.5);
+      var onde = 'Drawer ' + cell.dataset.size + ' · ' + tema;
+      linha(onde, 'título', rgb(getComputedStyle(d.querySelector('.al-drawer__title')).color), card, 4.5);
+      linha(onde, 'texto do miolo', rgb(getComputedStyle(d.querySelector('.al-drawer__content p')).color), card, 4.5);
+      linha(onde, 'ícone do X', rgb(getComputedStyle(d.querySelector('.al-icon-btn .al-icon')).color), card, 3);
+      var ghost = d.querySelector('.al-drawer__actions .al-btn--ghost');
+      var x = d.querySelector('.al-icon-btn');
+      if (cell.dataset.size === 'md') {
+        linha(onde, 'hover do Ghost', viaBotao(ghost, '--_bg-hover'), card, 1, false, 'distinto');
+        linha(onde, 'pressed do Ghost', viaBotao(ghost, '--_bg-active'), card, 1, false, 'distinto');
+        linha(onde, 'hover do X', viaBotao(x, '--_bg-hover'), card, 1, false, 'distinto');
+      }
     });
     ['--al-bg-canvas', '--al-bg-surface'].forEach(function (v) {
       var pagina = cor(v, 'background-color');
-      var card = cor('--al-modal-bg', 'background-color');
-      linha('Card × página escurecida · ' + tema, v.replace('--al-', '') + ' + scrim',
+      var card = cor('--al-drawer-bg', 'background-color');
+      linha('Painel × página escurecida · ' + tema, v.replace('--al-', '') + ' + scrim',
             card, sobre(scrim, pagina), 3, true);
     });
   }

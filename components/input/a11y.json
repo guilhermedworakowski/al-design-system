@@ -6,7 +6,7 @@
     "nonText": 3.0
   },
   "markupSource": "site/index.html",
-  "markupChecked": 26,
+  "markupChecked": 38,
   "markupPending": false,
   "markupRules": [
     "todo campo tem id e um <label for> de rotulo apontando para ele",
