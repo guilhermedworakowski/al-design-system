@@ -7,7 +7,7 @@
 <style id="al-real">
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.20.0 - MIT
+ * v0.21.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -1238,6 +1238,43 @@
   --al-sidebar-group-label-line-height: var(--al-line-height-sm);
   --al-sidebar-group-label-font-weight: 400;
   --al-sidebar-group-label-tracking: 0em;
+
+
+  /* trilha - o tema troca no :root */
+  --al-breadcrumb-link: var(--al-text-secondary);
+  --al-breadcrumb-current: var(--al-text-brand);
+  --al-breadcrumb-separator: var(--al-text-secondary);
+  --al-breadcrumb-more: var(--al-text-secondary);
+
+  /* menu do ... - hover e pressed -raised (o menu mora em surface-raised) */
+  --al-breadcrumb-menu-bg: var(--al-bg-surface-raised);
+  --al-breadcrumb-menu-border: var(--al-border-default);
+  --al-breadcrumb-menu-item-bg-hover: var(--al-bg-hover-raised);
+  --al-breadcrumb-menu-item-bg-active: var(--al-bg-active-raised);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-breadcrumb-ring: var(--al-focus-ring-default);
+
+  /* elevacao do menu - altura, nao estado */
+  --al-breadcrumb-menu-shadow: var(--al-elevation-3);
+
+  /* geometria */
+  --al-breadcrumb-gap: var(--al-space-8);
+  --al-breadcrumb-ring-radius: var(--al-radius-sm);
+  --al-breadcrumb-menu-padding: var(--al-space-8);
+  --al-breadcrumb-menu-gap: var(--al-space-8);
+  --al-breadcrumb-menu-offset: var(--al-space-8);
+  --al-breadcrumb-menu-radius: var(--al-radius-xl);
+  --al-breadcrumb-menu-border-width: var(--al-border-width-1);
+
+  /* largura minima do menu - valor declarado, sem escala na Foundation */
+  --al-breadcrumb-menu-min-width: 108px;
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-breadcrumb-label-font-size: var(--al-font-size-sm);
+  --al-breadcrumb-label-line-height: var(--al-line-height-sm);
+  --al-breadcrumb-label-font-weight: 500;
+  --al-breadcrumb-label-tracking: 0em;
 }
 
 /* AL Design System - tokens do Button
@@ -6698,6 +6735,272 @@
   }
 }
 
+/* AL Design System - tokens do Breadcrumb (com o _breadcrumb-more)
+ * GERADO por components/breadcrumb/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* trilha - o tema troca no :root */
+  --al-breadcrumb-link: var(--al-text-secondary);
+  --al-breadcrumb-current: var(--al-text-brand);
+  --al-breadcrumb-separator: var(--al-text-secondary);
+  --al-breadcrumb-more: var(--al-text-secondary);
+
+  /* menu do ... - hover e pressed -raised (o menu mora em surface-raised) */
+  --al-breadcrumb-menu-bg: var(--al-bg-surface-raised);
+  --al-breadcrumb-menu-border: var(--al-border-default);
+  --al-breadcrumb-menu-item-bg-hover: var(--al-bg-hover-raised);
+  --al-breadcrumb-menu-item-bg-active: var(--al-bg-active-raised);
+
+  /* anel de foco - aponta para a sombra composta, nao para a cor crua */
+  --al-breadcrumb-ring: var(--al-focus-ring-default);
+
+  /* elevacao do menu - altura, nao estado */
+  --al-breadcrumb-menu-shadow: var(--al-elevation-3);
+
+  /* geometria */
+  --al-breadcrumb-gap: var(--al-space-8);
+  --al-breadcrumb-ring-radius: var(--al-radius-sm);
+  --al-breadcrumb-menu-padding: var(--al-space-8);
+  --al-breadcrumb-menu-gap: var(--al-space-8);
+  --al-breadcrumb-menu-offset: var(--al-space-8);
+  --al-breadcrumb-menu-radius: var(--al-radius-xl);
+  --al-breadcrumb-menu-border-width: var(--al-border-width-1);
+
+  /* largura minima do menu - valor declarado, sem escala na Foundation */
+  --al-breadcrumb-menu-min-width: 108px;
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-breadcrumb-label-font-size: var(--al-font-size-sm);
+  --al-breadcrumb-label-line-height: var(--al-line-height-sm);
+  --al-breadcrumb-label-font-weight: 500;
+  --al-breadcrumb-label-tracking: 0em;
+}
+
+/* AL Design System - Breadcrumb (com o _breadcrumb-more)
+ *
+ * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css + icon.css,
+ * al-tab-tokens.css + tab.css (itens do menu) e al-breadcrumb-tokens.css,
+ * nesta ordem. Comportamento do menu: breadcrumb.js.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, borda, sombra, anel e
+ * tipografia entram por var(--al-breadcrumb-*). O check.py ao lado recusa o
+ * arquivo se algum escapar.
+ *
+ * CONTRATO DE MARCACAO (regras 19 a 22)
+ *
+ *   <nav class="al-breadcrumb" aria-label="Trilha de navegação">
+ *     <ol class="al-breadcrumb__list">
+ *       <li class="al-breadcrumb__item">
+ *         <a class="al-breadcrumb__link" href="/">Início</a>
+ *         <svg class="al-icon al-icon--16 al-breadcrumb__separator" viewBox="0 0 24 24"
+ *              aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
+ *       </li>
+ *       <li class="al-breadcrumb__item">
+ *         <a class="al-breadcrumb__link" href="/vendas">Vendas</a>
+ *         <svg class="al-icon al-icon--16 al-breadcrumb__separator" …></svg>
+ *       </li>
+ *       <li class="al-breadcrumb__item al-breadcrumb__more">            so na Large (regra 5)
+ *         <button class="al-breadcrumb__more-button" type="button"
+ *                 aria-label="Mostrar mais páginas"
+ *                 aria-expanded="false" aria-controls="bc-mais">…</button>
+ *         <ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-mais" hidden>
+ *           <li><a class="al-tab" href="/vendas/pedidos">
+ *             <span class="al-tab__label">Pedidos</span></a></li>
+ *         </ul>
+ *         <svg class="al-icon al-icon--16 al-breadcrumb__separator" …></svg>
+ *       </li>
+ *       <li class="al-breadcrumb__item">
+ *         <span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span>
+ *       </li>
+ *     </ol>
+ *   </nav>
+ *
+ *   - <ol>: a ordem tem significado (regra 19).
+ *   - O separador fica DENTRO do item que ele fecha, depois do link, e e
+ *     aria-hidden: o leitor de tela nao le "seta" a cada nivel (regra 21). O
+ *     ultimo item nao tem separador.
+ *   - Pagina atual: <span aria-current="page">, nunca <a> - nao clica e nao
+ *     recebe foco (regras 15 e 20).
+ *   - Os itens do menu sao links (Tab Square de navegacao), nunca role="menu"
+ *     (regra 17). Ordem de hierarquia, do mais alto para o mais baixo (regra 6).
+ *
+ * QUANDO A LARGE APARECE (regra 5)
+ *   Ate 4 niveis: todos os itens, sem o `…`. 5 ou mais: primeiro, segundo,
+ *   `…` e a atual. Quem decide e quem monta a pagina - o componente nao mede.
+ *
+ * SEM HOVER VISUAL NA TRILHA (regra 14)
+ *   Link e `…` so trocam o cursor. Nenhuma regra :hover/:active de cor aqui,
+ *   de proposito. Os itens DO MENU tem hover e pressed - sao Tab Square.
+ *
+ * HOVER -raised NO MENU (regra 26)
+ *   O menu mora em surface-raised, onde o bg-hover do Tab some no escuro.
+ *   Em vez de reescrever o tab.css, o menu redefine as duas custom properties
+ *   do Tab dentro dele - o tab.css continua sendo o unico que pinta o item.
+ *
+ * QUEBRA DE LINHA (regra 12)
+ *   A lista quebra para a linha de baixo em tela estreita; o rotulo nunca e
+ *   cortado. O item nao quebra por dentro: link e separador andam juntos.
+ *
+ * MOTION
+ *   O menu entra e sai em fade de `motion-duration-feedback` (120ms, a do
+ *   Button): ease-out ao abrir, ease-in ao fechar. Sem movimento com
+ *   prefers-reduced-motion. A trilha nao anima nada (regra 14).
+ *
+ * FOCO
+ *   Anel padrao por teclado (:focus-visible) em link e `…`, com o canto em
+ *   ring-radius (decisao C). Os itens do menu
+ *   usam o anel do proprio Tab Square (regra 24).
+ */
+
+/* ----------------------------------------------------------------- trilha */
+.al-breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--al-breadcrumb-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-breadcrumb-label-font-size);
+  line-height: var(--al-breadcrumb-label-line-height);
+  font-weight: var(--al-breadcrumb-label-font-weight);
+  letter-spacing: var(--al-breadcrumb-label-tracking);
+}
+
+.al-breadcrumb__item {
+  display: flex;
+  align-items: center;
+  gap: var(--al-breadcrumb-gap);
+}
+
+.al-breadcrumb__link {
+  color: var(--al-breadcrumb-link);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.al-breadcrumb__current {
+  color: var(--al-breadcrumb-current);
+}
+
+.al-breadcrumb__separator {
+  color: var(--al-breadcrumb-separator);
+}
+
+.al-breadcrumb__link:focus-visible,
+.al-breadcrumb__more-button:focus-visible {
+  outline: none;
+  box-shadow: var(--al-breadcrumb-ring);
+}
+
+/* O canto vale sempre, nao so no foco: assim o anel nao muda de forma ao
+   aparecer. Link e `…` nao tem fundo, entao o raio so se ve no anel (C). */
+.al-breadcrumb__link,
+.al-breadcrumb__more-button {
+  border-radius: var(--al-breadcrumb-ring-radius);
+}
+
+/* ------------------------------------------------------------------- `…` */
+/* Grade, nao flex: o menu (absoluto) se posiciona pela COLUNA do `…`, nao
+   pelo item inteiro - o item tambem carrega o separador, e centralizar nele
+   deslocava o menu meio separador para a direita. Filho absoluto de grade
+   com grid-column usa a area da coluna como bloco de referencia - desde que
+   a coluna seja EXPLICITA (coluna implicita conta como `auto` e o menu
+   voltava a centralizar no item inteiro; medido na etapa 6). */
+.al-breadcrumb__more {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+.al-breadcrumb__more-button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--al-breadcrumb-more);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ------------------------------------------------------------------- menu */
+/* Centralizado sob o `…`, `menu-offset` abaixo dele - como no Figma. Cresce
+   com o rotulo a partir da largura minima (decisao A). */
+.al-breadcrumb__menu {
+  --al-tab-bg-hover: var(--al-breadcrumb-menu-item-bg-hover);
+  --al-tab-bg-active: var(--al-breadcrumb-menu-item-bg-active);
+
+  position: absolute;
+  grid-column: 1 / 2;   /* as duas linhas: em absoluto, fim `auto` vira a borda do item */
+  grid-row: 1 / 2;
+  top: calc(100% + var(--al-breadcrumb-menu-offset));
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  inline-size: max-content;
+  min-inline-size: var(--al-breadcrumb-menu-min-width);
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--al-breadcrumb-menu-gap);
+  padding: var(--al-breadcrumb-menu-padding);
+  border: var(--al-breadcrumb-menu-border-width) solid var(--al-breadcrumb-menu-border);
+  border-radius: var(--al-breadcrumb-menu-radius);
+  background-color: var(--al-breadcrumb-menu-bg);
+  box-shadow: var(--al-breadcrumb-menu-shadow);
+  transition:
+    opacity var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    display var(--al-motion-duration-feedback) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-breadcrumb__menu[hidden] {
+  display: none;
+  opacity: 0;
+}
+
+.al-breadcrumb__menu > li,
+.al-breadcrumb__menu .al-tab,
+.al-breadcrumb__menu .al-tab__label {
+  flex: 1 1 auto;
+}
+
+/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
+   declara a de saida (ease-in, ao fechar); o menu aberto declara a de entrada
+   (ease-out). @starting-style da o ponto de partida do fade ao abrir, e
+   `allow-discrete` segura o display:none do [hidden] ate o fade de saida
+   terminar - o mesmo mecanismo do Modal, na duracao de feedback (120ms, a do
+   Button), porque o menu e pequeno e responde a um clique. Sem deslocamento:
+   so opacidade, a posicao e a do Figma do comeco ao fim. */
+.al-breadcrumb__menu:not([hidden]) {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-breadcrumb__menu:not([hidden]) {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-breadcrumb__menu {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------- alto contraste */
+@media (forced-colors: active) {
+  .al-breadcrumb__link:focus-visible,
+  .al-breadcrumb__more-button:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}
+
 </style>
 <style>
 /* ═══ Chrome do site ═══ */
@@ -7547,6 +7850,32 @@ footer code{background:none; padding:0}
 .th-sb-page i{height:6px; border-radius:3px; background:var(--al-border-default)}
 .th-sb-page i:nth-child(2){width:60%}
 
+/* ── páginas do Breadcrumb ──
+   Casca do site. A trilha em si é sempre a .al-breadcrumb, do breadcrumb.css
+   real. Os exemplos "a evitar" usam .bc-fake, nunca uma .al-breadcrumb errada. */
+.bc-stage{align-items:start; padding-top:56px; min-height:260px}
+.bc-page{width:100%; max-width:560px; padding:24px; border-radius:12px; text-align:left}
+.bc-page[data-bcpage="surface"], .bc-stage2[data-bcpage="surface"]{background:var(--al-bg-surface)}
+.bc-page[data-bcpage="canvas"], .bc-stage2[data-bcpage="canvas"]{background:var(--al-bg-canvas)}
+.bc-page[data-bcpage="canvas"]{outline:1px dashed var(--al-border-default); outline-offset:-1px}
+.dd .stage2.bc-stage2{display:block; padding:20px}
+.dd .stage2.bc-narrow{max-width:280px}
+.dd.bc-dd-1{grid-template-columns:1fr}
+.bc-open{min-height:200px; display:flex; justify-content:center; padding-top:8px}
+.bc-fake{display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:14px; line-height:20px;
+  font-weight:500; color:var(--al-text-secondary)}
+.bc-fake span.on{color:var(--al-text-brand)}
+.bc-fake i{font-style:normal}
+.th-bc{position:relative; display:flex; flex-direction:column; align-items:center; gap:8px; width:100%;
+  height:100%; padding-top:18px; overflow:hidden}
+.th-bc .bc-fake{flex-wrap:nowrap; font-size:12px; gap:6px}
+.th-bc .bc-fake span.on{color:var(--al-breadcrumb-current)}
+.th-bc-menu{display:flex; flex-direction:column; gap:5px; width:84px; padding:6px; margin-left:22px;
+  border:1px solid var(--al-breadcrumb-menu-border); border-radius:8px; background:var(--al-breadcrumb-menu-bg);
+  box-shadow:var(--al-breadcrumb-menu-shadow)}
+.th-bc-menu span{height:7px; border-radius:3px; background:var(--al-border-default)}
+.th-bc-menu span:nth-child(2){width:70%}
+
 /* ── Motion ──
    O palco lê os tokens reais da Foundation. A velocidade (1× ou ¼×) só
    multiplica a duração, para dar tempo de ver a curva; ela não é um token. */
@@ -7637,7 +7966,7 @@ footer code{background:none; padding:0}
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.20.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.21.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -7679,6 +8008,7 @@ footer code{background:none; padding:0}
         <a href="#/modal" data-page="modal">Modal</a>
         <a href="#/drawer" data-page="drawer">Drawer</a>
         <a href="#/sidebar" data-page="sidebar">Sidebar</a>
+        <a href="#/breadcrumb" data-page="breadcrumb">Breadcrumb</a>
       </div>
     </div>
   </div>
@@ -7794,7 +8124,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.20.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.21.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -7824,7 +8154,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.20.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.21.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -8033,7 +8363,7 @@ footer code{background:none; padding:0}
     Button já faz isso.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-motion" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Motion</h1><p class="lede">O que entra e sai da tela, e o que gira. A curva depende do tipo da ação — entrada desacelera, saída acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo à mão.</p><div class="meta"><span class="badge on">8 tokens</span><span class="badge">2 tipos de ação</span><span class="badge">1 loop</span><span class="badge">5 durações</span><span class="badge">12 componentes consomem</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Motion"><button role="tab" id="t-motion-movimentos" aria-controls="p-motion-movimentos" aria-selected="true">Movimentos</button><button role="tab" id="t-motion-tokens" aria-controls="p-motion-tokens" aria-selected="false" tabindex=-1>Tokens</button></div><div class="panel" id="p-motion-movimentos" role="tabpanel" aria-labelledby="t-motion-movimentos" tabindex="0">
+<div class="page" id="pg-motion" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Motion</h1><p class="lede">O que entra e sai da tela, e o que gira. A curva depende do tipo da ação — entrada desacelera, saída acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo à mão.</p><div class="meta"><span class="badge on">8 tokens</span><span class="badge">2 tipos de ação</span><span class="badge">1 loop</span><span class="badge">5 durações</span><span class="badge">13 componentes consomem</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Motion"><button role="tab" id="t-motion-movimentos" aria-controls="p-motion-movimentos" aria-selected="true">Movimentos</button><button role="tab" id="t-motion-tokens" aria-controls="p-motion-tokens" aria-selected="false" tabindex=-1>Tokens</button></div><div class="panel" id="p-motion-movimentos" role="tabpanel" aria-labelledby="t-motion-movimentos" tabindex="0">
 <section>
   <h2>Entrada e saída <span class="count">6 movimentos</span></h2>
   <p>Dois tipos de ação, três durações. O que entra desacelera e assenta; o que sai acelera e some.
@@ -8085,7 +8415,7 @@ footer code{background:none; padding:0}
     <p>Hover, foco, seleção e pressed usam <code>ease-out</code> ao entrar no estado e
     <code>ease-in</code> ao sair dele, com 120ms. No CSS isso vira duas declarações: a base
     traz a curva de saída, e um bloco de estados de destino troca para a de entrada, porque a
-    transição usa a curva do estado para onde vai. 12 componentes consomem.</p>
+    transição usa a curva do estado para onde vai. 13 componentes consomem.</p>
   </div>
   <div class="note">
     <b>O spinner é loop, e tem curva e durações próprias</b>
@@ -8456,9 +8786,9 @@ footer code{background:none; padding:0}
   consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
   normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
   <div class="stats">
-    <div class="stat hl"><b>336</b><span>verificações</span></div>
+    <div class="stat hl"><b>363</b><span>verificações</span></div>
     <div class="stat"><b>0</b><span>reprovas</span></div>
-    <div class="stat"><b>294</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>321</b><span>elementos com contrato conferido</span></div>
     <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
   </div>
 </section>
@@ -8533,7 +8863,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
   O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
-  <code>.al-icon</code>: 294 elementos nesta página, nenhum fora.
+  <code>.al-icon</code>: 321 elementos nesta página, nenhum fora.
   Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
   <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
   porque o rótulo nunca seria lido.</p>
@@ -8544,7 +8874,7 @@ footer code{background:none; padding:0}
     renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">18 publicados</span><span class="badge">Tier 3 em andamento</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
+<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">19 publicados</span><span class="badge">Tier 3 em andamento</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
 <section>
   <h2>Publicados</h2>
   <div class="cards">
@@ -8566,16 +8896,17 @@ footer code{background:none; padding:0}
     <a class="card" href="#/modal" data-page="modal"><div class="card-thumb"><div class="th-modal" aria-hidden="true"><div class="th-md-card"><span class="th-md-t"></span><span class="th-md-l"></span><span class="th-md-l th-md-l--s"></span><span class="th-md-a"><i></i><b></b></span></div></div></div><div class="card-body"><span class="card-title">Modal</span><span class="card-desc">Uma tarefa curta que pede resposta antes de seguir. É o &lt;dialog&gt; nativo: sobe sobre a página, prende o foco e nunca tem botão X.</span></div></a>
     <a class="card" href="#/drawer" data-page="drawer"><div class="card-thumb"><div class="th-drawer" aria-hidden="true"><div class="th-dw-panel"><span class="th-dw-t"></span><span class="th-dw-l"></span><span class="th-dw-l th-dw-l--s"></span><span class="th-dw-a"><i></i><b></b></span></div></div></div><div class="card-body"><span class="card-title">Drawer</span><span class="card-desc">Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo colado na direita: entra pela lateral, prende o foco e sempre tem uma saída visível.</span></div></a>
     <a class="card" href="#/sidebar" data-page="sidebar"><div class="card-thumb"><div class="th-sidebar" aria-hidden="true"><div class="th-sb-side"><span class="th-sb-who"><i></i><b></b></span><span class="th-sb-i th-sb-i--on"></span><span class="th-sb-i"></span><span class="th-sb-i"></span><span class="th-sb-i th-sb-i--s"></span></div><div class="th-sb-page"><i></i><i></i></div></div></div><div class="card-body"><span class="card-title">Sidebar</span><span class="card-desc">A navegação principal, presa à esquerda na altura da tela. Os itens são o Tab, e abaixo de 1024px ela vira painel modal pela esquerda — a mesma &lt;aside&gt;, nunca uma cópia.</span></div></a>
+    <a class="card" href="#/breadcrumb" data-page="breadcrumb"><div class="card-thumb"><div class="th-bc" aria-hidden="true"><div class="bc-fake"><span class="">Início</span><i aria-hidden="true">›</i><span class="">Vendas</span><i aria-hidden="true">›</i><span class="">…</span><i aria-hidden="true">›</i><span class="on">Pedido 1042</span></div><div class="th-bc-menu"><span></span><span></span><span></span></div></div></div><div class="card-body"><span class="card-title">Breadcrumb</span><span class="card-desc">Onde a pessoa está na hierarquia, com um link para cada nível acima. Com 5 níveis ou mais, os do meio vão para o menu do “…”.</span></div></a>
   </div>
 </section>
 
 <section>
-  <h2>O Tier 4 abriu</h2>
-  <p>Os primitivos, o formulário e a estrutura atravessaram as oito etapas, um componente de cada
-  vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente
-  pronto sem documentação”. O Tier 3 começou pelo Divider e fechou no Drawer. O tier de
-  <b>navegação</b> ficou curto, com dois componentes, e abriu pela Sidebar; o próximo é o
-  Breadcrumb. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e auditar.</p>
+  <h2>O Tier 4 fechou</h2>
+  <p>Os primitivos, o formulário, a estrutura e a navegação atravessaram as oito etapas, um
+  componente de cada vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida
+  de “componente pronto sem documentação”. O tier de <b>navegação</b> ficou curto, com dois
+  componentes: abriu pela Sidebar e fechou no Breadcrumb. O próximo é o Tier 5, de feedback, e cada
+  componente dele passa pelas mesmas oito etapas, a começar pela 1, definir e auditar.</p>
 </section></div></div>
 <div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">48 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
 <section>
@@ -14406,7 +14737,7 @@ footer code{background:none; padding:0}
 <section>
   <h2>O contrato de marcação</h2>
   <p>O <code>a11y.py</code> cobra doze regras lendo o HTML que este site emite:
-  <b>3 grupos</b> e <b>26 amostras</b>
+  <b>4 grupos</b> e <b>30 amostras</b>
   nesta página, nenhum fora do contrato.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>a · Nome do grupo</b><span><code>role="tablist"</code> com <code>aria-label</code> ou <code>aria-labelledby</code>.</span></div>
@@ -15659,8 +15990,304 @@ footer code{background:none; padding:0}
     <div><b>Movimento reduzido</b><span>O painel abre e fecha sem deslizar.</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-breadcrumb" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Breadcrumb</h1><p class="lede">Mostra onde a pessoa está na hierarquia e leva a qualquer nível acima com um clique. É um &lt;nav&gt; com uma lista ordenada; a página atual é texto, não link. Com 5 níveis ou mais, os do meio vão para o menu do “…” — o _breadcrumb-more do Figma, documentado aqui junto.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">3 + 2 variantes no Figma</span><span class="badge">19 tokens</span><span class="badge">1 exceção declarada</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Breadcrumb"><button role="tab" id="t-breadcrumb-overview" aria-controls="p-breadcrumb-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-breadcrumb-specs" aria-controls="p-breadcrumb-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-breadcrumb-guide" aria-controls="p-breadcrumb-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-breadcrumb-a11y" aria-controls="p-breadcrumb-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-breadcrumb-overview" role="tabpanel" aria-labelledby="t-breadcrumb-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage bc-stage" id="breadcrumb-stage"><div class="bc-page" data-bcpage="canvas"><nav class="al-breadcrumb" aria-label="Trilha de navegação"><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Vendas</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item al-breadcrumb__more"><button class="al-breadcrumb__more-button" type="button" aria-label="Mostrar mais páginas" aria-expanded="false" aria-controls="bc-pg">…</button><ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-pg" hidden><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Pedidos</span></a></li><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Março de 2026</span></a></li><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Loja Centro</span></a></li></ul><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span></li></ol></nav></div></div>
+    <div class="controls" id="breadcrumb-controls">
+      <div class="ctl"><span class="ctl-name">Profundidade</span><div class="seg" role="radiogroup" aria-label="bcdepth">
+<input type="radio" id="bcdepth-2" name="bcdepth" value="2"><label for="bcdepth-2">Short · 2</label>
+<input type="radio" id="bcdepth-3" name="bcdepth" value="3"><label for="bcdepth-3">Medium · 3</label>
+<input type="radio" id="bcdepth-4" name="bcdepth" value="4"><label for="bcdepth-4">4 níveis</label>
+<input type="radio" id="bcdepth-6" name="bcdepth" value="6" checked><label for="bcdepth-6">Large · 6</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Página</span><div class="seg" role="radiogroup" aria-label="bcpage">
+<input type="radio" id="bcpage-canvas" name="bcpage" value="canvas" checked><label for="bcpage-canvas">Tela</label>
+<input type="radio" id="bcpage-surface" name="bcpage" value="surface"><label for="bcpage-surface">Superfície</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="bctheme">
+<input type="radio" id="bctheme-auto" name="bctheme" value="auto" checked><label for="bctheme-auto">Do sistema</label>
+<input type="radio" id="bctheme-light" name="bctheme" value="light"><label for="bctheme-light">Claro</label>
+<input type="radio" id="bctheme-dark" name="bctheme" value="dark"><label for="bctheme-dark">Escuro</label>
+</div></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="breadcrumb-copy">Copiar</button></div>
+      <pre><code id="breadcrumb-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Em <b>Large</b>, tabule até o <b>…</b> e aperte Enter: o menu abre e o foco fica no botão; o Tab
+    entra nos links, o Esc fecha e devolve o foco. Passe o mouse na trilha — só o cursor muda — e
+    nos itens do menu, que têm hover. Troque o <b>Tema</b> para escuro e repita no menu.
+  </p>
+</section>
+
+<section>
+  <h2>Profundidade, não tamanho</h2>
+  <p>Short, Medium e Large são o número de níveis, não um tamanho. Até 4, a trilha mostra tudo;
+  com 5 ou mais, os do meio vão para o menu do “…”.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Short · 2 níveis</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas"><nav class="al-breadcrumb" aria-label="Exemplo Short" aria-hidden="true" inert><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span></li></ol></nav></div>
+      <p class="cap">A página logo abaixo da raiz.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Medium · 3 níveis</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas"><nav class="al-breadcrumb" aria-label="Exemplo Medium" aria-hidden="true" inert><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Vendas</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span></li></ol></nav></div>
+      <p class="cap">O caso mais comum.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">4 níveis · ainda sem “…”</span>
+      <div class="stage2 bc-stage2" data-bcpage="surface"><nav class="al-breadcrumb" aria-label="Exemplo com 4 níveis" aria-hidden="true" inert><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Vendas</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Pedidos</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span></li></ol></nav></div>
+      <p class="cap">Colapsar aqui esconderia um item só. É o Medium com um nível a mais.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Large · 5 níveis ou mais</span>
+      <div class="stage2 bc-stage2" data-bcpage="surface"><nav class="al-breadcrumb" aria-label="Exemplo Large" aria-hidden="true" inert><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Vendas</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item al-breadcrumb__more"><button class="al-breadcrumb__more-button" type="button" aria-label="Mostrar mais páginas" aria-expanded="false" aria-controls="bc-s6">…</button><ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-s6" hidden><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Pedidos</span></a></li><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Março de 2026</span></a></li><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Loja Centro</span></a></li></ul><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span></li></ol></nav></div>
+      <p class="cap">Primeiro, segundo, “…” e a atual. Os do meio, em ordem, no menu.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>O menu do “…”</h2>
+  <p>É o <code>_breadcrumb-more</code> do Figma: um botão e uma lista de links que abre 8 abaixo
+  dele, centralizada, com a sombra Elevation/3. Os itens são o Tab Square de navegação.</p>
+  <div class="cd-panel" style="margin-top:16px"><div class="bc-open"><nav class="al-breadcrumb" aria-label="Exemplo com o menu aberto" aria-hidden="true" inert><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Vendas</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item al-breadcrumb__more"><button class="al-breadcrumb__more-button" type="button" aria-label="Mostrar mais páginas" aria-expanded="true" aria-controls="bc-ov-open" data-al-breadcrumb>…</button><ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-ov-open"><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Pedidos</span></a></li><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Março de 2026</span></a></li><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Loja Centro</span></a></li></ul><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span></li></ol></nav></div></div>
+</section></div><div class="panel" id="p-breadcrumb-specs" role="tabpanel" aria-labelledby="t-breadcrumb-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Trilha</b><span><code>&lt;nav class="al-breadcrumb"&gt;</code> com nome e uma <code>&lt;ol&gt;</code>: a ordem tem significado.</span></div>
+    <div><b>Link</b><span><code>.al-breadcrumb__link</code>, Label/md em <code>breadcrumb-link</code>. Sem sublinhado e sem hover: só o cursor muda.</span></div>
+    <div><b>Separador</b><span>O chevron-right de 16, em <code>breadcrumb-separator</code>, dentro do item que ele fecha e fora do leitor de tela.</span></div>
+    <div><b>Página atual</b><span><code>&lt;span aria-current="page"&gt;</code> em <code>breadcrumb-current</code>. Não é link e não recebe foco.</span></div>
+    <div><b>“…”</b><span><code>&lt;button&gt;</code> “Mostrar mais páginas”, com <code>aria-expanded</code>. Só na Large, sempre o terceiro item.</span></div>
+    <div><b>Menu</b><span><code>&lt;ul class="al-tabs al-tabs--square"&gt;</code> de links, <code>bg-surface-raised</code>, borda, raio xl, Elevation/3. Largura mínima 108, cresce com o rótulo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Menu aberto</h2>
+  <p>Congelado, sobre os dois fundos. No segundo, um rótulo longo: o menu passa de 108 e cresce.</p>
+  <div class="dd bc-dd-1" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Tela</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas"><div class="bc-open"><nav class="al-breadcrumb" aria-label="Exemplo com o menu aberto" aria-hidden="true" inert><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Vendas</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item al-breadcrumb__more"><button class="al-breadcrumb__more-button" type="button" aria-label="Mostrar mais páginas" aria-expanded="true" aria-controls="bc-sp-a" data-al-breadcrumb>…</button><ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-sp-a"><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Pedidos</span></a></li><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Março de 2026</span></a></li><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Loja Centro</span></a></li></ul><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span></li></ol></nav></div></div></div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Superfície · rótulo longo</span>
+      <div class="stage2 bc-stage2" data-bcpage="surface"><div class="bc-open"><nav class="al-breadcrumb" aria-label="Exemplo com o menu aberto" aria-hidden="true" inert><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Vendas</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item al-breadcrumb__more"><button class="al-breadcrumb__more-button" type="button" aria-label="Mostrar mais páginas" aria-expanded="true" aria-controls="bc-sp-b" data-al-breadcrumb>…</button><ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-sp-b"><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Relatórios</span></a></li><li><a class="al-tab" href="#/breadcrumb"><span class="al-tab__label">Configurações da conta</span></a></li></ul><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span></li></ol></nav></div></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Breadcrumb</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody><tr><td class="tok">--al-breadcrumb-link</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-breadcrumb-current</td><td class="tok dim">text-brand</td><td class="tok dim"><span class="chip sm" style="background:#992700"></span>#992700</td><td class="tok dim"><span class="chip sm" style="background:#FF9267"></span>#FF9267</td></tr>
+<tr><td class="tok">--al-breadcrumb-separator</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-breadcrumb-more</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td><td class="tok dim"><span class="chip sm" style="background:#3E3E3E"></span>#3E3E3E</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-border</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td><td class="tok dim"><span class="chip sm" style="background:#565656"></span>#565656</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-item-bg-hover</td><td class="tok dim">bg-hover-raised</td><td class="tok dim"><span class="chip sm" style="background:#EEEEEE"></span>#EEEEEE</td><td class="tok dim"><span class="chip sm" style="background:#565656"></span>#565656</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-item-bg-active</td><td class="tok dim">bg-active-raised</td><td class="tok dim"><span class="chip sm" style="background:#E0E0E0"></span>#E0E0E0</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td></tr>
+<tr><td class="tok">--al-breadcrumb-ring</td><td class="tok dim">focusRing.default</td><td class="tok dim"><span class="dim">sombra composta</span></td><td class="tok dim"><span class="dim">sombra composta</span></td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-shadow</td><td class="tok dim">elevation.3</td><td class="tok dim"><span class="dim">sombra composta</span></td><td class="tok dim"><span class="dim">sombra composta</span></td></tr>
+<tr><td class="tok">--al-breadcrumb-gap</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-breadcrumb-ring-radius</td><td class="tok dim">radius.sm</td><td class="tok dim">4px</td><td class="tok dim">4px</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-padding</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-gap</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-offset</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-radius</td><td class="tok dim">radius.xl</td><td class="tok dim">12px</td><td class="tok dim">12px</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-border-width</td><td class="tok dim">border.width.1</td><td class="tok dim">1px</td><td class="tok dim">1px</td></tr>
+<tr><td class="tok">--al-breadcrumb-label-font</td><td class="tok dim">type.styles.label-md</td><td class="tok dim">14/20 · 500</td><td class="tok dim">14/20 · 500</td></tr>
+<tr><td class="tok">--al-breadcrumb-menu-min-width</td><td class="tok dim">108px</td><td class="tok dim">108px</td><td class="tok dim">108px</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Um valor declarado</b>
+    Todo token aponta para a Foundation, menos <code>breadcrumb-menu-min-width</code> (108px): a
+    Foundation ainda não tem escala de largura de contêiner. É a mesma exceção da Sidebar, do Modal e
+    do Drawer, e é mínima, não fixa.
+  </div>
+  <div class="note">
+    <b>O hover do menu é <code>-raised</code></b>
+    O menu mora em <code>bg-surface-raised</code>, onde o hover do Tab sumia no escuro. Em vez de
+    reescrever o Tab, o menu redefine dentro dele as duas cores de hover e pressed do Tab para
+    <code>breadcrumb-menu-item-bg-hover</code> e <code>-active</code>.
+  </div>
+  <div class="note">
+    <b>O menu se posiciona pelo “…”, não pelo item</b>
+    O item do “…” também carrega o separador. Ele é uma grade de duas colunas, e o menu se centraliza
+    na primeira — a do botão. Sem isso, ele ficava 12px para a direita.
+  </div>
+  <div class="note">
+    <b>Abre e fecha em 120ms</b>
+    Um fade de opacidade em <code>motion-duration-feedback</code>, a duração do Button: curva de entrada
+    ao abrir, de saída ao fechar. Sem deslocamento, e sem fade com movimento reduzido.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>breadcrumb.js</code></b>
+    Só a Large precisa dele. O “…” abre e fecha a lista e mantém <code>aria-expanded</code>; o foco fica
+    no botão. Esc fecha e devolve o foco; clique fora, foco saindo e clique num item também fecham.
+  </div>
+</section></div><div class="panel" id="p-breadcrumb-guide" role="tabpanel" aria-labelledby="t-breadcrumb-guide" tabindex="0" hidden>
+<section>
+  <h2>Colapsar só a partir de 5 níveis</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">4 níveis, tudo à mostra</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas"><nav class="al-breadcrumb" aria-label="Exemplo com 4 níveis" aria-hidden="true" inert><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Vendas</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Pedidos</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span></li></ol></nav></div>
+      <p class="cap">Ainda cabe, e cada nível está a um clique.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">“…” escondendo um item só</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas"><div class="bc-fake"><span class="">Início</span><i aria-hidden="true">›</i><span class="">Vendas</span><i aria-hidden="true">›</i><span class="">…</span><i aria-hidden="true">›</i><span class="on">Pedido 1042</span></div></div>
+      <p class="cap">Um clique a mais para um nível que caberia na linha.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Rótulo inteiro, a trilha quebra</span>
+      <div class="stage2 bc-stage2 bc-narrow" data-bcpage="canvas"><nav class="al-breadcrumb" aria-label="Exemplo estreito" aria-hidden="true" inert><ol class="al-breadcrumb__list"><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Início</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Configurações da conta</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/breadcrumb">Integrações e aplicativos</a><svg class="al-icon al-icon--16 al-breadcrumb__separator" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></li><li class="al-breadcrumb__item"><span class="al-breadcrumb__current" aria-current="page">Notificações por e-mail</span></li></ol></nav></div>
+      <p class="cap">Em tela estreita, a linha de baixo. Link e setinha andam juntos.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Rótulo cortado</span>
+      <div class="stage2 bc-stage2" data-bcpage="canvas"><div class="bc-fake"><span class="">Início</span><i aria-hidden="true">›</i><span class="">Configuraçõ…</span><i aria-hidden="true">›</i><span class="">Integraç…</span><i aria-hidden="true">›</i><span class="on">Notificações por e-mail</span></div></div>
+      <p class="cap">Reticências escondem justamente a palavra que diferencia o nível.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  <h3 class="tb-rgroup">Quando usar</h3>
+<div class="rule"><div class="rn">01</div><div><h3>Hierarquia com 3 níveis ou mais</h3><p>Com um nível só, a trilha vira ruído. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">02</div><div><h3>Não para progresso de um fluxo linear</h3><p>Cadastro em etapas pede indicador de progresso. Precedentes: GOV.UK, Carbon.</p></div></div>
+<div class="rule"><div class="rn">03</div><div><h3>Com a Sidebar, só dois níveis abaixo dela</h3><p>Se a Sidebar já mostra onde a pessoa está, a trilha repete. Precedente: GOV.UK.</p></div></div>
+<div class="rule"><div class="rn">04</div><div><h3>Hierarquia, não histórico</h3><p>O caminho é o mesmo por onde quer que a pessoa tenha chegado, e é um modelo só no produto. Precedente: Carbon.</p></div></div>
+<h3 class="tb-rgroup">Profundidade</h3>
+<div class="rule"><div class="rn">05</div><div><h3>Short, Medium e Large são profundidade</h3><p>Até 4 níveis, tudo à mostra; com 5 ou mais, Large. Precedentes: Spectrum (máximo de 4 visíveis), eBay.</p></div></div>
+<div class="rule"><div class="rn">06</div><div><h3>Large: primeiro, segundo, “…” e a atual</h3><p>Os do meio vão para o menu, do mais alto para o mais baixo. <b>Divergência consciente</b> da Carbon, que mostra o primeiro e os dois últimos.</p></div></div>
+<h3 class="tb-rgroup">Posição</h3>
+<div class="rule"><div class="rn">07</div><div><h3>Um por página, no topo, acima do título</h3><p>Sobre <code>bg-canvas</code> ou <code>bg-surface</code>, nunca dentro de Card, Modal ou Drawer. Precedentes: GOV.UK, Carbon.</p></div></div>
+<div class="rule"><div class="rn">08</div><div><h3>O primeiro item é a raiz real</h3><p>“Início” ou o nome da área, nunca o logo. Precedente: GOV.UK.</p></div></div>
+<div class="rule"><div class="rn">09</div><div><h3>Nada clicável colado ao “…”</h3><p>Ele tem 12×20 e só passa no alvo mínimo do WCAG 2.5.8 pelo espaço de 24 em volta.</p></div></div>
+<h3 class="tb-rgroup">Conteúdo</h3>
+<div class="rule"><div class="rn">10</div><div><h3>O rótulo repete o título da página de destino</h3><p>Curto e sem pontuação. Precedentes: GOV.UK, Carbon.</p></div></div>
+<div class="rule"><div class="rn">11</div><div><h3>A página atual é o último item</h3><p>Com o mesmo nome do título da página. <b>Divergência consciente</b> da GOV.UK e da Carbon v10, que a omitem.</p></div></div>
+<div class="rule"><div class="rn">12</div><div><h3>Sem reticências na trilha</h3><p>Em tela estreita ela quebra para a linha de baixo; no menu, a largura cresce. Precedente: Terra. <b>Divergência consciente</b> de Queensland, que não quebra.</p></div></div>
+<div class="rule"><div class="rn">13</div><div><h3>O separador é sempre o chevron</h3><p>Nem barra, nem ícone nos itens. Precedente: Spectrum.</p></div></div>
+<h3 class="tb-rgroup">Comportamento</h3>
+<div class="rule"><div class="rn">14</div><div><h3>A trilha não tem hover</h3><p>Só o cursor muda: é navegação secundária e o contexto já diz que são links. A Carbon sublinha; aqui é decisão de desenho.</p></div></div>
+<div class="rule"><div class="rn">15</div><div><h3>A atual não é link</h3><p>Não clica e não recebe foco. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">16</div><div><h3>O “…” abre o menu</h3><p>Fecha com Esc (o foco volta ao “…”), com clique fora ou ao escolher um link. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">17</div><div><h3>Os itens do menu são links, não ações</h3><p>Sem <code>role="menu"</code>; o Tab percorre. Precedente: W3C, padrão de disclosure.</p></div></div>
+<div class="rule"><div class="rn">18</div><div><h3>Sem desabilitado nem carregando</h3><p>Página sem pai não tem breadcrumb. Nenhum sistema de referência prevê esses estados.</p></div></div>
+<h3 class="tb-rgroup">Acessibilidade</h3>
+<div class="rule"><div class="rn">19</div><div><h3><code>&lt;nav aria-label="Trilha de navegação"&gt;</code> com <code>&lt;ol&gt;</code></h3><p>A ordem tem significado. Precedentes: Carbon, Primer, W3C.</p></div></div>
+<div class="rule"><div class="rn">20</div><div><h3><code>aria-current="page"</code> no último</h3><p>Precedentes: Primer, W3C.</p></div></div>
+<div class="rule"><div class="rn">21</div><div><h3>O separador é decorativo</h3><p>Fora do leitor de tela, para não ouvir “seta” a cada nível. Precedente: W3C.</p></div></div>
+<div class="rule"><div class="rn">22</div><div><h3>O “…” é um botão com nome</h3><p>“Mostrar mais páginas”, com <code>aria-expanded</code> e <code>aria-controls</code>. Precedente: Carbon (“more breadcrumbs”).</p></div></div>
+<div class="rule"><div class="rn">23</div><div><h3>A cor nunca é a única pista da atual</h3><p>Ela também é a última, é marcada para o leitor de tela e não é link. WCAG 1.4.1.</p></div></div>
+<div class="rule"><div class="rn">24</div><div><h3>Anel de foco em links e no “…”</h3><p>O padrão, com canto de 4. Os itens do menu usam o do Tab Square.</p></div></div>
+<h3 class="tb-rgroup">Exceções e o que as paga</h3>
+<div class="rule"><div class="rn">25</div><div><h3>A borda do menu fica abaixo de 3:1</h3><p><code>borda-de-regiao</code>: o menu é caixa de conteúdo, não controle, e se separa pela sombra. Não escureça. Mesmo caso da Sidebar e do Card.</p></div></div>
+<div class="rule"><div class="rn">26</div><div><h3>O fundo do menu é sempre <code>bg-surface-raised</code></h3><p>Com hover e pressed <code>-raised</code>. Trocar o fundo faz o hover sumir no escuro (Modal 0.18.1).</p></div></div>
+<h3 class="tb-rgroup">Fora de escopo</h3>
+<div class="rule"><div class="rn">27</div><div><h3>Sem casa, sem menu por item, sem histórico, sem tamanho maior</h3><p>Se a demanda aparecer, abre uma rodada nova na etapa 1. A Spectrum tem menu por item; o AL não.</p></div></div>
+<div class="rule"><div class="rn">28</div><div><h3>Não substitui o botão de voltar</h3><p>A Polaris trocou a trilha por uma ação de voltar. No AL as duas coisas são separadas.</p></div></div>
+</section></div><div class="panel" id="p-breadcrumb-a11y" role="tabpanel" aria-labelledby="t-breadcrumb-a11y" tabindex="0" hidden>
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede cada papel contra o fundo que ele tem na tela: a trilha contra a tela e a
+  superfície; o item do menu contra o fundo que o menu injeta em cada estado; e o hover e o pressed
+  do item contra o fundo do menu — iguais seria um item que não reage.</p>
+  <div class="stats">
+    <div class="stat hl"><b>32</b><span>combinações medidas</span></div>
+    <div class="stat"><b>28</b><span>passam</span></div>
+    <div class="stat"><b>4</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">link</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">…</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">pagina atual</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">7.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">anel na trilha</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">borda do menu</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.57:1</td><td class="tok dim">3.0:1</td><td><span class="exc">borda-de-regiao</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">link</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.56:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">…</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.56:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">pagina atual</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">7.41:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">anel na trilha</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">3.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">borda do menu</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.47:1</td><td class="tok dim">3.0:1</td><td><span class="exc">borda-de-regiao</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">item do menu</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">menu-bg</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">item do menu (hover)</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">menu-item-bg-hover</td><td class="num strong">12.54:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">item do menu (pressed)</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">menu-item-bg-active</td><td class="num strong">11.02:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">anel no menu</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">menu-bg</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover do item vs menu</td><td class="chipcell"><span class="chip sm" style="background:#EEEEEE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">menu-bg</td><td class="num strong">—</td><td class="tok dim">diferente</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">pressed do item vs menu</td><td class="chipcell"><span class="chip sm" style="background:#E0E0E0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">menu-bg</td><td class="num strong">—</td><td class="tok dim">diferente</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">link</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.47:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">…</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.47:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">pagina atual</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.08:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">anel na trilha</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">borda do menu</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">2.42:1</td><td class="tok dim">3.0:1</td><td><span class="exc">borda-de-regiao</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">link</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">…</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">pagina atual</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.62:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">anel na trilha</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.62:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">borda do menu</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.98:1</td><td class="tok dim">3.0:1</td><td><span class="exc">borda-de-regiao</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">item do menu</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">menu-bg</td><td class="num strong">5.10:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">item do menu (hover)</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">menu-item-bg-hover</td><td class="num strong">6.85:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">item do menu (pressed)</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#717171"></span></td><td class="tok dim">menu-item-bg-active</td><td class="num strong">4.56:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">anel no menu</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">menu-bg</td><td class="num strong">4.87:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover do item vs menu</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">menu-bg</td><td class="num strong">—</td><td class="tok dim">diferente</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">pressed do item vs menu</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">menu-bg</td><td class="num strong">—</td><td class="tok dim">diferente</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra dez regras lendo o HTML que este site emite:
+  <b>12 trilhas</b>, nenhuma fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Região</b><span><code>&lt;nav&gt;</code> com <code>aria-label</code>.</span></div>
+    <div><b>b · Uma por página</b><span>Uma trilha viva; amostras ficam sob <code>inert</code>.</span></div>
+    <div><b>c · Lista</b><span>Uma <code>&lt;ol class="al-breadcrumb__list"&gt;</code> só com <code>__item</code>.</span></div>
+    <div><b>d · Atual</b><span>Último item: <code>&lt;span aria-current="page"&gt;</code> com texto, sem link e sem separador.</span></div>
+    <div><b>e · Separador</b><span>Todo item antes do último termina num <code>&lt;svg&gt;</code> <code>aria-hidden</code> e <code>focusable="false"</code>.</span></div>
+    <div><b>f · Links</b><span><code>&lt;a href&gt;</code> com texto; <code>aria-current</code> só na atual.</span></div>
+    <div><b>g · “…”</b><span>Só com 5 níveis ou mais, no terceiro item: <code>&lt;button type="button"&gt;</code> com nome, <code>aria-expanded</code> e <code>aria-controls</code>.</span></div>
+    <div><b>h · Menu</b><span><code>&lt;ul class="al-tabs al-tabs--square"&gt;</code> de links <code>.al-tab</code>, sem <code>role</code>.</span></div>
+    <div><b>i · Lugar</b><span>Nunca dentro de Card, Modal ou Drawer.</span></div>
+    <div><b>j · Rótulos</b><span>Nenhum vazio.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Ordem do Tab</b><span>Início, Vendas, “…”, e sai. A página atual não para.</span></div>
+    <div><b>Abrir</b><span>Enter ou Espaço no “…”; o foco fica no botão e o Tab entra nos links.</span></div>
+    <div><b>Fechar</b><span>Esc devolve o foco ao “…”. Tab depois do último item, Shift+Tab antes do “…”, clique fora ou num item também fecham.</span></div>
+    <div><b>Anúncio</b><span>“Trilha de navegação”, “Mostrar mais páginas, recolhido/expandido”, “Pedido 1042, página atual”. As setas não são lidas.</span></div>
+    <div><b>Celular</b><span>Em 375 a página não rola na horizontal e o menu cabe na tela.</span></div>
+    <div><b>Alto contraste</b><span>O anel vira contorno <code>Highlight</code>.</span></div>
+    <div><b>Movimento reduzido</b><span>O menu aparece e some sem fade.</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.20.0</span>
+  <span><b>AL Design System</b> · v0.21.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -17797,6 +18424,124 @@ var SB_PARTS = {"menu": "<button type=\"button\" class=\"al-icon-btn al-icon-btn
   // o palco so tem largura quando a pagina esta visivel: medir de novo ao abrir a aba
   document.addEventListener('click', function () { setTimeout(fit, 0); });
   window.addEventListener('hashchange', function () { setTimeout(fit, 0); });
+  render();
+})();
+/* AL Design System - Breadcrumb, menu do `…` (decisoes 5a e B)
+ *
+ * So a Large precisa deste arquivo. Short e Medium sao links e texto: nada
+ * para ligar.
+ *
+ * Padrao "disclosure navigation" do W3C (regra 17), nao menu de acoes:
+ *   - o `…` abre e fecha a lista (hidden) e mantem aria-expanded em dia;
+ *   - ao abrir, o foco FICA no `…` (decisao B = a); o Tab do teclado entra nos
+ *     links, na ordem. Sem setas, sem role="menu";
+ *   - fecha com Esc - e o foco volta ao `…` (regra 16);
+ *   - fecha no clique fora, e quando o foco sai do `…` e do menu;
+ *   - fecha ao escolher um link (a navegacao segue normalmente).
+ *
+ * Uso:
+ *   <script src="breadcrumb.js"><\/script>   -> liga sozinho quando a pagina carrega
+ *   alBreadcrumb.init(container)             -> liga em conteudo inserido depois
+ * Ligar duas vezes o mesmo `…` nao duplica nada.
+ */
+(function () {
+  'use strict';
+
+  function bind(button) {
+    if (button.hasAttribute('data-al-breadcrumb')) return;
+    var menu = document.getElementById(button.getAttribute('aria-controls'));
+    if (!menu) return;
+    button.setAttribute('data-al-breadcrumb', '');
+    var wrap = button.parentNode;
+
+    function isOpen() { return button.getAttribute('aria-expanded') === 'true'; }
+
+    function set(open) {
+      button.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menu.hidden = !open;
+    }
+
+    set(isOpen());   // marcacao e estado sempre concordam
+
+    button.addEventListener('click', function () { set(!isOpen()); });
+
+    wrap.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape' || !isOpen()) return;
+      e.preventDefault();
+      set(false);
+      button.focus();
+    });
+
+    // foco saiu do `…` e do menu (Tab depois do ultimo link, Shift+Tab antes do `…`)
+    wrap.addEventListener('focusout', function (e) {
+      if (isOpen() && e.relatedTarget && !wrap.contains(e.relatedTarget)) set(false);
+    });
+
+    menu.addEventListener('click', function (e) {
+      if (e.target.closest('a[href]')) set(false);
+    });
+
+    document.addEventListener('pointerdown', function (e) {
+      if (isOpen() && !wrap.contains(e.target)) set(false);
+    });
+  }
+
+  function init(root) {
+    [].forEach.call((root || document).querySelectorAll('.al-breadcrumb__more-button[aria-controls]'), bind);
+  }
+
+  window.alBreadcrumb = { init: init };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function () { init(); });
+  } else {
+    init();
+  }
+})();
+var BC_DEMOS = {"2": {"html": "<nav class=\"al-breadcrumb\" aria-label=\"Trilha de navegação\"><ol class=\"al-breadcrumb__list\"><li class=\"al-breadcrumb__item\"><a class=\"al-breadcrumb__link\" href=\"#/breadcrumb\">Início<\/a><svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/li><li class=\"al-breadcrumb__item\"><span class=\"al-breadcrumb__current\" aria-current=\"page\">Pedido 1042<\/span><\/li><\/ol><\/nav>", "code": "<nav class=\"al-breadcrumb\" aria-label=\"Trilha de navegação\">\n  <ol class=\"al-breadcrumb__list\">\n    <li class=\"al-breadcrumb__item\">\n      <a class=\"al-breadcrumb__link\" href=\"/início\">Início<\/a>\n      <svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" viewBox=\"0 0 24 24\"\n           aria-hidden=\"true\" focusable=\"false\">…<\/svg>\n    <\/li>\n    <li class=\"al-breadcrumb__item\">\n      <span class=\"al-breadcrumb__current\" aria-current=\"page\">Pedido 1042<\/span>\n    <\/li>\n  <\/ol>\n<\/nav>"}, "3": {"html": "<nav class=\"al-breadcrumb\" aria-label=\"Trilha de navegação\"><ol class=\"al-breadcrumb__list\"><li class=\"al-breadcrumb__item\"><a class=\"al-breadcrumb__link\" href=\"#/breadcrumb\">Início<\/a><svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/li><li class=\"al-breadcrumb__item\"><a class=\"al-breadcrumb__link\" href=\"#/breadcrumb\">Vendas<\/a><svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/li><li class=\"al-breadcrumb__item\"><span class=\"al-breadcrumb__current\" aria-current=\"page\">Pedido 1042<\/span><\/li><\/ol><\/nav>", "code": "<nav class=\"al-breadcrumb\" aria-label=\"Trilha de navegação\">\n  <ol class=\"al-breadcrumb__list\">\n    <li class=\"al-breadcrumb__item\">\n      <a class=\"al-breadcrumb__link\" href=\"/início\">Início<\/a>\n      <svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" viewBox=\"0 0 24 24\"\n           aria-hidden=\"true\" focusable=\"false\">…<\/svg>\n    <\/li>\n    <li class=\"al-breadcrumb__item\">\n      <a class=\"al-breadcrumb__link\" href=\"/vendas\">Vendas<\/a>\n      <svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" viewBox=\"0 0 24 24\"\n           aria-hidden=\"true\" focusable=\"false\">…<\/svg>\n    <\/li>\n    <li class=\"al-breadcrumb__item\">\n      <span class=\"al-breadcrumb__current\" aria-current=\"page\">Pedido 1042<\/span>\n    <\/li>\n  <\/ol>\n<\/nav>"}, "4": {"html": "<nav class=\"al-breadcrumb\" aria-label=\"Trilha de navegação\"><ol class=\"al-breadcrumb__list\"><li class=\"al-breadcrumb__item\"><a class=\"al-breadcrumb__link\" href=\"#/breadcrumb\">Início<\/a><svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/li><li class=\"al-breadcrumb__item\"><a class=\"al-breadcrumb__link\" href=\"#/breadcrumb\">Vendas<\/a><svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/li><li class=\"al-breadcrumb__item\"><a class=\"al-breadcrumb__link\" href=\"#/breadcrumb\">Pedidos<\/a><svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/li><li class=\"al-breadcrumb__item\"><span class=\"al-breadcrumb__current\" aria-current=\"page\">Pedido 1042<\/span><\/li><\/ol><\/nav>", "code": "<nav class=\"al-breadcrumb\" aria-label=\"Trilha de navegação\">\n  <ol class=\"al-breadcrumb__list\">\n    <li class=\"al-breadcrumb__item\">\n      <a class=\"al-breadcrumb__link\" href=\"/início\">Início<\/a>\n      <svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" viewBox=\"0 0 24 24\"\n           aria-hidden=\"true\" focusable=\"false\">…<\/svg>\n    <\/li>\n    <li class=\"al-breadcrumb__item\">\n      <a class=\"al-breadcrumb__link\" href=\"/vendas\">Vendas<\/a>\n      <svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" viewBox=\"0 0 24 24\"\n           aria-hidden=\"true\" focusable=\"false\">…<\/svg>\n    <\/li>\n    <li class=\"al-breadcrumb__item\">\n      <a class=\"al-breadcrumb__link\" href=\"/pedidos\">Pedidos<\/a>\n      <svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" viewBox=\"0 0 24 24\"\n           aria-hidden=\"true\" focusable=\"false\">…<\/svg>\n    <\/li>\n    <li class=\"al-breadcrumb__item\">\n      <span class=\"al-breadcrumb__current\" aria-current=\"page\">Pedido 1042<\/span>\n    <\/li>\n  <\/ol>\n<\/nav>"}, "6": {"html": "<nav class=\"al-breadcrumb\" aria-label=\"Trilha de navegação\"><ol class=\"al-breadcrumb__list\"><li class=\"al-breadcrumb__item\"><a class=\"al-breadcrumb__link\" href=\"#/breadcrumb\">Início<\/a><svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/li><li class=\"al-breadcrumb__item\"><a class=\"al-breadcrumb__link\" href=\"#/breadcrumb\">Vendas<\/a><svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/li><li class=\"al-breadcrumb__item al-breadcrumb__more\"><button class=\"al-breadcrumb__more-button\" type=\"button\" aria-label=\"Mostrar mais páginas\" aria-expanded=\"false\" aria-controls=\"bc-pg\">…<\/button><ul class=\"al-tabs al-tabs--square al-breadcrumb__menu\" id=\"bc-pg\" hidden><li><a class=\"al-tab\" href=\"#/breadcrumb\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#/breadcrumb\"><span class=\"al-tab__label\">Março de 2026<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#/breadcrumb\"><span class=\"al-tab__label\">Loja Centro<\/span><\/a><\/li><\/ul><svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/li><li class=\"al-breadcrumb__item\"><span class=\"al-breadcrumb__current\" aria-current=\"page\">Pedido 1042<\/span><\/li><\/ol><\/nav>", "code": "<nav class=\"al-breadcrumb\" aria-label=\"Trilha de navegação\">\n  <ol class=\"al-breadcrumb__list\">\n    <li class=\"al-breadcrumb__item\">\n      <a class=\"al-breadcrumb__link\" href=\"/início\">Início<\/a>\n      <svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" viewBox=\"0 0 24 24\"\n           aria-hidden=\"true\" focusable=\"false\">…<\/svg>\n    <\/li>\n    <li class=\"al-breadcrumb__item\">\n      <a class=\"al-breadcrumb__link\" href=\"/vendas\">Vendas<\/a>\n      <svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" viewBox=\"0 0 24 24\"\n           aria-hidden=\"true\" focusable=\"false\">…<\/svg>\n    <\/li>\n    <li class=\"al-breadcrumb__item al-breadcrumb__more\">\n      <button class=\"al-breadcrumb__more-button\" type=\"button\"\n              aria-label=\"Mostrar mais páginas\"\n              aria-expanded=\"false\" aria-controls=\"bc-mais\">…<\/button>\n      <ul class=\"al-tabs al-tabs--square al-breadcrumb__menu\" id=\"bc-mais\" hidden>\n        <li><a class=\"al-tab\" href=\"/pedidos\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li>\n        <li><a class=\"al-tab\" href=\"/março-de-2026\"><span class=\"al-tab__label\">Março de 2026<\/span><\/a><\/li>\n        <li><a class=\"al-tab\" href=\"/loja-centro\"><span class=\"al-tab__label\">Loja Centro<\/span><\/a><\/li>\n      <\/ul>\n      <svg class=\"al-icon al-icon--16 al-breadcrumb__separator\" viewBox=\"0 0 24 24\"\n           aria-hidden=\"true\" focusable=\"false\">…<\/svg>\n    <\/li>\n    <li class=\"al-breadcrumb__item\">\n      <span class=\"al-breadcrumb__current\" aria-current=\"page\">Pedido 1042<\/span>\n    <\/li>\n  <\/ol>\n<\/nav>\n<script src=\"breadcrumb.js\"><\/script>  <!-- o menu do “…” -->"}};
+
+(function () {
+  // ── playground do Breadcrumb ──
+  var stage = document.getElementById('breadcrumb-stage');
+  if (!stage) return;
+  var code = document.getElementById('breadcrumb-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada profundidade vem pronto do site.py (BC_DEMOS). Depois de
+  // trocar, o breadcrumb.js real liga o `…` novo.
+  function render() {
+    var theme = pick('bctheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = BC_DEMOS[pick('bcdepth')];
+    stage.innerHTML = '<div class="bc-page" data-bcpage="' + pick('bcpage') + '">' + demo.html + '</div>';
+    if (window.alBreadcrumb) window.alBreadcrumb.init(stage);
+    code.innerHTML = esc(demo.code);
+  }
+
+  // os links de exemplo nao navegam; o menu fecha pelo proprio breadcrumb.js
+  stage.addEventListener('click', function (e) {
+    if (e.target.closest('a[href]')) e.preventDefault();
+  });
+
+  document.querySelectorAll('#breadcrumb-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('breadcrumb-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
   render();
 })();
 
