@@ -122,6 +122,11 @@ DRW_TOKENS = open(os.path.join(ROOT, 'components', 'drawer', 'al-drawer-tokens.c
 DRW_CSS = open(os.path.join(ROOT, 'components', 'drawer', 'drawer.css')).read()
 DRW_JS = open(os.path.join(ROOT, 'components', 'drawer', 'drawer.js')).read()
 DRW_A11Y = json.load(open(os.path.join(ROOT, 'components', 'drawer', 'a11y.json')))
+SBR = json.load(open(os.path.join(ROOT, 'components', 'sidebar', 'tokens.json')))
+SBR_TOKENS = open(os.path.join(ROOT, 'components', 'sidebar', 'al-sidebar-tokens.css')).read()
+SBR_CSS = open(os.path.join(ROOT, 'components', 'sidebar', 'sidebar.css')).read()
+SBR_JS = open(os.path.join(ROOT, 'components', 'sidebar', 'sidebar.js')).read()
+SBR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'sidebar', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -154,6 +159,7 @@ N_TAB_TOKENS = len(TAB['alias'])
 N_ACC_TOKENS = len(ACC['alias'])
 N_MOD_TOKENS = len(MOD['alias'])
 N_DRW_TOKENS = len(DRW['alias'])
+N_SBR_TOKENS = len(SBR['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -198,7 +204,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
-                         ACC_TOKENS, MOD_TOKENS, DRW_TOKENS)
+                         ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -216,7 +222,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + TAB_TOKENS + '\n' + TAB_CSS
             + '\n' + ACC_TOKENS + '\n' + ACC_CSS
             + '\n' + MOD_TOKENS + '\n' + MOD_CSS
-            + '\n' + DRW_TOKENS + '\n' + DRW_CSS)
+            + '\n' + DRW_TOKENS + '\n' + DRW_CSS
+            + '\n' + SBR_TOKENS + '\n' + SBR_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1562,7 +1569,7 @@ def mo_matrix():
     return (
         '<div class="scroller"><table>'
         '<thead><tr><th>Tipo de ação</th><th>Easing</th><th class="num">Controles</th>'
-        '<th class="num">Tooltip e Toast</th><th class="num">Modal e Drawer</th></tr></thead><tbody>'
+        '<th class="num">Tooltip e Toast</th><th class="num">Modal, Drawer e Sidebar</th></tr></thead><tbody>'
         + row('Entrada', 'ease-out') + row('Saída', 'ease-in') +
         '</tbody></table></div>')
 
@@ -8225,7 +8232,7 @@ TAB_GUIDE = f'''
     <div><b>Fechar aba</b><span>Não existe.</span></div>
     <div><b>Segundo tamanho</b><span>Um tamanho só (regra 10).</span></div>
     <div><b>Desabilitada</b><span>Não existe (regra 18).</span></div>
-    <div><b>Item de sidebar cheio</b><span>Largura total com rótulo à esquerda fica para a sidebar do Tier 4.</span></div>
+    <div><b>Item de sidebar cheio</b><span>Largura total com rótulo à esquerda é coisa da Sidebar: ela estica o Square.</span></div>
   </div>
 </section>'''
 
@@ -9634,7 +9641,7 @@ DW_RULES = [
         ('Decisão que trava, ou confirmação, é Modal', 'O Drawer não interrompe: ele acompanha a página. Precedentes: SAP, Design System de Singapura.'),
         ('Fluxo longo, de várias etapas, ou com URL própria, é página', 'Formulário curto de edição no contexto cabe no Drawer; passou do <code>lg</code> com rolagem demais, vire página. <b>Divergência consciente:</b> o Primer proíbe formulário em painel lateral; Ant Design e Singapura o permitem, e o AL fica com eles. Precedentes: Primer, Evergreen, Smashing Magazine.'),
         ('Nunca um Drawer sobre outro', 'O usuário se perde na camada. Precedentes: Primer (o fundo escurecido impede dois painéis ao mesmo tempo), Moon.'),
-        ('Só entra pela direita', 'A esquerda é de navegação, que é do Tier 4. Precedentes: Primer, Carbon (painel direito do UI shell).'),
+        ('Só entra pela direita', 'A esquerda é da navegação, a Sidebar. Precedentes: Primer, Carbon (painel direito do UI shell).'),
     ]),
     ('Estrutura e conteúdo', [
         ('O título é obrigatório e visível', 'Ele nomeia o painel para todo mundo. Precedentes: Primer, APG.'),
@@ -9723,7 +9730,7 @@ DRAWER_GUIDE = f'''
 <section>
   <h2>Fora de escopo, de propósito</h2>
   <div class="anat">
-    <div><b>Outros lados</b><span>Esquerda, de cima e de baixo. A esquerda é navegação, que é do Tier 4.</span></div>
+    <div><b>Outros lados</b><span>Esquerda, de cima e de baixo. A esquerda é da Sidebar, que vira painel pela esquerda no celular.</span></div>
     <div><b>Drawer persistente, sem fundo escurecido</b><span>O “standard” do Material é layout de página, não componente de overlay.</span></div>
     <div><b>Drawer redimensionável</b><span>Os três tamanhos são fixos.</span></div>
     <div><b>Drawer sobre Drawer</b><span>Nunca. Se a demanda aparecer, o fluxo é página.</span></div>
@@ -9925,6 +9932,653 @@ JS_DRAWER = r"""
 """
 
 
+# ═══════════════════════════════════════════════════════════ Sidebar · abas
+# Primeiro componente do Tier 4, e o primeiro que e LAYOUT de pagina: a Sidebar
+# so faz sentido ao lado de um conteudo, presa na altura da tela, e muda de forma
+# abaixo de 1024px. Por isso o playground nao desenha a Sidebar solta no palco: ele
+# monta uma pagina pequena dentro de um <iframe>, com o CSS real (a <style
+# id="al-real"> desta pagina) e o sidebar.js real, em largura de tela larga
+# (reduzida para caber) ou de celular. As congeladas das Especificacoes ficam sob
+# `inert`; os "a evitar" sao casca do site (sb-fake-*), nunca uma .al-sidebar errada.
+SB_WIDTHS = [('wide', 'Tela larga · 1200'), ('phone', 'Celular · 375')]
+SB_AVATARS = [('initials', 'Iniciais'), ('icon', 'Ícone')]
+SB_HELP = [('on', 'Com Ajuda'), ('off', 'Sem Ajuda')]
+
+N_SB_MEDIDAS = len(SBR_A11Y['rows'])
+N_SB_EXC = sum(1 for r in SBR_A11Y['rows'] if r['exception'])
+N_SB_PASS = sum(1 for r in SBR_A11Y['rows'] if r['pass'])
+N_SB_FAIL = sum(1 for r in SBR_A11Y['rows'] if not r['pass'] and not r['exception'])
+N_SB_EXC_KEYS = len({r['exception'] for r in SBR_A11Y['rows'] if r['exception']})
+SB_WIDTH = SBR['resolved']['sidebar-width']
+
+SB_GROUPS = [
+    ('Vendas', ['Pedidos', 'Clientes', 'Produtos', 'Cupons']),
+    ('Financeiro', ['Faturas', 'Pagamentos', 'Relatórios']),
+    ('Operação', ['Estoque', 'Entregas', 'Fornecedores']),
+]
+SB_LOOSE = ['Início', 'Caixa de entrada']
+SB_SUPPORT = ['Central de ajuda', 'Documentação', 'Enviar feedback']
+
+
+def sb_slug(s):
+    import unicodedata
+    return re.sub(r'[^a-z0-9]+', '-', unicodedata.normalize('NFKD', s.lower())
+                  .encode('ascii', 'ignore').decode()).strip('-')
+
+
+def sb_list(itens, atual, labelledby=None):
+    lab = f' aria-labelledby="{labelledby}"' if labelledby else ''
+    return (f'<ul class="al-tabs al-tabs--square"{lab}>' + ''.join(
+        f'<li><a class="al-tab" href="#{sb_slug(i)}"{" aria-current=" + chr(34) + "page" + chr(34) if i == atual else ""}>'
+        f'<span class="al-tab__label">{i}</span></a></li>' for i in itens) + '</ul>')
+
+
+def sb_group(pid, rotulo, itens, atual, extra=''):
+    gid = f'{pid}-g-{sb_slug(rotulo)}'
+    return (f'<div class="al-sidebar__group{extra}"><p class="al-sidebar__group-label" id="{gid}">{rotulo}</p>'
+            f'{sb_list(itens, atual, gid)}</div>')
+
+
+def sb_avatar(kind, ini):
+    inner = al_icon('user') if kind == 'icon' else f'<span class="al-avatar__initials">{ini}</span>'
+    return f'<span class="al-avatar al-avatar--md" aria-hidden="true">{inner}</span>'
+
+
+def sb_aside(pid, nome='Jane Doe', email='jane.doe@gmail.com', ini='JD', groups=SB_GROUPS,
+             loose=SB_LOOSE, atual='Início', help_on=True, av='initials'):
+    miolo = (sb_list(loose, atual) if loose else '') + ''.join(sb_group(pid, r, i, atual) for r, i in groups)
+    sup = sb_group(pid, 'Ajuda', SB_SUPPORT, atual, ' al-sidebar__support') if help_on else ''
+    return (f'<aside class="al-sidebar" id="{pid}" aria-label="Barra lateral">'
+            f'<div class="al-sidebar__profile">{sb_avatar(av, ini)}'
+            f'<div class="al-sidebar__details"><div class="al-sidebar__user">'
+            f'<p class="al-sidebar__name">{nome}</p><p class="al-sidebar__email">{email}</p></div>'
+            f'<a class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" href="#conta" '
+            f'aria-label="Abrir minha conta">{al_icon("chevron-right")}</a></div></div>'
+            f'<nav class="al-sidebar__nav" aria-label="Principal"><div class="al-sidebar__content">{miolo}</div>'
+            f'{sup}</nav></aside>')
+
+
+def sb_code(av, help_on):
+    avatar = ('      <span class="al-avatar__initials">JD</span>' if av == 'initials' else
+              '      <svg class="al-icon" aria-hidden="true" focusable="false">…user…</svg>')
+    L = ['<a class="skip" href="#conteudo">Pular para o conteúdo</a>   <!-- do produto, antes da Sidebar -->',
+         '',
+         '<!-- botão Menu, do produto, no topo da página: só aparece abaixo de 1024px -->',
+         '<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"',
+         '        aria-label="Menu" aria-controls="sb" aria-expanded="false" data-al-sidebar-open="sb">',
+         '  <svg class="al-icon" aria-hidden="true" focusable="false">…menu…</svg></button>',
+         '',
+         '<aside class="al-sidebar" id="sb" aria-label="Barra lateral">',
+         '  <div class="al-sidebar__profile">',
+         '    <span class="al-avatar al-avatar--md" aria-hidden="true">', avatar, '    </span>',
+         '    <div class="al-sidebar__details">',
+         '      <div class="al-sidebar__user">',
+         '        <p class="al-sidebar__name">Jane Doe</p>',
+         '        <p class="al-sidebar__email">jane.doe@gmail.com</p>',
+         '      </div>',
+         '      <a class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" href="/conta" aria-label="Abrir minha conta">',
+         '        <svg class="al-icon" aria-hidden="true" focusable="false">…chevron-right…</svg></a>',
+         '    </div>',
+         '  </div>',
+         '  <nav class="al-sidebar__nav" aria-label="Principal">',
+         '    <div class="al-sidebar__content">   <!-- só esta parte rola -->',
+         '      <ul class="al-tabs al-tabs--square">   <!-- itens soltos: no topo, sem rótulo -->',
+         '        <li><a class="al-tab" href="/" aria-current="page"><span class="al-tab__label">Início</span></a></li>',
+         '      </ul>',
+         '      <div class="al-sidebar__group">',
+         '        <p class="al-sidebar__group-label" id="g-vendas">Vendas</p>',
+         '        <ul class="al-tabs al-tabs--square" aria-labelledby="g-vendas">',
+         '          <li><a class="al-tab" href="/pedidos"><span class="al-tab__label">Pedidos</span></a></li>',
+         '        </ul>',
+         '      </div>',
+         '    </div>']
+    if help_on:
+        L += ['    <div class="al-sidebar__group al-sidebar__support">',
+              '      <p class="al-sidebar__group-label" id="g-ajuda">Ajuda</p>',
+              '      <ul class="al-tabs al-tabs--square" aria-labelledby="g-ajuda">',
+              '        <li><a class="al-tab" href="/ajuda"><span class="al-tab__label">Central de ajuda</span></a></li>',
+              '      </ul>',
+              '    </div>']
+    L += ['  </nav>', '</aside>',
+          '<main id="conteudo" tabindex="-1">…</main>',
+          '<script src="sidebar.js"></script>  <!-- o painel modal abaixo de 1024px -->']
+    return '\n'.join(L)
+
+
+SB_DEMOS = {f'{a}|{h}': {'aside': sb_aside('sb', help_on=h == 'on', av=a), 'code': sb_code(a, h == 'on')}
+            for a, _ in SB_AVATARS for h, _ in SB_HELP}
+SB_MENU = ('<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md" aria-label="Menu" '
+           f'aria-controls="sb" aria-expanded="false" data-al-sidebar-open="sb">{al_icon("menu")}</button>')
+
+
+def sb_frozen(pid, rotulo, **kw):
+    """Sidebar inline, so para mostrar: inert + aria-hidden, altura de exemplo."""
+    return (f'<div class="sb-cell" inert aria-hidden="true"><span class="md-lab">{rotulo}</span>'
+            + sb_aside(pid, **kw) + '</div>')
+
+
+def sidebar_token_rows():
+    rows = []
+    for name in SBR['alias']:
+        res = SBR['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{SBR["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+SB_OQUE = {
+    'nome': 'nome', 'email': 'e-mail', 'rotulo-grupo': 'rótulo de grupo',
+    'item-repouso': 'item em repouso', 'item-hover': 'item em hover', 'item-pressed': 'item pressionado',
+    'item-atual': 'item atual', 'item-atual-hover': 'item atual em hover',
+    'item-atual-pressed': 'item atual pressionado', 'anel-de-foco': 'anel de foco',
+    'icone-do-botao-perfil': 'ícone do botão do perfil', 'item-atual-fundo': 'fundo do item atual',
+    'item-atual-pressed-fundo': 'fundo do item atual pressionado',
+    'item-hover-distinto': 'hover do item × Sidebar', 'item-pressed-distinto': 'pressionado do item × Sidebar',
+    'botao-hover-distinto': 'hover do botão × Sidebar', 'botao-pressed-distinto': 'pressionado do botão × Sidebar',
+    'borda-x-bg-canvas': 'borda × tela', 'borda-x-bg-surface': 'borda × superfície',
+    'painel-x-bg-canvas-escurecida': 'painel modal × tela escurecida',
+    'painel-x-bg-surface-escurecida': 'painel modal × superfície escurecida',
+    'borda-do-painel-x-bg-canvas-escurecida': 'borda do painel × tela escurecida',
+    'borda-do-painel-x-bg-surface-escurecida': 'borda do painel × superfície escurecida',
+}
+
+
+def sidebar_a11y_rows():
+    out = []
+    for r in SBR_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        if r['invisible']:
+            v = '<span class="fail">invisível</span>'
+        elif r['pass']:
+            v = '<span class="pass">passa</span>'
+        else:
+            v = '<span class="exc">exceção declarada</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{SB_OQUE[r["what"]]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+SIDEBAR_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage sb-stage" id="sidebar-stage">
+      <div class="sb-framebox" id="sidebar-framebox">
+        <iframe class="sb-frame" id="sidebar-frame" title="Página de exemplo com a Sidebar"></iframe>
+      </div>
+    </div>
+
+    <div class="controls" id="sidebar-controls">
+      <div class="ctl"><span class="ctl-name">Largura</span>{seg('sbwidth', SB_WIDTHS, 'wide')}</div>
+      <div class="ctl"><span class="ctl-name">Avatar</span>{seg('sbavatar', SB_AVATARS, 'initials')}</div>
+      <div class="ctl"><span class="ctl-name">Ajuda</span>{seg('sbhelp', SB_HELP, 'on')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('sbtheme', [('auto', 'Do site'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="sidebar-copy">Copiar</button></div>
+      <pre><code id="sidebar-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O palco é uma página pequena de verdade, com o CSS e o <code>sidebar.js</code> reais. Em <b>Tela larga</b>
+    ela tem 1200px, reduzida para caber: clique nos itens, passe o mouse, role o miolo da Sidebar. Em
+    <b>Celular</b> ela tem 375px: a Sidebar sai da página e o botão Menu a abre como painel pela esquerda.
+    O foco cai no item atual; Esc, um clique fora ou a escolha de um destino fecham.
+  </p>
+</section>'''
+
+
+SIDEBAR_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-sidebar</code> é um <code>&lt;aside&gt;</code> com nome. {SB_WIDTH}px de largura (<code>sidebar-width</code>), a altura da tela, presa no topo enquanto a página rola. Fundo <code>sidebar-bg</code> (a tela) e uma borda à direita, <code>sidebar-border</code>.</span></div>
+    <div><b>Perfil</b><span><code>__profile</code>: Avatar md (decorativo), nome e e-mail em <code>__user</code> e o Icon Button Ghost sm que leva à conta. Fica fora da navegação.</span></div>
+    <div><b>Navegação</b><span><code>__nav</code> é o <code>&lt;nav aria-label="Principal"&gt;</code>. Dentro, o miolo e a Ajuda.</span></div>
+    <div><b>Miolo</b><span><code>__content</code>: itens soltos no topo e os grupos. É o único que rola.</span></div>
+    <div><b>Grupo</b><span><code>__group</code>: rótulo em <code>__group-label</code> (mono) e uma lista nomeada por ele.</span></div>
+    <div><b>Item</b><span>O Tab Square de navegação: <code>&lt;a class="al-tab"&gt;</code>, com <code>aria-current="page"</code> no atual. Aqui ele estica na largura.</span></div>
+    <div><b>Ajuda</b><span><code>__support</code>, opcional: um grupo fixo embaixo, com até três itens.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Congeladas</h2>
+  <p>Mesmo CSS, com uma altura de exemplo no lugar da altura da tela, para comparar com o Figma. A da esquerda
+  testa as reticências no nome e no e-mail; a da direita é o desenho do Figma, com o slot vazio.</p>
+  <div class="cd-panel sb-frozen" style="margin-top:16px">
+    {sb_frozen('sb-sp-a', 'nome longo · item atual · sem Ajuda', nome='Maria Eduarda Albuquerque Cavalcanti',
+               email='maria.eduarda.albuquerque@empresaexemplo.com.br', ini='MA',
+               groups=[('Vendas', ['Pedidos', 'Clientes', 'Produtos'])], loose=['Início'],
+               atual='Clientes', help_on=False)}
+    {sb_frozen('sb-sp-b', 'como no Figma · slot vazio · Ajuda', groups=[], loose=[], atual=None, av='icon')}
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token da Sidebar</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{sidebar_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O fundo é a tela, separada por uma borda</b>
+    Com <code>bg-surface-raised</code>, o desenho inicial, a Sidebar era branca sobre branca no claro e o hover
+    dos itens sumia no escuro (1,00:1). Na tela, os itens (Tab) e o botão do perfil (Icon Button) ficam sobre o
+    fundo em que já foram medidos, sem correção nenhuma. Quem separa da página é a borda, na cor do Divider.
+  </div>
+  <div class="note">
+    <b>A largura é o único valor declarado</b>
+    Todo token aponta para a Foundation, menos <code>sidebar-width</code>: a Foundation ainda não tem escala de
+    largura de contêiner. É a mesma exceção do Modal e do Drawer.
+  </div>
+  <div class="note">
+    <b>Altura, rolagem e o <code>align-self</code></b>
+    A Sidebar tem a altura da tela e fica presa no topo (<code>sticky</code>); só o miolo rola, e ele ganha um
+    respiro do tamanho do anel de foco para o overflow não cortar o anel. Numa linha flex, o padrão é esticar o
+    item até a altura da linha, e um item esticado não tem para onde grudar: por isso a Sidebar declara
+    <code>align-self: flex-start</code>. Achado da etapa 6.
+  </div>
+  <div class="note">
+    <b>Abaixo de 1024px, painel modal pela esquerda</b>
+    O <code>sidebar.js</code> move a mesma <code>&lt;aside&gt;</code> para dentro de um <code>&lt;dialog&gt;</code>
+    e chama <code>showModal()</code>: nunca há duas cópias da navegação. Fundo escurecido, sombra e duração são os
+    semânticos que o Drawer também usa (<code>bg-scrim</code>, <code>elevation-5</code>, duração de painel), lidos
+    direto da Foundation. Sem X: o botão Menu, o Esc e o clique fora fecham. O ponto de quebra é o único
+    comprimento escrito no CSS, porque <code>@media</code> não lê custom property; o portão aceita só esse valor,
+    só ali.
+  </div>
+  <div class="note">
+    <b>O item é o Tab</b>
+    Cor, fundo, raio, anel e estados vêm do <code>tab.css</code>. O CSS da Sidebar só empilha os itens com
+    <code>sidebar-item-gap</code> e estica cada um na largura.
+  </div>
+</section>'''
+
+
+SB_RULES = [
+    ('Quando usar', [
+        ('Navegação principal entre destinos do produto', 'Visível o tempo todo; vale a partir de uns 5 destinos ou quando a pessoa troca de área com frequência. Com menos, barra horizontal com Tab Line. Precedentes: Carbon (painel lateral acima de 5 itens), Material (gaveta para 5 ou mais).'),
+        ('Item é destino, nunca ação', '“Criar pedido” ou “Sair” vão num Button, no conteúdo ou na página de conta. Precedentes: Primer NavList, Polaris.'),
+        ('Não alterna conteúdo da mesma tela', 'Isso é o Tab de painel: marcação diferente, anúncio diferente. Precedentes: Primer (NavList e UnderlinePanels separados), regra 22 do Tab.'),
+        ('Uma Sidebar por tela, sempre à esquerda', 'A direita é do Drawer; duas colunas de navegação competem. Precedentes: Material, Carbon.'),
+    ]),
+    ('Estrutura e hierarquia', [
+        ('Três zonas, nesta ordem', 'Perfil em cima, grupos no miolo, Ajuda embaixo. Só o miolo rola. Precedentes: Carbon, Material.'),
+        ('Destinos relacionados sob um rótulo de grupo', 'Itens sem categoria vão no topo, sem rótulo; grupo de um item só não leva rótulo. Precedentes: Spectrum, Primer NavList.Group.'),
+        ('Os mais usados primeiro', 'Entre grupos e dentro de cada grupo. Precedente: Material.'),
+        ('Um nível só', 'Sub-páginas viram Tab Line dentro da página. Precedentes: Carbon (sem terceiro nível; abas na página), decisão I do Tab.'),
+        ('Rótulo de grupo não é clicável', 'Ele não leva a lugar nenhum. Precedente: Spectrum.'),
+        ('Grupos separados por espaço, sem Divider', '<b>Divergência consciente:</b> o Primer usa divisória em grupo sem rótulo. No AL todo grupo com mais de um item tem rótulo, e rótulo mais 24 de espaço já separam.'),
+    ]),
+    ('Item', [
+        ('Sempre o Tab Square de largura cheia', 'Nunca o Line: a linha só faz sentido na horizontal. Precedente: regra 4 e decisão J do Tab.'),
+        ('No máximo um item atual', 'O destino da área onde a pessoa está, inclusive nas sub-páginas. Página fora dos destinos, como a da conta, não marca nenhum. Precedentes: Carbon, Primer.'),
+        ('Sem ícone e sem contador', 'Nesta versão. O Tab também não tem.'),
+    ]),
+    ('Conteúdo', [
+        ('Rótulo de 1 a 3 palavras', 'Um substantivo que nomeia o destino, em caixa de frase, sem jargão interno: “Pedidos”, não “Gerencie seus pedidos”. Precedentes: Material, regras 14 e 15 do Tab.'),
+        ('Rótulo em uma linha, sem reticências', 'A largura útil é 248. Se não cabe, o texto muda. Precedentes: Material (“não truncar”), regra 16 do Tab.'),
+        ('Nenhum rótulo repetido', 'O leitor de tela lista todos os links; dois “Relatórios” ficam ambíguos (WCAG 2.4.4).'),
+        ('Rótulo de grupo com uma ou duas palavras', 'Mono, em caixa de frase, nunca em caixa alta: a fonte já o diferencia dos itens.'),
+    ]),
+    ('Perfil', [
+        ('Quem está logado: nome e e-mail', 'O Avatar segue foto, iniciais, ícone, e aqui é decorativo, porque o nome está ao lado. Precedente: regras do Avatar.'),
+        ('O botão leva à página da conta', 'Com nome que diz isso, como “Abrir minha conta”. Precedente: regras do Icon Button.'),
+        ('Nome e e-mail podem ter reticências', 'A única exceção à regra 15: o texto vem do cadastro, não do produto. O texto inteiro segue no documento para o leitor de tela. Precedente: Primer (truncar só texto do usuário).'),
+    ]),
+    ('Ajuda', [
+        ('Opcional, para o que fica fora do dia a dia', 'Suporte, documentação, feedback; até três itens, fixos embaixo. Precedentes: Carbon, Material.'),
+        ('Item que abre outro site avisa', 'No rótulo ou no nome acessível. Precedente: WCAG 3.2.5.'),
+    ]),
+    ('Tamanho e layout', [
+        ('Um tamanho só', f'{SB_WIDTH} de largura e a altura da tela; não rola com a página. Precedente: Primer (painel de 296).'),
+        ('Abaixo de 1024px, painel modal pela esquerda', 'Aberto por um botão Menu que o produto põe no topo. Cobre também o zoom de 200% (WCAG 1.4.10). Precedentes: Carbon (menu em tela pequena ou a ~175% de zoom), Material (gaveta modal em tela compacta).'),
+        ('No modo modal, sem X', 'O foco cai no item atual; Esc fecha e devolve o foco ao Menu; escolher um destino fecha; clicar fora sempre fecha, porque não há campos. O Menu continua visível. Precedentes: Modal e Drawer do AL, Material.'),
+    ]),
+    ('Acessibilidade', [
+        ('<code>&lt;aside&gt;</code> com a navegação dentro', 'Grupos e Ajuda num <code>&lt;nav aria-label="Principal"&gt;</code>; o perfil fica fora, porque identifica, não navega. Precedentes: Carbon, Queensland.'),
+        ('Cada grupo é uma lista nomeada pelo rótulo', '“Vendas, lista, 4 itens”. Precedentes: Primer, Carbon.'),
+        ('Itens são links, o atual com <code>aria-current="page"</code>', 'Nunca <code>role="tab"</code>; Tab passa por todos e as setas não fazem nada. Precedentes: regra 22 do Tab, Carbon, Primer.'),
+        ('“Pular para o conteúdo” antes da Sidebar', 'É do produto. Sem ele, quem usa teclado atravessa todos os itens em toda página (WCAG 2.4.1). Precedente: Carbon.'),
+        ('Foco é o anel do Tab, só pelo teclado', 'No alto contraste, o item atual ganha contorno e a borda segue visível. Precedente: regras 23 e 24 do Tab.'),
+    ]),
+    ('Exceções', [
+        ('A borda é de região', 'Entre 1,47 e 2,71:1, abaixo de 3:1: a Sidebar é uma região da página, não um controle. Não escurecer. Mesmo raciocínio do Divider e do Card.'),
+        ('O título da página repete o rótulo do item atual', 'Paga a seleção tonal herdada do Tab (o fundo do atual mal se separa da tela). Sobre a tela, o pressionado do atual passa 3:1.'),
+    ]),
+    ('Fora de escopo', [
+        ('O que fica de fora, de propósito', 'Ícone, contador, sub-níveis, modo recolhido só com ícones, redimensionar arrastando, Sidebar à direita, segundo tamanho, tema próprio. Demanda nova volta para a etapa 1.'),
+    ]),
+]
+
+
+def sb_rules_html():
+    out, n = [], 0
+    for grupo, regras in SB_RULES:
+        out.append(f'<h3 class="cd-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    assert n == 33, f'as regras aprovadas sao 33, o site tem {n}'
+    return '\n'.join(out)
+
+
+def sb_fake(itens, kind='do'):
+    lis = ''.join(f'<span class="sb-fake-i{" sb-fake-i--on" if on else ""}">{t}</span>' for t, on in itens)
+    return (f'<div class="sb-fake sb-fake--{kind}"><span class="sb-fake-side">'
+            f'<span class="sb-fake-who"><i></i><b></b></span>{lis}</span>'
+            f'<span class="sb-fake-page"><i></i><i></i><i></i></span></div>')
+
+
+SIDEBAR_GUIDE = f'''
+<section>
+  <h2>Quando usar</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Destinos, um deles atual</span>
+      <div class="stage2 sb-stage2">{sb_fake([('Início', True), ('Pedidos', False), ('Clientes', False), ('Faturas', False)])}</div>
+      <p class="cap">Substantivos curtos que levam a páginas. <i>Primer, Material.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Ações misturadas com destinos</span>
+      <div class="stage2 sb-stage2">{sb_fake([('Início', True), ('Criar pedido', False), ('Exportar', False), ('Sair', False)], 'no')}</div>
+      <p class="cap">Ação é Button, no conteúdo. <i>Primer, Polaris.</i></p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Rótulo curto, uma linha</span>
+      <div class="stage2 sb-stage2">{sb_fake([('Relatórios', False), ('Pagamentos', True), ('Estoque', False)])}</div>
+      <p class="cap">Se não cabe, o texto muda. <i>Material.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Dois itens atuais</span>
+      <div class="stage2 sb-stage2">{sb_fake([('Pedidos', True), ('Clientes', True), ('Estoque', False)], 'no')}</div>
+      <p class="cap">A marca diz onde a pessoa está: um lugar só.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {sb_rules_html()}
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Ícone e contador nos itens</b><span>O Tab não tem; a Sidebar herda.</span></div>
+    <div><b>Sub-níveis que expandem</b><span>Um nível só; sub-páginas são Tab Line na página.</span></div>
+    <div><b>Modo recolhido só com ícones</b><span>Sem ícone nos itens, ele nem é possível.</span></div>
+    <div><b>Redimensionar arrastando</b><span>O Spectrum tem; o AL tem um tamanho.</span></div>
+    <div><b>Sidebar à direita</b><span>A direita é do Drawer.</span></div>
+    <div><b>Tema próprio</b><span>Uma Sidebar escura num produto claro, por exemplo.</span></div>
+  </div>
+</section>'''
+
+
+SIDEBAR_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede os textos da Sidebar e os estados do item e do botão do perfil <b>sobre o fundo da
+  Sidebar</b>, além da borda e do painel modal contra a página escurecida. Texto passa 4,5:1; anel, ícone e
+  fundo do item atual, 3:1. Um julgamento a mais exige que hover e pressionado sejam <b>diferentes</b> do
+  fundo: era o defeito que o fundo elevado causava.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_SB_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_SB_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>{N_SB_EXC}</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>{N_SB_FAIL}</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{sidebar_a11y_rows()}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Exceção nova: o painel modal não se separa do fundo escurecido no escuro</b>
+    O painel tem a cor da tela, e no escuro a página escurecida fica quase da mesma cor: 1,08 a 1,12:1. No claro
+    passa (4,1). Quem separa é a borda (2,6 a 2,7:1) e a sombra, e o painel ocupa a altura toda a partir da borda
+    esquerda. Aprovada na etapa 6; o Drawer tem a parecida, em 1,8.
+  </div>
+  <div class="note">
+    <b>Herdadas</b>
+    <code>borda-de-regiao</code> (a borda é de região, não de controle), <code>selecao-tonal</code> (paga pelo
+    título da página igual ao rótulo do item atual) e <code>marca-no-hover-escuro</code> (a exceção de marca da
+    Foundation, 3,85:1 no hover do item atual).
+  </div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra catorze regras lendo o HTML da visualização de QA:
+  <b>{SBR_A11Y['markupChecked'] or 0} Sidebars</b> ali, nenhuma fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Região</b><span><code>.al-sidebar</code> é um <code>&lt;aside&gt;</code> com nome.</span></div>
+    <div><b>b · Uma por tela</b><span>Só uma viva no documento; as congeladas, sob <code>inert</code>, estão isentas.</span></div>
+    <div><b>c · Navegação</b><span>Exatamente um <code>__nav</code>, que é <code>&lt;nav aria-label&gt;</code>.</span></div>
+    <div><b>d · Ordem</b><span>Perfil e navegação; dentro dela, miolo e Ajuda.</span></div>
+    <div><b>e · Perfil</b><span>Fora do <code>&lt;nav&gt;</code>; Avatar <code>aria-hidden</code> e foto com <code>alt=""</code>.</span></div>
+    <div><b>f · Botão do perfil</b><span>Icon Button com nome e ícone <code>aria-hidden</code>.</span></div>
+    <div><b>g · Grupo</b><span>Rótulo com texto e id; a lista aponta para ele com <code>aria-labelledby</code>.</span></div>
+    <div><b>h · Lista</b><span>Sempre <code>.al-tabs.al-tabs--square</code>.</span></div>
+    <div><b>i · Item</b><span><code>&lt;a href&gt;</code> com rótulo, nunca <code>role="tab"</code> nem <code>aria-selected</code>.</span></div>
+    <div><b>j · Um atual</b><span>No máximo um <code>aria-current="page"</code>.</span></div>
+    <div><b>k · Sem repetir</b><span>Nenhum rótulo de item igual a outro.</span></div>
+    <div><b>l · Ajuda</b><span>É um grupo, com até três itens.</span></div>
+    <div><b>m · Menu</b><span>Todo <code>data-al-sidebar-open</code> aponta para uma Sidebar e tem nome, <code>aria-controls</code> e <code>aria-expanded</code>.</span></div>
+    <div><b>n · Pular</b><span>Um link “pular para o conteúdo” vem antes da Sidebar.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Ordem</b><span>Pular para o conteúdo, botão do perfil, itens grupo a grupo, Ajuda. Setas não fazem nada.</span></div>
+    <div><b>Presa no topo</b><span>A Sidebar fica parada enquanto a página rola; só o miolo dela rola.</span></div>
+    <div><b>Painel modal</b><span>Entra da esquerda e sai pela esquerda; o foco cai no item atual e fica preso no painel.</span></div>
+    <div><b>Fechar</b><span>Esc, clique fora ou escolher um destino; o foco volta ao Menu, que informa aberto ou fechado.</span></div>
+    <div><b>Tela alargou</b><span>Com o painel aberto, ele fecha e a Sidebar volta ao lugar dela.</span></div>
+    <div><b>Leitor de tela</b><span>“Barra lateral”, “Principal, navegação”, “Vendas, lista, 4 itens”, “página atual”.</span></div>
+    <div><b>Movimento reduzido</b><span>O painel abre e fecha sem deslizar.</span></div>
+  </div>
+</section>'''
+
+
+TH_SIDEBAR = ('<div class="th-sidebar" aria-hidden="true"><div class="th-sb-side">'
+              '<span class="th-sb-who"><i></i><b></b></span>'
+              '<span class="th-sb-i th-sb-i--on"></span><span class="th-sb-i"></span><span class="th-sb-i"></span>'
+              '<span class="th-sb-i th-sb-i--s"></span></div><div class="th-sb-page"><i></i><i></i></div></div>')
+
+
+CHROME_SIDEBAR = """
+/* ── páginas da Sidebar ──
+   Casca do site. A Sidebar em si é sempre a .al-sidebar, do sidebar.css real.
+   Os exemplos "a evitar" usam .sb-fake-*, nunca uma .al-sidebar errada. */
+.sb-stage{display:block; padding:0; overflow:hidden; background:var(--al-bg-surface)}
+.sb-framebox{position:relative; overflow:hidden; margin:0 auto}
+.sb-frame{display:block; border:0; transform-origin:0 0; background:var(--al-bg-canvas)}
+/* congeladas: caixa comum com altura de exemplo, visíveis em qualquer largura
+   (abaixo de 1024px o sidebar.css esconde a .al-sidebar da página) */
+.sb-frozen{display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start}
+.sb-cell{min-width:0; max-width:100%; display:flex; flex-direction:column; gap:8px}
+.sb-cell .al-sidebar{display:flex; position:static; block-size:560px; max-inline-size:100%}
+.dd .stage2.sb-stage2{display:block; padding:0; overflow:hidden}
+.sb-fake{display:flex; height:170px; overflow:hidden; border-radius:inherit; background:var(--al-bg-canvas)}
+.sb-fake-side{display:flex; flex-direction:column; gap:4px; width:46%; padding:12px;
+  border-right:1px solid var(--al-border-default)}
+.sb-fake-who{display:flex; align-items:center; gap:6px; margin-bottom:6px}
+.sb-fake-who i{width:18px; height:18px; border-radius:50%; background:var(--al-bg-subtle)}
+.sb-fake-who b{height:7px; width:50%; border-radius:4px; background:var(--al-text-primary)}
+.sb-fake-i{padding:3px 8px; border-radius:6px; font-size:12px; line-height:18px; color:var(--al-text-secondary);
+  white-space:nowrap; overflow:hidden}
+.sb-fake-i--on{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+.sb-fake-page{flex:1; display:flex; flex-direction:column; gap:10px; padding:16px}
+.sb-fake-page i{display:block; height:8px; border-radius:4px; background:var(--al-border-default)}
+.sb-fake-page i:nth-child(2){width:70%}
+.sb-fake-page i:nth-child(3){width:50%}
+.th-sidebar{display:flex; width:100%; height:100%; border-radius:6px; overflow:hidden; background:var(--al-sidebar-bg)}
+.th-sb-side{display:flex; flex-direction:column; gap:5px; width:42%; padding:10px 8px;
+  border-right:1px solid var(--al-sidebar-border)}
+.th-sb-who{display:flex; align-items:center; gap:5px; margin-bottom:4px}
+.th-sb-who i{width:12px; height:12px; border-radius:50%; background:var(--al-bg-subtle)}
+.th-sb-who b{height:6px; flex:1; border-radius:3px; background:var(--al-sidebar-name)}
+.th-sb-i{height:9px; border-radius:3px; background:var(--al-border-subtle)}
+.th-sb-i--on{background:var(--al-bg-brand-subtle); box-shadow:inset 3px 0 0 var(--al-text-brand)}
+.th-sb-i--s{width:70%}
+.th-sb-page{flex:1; display:flex; flex-direction:column; gap:6px; padding:12px 10px}
+.th-sb-page i{height:6px; border-radius:3px; background:var(--al-border-default)}
+.th-sb-page i:nth-child(2){width:60%}
+"""
+
+
+# CSS do conteudo da pagina de exemplo dentro do iframe (so casca)
+SB_APP_CSS = """
+html,body{margin:0; background:var(--al-bg-canvas); color:var(--al-text-primary);
+  font-family:var(--al-font-sans); font-size:var(--al-font-size-md); line-height:var(--al-line-height-md)}
+.sb-skip{position:absolute; left:8px; top:8px; z-index:5; padding:8px 16px; border-radius:var(--al-radius-md);
+  background:var(--al-bg-brand); color:var(--al-text-on-brand); font-weight:600; translate:0 -200%}
+.sb-skip:focus{translate:none; outline:none; box-shadow:var(--al-focus-ring-default)}
+.sb-app{display:flex; min-height:100dvh}
+.sb-app-main{flex:1; min-width:0; outline:none}
+.sb-app-top{position:sticky; top:0; display:flex; align-items:center; gap:12px; padding:12px 24px;
+  background:var(--al-bg-canvas); border-bottom:1px solid var(--al-border-subtle)}
+.sb-app-top h1{margin:0; font-size:var(--al-font-size-xl); line-height:var(--al-line-height-xl); font-weight:600}
+.sb-app-body{display:grid; gap:16px; padding:24px; max-width:720px}
+.sb-app-body p{margin:0; color:var(--al-text-secondary)}
+.sb-app-block{height:96px; border-radius:var(--al-radius-xl); background:var(--al-bg-surface)}
+"""
+
+SB_APP_JS = r"""
+(function () {
+  // so casca de demonstracao: o clique num item vira a "pagina atual"
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('.al-sidebar a[href]');
+    if (!a) return;
+    e.preventDefault();
+    document.querySelectorAll('.al-sidebar .al-tab[aria-current]').forEach(function (x) { x.removeAttribute('aria-current'); });
+    var t = document.getElementById('app-title');
+    if (a.classList.contains('al-tab')) { a.setAttribute('aria-current', 'page'); t.textContent = a.textContent.trim(); }
+    else { t.textContent = 'Minha conta'; }
+  });
+})();
+"""
+
+JS_SIDEBAR_DATA = ('var SB_DEMOS = ' + json.dumps(SB_DEMOS, ensure_ascii=False).replace('</', '<\\/') + ';\n'
+                   + 'var SB_PARTS = ' + json.dumps({
+                       'menu': SB_MENU, 'css': SB_APP_CSS,
+                       'js': SBR_JS + '\n' + SB_APP_JS,
+                       'body': ('<div class="sb-app-body"><p>A página atual repete o rótulo do item atual no '
+                                'título. Clique nos itens; role o miolo da Sidebar.</p>'
+                                '<div class="sb-app-block"></div><div class="sb-app-block"></div>'
+                                '<div class="sb-app-block"></div><div class="sb-app-block"></div></div>'),
+                   }, ensure_ascii=False).replace('</', '<\\/') + ';\n')
+
+JS_SIDEBAR = r"""
+(function () {
+  // ── playground da Sidebar ── uma pagina pequena de verdade, num iframe, com o
+  // CSS real (<style id="al-real">) e o sidebar.js real
+  var frame = document.getElementById('sidebar-frame');
+  if (!frame) return;
+  var box = document.getElementById('sidebar-framebox');
+  var stage = document.getElementById('sidebar-stage');
+  var code = document.getElementById('sidebar-code');
+  var SIZES = { wide: [1200, 720], phone: [375, 667] };
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function theme() {
+    var t = pick('sbtheme');
+    if (t !== 'auto') return t;
+    return document.documentElement.getAttribute('data-theme') || '';
+  }
+  function fit() {
+    var s = SIZES[pick('sbwidth')];
+    var avail = stage.clientWidth - 32;
+    var k = Math.min(1, avail / s[0]);
+    frame.style.width = s[0] + 'px';
+    frame.style.height = s[1] + 'px';
+    frame.style.transform = 'scale(' + k + ')';
+    box.style.width = Math.round(s[0] * k) + 'px';
+    box.style.height = Math.round(s[1] * k) + 'px';
+    box.style.margin = '16px auto';
+  }
+  function render() {
+    var demo = SB_DEMOS[pick('sbavatar') + '|' + pick('sbhelp')];
+    var real = document.getElementById('al-real').textContent;
+    var t = theme();
+    frame.srcdoc = '<!doctype html><html lang="pt-BR"' + (t ? ' data-theme="' + t + '"' : '') + '><head>' +
+      '<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap">' +
+      '<style>' + real + SB_PARTS.css + '</style></head><body>' +
+      '<a class="sb-skip" href="#app-main">Pular para o conteúdo</a><div class="sb-app">' + demo.aside +
+      '<main class="sb-app-main" id="app-main" tabindex="-1"><div class="sb-app-top">' + SB_PARTS.menu +
+      '<h1 id="app-title">Início</h1></div>' + SB_PARTS.body + '</main></div>' +
+      '<script>' + SB_PARTS.js + '<\/script></body></html>';
+    code.innerHTML = esc(demo.code);
+    fit();
+  }
+  function retheme() {
+    try {
+      var d = frame.contentDocument, t = theme();
+      if (!d || !d.documentElement) return;
+      if (t) d.documentElement.setAttribute('data-theme', t); else d.documentElement.removeAttribute('data-theme');
+    } catch (e) {}
+  }
+
+  document.querySelectorAll('#sidebar-controls input').forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      if (inp.name === 'sbtheme') retheme();
+      else if (inp.name === 'sbwidth') fit();
+      else render();
+    });
+  });
+  // o tema do site muda no switch do trilho: "Do site" acompanha
+  new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.addEventListener('resize', fit);
+  document.getElementById('sidebar-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  // o palco so tem largura quando a pagina esta visivel: medir de novo ao abrir a aba
+  document.addEventListener('click', function () { setTimeout(fit, 0); });
+  window.addEventListener('hashchange', function () { setTimeout(fit, 0); });
+  render();
+})();
+"""
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -9946,16 +10600,17 @@ LANDING_COMPONENTES = f'''
     {card('accordion', 'Accordion', 'Conteúdo secundário que abre e fecha no lugar. É o &lt;details&gt; nativo: sem script, vários abertos por padrão ou um por vez com name.', TH_ACCORDION)}
     {card('modal', 'Modal', 'Uma tarefa curta que pede resposta antes de seguir. É o &lt;dialog&gt; nativo: sobe sobre a página, prende o foco e nunca tem botão X.', TH_MODAL)}
     {card('drawer', 'Drawer', 'Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo colado na direita: entra pela lateral, prende o foco e sempre tem uma saída visível.', TH_DRAWER)}
+    {card('sidebar', 'Sidebar', 'A navegação principal, presa à esquerda na altura da tela. Os itens são o Tab, e abaixo de 1024px ela vira painel modal pela esquerda — a mesma &lt;aside&gt;, nunca uma cópia.', TH_SIDEBAR)}
   </div>
 </section>
 
 <section>
-  <h2>O Tier 3 fechou</h2>
-  <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
-  disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
-  sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
-  seguiu pelo Card, pelo Tab, pelo Accordion e pelo Modal e fechou no Drawer. Cada um passou pelas mesmas oito etapas, a começar pela 1, definir e
-  auditar.</p>
+  <h2>O Tier 4 abriu</h2>
+  <p>Os primitivos, o formulário e a estrutura atravessaram as oito etapas, um componente de cada
+  vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente
+  pronto sem documentação”. O Tier 3 começou pelo Divider e fechou no Drawer. O tier de
+  <b>navegação</b> ficou curto, com dois componentes, e abriu pela Sidebar; o próximo é o
+  Breadcrumb. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e auditar.</p>
 </section>'''
 
 # O selo da pagina Componentes conta os cards publicados do indice - era um
@@ -10187,6 +10842,15 @@ PAGES = [
          (f'{N_DRW_TOKENS} tokens', False), (f'{N_DW_EXC_KEYS} exceção declarada', False)],
         [('overview', 'Visão geral', DRAWER_OVERVIEW), ('specs', 'Especificações', DRAWER_SPECS),
          ('guide', 'Diretrizes', DRAWER_GUIDE), ('a11y', 'Acessibilidade', DRAWER_A11Y_TAB)])),
+    ('sidebar', 'Componentes', page(
+        'sidebar', 'Componentes', 'Sidebar',
+        'A navegação principal do produto, presa à esquerda na altura da tela. É um &lt;aside&gt; com o '
+        '&lt;nav&gt; dentro, e os itens são o Tab Square de navegação. Abaixo de 1024px ela sai da página e '
+        'o botão Menu a abre como painel modal pela esquerda.',
+        [('Estável', True), ('1 variante no Figma', False),
+         (f'{N_SBR_TOKENS} tokens', False), (f'{N_SB_EXC_KEYS} exceções declaradas', False)],
+        [('overview', 'Visão geral', SIDEBAR_OVERVIEW), ('specs', 'Especificações', SIDEBAR_SPECS),
+         ('guide', 'Diretrizes', SIDEBAR_GUIDE), ('a11y', 'Acessibilidade', SIDEBAR_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -10233,6 +10897,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/accordion" data-page="accordion">Accordion</a>
         <a href="#/modal" data-page="modal">Modal</a>
         <a href="#/drawer" data-page="drawer">Drawer</a>
+        <a href="#/sidebar" data-page="sidebar">Sidebar</a>
       </div>
     </div>
   </div>
@@ -12361,11 +13026,11 @@ HTML = (
     '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
     '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
     'family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">\n\n'
-    '<style>\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
+    '<style id="al-real">\n/* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */\n'
     + CSS_REAL +
-    '\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
+    '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -12378,6 +13043,7 @@ HTML = (
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
     + DRW_JS.replace('</', '<\\/') + JS_DRAWER_DATA + JS_DRAWER
+    + JS_SIDEBAR_DATA + JS_SIDEBAR
     + JS_MOTION + '</script>\n'
 )
 
@@ -12439,6 +13105,10 @@ print(f'  tokens do Drawer  : {N_DRW_TOKENS}  '
       f'({len(DRW_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in DRW_A11Y["rows"] if r["invisible"])} invisiveis, '
       f'{sum(1 for r in DRW_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
+print(f'  tokens da Sidebar : {N_SBR_TOKENS}  '
+      f'({len(SBR_A11Y["rows"])} combinacoes medidas, '
+      f'{sum(1 for r in SBR_A11Y["rows"] if r["invisible"])} invisiveis, '
+      f'{sum(1 for r in SBR_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
 print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

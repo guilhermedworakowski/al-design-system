@@ -69,7 +69,12 @@ TOKENS = {
     # componente novo. <dialog> nativo colado na direita, com drawer.js proprio
     # (abrir por atributo, clique no fundo so sem campos, foco inicial). Reusa
     # bg-scrim e motion.duration.panel; nenhum token da Foundation muda.
-    "name": "AL Design System", "version": "0.19.0", "license": "MIT",
+    # 0.20.0: Sidebar, primeiro componente do Tier 4 - casa do meio,
+    # componente novo. <aside> com <nav> dentro, itens = Tab Square; abaixo de
+    # 1024px o sidebar.js move a mesma <aside> para um <dialog> pela esquerda.
+    # Reusa bg-scrim, elevation-5 e motion.duration.panel; nenhum token da
+    # Foundation muda.
+    "name": "AL Design System", "version": "0.20.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },

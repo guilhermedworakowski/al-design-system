@@ -4,10 +4,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 
-<style>
+<style id="al-real">
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.19.0 - MIT
+ * v0.20.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -1203,6 +1203,41 @@
   --al-drawer-title-line-height: var(--al-line-height-2xl);
   --al-drawer-title-font-weight: 600;
   --al-drawer-title-tracking: -0.01em;
+
+
+  /* cor - o tema troca no :root */
+  --al-sidebar-bg: var(--al-bg-canvas);
+  --al-sidebar-border: var(--al-border-default);
+  --al-sidebar-name: var(--al-text-primary);
+  --al-sidebar-email: var(--al-text-secondary);
+  --al-sidebar-group-label: var(--al-text-secondary);
+
+  /* geometria */
+  --al-sidebar-border-width: var(--al-border-width-1);
+  --al-sidebar-padding: var(--al-space-24);
+  --al-sidebar-gap: var(--al-space-24);
+  --al-sidebar-profile-gap: var(--al-space-8);
+  --al-sidebar-profile-text-gap: var(--al-space-4);
+  --al-sidebar-group-gap: var(--al-space-16);
+  --al-sidebar-item-gap: var(--al-space-8);
+
+  /* largura - valor declarado, sem escala na Foundation (mesma excecao do Modal e do Drawer) */
+  --al-sidebar-width: 296px;
+
+  /* tipografia - um estilo vira quatro vars (cinco no rotulo, que e mono) */
+  --al-sidebar-name-font-size: var(--al-font-size-xl);
+  --al-sidebar-name-line-height: var(--al-line-height-xl);
+  --al-sidebar-name-font-weight: 600;
+  --al-sidebar-name-tracking: -0.01em;
+  --al-sidebar-email-font-size: var(--al-font-size-sm);
+  --al-sidebar-email-line-height: var(--al-line-height-sm);
+  --al-sidebar-email-font-weight: 400;
+  --al-sidebar-email-tracking: 0em;
+  --al-sidebar-group-label-font-family: var(--al-font-mono);
+  --al-sidebar-group-label-font-size: var(--al-font-size-sm);
+  --al-sidebar-group-label-line-height: var(--al-line-height-sm);
+  --al-sidebar-group-label-font-weight: 400;
+  --al-sidebar-group-label-tracking: 0em;
 }
 
 /* AL Design System - tokens do Button
@@ -6291,6 +6326,380 @@
   }
 }
 
+/* AL Design System - tokens do Sidebar
+ * GERADO por components/sidebar/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* cor - o tema troca no :root */
+  --al-sidebar-bg: var(--al-bg-canvas);
+  --al-sidebar-border: var(--al-border-default);
+  --al-sidebar-name: var(--al-text-primary);
+  --al-sidebar-email: var(--al-text-secondary);
+  --al-sidebar-group-label: var(--al-text-secondary);
+
+  /* geometria */
+  --al-sidebar-border-width: var(--al-border-width-1);
+  --al-sidebar-padding: var(--al-space-24);
+  --al-sidebar-gap: var(--al-space-24);
+  --al-sidebar-profile-gap: var(--al-space-8);
+  --al-sidebar-profile-text-gap: var(--al-space-4);
+  --al-sidebar-group-gap: var(--al-space-16);
+  --al-sidebar-item-gap: var(--al-space-8);
+
+  /* largura - valor declarado, sem escala na Foundation (mesma excecao do Modal e do Drawer) */
+  --al-sidebar-width: 296px;
+
+  /* tipografia - um estilo vira quatro vars (cinco no rotulo, que e mono) */
+  --al-sidebar-name-font-size: var(--al-font-size-xl);
+  --al-sidebar-name-line-height: var(--al-line-height-xl);
+  --al-sidebar-name-font-weight: 600;
+  --al-sidebar-name-tracking: -0.01em;
+  --al-sidebar-email-font-size: var(--al-font-size-sm);
+  --al-sidebar-email-line-height: var(--al-line-height-sm);
+  --al-sidebar-email-font-weight: 400;
+  --al-sidebar-email-tracking: 0em;
+  --al-sidebar-group-label-font-family: var(--al-font-mono);
+  --al-sidebar-group-label-font-size: var(--al-font-size-sm);
+  --al-sidebar-group-label-line-height: var(--al-line-height-sm);
+  --al-sidebar-group-label-font-weight: 400;
+  --al-sidebar-group-label-tracking: 0em;
+}
+
+/* AL Design System - Sidebar
+ * Escrito a mao. Depende de al-foundation.css, tab.css, avatar.css,
+ * icon-button.css, icon.css e al-sidebar-tokens.css. O modo modal da tela
+ * estreita (abrir, fechar, foco) vive em sidebar.js.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, tipografia, borda e largura entram
+ * por var(--al-sidebar-*). O check.py ao lado recusa o arquivo se algum
+ * escapar - com UMA excecao nomeada: o ponto de quebra de 1024px (ver TELA
+ * ESTREITA), porque @media nao aceita var().
+ *
+ * CONTRATO DE MARCACAO
+ *
+ *   <aside class="al-sidebar" id="sb" aria-label="Barra lateral">
+ *     <div class="al-sidebar__profile">
+ *       <span class="al-avatar al-avatar--md" aria-hidden="true">
+ *         <img class="al-avatar__photo" src="…" alt=""></span>     regra 18
+ *       <div class="al-sidebar__details">
+ *         <div class="al-sidebar__user">
+ *           <p class="al-sidebar__name">Jane Doe</p>
+ *           <p class="al-sidebar__email">jane.doe@gmail.com</p>
+ *         </div>
+ *         <a class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm"
+ *            href="/conta" aria-label="Abrir minha conta">            regra 19
+ *           <svg class="al-icon" aria-hidden="true" focusable="false">…</svg></a>
+ *       </div>
+ *     </div>
+ *     <nav class="al-sidebar__nav" aria-label="Principal">            regra 26
+ *       <div class="al-sidebar__content">
+ *         <ul class="al-tabs al-tabs--square">                         itens soltos, sem rotulo (regra 6)
+ *           <li><a class="al-tab" href="/" aria-current="page">
+ *             <span class="al-tab__label">Início</span></a></li>
+ *         </ul>
+ *         <div class="al-sidebar__group">
+ *           <p class="al-sidebar__group-label" id="g-vendas">Vendas</p>
+ *           <ul class="al-tabs al-tabs--square" aria-labelledby="g-vendas">  regra 27
+ *             <li><a class="al-tab" href="/pedidos">
+ *               <span class="al-tab__label">Pedidos</span></a></li>
+ *           </ul>
+ *         </div>
+ *       </div>
+ *       <div class="al-sidebar__group al-sidebar__support">             opcional (regra 21)
+ *         <p class="al-sidebar__group-label" id="g-ajuda">Ajuda</p>
+ *         <ul class="al-tabs al-tabs--square" aria-labelledby="g-ajuda">…</ul>
+ *       </div>
+ *     </nav>
+ *   </aside>
+ *
+ *   - Item = Tab Square de navegacao (regra 11): <a>, aria-current="page" no
+ *     atual (regras 12 e 28), nunca role="tab". O visual vem do tab.css; aqui
+ *     so o item estica na largura.
+ *   - O perfil fica FORA do <nav> (regra 26). O Avatar e decorativo (regra 18).
+ *   - Sem ".al-sidebar__support" a secao de Ajuda simplesmente nao existe.
+ *   - "Pular para o conteudo" antes da Sidebar e do produto (regra 29).
+ *   - Botao que abre na tela estreita, do produto, no topo da pagina:
+ *       <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"
+ *               aria-label="Menu" aria-controls="sb" aria-expanded="false"
+ *               data-al-sidebar-open="sb">…menu…</button>
+ *     Ele so aparece abaixo de 1024px.
+ *
+ * ALTURA E ROLAGEM (REGRAS 5 E 23)
+ *   Altura da tela (100dvh) e presa no topo enquanto a pagina rola (sticky).
+ *   Perfil e Ajuda ficam fixos; so __content rola. O __content ganha um
+ *   respiro do tamanho do anel de foco e desconta com margem negativa, como no
+ *   Drawer: o overflow cortaria o anel do primeiro e do ultimo item.
+ *
+ * TEXTO DO PERFIL (REGRA 20)
+ *   Nome e e-mail numa linha, com reticencias - a unica excecao a regra 15,
+ *   porque o texto vem do cadastro. O texto inteiro continua no DOM, entao o
+ *   leitor de tela le tudo. Rotulo de item NAO tem reticencias.
+ *
+ * TELA ESTREITA - EXCECAO NOMEADA `ponto-de-quebra` (REGRAS 24 E 25)
+ *   Abaixo de 1024px (decisao 1 da etapa 4) a Sidebar sai da pagina e vira
+ *   painel modal pela esquerda. A Foundation nao tem escala de ponto de
+ *   quebra e @media nao le custom property: o 1024 e escrito aqui, uma vez
+ *   por media query, e o check.py aceita SO esse valor SO dentro de @media.
+ *   O sidebar.js move a mesma <aside> para dentro de um <dialog
+ *   class="al-sidebar-modal"> e chama showModal(): nada de marcacao
+ *   duplicada. Scrim, sombra, duracao e respiro sao os semanticos que o
+ *   Drawer tambem usa (bg-scrim, elevation-5, motion.duration.panel,
+ *   space-16), lidos direto da Foundation para a Sidebar nao depender do
+ *   CSS do Drawer. Sem X (decisao 3): o botao Menu, o Esc e o scrim fecham.
+ *   Sem raio: o desenho da Sidebar nao tem.
+ *
+ * ALTO CONTRASTE
+ *   A borda a direita ja e borda: o forced-colors a pinta com a cor do texto.
+ *   No modo modal o painel ganha contorno, como o Drawer.
+ */
+
+/* ---------------------------------------------------------------- caixa */
+.al-sidebar {
+  box-sizing: border-box;
+  position: sticky;
+  inset-block-start: 0;
+  /* Numa linha flex ou grid (o layout comum: Sidebar + conteudo) o padrao e
+     esticar ate a altura da linha - e um item esticado nao tem para onde
+     "grudar", o sticky nao acontece. Achado da etapa 6. */
+  align-self: flex-start;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-gap);
+  inline-size: var(--al-sidebar-width);
+  block-size: 100dvh;
+  margin: 0;
+  padding: var(--al-sidebar-padding);
+  border-inline-end: var(--al-sidebar-border-width) solid var(--al-sidebar-border);
+  background-color: var(--al-sidebar-bg);
+  color: var(--al-sidebar-name);
+  font-family: var(--al-font-sans);
+}
+
+/* --------------------------------------------------------------- perfil */
+.al-sidebar__profile {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--al-sidebar-profile-gap);
+}
+
+.al-sidebar__profile > .al-avatar {
+  flex: none;
+}
+
+.al-sidebar__details {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--al-sidebar-profile-text-gap);
+}
+
+.al-sidebar__details > .al-icon-btn {
+  flex: none;
+}
+
+.al-sidebar__user {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-profile-text-gap);
+}
+
+/* Resets do componente: quem usa pode ter estilo global de <p>. */
+.al-sidebar__name,
+.al-sidebar__email {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;          /* regra 20 */
+}
+
+.al-sidebar__name {
+  color: var(--al-sidebar-name);
+  font-size: var(--al-sidebar-name-font-size);
+  line-height: var(--al-sidebar-name-line-height);
+  font-weight: var(--al-sidebar-name-font-weight);
+  letter-spacing: var(--al-sidebar-name-tracking);
+}
+
+.al-sidebar__email {
+  color: var(--al-sidebar-email);
+  font-size: var(--al-sidebar-email-font-size);
+  line-height: var(--al-sidebar-email-line-height);
+  font-weight: var(--al-sidebar-email-font-weight);
+  letter-spacing: var(--al-sidebar-email-tracking);
+}
+
+/* ------------------------------------------------------ navegacao e miolo */
+.al-sidebar__nav {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-gap);
+}
+
+.al-sidebar__content {
+  --_ring-room: calc(var(--al-border-focus-offset) + var(--al-border-width-focus));
+  flex: 1 1 auto;
+  min-block-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-gap);       /* entre grupos, sem Divider (regra 10) */
+  margin: calc(-1 * var(--_ring-room));
+  padding: var(--_ring-room);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.al-sidebar__support {
+  flex: none;
+}
+
+/* ---------------------------------------------------------------- grupo */
+.al-sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-group-gap);
+}
+
+.al-sidebar__group-label {
+  margin: 0;
+  color: var(--al-sidebar-group-label);
+  font-family: var(--al-sidebar-group-label-font-family);
+  font-size: var(--al-sidebar-group-label-font-size);
+  line-height: var(--al-sidebar-group-label-line-height);
+  font-weight: var(--al-sidebar-group-label-font-weight);
+  letter-spacing: var(--al-sidebar-group-label-tracking);
+  text-transform: none;             /* regra 17: nunca caixa alta */
+}
+
+/* ----------------------------------------------------------------- item */
+/* O Tab Square, empilhado e de largura cheia (regra 11, decisao J do Tab).
+   Cor, fundo, raio, padding, anel e estados continuam do tab.css. */
+.al-sidebar .al-tabs {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--al-sidebar-item-gap);
+}
+
+.al-sidebar .al-tabs > li,
+.al-sidebar .al-tab {
+  flex: 1 1 auto;
+}
+
+.al-sidebar .al-tab__label {
+  flex: 1 1 auto;
+}
+
+/* --------------------------------------------------------- tela estreita */
+/* Botao Menu: so existe abaixo do ponto de quebra. */
+@media (width >= 1024px) {
+  [data-al-sidebar-open] {
+    display: none;
+  }
+}
+
+@media (width < 1024px) {
+  .al-sidebar {
+    display: none;
+  }
+
+  .al-sidebar-modal .al-sidebar {
+    display: flex;
+    position: static;
+    inline-size: auto;
+    block-size: 100%;
+  }
+}
+
+.al-sidebar-modal {
+  box-sizing: border-box;
+  inline-size: var(--al-sidebar-width);
+  max-inline-size: calc(100% - var(--al-space-16));   /* regra 24, como o Drawer */
+  inset: 0 auto 0 0;
+  block-size: auto;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: var(--al-sidebar-bg);
+  box-shadow: var(--al-elevation-5);
+  overflow: clip;
+}
+
+:root:has(.al-sidebar-modal:modal) {
+  overflow: hidden;
+}
+
+/* Entra da esquerda para a direita e sai pelo mesmo lado, com fade (a sombra
+   vazaria com o painel parado fora da tela). Mesma mecanica do Drawer,
+   espelhada. */
+.al-sidebar-modal {
+  opacity: 0;
+  translate: -100% 0;
+  transition:
+    opacity var(--al-motion-duration-panel) var(--al-motion-easing-exit),
+    translate var(--al-motion-duration-panel) var(--al-motion-easing-exit),
+    overlay var(--al-motion-duration-panel) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-motion-duration-panel) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-sidebar-modal[open] {
+  opacity: 1;
+  translate: 0 0;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+.al-sidebar-modal::backdrop {
+  background-color: var(--al-bg-scrim);
+  opacity: 0;
+  transition:
+    opacity var(--al-motion-duration-panel) var(--al-motion-easing-exit),
+    overlay var(--al-motion-duration-panel) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-motion-duration-panel) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-sidebar-modal[open]::backdrop {
+  opacity: 1;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-sidebar-modal[open] {
+    opacity: 0;
+    translate: -100% 0;
+  }
+
+  .al-sidebar-modal[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-sidebar-modal,
+  .al-sidebar-modal::backdrop {
+    transition: none;
+  }
+
+  .al-sidebar-modal {
+    translate: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-sidebar-modal {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+}
+
+</style>
+<style>
 /* ═══ Chrome do site ═══ */
 
 *{box-sizing:border-box}
@@ -7100,6 +7509,44 @@ footer code{background:none; padding:0}
 .th-dw-a i{background:var(--al-bg-hover)}
 .th-dw-a b{background:var(--al-bg-brand)}
 
+/* ── páginas da Sidebar ──
+   Casca do site. A Sidebar em si é sempre a .al-sidebar, do sidebar.css real.
+   Os exemplos "a evitar" usam .sb-fake-*, nunca uma .al-sidebar errada. */
+.sb-stage{display:block; padding:0; overflow:hidden; background:var(--al-bg-surface)}
+.sb-framebox{position:relative; overflow:hidden; margin:0 auto}
+.sb-frame{display:block; border:0; transform-origin:0 0; background:var(--al-bg-canvas)}
+/* congeladas: caixa comum com altura de exemplo, visíveis em qualquer largura
+   (abaixo de 1024px o sidebar.css esconde a .al-sidebar da página) */
+.sb-frozen{display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start}
+.sb-cell{min-width:0; max-width:100%; display:flex; flex-direction:column; gap:8px}
+.sb-cell .al-sidebar{display:flex; position:static; block-size:560px; max-inline-size:100%}
+.dd .stage2.sb-stage2{display:block; padding:0; overflow:hidden}
+.sb-fake{display:flex; height:170px; overflow:hidden; border-radius:inherit; background:var(--al-bg-canvas)}
+.sb-fake-side{display:flex; flex-direction:column; gap:4px; width:46%; padding:12px;
+  border-right:1px solid var(--al-border-default)}
+.sb-fake-who{display:flex; align-items:center; gap:6px; margin-bottom:6px}
+.sb-fake-who i{width:18px; height:18px; border-radius:50%; background:var(--al-bg-subtle)}
+.sb-fake-who b{height:7px; width:50%; border-radius:4px; background:var(--al-text-primary)}
+.sb-fake-i{padding:3px 8px; border-radius:6px; font-size:12px; line-height:18px; color:var(--al-text-secondary);
+  white-space:nowrap; overflow:hidden}
+.sb-fake-i--on{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+.sb-fake-page{flex:1; display:flex; flex-direction:column; gap:10px; padding:16px}
+.sb-fake-page i{display:block; height:8px; border-radius:4px; background:var(--al-border-default)}
+.sb-fake-page i:nth-child(2){width:70%}
+.sb-fake-page i:nth-child(3){width:50%}
+.th-sidebar{display:flex; width:100%; height:100%; border-radius:6px; overflow:hidden; background:var(--al-sidebar-bg)}
+.th-sb-side{display:flex; flex-direction:column; gap:5px; width:42%; padding:10px 8px;
+  border-right:1px solid var(--al-sidebar-border)}
+.th-sb-who{display:flex; align-items:center; gap:5px; margin-bottom:4px}
+.th-sb-who i{width:12px; height:12px; border-radius:50%; background:var(--al-bg-subtle)}
+.th-sb-who b{height:6px; flex:1; border-radius:3px; background:var(--al-sidebar-name)}
+.th-sb-i{height:9px; border-radius:3px; background:var(--al-border-subtle)}
+.th-sb-i--on{background:var(--al-bg-brand-subtle); box-shadow:inset 3px 0 0 var(--al-text-brand)}
+.th-sb-i--s{width:70%}
+.th-sb-page{flex:1; display:flex; flex-direction:column; gap:6px; padding:12px 10px}
+.th-sb-page i{height:6px; border-radius:3px; background:var(--al-border-default)}
+.th-sb-page i:nth-child(2){width:60%}
+
 /* ── Motion ──
    O palco lê os tokens reais da Foundation. A velocidade (1× ou ¼×) só
    multiplica a duração, para dar tempo de ver a curva; ela não é um token. */
@@ -7190,7 +7637,7 @@ footer code{background:none; padding:0}
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.19.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.20.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -7231,6 +7678,7 @@ footer code{background:none; padding:0}
         <a href="#/accordion" data-page="accordion">Accordion</a>
         <a href="#/modal" data-page="modal">Modal</a>
         <a href="#/drawer" data-page="drawer">Drawer</a>
+        <a href="#/sidebar" data-page="sidebar">Sidebar</a>
       </div>
     </div>
   </div>
@@ -7346,7 +7794,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.19.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.20.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -7376,7 +7824,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.19.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.20.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -7593,7 +8041,7 @@ footer code{background:none; padding:0}
   pequeno por cima dela leva 200ms, e a resposta de um controle ao ponteiro leva
   120ms. A curva é a mesma para todos: entrar num estado (hover, foco, marcado) é
   entrada, voltar dele é saída. O spinner fica à parte, porque loop não entra nem sai.</p>
-  <div style="margin-top:18px"><div class="scroller"><table><thead><tr><th>Tipo de ação</th><th>Easing</th><th class="num">Controles</th><th class="num">Tooltip e Toast</th><th class="num">Modal e Drawer</th></tr></thead><tbody><tr><td class="name">Entrada</td><td class="tok">ease-out</td><td class="num">120ms</td><td class="num">200ms</td><td class="num">300ms</td></tr><tr><td class="name">Saída</td><td class="tok">ease-in</td><td class="num">120ms</td><td class="num">200ms</td><td class="num">300ms</td></tr></tbody></table></div></div>
+  <div style="margin-top:18px"><div class="scroller"><table><thead><tr><th>Tipo de ação</th><th>Easing</th><th class="num">Controles</th><th class="num">Tooltip e Toast</th><th class="num">Modal, Drawer e Sidebar</th></tr></thead><tbody><tr><td class="name">Entrada</td><td class="tok">ease-out</td><td class="num">120ms</td><td class="num">200ms</td><td class="num">300ms</td></tr><tr><td class="name">Saída</td><td class="tok">ease-in</td><td class="num">120ms</td><td class="num">200ms</td><td class="num">300ms</td></tr></tbody></table></div></div>
 </section>
 
 <section id="mo-root" data-speed="1">
@@ -8008,9 +8456,9 @@ footer code{background:none; padding:0}
   consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
   normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
   <div class="stats">
-    <div class="stat hl"><b>333</b><span>verificações</span></div>
+    <div class="stat hl"><b>336</b><span>verificações</span></div>
     <div class="stat"><b>0</b><span>reprovas</span></div>
-    <div class="stat"><b>291</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>294</b><span>elementos com contrato conferido</span></div>
     <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
   </div>
 </section>
@@ -8085,7 +8533,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
   O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
-  <code>.al-icon</code>: 291 elementos nesta página, nenhum fora.
+  <code>.al-icon</code>: 294 elementos nesta página, nenhum fora.
   Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
   <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
   porque o rótulo nunca seria lido.</p>
@@ -8096,7 +8544,7 @@ footer code{background:none; padding:0}
     renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">17 publicados</span><span class="badge">Tier 3 em andamento</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
+<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">18 publicados</span><span class="badge">Tier 3 em andamento</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
 <section>
   <h2>Publicados</h2>
   <div class="cards">
@@ -8117,16 +8565,17 @@ footer code{background:none; padding:0}
     <a class="card" href="#/accordion" data-page="accordion"><div class="card-thumb"><div class="th-accordion" aria-hidden="true"><div class="th-ac-item"><span class="th-ac-t"></span><span class="th-ac-c"></span></div><div class="th-ac-item is-open"><span class="th-ac-t"></span><span class="th-ac-c"></span><span class="th-ac-body"></span></div><div class="th-ac-item"><span class="th-ac-t"></span><span class="th-ac-c"></span></div></div></div><div class="card-body"><span class="card-title">Accordion</span><span class="card-desc">Conteúdo secundário que abre e fecha no lugar. É o &lt;details&gt; nativo: sem script, vários abertos por padrão ou um por vez com name.</span></div></a>
     <a class="card" href="#/modal" data-page="modal"><div class="card-thumb"><div class="th-modal" aria-hidden="true"><div class="th-md-card"><span class="th-md-t"></span><span class="th-md-l"></span><span class="th-md-l th-md-l--s"></span><span class="th-md-a"><i></i><b></b></span></div></div></div><div class="card-body"><span class="card-title">Modal</span><span class="card-desc">Uma tarefa curta que pede resposta antes de seguir. É o &lt;dialog&gt; nativo: sobe sobre a página, prende o foco e nunca tem botão X.</span></div></a>
     <a class="card" href="#/drawer" data-page="drawer"><div class="card-thumb"><div class="th-drawer" aria-hidden="true"><div class="th-dw-panel"><span class="th-dw-t"></span><span class="th-dw-l"></span><span class="th-dw-l th-dw-l--s"></span><span class="th-dw-a"><i></i><b></b></span></div></div></div><div class="card-body"><span class="card-title">Drawer</span><span class="card-desc">Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo colado na direita: entra pela lateral, prende o foco e sempre tem uma saída visível.</span></div></a>
+    <a class="card" href="#/sidebar" data-page="sidebar"><div class="card-thumb"><div class="th-sidebar" aria-hidden="true"><div class="th-sb-side"><span class="th-sb-who"><i></i><b></b></span><span class="th-sb-i th-sb-i--on"></span><span class="th-sb-i"></span><span class="th-sb-i"></span><span class="th-sb-i th-sb-i--s"></span></div><div class="th-sb-page"><i></i><i></i></div></div></div><div class="card-body"><span class="card-title">Sidebar</span><span class="card-desc">A navegação principal, presa à esquerda na altura da tela. Os itens são o Tab, e abaixo de 1024px ela vira painel modal pela esquerda — a mesma &lt;aside&gt;, nunca uma cópia.</span></div></a>
   </div>
 </section>
 
 <section>
-  <h2>O Tier 3 fechou</h2>
-  <p>Os primitivos e o formulário atravessaram as oito etapas, um componente de cada vez — e a
-  disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente pronto
-  sem documentação”. O tier de <b>estrutura</b> começou pela peça mais simples dele, o Divider,
-  seguiu pelo Card, pelo Tab, pelo Accordion e pelo Modal e fechou no Drawer. Cada um passou pelas mesmas oito etapas, a começar pela 1, definir e
-  auditar.</p>
+  <h2>O Tier 4 abriu</h2>
+  <p>Os primitivos, o formulário e a estrutura atravessaram as oito etapas, um componente de cada
+  vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida de “componente
+  pronto sem documentação”. O Tier 3 começou pelo Divider e fechou no Drawer. O tier de
+  <b>navegação</b> ficou curto, com dois componentes, e abriu pela Sidebar; o próximo é o
+  Breadcrumb. Cada um passa pelas mesmas oito etapas, a começar pela 1, definir e auditar.</p>
 </section></div></div>
 <div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">48 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
 <section>
@@ -9799,7 +10248,7 @@ footer code{background:none; padding:0}
   <h2>O contrato de marcação</h2>
   <p>Este é o coração da acessibilidade do Avatar, e é o que nenhum portão de CSS alcança — ele
   vive na marcação que quem consome escreve. O <code>a11y.py</code> o cobra lendo o HTML que
-  este site emite: <b>26 elementos</b> <code>.al-avatar</code>
+  este site emite: <b>28 elementos</b> <code>.al-avatar</code>
   nesta página, nenhum fora do contrato.</p>
   <div class="dd" style="margin-top:16px">
     <div class="cell do">
@@ -13826,7 +14275,7 @@ footer code{background:none; padding:0}
     <div><b>Fechar aba</b><span>Não existe.</span></div>
     <div><b>Segundo tamanho</b><span>Um tamanho só (regra 10).</span></div>
     <div><b>Desabilitada</b><span>Não existe (regra 18).</span></div>
-    <div><b>Item de sidebar cheio</b><span>Largura total com rótulo à esquerda fica para a sidebar do Tier 4.</span></div>
+    <div><b>Item de sidebar cheio</b><span>Largura total com rótulo à esquerda é coisa da Sidebar: ela estica o Square.</span></div>
   </div>
 </section></div><div class="panel" id="p-tab-a11y" role="tabpanel" aria-labelledby="t-tab-a11y" tabindex="0" hidden>
 <section>
@@ -13957,7 +14406,7 @@ footer code{background:none; padding:0}
 <section>
   <h2>O contrato de marcação</h2>
   <p>O <code>a11y.py</code> cobra doze regras lendo o HTML que este site emite:
-  <b>3 grupos</b> e <b>23 amostras</b>
+  <b>3 grupos</b> e <b>26 amostras</b>
   nesta página, nenhum fora do contrato.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>a · Nome do grupo</b><span><code>role="tablist"</code> com <code>aria-label</code> ou <code>aria-labelledby</code>.</span></div>
@@ -14757,7 +15206,7 @@ footer code{background:none; padding:0}
 <div class="rule"><div class="rn">02</div><div><h3>Decisão que trava, ou confirmação, é Modal</h3><p>O Drawer não interrompe: ele acompanha a página. Precedentes: SAP, Design System de Singapura.</p></div></div>
 <div class="rule"><div class="rn">03</div><div><h3>Fluxo longo, de várias etapas, ou com URL própria, é página</h3><p>Formulário curto de edição no contexto cabe no Drawer; passou do <code>lg</code> com rolagem demais, vire página. <b>Divergência consciente:</b> o Primer proíbe formulário em painel lateral; Ant Design e Singapura o permitem, e o AL fica com eles. Precedentes: Primer, Evergreen, Smashing Magazine.</p></div></div>
 <div class="rule"><div class="rn">04</div><div><h3>Nunca um Drawer sobre outro</h3><p>O usuário se perde na camada. Precedentes: Primer (o fundo escurecido impede dois painéis ao mesmo tempo), Moon.</p></div></div>
-<div class="rule"><div class="rn">05</div><div><h3>Só entra pela direita</h3><p>A esquerda é de navegação, que é do Tier 4. Precedentes: Primer, Carbon (painel direito do UI shell).</p></div></div>
+<div class="rule"><div class="rn">05</div><div><h3>Só entra pela direita</h3><p>A esquerda é da navegação, a Sidebar. Precedentes: Primer, Carbon (painel direito do UI shell).</p></div></div>
 <h3 class="cd-rgroup">Estrutura e conteúdo</h3>
 <div class="rule"><div class="rn">06</div><div><h3>O título é obrigatório e visível</h3><p>Ele nomeia o painel para todo mundo. Precedentes: Primer, APG.</p></div></div>
 <div class="rule"><div class="rn">07</div><div><h3>Curto, em caixa de frase, com o nome do objeto ou da tarefa</h3><p>“Filtros”, “Editar cliente”. Mesma regra do título do Modal.</p></div></div>
@@ -14793,7 +15242,7 @@ footer code{background:none; padding:0}
 <section>
   <h2>Fora de escopo, de propósito</h2>
   <div class="anat">
-    <div><b>Outros lados</b><span>Esquerda, de cima e de baixo. A esquerda é navegação, que é do Tier 4.</span></div>
+    <div><b>Outros lados</b><span>Esquerda, de cima e de baixo. A esquerda é da Sidebar, que vira painel pela esquerda no celular.</span></div>
     <div><b>Drawer persistente, sem fundo escurecido</b><span>O “standard” do Material é layout de página, não componente de overlay.</span></div>
     <div><b>Drawer redimensionável</b><span>Os três tamanhos são fixos.</span></div>
     <div><b>Drawer sobre Drawer</b><span>Nunca. Se a demanda aparecer, o fluxo é página.</span></div>
@@ -14889,8 +15338,329 @@ footer code{background:none; padding:0}
     <div><b>Alto contraste</b><span>O painel ganha contorno na cor do texto do sistema.</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-sidebar" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Sidebar</h1><p class="lede">A navegação principal do produto, presa à esquerda na altura da tela. É um &lt;aside&gt; com o &lt;nav&gt; dentro, e os itens são o Tab Square de navegação. Abaixo de 1024px ela sai da página e o botão Menu a abre como painel modal pela esquerda.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">1 variante no Figma</span><span class="badge">16 tokens</span><span class="badge">4 exceções declaradas</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Sidebar"><button role="tab" id="t-sidebar-overview" aria-controls="p-sidebar-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-sidebar-specs" aria-controls="p-sidebar-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-sidebar-guide" aria-controls="p-sidebar-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-sidebar-a11y" aria-controls="p-sidebar-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-sidebar-overview" role="tabpanel" aria-labelledby="t-sidebar-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage sb-stage" id="sidebar-stage">
+      <div class="sb-framebox" id="sidebar-framebox">
+        <iframe class="sb-frame" id="sidebar-frame" title="Página de exemplo com a Sidebar"></iframe>
+      </div>
+    </div>
+
+    <div class="controls" id="sidebar-controls">
+      <div class="ctl"><span class="ctl-name">Largura</span><div class="seg" role="radiogroup" aria-label="sbwidth">
+<input type="radio" id="sbwidth-wide" name="sbwidth" value="wide" checked><label for="sbwidth-wide">Tela larga · 1200</label>
+<input type="radio" id="sbwidth-phone" name="sbwidth" value="phone"><label for="sbwidth-phone">Celular · 375</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Avatar</span><div class="seg" role="radiogroup" aria-label="sbavatar">
+<input type="radio" id="sbavatar-initials" name="sbavatar" value="initials" checked><label for="sbavatar-initials">Iniciais</label>
+<input type="radio" id="sbavatar-icon" name="sbavatar" value="icon"><label for="sbavatar-icon">Ícone</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Ajuda</span><div class="seg" role="radiogroup" aria-label="sbhelp">
+<input type="radio" id="sbhelp-on" name="sbhelp" value="on" checked><label for="sbhelp-on">Com Ajuda</label>
+<input type="radio" id="sbhelp-off" name="sbhelp" value="off"><label for="sbhelp-off">Sem Ajuda</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="sbtheme">
+<input type="radio" id="sbtheme-auto" name="sbtheme" value="auto" checked><label for="sbtheme-auto">Do site</label>
+<input type="radio" id="sbtheme-light" name="sbtheme" value="light"><label for="sbtheme-light">Claro</label>
+<input type="radio" id="sbtheme-dark" name="sbtheme" value="dark"><label for="sbtheme-dark">Escuro</label>
+</div></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="sidebar-copy">Copiar</button></div>
+      <pre><code id="sidebar-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O palco é uma página pequena de verdade, com o CSS e o <code>sidebar.js</code> reais. Em <b>Tela larga</b>
+    ela tem 1200px, reduzida para caber: clique nos itens, passe o mouse, role o miolo da Sidebar. Em
+    <b>Celular</b> ela tem 375px: a Sidebar sai da página e o botão Menu a abre como painel pela esquerda.
+    O foco cai no item atual; Esc, um clique fora ou a escolha de um destino fecham.
+  </p>
+</section></div><div class="panel" id="p-sidebar-specs" role="tabpanel" aria-labelledby="t-sidebar-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-sidebar</code> é um <code>&lt;aside&gt;</code> com nome. 296px de largura (<code>sidebar-width</code>), a altura da tela, presa no topo enquanto a página rola. Fundo <code>sidebar-bg</code> (a tela) e uma borda à direita, <code>sidebar-border</code>.</span></div>
+    <div><b>Perfil</b><span><code>__profile</code>: Avatar md (decorativo), nome e e-mail em <code>__user</code> e o Icon Button Ghost sm que leva à conta. Fica fora da navegação.</span></div>
+    <div><b>Navegação</b><span><code>__nav</code> é o <code>&lt;nav aria-label="Principal"&gt;</code>. Dentro, o miolo e a Ajuda.</span></div>
+    <div><b>Miolo</b><span><code>__content</code>: itens soltos no topo e os grupos. É o único que rola.</span></div>
+    <div><b>Grupo</b><span><code>__group</code>: rótulo em <code>__group-label</code> (mono) e uma lista nomeada por ele.</span></div>
+    <div><b>Item</b><span>O Tab Square de navegação: <code>&lt;a class="al-tab"&gt;</code>, com <code>aria-current="page"</code> no atual. Aqui ele estica na largura.</span></div>
+    <div><b>Ajuda</b><span><code>__support</code>, opcional: um grupo fixo embaixo, com até três itens.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Congeladas</h2>
+  <p>Mesmo CSS, com uma altura de exemplo no lugar da altura da tela, para comparar com o Figma. A da esquerda
+  testa as reticências no nome e no e-mail; a da direita é o desenho do Figma, com o slot vazio.</p>
+  <div class="cd-panel sb-frozen" style="margin-top:16px">
+    <div class="sb-cell" inert aria-hidden="true"><span class="md-lab">nome longo · item atual · sem Ajuda</span><aside class="al-sidebar" id="sb-sp-a" aria-label="Barra lateral"><div class="al-sidebar__profile"><span class="al-avatar al-avatar--md" aria-hidden="true"><span class="al-avatar__initials">MA</span></span><div class="al-sidebar__details"><div class="al-sidebar__user"><p class="al-sidebar__name">Maria Eduarda Albuquerque Cavalcanti</p><p class="al-sidebar__email">maria.eduarda.albuquerque@empresaexemplo.com.br</p></div><a class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" href="#conta" aria-label="Abrir minha conta"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></a></div></div><nav class="al-sidebar__nav" aria-label="Principal"><div class="al-sidebar__content"><ul class="al-tabs al-tabs--square"><li><a class="al-tab" href="#inicio"><span class="al-tab__label">Início</span></a></li></ul><div class="al-sidebar__group"><p class="al-sidebar__group-label" id="sb-sp-a-g-vendas">Vendas</p><ul class="al-tabs al-tabs--square" aria-labelledby="sb-sp-a-g-vendas"><li><a class="al-tab" href="#pedidos"><span class="al-tab__label">Pedidos</span></a></li><li><a class="al-tab" href="#clientes" aria-current="page"><span class="al-tab__label">Clientes</span></a></li><li><a class="al-tab" href="#produtos"><span class="al-tab__label">Produtos</span></a></li></ul></div></div></nav></aside></div>
+    <div class="sb-cell" inert aria-hidden="true"><span class="md-lab">como no Figma · slot vazio · Ajuda</span><aside class="al-sidebar" id="sb-sp-b" aria-label="Barra lateral"><div class="al-sidebar__profile"><span class="al-avatar al-avatar--md" aria-hidden="true"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg></span><div class="al-sidebar__details"><div class="al-sidebar__user"><p class="al-sidebar__name">Jane Doe</p><p class="al-sidebar__email">jane.doe@gmail.com</p></div><a class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" href="#conta" aria-label="Abrir minha conta"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m9 18 6-6-6-6" /></svg></a></div></div><nav class="al-sidebar__nav" aria-label="Principal"><div class="al-sidebar__content"></div><div class="al-sidebar__group al-sidebar__support"><p class="al-sidebar__group-label" id="sb-sp-b-g-ajuda">Ajuda</p><ul class="al-tabs al-tabs--square" aria-labelledby="sb-sp-b-g-ajuda"><li><a class="al-tab" href="#central-de-ajuda"><span class="al-tab__label">Central de ajuda</span></a></li><li><a class="al-tab" href="#documentacao"><span class="al-tab__label">Documentação</span></a></li><li><a class="al-tab" href="#enviar-feedback"><span class="al-tab__label">Enviar feedback</span></a></li></ul></div></nav></aside></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token da Sidebar</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody><tr><td class="tok">--al-sidebar-bg</td><td class="tok dim">bg-canvas</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td><td class="tok dim"><span class="chip sm" style="background:#181818"></span>#181818</td></tr>
+<tr><td class="tok">--al-sidebar-border</td><td class="tok dim">border-default</td><td class="tok dim"><span class="chip sm" style="background:#CECECE"></span>#CECECE</td><td class="tok dim"><span class="chip sm" style="background:#565656"></span>#565656</td></tr>
+<tr><td class="tok">--al-sidebar-name</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td><td class="tok dim"><span class="chip sm" style="background:#F7F7F7"></span>#F7F7F7</td></tr>
+<tr><td class="tok">--al-sidebar-email</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-sidebar-group-label</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-sidebar-border-width</td><td class="tok dim">border.width.1</td><td class="tok dim">1px</td><td class="tok dim">1px</td></tr>
+<tr><td class="tok">--al-sidebar-padding</td><td class="tok dim">space.24</td><td class="tok dim">24px</td><td class="tok dim">24px</td></tr>
+<tr><td class="tok">--al-sidebar-gap</td><td class="tok dim">space.24</td><td class="tok dim">24px</td><td class="tok dim">24px</td></tr>
+<tr><td class="tok">--al-sidebar-profile-gap</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-sidebar-profile-text-gap</td><td class="tok dim">space.4</td><td class="tok dim">4px</td><td class="tok dim">4px</td></tr>
+<tr><td class="tok">--al-sidebar-group-gap</td><td class="tok dim">space.16</td><td class="tok dim">16px</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-sidebar-item-gap</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-sidebar-name-font</td><td class="tok dim">type.styles.heading-xs</td><td class="tok dim">20/28 · 600</td><td class="tok dim">20/28 · 600</td></tr>
+<tr><td class="tok">--al-sidebar-email-font</td><td class="tok dim">type.styles.body-sm</td><td class="tok dim">14/20 · 400</td><td class="tok dim">14/20 · 400</td></tr>
+<tr><td class="tok">--al-sidebar-group-label-font</td><td class="tok dim">type.styles.code-md</td><td class="tok dim">14/20 · 400</td><td class="tok dim">14/20 · 400</td></tr>
+<tr><td class="tok">--al-sidebar-width</td><td class="tok dim">296px</td><td class="tok dim">296px</td><td class="tok dim">296px</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>O fundo é a tela, separada por uma borda</b>
+    Com <code>bg-surface-raised</code>, o desenho inicial, a Sidebar era branca sobre branca no claro e o hover
+    dos itens sumia no escuro (1,00:1). Na tela, os itens (Tab) e o botão do perfil (Icon Button) ficam sobre o
+    fundo em que já foram medidos, sem correção nenhuma. Quem separa da página é a borda, na cor do Divider.
+  </div>
+  <div class="note">
+    <b>A largura é o único valor declarado</b>
+    Todo token aponta para a Foundation, menos <code>sidebar-width</code>: a Foundation ainda não tem escala de
+    largura de contêiner. É a mesma exceção do Modal e do Drawer.
+  </div>
+  <div class="note">
+    <b>Altura, rolagem e o <code>align-self</code></b>
+    A Sidebar tem a altura da tela e fica presa no topo (<code>sticky</code>); só o miolo rola, e ele ganha um
+    respiro do tamanho do anel de foco para o overflow não cortar o anel. Numa linha flex, o padrão é esticar o
+    item até a altura da linha, e um item esticado não tem para onde grudar: por isso a Sidebar declara
+    <code>align-self: flex-start</code>. Achado da etapa 6.
+  </div>
+  <div class="note">
+    <b>Abaixo de 1024px, painel modal pela esquerda</b>
+    O <code>sidebar.js</code> move a mesma <code>&lt;aside&gt;</code> para dentro de um <code>&lt;dialog&gt;</code>
+    e chama <code>showModal()</code>: nunca há duas cópias da navegação. Fundo escurecido, sombra e duração são os
+    semânticos que o Drawer também usa (<code>bg-scrim</code>, <code>elevation-5</code>, duração de painel), lidos
+    direto da Foundation. Sem X: o botão Menu, o Esc e o clique fora fecham. O ponto de quebra é o único
+    comprimento escrito no CSS, porque <code>@media</code> não lê custom property; o portão aceita só esse valor,
+    só ali.
+  </div>
+  <div class="note">
+    <b>O item é o Tab</b>
+    Cor, fundo, raio, anel e estados vêm do <code>tab.css</code>. O CSS da Sidebar só empilha os itens com
+    <code>sidebar-item-gap</code> e estica cada um na largura.
+  </div>
+</section></div><div class="panel" id="p-sidebar-guide" role="tabpanel" aria-labelledby="t-sidebar-guide" tabindex="0" hidden>
+<section>
+  <h2>Quando usar</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Destinos, um deles atual</span>
+      <div class="stage2 sb-stage2"><div class="sb-fake sb-fake--do"><span class="sb-fake-side"><span class="sb-fake-who"><i></i><b></b></span><span class="sb-fake-i sb-fake-i--on">Início</span><span class="sb-fake-i">Pedidos</span><span class="sb-fake-i">Clientes</span><span class="sb-fake-i">Faturas</span></span><span class="sb-fake-page"><i></i><i></i><i></i></span></div></div>
+      <p class="cap">Substantivos curtos que levam a páginas. <i>Primer, Material.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Ações misturadas com destinos</span>
+      <div class="stage2 sb-stage2"><div class="sb-fake sb-fake--no"><span class="sb-fake-side"><span class="sb-fake-who"><i></i><b></b></span><span class="sb-fake-i sb-fake-i--on">Início</span><span class="sb-fake-i">Criar pedido</span><span class="sb-fake-i">Exportar</span><span class="sb-fake-i">Sair</span></span><span class="sb-fake-page"><i></i><i></i><i></i></span></div></div>
+      <p class="cap">Ação é Button, no conteúdo. <i>Primer, Polaris.</i></p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Rótulo curto, uma linha</span>
+      <div class="stage2 sb-stage2"><div class="sb-fake sb-fake--do"><span class="sb-fake-side"><span class="sb-fake-who"><i></i><b></b></span><span class="sb-fake-i">Relatórios</span><span class="sb-fake-i sb-fake-i--on">Pagamentos</span><span class="sb-fake-i">Estoque</span></span><span class="sb-fake-page"><i></i><i></i><i></i></span></div></div>
+      <p class="cap">Se não cabe, o texto muda. <i>Material.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Dois itens atuais</span>
+      <div class="stage2 sb-stage2"><div class="sb-fake sb-fake--no"><span class="sb-fake-side"><span class="sb-fake-who"><i></i><b></b></span><span class="sb-fake-i sb-fake-i--on">Pedidos</span><span class="sb-fake-i sb-fake-i--on">Clientes</span><span class="sb-fake-i">Estoque</span></span><span class="sb-fake-page"><i></i><i></i><i></i></span></div></div>
+      <p class="cap">A marca diz onde a pessoa está: um lugar só.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  <h3 class="cd-rgroup">Quando usar</h3>
+<div class="rule"><div class="rn">01</div><div><h3>Navegação principal entre destinos do produto</h3><p>Visível o tempo todo; vale a partir de uns 5 destinos ou quando a pessoa troca de área com frequência. Com menos, barra horizontal com Tab Line. Precedentes: Carbon (painel lateral acima de 5 itens), Material (gaveta para 5 ou mais).</p></div></div>
+<div class="rule"><div class="rn">02</div><div><h3>Item é destino, nunca ação</h3><p>“Criar pedido” ou “Sair” vão num Button, no conteúdo ou na página de conta. Precedentes: Primer NavList, Polaris.</p></div></div>
+<div class="rule"><div class="rn">03</div><div><h3>Não alterna conteúdo da mesma tela</h3><p>Isso é o Tab de painel: marcação diferente, anúncio diferente. Precedentes: Primer (NavList e UnderlinePanels separados), regra 22 do Tab.</p></div></div>
+<div class="rule"><div class="rn">04</div><div><h3>Uma Sidebar por tela, sempre à esquerda</h3><p>A direita é do Drawer; duas colunas de navegação competem. Precedentes: Material, Carbon.</p></div></div>
+<h3 class="cd-rgroup">Estrutura e hierarquia</h3>
+<div class="rule"><div class="rn">05</div><div><h3>Três zonas, nesta ordem</h3><p>Perfil em cima, grupos no miolo, Ajuda embaixo. Só o miolo rola. Precedentes: Carbon, Material.</p></div></div>
+<div class="rule"><div class="rn">06</div><div><h3>Destinos relacionados sob um rótulo de grupo</h3><p>Itens sem categoria vão no topo, sem rótulo; grupo de um item só não leva rótulo. Precedentes: Spectrum, Primer NavList.Group.</p></div></div>
+<div class="rule"><div class="rn">07</div><div><h3>Os mais usados primeiro</h3><p>Entre grupos e dentro de cada grupo. Precedente: Material.</p></div></div>
+<div class="rule"><div class="rn">08</div><div><h3>Um nível só</h3><p>Sub-páginas viram Tab Line dentro da página. Precedentes: Carbon (sem terceiro nível; abas na página), decisão I do Tab.</p></div></div>
+<div class="rule"><div class="rn">09</div><div><h3>Rótulo de grupo não é clicável</h3><p>Ele não leva a lugar nenhum. Precedente: Spectrum.</p></div></div>
+<div class="rule"><div class="rn">10</div><div><h3>Grupos separados por espaço, sem Divider</h3><p><b>Divergência consciente:</b> o Primer usa divisória em grupo sem rótulo. No AL todo grupo com mais de um item tem rótulo, e rótulo mais 24 de espaço já separam.</p></div></div>
+<h3 class="cd-rgroup">Item</h3>
+<div class="rule"><div class="rn">11</div><div><h3>Sempre o Tab Square de largura cheia</h3><p>Nunca o Line: a linha só faz sentido na horizontal. Precedente: regra 4 e decisão J do Tab.</p></div></div>
+<div class="rule"><div class="rn">12</div><div><h3>No máximo um item atual</h3><p>O destino da área onde a pessoa está, inclusive nas sub-páginas. Página fora dos destinos, como a da conta, não marca nenhum. Precedentes: Carbon, Primer.</p></div></div>
+<div class="rule"><div class="rn">13</div><div><h3>Sem ícone e sem contador</h3><p>Nesta versão. O Tab também não tem.</p></div></div>
+<h3 class="cd-rgroup">Conteúdo</h3>
+<div class="rule"><div class="rn">14</div><div><h3>Rótulo de 1 a 3 palavras</h3><p>Um substantivo que nomeia o destino, em caixa de frase, sem jargão interno: “Pedidos”, não “Gerencie seus pedidos”. Precedentes: Material, regras 14 e 15 do Tab.</p></div></div>
+<div class="rule"><div class="rn">15</div><div><h3>Rótulo em uma linha, sem reticências</h3><p>A largura útil é 248. Se não cabe, o texto muda. Precedentes: Material (“não truncar”), regra 16 do Tab.</p></div></div>
+<div class="rule"><div class="rn">16</div><div><h3>Nenhum rótulo repetido</h3><p>O leitor de tela lista todos os links; dois “Relatórios” ficam ambíguos (WCAG 2.4.4).</p></div></div>
+<div class="rule"><div class="rn">17</div><div><h3>Rótulo de grupo com uma ou duas palavras</h3><p>Mono, em caixa de frase, nunca em caixa alta: a fonte já o diferencia dos itens.</p></div></div>
+<h3 class="cd-rgroup">Perfil</h3>
+<div class="rule"><div class="rn">18</div><div><h3>Quem está logado: nome e e-mail</h3><p>O Avatar segue foto, iniciais, ícone, e aqui é decorativo, porque o nome está ao lado. Precedente: regras do Avatar.</p></div></div>
+<div class="rule"><div class="rn">19</div><div><h3>O botão leva à página da conta</h3><p>Com nome que diz isso, como “Abrir minha conta”. Precedente: regras do Icon Button.</p></div></div>
+<div class="rule"><div class="rn">20</div><div><h3>Nome e e-mail podem ter reticências</h3><p>A única exceção à regra 15: o texto vem do cadastro, não do produto. O texto inteiro segue no documento para o leitor de tela. Precedente: Primer (truncar só texto do usuário).</p></div></div>
+<h3 class="cd-rgroup">Ajuda</h3>
+<div class="rule"><div class="rn">21</div><div><h3>Opcional, para o que fica fora do dia a dia</h3><p>Suporte, documentação, feedback; até três itens, fixos embaixo. Precedentes: Carbon, Material.</p></div></div>
+<div class="rule"><div class="rn">22</div><div><h3>Item que abre outro site avisa</h3><p>No rótulo ou no nome acessível. Precedente: WCAG 3.2.5.</p></div></div>
+<h3 class="cd-rgroup">Tamanho e layout</h3>
+<div class="rule"><div class="rn">23</div><div><h3>Um tamanho só</h3><p>296 de largura e a altura da tela; não rola com a página. Precedente: Primer (painel de 296).</p></div></div>
+<div class="rule"><div class="rn">24</div><div><h3>Abaixo de 1024px, painel modal pela esquerda</h3><p>Aberto por um botão Menu que o produto põe no topo. Cobre também o zoom de 200% (WCAG 1.4.10). Precedentes: Carbon (menu em tela pequena ou a ~175% de zoom), Material (gaveta modal em tela compacta).</p></div></div>
+<div class="rule"><div class="rn">25</div><div><h3>No modo modal, sem X</h3><p>O foco cai no item atual; Esc fecha e devolve o foco ao Menu; escolher um destino fecha; clicar fora sempre fecha, porque não há campos. O Menu continua visível. Precedentes: Modal e Drawer do AL, Material.</p></div></div>
+<h3 class="cd-rgroup">Acessibilidade</h3>
+<div class="rule"><div class="rn">26</div><div><h3><code>&lt;aside&gt;</code> com a navegação dentro</h3><p>Grupos e Ajuda num <code>&lt;nav aria-label="Principal"&gt;</code>; o perfil fica fora, porque identifica, não navega. Precedentes: Carbon, Queensland.</p></div></div>
+<div class="rule"><div class="rn">27</div><div><h3>Cada grupo é uma lista nomeada pelo rótulo</h3><p>“Vendas, lista, 4 itens”. Precedentes: Primer, Carbon.</p></div></div>
+<div class="rule"><div class="rn">28</div><div><h3>Itens são links, o atual com <code>aria-current="page"</code></h3><p>Nunca <code>role="tab"</code>; Tab passa por todos e as setas não fazem nada. Precedentes: regra 22 do Tab, Carbon, Primer.</p></div></div>
+<div class="rule"><div class="rn">29</div><div><h3>“Pular para o conteúdo” antes da Sidebar</h3><p>É do produto. Sem ele, quem usa teclado atravessa todos os itens em toda página (WCAG 2.4.1). Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">30</div><div><h3>Foco é o anel do Tab, só pelo teclado</h3><p>No alto contraste, o item atual ganha contorno e a borda segue visível. Precedente: regras 23 e 24 do Tab.</p></div></div>
+<h3 class="cd-rgroup">Exceções</h3>
+<div class="rule"><div class="rn">31</div><div><h3>A borda é de região</h3><p>Entre 1,47 e 2,71:1, abaixo de 3:1: a Sidebar é uma região da página, não um controle. Não escurecer. Mesmo raciocínio do Divider e do Card.</p></div></div>
+<div class="rule"><div class="rn">32</div><div><h3>O título da página repete o rótulo do item atual</h3><p>Paga a seleção tonal herdada do Tab (o fundo do atual mal se separa da tela). Sobre a tela, o pressionado do atual passa 3:1.</p></div></div>
+<h3 class="cd-rgroup">Fora de escopo</h3>
+<div class="rule"><div class="rn">33</div><div><h3>O que fica de fora, de propósito</h3><p>Ícone, contador, sub-níveis, modo recolhido só com ícones, redimensionar arrastando, Sidebar à direita, segundo tamanho, tema próprio. Demanda nova volta para a etapa 1.</p></div></div>
+</section>
+
+<section>
+  <h2>Fora de escopo, de propósito</h2>
+  <div class="anat">
+    <div><b>Ícone e contador nos itens</b><span>O Tab não tem; a Sidebar herda.</span></div>
+    <div><b>Sub-níveis que expandem</b><span>Um nível só; sub-páginas são Tab Line na página.</span></div>
+    <div><b>Modo recolhido só com ícones</b><span>Sem ícone nos itens, ele nem é possível.</span></div>
+    <div><b>Redimensionar arrastando</b><span>O Spectrum tem; o AL tem um tamanho.</span></div>
+    <div><b>Sidebar à direita</b><span>A direita é do Drawer.</span></div>
+    <div><b>Tema próprio</b><span>Uma Sidebar escura num produto claro, por exemplo.</span></div>
+  </div>
+</section></div><div class="panel" id="p-sidebar-a11y" role="tabpanel" aria-labelledby="t-sidebar-a11y" tabindex="0" hidden>
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O portão mede os textos da Sidebar e os estados do item e do botão do perfil <b>sobre o fundo da
+  Sidebar</b>, além da borda e do painel modal contra a página escurecida. Texto passa 4,5:1; anel, ícone e
+  fundo do item atual, 3:1. Um julgamento a mais exige que hover e pressionado sejam <b>diferentes</b> do
+  fundo: era o defeito que o fundo elevado causava.</p>
+  <div class="stats">
+    <div class="stat hl"><b>46</b><span>combinações medidas</span></div>
+    <div class="stat"><b>33</b><span>passam</span></div>
+    <div class="stat"><b>13</b><span>em exceção declarada</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Contraste contra o fundo efetivo</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">nome</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">14.55:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">e-mail</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">rótulo de grupo</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">item em repouso</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">item em hover</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover</td><td class="num strong">12.54:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">item pressionado</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active</td><td class="num strong">11.02:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">item atual</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#FFEADE"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">6.83:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">item atual em hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">bg-brand-hover</td><td class="num strong">5.30:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">item atual pressionado</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#992700"></span></td><td class="tok dim">bg-brand-active</td><td class="num strong">7.94:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">ícone do botão do perfil</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">14.55:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">fundo do item atual</td><td class="chipcell"><span class="chip sm" style="background:#FFEADE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.16:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">fundo do item atual pressionado</td><td class="chipcell"><span class="chip sm" style="background:#992700"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">7.94:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover do item × Sidebar</td><td class="chipcell"><span class="chip sm" style="background:#EEEEEE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.16:1</td><td class="tok dim">1.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">pressionado do item × Sidebar</td><td class="chipcell"><span class="chip sm" style="background:#E0E0E0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.32:1</td><td class="tok dim">1.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">hover do botão × Sidebar</td><td class="chipcell"><span class="chip sm" style="background:#EEEEEE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.16:1</td><td class="tok dim">1.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">pressionado do botão × Sidebar</td><td class="chipcell"><span class="chip sm" style="background:#E0E0E0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.32:1</td><td class="tok dim">1.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">borda × tela</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.57:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">borda × superfície</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.47:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">painel modal × tela escurecida</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#7D7D7D"></span></td><td class="tok dim">bg-canvas+scrim</td><td class="num strong">4.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">borda do painel × tela escurecida</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#7D7D7D"></span></td><td class="tok dim">bg-canvas+scrim</td><td class="num strong">2.62:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">painel modal × superfície escurecida</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#7A7A7A"></span></td><td class="tok dim">bg-surface+scrim</td><td class="num strong">4.29:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">borda do painel × superfície escurecida</td><td class="chipcell"><span class="chip sm" style="background:#CECECE"></span><span class="chip sm" style="background:#7A7A7A"></span></td><td class="tok dim">bg-surface+scrim</td><td class="num strong">2.73:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">nome</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">16.57:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">e-mail</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.47:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">rótulo de grupo</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.47:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">item em repouso</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.47:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">item em hover</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-hover</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">item pressionado</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-active</td><td class="num strong">6.85:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">item atual</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#2D0D00"></span></td><td class="tok dim">bg-brand-subtle</td><td class="num strong">8.18:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">item atual em hover</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#EA4900"></span></td><td class="tok dim">bg-brand-hover</td><td class="num strong">3.85:1</td><td class="tok dim">4.5:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">item atual pressionado</td><td class="chipcell"><span class="chip sm" style="background:#FFFFFF"></span><span class="chip sm" style="background:#C53900"></span></td><td class="tok dim">bg-brand-active</td><td class="num strong">5.30:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">ícone do botão do perfil</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">16.57:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">fundo do item atual</td><td class="chipcell"><span class="chip sm" style="background:#2D0D00"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.01:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">fundo do item atual pressionado</td><td class="chipcell"><span class="chip sm" style="background:#C53900"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">3.35:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover do item × Sidebar</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.66:1</td><td class="tok dim">1.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">pressionado do item × Sidebar</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">2.42:1</td><td class="tok dim">1.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">hover do botão × Sidebar</td><td class="chipcell"><span class="chip sm" style="background:#3E3E3E"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">1.66:1</td><td class="tok dim">1.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">pressionado do botão × Sidebar</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">2.42:1</td><td class="tok dim">1.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">borda × tela</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">2.42:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">borda × superfície</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">1.98:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">painel modal × tela escurecida</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#090909"></span></td><td class="tok dim">bg-canvas+scrim</td><td class="num strong">1.12:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">borda do painel × tela escurecida</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#090909"></span></td><td class="tok dim">bg-canvas+scrim</td><td class="num strong">2.71:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">painel modal × superfície escurecida</td><td class="chipcell"><span class="chip sm" style="background:#181818"></span><span class="chip sm" style="background:#0F0F0F"></span></td><td class="tok dim">bg-surface+scrim</td><td class="num strong">1.08:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">borda do painel × superfície escurecida</td><td class="chipcell"><span class="chip sm" style="background:#565656"></span><span class="chip sm" style="background:#0F0F0F"></span></td><td class="tok dim">bg-surface+scrim</td><td class="num strong">2.61:1</td><td class="tok dim">3.0:1</td><td><span class="exc">exceção declarada</span></td></tr></tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Exceção nova: o painel modal não se separa do fundo escurecido no escuro</b>
+    O painel tem a cor da tela, e no escuro a página escurecida fica quase da mesma cor: 1,08 a 1,12:1. No claro
+    passa (4,1). Quem separa é a borda (2,6 a 2,7:1) e a sombra, e o painel ocupa a altura toda a partir da borda
+    esquerda. Aprovada na etapa 6; o Drawer tem a parecida, em 1,8.
+  </div>
+  <div class="note">
+    <b>Herdadas</b>
+    <code>borda-de-regiao</code> (a borda é de região, não de controle), <code>selecao-tonal</code> (paga pelo
+    título da página igual ao rótulo do item atual) e <code>marca-no-hover-escuro</code> (a exceção de marca da
+    Foundation, 3,85:1 no hover do item atual).
+  </div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra catorze regras lendo o HTML da visualização de QA:
+  <b>3 Sidebars</b> ali, nenhuma fora do contrato.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Região</b><span><code>.al-sidebar</code> é um <code>&lt;aside&gt;</code> com nome.</span></div>
+    <div><b>b · Uma por tela</b><span>Só uma viva no documento; as congeladas, sob <code>inert</code>, estão isentas.</span></div>
+    <div><b>c · Navegação</b><span>Exatamente um <code>__nav</code>, que é <code>&lt;nav aria-label&gt;</code>.</span></div>
+    <div><b>d · Ordem</b><span>Perfil e navegação; dentro dela, miolo e Ajuda.</span></div>
+    <div><b>e · Perfil</b><span>Fora do <code>&lt;nav&gt;</code>; Avatar <code>aria-hidden</code> e foto com <code>alt=""</code>.</span></div>
+    <div><b>f · Botão do perfil</b><span>Icon Button com nome e ícone <code>aria-hidden</code>.</span></div>
+    <div><b>g · Grupo</b><span>Rótulo com texto e id; a lista aponta para ele com <code>aria-labelledby</code>.</span></div>
+    <div><b>h · Lista</b><span>Sempre <code>.al-tabs.al-tabs--square</code>.</span></div>
+    <div><b>i · Item</b><span><code>&lt;a href&gt;</code> com rótulo, nunca <code>role="tab"</code> nem <code>aria-selected</code>.</span></div>
+    <div><b>j · Um atual</b><span>No máximo um <code>aria-current="page"</code>.</span></div>
+    <div><b>k · Sem repetir</b><span>Nenhum rótulo de item igual a outro.</span></div>
+    <div><b>l · Ajuda</b><span>É um grupo, com até três itens.</span></div>
+    <div><b>m · Menu</b><span>Todo <code>data-al-sidebar-open</code> aponta para uma Sidebar e tem nome, <code>aria-controls</code> e <code>aria-expanded</code>.</span></div>
+    <div><b>n · Pular</b><span>Um link “pular para o conteúdo” vem antes da Sidebar.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Ordem</b><span>Pular para o conteúdo, botão do perfil, itens grupo a grupo, Ajuda. Setas não fazem nada.</span></div>
+    <div><b>Presa no topo</b><span>A Sidebar fica parada enquanto a página rola; só o miolo dela rola.</span></div>
+    <div><b>Painel modal</b><span>Entra da esquerda e sai pela esquerda; o foco cai no item atual e fica preso no painel.</span></div>
+    <div><b>Fechar</b><span>Esc, clique fora ou escolher um destino; o foco volta ao Menu, que informa aberto ou fechado.</span></div>
+    <div><b>Tela alargou</b><span>Com o painel aberto, ele fecha e a Sidebar volta ao lugar dela.</span></div>
+    <div><b>Leitor de tela</b><span>“Barra lateral”, “Principal, navegação”, “Vendas, lista, 4 itens”, “página atual”.</span></div>
+    <div><b>Movimento reduzido</b><span>O painel abre e fecha sem deslizar.</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.19.0</span>
+  <span><b>AL Design System</b> · v0.20.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -16945,6 +17715,88 @@ var DW_DEMOS = {"sm|detail": {"inner": "<header class=\"al-drawer__header\"><h2 
       navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
     }
   });
+  render();
+})();
+var SB_DEMOS = {"initials|on": {"aside": "<aside class=\"al-sidebar\" id=\"sb\" aria-label=\"Barra lateral\"><div class=\"al-sidebar__profile\"><span class=\"al-avatar al-avatar--md\" aria-hidden=\"true\"><span class=\"al-avatar__initials\">JD<\/span><\/span><div class=\"al-sidebar__details\"><div class=\"al-sidebar__user\"><p class=\"al-sidebar__name\">Jane Doe<\/p><p class=\"al-sidebar__email\">jane.doe@gmail.com<\/p><\/div><a class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm\" href=\"#conta\" aria-label=\"Abrir minha conta\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/a><\/div><\/div><nav class=\"al-sidebar__nav\" aria-label=\"Principal\"><div class=\"al-sidebar__content\"><ul class=\"al-tabs al-tabs--square\"><li><a class=\"al-tab\" href=\"#inicio\" aria-current=\"page\"><span class=\"al-tab__label\">Início<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#caixa-de-entrada\"><span class=\"al-tab__label\">Caixa de entrada<\/span><\/a><\/li><\/ul><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-vendas\">Vendas<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-vendas\"><li><a class=\"al-tab\" href=\"#pedidos\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#clientes\"><span class=\"al-tab__label\">Clientes<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#produtos\"><span class=\"al-tab__label\">Produtos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#cupons\"><span class=\"al-tab__label\">Cupons<\/span><\/a><\/li><\/ul><\/div><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-financeiro\">Financeiro<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-financeiro\"><li><a class=\"al-tab\" href=\"#faturas\"><span class=\"al-tab__label\">Faturas<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#pagamentos\"><span class=\"al-tab__label\">Pagamentos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#relatorios\"><span class=\"al-tab__label\">Relatórios<\/span><\/a><\/li><\/ul><\/div><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-operacao\">Operação<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-operacao\"><li><a class=\"al-tab\" href=\"#estoque\"><span class=\"al-tab__label\">Estoque<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#entregas\"><span class=\"al-tab__label\">Entregas<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#fornecedores\"><span class=\"al-tab__label\">Fornecedores<\/span><\/a><\/li><\/ul><\/div><\/div><div class=\"al-sidebar__group al-sidebar__support\"><p class=\"al-sidebar__group-label\" id=\"sb-g-ajuda\">Ajuda<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-ajuda\"><li><a class=\"al-tab\" href=\"#central-de-ajuda\"><span class=\"al-tab__label\">Central de ajuda<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#documentacao\"><span class=\"al-tab__label\">Documentação<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#enviar-feedback\"><span class=\"al-tab__label\">Enviar feedback<\/span><\/a><\/li><\/ul><\/div><\/nav><\/aside>", "code": "<a class=\"skip\" href=\"#conteudo\">Pular para o conteúdo<\/a>   <!-- do produto, antes da Sidebar -->\n\n<!-- botão Menu, do produto, no topo da página: só aparece abaixo de 1024px -->\n<button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--md\"\n        aria-label=\"Menu\" aria-controls=\"sb\" aria-expanded=\"false\" data-al-sidebar-open=\"sb\">\n  <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…menu…<\/svg><\/button>\n\n<aside class=\"al-sidebar\" id=\"sb\" aria-label=\"Barra lateral\">\n  <div class=\"al-sidebar__profile\">\n    <span class=\"al-avatar al-avatar--md\" aria-hidden=\"true\">\n      <span class=\"al-avatar__initials\">JD<\/span>\n    <\/span>\n    <div class=\"al-sidebar__details\">\n      <div class=\"al-sidebar__user\">\n        <p class=\"al-sidebar__name\">Jane Doe<\/p>\n        <p class=\"al-sidebar__email\">jane.doe@gmail.com<\/p>\n      <\/div>\n      <a class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm\" href=\"/conta\" aria-label=\"Abrir minha conta\">\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…chevron-right…<\/svg><\/a>\n    <\/div>\n  <\/div>\n  <nav class=\"al-sidebar__nav\" aria-label=\"Principal\">\n    <div class=\"al-sidebar__content\">   <!-- só esta parte rola -->\n      <ul class=\"al-tabs al-tabs--square\">   <!-- itens soltos: no topo, sem rótulo -->\n        <li><a class=\"al-tab\" href=\"/\" aria-current=\"page\"><span class=\"al-tab__label\">Início<\/span><\/a><\/li>\n      <\/ul>\n      <div class=\"al-sidebar__group\">\n        <p class=\"al-sidebar__group-label\" id=\"g-vendas\">Vendas<\/p>\n        <ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"g-vendas\">\n          <li><a class=\"al-tab\" href=\"/pedidos\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li>\n        <\/ul>\n      <\/div>\n    <\/div>\n    <div class=\"al-sidebar__group al-sidebar__support\">\n      <p class=\"al-sidebar__group-label\" id=\"g-ajuda\">Ajuda<\/p>\n      <ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"g-ajuda\">\n        <li><a class=\"al-tab\" href=\"/ajuda\"><span class=\"al-tab__label\">Central de ajuda<\/span><\/a><\/li>\n      <\/ul>\n    <\/div>\n  <\/nav>\n<\/aside>\n<main id=\"conteudo\" tabindex=\"-1\">…<\/main>\n<script src=\"sidebar.js\"><\/script>  <!-- o painel modal abaixo de 1024px -->"}, "initials|off": {"aside": "<aside class=\"al-sidebar\" id=\"sb\" aria-label=\"Barra lateral\"><div class=\"al-sidebar__profile\"><span class=\"al-avatar al-avatar--md\" aria-hidden=\"true\"><span class=\"al-avatar__initials\">JD<\/span><\/span><div class=\"al-sidebar__details\"><div class=\"al-sidebar__user\"><p class=\"al-sidebar__name\">Jane Doe<\/p><p class=\"al-sidebar__email\">jane.doe@gmail.com<\/p><\/div><a class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm\" href=\"#conta\" aria-label=\"Abrir minha conta\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/a><\/div><\/div><nav class=\"al-sidebar__nav\" aria-label=\"Principal\"><div class=\"al-sidebar__content\"><ul class=\"al-tabs al-tabs--square\"><li><a class=\"al-tab\" href=\"#inicio\" aria-current=\"page\"><span class=\"al-tab__label\">Início<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#caixa-de-entrada\"><span class=\"al-tab__label\">Caixa de entrada<\/span><\/a><\/li><\/ul><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-vendas\">Vendas<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-vendas\"><li><a class=\"al-tab\" href=\"#pedidos\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#clientes\"><span class=\"al-tab__label\">Clientes<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#produtos\"><span class=\"al-tab__label\">Produtos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#cupons\"><span class=\"al-tab__label\">Cupons<\/span><\/a><\/li><\/ul><\/div><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-financeiro\">Financeiro<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-financeiro\"><li><a class=\"al-tab\" href=\"#faturas\"><span class=\"al-tab__label\">Faturas<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#pagamentos\"><span class=\"al-tab__label\">Pagamentos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#relatorios\"><span class=\"al-tab__label\">Relatórios<\/span><\/a><\/li><\/ul><\/div><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-operacao\">Operação<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-operacao\"><li><a class=\"al-tab\" href=\"#estoque\"><span class=\"al-tab__label\">Estoque<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#entregas\"><span class=\"al-tab__label\">Entregas<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#fornecedores\"><span class=\"al-tab__label\">Fornecedores<\/span><\/a><\/li><\/ul><\/div><\/div><\/nav><\/aside>", "code": "<a class=\"skip\" href=\"#conteudo\">Pular para o conteúdo<\/a>   <!-- do produto, antes da Sidebar -->\n\n<!-- botão Menu, do produto, no topo da página: só aparece abaixo de 1024px -->\n<button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--md\"\n        aria-label=\"Menu\" aria-controls=\"sb\" aria-expanded=\"false\" data-al-sidebar-open=\"sb\">\n  <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…menu…<\/svg><\/button>\n\n<aside class=\"al-sidebar\" id=\"sb\" aria-label=\"Barra lateral\">\n  <div class=\"al-sidebar__profile\">\n    <span class=\"al-avatar al-avatar--md\" aria-hidden=\"true\">\n      <span class=\"al-avatar__initials\">JD<\/span>\n    <\/span>\n    <div class=\"al-sidebar__details\">\n      <div class=\"al-sidebar__user\">\n        <p class=\"al-sidebar__name\">Jane Doe<\/p>\n        <p class=\"al-sidebar__email\">jane.doe@gmail.com<\/p>\n      <\/div>\n      <a class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm\" href=\"/conta\" aria-label=\"Abrir minha conta\">\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…chevron-right…<\/svg><\/a>\n    <\/div>\n  <\/div>\n  <nav class=\"al-sidebar__nav\" aria-label=\"Principal\">\n    <div class=\"al-sidebar__content\">   <!-- só esta parte rola -->\n      <ul class=\"al-tabs al-tabs--square\">   <!-- itens soltos: no topo, sem rótulo -->\n        <li><a class=\"al-tab\" href=\"/\" aria-current=\"page\"><span class=\"al-tab__label\">Início<\/span><\/a><\/li>\n      <\/ul>\n      <div class=\"al-sidebar__group\">\n        <p class=\"al-sidebar__group-label\" id=\"g-vendas\">Vendas<\/p>\n        <ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"g-vendas\">\n          <li><a class=\"al-tab\" href=\"/pedidos\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li>\n        <\/ul>\n      <\/div>\n    <\/div>\n  <\/nav>\n<\/aside>\n<main id=\"conteudo\" tabindex=\"-1\">…<\/main>\n<script src=\"sidebar.js\"><\/script>  <!-- o painel modal abaixo de 1024px -->"}, "icon|on": {"aside": "<aside class=\"al-sidebar\" id=\"sb\" aria-label=\"Barra lateral\"><div class=\"al-sidebar__profile\"><span class=\"al-avatar al-avatar--md\" aria-hidden=\"true\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" /><circle cx=\"12\" cy=\"7\" r=\"4\" /><\/svg><\/span><div class=\"al-sidebar__details\"><div class=\"al-sidebar__user\"><p class=\"al-sidebar__name\">Jane Doe<\/p><p class=\"al-sidebar__email\">jane.doe@gmail.com<\/p><\/div><a class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm\" href=\"#conta\" aria-label=\"Abrir minha conta\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/a><\/div><\/div><nav class=\"al-sidebar__nav\" aria-label=\"Principal\"><div class=\"al-sidebar__content\"><ul class=\"al-tabs al-tabs--square\"><li><a class=\"al-tab\" href=\"#inicio\" aria-current=\"page\"><span class=\"al-tab__label\">Início<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#caixa-de-entrada\"><span class=\"al-tab__label\">Caixa de entrada<\/span><\/a><\/li><\/ul><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-vendas\">Vendas<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-vendas\"><li><a class=\"al-tab\" href=\"#pedidos\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#clientes\"><span class=\"al-tab__label\">Clientes<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#produtos\"><span class=\"al-tab__label\">Produtos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#cupons\"><span class=\"al-tab__label\">Cupons<\/span><\/a><\/li><\/ul><\/div><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-financeiro\">Financeiro<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-financeiro\"><li><a class=\"al-tab\" href=\"#faturas\"><span class=\"al-tab__label\">Faturas<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#pagamentos\"><span class=\"al-tab__label\">Pagamentos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#relatorios\"><span class=\"al-tab__label\">Relatórios<\/span><\/a><\/li><\/ul><\/div><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-operacao\">Operação<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-operacao\"><li><a class=\"al-tab\" href=\"#estoque\"><span class=\"al-tab__label\">Estoque<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#entregas\"><span class=\"al-tab__label\">Entregas<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#fornecedores\"><span class=\"al-tab__label\">Fornecedores<\/span><\/a><\/li><\/ul><\/div><\/div><div class=\"al-sidebar__group al-sidebar__support\"><p class=\"al-sidebar__group-label\" id=\"sb-g-ajuda\">Ajuda<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-ajuda\"><li><a class=\"al-tab\" href=\"#central-de-ajuda\"><span class=\"al-tab__label\">Central de ajuda<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#documentacao\"><span class=\"al-tab__label\">Documentação<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#enviar-feedback\"><span class=\"al-tab__label\">Enviar feedback<\/span><\/a><\/li><\/ul><\/div><\/nav><\/aside>", "code": "<a class=\"skip\" href=\"#conteudo\">Pular para o conteúdo<\/a>   <!-- do produto, antes da Sidebar -->\n\n<!-- botão Menu, do produto, no topo da página: só aparece abaixo de 1024px -->\n<button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--md\"\n        aria-label=\"Menu\" aria-controls=\"sb\" aria-expanded=\"false\" data-al-sidebar-open=\"sb\">\n  <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…menu…<\/svg><\/button>\n\n<aside class=\"al-sidebar\" id=\"sb\" aria-label=\"Barra lateral\">\n  <div class=\"al-sidebar__profile\">\n    <span class=\"al-avatar al-avatar--md\" aria-hidden=\"true\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…user…<\/svg>\n    <\/span>\n    <div class=\"al-sidebar__details\">\n      <div class=\"al-sidebar__user\">\n        <p class=\"al-sidebar__name\">Jane Doe<\/p>\n        <p class=\"al-sidebar__email\">jane.doe@gmail.com<\/p>\n      <\/div>\n      <a class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm\" href=\"/conta\" aria-label=\"Abrir minha conta\">\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…chevron-right…<\/svg><\/a>\n    <\/div>\n  <\/div>\n  <nav class=\"al-sidebar__nav\" aria-label=\"Principal\">\n    <div class=\"al-sidebar__content\">   <!-- só esta parte rola -->\n      <ul class=\"al-tabs al-tabs--square\">   <!-- itens soltos: no topo, sem rótulo -->\n        <li><a class=\"al-tab\" href=\"/\" aria-current=\"page\"><span class=\"al-tab__label\">Início<\/span><\/a><\/li>\n      <\/ul>\n      <div class=\"al-sidebar__group\">\n        <p class=\"al-sidebar__group-label\" id=\"g-vendas\">Vendas<\/p>\n        <ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"g-vendas\">\n          <li><a class=\"al-tab\" href=\"/pedidos\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li>\n        <\/ul>\n      <\/div>\n    <\/div>\n    <div class=\"al-sidebar__group al-sidebar__support\">\n      <p class=\"al-sidebar__group-label\" id=\"g-ajuda\">Ajuda<\/p>\n      <ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"g-ajuda\">\n        <li><a class=\"al-tab\" href=\"/ajuda\"><span class=\"al-tab__label\">Central de ajuda<\/span><\/a><\/li>\n      <\/ul>\n    <\/div>\n  <\/nav>\n<\/aside>\n<main id=\"conteudo\" tabindex=\"-1\">…<\/main>\n<script src=\"sidebar.js\"><\/script>  <!-- o painel modal abaixo de 1024px -->"}, "icon|off": {"aside": "<aside class=\"al-sidebar\" id=\"sb\" aria-label=\"Barra lateral\"><div class=\"al-sidebar__profile\"><span class=\"al-avatar al-avatar--md\" aria-hidden=\"true\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2\" /><circle cx=\"12\" cy=\"7\" r=\"4\" /><\/svg><\/span><div class=\"al-sidebar__details\"><div class=\"al-sidebar__user\"><p class=\"al-sidebar__name\">Jane Doe<\/p><p class=\"al-sidebar__email\">jane.doe@gmail.com<\/p><\/div><a class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm\" href=\"#conta\" aria-label=\"Abrir minha conta\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m9 18 6-6-6-6\" /><\/svg><\/a><\/div><\/div><nav class=\"al-sidebar__nav\" aria-label=\"Principal\"><div class=\"al-sidebar__content\"><ul class=\"al-tabs al-tabs--square\"><li><a class=\"al-tab\" href=\"#inicio\" aria-current=\"page\"><span class=\"al-tab__label\">Início<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#caixa-de-entrada\"><span class=\"al-tab__label\">Caixa de entrada<\/span><\/a><\/li><\/ul><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-vendas\">Vendas<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-vendas\"><li><a class=\"al-tab\" href=\"#pedidos\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#clientes\"><span class=\"al-tab__label\">Clientes<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#produtos\"><span class=\"al-tab__label\">Produtos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#cupons\"><span class=\"al-tab__label\">Cupons<\/span><\/a><\/li><\/ul><\/div><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-financeiro\">Financeiro<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-financeiro\"><li><a class=\"al-tab\" href=\"#faturas\"><span class=\"al-tab__label\">Faturas<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#pagamentos\"><span class=\"al-tab__label\">Pagamentos<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#relatorios\"><span class=\"al-tab__label\">Relatórios<\/span><\/a><\/li><\/ul><\/div><div class=\"al-sidebar__group\"><p class=\"al-sidebar__group-label\" id=\"sb-g-operacao\">Operação<\/p><ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"sb-g-operacao\"><li><a class=\"al-tab\" href=\"#estoque\"><span class=\"al-tab__label\">Estoque<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#entregas\"><span class=\"al-tab__label\">Entregas<\/span><\/a><\/li><li><a class=\"al-tab\" href=\"#fornecedores\"><span class=\"al-tab__label\">Fornecedores<\/span><\/a><\/li><\/ul><\/div><\/div><\/nav><\/aside>", "code": "<a class=\"skip\" href=\"#conteudo\">Pular para o conteúdo<\/a>   <!-- do produto, antes da Sidebar -->\n\n<!-- botão Menu, do produto, no topo da página: só aparece abaixo de 1024px -->\n<button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--md\"\n        aria-label=\"Menu\" aria-controls=\"sb\" aria-expanded=\"false\" data-al-sidebar-open=\"sb\">\n  <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…menu…<\/svg><\/button>\n\n<aside class=\"al-sidebar\" id=\"sb\" aria-label=\"Barra lateral\">\n  <div class=\"al-sidebar__profile\">\n    <span class=\"al-avatar al-avatar--md\" aria-hidden=\"true\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…user…<\/svg>\n    <\/span>\n    <div class=\"al-sidebar__details\">\n      <div class=\"al-sidebar__user\">\n        <p class=\"al-sidebar__name\">Jane Doe<\/p>\n        <p class=\"al-sidebar__email\">jane.doe@gmail.com<\/p>\n      <\/div>\n      <a class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm\" href=\"/conta\" aria-label=\"Abrir minha conta\">\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…chevron-right…<\/svg><\/a>\n    <\/div>\n  <\/div>\n  <nav class=\"al-sidebar__nav\" aria-label=\"Principal\">\n    <div class=\"al-sidebar__content\">   <!-- só esta parte rola -->\n      <ul class=\"al-tabs al-tabs--square\">   <!-- itens soltos: no topo, sem rótulo -->\n        <li><a class=\"al-tab\" href=\"/\" aria-current=\"page\"><span class=\"al-tab__label\">Início<\/span><\/a><\/li>\n      <\/ul>\n      <div class=\"al-sidebar__group\">\n        <p class=\"al-sidebar__group-label\" id=\"g-vendas\">Vendas<\/p>\n        <ul class=\"al-tabs al-tabs--square\" aria-labelledby=\"g-vendas\">\n          <li><a class=\"al-tab\" href=\"/pedidos\"><span class=\"al-tab__label\">Pedidos<\/span><\/a><\/li>\n        <\/ul>\n      <\/div>\n    <\/div>\n  <\/nav>\n<\/aside>\n<main id=\"conteudo\" tabindex=\"-1\">…<\/main>\n<script src=\"sidebar.js\"><\/script>  <!-- o painel modal abaixo de 1024px -->"}};
+var SB_PARTS = {"menu": "<button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--md\" aria-label=\"Menu\" aria-controls=\"sb\" aria-expanded=\"false\" data-al-sidebar-open=\"sb\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M4 5h16\" /><path d=\"M4 12h16\" /><path d=\"M4 19h16\" /><\/svg><\/button>", "css": "\nhtml,body{margin:0; background:var(--al-bg-canvas); color:var(--al-text-primary);\n  font-family:var(--al-font-sans); font-size:var(--al-font-size-md); line-height:var(--al-line-height-md)}\n.sb-skip{position:absolute; left:8px; top:8px; z-index:5; padding:8px 16px; border-radius:var(--al-radius-md);\n  background:var(--al-bg-brand); color:var(--al-text-on-brand); font-weight:600; translate:0 -200%}\n.sb-skip:focus{translate:none; outline:none; box-shadow:var(--al-focus-ring-default)}\n.sb-app{display:flex; min-height:100dvh}\n.sb-app-main{flex:1; min-width:0; outline:none}\n.sb-app-top{position:sticky; top:0; display:flex; align-items:center; gap:12px; padding:12px 24px;\n  background:var(--al-bg-canvas); border-bottom:1px solid var(--al-border-subtle)}\n.sb-app-top h1{margin:0; font-size:var(--al-font-size-xl); line-height:var(--al-line-height-xl); font-weight:600}\n.sb-app-body{display:grid; gap:16px; padding:24px; max-width:720px}\n.sb-app-body p{margin:0; color:var(--al-text-secondary)}\n.sb-app-block{height:96px; border-radius:var(--al-radius-xl); background:var(--al-bg-surface)}\n", "js": "/* AL Design System - Sidebar, comportamento da tela estreita\n *\n * Acima de 1024px a Sidebar e so marcacao e CSS: nao ha nada para ligar.\n * Abaixo disso ela vira painel modal pela esquerda (regras 24 e 25), e este\n * arquivo cobre o que o CSS nao faz:\n *   - abrir pelo botao Menu do produto: data-al-sidebar-open=\"<id da aside>\".\n *     A MESMA <aside> e movida para dentro de um <dialog class=\"al-sidebar-modal\">\n *     e volta para o lugar dela ao fechar - nunca ha duas copias da navegacao;\n *   - o <dialog> nativo prende o foco, deixa a pagina inerte, fecha com Esc e\n *     devolve o foco ao botao Menu;\n *   - foco inicial no item atual (aria-current), senao no primeiro item;\n *   - fecha ao escolher um destino (clique num link do <nav>);\n *   - fecha SEMPRE no clique no scrim: a Sidebar nao tem campos;\n *   - sem X (decisao 3): Menu, Esc e scrim bastam;\n *   - se a tela alargar com o painel aberto, fecha e a Sidebar volta a pagina;\n *   - mantem aria-expanded do botao Menu em dia.\n *\n * Uso:\n *   carregar este arquivo com um script src  -> liga sozinho\n * O ponto de quebra repete o do sidebar.css (excecao `ponto-de-quebra`).\n */\n(function () {\n  'use strict';\n\n  var NARROW = window.matchMedia('(width < 1024px)');\n  var open = null;   // { aside, dialog, marker, opener }\n\n  function initialFocus(aside) {\n    var target = aside.querySelector('.al-sidebar__nav [aria-current]:not([aria-current=\"false\"])') ||\n                 aside.querySelector('.al-sidebar__nav a[href]');\n    if (target) target.focus();\n  }\n\n  function inside(el, x, y) {\n    var r = el.getBoundingClientRect();\n    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;\n  }\n\n  function restore() {\n    if (!open) return;\n    var s = open;\n    open = null;\n    s.marker.parentNode.insertBefore(s.aside, s.marker);\n    s.marker.remove();\n    s.dialog.remove();\n    if (s.opener) s.opener.setAttribute('aria-expanded', 'false');\n  }\n\n  function show(aside, opener) {\n    if (open || typeof HTMLDialogElement === 'undefined') return;\n    var dialog = document.createElement('dialog');\n    dialog.className = 'al-sidebar-modal';\n    dialog.setAttribute('aria-label', aside.getAttribute('aria-label') || 'Menu');\n    var marker = document.createComment('al-sidebar');\n    aside.parentNode.insertBefore(marker, aside);\n    document.body.appendChild(dialog);\n    dialog.appendChild(aside);\n    open = { aside: aside, dialog: dialog, marker: marker, opener: opener };\n\n    // So devolve a <aside> depois da animacao de saida: o evento `close` vem\n    // na hora, mas o painel ainda esta deslizando.\n    dialog.addEventListener('close', function () {\n      if (opener) opener.setAttribute('aria-expanded', 'false');\n      var done = false;\n      function finish() { if (!done) { done = true; restore(); } }\n      dialog.addEventListener('transitionend', function (e) {\n        if (e.target === dialog && e.propertyName === 'translate') finish();\n      });\n      var ms = parseFloat(getComputedStyle(dialog).transitionDuration) * 1000 || 0;\n      setTimeout(finish, ms + 50);\n    });\n\n    var pressedOnScrim = false;\n    dialog.addEventListener('pointerdown', function (e) {\n      pressedOnScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);\n    });\n    dialog.addEventListener('click', function (e) {\n      var onScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);\n      if (onScrim && pressedOnScrim) { dialog.close(); return; }\n      pressedOnScrim = false;\n      var link = e.target.closest && e.target.closest('.al-sidebar__nav a[href], .al-sidebar__profile a[href]');\n      if (link) dialog.close();                    // regra 25: escolheu, fecha\n    });\n\n    dialog.showModal();\n    if (opener) opener.setAttribute('aria-expanded', 'true');\n    initialFocus(aside);\n  }\n\n  document.addEventListener('click', function (e) {\n    var opener = e.target.closest && e.target.closest('[data-al-sidebar-open]');\n    if (!opener || !NARROW.matches) return;\n    var aside = document.getElementById(opener.getAttribute('data-al-sidebar-open'));\n    if (aside) show(aside, opener);\n  });\n\n  // Tela alargou com o painel aberto: fecha e devolve na hora, sem animacao.\n  NARROW.addEventListener('change', function (e) {\n    if (!e.matches && open) {\n      var d = open.dialog;\n      restore();\n      if (d.open) d.close();\n    }\n  });\n})();\n\n\n(function () {\n  // so casca de demonstracao: o clique num item vira a \"pagina atual\"\n  document.addEventListener('click', function (e) {\n    var a = e.target.closest && e.target.closest('.al-sidebar a[href]');\n    if (!a) return;\n    e.preventDefault();\n    document.querySelectorAll('.al-sidebar .al-tab[aria-current]').forEach(function (x) { x.removeAttribute('aria-current'); });\n    var t = document.getElementById('app-title');\n    if (a.classList.contains('al-tab')) { a.setAttribute('aria-current', 'page'); t.textContent = a.textContent.trim(); }\n    else { t.textContent = 'Minha conta'; }\n  });\n})();\n", "body": "<div class=\"sb-app-body\"><p>A página atual repete o rótulo do item atual no título. Clique nos itens; role o miolo da Sidebar.<\/p><div class=\"sb-app-block\"><\/div><div class=\"sb-app-block\"><\/div><div class=\"sb-app-block\"><\/div><div class=\"sb-app-block\"><\/div><\/div>"};
+
+(function () {
+  // ── playground da Sidebar ── uma pagina pequena de verdade, num iframe, com o
+  // CSS real (<style id="al-real">) e o sidebar.js real
+  var frame = document.getElementById('sidebar-frame');
+  if (!frame) return;
+  var box = document.getElementById('sidebar-framebox');
+  var stage = document.getElementById('sidebar-stage');
+  var code = document.getElementById('sidebar-code');
+  var SIZES = { wide: [1200, 720], phone: [375, 667] };
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function theme() {
+    var t = pick('sbtheme');
+    if (t !== 'auto') return t;
+    return document.documentElement.getAttribute('data-theme') || '';
+  }
+  function fit() {
+    var s = SIZES[pick('sbwidth')];
+    var avail = stage.clientWidth - 32;
+    var k = Math.min(1, avail / s[0]);
+    frame.style.width = s[0] + 'px';
+    frame.style.height = s[1] + 'px';
+    frame.style.transform = 'scale(' + k + ')';
+    box.style.width = Math.round(s[0] * k) + 'px';
+    box.style.height = Math.round(s[1] * k) + 'px';
+    box.style.margin = '16px auto';
+  }
+  function render() {
+    var demo = SB_DEMOS[pick('sbavatar') + '|' + pick('sbhelp')];
+    var real = document.getElementById('al-real').textContent;
+    var t = theme();
+    frame.srcdoc = '<!doctype html><html lang="pt-BR"' + (t ? ' data-theme="' + t + '"' : '') + '><head>' +
+      '<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' +
+      '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap">' +
+      '<style>' + real + SB_PARTS.css + '</style></head><body>' +
+      '<a class="sb-skip" href="#app-main">Pular para o conteúdo</a><div class="sb-app">' + demo.aside +
+      '<main class="sb-app-main" id="app-main" tabindex="-1"><div class="sb-app-top">' + SB_PARTS.menu +
+      '<h1 id="app-title">Início</h1></div>' + SB_PARTS.body + '</main></div>' +
+      '<script>' + SB_PARTS.js + '<\/script></body></html>';
+    code.innerHTML = esc(demo.code);
+    fit();
+  }
+  function retheme() {
+    try {
+      var d = frame.contentDocument, t = theme();
+      if (!d || !d.documentElement) return;
+      if (t) d.documentElement.setAttribute('data-theme', t); else d.documentElement.removeAttribute('data-theme');
+    } catch (e) {}
+  }
+
+  document.querySelectorAll('#sidebar-controls input').forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      if (inp.name === 'sbtheme') retheme();
+      else if (inp.name === 'sbwidth') fit();
+      else render();
+    });
+  });
+  // o tema do site muda no switch do trilho: "Do site" acompanha
+  new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  window.addEventListener('resize', fit);
+  document.getElementById('sidebar-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  // o palco so tem largura quando a pagina esta visivel: medir de novo ao abrir a aba
+  document.addEventListener('click', function () { setTimeout(fit, 0); });
+  window.addEventListener('hashchange', function () { setTimeout(fit, 0); });
   render();
 })();
 
