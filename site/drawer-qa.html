@@ -7,7 +7,7 @@
 <style>
 /* ================= foundation ================= */
 /* AL Design System - Foundation
- * v0.21.0 - MIT
+ * v0.22.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -962,9 +962,14 @@
  *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
  *
  * O NOME ACESSIVEL
- *   aria-label e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
+ *   O nome e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
  *   contrato deste componente que nao tem alternativa. Ele descreve a ACAO,
- *   nao o desenho: "Buscar", nunca "Lupa".
+ *   nao o desenho: "Buscar", nunca "Lupa". Vem de UM lugar so:
+ *     aria-label="Buscar"            sem tooltip
+ *     aria-labelledby="<id>"         com Tooltip - o texto do tooltip E o
+ *                                    nome (regra 24 do Tooltip, 08/10/2026)
+ *   Os dois juntos reprovam no a11y.py: o labelledby venceria e o aria-label
+ *   envelheceria sem ninguem ler.
  *   O nome vai no BOTAO, nunca no svg. O svg e decorativo aqui pelo mesmo
  *   motivo de sempre - aria-hidden tira do leitor de tela, focusable="false"
  *   tira da ordem de tabulacao - e anunciar os dois seria ruido duplicado.
@@ -2239,7 +2244,7 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   <header class="qa-head">
     <div>
       <h1>Drawer — QA da etapa 6</h1>
-      <p class="qa-sub">AL Design System 0.21.0 · componente 0.1.0 ·
+      <p class="qa-sub">AL Design System 0.22.0 · componente 0.1.0 ·
       3 tamanhos × 4 cenários × 2 temas · portão: 22 combinações, 20 passam, 2 exceções, 0 reprovas</p>
     </div>
     <button type="button" class="qa-btn" id="theme-toggle" aria-pressed="false">

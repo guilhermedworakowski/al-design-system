@@ -1,0 +1,38 @@
+/* AL Design System - tokens do Tooltip
+ * GERADO por components/tooltip/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* cor - fundo invertido; o tema troca no :root */
+  --al-tooltip-bg: var(--al-bg-inverse);
+  --al-tooltip-text: var(--al-text-inverse);
+
+  /* elevacao - altura, nao estado */
+  --al-tooltip-shadow: var(--al-elevation-3);
+
+  /* geometria */
+  --al-tooltip-padding-y: var(--al-space-8);
+  --al-tooltip-padding-x: var(--al-space-12);
+  --al-tooltip-gap: var(--al-space-8);
+  --al-tooltip-offset: var(--al-space-4);
+  --al-tooltip-radius: var(--al-radius-lg);
+
+  /* largura maxima - valor declarado, sem escala na Foundation */
+  --al-tooltip-max-width: 280px;
+
+  /* movimento */
+  --al-tooltip-duration: var(--al-motion-duration-popup);
+  --al-tooltip-easing-enter: var(--al-motion-easing-enter);
+  --al-tooltip-easing-exit: var(--al-motion-easing-exit);
+
+  /* atraso - valor declarado, fica no componente (decisao 6). Lido pelo tooltip.js */
+  --al-tooltip-delay-show: 500ms;
+  --al-tooltip-delay-hide: 100ms;
+
+  /* tipografia - um estilo vira quatro vars */
+  --al-tooltip-font-size: var(--al-font-size-sm);
+  --al-tooltip-line-height: var(--al-line-height-sm);
+  --al-tooltip-font-weight: 400;
+  --al-tooltip-tracking: 0em;
+}

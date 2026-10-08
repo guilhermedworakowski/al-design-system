@@ -10,7 +10,7 @@
 <style>
 /* ================= foundation ================= */
 /* AL Design System - Foundation
- * v0.21.0 - MIT
+ * v0.22.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -599,9 +599,14 @@
  *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
  *
  * O NOME ACESSIVEL
- *   aria-label e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
+ *   O nome e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
  *   contrato deste componente que nao tem alternativa. Ele descreve a ACAO,
- *   nao o desenho: "Buscar", nunca "Lupa".
+ *   nao o desenho: "Buscar", nunca "Lupa". Vem de UM lugar so:
+ *     aria-label="Buscar"            sem tooltip
+ *     aria-labelledby="<id>"         com Tooltip - o texto do tooltip E o
+ *                                    nome (regra 24 do Tooltip, 08/10/2026)
+ *   Os dois juntos reprovam no a11y.py: o labelledby venceria e o aria-label
+ *   envelheceria sem ninguem ler.
  *   O nome vai no BOTAO, nunca no svg. O svg e decorativo aqui pelo mesmo
  *   motivo de sempre - aria-hidden tira do leitor de tela, focusable="false"
  *   tira da ordem de tabulacao - e anunciar os dois seria ruido duplicado.
@@ -1820,7 +1825,7 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
   <div class="qa-wrap">
     <header class="qa-head">
       <h1>Sidebar — QA da etapa 6</h1>
-      <p class="qa-sub">AL Design System 0.21.0 · componente 0.1.0 ·
+      <p class="qa-sub">AL Design System 0.22.0 · componente 0.1.0 ·
       tela larga + celular × 2 temas · portão: 46 combinações, 33 passam, 13 exceções, 0 reprovas</p>
     </header>
 
@@ -1847,7 +1852,7 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
       <iframe class="qa-phone" id="qa-phone" title="Sidebar no celular, 375px" srcdoc="&lt;!doctype html&gt;&lt;html lang=&quot;pt-BR&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;&lt;style&gt;
 /* ================= foundation ================= */
 /* AL Design System - Foundation
- * v0.21.0 - MIT
+ * v0.22.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -2436,9 +2441,14 @@ code { font-family: var(--al-font-mono); font-size: 0.9em; }
  *   type=&quot;button&quot; nao e opcional: dentro de &lt;form&gt;, o padrao do HTML e submit.
  *
  * O NOME ACESSIVEL
- *   aria-label e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
+ *   O nome e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
  *   contrato deste componente que nao tem alternativa. Ele descreve a ACAO,
- *   nao o desenho: &quot;Buscar&quot;, nunca &quot;Lupa&quot;.
+ *   nao o desenho: &quot;Buscar&quot;, nunca &quot;Lupa&quot;. Vem de UM lugar so:
+ *     aria-label=&quot;Buscar&quot;            sem tooltip
+ *     aria-labelledby=&quot;&lt;id&gt;&quot;         com Tooltip - o texto do tooltip E o
+ *                                    nome (regra 24 do Tooltip, 08/10/2026)
+ *   Os dois juntos reprovam no a11y.py: o labelledby venceria e o aria-label
+ *   envelheceria sem ninguem ler.
  *   O nome vai no BOTAO, nunca no svg. O svg e decorativo aqui pelo mesmo
  *   motivo de sempre - aria-hidden tira do leitor de tela, focusable=&quot;false&quot;
  *   tira da ordem de tabulacao - e anunciar os dois seria ruido duplicado.

@@ -132,6 +132,11 @@ BCR_TOKENS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'al-breadcrumb-
 BCR_CSS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'breadcrumb.css')).read()
 BCR_JS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'breadcrumb.js')).read()
 BCR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'breadcrumb', 'a11y.json')))
+TTP = json.load(open(os.path.join(ROOT, 'components', 'tooltip', 'tokens.json')))
+TTP_TOKENS = open(os.path.join(ROOT, 'components', 'tooltip', 'al-tooltip-tokens.css')).read()
+TTP_CSS = open(os.path.join(ROOT, 'components', 'tooltip', 'tooltip.css')).read()
+TTP_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tooltip', 'a11y.json')))
+TTP_JS = open(os.path.join(ROOT, 'components', 'tooltip', 'tooltip.js')).read()
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -166,6 +171,7 @@ N_MOD_TOKENS = len(MOD['alias'])
 N_DRW_TOKENS = len(DRW['alias'])
 N_SBR_TOKENS = len(SBR['alias'])
 N_BCR_TOKENS = len(BCR['alias'])
+N_TTP_TOKENS = len(TTP['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -210,7 +216,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          AVATAR_TOKENS, SELECT_TOKENS, CHECKBOX_TOKENS, RADIO_TOKENS,
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
-                         ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS)
+                         ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
+                         TTP_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -230,7 +237,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + MOD_TOKENS + '\n' + MOD_CSS
             + '\n' + DRW_TOKENS + '\n' + DRW_CSS
             + '\n' + SBR_TOKENS + '\n' + SBR_CSS
-            + '\n' + BCR_TOKENS + '\n' + BCR_CSS)
+            + '\n' + BCR_TOKENS + '\n' + BCR_CSS
+            + '\n' + TTP_TOKENS + '\n' + TTP_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1624,8 +1632,8 @@ TAB_MOTION_MOVIMENTOS = f'''
       <span class="al-btn__label">Reproduzir todos</span></button>
   </div>
   <div class="dd">{mo_cells()}</div>
-  <p class="mo-fine">Ilustração do movimento, não dos componentes: Tooltip e Toast ainda
-  não existem no AL, os palcos do Modal e do Drawer são miniaturas, e o do controle também não é o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
+  <p class="mo-fine">Ilustração do movimento, não dos componentes: o Toast ainda não existe
+  no AL, os palcos do Tooltip, do Modal e do Drawer são miniaturas, e o do controle também não é o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
   a Foundation fixa só a duração e a curva.</p>
   <p class="mo-fine" id="mo-reduced" hidden>Seu sistema pede movimento reduzido. Os palcos trocam de estado
   sem animar, que é exatamente o que um componente do AL faz nessa preferência.</p>
@@ -2542,18 +2550,20 @@ IB_GUIDE = f'''
     <p>“Buscar”, nunca “Lupa”. “Fechar”, nunca “X”. A formulação é literalmente a do Primer.</p>
   </div></div>
   <div class="rule"><div class="rn">07</div><div>
-    <h3>Tooltip com o mesmo texto, quando existir</h3>
-    <p>Idêntico, não parecido: divergência entre rótulo visível e programático quebra comando de
-    voz — quem fala “clicar em Buscar” não ativa um botão rotulado de outro jeito. O Polaris é
-    explícito nisso.</p>
+    <h3>Com tooltip, o nome vem dele</h3>
+    <p>O botão aponta para o tooltip por <code>aria-labelledby</code> e não leva
+    <code>aria-label</code> — nunca os dois. Assim o texto que se vê e o nome que o leitor de tela
+    anuncia são o mesmo texto, não duas cópias que podem divergir: divergência quebra comando de voz,
+    porque quem fala “clicar em Buscar” não ativa um botão rotulado de outro jeito. O Polaris é
+    explícito nisso, e o portão do Icon Button recusa os dois juntos.</p>
   </div></div>
   <div class="rule"><div class="rn">08</div><div>
-    <h3>Divergência consciente: o tooltip ainda não existe aqui</h3>
-    <p>Primer sempre renderiza um, Polaris diz que deve ser fornecido, e o Spectrum define o
-    tooltip justamente como o lugar de mostrar o rótulo de um botão só de ícone. Como o
-    componente ainda não existe no AL, o <code>aria-label</code> vai sozinho: <b>ele atende o
-    leitor de tela, mas não o usuário vidente que não reconhece o ícone</b>. É por isso que a
-    regra 01 é restritiva — enquanto não há tooltip, o reconhecimento é a única rede.</p>
+    <h3>Use tooltip em todo botão só com ícone</h3>
+    <p>O Primer sempre renderiza um, o Polaris diz que deve ser fornecido, e o Spectrum define o
+    tooltip justamente como o lugar de mostrar o rótulo de um botão só de ícone. Só o
+    <code>aria-label</code> atende o leitor de tela, mas não quem enxerga e não reconhece o
+    desenho — o tooltip atende os dois. Ele não substitui a regra 01: é rede para quem hesita, não
+    licença para ícone ambíguo.</p>
   </div></div>
 </section>
 
@@ -2989,10 +2999,9 @@ TAG_GUIDE = f'''
 
   <div class="rule"><div class="rn">03</div><div>
     <h3>Rótulo longo se resolve na origem, não no truncamento</h3>
-    <p>O Carbon trunca e revela o texto completo por tooltip. <b>Aqui não</b>: o Tooltip ainda
-    não existe no AL, e truncar esconderia informação sem devolver caminho para recuperá-la.
-    Então a regra é o passo anterior — encurte antes de chegar na tag. Quando o Tooltip
-    existir, esta regra é revisitada.</p></div></div>
+    <p>O Carbon trunca e revela o texto completo por tooltip. <b>Aqui não</b>: o Tooltip do AL
+    só vale em elemento focável, e a tag não é — o texto cortado ficaria sem caminho de volta para
+    quem usa teclado ou toque. Então a regra é o passo anterior: encurte antes de chegar na tag.</p></div></div>
 
   <div class="rule"><div class="rn">04</div><div>
     <h3>Não misture os dois tipos no mesmo grupo</h3>
@@ -11091,6 +11100,471 @@ JS_BREADCRUMB = r"""
 """
 
 
+# ══════════════════════════════════════════════════════════════ Tooltip · abas
+# Primeiro componente do Tier 5 e primeiro do piloto em duas sessoes: a pagina
+# nasce na etapa 5 (antes era a 7) e e ela que o Gui olha no QA. Todo tooltip
+# VIVO sai do tooltip.css e do tooltip.js reais, ligado ao gatilho pelo ARIA.
+# Os congelados (lados, texto longo, "a evitar") nao sao popover: sao a mesma
+# .al-tooltip posta no fluxo por uma casca do site (tt-frozen), sob
+# `aria-hidden` + `inert` - um tooltip aberto para sempre nao existe no
+# componente, e o portao de marcacao da etapa 6 nao deve conta-lo.
+TT_SIDES = [('top', 'Em cima'), ('bottom', 'Embaixo'), ('left', 'Esquerda'), ('right', 'Direita')]
+TT_USES = [('name', 'Nome do botão'), ('desc', 'Descrição')]
+TT_MAX_W = TTP['resolved']['tooltip-max-width']
+TT_DELAY_SHOW = TTP['resolved']['tooltip-delay-show']
+TT_DELAY_HIDE = TTP['resolved']['tooltip-delay-hide']
+N_TT_LITERALS = sum(1 for v in TTP['alias'].values() if v.endswith(('px', 'ms')))
+
+TT_INFO = al_icon('info', 'al-icon al-icon--20 al-tooltip__icon')
+TT_ACTIONS = [('pencil', 'Editar'), ('copy', 'Copiar'), ('trash', 'Excluir')]
+TT_DESC = ('Exportar', 'Baixa um CSV com os pedidos do mês, um por linha')
+
+
+def tt_tip(tid, text, side, extra=''):
+    return (f'<div class="al-tooltip" id="{tid}" role="tooltip" popover="manual" '
+            f'data-placement="{side}"{extra}>{TT_INFO}<span class="al-tooltip__text">{text}</span></div>')
+
+
+def tt_icon_btn(icon, label, attrs):
+    # com tooltip ligado, o nome vem dele (aria-labelledby) e o aria-label sai -
+    # o portao do Icon Button recusa os dois juntos (decisao (a), 08/10/2026)
+    name = '' if 'aria-labelledby' in attrs else f'aria-label="{label}" '
+    return (f'<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md" '
+            f'{name}{attrs}><span class="al-icon-btn__spinner" aria-hidden="true"></span>'
+            f'{al_icon(icon)}</button>')
+
+
+def tt_btn(label, attrs):
+    return (f'<button type="button" class="al-btn al-btn--secondary al-btn--md" {attrs}>'
+            f'<span class="al-btn__spinner" aria-hidden="true"></span>'
+            f'<span class="al-btn__label">{label}</span></button>')
+
+
+def tt_live(use, side, prefix='tt-pg'):
+    """O que o playground monta: gatilhos reais, cada um com o seu tooltip logo depois."""
+    if use == 'name':
+        parts = []
+        for icon, label in TT_ACTIONS:
+            tid = f'{prefix}-{icon}'
+            parts.append(tt_icon_btn(icon, label, f'aria-labelledby="{tid}"') + tt_tip(tid, label, side))
+        return f'<div class="tt-row">{"".join(parts)}</div>'
+    tid = f'{prefix}-desc'
+    attrs = f'aria-describedby="{tid}"'
+    return (f'<div class="tt-row">{tt_btn(TT_DESC[0], attrs)}'
+            f'{tt_tip(tid, TT_DESC[1], side)}</div>')
+
+
+def tt_code(use, side):
+    ico = '<svg class="al-icon al-icon--20 al-tooltip__icon" aria-hidden="true" focusable="false">…</svg>'
+    place = '' if side == 'top' else f' data-placement="{side}"'
+    if use == 'name':
+        L = ['<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"',
+             '        aria-labelledby="tt-excluir">',
+             '  <span class="al-icon-btn__spinner" aria-hidden="true"></span>',
+             '  <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>',
+             '</button>',
+             f'<div class="al-tooltip" id="tt-excluir" role="tooltip" popover="manual"{place}>',
+             f'  {ico}', '  <span class="al-tooltip__text">Excluir</span>', '</div>']
+    else:
+        L = ['<button type="button" class="al-btn al-btn--secondary al-btn--md"',
+             '        aria-describedby="tt-exportar">',
+             '  <span class="al-btn__spinner" aria-hidden="true"></span>',
+             f'  <span class="al-btn__label">{TT_DESC[0]}</span>',
+             '</button>',
+             f'<div class="al-tooltip" id="tt-exportar" role="tooltip" popover="manual"{place}>',
+             f'  {ico}', f'  <span class="al-tooltip__text">{TT_DESC[1]}</span>', '</div>']
+    L.append('<script src="tooltip.js"></script>')
+    return '\n'.join(L)
+
+
+TT_DEMOS = {f'{u}-{s}': {'html': tt_live(u, s), 'code': tt_code(u, s)}
+            for u, _ in TT_USES for s, _ in TT_SIDES}
+
+
+def tt_frozen(text, side='top', icon='trash', label='Excluir', wide=False):
+    """Amostra congelada: gatilho + tooltip no fluxo, fora do leitor de tela e do teclado."""
+    tip = (f'<div class="al-tooltip" data-placement="{side}">{TT_INFO}'
+           f'<span class="al-tooltip__text">{text}</span></div>')
+    trig = (tt_btn(label, 'tabindex="-1"') if wide else tt_icon_btn(icon, label, 'tabindex="-1"'))
+    return (f'<div class="tt-frozen" data-side="{side}" aria-hidden="true" inert>'
+            f'{trig}{tip}</div>')
+
+
+def tt_fake(text, cls=''):
+    """Casca para os 'a evitar'. Nunca uma .al-tooltip errada."""
+    return f'<div class="tt-fake {cls}" aria-hidden="true"><span>{text}</span></div>'
+
+
+def tooltip_token_rows():
+    rows = []
+    for name in TTP['alias']:
+        res = TTP['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, dict):
+            light = dark = '<span class="dim">sombra composta</span>'
+        elif isinstance(res, list) and len(res) == 4 and all(isinstance(n, (int, float)) for n in res):
+            light = dark = 'cubic-bezier(' + ', '.join(str(n) for n in res) + ')'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        elif name.startswith(('tooltip-delay', 'tooltip-duration')):
+            light = dark = f'{res}ms'
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{TTP["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+TOOLTIP_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage tt-stage" id="tooltip-stage">{TT_DEMOS["name-top"]["html"]}</div>
+    <div class="controls" id="tooltip-controls">
+      <div class="ctl"><span class="ctl-name">Uso</span>{seg('ttuse', TT_USES, 'name')}</div>
+      <div class="ctl"><span class="ctl-name">Lado</span>{seg('ttside', TT_SIDES, 'top')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tttheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="tooltip-copy">Copiar</button></div>
+      <pre><code id="tooltip-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    Pare o mouse num botão: o tooltip espera {TT_DELAY_SHOW}ms. Com um aberto, passe para o vizinho — ele
+    troca na hora. Leve o mouse até o tooltip: ele fica. Tabule até um botão: abre na hora; clique com o
+    mouse: não abre. Esc fecha sem tirar o foco. Troque o <b>Lado</b> e o <b>Tema</b>.
+  </p>
+</section>
+
+<section>
+  <h2>Nome ou descrição</h2>
+  <p>O mesmo componente faz dois papéis, e quem decide é o atributo do gatilho.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Nome · aria-labelledby</span>
+      <div class="stage2 tt-stage2">{tt_frozen('Excluir')}</div>
+      <p class="cap">O botão só com ícone. O tooltip diz o que ele faz, e é isso que o leitor de tela anuncia.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">Descrição · aria-describedby</span>
+      <div class="stage2 tt-stage2">{tt_frozen(TT_DESC[1], label=TT_DESC[0], wide=True)}</div>
+      <p class="cap">Um botão que já tem nome. O tooltip acrescenta o detalhe, e quebra linha em {TT_MAX_W}px.</p>
+    </div>
+  </div>
+</section>'''
+
+
+TOOLTIP_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Gatilho</b><span>Botão, link ou campo — sempre focável, nunca <code>disabled</code>. Liga o tooltip pelo próprio ARIA.</span></div>
+    <div><b>Caixa</b><span><code>.al-tooltip</code> com <code>role="tooltip"</code> e <code>popover="manual"</code>: <code>tooltip-bg</code>, raio lg, Elevation/3, sem borda e sem seta.</span></div>
+    <div><b>Ícone</b><span>O info de 20, sempre presente, decorativo, na cor do texto.</span></div>
+    <div><b>Texto</b><span>Body/sm 14/20 em <code>tooltip-text</code>. Quebra linha a partir de {TT_MAX_W}px.</span></div>
+    <div><b>Distância</b><span><code>tooltip-offset</code> (4) do gatilho, em qualquer lado.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Os quatro lados</h2>
+  <p>Em cima por padrão. Se não couber na tela, vira para o lado oposto sozinho — e nunca cobre o gatilho.</p>
+  <div class="dd tt-sides" style="margin-top:16px">
+    {''.join(f'<div class="cell"><span class="lab" style="color:var(--al-text-secondary)">{lab}</span>'
+             f'<div class="stage2 tt-stage2">{tt_frozen("Excluir", side)}</div></div>' for side, lab in TT_SIDES)}
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Tooltip</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{tooltip_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Três valores declarados</b>
+    Todo token aponta para a Foundation, menos <code>tooltip-max-width</code> ({TT_MAX_W}px) — a Foundation
+    não tem escala de largura, a mesma exceção do Modal e do Breadcrumb — e os dois atrasos,
+    <code>tooltip-delay-show</code> ({TT_DELAY_SHOW}ms) e <code>tooltip-delay-hide</code> ({TT_DELAY_HIDE}ms),
+    que ficam no componente até um segundo componente precisar de atraso.
+  </div>
+  <div class="note">
+    <b>Fundo invertido</b>
+    Escuro no tema claro, claro no escuro. Ele se destaca da página sozinho — por isso não tem borda — e
+    não se confunde com um menu, que é clicável.
+  </div>
+  <div class="note">
+    <b>Mora na top layer</b>
+    É um <code>popover="manual"</code>: fica acima de tudo sem z-index, inclusive de um Modal aberto.
+    Manual porque quem abre e fecha é o <code>tooltip.js</code> — o automático fecharia no clique e roubaria
+    o Esc do Modal.
+  </div>
+  <div class="note">
+    <b>Aparece e some em {TTP['resolved']['tooltip-duration']}ms</b>
+    Um fade de opacidade em <code>motion-duration-popup</code>: curva de entrada ao abrir, de saída ao
+    fechar. Sem deslocamento, e sem fade com movimento reduzido.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>tooltip.js</code></b>
+    Atraso, hover, foco, Esc, um por vez e o lado. Os tempos e a distância são lidos dos tokens no CSS,
+    nunca escritos no script.
+  </div>
+</section>'''
+
+
+TT_RULES = [
+    ('Quando usar', [
+        ('Para dar nome a um botão só com ícone', 'Quem vê o ícone não tem outro jeito de saber o que ele faz. Precedentes: Polaris, Primer.'),
+        ('Só o que é curto e complementar, nunca essencial', 'Toque não tem hover: no celular, o tooltip não existe. Precedentes: Carbon, Primer, Intuit.'),
+        ('O que é preciso para concluir vai no texto de ajuda', 'Do campo, sempre à vista. Precedente: Carbon.'),
+        ('Não repita o que já está escrito', 'Um “Salvar” com tooltip “Salvar” é só ruído. Precedente: Polaris.'),
+        ('Não para erro, validação ou confirmação', 'Isso é da mensagem do formulário, do Toast e do Alert. Precedente: Spectrum.'),
+    ]),
+    ('Conteúdo', [
+        ('Uma frase curta, até duas linhas', f'Nos {TT_MAX_W}px. Passou disso, não é tooltip. Precedentes: Shopify, Emarsys (100 a 150 caracteres).'),
+        ('Só a primeira maiúscula, sem ponto em fragmento', 'Precedentes: Intuit, Polaris.'),
+        ('Nomeie a ação, não o desenho', '“Excluir”, nunca “Ícone de lixeira”. Precedentes: Emarsys, Primer.'),
+        ('O atalho pode vir junto', '“Salvar (Ctrl+S)”. Precedente: Polaris.'),
+        ('Nada clicável dentro', 'O tooltip nunca recebe foco: um link ali é inalcançável. Precedentes: Carbon, Shopify.'),
+    ]),
+    ('Ícone', [
+        ('O ícone é decorativo', '<code>aria-hidden</code>: quem carrega o sentido é o texto. Contrato do Icon.'),
+        ('Na cor do texto', '<code>currentColor</code>, sem tinta própria. Contrato do Icon.'),
+    ]),
+    ('Posição', [
+        ('Em cima por padrão, vira sozinho', 'Embaixo se não couber; esquerda e direita para gatilho colado na borda. Precedentes: Spectrum, Polaris.'),
+        ('Sem seta, a 4px', '<b>Divergência consciente</b> da Carbon e do Spectrum: a mesma receita do menu do Breadcrumb, sem variantes no Figma.'),
+        ('Nunca cobre o gatilho', 'WCAG 1.4.13.'),
+    ]),
+    ('Comportamento', [
+        (f'Hover espera {TT_DELAY_SHOW}ms, foco abre na hora', 'Para não piscar quando o mouse só atravessa. Decisão 6 da etapa 1.'),
+        ('Fica aberto sobre o gatilho ou sobre ele mesmo', f'Com {TT_DELAY_HIDE}ms de folga para o ponteiro atravessar o vão. WCAG 1.4.13.'),
+        ('Esc fecha sem mover o foco', 'WCAG 1.4.13.'),
+        ('Um por vez', 'Dois textos flutuando competem pela leitura. Razão própria.'),
+        ('Não abre no clique nem no toque', 'Conteúdo que abre no clique é outro componente, o toggletip. Precedente: Carbon.'),
+        (f'Aparece e some em {TTP["resolved"]["tooltip-duration"]}ms', 'Fade de <code>motion-duration-popup</code>; sem transição com movimento reduzido.'),
+    ]),
+    ('Acessibilidade', [
+        ('Só em elemento focável', 'Botão, link ou campo. Em texto solto, o teclado nunca chega. Precedente: Primer.'),
+        ('Nunca em desabilitado', 'Ele não recebe foco. Para explicar um bloqueio, <code>aria-disabled</code>. Precedente: Primer.'),
+        ('Nome é labelledby, complemento é describedby', 'E o tooltip sempre leva <code>role="tooltip"</code>. Precedentes: Primer, W3C ARIA1.'),
+        ('Logo depois do gatilho no HTML', 'Precedente: Primer.'),
+    ]),
+    ('Fora de escopo', [
+        ('Conteúdo clicável', 'O AL não tem toggletip: texto na página, Modal ou Drawer. Precedente: Carbon.'),
+        ('Variantes coloridas', 'Toast ou Alert. Precedente: Spectrum.'),
+        ('Tooltip rico, com título e ação', 'Precedente: Material.'),
+    ]),
+]
+
+
+def tt_rules_html():
+    out, n = [], 0
+    for grupo, regras in TT_RULES:
+        out.append(f'<h3 class="tb-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    assert n == 28, f'as regras aprovadas sao 28, o site tem {n}'
+    return '\n'.join(out)
+
+
+TOOLTIP_GUIDE = f'''
+<section>
+  <h2>Curto, e o nome da ação</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">A ação</span>
+      <div class="stage2 tt-stage2">{tt_frozen('Excluir')}</div>
+      <p class="cap">O que o botão faz, numa palavra.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">O desenho</span>
+      <div class="stage2 tt-stage2">{tt_fake('Ícone de lixeira')}</div>
+      <p class="cap">Quem não vê o ícone não ganha nada; quem vê já sabia.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Complemento opcional</span>
+      <div class="stage2 tt-stage2">{tt_frozen(TT_DESC[1], label=TT_DESC[0], wide=True)}</div>
+      <p class="cap">O botão funciona sem ler o tooltip.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Um parágrafo com link</span>
+      <div class="stage2 tt-stage2">{tt_fake('A exportação inclui só pedidos pagos. Pedidos cancelados ficam de fora — veja <u>como filtrar</u> antes de exportar.', 'tt-fake--long')}</div>
+      <p class="cap">Longo demais, e o link é inalcançável. Isso é texto na página.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {tt_rules_html()}
+</section>'''
+
+
+def tooltip_a11y_rows():
+    out = []
+    for r in TTP_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{r["what"]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+N_TT_MEDIDAS = len(TTP_A11Y['rows'])
+N_TT_PASS = sum(1 for r in TTP_A11Y['rows'] if r['pass'])
+
+
+TOOLTIP_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O tooltip mora na camada mais alta do navegador, com fundo opaco: o texto e o ícone só encostam no
+  fundo do próprio tooltip. O que muda de lugar é a caixa — ela pode cair sobre a tela, a superfície ou
+  um Modal aberto. Sem borda e sem seta, é o fundo invertido que a separa da página.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_TT_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_TT_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>0</b><span>exceções</span></div>
+    <div class="stat"><b>{N_TT_MEDIDAS - N_TT_PASS}</b><span>reprovas</span></div>
+  </div>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{tooltip_a11y_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra nove regras lendo o HTML que este site emite, incluindo as
+  {TTP_A11Y['markupDemos']} variantes do Playground: <b>{TTP_A11Y['markupChecked'] or 0} tooltips</b>, nenhum
+  fora do contrato. As {TTP_A11Y['markupFrozen']} amostras congeladas desta documentação ficam fora do
+  teclado e do leitor de tela.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Papel</b><span><code>role="tooltip"</code>, <code>popover="manual"</code> e <code>id</code> único.</span></div>
+    <div><b>b · Lado</b><span><code>data-placement</code> só <code>top</code>, <code>bottom</code>, <code>left</code> ou <code>right</code>.</span></div>
+    <div><b>c · Conteúdo</b><span>Ícone 20 decorativo e um texto. Nada mais.</span></div>
+    <div><b>d · Nada interativo</b><span>Sem link, botão, campo ou <code>tabindex</code> dentro.</span></div>
+    <div><b>e · Um gatilho</b><span>Exatamente um aponta para ele, por <code>aria-labelledby</code> ou <code>aria-describedby</code>.</span></div>
+    <div><b>f · Gatilho focável</b><span>Botão, link ou campo — nunca <code>disabled</code>.</span></div>
+    <div><b>g · Ordem</b><span>O tooltip vem logo depois do gatilho no HTML.</span></div>
+    <div><b>h · Nome</b><span>Com <code>labelledby</code>, sem <code>aria-label</code>. Com <code>describedby</code>, o gatilho já tem nome.</span></div>
+    <div><b>i · Amostras</b><span>Tooltip sem <code>popover</code> só sob <code>inert</code> e <code>aria-hidden</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela</h2>
+  <div class="anat">
+    <div><b>Foco</b><span>Tab até o gatilho abre na hora. O tooltip não entra na ordem do Tab.</span></div>
+    <div><b>Esc</b><span>Fecha o tooltip e deixa o foco onde estava. Dentro de um Modal, o primeiro Esc fecha só o tooltip.</span></div>
+    <div><b>Anúncio</b><span>Nome: “Excluir, botão”. Descrição: “Exportar, botão, {TT_DESC[1]}”.</span></div>
+    <div><b>Toque</b><span>Não abre. O nome chega ao leitor de tela mesmo assim, pelo atributo.</span></div>
+    <div><b>Alto contraste</b><span>Sem sombra, a caixa ganha um contorno <code>CanvasText</code>.</span></div>
+    <div><b>Movimento reduzido</b><span>Aparece e some sem fade.</span></div>
+  </div>
+</section>'''
+
+
+# Miniatura do card: casca (o card inteiro ja e um link).
+TH_TOOLTIP = ('<div class="th-tt" aria-hidden="true"><div class="th-tt-tip"><i></i><span></span></div>'
+              '<div class="th-tt-btn"></div></div>')
+
+
+CHROME_TOOLTIP = """
+/* ── páginas do Tooltip ──
+   Casca do site. O tooltip vivo é sempre a .al-tooltip do tooltip.css real.
+   .tt-frozen tira a amostra da top layer e a põe no fluxo; .tt-fake é o
+   "a evitar", nunca uma .al-tooltip errada. */
+.tt-stage{min-height:260px}
+.tt-row{display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center}
+.dd .stage2.tt-stage2{justify-content:center; padding:28px 16px; min-height:150px}
+.dd.tt-sides{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.tt-frozen{position:relative; display:inline-grid; place-items:center}
+.tt-frozen .al-tooltip{position:absolute; display:flex; align-items:flex-start;
+  gap:var(--al-tooltip-gap); opacity:1; transition:none}
+.tt-frozen[data-side="top"] .al-tooltip{bottom:calc(100% + var(--al-tooltip-offset)); left:50%; transform:translateX(-50%)}
+.tt-frozen[data-side="bottom"] .al-tooltip{top:calc(100% + var(--al-tooltip-offset)); left:50%; transform:translateX(-50%)}
+.tt-frozen[data-side="left"] .al-tooltip{right:calc(100% + var(--al-tooltip-offset)); top:50%; transform:translateY(-50%)}
+.tt-frozen[data-side="right"] .al-tooltip{left:calc(100% + var(--al-tooltip-offset)); top:50%; transform:translateY(-50%)}
+.tt-stage2:has(.tt-frozen[data-side="top"]){align-items:flex-end}
+.tt-stage2:has(.tt-frozen[data-side="bottom"]){align-items:flex-start}
+.tt-stage2:has(.tt-frozen[data-side="left"]){justify-content:flex-end}
+.tt-stage2:has(.tt-frozen[data-side="right"]){justify-content:flex-start}
+.tt-fake{max-width:280px; padding:8px 12px; border-radius:8px; background:var(--al-bg-inverse);
+  color:var(--al-text-inverse); font-size:14px; line-height:20px}
+.tt-fake--long{max-width:340px}
+.th-tt{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; width:100%; height:100%}
+.th-tt-tip{display:flex; align-items:center; gap:6px; padding:7px 10px; border-radius:6px;
+  background:var(--al-tooltip-bg); box-shadow:var(--al-tooltip-shadow)}
+.th-tt-tip i{width:10px; height:10px; border-radius:50%; border:1.5px solid var(--al-tooltip-text)}
+.th-tt-tip span{width:52px; height:6px; border-radius:3px; background:var(--al-tooltip-text)}
+.th-tt-btn{width:26px; height:26px; border-radius:50%; background:var(--al-border-default)}
+"""
+
+
+JS_TOOLTIP_DATA = ('var TT_DEMOS = ' + json.dumps(TT_DEMOS, ensure_ascii=False).replace('</', '<\\/') + ';\n')
+
+JS_TOOLTIP = r"""
+(function () {
+  // ── playground do Tooltip ──
+  var stage = document.getElementById('tooltip-stage');
+  if (!stage) return;
+  var code = document.getElementById('tooltip-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML vem pronto do site.py (TT_DEMOS); o tooltip.js real liga os
+  // gatilhos novos. Antes de trocar, fecha o que estiver aberto.
+  function render() {
+    if (window.alTooltip) window.alTooltip.hide();
+    var theme = pick('tttheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = TT_DEMOS[pick('ttuse') + '-' + pick('ttside')];
+    stage.innerHTML = demo.html;
+    if (window.alTooltip) window.alTooltip.init(stage);
+    code.innerHTML = esc(demo.code);
+  }
+
+  document.querySelectorAll('#tooltip-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('tooltip-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -11114,16 +11588,17 @@ LANDING_COMPONENTES = f'''
     {card('drawer', 'Drawer', 'Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo colado na direita: entra pela lateral, prende o foco e sempre tem uma saída visível.', TH_DRAWER)}
     {card('sidebar', 'Sidebar', 'A navegação principal, presa à esquerda na altura da tela. Os itens são o Tab, e abaixo de 1024px ela vira painel modal pela esquerda — a mesma &lt;aside&gt;, nunca uma cópia.', TH_SIDEBAR)}
     {card('breadcrumb', 'Breadcrumb', 'Onde a pessoa está na hierarquia, com um link para cada nível acima. Com 5 níveis ou mais, os do meio vão para o menu do “…”.', TH_BREADCRUMB)}
+    {card('tooltip', 'Tooltip', 'O nome de um botão só com ícone, ou um complemento curto. Abre no hover e no foco, fecha no Esc, e nunca carrega o que a pessoa precisa para seguir.', TH_TOOLTIP)}
   </div>
 </section>
 
 <section>
-  <h2>O Tier 4 fechou</h2>
+  <h2>O Tier 5 abriu</h2>
   <p>Os primitivos, o formulário, a estrutura e a navegação atravessaram as oito etapas, um
   componente de cada vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida
-  de “componente pronto sem documentação”. O tier de <b>navegação</b> ficou curto, com dois
-  componentes: abriu pela Sidebar e fechou no Breadcrumb. O próximo é o Tier 5, de feedback, e cada
-  componente dele passa pelas mesmas oito etapas, a começar pela 1, definir e auditar.</p>
+  de “componente pronto sem documentação”. O tier de <b>feedback</b> é o último e abriu pelo Tooltip,
+  que também estreia o pipeline em duas sessões: a página nasce junto com o código e é nela que o
+  QA acontece.</p>
 </section>'''
 
 # O selo da pagina Componentes conta os cards publicados do indice - era um
@@ -11200,7 +11675,7 @@ PAGES = [
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [(f'{N_PUBLICADOS} publicados', True), ('Tier 3 em andamento', False), ('8 etapas por componente', False)],
+        [(f'{N_PUBLICADOS} publicados', True), ('Tier 5 em andamento', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
@@ -11373,6 +11848,15 @@ PAGES = [
          (f'{N_BCR_TOKENS} tokens', False), (f'{N_BC_EXC_KEYS} exceção declarada', False)],
         [('overview', 'Visão geral', BREADCRUMB_OVERVIEW), ('specs', 'Especificações', BREADCRUMB_SPECS),
          ('guide', 'Diretrizes', BREADCRUMB_GUIDE), ('a11y', 'Acessibilidade', BREADCRUMB_A11Y_TAB)])),
+    ('tooltip', 'Componentes', page(
+        'tooltip', 'Componentes', 'Tooltip',
+        'Um texto curto que aparece sobre um elemento no hover e no foco do teclado: o nome de um botão só '
+        'com ícone, ou um complemento de um que já tem nome. É um popover nativo, ligado ao gatilho pelo '
+        'próprio ARIA; some no Esc e nunca tem nada clicável dentro.',
+        [('Em revisão', False), ('1 componente no Figma', False),
+         (f'{N_TTP_TOKENS} tokens', False), (f'{N_TT_LITERALS} valores declarados', False)],
+        [('overview', 'Visão geral', TOOLTIP_OVERVIEW), ('specs', 'Especificações', TOOLTIP_SPECS),
+         ('guide', 'Diretrizes', TOOLTIP_GUIDE), ('a11y', 'Acessibilidade', TOOLTIP_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -11421,6 +11905,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/drawer" data-page="drawer">Drawer</a>
         <a href="#/sidebar" data-page="sidebar">Sidebar</a>
         <a href="#/breadcrumb" data-page="breadcrumb">Breadcrumb</a>
+        <a href="#/tooltip" data-page="tooltip">Tooltip</a>
       </div>
     </div>
   </div>
@@ -13553,7 +14038,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -13568,6 +14053,7 @@ HTML = (
     + DRW_JS.replace('</', '<\\/') + JS_DRAWER_DATA + JS_DRAWER
     + JS_SIDEBAR_DATA + JS_SIDEBAR
     + BCR_JS.replace('</', '<\\/') + JS_BREADCRUMB_DATA + JS_BREADCRUMB
+    + TTP_JS.replace('</', '<\\/') + JS_TOOLTIP_DATA + JS_TOOLTIP
     + JS_MOTION + '</script>\n'
 )
 
@@ -13636,6 +14122,8 @@ print(f'  tokens da Sidebar : {N_SBR_TOKENS}  '
 print(f'  tokens do Breadcrumb: {N_BCR_TOKENS}  '
       f'({len(BCR_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in BCR_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
+print(f'  tokens do Tooltip : {N_TTP_TOKENS}  '
+      f'({len(TTP_A11Y["rows"])} combinacoes medidas, {TTP_A11Y["markupChecked"]} tooltips no contrato de marcacao)')
 print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
