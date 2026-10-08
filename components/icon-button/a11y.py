@@ -93,11 +93,22 @@ def effective_bg(variant, state, theme):
 BTN_TAG = re.compile(r'<button\b[^>]*>')
 
 
+def labelled_text(html, rid):
+    """Texto do elemento com aquele id - ate o primeiro </div>, que e onde o
+    .al-tooltip fecha. Aproximado de proposito: basta provar que nao e vazio."""
+    m = re.search(r'<[^>]*\bid="' + re.escape(rid) + r'"[^>]*>(.*?)</div>', html, re.S)
+    return m and re.sub(r'<[^>]+>', '', m.group(1)).strip()
+
+
 def markup_contract():
     """Cobra o contrato de cada .al-icon-btn no HTML que o site emite.
 
     Quatro regras, todas da etapa 4:
-      10  aria-label presente e nao vazio - o nome vai no BOTAO
+      10  nome no BOTAO, de um jeito so: aria-label nao vazio OU
+          aria-labelledby apontando para um elemento que existe e tem texto
+          (o Tooltip, decisao (a) de 08/10/2026). Os dois juntos reprovam: o
+          labelledby vence e o aria-label vira texto que ninguem le e que
+          envelhece sozinho.
       14  aria-busy sempre acompanhado de aria-disabled
       17  o atributo `disabled` nao e usado: ele tira o botao da ordem de foco
           no meio da interacao e nada e anunciado
@@ -125,8 +136,18 @@ def markup_contract():
         line = html.count('\n', 0, m.start()) + 1
 
         label = re.search(r'aria-label="([^"]*)"', tag)
-        if not (label and label.group(1).strip()):
-            problems.append(f'linha {line}: sem aria-label - botao mudo para leitor de tela')
+        ref = re.search(r'aria-labelledby="([^"]*)"', tag)
+        if label and ref:
+            problems.append(f'linha {line}: aria-label e aria-labelledby juntos - '
+                            f'o nome tem que morar num lugar so')
+        elif ref:
+            for rid in ref.group(1).split():
+                if not labelled_text(html, rid):
+                    problems.append(f'linha {line}: aria-labelledby="{rid}" aponta para '
+                                    f'elemento que nao existe ou nao tem texto')
+        elif not (label and label.group(1).strip()):
+            problems.append(f'linha {line}: sem aria-label nem aria-labelledby - '
+                            f'botao mudo para leitor de tela')
         if 'aria-hidden="true"' in tag:
             problems.append(f'linha {line}: aria-hidden no proprio botao - '
                             f'decorativo e o svg, nao o acionavel')
@@ -274,7 +295,7 @@ def run():
 
     print('\n5. CONTRATO DE MARCAÇÃO  (no HTML que o site emite)')
     print('-' * 78)
-    print('  aria-label obrigatório · aria-busy sempre com aria-disabled')
+    print('  nome: aria-label OU aria-labelledby (nunca os dois) · aria-busy sempre com aria-disabled')
     print('  sem atributo disabled · aria-hidden nunca no botão')
     if checked is None:
         for p in markup_problems:

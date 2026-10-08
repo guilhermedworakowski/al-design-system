@@ -21,9 +21,14 @@
  *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
  *
  * O NOME ACESSIVEL
- *   aria-label e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
+ *   O nome e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
  *   contrato deste componente que nao tem alternativa. Ele descreve a ACAO,
- *   nao o desenho: "Buscar", nunca "Lupa".
+ *   nao o desenho: "Buscar", nunca "Lupa". Vem de UM lugar so:
+ *     aria-label="Buscar"            sem tooltip
+ *     aria-labelledby="<id>"         com Tooltip - o texto do tooltip E o
+ *                                    nome (regra 24 do Tooltip, 08/10/2026)
+ *   Os dois juntos reprovam no a11y.py: o labelledby venceria e o aria-label
+ *   envelheceria sem ninguem ler.
  *   O nome vai no BOTAO, nunca no svg. O svg e decorativo aqui pelo mesmo
  *   motivo de sempre - aria-hidden tira do leitor de tela, focusable="false"
  *   tira da ordem de tabulacao - e anunciar os dois seria ruido duplicado.
