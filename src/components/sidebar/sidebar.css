@@ -210,7 +210,7 @@
   line-height: var(--al-sidebar-group-label-line-height);
   font-weight: var(--al-sidebar-group-label-font-weight);
   letter-spacing: var(--al-sidebar-group-label-tracking);
-  text-transform: none;             /* rule 17: never uppercase */
+  text-transform: uppercase;        /* rule 17: all caps by CSS, never typed */
 }
 
 /* ----------------------------------------------------------------- item */
