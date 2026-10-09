@@ -1,0 +1,22 @@
+# Roda o build completo em cada PR e em cada push para dev e main.
+# Reprova se algum portao falhar ou se os arquivos gerados commitados
+# estiverem diferentes do que as fontes geram (python3 build.py --check).
+name: build
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python3 build.py --check
