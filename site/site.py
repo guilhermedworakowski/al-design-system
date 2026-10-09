@@ -10220,7 +10220,7 @@ SB_RULES = [
         ('Rótulo de 1 a 3 palavras', 'Um substantivo que nomeia o destino, em caixa de frase, sem jargão interno: “Pedidos”, não “Gerencie seus pedidos”. Precedentes: Material, regras 14 e 15 do Tab.'),
         ('Rótulo em uma linha, sem reticências', 'A largura útil é 248. Se não cabe, o texto muda. Precedentes: Material (“não truncar”), regra 16 do Tab.'),
         ('Nenhum rótulo repetido', 'O leitor de tela lista todos os links; dois “Relatórios” ficam ambíguos (WCAG 2.4.4).'),
-        ('Rótulo de grupo com uma ou duas palavras', 'Mono, em caixa de frase, nunca em caixa alta: a fonte já o diferencia dos itens.'),
+        ('Rótulo de grupo com uma ou duas palavras', 'Mono e em caixa alta, para ler como seção e não como item. Escrito em caixa de frase e posto em caixa alta pelo CSS (<code>text-transform</code>): digitado em maiúsculas, alguns leitores de tela soletram a palavra.'),
     ]),
     ('Perfil', [
         ('Quem está logado: nome e e-mail', 'O Avatar segue foto, iniciais, ícone, e aqui é decorativo, porque o nome está ao lado. Precedente: regras do Avatar.'),

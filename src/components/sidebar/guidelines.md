@@ -87,7 +87,7 @@ The usable width is 248px. If it doesn't fit, the text changes.
 The screen reader lists every link; two "Reports" are ambiguous (WCAG 2.4.4).
 
 **17. A group label of one or two words.**
-Mono, in sentence case, never all caps: the font already sets it apart from the items.
+Mono and all caps, so it reads as a section and not as an item. Typed in sentence case and capitalized by CSS (`text-transform`): written in capitals, some screen readers spell the word letter by letter.
 
 ### Profile
 
