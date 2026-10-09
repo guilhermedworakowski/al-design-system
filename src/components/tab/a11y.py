@@ -52,7 +52,9 @@ THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
        (rule 14);
     f) no disabled or aria-disabled (rule 18);
     g) nesting: at most two levels, Line outside and Square inside ("Tabs
-       inside tabs" in guidelines.md);
+       inside tabs" in guidelines.md). An interactive demo, marked by
+       `data-al-demo` on an ancestor, doesn't count levels: it is a sample of
+       the component sitting in a documentation page that has its own tabs;
     h) `<ul class="al-tabs">` only with `<li>` children, and the tab inside
        the `<li>`;
     i) unique ids in the document - tab and panel are linked by id (lesson
@@ -267,9 +269,10 @@ def markup_contract(path):
         if not in_sidebar and not 2 <= len(tabs) <= 6:
             problems.append(f'line {ln}: group with {len(tabs)} tab(s) - from 2 to 6 (rule 8)')
 
-        # (g) nesting
+        # (g) nesting - a demo (data-al-demo) is a sample, not a second level
         parents = [p for p in ancestors(g) if has(p, 'al-tabs')]
-        level = 1 + sum(1 for p in nodes if has(p, 'al-tabs') and not hidden_sample(p)
+        in_demo = any('data-al-demo' in p['attrs'] for p in ancestors(g))
+        level = 1 if in_demo else 1 + sum(1 for p in nodes if has(p, 'al-tabs') and not hidden_sample(p)
                         and p is not g and _holds_panel_of(p, g, ids))
         if parents:
             problems.append(f'line {ln}: .al-tabs inside .al-tabs - the second level lives '
