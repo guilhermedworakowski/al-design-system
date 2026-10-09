@@ -57,7 +57,7 @@ THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
        the `<li>`;
     i) unique ids in the document - tab and panel are linked by id (lesson
        from the Select);
-    j) from 2 to 6 tabs per group (rule 8);
+    j) from 2 to 6 tabs per group (rule 8), except in a Sidebar;
     k) the panel starts with a heading equal to the tab's label (rule 25 - it
        is what pays for `tonal-selection`);
     l) a frozen sample (aria-hidden) is `inert`.
@@ -261,8 +261,10 @@ def markup_contract(path):
         tabs = tabs_of(g)
         panel = a.get('role') == 'tablist'
 
-        # (j) count
-        if not 2 <= len(tabs) <= 6:
+        # (j) count. Not inside a Sidebar: rule 8 itself sends more than six
+        # destinations to side navigation, and the Sidebar gate owns its lists.
+        in_sidebar = any(has(p, 'al-sidebar') for p in ancestors(g))
+        if not in_sidebar and not 2 <= len(tabs) <= 6:
             problems.append(f'line {ln}: group with {len(tabs)} tab(s) - from 2 to 6 (rule 8)')
 
         # (g) nesting
