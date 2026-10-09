@@ -7,7 +7,7 @@
 <style id="al-real">
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.23.0 - MIT
+ * v0.24.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -1356,6 +1356,46 @@
   --al-toast-description-line-height: var(--al-line-height-sm);
   --al-toast-description-font-weight: 400;
   --al-toast-description-tracking: 0em;
+
+
+  /* cor - caixa e texto */
+  --al-alert-bg: var(--al-bg-surface-raised);
+  --al-alert-title: var(--al-text-primary);
+  --al-alert-description: var(--al-text-secondary);
+
+  /* cor - status: icone e borda */
+  --al-alert-success-icon: var(--al-text-success);
+  --al-alert-success-border: var(--al-border-success);
+  --al-alert-warning-icon: var(--al-text-warning);
+  --al-alert-warning-border: var(--al-border-warning);
+  --al-alert-danger-icon: var(--al-text-danger);
+  --al-alert-danger-border: var(--al-border-danger);
+  --al-alert-info-icon: var(--al-text-info);
+  --al-alert-info-border: var(--al-border-info);
+
+  /* geometria */
+  --al-alert-padding: var(--al-space-16);
+  --al-alert-gap: var(--al-space-16);
+  --al-alert-text-gap: var(--al-space-4);
+  --al-alert-section-gap: var(--al-space-24);
+  --al-alert-actions-gap: var(--al-space-16);
+  --al-alert-radius: var(--al-radius-xl);
+  --al-alert-border-width: var(--al-border-width-1);
+
+  /* movimento - a transicao rapida dos controles (decisao E) */
+  --al-alert-duration: var(--al-motion-duration-feedback);
+  --al-alert-easing-enter: var(--al-motion-easing-enter);
+  --al-alert-easing-exit: var(--al-motion-easing-exit);
+
+  /* tipografia - titulo montado da escala (decisao F), descricao = Body/md */
+  --al-alert-title-font-size: var(--al-font-size-md);
+  --al-alert-title-line-height: var(--al-line-height-md);
+  --al-alert-title-font-weight: var(--al-font-weight-bold);
+  --al-alert-title-tracking: 0em;
+  --al-alert-description-font-size: var(--al-font-size-md);
+  --al-alert-description-line-height: var(--al-line-height-md);
+  --al-alert-description-font-weight: var(--al-font-weight-regular);
+  --al-alert-description-tracking: 0em;
 }
 
 /* AL Design System - tokens do Button
@@ -7493,6 +7533,226 @@
   }
 }
 
+/* AL Design System - tokens do Alert
+ * GERADO por components/alert/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* cor - caixa e texto */
+  --al-alert-bg: var(--al-bg-surface-raised);
+  --al-alert-title: var(--al-text-primary);
+  --al-alert-description: var(--al-text-secondary);
+
+  /* cor - status: icone e borda */
+  --al-alert-success-icon: var(--al-text-success);
+  --al-alert-success-border: var(--al-border-success);
+  --al-alert-warning-icon: var(--al-text-warning);
+  --al-alert-warning-border: var(--al-border-warning);
+  --al-alert-danger-icon: var(--al-text-danger);
+  --al-alert-danger-border: var(--al-border-danger);
+  --al-alert-info-icon: var(--al-text-info);
+  --al-alert-info-border: var(--al-border-info);
+
+  /* geometria */
+  --al-alert-padding: var(--al-space-16);
+  --al-alert-gap: var(--al-space-16);
+  --al-alert-text-gap: var(--al-space-4);
+  --al-alert-section-gap: var(--al-space-24);
+  --al-alert-actions-gap: var(--al-space-16);
+  --al-alert-radius: var(--al-radius-xl);
+  --al-alert-border-width: var(--al-border-width-1);
+
+  /* movimento - a transicao rapida dos controles (decisao E) */
+  --al-alert-duration: var(--al-motion-duration-feedback);
+  --al-alert-easing-enter: var(--al-motion-easing-enter);
+  --al-alert-easing-exit: var(--al-motion-easing-exit);
+
+  /* tipografia - titulo montado da escala (decisao F), descricao = Body/md */
+  --al-alert-title-font-size: var(--al-font-size-md);
+  --al-alert-title-line-height: var(--al-line-height-md);
+  --al-alert-title-font-weight: var(--al-font-weight-bold);
+  --al-alert-title-tracking: 0em;
+  --al-alert-description-font-size: var(--al-font-size-md);
+  --al-alert-description-line-height: var(--al-line-height-md);
+  --al-alert-description-font-weight: var(--al-font-weight-regular);
+  --al-alert-description-tracking: 0em;
+}
+
+/* AL Design System - Alert
+ *
+ * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css + icon.css,
+ * os tokens e o CSS do Button e do Icon Button e al-alert-tokens.css, nesta
+ * ordem. Comportamento (fechar e inserir depois do carregamento): alert.js.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, movimento e tipografia
+ * entram por var(--al-alert-*). O check.py ao lado recusa o arquivo se algum
+ * escapar.
+ *
+ * CONTRATO DE MARCACAO (regras 9, 15, 16, 17, 23, 26, 27)
+ *
+ *   No topo da pagina, abaixo do header, antes do conteudo (regra 9), dentro
+ *   de um lugar fixo - o .al-alert-slot - que existe desde o carregamento:
+ *
+ *   <div class="al-alert-slot">
+ *     <div class="al-alert al-alert--warning">
+ *       <div class="al-alert__body">
+ *         <svg class="al-icon al-icon--24 al-alert__icon" role="img"
+ *              aria-label="Aviso">…triangle-alert…</svg>
+ *         <div class="al-alert__text">
+ *           <p class="al-alert__title">Seu plano vence em 3 dias</p>
+ *           <p class="al-alert__description">Renove para não perder os relatórios.</p>
+ *         </div>
+ *         <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close"
+ *                 aria-label="Fechar aviso" data-al-alert-close>          (opcional)
+ *           <svg class="al-icon" aria-hidden="true" focusable="false">…x…</svg>
+ *         </button>
+ *       </div>
+ *       <div class="al-alert__actions">                                   (opcional)
+ *         <button type="button" class="al-btn al-btn--ghost al-btn--md">Ver detalhes</button>
+ *         <button type="button" class="al-btn al-btn--primary al-btn--md">Renovar plano</button>
+ *       </div>
+ *     </div>
+ *   </div>
+ *
+ *   - Status por modificador: --success, --warning, --danger, --info. Danger
+ *     e cuidado, nao erro (regra 4). Sem Neutral (regra 28). Icone fixo por
+ *     status: circle-check, triangle-alert, circle-alert, info (regra 15).
+ *   - O icone CARREGA o status: role="img" + aria-label com o nome do status
+ *     ("Sucesso", "Aviso", "Perigo", "Informação") - regra 16.
+ *   - Titulo e descricao sao <p>, nunca heading: o Alert fica acima do h1 e
+ *     nao entra no indice de titulos (regra 26). A descricao e obrigatoria.
+ *   - Ate duas acoes, Ghost a esquerda e Primary a direita (regra 17), md.
+ *   - X: Icon Button Ghost sm, "Fechar aviso" (regra 27). Warning e Danger
+ *     nao levam X enquanto a situacao existir (regra 20) - isso e regra de
+ *     uso, o CSS nao impede.
+ *   - Presente no carregamento, o Alert e conteudo comum: sem role de regiao
+ *     viva (regra 23). Inserido depois, o alert.js poe o role (regra 24).
+ *
+ * LAYOUT
+ *   Coluna: corpo em cima, acoes embaixo, `alert-section-gap` (24) entre os
+ *   dois. Corpo em linha: icone, texto e X separados por `alert-gap` (16), tudo
+ *   alinhado ao topo - icone 24 na entrelinha 24 do titulo. Acoes alinhadas a
+ *   direita, `alert-actions-gap` (16) entre os botoes; quebram de linha se nao
+ *   couberem. Largura: a do conteudo da pagina, sem width (regra 10).
+ *
+ * BORDA E ALTURA
+ *   Borda inside, como no Figma: o padding desconta a borda. Sem height.
+ *
+ * MOTION (decisao E)
+ *   Entra e sai so com opacidade em `alert-duration` (duration-feedback,
+ *   120ms, a dos botoes): curva de entrada ao aparecer, de saida ao sair.
+ *   @starting-style da o ponto de partida; a saida e o [data-leaving] que o
+ *   alert.js poe antes de remover. Sem transicao com prefers-reduced-motion.
+ */
+
+/* ------------------------------------------------------------------- caixa */
+.al-alert {
+  --_icon: var(--al-alert-info-icon);
+  --_border: var(--al-alert-info-border);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-alert-section-gap);
+  box-sizing: border-box;
+  padding: calc(var(--al-alert-padding) - var(--al-alert-border-width));
+  border: var(--al-alert-border-width) solid var(--_border);
+  border-radius: var(--al-alert-radius);
+  background-color: var(--al-alert-bg);
+
+  font-family: var(--al-font-sans);
+
+  opacity: 1;
+  transition: opacity var(--al-alert-duration) var(--al-alert-easing-enter);
+}
+
+@starting-style {
+  .al-alert {
+    opacity: 0;
+  }
+}
+
+.al-alert[data-leaving] {
+  opacity: 0;
+  transition: opacity var(--al-alert-duration) var(--al-alert-easing-exit);
+}
+
+.al-alert--success { --_icon: var(--al-alert-success-icon); --_border: var(--al-alert-success-border); }
+.al-alert--warning { --_icon: var(--al-alert-warning-icon); --_border: var(--al-alert-warning-border); }
+.al-alert--danger  { --_icon: var(--al-alert-danger-icon);  --_border: var(--al-alert-danger-border); }
+.al-alert--info    { --_icon: var(--al-alert-info-icon);    --_border: var(--al-alert-info-border); }
+
+/* -------------------------------------------------------------------- corpo */
+.al-alert__body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--al-alert-gap);
+}
+
+.al-alert__icon {
+  flex: none;
+  color: var(--_icon);
+}
+
+.al-alert__text {
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-alert-text-gap);
+  overflow-wrap: break-word;
+}
+
+.al-alert__title {
+  margin: 0;
+  color: var(--al-alert-title);
+  font-size: var(--al-alert-title-font-size);
+  line-height: var(--al-alert-title-line-height);
+  font-weight: var(--al-alert-title-font-weight);
+  letter-spacing: var(--al-alert-title-tracking);
+}
+
+.al-alert__description {
+  margin: 0;
+  color: var(--al-alert-description);
+  font-size: var(--al-alert-description-font-size);
+  line-height: var(--al-alert-description-line-height);
+  font-weight: var(--al-alert-description-font-weight);
+  letter-spacing: var(--al-alert-description-tracking);
+}
+
+.al-alert__close {
+  flex: none;
+}
+
+/* -------------------------------------------------------------------- acoes */
+.al-alert__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--al-alert-actions-gap);
+}
+
+/* Botoes ghost e secondary sobre o fundo elevado: o Button le bg-hover/
+   bg-active, feitos para bg-surface. No escuro o fundo do Alert
+   (surface-raised) e igual ao bg-hover, e o hover sumia. Mesma correcao do
+   Modal (0.18.1), do Card e do Toast; sem token novo. */
+.al-alert .al-btn--ghost,
+.al-alert .al-btn--secondary,
+.al-alert .al-icon-btn--ghost,
+.al-alert .al-icon-btn--secondary {
+  --_bg-hover: var(--al-bg-hover-raised);
+  --_bg-active: var(--al-bg-active-raised);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-alert,
+  .al-alert[data-leaving] {
+    transition: none;
+  }
+}
+
 </style>
 <style>
 /* ═══ Chrome do site ═══ */
@@ -8414,6 +8674,28 @@ footer code{background:none; padding:0}
   linear-gradient(45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%),
   linear-gradient(-45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%)}
 
+/* ── páginas do Alert ──
+   Casca do site. O alerta vivo é a .al-alert do alert.css real, no
+   .al-alert-slot do palco. .alr-frozen é a amostra parada; .alr-fake é o
+   "a evitar", nunca uma .al-alert errada. */
+.alr-stage{min-height:220px; display:flex; align-items:flex-start; justify-content:center; padding:32px 16px}
+.alr-slot{inline-size:min(600px, 100%)}
+.alr-list{display:grid; gap:20px}
+.alr-list .cell{display:flex; flex-direction:column; gap:10px}
+.alr-frozen .al-alert{transition:none}
+.alr-fake{padding:16px; border-radius:12px; border:1px solid var(--al-border-default);
+  background:var(--al-bg-surface-raised); color:var(--al-text-primary); font-size:16px; line-height:24px}
+.alr-fake b{display:block}
+.th-alr{display:flex; flex-direction:column; gap:7px; width:100%; height:100%; padding:16px; box-sizing:border-box}
+.th-alr-box{display:flex; align-items:flex-start; gap:8px; padding:10px; border-radius:8px;
+  background:var(--al-alert-bg); border:1px solid var(--al-alert-warning-border)}
+.th-alr-box i{flex:none; width:11px; height:11px; border-radius:50%; border:1.5px solid var(--al-alert-warning-icon)}
+.th-alr-box span{flex:1; display:flex; flex-direction:column; gap:5px; padding-top:2px}
+.th-alr-box b{height:5px; border-radius:3px; background:var(--al-alert-title); width:55%}
+.th-alr-box b + b{background:var(--al-alert-description); width:90%; opacity:.6}
+.th-alr em{display:block; height:6px; border-radius:3px; background:var(--al-border-default); width:80%}
+.th-alr em + em{width:60%}
+
 /* ── Motion ──
    O palco lê os tokens reais da Foundation. A velocidade (1× ou ¼×) só
    multiplica a duração, para dar tempo de ver a curva; ela não é um token. */
@@ -8516,7 +8798,7 @@ footer code{background:none; padding:0}
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.23.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.24.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -8561,6 +8843,7 @@ footer code{background:none; padding:0}
         <a href="#/breadcrumb" data-page="breadcrumb">Breadcrumb</a>
         <a href="#/tooltip" data-page="tooltip">Tooltip</a>
         <a href="#/toast" data-page="toast">Toast</a>
+        <a href="#/alert" data-page="alert">Alert</a>
       </div>
     </div>
   </div>
@@ -8676,7 +8959,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.23.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.24.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -8706,7 +8989,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.23.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.24.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -8915,7 +9198,7 @@ footer code{background:none; padding:0}
     Button já faz isso.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-motion" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Motion</h1><p class="lede">O que entra e sai da tela, e o que gira. A curva depende do tipo da ação — entrada desacelera, saída acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo à mão.</p><div class="meta"><span class="badge on">8 tokens</span><span class="badge">2 tipos de ação</span><span class="badge">1 loop</span><span class="badge">5 durações</span><span class="badge">13 componentes consomem</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Motion"><button role="tab" id="t-motion-movimentos" aria-controls="p-motion-movimentos" aria-selected="true">Movimentos</button><button role="tab" id="t-motion-tokens" aria-controls="p-motion-tokens" aria-selected="false" tabindex=-1>Tokens</button></div><div class="panel" id="p-motion-movimentos" role="tabpanel" aria-labelledby="t-motion-movimentos" tabindex="0">
+<div class="page" id="pg-motion" hidden><header class="phead"><div class="eyebrow">Fundação</div><h1>Motion</h1><p class="lede">O que entra e sai da tela, e o que gira. A curva depende do tipo da ação — entrada desacelera, saída acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo à mão.</p><div class="meta"><span class="badge on">8 tokens</span><span class="badge">2 tipos de ação</span><span class="badge">1 loop</span><span class="badge">5 durações</span><span class="badge">14 componentes consomem</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Motion"><button role="tab" id="t-motion-movimentos" aria-controls="p-motion-movimentos" aria-selected="true">Movimentos</button><button role="tab" id="t-motion-tokens" aria-controls="p-motion-tokens" aria-selected="false" tabindex=-1>Tokens</button></div><div class="panel" id="p-motion-movimentos" role="tabpanel" aria-labelledby="t-motion-movimentos" tabindex="0">
 <section>
   <h2>Entrada e saída <span class="count">6 movimentos</span></h2>
   <p>Dois tipos de ação, três durações. O que entra desacelera e assenta; o que sai acelera e some.
@@ -8967,7 +9250,7 @@ footer code{background:none; padding:0}
     <p>Hover, foco, seleção e pressed usam <code>ease-out</code> ao entrar no estado e
     <code>ease-in</code> ao sair dele, com 120ms. No CSS isso vira duas declarações: a base
     traz a curva de saída, e um bloco de estados de destino troca para a de entrada, porque a
-    transição usa a curva do estado para onde vai. 13 componentes consomem.</p>
+    transição usa a curva do estado para onde vai. 14 componentes consomem.</p>
   </div>
   <div class="note">
     <b>O spinner é loop, e tem curva e durações próprias</b>
@@ -9338,9 +9621,9 @@ footer code{background:none; padding:0}
   consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
   normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
   <div class="stats">
-    <div class="stat hl"><b>417</b><span>verificações</span></div>
+    <div class="stat hl"><b>453</b><span>verificações</span></div>
     <div class="stat"><b>0</b><span>reprovas</span></div>
-    <div class="stat"><b>375</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>411</b><span>elementos com contrato conferido</span></div>
     <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
   </div>
 </section>
@@ -9415,7 +9698,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
   O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
-  <code>.al-icon</code>: 375 elementos nesta página, nenhum fora.
+  <code>.al-icon</code>: 411 elementos nesta página, nenhum fora.
   Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
   <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
   porque o rótulo nunca seria lido.</p>
@@ -9426,7 +9709,7 @@ footer code{background:none; padding:0}
     renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">21 publicados</span><span class="badge">Tier 5 em andamento</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
+<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">22 publicados</span><span class="badge">V1 completa</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
 <section>
   <h2>Publicados</h2>
   <div class="cards">
@@ -9451,16 +9734,17 @@ footer code{background:none; padding:0}
     <a class="card" href="#/breadcrumb" data-page="breadcrumb"><div class="card-thumb"><div class="th-bc" aria-hidden="true"><div class="bc-fake"><span class="">Início</span><i aria-hidden="true">›</i><span class="">Vendas</span><i aria-hidden="true">›</i><span class="">…</span><i aria-hidden="true">›</i><span class="on">Pedido 1042</span></div><div class="th-bc-menu"><span></span><span></span><span></span></div></div></div><div class="card-body"><span class="card-title">Breadcrumb</span><span class="card-desc">Onde a pessoa está na hierarquia, com um link para cada nível acima. Com 5 níveis ou mais, os do meio vão para o menu do “…”.</span></div></a>
     <a class="card" href="#/tooltip" data-page="tooltip"><div class="card-thumb"><div class="th-tt" aria-hidden="true"><div class="th-tt-tip"><i></i><span></span></div><div class="th-tt-btn"></div></div></div><div class="card-body"><span class="card-title">Tooltip</span><span class="card-desc">O nome de um botão só com ícone, ou um complemento curto. Abre no hover e no foco, fecha no Esc, e nunca carrega o que a pessoa precisa para seguir.</span></div></a>
     <a class="card" href="#/toast" data-page="toast"><div class="card-thumb"><div class="th-ts" aria-hidden="true"><div class="th-ts-box"><i></i><span><b></b><b></b></span><u></u></div></div></div><div class="card-body"><span class="card-title">Toast</span><span class="card-desc">A confirmação de algo que acabou de acontecer, no canto da tela. Um por vez, em fila; Sucesso e Informação saem sozinhos, Aviso e Erro esperam o X.</span></div></a>
+    <a class="card" href="#/alert" data-page="alert"><div class="card-thumb"><div class="th-alr" aria-hidden="true"><div class="th-alr-box"><i></i><span><b></b><b></b></span></div><em></em><em></em></div></div><div class="card-body"><span class="card-title">Alert</span><span class="card-desc">Um assunto que pede atenção, no topo da página, abaixo do header. Um por página; Aviso e Perigo ficam até a situação se resolver.</span></div></a>
   </div>
 </section>
 
 <section>
-  <h2>O Tier 5 abriu</h2>
-  <p>Os primitivos, o formulário, a estrutura e a navegação atravessaram as oito etapas, um
-  componente de cada vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida
-  de “componente pronto sem documentação”. O tier de <b>feedback</b> é o último e abriu pelo Tooltip,
-  que também estreia o pipeline em duas sessões: a página nasce junto com o código e é nela que o
-  QA acontece.</p>
+  <h2>A V1 fechou</h2>
+  <p>Os primitivos, o formulário, a estrutura, a navegação e o feedback atravessaram as oito etapas,
+  um componente de cada vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida
+  de “componente pronto sem documentação”. O tier de <b>feedback</b> foi o último: Tooltip, Toast e
+  Alert, os três já no pipeline em duas sessões, em que a página nasce junto com o código e é nela que
+  o QA acontece. Com o Alert, os cinco tiers estão fechados.</p>
 </section></div></div>
 <div class="page" id="pg-button" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Button</h1><p class="lede">Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, dois tamanhos, cinco estados.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">40 variantes no Figma</span><span class="badge">48 tokens</span><span class="badge">0 valores soltos</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Button"><button role="tab" id="t-button-overview" aria-controls="p-button-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-button-specs" aria-controls="p-button-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-button-guide" aria-controls="p-button-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-button-a11y" aria-controls="p-button-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-button-overview" role="tabpanel" aria-labelledby="t-button-overview" tabindex="0">
 <section>
@@ -10308,7 +10592,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>O <code>aria-label</code> não vive no CSS, então o portão de literal não alcança. Ele vive na
   marcação — e é aqui que o <code>a11y.py</code> o cobra, lendo o HTML que este site emite:
-  <b>88 elementos</b> <code>.al-icon-btn</code> nesta página, nenhum
+  <b>99 elementos</b> <code>.al-icon-btn</code> nesta página, nenhum
   fora do contrato. Ele reprova quatro coisas: botão sem <code>aria-label</code>,
   <code>aria-hidden</code> no próprio botão, <code>aria-busy</code> sem
   <code>aria-disabled</code>, e o atributo <code>disabled</code> no lugar de
@@ -16840,7 +17124,7 @@ footer code{background:none; padding:0}
     <div><b>Movimento reduzido</b><span>O menu aparece e some sem fade.</span></div>
   </div>
 </section></div></div>
-<div class="page" id="pg-tooltip" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Tooltip</h1><p class="lede">Um texto curto que aparece sobre um elemento no hover e no foco do teclado: o nome de um botão só com ícone, ou um complemento de um que já tem nome. É um popover nativo, ligado ao gatilho pelo próprio ARIA; some no Esc e nunca tem nada clicável dentro.</p><div class="meta"><span class="badge">Em revisão</span><span class="badge">1 componente no Figma</span><span class="badge">15 tokens</span><span class="badge">3 valores declarados</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Tooltip"><button role="tab" id="t-tooltip-overview" aria-controls="p-tooltip-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-tooltip-specs" aria-controls="p-tooltip-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-tooltip-guide" aria-controls="p-tooltip-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-tooltip-a11y" aria-controls="p-tooltip-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-tooltip-overview" role="tabpanel" aria-labelledby="t-tooltip-overview" tabindex="0">
+<div class="page" id="pg-tooltip" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Tooltip</h1><p class="lede">Um texto curto que aparece sobre um elemento no hover e no foco do teclado: o nome de um botão só com ícone, ou um complemento de um que já tem nome. É um popover nativo, ligado ao gatilho pelo próprio ARIA; some no Esc e nunca tem nada clicável dentro.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">1 componente no Figma</span><span class="badge">15 tokens</span><span class="badge">3 valores declarados</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Tooltip"><button role="tab" id="t-tooltip-overview" aria-controls="p-tooltip-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-tooltip-specs" aria-controls="p-tooltip-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-tooltip-guide" aria-controls="p-tooltip-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-tooltip-a11y" aria-controls="p-tooltip-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-tooltip-overview" role="tabpanel" aria-labelledby="t-tooltip-overview" tabindex="0">
 <section>
   <h2>Playground</h2>
   <div class="pg">
@@ -17084,7 +17368,7 @@ footer code{background:none; padding:0}
     <div><b>Movimento reduzido</b><span>Aparece e some sem fade.</span></div>
   </div>
 </section></div></div>
-<div class="page" id="pg-toast" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Toast</h1><p class="lede">Uma mensagem curta no canto da tela sobre algo que acabou de acontecer: um sucesso, um aviso, um erro ou uma informação. Nunca rouba o foco, entra em fila, um por vez, e só some sozinho quando não é aviso nem erro.</p><div class="meta"><span class="badge">Em revisão</span><span class="badge">4 variantes no Figma</span><span class="badge">25 tokens</span><span class="badge">2 valores declarados</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Toast"><button role="tab" id="t-toast-overview" aria-controls="p-toast-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-toast-specs" aria-controls="p-toast-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-toast-guide" aria-controls="p-toast-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-toast-a11y" aria-controls="p-toast-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-toast-overview" role="tabpanel" aria-labelledby="t-toast-overview" tabindex="0">
+<div class="page" id="pg-toast" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Toast</h1><p class="lede">Uma mensagem curta no canto da tela sobre algo que acabou de acontecer: um sucesso, um aviso, um erro ou uma informação. Nunca rouba o foco, entra em fila, um por vez, e só some sozinho quando não é aviso nem erro.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">4 variantes no Figma</span><span class="badge">25 tokens</span><span class="badge">2 valores declarados</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Toast"><button role="tab" id="t-toast-overview" aria-controls="p-toast-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-toast-specs" aria-controls="p-toast-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-toast-guide" aria-controls="p-toast-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-toast-a11y" aria-controls="p-toast-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-toast-overview" role="tabpanel" aria-labelledby="t-toast-overview" tabindex="0">
 <section>
   <h2>Playground</h2>
   <div class="pg">
@@ -17372,8 +17656,301 @@ footer code{background:none; padding:0}
     <div><b>Movimento reduzido</b><span>Aparece e some sem transição.</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-alert" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Alert</h1><p class="lede">Um bloco no topo da página, abaixo do header, sobre um assunto que pede atenção: um sucesso que continua valendo, uma informação, um aviso ou um perigo. Um por página, com até duas ações e um X opcional — e só é anunciado quando chega depois do carregamento.</p><div class="meta"><span class="badge on">Estável</span><span class="badge">4 variantes no Figma</span><span class="badge">25 tokens</span><span class="badge">0 valores declarados</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Alert"><button role="tab" id="t-alert-overview" aria-controls="p-alert-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-alert-specs" aria-controls="p-alert-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-alert-guide" aria-controls="p-alert-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-alert-a11y" aria-controls="p-alert-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-alert-overview" role="tabpanel" aria-labelledby="t-alert-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage alr-stage" id="alert-stage"><div class="al-alert-slot alr-slot" id="alert-slot"><div class="al-alert al-alert--warning"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Seu plano vence em 3 dias</p><p class="al-alert__description">Renove para não perder o acesso aos relatórios.</p></div></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver planos</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Renovar plano</span></button></div></div></div></div>
+    <div class="controls" id="alert-controls">
+      <div class="ctl"><span class="ctl-name">Status</span><div class="seg" role="radiogroup" aria-label="alrstatus">
+<input type="radio" id="alrstatus-success" name="alrstatus" value="success"><label for="alrstatus-success">Sucesso</label>
+<input type="radio" id="alrstatus-warning" name="alrstatus" value="warning" checked><label for="alrstatus-warning">Aviso</label>
+<input type="radio" id="alrstatus-danger" name="alrstatus" value="danger"><label for="alrstatus-danger">Perigo</label>
+<input type="radio" id="alrstatus-info" name="alrstatus" value="info"><label for="alrstatus-info">Informação</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Ações</span><div class="seg" role="radiogroup" aria-label="alracts">
+<input type="radio" id="alracts-1" name="alracts" value="1" checked><label for="alracts-1">Com ações</label>
+<input type="radio" id="alracts-0" name="alracts" value="0"><label for="alracts-0">Sem ações</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Fechar</span><div class="seg" role="radiogroup" aria-label="alrclose">
+<input type="radio" id="alrclose-1" name="alrclose" value="1"><label for="alrclose-1">Com X</label>
+<input type="radio" id="alrclose-0" name="alrclose" value="0" checked><label for="alrclose-0">Sem X</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="alrtheme">
+<input type="radio" id="alrtheme-auto" name="alrtheme" value="auto" checked><label for="alrtheme-auto">Do sistema</label>
+<input type="radio" id="alrtheme-light" name="alrtheme" value="light"><label for="alrtheme-light">Claro</label>
+<input type="radio" id="alrtheme-dark" name="alrtheme" value="dark"><label for="alrtheme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Inserir</span><div><button type="button" class="al-btn al-btn--secondary al-btn--sm" id="alert-fire">
+        <span class="al-btn__label">Inserir com anúncio</span></button></div></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="alert-copy">Copiar</button></div>
+      <pre><code id="alert-code"></code></pre>
+    </div>
+  </div>
+  <template id="alr-pg-success-1-1"><div class="al-alert al-alert--success"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-alert__text"><p class="al-alert__title">Sua loja está publicada</p><p class="al-alert__description">Os clientes já podem ver e comprar os produtos.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver loja</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Compartilhar link</span></button></div></div></template><template id="alr-pg-success-1-0"><div class="al-alert al-alert--success"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-alert__text"><p class="al-alert__title">Sua loja está publicada</p><p class="al-alert__description">Os clientes já podem ver e comprar os produtos.</p></div></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver loja</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Compartilhar link</span></button></div></div></template><template id="alr-pg-success-0-1"><div class="al-alert al-alert--success"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-alert__text"><p class="al-alert__title">Sua loja está publicada</p><p class="al-alert__description">Os clientes já podem ver e comprar os produtos.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></template><template id="alr-pg-success-0-0"><div class="al-alert al-alert--success"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-alert__text"><p class="al-alert__title">Sua loja está publicada</p><p class="al-alert__description">Os clientes já podem ver e comprar os produtos.</p></div></div></div></template><template id="alr-pg-warning-1-1"><div class="al-alert al-alert--warning"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Seu plano vence em 3 dias</p><p class="al-alert__description">Renove para não perder o acesso aos relatórios.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver planos</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Renovar plano</span></button></div></div></template><template id="alr-pg-warning-1-0"><div class="al-alert al-alert--warning"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Seu plano vence em 3 dias</p><p class="al-alert__description">Renove para não perder o acesso aos relatórios.</p></div></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver planos</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Renovar plano</span></button></div></div></template><template id="alr-pg-warning-0-1"><div class="al-alert al-alert--warning"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Seu plano vence em 3 dias</p><p class="al-alert__description">Renove para não perder o acesso aos relatórios.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></template><template id="alr-pg-warning-0-0"><div class="al-alert al-alert--warning"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Seu plano vence em 3 dias</p><p class="al-alert__description">Renove para não perder o acesso aos relatórios.</p></div></div></div></template><template id="alr-pg-danger-1-1"><div class="al-alert al-alert--danger"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Perigo" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-alert__text"><p class="al-alert__title">Excluir a conta apaga todos os pedidos</p><p class="al-alert__description">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver o que é apagado</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Exportar dados</span></button></div></div></template><template id="alr-pg-danger-1-0"><div class="al-alert al-alert--danger"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Perigo" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-alert__text"><p class="al-alert__title">Excluir a conta apaga todos os pedidos</p><p class="al-alert__description">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.</p></div></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver o que é apagado</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Exportar dados</span></button></div></div></template><template id="alr-pg-danger-0-1"><div class="al-alert al-alert--danger"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Perigo" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-alert__text"><p class="al-alert__title">Excluir a conta apaga todos os pedidos</p><p class="al-alert__description">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></template><template id="alr-pg-danger-0-0"><div class="al-alert al-alert--danger"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Perigo" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-alert__text"><p class="al-alert__title">Excluir a conta apaga todos os pedidos</p><p class="al-alert__description">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.</p></div></div></div></template><template id="alr-pg-info-1-1"><div class="al-alert al-alert--info"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Os relatórios são atualizados a cada hora</p><p class="al-alert__description">Os números de hoje podem mudar até o fim do dia.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver histórico</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Configurar aviso</span></button></div></div></template><template id="alr-pg-info-1-0"><div class="al-alert al-alert--info"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Os relatórios são atualizados a cada hora</p><p class="al-alert__description">Os números de hoje podem mudar até o fim do dia.</p></div></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver histórico</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Configurar aviso</span></button></div></div></template><template id="alr-pg-info-0-1"><div class="al-alert al-alert--info"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Os relatórios são atualizados a cada hora</p><p class="al-alert__description">Os números de hoje podem mudar até o fim do dia.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></template><template id="alr-pg-info-0-0"><div class="al-alert al-alert--info"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Os relatórios são atualizados a cada hora</p><p class="al-alert__description">Os números de hoje podem mudar até o fim do dia.</p></div></div></div></template>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O alerta do palco é o de verdade: o X fecha com o <code>alert.js</code>. Trocar um controle traz de volta.
+    <b>Inserir com anúncio</b> põe o mesmo alerta como se ele chegasse depois do carregamento — é aí que o
+    leitor de tela o anuncia. Ao trocar o status, o X segue a regra 20: Aviso e Perigo nascem sem ele.
+  </p>
+</section>
+
+<section>
+  <h2>Os quatro status</h2>
+  <p>O ícone diz o status sem depender da cor; a borda acompanha. Perigo é cuidado, não erro.</p>
+  <div class="alr-list" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Sucesso</span><div class="alr-frozen" aria-hidden="true" inert><div class="al-alert al-alert--success"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-alert__text"><p class="al-alert__title">Sua loja está publicada</p><p class="al-alert__description">Os clientes já podem ver e comprar os produtos.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Aviso</span><div class="alr-frozen" aria-hidden="true" inert><div class="al-alert al-alert--warning"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Seu plano vence em 3 dias</p><p class="al-alert__description">Renove para não perder o acesso aos relatórios.</p></div></div></div></div></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Perigo</span><div class="alr-frozen" aria-hidden="true" inert><div class="al-alert al-alert--danger"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Perigo" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-alert__text"><p class="al-alert__title">Excluir a conta apaga todos os pedidos</p><p class="al-alert__description">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.</p></div></div></div></div></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Informação</span><div class="alr-frozen" aria-hidden="true" inert><div class="al-alert al-alert--info"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Os relatórios são atualizados a cada hora</p><p class="al-alert__description">Os números de hoje podem mudar até o fim do dia.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div></div>
+  </div>
+</section></div><div class="panel" id="p-alert-specs" role="tabpanel" aria-labelledby="t-alert-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-alert</code>: <code>alert-bg</code> (o fundo do Card), borda de 1px na cor do status, raio xl, padding 16, sem sombra.</span></div>
+    <div><b>Ícone</b><span>24px, alinhado ao topo, na entrelinha do título. Fixo por status, com <code>role="img"</code>: ele carrega o status.</span></div>
+    <div><b>Título</b><span>16/24 bold em <code>alert-title</code>, montado da escala — a Foundation não tem estilo 16 bold. Um <code>&lt;p&gt;</code>, nunca heading.</span></div>
+    <div><b>Descrição</b><span>Body/md 16/24 em <code>alert-description</code>, a 4 do título. Sempre presente.</span></div>
+    <div><b>Fechar</b><span>Icon Button Ghost sm, <code>aria-label="Fechar aviso"</code>. Opcional; Aviso e Perigo não levam enquanto a situação existir.</span></div>
+    <div><b>Ações</b><span>Button Ghost e Primary md, alinhados à direita, a 24 do texto e 16 entre si. Opcionais.</span></div>
+    <div><b>Lugar</b><span>Um <code>.al-alert-slot</code> no topo da página, abaixo do header, na largura do conteúdo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Com e sem ações</h2>
+  <div class="alr-list" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Com ações e X</span><div class="alr-frozen" aria-hidden="true" inert><div class="al-alert al-alert--info"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Os relatórios são atualizados a cada hora</p><p class="al-alert__description">Os números de hoje podem mudar até o fim do dia.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" aria-label="Fechar aviso" data-al-alert-close><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver histórico</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Configurar aviso</span></button></div></div></div></div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Só o texto</span><div class="alr-frozen" aria-hidden="true" inert><div class="al-alert al-alert--info"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Os relatórios são atualizados a cada hora</p><p class="al-alert__description">Os números de hoje podem mudar até o fim do dia.</p></div></div></div></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Alert</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody><tr><td class="tok">--al-alert-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td><td class="tok dim"><span class="chip sm" style="background:#3E3E3E"></span>#3E3E3E</td></tr>
+<tr><td class="tok">--al-alert-title</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td><td class="tok dim"><span class="chip sm" style="background:#F7F7F7"></span>#F7F7F7</td></tr>
+<tr><td class="tok">--al-alert-description</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-alert-success-icon</td><td class="tok dim">text-success</td><td class="tok dim"><span class="chip sm" style="background:#006911"></span>#006911</td><td class="tok dim"><span class="chip sm" style="background:#6ACD7C"></span>#6ACD7C</td></tr>
+<tr><td class="tok">--al-alert-success-border</td><td class="tok dim">border-success</td><td class="tok dim"><span class="chip sm" style="background:#008A2A"></span>#008A2A</td><td class="tok dim"><span class="chip sm" style="background:#1BB14B"></span>#1BB14B</td></tr>
+<tr><td class="tok">--al-alert-warning-icon</td><td class="tok dim">text-warning</td><td class="tok dim"><span class="chip sm" style="background:#704F00"></span>#704F00</td><td class="tok dim"><span class="chip sm" style="background:#EBCA7E"></span>#EBCA7E</td></tr>
+<tr><td class="tok">--al-alert-warning-border</td><td class="tok dim">border-warning</td><td class="tok dim"><span class="chip sm" style="background:#916A00"></span>#916A00</td><td class="tok dim"><span class="chip sm" style="background:#DCAC2E"></span>#DCAC2E</td></tr>
+<tr><td class="tok">--al-alert-danger-icon</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td><td class="tok dim"><span class="chip sm" style="background:#FF8D91"></span>#FF8D91</td></tr>
+<tr><td class="tok">--al-alert-danger-border</td><td class="tok dim">border-danger</td><td class="tok dim"><span class="chip sm" style="background:#CA293F"></span>#CA293F</td><td class="tok dim"><span class="chip sm" style="background:#F84F5D"></span>#F84F5D</td></tr>
+<tr><td class="tok">--al-alert-info-icon</td><td class="tok dim">text-info</td><td class="tok dim"><span class="chip sm" style="background:#0055A3"></span>#0055A3</td><td class="tok dim"><span class="chip sm" style="background:#76B8FF"></span>#76B8FF</td></tr>
+<tr><td class="tok">--al-alert-info-border</td><td class="tok dim">border-info</td><td class="tok dim"><span class="chip sm" style="background:#0071D0"></span>#0071D0</td><td class="tok dim"><span class="chip sm" style="background:#2696FF"></span>#2696FF</td></tr>
+<tr><td class="tok">--al-alert-padding</td><td class="tok dim">space.16</td><td class="tok dim">16px</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-alert-gap</td><td class="tok dim">space.16</td><td class="tok dim">16px</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-alert-text-gap</td><td class="tok dim">space.4</td><td class="tok dim">4px</td><td class="tok dim">4px</td></tr>
+<tr><td class="tok">--al-alert-section-gap</td><td class="tok dim">space.24</td><td class="tok dim">24px</td><td class="tok dim">24px</td></tr>
+<tr><td class="tok">--al-alert-actions-gap</td><td class="tok dim">space.16</td><td class="tok dim">16px</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-alert-radius</td><td class="tok dim">radius.xl</td><td class="tok dim">12px</td><td class="tok dim">12px</td></tr>
+<tr><td class="tok">--al-alert-border-width</td><td class="tok dim">border.width.1</td><td class="tok dim">1px</td><td class="tok dim">1px</td></tr>
+<tr><td class="tok">--al-alert-title-font-size</td><td class="tok dim">type.size.md</td><td class="tok dim">16px</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-alert-title-line-height</td><td class="tok dim">type.leading.md</td><td class="tok dim">24px</td><td class="tok dim">24px</td></tr>
+<tr><td class="tok">--al-alert-title-font-weight</td><td class="tok dim">type.weight.bold</td><td class="tok dim">700</td><td class="tok dim">700</td></tr>
+<tr><td class="tok">--al-alert-description-font</td><td class="tok dim">type.styles.body-md</td><td class="tok dim">16/24 · 400</td><td class="tok dim">16/24 · 400</td></tr>
+<tr><td class="tok">--al-alert-duration</td><td class="tok dim">motion.duration.feedback</td><td class="tok dim">120ms</td><td class="tok dim">120ms</td></tr>
+<tr><td class="tok">--al-alert-easing-enter</td><td class="tok dim">motion.easing.enter</td><td class="tok dim">cubic-bezier(0, 0, 0.58, 1)</td><td class="tok dim">cubic-bezier(0, 0, 0.58, 1)</td></tr>
+<tr><td class="tok">--al-alert-easing-exit</td><td class="tok dim">motion.easing.exit</td><td class="tok dim">cubic-bezier(0.42, 0, 1, 1)</td><td class="tok dim">cubic-bezier(0.42, 0, 1, 1)</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Nenhum valor declarado</b>
+    Todos os 25 tokens apontam para a Foundation. Sem largura: o Alert ocupa a do conteúdo.
+  </div>
+  <div class="note">
+    <b>O título é montado da escala</b>
+    Tamanho <code>md</code>, entrelinha <code>md</code> e peso <code>bold</code> — três tokens soltos, em vez de um
+    estilo novo na Foundation que só o Alert usaria.
+  </div>
+  <div class="note">
+    <b>Perigo usa o semântico <code>danger</code> com o próprio nome</b>
+    Diferente do Toast, onde o status se chama Erro: aqui o sentido é cuidado com o que vem, não falha.
+  </div>
+  <div class="note">
+    <b>Entra e sai em 120ms</b>
+    Só opacidade, na duração dos controles: curva de entrada ao aparecer, de saída ao sair. Sem movimento com
+    movimento reduzido.
+  </div>
+  <div class="note">
+    <b>Botões sobre a superfície elevada</b>
+    O hover do Ghost e do X vem dos semânticos <code>-raised</code>, como no Modal, no Card e no Toast — no escuro,
+    o hover comum some sobre este fundo.
+  </div>
+</section></div><div class="panel" id="p-alert-guide" role="tabpanel" aria-labelledby="t-alert-guide" tabindex="0" hidden>
+<section>
+  <h2>Assunto concreto, próximo passo claro</h2>
+  <div class="alr-list" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Diz a consequência</span>
+      <div class="alr-frozen" aria-hidden="true" inert><div class="al-alert al-alert--warning"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-alert__text"><p class="al-alert__title">Seu plano vence em 3 dias</p><p class="al-alert__description">Renove para não perder o acesso aos relatórios.</p></div></div><div class="al-alert__actions"><button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">Ver planos</span></button><button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">Renovar plano</span></button></div></div></div>
+      <p class="cap">O título é o assunto; a descrição, o que fazer. A ação resolve.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Um grito</span>
+      <div class="alr-fake " aria-hidden="true"><b>Atenção!</b> Verifique as informações da sua conta.</div>
+      <p class="cap">Não diz o que está errado nem o que fazer.</p>
+    </div>
+    <div class="cell do">
+      <span class="lab">Perigo é cuidado</span>
+      <div class="alr-frozen" aria-hidden="true" inert><div class="al-alert al-alert--danger"><div class="al-alert__body"><svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="Perigo" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-alert__text"><p class="al-alert__title">Excluir a conta apaga todos os pedidos</p><p class="al-alert__description">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.</p></div></div></div></div>
+      <p class="cap">Avisa do que é irreversível antes de acontecer. Sem X: fica enquanto o risco existir.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Confirmação de clique</span>
+      <div class="alr-fake " aria-hidden="true"><b>Alteração salva</b> Suas preferências foram atualizadas.</div>
+      <p class="cap">O que acabou de acontecer é Toast, no canto, e some sozinho.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  <h3 class="tb-rgroup">Quando usar cada status</h3>
+<div class="rule"><div class="rn">01</div><div><h3>Sucesso: um estado bom que continua valendo</h3><p>“Sua loja está publicada”. Não confirma um clique — isso é Toast. Precedentes: Polaris, Spectrum.</p></div></div>
+<div class="rule"><div class="rn">02</div><div><h3>Informação: um contexto que muda o uso da página</h3><p>“Os relatórios são atualizados a cada hora”. Precedentes: Spectrum, Polaris.</p></div></div>
+<div class="rule"><div class="rn">03</div><div><h3>Aviso: vai dar problema se nada for feito</h3><p>“Seu plano vence em 3 dias”. Precedentes: Polaris, Carbon.</p></div></div>
+<div class="rule"><div class="rn">04</div><div><h3>Perigo: pede cuidado, não é erro</h3><p>Uma ação irreversível adiante ou um risco ativo. Diverge de propósito do Polaris e do Carbon, que usam a cor para erro: no AL, erro de ação é Toast e erro de campo é do formulário. Precedente: Primer.</p></div></div>
+<h3 class="tb-rgroup">Quando não usar</h3>
+<div class="rule"><div class="rn">05</div><div><h3>O que acabou de acontecer é Toast</h3><p>“Alteração salva” aparece no canto e some. Precedente: Carbon separa inline de toast.</p></div></div>
+<div class="rule"><div class="rn">06</div><div><h3>Erro de preenchimento fica no campo</h3><p>Na mensagem do próprio campo. Precedentes: Carbon, Polaris.</p></div></div>
+<div class="rule"><div class="rn">07</div><div><h3>Não aponte o que a tela deveria deixar claro</h3><p>Se precisa de um aviso para achar o botão, o problema é o botão. Precedente: Polaris.</p></div></div>
+<div class="rule"><div class="rn">08</div><div><h3>Conteúdo sem status é Card</h3><p>O Alert é um card de assunto específico, não uma moldura bonita.</p></div></div>
+<h3 class="tb-rgroup">Posição e quantidade</h3>
+<div class="rule"><div class="rn">09</div><div><h3>No topo, abaixo do header</h3><p>Antes do conteúdo da página. Precedentes: Material, Carbon.</p></div></div>
+<div class="rule"><div class="rn">10</div><div><h3>Na largura do conteúdo</h3><p>Sem largura fixa. Precedente: Material.</p></div></div>
+<div class="rule"><div class="rn">11</div><div><h3>Um por página</h3><p>Com dois assuntos, aparece o mais grave: Perigo, Aviso, Informação, Sucesso. Precedentes: Primer, Polaris, Material.</p></div></div>
+<h3 class="tb-rgroup">Conteúdo</h3>
+<div class="rule"><div class="rn">12</div><div><h3>Título curto, que diz o assunto</h3><p>Só a primeira maiúscula, sem ponto final. Precedente: Polaris.</p></div></div>
+<div class="rule"><div class="rn">13</div><div><h3>Descrição sempre, em até duas linhas</h3><p>O que acontece e o que fazer, com ponto. Precedentes: Carbon, Polaris.</p></div></div>
+<div class="rule"><div class="rn">14</div><div><h3>Sem título genérico</h3><p>“Atenção!” não diz nada; diga a consequência. Precedente: Polaris.</p></div></div>
+<h3 class="tb-rgroup">Ícone</h3>
+<div class="rule"><div class="rn">15</div><div><h3>Fixo por status, o mesmo do Toast</h3><p>Círculo com check, triângulo, círculo com exclamação e “i”. Precedente: Spectrum.</p></div></div>
+<div class="rule"><div class="rn">16</div><div><h3>Anunciado com o nome do status</h3><p><code>role="img"</code> e <code>aria-label</code> — “Perigo”. Contrato do Icon do AL.</p></div></div>
+<h3 class="tb-rgroup">Ações</h3>
+<div class="rule"><div class="rn">17</div><div><h3>Até duas, alinhadas à direita</h3><p>Ghost à esquerda, Primary à direita. Precedente: Primer.</p></div></div>
+<div class="rule"><div class="rn">18</div><div><h3>O Primary do Alert é o da tela</h3><p>Se a página já mostra outro Primary, o Alert usa só Ghost. Regra do Button: um por vez.</p></div></div>
+<div class="rule"><div class="rn">19</div><div><h3>Verbo e objeto no rótulo</h3><p>“Renovar plano”. Nunca “OK” ou “Fechar” — quem fecha é o X. Precedentes: Polaris, Carbon.</p></div></div>
+<h3 class="tb-rgroup">Dispensar</h3>
+<div class="rule"><div class="rn">20</div><div><h3>X só no que pode ser ignorado</h3><p>Sucesso e Informação podem ter; Aviso e Perigo não, enquanto a situação existir — saem quando ela se resolve. Precedentes: Primer, Polaris.</p></div></div>
+<div class="rule"><div class="rn">21</div><div><h3>Fechou, não volta</h3><p>A escolha fica guardada; o mesmo Alert não reaparece na próxima visita. Precedente: Primer.</p></div></div>
+<div class="rule"><div class="rn">22</div><div><h3>O foco segue em frente</h3><p>Ao fechar, vai para o próximo elemento focável; sem nenhum, para o conteúdo principal. WCAG 2.4.3.</p></div></div>
+<h3 class="tb-rgroup">Acessibilidade</h3>
+<div class="rule"><div class="rn">23</div><div><h3>Presente ao carregar, é conteúdo comum</h3><p>Lido na ordem, sem região viva. Precedente: Spectrum reserva o alert para atenção imediata.</p></div></div>
+<div class="rule"><div class="rn">24</div><div><h3>Inserido depois, é anunciado</h3><p>Perigo em <code>role="alert"</code>; os outros em <code>role="status"</code>. Precedentes: Spectrum, Carbon.</p></div></div>
+<div class="rule"><div class="rn">25</div><div><h3>Nunca rouba o foco</h3><p>Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">26</div><div><h3>O título não é heading</h3><p>Fica acima do h1 e não entra no índice de títulos. Diverge de propósito do Spectrum; precedente interno: Accordion.</p></div></div>
+<div class="rule"><div class="rn">27</div><div><h3>O X é um botão de verdade</h3><p>“Fechar aviso”, alcançável pelo Tab. Precedente: Carbon.</p></div></div>
+<h3 class="tb-rgroup">Fora de escopo</h3>
+<div class="rule"><div class="rn">28</div><div><h3>Sem neutro, fundo colorido, faixa de tela inteira ou tamanhos</h3><p>Informação cobre o neutro; o fundo claro com borda é o do Toast.</p></div></div>
+<div class="rule"><div class="rn">29</div><div><h3>Não some sozinho nem empilha</h3><p>Isso é Toast. Precedente: Material — persistente até resolver ou fechar.</p></div></div>
+</section></div><div class="panel" id="p-alert-a11y" role="tabpanel" aria-labelledby="t-alert-a11y" tabindex="0" hidden>
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O Alert tem fundo opaco: título, descrição, ícone, o X e os botões só encostam no fundo do próprio Alert.
+  Quem encosta na página é a borda — e a página é a tela ou a superfície. A borda é decorativa (quem diz o
+  status é o ícone), mas é ela que separa a caixa da página, então passa no 3:1 igual. O X e o Ghost das ações
+  são medidos em repouso, hover e pressionado, e o anel de foco contra o fundo do Alert. O rótulo do Primary
+  fica de fora: ele só encosta no próprio botão, que não muda aqui.</p>
+  <div class="stats">
+    <div class="stat hl"><b>50</b><span>combinações medidas</span></div>
+    <div class="stat"><b>50</b><span>passam</span></div>
+    <div class="stat"><b>0</b><span>exceções</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">titulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">14.55:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">descricao</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">success / icone</td><td class="chipcell"><span class="chip sm" style="background:#006911"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">6.93:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">warning / icone</td><td class="chipcell"><span class="chip sm" style="background:#704F00"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">7.48:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">danger / icone</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">8.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">info / icone</td><td class="chipcell"><span class="chip sm" style="background:#0055A3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">7.43:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#008A2A"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.50:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#008A2A"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.50:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#008A2A"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.20:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#916A00"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.92:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#916A00"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.92:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#916A00"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.60:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">danger / borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.38:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">danger / borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">5.38:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">danger / borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">5.03:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#0071D0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.91:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#0071D0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.91:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#0071D0"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.59:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">X / repouso</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">14.55:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">X / hover</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover-raised</td><td class="num strong">12.54:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">X / pressionado</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active-raised</td><td class="num strong">11.02:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Ghost / repouso</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">14.55:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Ghost / hover</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover-raised</td><td class="num strong">12.54:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">Ghost / pressionado</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active-raised</td><td class="num strong">11.02:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">titulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">descricao</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.10:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">success / icone</td><td class="chipcell"><span class="chip sm" style="background:#6ACD7C"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.42:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">warning / icone</td><td class="chipcell"><span class="chip sm" style="background:#EBCA7E"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">6.76:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">danger / icone</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.82:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">info / icone</td><td class="chipcell"><span class="chip sm" style="background:#76B8FF"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.13:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.79:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">6.29:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">5.15:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.44:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.92:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">danger / borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.19:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">danger / borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">5.30:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">danger / borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.51:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">5.82:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.77:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">X / repouso</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">9.98:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">X / hover</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-hover-raised</td><td class="num strong">6.85:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">X / pressionado</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#717171"></span></td><td class="tok dim">bg-active-raised</td><td class="num strong">4.56:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Ghost / repouso</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Ghost / hover</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-hover-raised</td><td class="num strong">6.85:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">Ghost / pressionado</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#717171"></span></td><td class="tok dim">bg-active-raised</td><td class="num strong">4.56:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.87:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra dez regras lendo o HTML que este site emite: o alerta do palco e os
+  <b>16 modelos</b> do Playground, nenhum fora do contrato. As
+  8 amostras congeladas desta documentação seguem a mesma marcação e ficam fora do
+  teclado e do leitor de tela.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Lugar</b><span>Um <code>.al-alert-slot</code> desde o carregamento, com no máximo um Alert dentro.</span></div>
+    <div><b>b · Sem região viva</b><span>Presente ao carregar, nem o Alert nem o slot têm <code>role</code> ou <code>aria-live</code>.</span></div>
+    <div><b>c · Modelo</b><span>Cada Alert inserido depois nasce de um <code>&lt;template&gt;</code> com a <code>.al-alert</code> como único filho.</span></div>
+    <div><b>d · Status</b><span>Um só: <code>--success</code>, <code>--warning</code>, <code>--danger</code> ou <code>--info</code>.</span></div>
+    <div><b>e · Partes</b><span>Corpo e, opcional, ações, nessa ordem.</span></div>
+    <div><b>f · Ícone</b><span>O do status, com <code>role="img"</code> e o nome do status no <code>aria-label</code>.</span></div>
+    <div><b>g · Texto</b><span>Título e descrição em <code>&lt;p&gt;</code>, os dois obrigatórios. Nenhum heading.</span></div>
+    <div><b>h · X</b><span>Opcional, Icon Button Ghost sm, <code>aria-label="Fechar aviso"</code>.</span></div>
+    <div><b>i · Ações</b><span>Um ou dois botões md; com dois, Ghost e depois Primary. Nada mais interativo.</span></div>
+    <div><b>j · Amostras</b><span>Alert fora do slot e do <code>&lt;template&gt;</code> só sob <code>inert</code> e <code>aria-hidden</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela</h2>
+  <div class="anat">
+    <div><b>Ao carregar</b><span>O Alert é lido na ordem da página, como qualquer texto. Sem região viva.</span></div>
+    <div><b>Inserido depois</b><span>O <code>alert.js</code> cria a região vazia e só então põe o Alert: Perigo interrompe (<code>role="alert"</code>), o resto espera (<code>role="status"</code>).</span></div>
+    <div><b>Foco</b><span>Nunca vai para o Alert sozinho. O X e as ações entram na ordem do Tab.</span></div>
+    <div><b>Ao fechar</b><span>O foco vai para o próximo elemento focável depois do Alert; sem nenhum, para o <code>&lt;main&gt;</code>.</span></div>
+    <div><b>Título</b><span>Um <code>&lt;p&gt;</code> em negrito: não entra na lista de títulos do leitor de tela.</span></div>
+    <div><b>Movimento reduzido</b><span>Aparece e some sem transição.</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.23.0</span>
+  <span><b>AL Design System</b> · v0.24.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -20072,6 +20649,167 @@ var TS_DEMOS = {"success-1": {"frozen": "<div class=\"ts-frozen\" aria-hidden=\"
     inp.addEventListener('input', render);
   });
   document.getElementById('toast-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+/* AL Design System - Alert (regras 11, 20 a 25)
+ *
+ * O Alert e marcacao comum da pagina (contrato no cabecalho do alert.css).
+ * Este arquivo so cuida de FECHAR e de INSERIR DEPOIS do carregamento:
+ *
+ *   - o X ([data-al-alert-close]) tira o Alert com fade de saida e dispara o
+ *     evento `al-alert-close` no slot, para o produto guardar a escolha e o
+ *     Alert nao voltar na proxima visita (regra 21);
+ *   - se o foco estava dentro, ele vai para o proximo elemento focavel depois
+ *     do Alert; sem nenhum, para o <main> (regra 22). Nunca se perde no body;
+ *   - alAlert.show() poe um Alert vindo de um <template> no slot. Um por
+ *     pagina: o que estava la sai (regra 11). Ele entra numa regiao viva que
+ *     nasce VAZIA e so depois recebe o Alert - regiao que nasce junto com a
+ *     mensagem nao e anunciada. Danger vai em role="alert", os outros em
+ *     role="status" (regra 24). O foco nao se move (regra 25).
+ *   - Alert presente no carregamento nao ganha role nenhum (regra 23).
+ * A duracao da saida e lida do token no CSS, nunca escrita aqui.
+ *
+ * Uso:
+ *   <script src="alert.js"><\/script>
+ *   alAlert.show('alert-plano')                       -> clona o <template id> no .al-alert-slot
+ *   alAlert.show(tpl, { slot: el })                   -> noutro slot
+ *   alAlert.dismiss(el)                               -> tira o Alert (o mesmo que o X)
+ *   slot.addEventListener('al-alert-close', e => …)    -> e.detail.alert e o que saiu
+ */
+(function () {
+  'use strict';
+
+  var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), ' +
+    'select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
+
+  function token(el, name) {
+    return parseFloat(getComputedStyle(el).getPropertyValue('--al-alert-' + name)) || 0;
+  }
+
+  function reduced() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function visible(el) {
+    return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+  }
+
+  // Regra 22: o proximo focavel DEPOIS do Alert na ordem do documento.
+  function nextFocus(alert) {
+    var all = document.querySelectorAll(FOCUSABLE);
+    for (var i = 0; i < all.length; i++) {
+      var el = all[i];
+      if (alert.contains(el) || !visible(el)) continue;
+      if (alert.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING) return el;
+    }
+    var main = document.querySelector('main');
+    if (main && !main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1');
+    return main;
+  }
+
+  function dismiss(alert) {
+    if (!alert || alert.hasAttribute('data-leaving')) return;
+    var slot = alert.closest('.al-alert-slot') || alert.parentNode;
+    var live = alert.parentNode && alert.parentNode.classList.contains('al-alert-live')
+      ? alert.parentNode : null;
+
+    if (alert.contains(document.activeElement)) {
+      var to = nextFocus(alert);
+      if (to) to.focus();
+    }
+
+    alert.setAttribute('data-leaving', '');
+    var ms = reduced() ? 0 : token(alert, 'duration');
+    setTimeout(function () {
+      (live || alert).remove();
+      if (slot) slot.dispatchEvent(new CustomEvent('al-alert-close', { detail: { alert: alert } }));
+    }, ms);
+  }
+
+  function show(tpl, opts) {
+    opts = opts || {};
+    if (typeof tpl === 'string') tpl = document.getElementById(tpl);
+    if (!tpl) return null;
+    var slot = opts.slot || document.querySelector('.al-alert-slot');
+    if (!slot) return null;
+
+    var alert = tpl.content.querySelector('.al-alert').cloneNode(true);
+
+    // Regra 11: um por pagina. O anterior sai na hora, sem fade - o novo
+    // ocupa o mesmo lugar.
+    var old = slot.querySelectorAll('.al-alert-live, .al-alert');
+    for (var i = 0; i < old.length; i++) {
+      if (old[i].parentNode === slot) old[i].remove();
+    }
+
+    var live = document.createElement('div');
+    live.className = 'al-alert-live';
+    live.setAttribute('role', alert.classList.contains('al-alert--danger') ? 'alert' : 'status');
+    slot.appendChild(live);
+    // A regiao precisa existir vazia antes da mensagem para o leitor anunciar.
+    setTimeout(function () { live.appendChild(alert); }, 50);
+    return alert;
+  }
+
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest && e.target.closest('[data-al-alert-close]');
+    if (!btn) return;
+    dismiss(btn.closest('.al-alert'));
+  });
+
+  window.alAlert = { show: show, dismiss: dismiss };
+})();
+var ALR_DEMOS = {"success-1-1": {"html": "<div class=\"al-alert al-alert--success\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"m16 9-5.5 5.5L8 12\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Sua loja está publicada<\/p><p class=\"al-alert__description\">Os clientes já podem ver e comprar os produtos.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\" aria-label=\"Fechar aviso\" data-al-alert-close><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><div class=\"al-alert__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\"><span class=\"al-btn__label\">Ver loja<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\"><span class=\"al-btn__label\">Compartilhar link<\/span><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--success\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\">…circle-check…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Sua loja está publicada<\/p>\n        <p class=\"al-alert__description\">Os clientes já podem ver e comprar os produtos.<\/p>\n      <\/div>\n      <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\"\n              aria-label=\"Fechar aviso\" data-al-alert-close>\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n      <\/button>\n    <\/div>\n    <div class=\"al-alert__actions\">\n      <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\">Ver loja<\/button>\n      <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\">Compartilhar link<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-success');<\/script>"}, "success-1-0": {"html": "<div class=\"al-alert al-alert--success\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"m16 9-5.5 5.5L8 12\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Sua loja está publicada<\/p><p class=\"al-alert__description\">Os clientes já podem ver e comprar os produtos.<\/p><\/div><\/div><div class=\"al-alert__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\"><span class=\"al-btn__label\">Ver loja<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\"><span class=\"al-btn__label\">Compartilhar link<\/span><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--success\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\">…circle-check…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Sua loja está publicada<\/p>\n        <p class=\"al-alert__description\">Os clientes já podem ver e comprar os produtos.<\/p>\n      <\/div>\n    <\/div>\n    <div class=\"al-alert__actions\">\n      <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\">Ver loja<\/button>\n      <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\">Compartilhar link<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-success');<\/script>"}, "success-0-1": {"html": "<div class=\"al-alert al-alert--success\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"m16 9-5.5 5.5L8 12\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Sua loja está publicada<\/p><p class=\"al-alert__description\">Os clientes já podem ver e comprar os produtos.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\" aria-label=\"Fechar aviso\" data-al-alert-close><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--success\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\">…circle-check…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Sua loja está publicada<\/p>\n        <p class=\"al-alert__description\">Os clientes já podem ver e comprar os produtos.<\/p>\n      <\/div>\n      <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\"\n              aria-label=\"Fechar aviso\" data-al-alert-close>\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n      <\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-success');<\/script>"}, "success-0-0": {"html": "<div class=\"al-alert al-alert--success\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"m16 9-5.5 5.5L8 12\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Sua loja está publicada<\/p><p class=\"al-alert__description\">Os clientes já podem ver e comprar os produtos.<\/p><\/div><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--success\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\">…circle-check…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Sua loja está publicada<\/p>\n        <p class=\"al-alert__description\">Os clientes já podem ver e comprar os produtos.<\/p>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-success');<\/script>"}, "warning-1-1": {"html": "<div class=\"al-alert al-alert--warning\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /><path d=\"M12 9v4\" /><path d=\"M12 17h.01\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Seu plano vence em 3 dias<\/p><p class=\"al-alert__description\">Renove para não perder o acesso aos relatórios.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\" aria-label=\"Fechar aviso\" data-al-alert-close><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><div class=\"al-alert__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\"><span class=\"al-btn__label\">Ver planos<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\"><span class=\"al-btn__label\">Renovar plano<\/span><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--warning\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\">…triangle-alert…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Seu plano vence em 3 dias<\/p>\n        <p class=\"al-alert__description\">Renove para não perder o acesso aos relatórios.<\/p>\n      <\/div>\n      <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\"\n              aria-label=\"Fechar aviso\" data-al-alert-close>\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n      <\/button>\n    <\/div>\n    <div class=\"al-alert__actions\">\n      <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\">Ver planos<\/button>\n      <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\">Renovar plano<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-warning');<\/script>"}, "warning-1-0": {"html": "<div class=\"al-alert al-alert--warning\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /><path d=\"M12 9v4\" /><path d=\"M12 17h.01\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Seu plano vence em 3 dias<\/p><p class=\"al-alert__description\">Renove para não perder o acesso aos relatórios.<\/p><\/div><\/div><div class=\"al-alert__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\"><span class=\"al-btn__label\">Ver planos<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\"><span class=\"al-btn__label\">Renovar plano<\/span><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--warning\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\">…triangle-alert…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Seu plano vence em 3 dias<\/p>\n        <p class=\"al-alert__description\">Renove para não perder o acesso aos relatórios.<\/p>\n      <\/div>\n    <\/div>\n    <div class=\"al-alert__actions\">\n      <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\">Ver planos<\/button>\n      <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\">Renovar plano<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-warning');<\/script>"}, "warning-0-1": {"html": "<div class=\"al-alert al-alert--warning\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /><path d=\"M12 9v4\" /><path d=\"M12 17h.01\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Seu plano vence em 3 dias<\/p><p class=\"al-alert__description\">Renove para não perder o acesso aos relatórios.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\" aria-label=\"Fechar aviso\" data-al-alert-close><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--warning\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\">…triangle-alert…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Seu plano vence em 3 dias<\/p>\n        <p class=\"al-alert__description\">Renove para não perder o acesso aos relatórios.<\/p>\n      <\/div>\n      <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\"\n              aria-label=\"Fechar aviso\" data-al-alert-close>\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n      <\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-warning');<\/script>"}, "warning-0-0": {"html": "<div class=\"al-alert al-alert--warning\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /><path d=\"M12 9v4\" /><path d=\"M12 17h.01\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Seu plano vence em 3 dias<\/p><p class=\"al-alert__description\">Renove para não perder o acesso aos relatórios.<\/p><\/div><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--warning\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\">…triangle-alert…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Seu plano vence em 3 dias<\/p>\n        <p class=\"al-alert__description\">Renove para não perder o acesso aos relatórios.<\/p>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-warning');<\/script>"}, "danger-1-1": {"html": "<div class=\"al-alert al-alert--danger\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Perigo\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\" /><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Excluir a conta apaga todos os pedidos<\/p><p class=\"al-alert__description\">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\" aria-label=\"Fechar aviso\" data-al-alert-close><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><div class=\"al-alert__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\"><span class=\"al-btn__label\">Ver o que é apagado<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\"><span class=\"al-btn__label\">Exportar dados<\/span><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--danger\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Perigo\" focusable=\"false\">…circle-alert…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Excluir a conta apaga todos os pedidos<\/p>\n        <p class=\"al-alert__description\">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.<\/p>\n      <\/div>\n      <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\"\n              aria-label=\"Fechar aviso\" data-al-alert-close>\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n      <\/button>\n    <\/div>\n    <div class=\"al-alert__actions\">\n      <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\">Ver o que é apagado<\/button>\n      <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\">Exportar dados<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-danger');<\/script>"}, "danger-1-0": {"html": "<div class=\"al-alert al-alert--danger\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Perigo\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\" /><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Excluir a conta apaga todos os pedidos<\/p><p class=\"al-alert__description\">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.<\/p><\/div><\/div><div class=\"al-alert__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\"><span class=\"al-btn__label\">Ver o que é apagado<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\"><span class=\"al-btn__label\">Exportar dados<\/span><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--danger\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Perigo\" focusable=\"false\">…circle-alert…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Excluir a conta apaga todos os pedidos<\/p>\n        <p class=\"al-alert__description\">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.<\/p>\n      <\/div>\n    <\/div>\n    <div class=\"al-alert__actions\">\n      <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\">Ver o que é apagado<\/button>\n      <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\">Exportar dados<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-danger');<\/script>"}, "danger-0-1": {"html": "<div class=\"al-alert al-alert--danger\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Perigo\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\" /><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Excluir a conta apaga todos os pedidos<\/p><p class=\"al-alert__description\">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\" aria-label=\"Fechar aviso\" data-al-alert-close><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--danger\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Perigo\" focusable=\"false\">…circle-alert…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Excluir a conta apaga todos os pedidos<\/p>\n        <p class=\"al-alert__description\">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.<\/p>\n      <\/div>\n      <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\"\n              aria-label=\"Fechar aviso\" data-al-alert-close>\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n      <\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-danger');<\/script>"}, "danger-0-0": {"html": "<div class=\"al-alert al-alert--danger\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Perigo\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\" /><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Excluir a conta apaga todos os pedidos<\/p><p class=\"al-alert__description\">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.<\/p><\/div><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--danger\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Perigo\" focusable=\"false\">…circle-alert…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Excluir a conta apaga todos os pedidos<\/p>\n        <p class=\"al-alert__description\">Os dados não podem ser recuperados. Exporte antes o que quiser guardar.<\/p>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-danger');<\/script>"}, "info-1-1": {"html": "<div class=\"al-alert al-alert--info\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Os relatórios são atualizados a cada hora<\/p><p class=\"al-alert__description\">Os números de hoje podem mudar até o fim do dia.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\" aria-label=\"Fechar aviso\" data-al-alert-close><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><div class=\"al-alert__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\"><span class=\"al-btn__label\">Ver histórico<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\"><span class=\"al-btn__label\">Configurar aviso<\/span><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--info\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\">…info…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Os relatórios são atualizados a cada hora<\/p>\n        <p class=\"al-alert__description\">Os números de hoje podem mudar até o fim do dia.<\/p>\n      <\/div>\n      <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\"\n              aria-label=\"Fechar aviso\" data-al-alert-close>\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n      <\/button>\n    <\/div>\n    <div class=\"al-alert__actions\">\n      <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\">Ver histórico<\/button>\n      <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\">Configurar aviso<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-info');<\/script>"}, "info-1-0": {"html": "<div class=\"al-alert al-alert--info\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Os relatórios são atualizados a cada hora<\/p><p class=\"al-alert__description\">Os números de hoje podem mudar até o fim do dia.<\/p><\/div><\/div><div class=\"al-alert__actions\"><button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\"><span class=\"al-btn__label\">Ver histórico<\/span><\/button><button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\"><span class=\"al-btn__label\">Configurar aviso<\/span><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--info\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\">…info…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Os relatórios são atualizados a cada hora<\/p>\n        <p class=\"al-alert__description\">Os números de hoje podem mudar até o fim do dia.<\/p>\n      <\/div>\n    <\/div>\n    <div class=\"al-alert__actions\">\n      <button type=\"button\" class=\"al-btn al-btn--ghost al-btn--md\">Ver histórico<\/button>\n      <button type=\"button\" class=\"al-btn al-btn--primary al-btn--md\">Configurar aviso<\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-info');<\/script>"}, "info-0-1": {"html": "<div class=\"al-alert al-alert--info\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Os relatórios são atualizados a cada hora<\/p><p class=\"al-alert__description\">Os números de hoje podem mudar até o fim do dia.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\" aria-label=\"Fechar aviso\" data-al-alert-close><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--info\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\">…info…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Os relatórios são atualizados a cada hora<\/p>\n        <p class=\"al-alert__description\">Os números de hoje podem mudar até o fim do dia.<\/p>\n      <\/div>\n      <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close\"\n              aria-label=\"Fechar aviso\" data-al-alert-close>\n        <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n      <\/button>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-info');<\/script>"}, "info-0-0": {"html": "<div class=\"al-alert al-alert--info\"><div class=\"al-alert__body\"><svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" /><\/svg><div class=\"al-alert__text\"><p class=\"al-alert__title\">Os relatórios são atualizados a cada hora<\/p><p class=\"al-alert__description\">Os números de hoje podem mudar até o fim do dia.<\/p><\/div><\/div><\/div>", "code": "<!-- no topo da página, abaixo do header -->\n<div class=\"al-alert-slot\">\n  <div class=\"al-alert al-alert--info\">\n    <div class=\"al-alert__body\">\n      <svg class=\"al-icon al-icon--24 al-alert__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\">…info…<\/svg>\n      <div class=\"al-alert__text\">\n        <p class=\"al-alert__title\">Os relatórios são atualizados a cada hora<\/p>\n        <p class=\"al-alert__description\">Os números de hoje podem mudar até o fim do dia.<\/p>\n      <\/div>\n    <\/div>\n  <\/div>\n<\/div>\n\n<!-- inserido depois do carregamento: o alert.js põe o role -->\n<script>alAlert.show('alert-info');<\/script>"}};
+var ALR_CLOSE_DEFAULT = {"success": "1", "warning": "0", "danger": "0", "info": "1"};
+
+(function () {
+  // ── playground do Alert ──
+  var stage = document.getElementById('alert-stage');
+  if (!stage) return;
+  var slot = document.getElementById('alert-slot');
+  var code = document.getElementById('alert-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function key() { return pick('alrstatus') + '-' + pick('alracts') + '-' + pick('alrclose'); }
+
+  // O alerta do palco e vivo: o X o tira de verdade. Qualquer controle o
+  // devolve, sem anuncio - como um Alert presente no carregamento (regra 23).
+  function render() {
+    var theme = pick('alrtheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    slot.innerHTML = ALR_DEMOS[key()].html;
+    code.innerHTML = esc(ALR_DEMOS[key()].code);
+  }
+
+  // Regra 20: ao trocar o status, o X volta ao padrao dele.
+  document.querySelectorAll('input[name="alrstatus"]').forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      var want = ALR_CLOSE_DEFAULT[pick('alrstatus')];
+      var c = document.querySelector('input[name="alrclose"][value="' + want + '"]');
+      if (c) c.checked = true;
+    });
+  });
+  document.querySelectorAll('#alert-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('alert-fire').addEventListener('click', function () {
+    if (window.alAlert) window.alAlert.show('alr-pg-' + key(), { slot: slot });
+  });
+  document.getElementById('alert-copy').addEventListener('click', function () {
     var btn = this;
     var done = function () {
       btn.textContent = 'Copiado';

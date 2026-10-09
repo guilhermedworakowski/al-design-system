@@ -142,6 +142,11 @@ TST_TOKENS = open(os.path.join(ROOT, 'components', 'toast', 'al-toast-tokens.css
 TST_CSS = open(os.path.join(ROOT, 'components', 'toast', 'toast.css')).read()
 TST_A11Y = json.load(open(os.path.join(ROOT, 'components', 'toast', 'a11y.json')))
 TST_JS = open(os.path.join(ROOT, 'components', 'toast', 'toast.js')).read()
+ALR = json.load(open(os.path.join(ROOT, 'components', 'alert', 'tokens.json')))
+ALR_TOKENS = open(os.path.join(ROOT, 'components', 'alert', 'al-alert-tokens.css')).read()
+ALR_CSS = open(os.path.join(ROOT, 'components', 'alert', 'alert.css')).read()
+ALR_JS = open(os.path.join(ROOT, 'components', 'alert', 'alert.js')).read()
+ALR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'alert', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -178,6 +183,7 @@ N_SBR_TOKENS = len(SBR['alias'])
 N_BCR_TOKENS = len(BCR['alias'])
 N_TTP_TOKENS = len(TTP['alias'])
 N_TST_TOKENS = len(TST['alias'])
+N_ALR_TOKENS = len(ALR['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -223,7 +229,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
-                         TTP_TOKENS, TST_TOKENS)
+                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -245,7 +251,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + SBR_TOKENS + '\n' + SBR_CSS
             + '\n' + BCR_TOKENS + '\n' + BCR_CSS
             + '\n' + TTP_TOKENS + '\n' + TTP_CSS
-            + '\n' + TST_TOKENS + '\n' + TST_CSS)
+            + '\n' + TST_TOKENS + '\n' + TST_CSS
+            + '\n' + ALR_TOKENS + '\n' + ALR_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -12028,6 +12035,473 @@ JS_TOAST = r"""
 """
 
 
+
+
+# ══════════════════════════════════════════════════════════════ Alert · abas
+# Terceiro componente do Tier 5, ultimo da V1, terceiro do piloto em duas
+# sessoes: a pagina nasce na etapa 5. O Alert e conteudo da pagina, entao o do
+# Playground e VIVO - a .al-alert do alert.css real, num .al-alert-slot, com o
+# X fechando pelo alert.js. "Inserir com anuncio" usa alAlert.show() com um dos
+# <template> da pagina. As amostras da documentacao sao a mesma marcacao sob
+# `aria-hidden` + `inert` (alr-frozen): um X que some com a amostra nao serve
+# para documentar.
+ALR_STATUSES = [('success', 'Sucesso'), ('warning', 'Aviso'), ('danger', 'Perigo'), ('info', 'Informação')]
+ALR_ICONS = {'success': 'circle-check', 'warning': 'triangle-alert', 'danger': 'circle-alert', 'info': 'info'}
+ALR_TEXT = {
+    'success': ('Sua loja está publicada', 'Os clientes já podem ver e comprar os produtos.',
+                ('Ver loja', 'Compartilhar link')),
+    'warning': ('Seu plano vence em 3 dias', 'Renove para não perder o acesso aos relatórios.',
+                ('Ver planos', 'Renovar plano')),
+    'danger':  ('Excluir a conta apaga todos os pedidos', 'Os dados não podem ser recuperados. Exporte antes o que quiser guardar.',
+                ('Ver o que é apagado', 'Exportar dados')),
+    'info':    ('Os relatórios são atualizados a cada hora', 'Os números de hoje podem mudar até o fim do dia.',
+                ('Ver histórico', 'Configurar aviso')),
+}
+# Regra 20: Warning e Danger nascem sem X no Playground.
+ALR_CLOSE_DEFAULT = {'success': '1', 'warning': '0', 'danger': '0', 'info': '1'}
+ALR_ACTS = [('1', 'Com ações'), ('0', 'Sem ações')]
+ALR_CLOSES = [('1', 'Com X'), ('0', 'Sem X')]
+ALR_CLOSE_X = al_icon('x')
+
+
+def alr_icon(status):
+    label = dict(ALR_STATUSES)[status]
+    return al_icon(ALR_ICONS[status], 'al-icon al-icon--24 al-alert__icon').replace(
+        'aria-hidden="true" focusable="false"', f'role="img" aria-label="{label}" focusable="false"', 1)
+
+
+def alr_alert(status, acts=True, close=True, title=None, text=None):
+    t, d, (a1, a2) = ALR_TEXT[status]
+    t, d = title or t, text or d
+    x = (f'<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close" '
+         f'aria-label="Fechar aviso" data-al-alert-close>{ALR_CLOSE_X}</button>') if close else ''
+    actions = (f'<div class="al-alert__actions">'
+               f'<button type="button" class="al-btn al-btn--ghost al-btn--md"><span class="al-btn__label">{a1}</span></button>'
+               f'<button type="button" class="al-btn al-btn--primary al-btn--md"><span class="al-btn__label">{a2}</span></button>'
+               f'</div>') if acts else ''
+    return (f'<div class="al-alert al-alert--{status}"><div class="al-alert__body">{alr_icon(status)}'
+            f'<div class="al-alert__text"><p class="al-alert__title">{t}</p>'
+            f'<p class="al-alert__description">{d}</p></div>{x}</div>{actions}</div>')
+
+
+def alr_frozen(status, acts=True, close=True, title=None, text=None):
+    return f'<div class="alr-frozen" aria-hidden="true" inert>{alr_alert(status, acts, close, title, text)}</div>'
+
+
+def alr_fake(text, cls=''):
+    """O "a evitar": nunca uma .al-alert errada, so a casca."""
+    return f'<div class="alr-fake {cls}" aria-hidden="true">{text}</div>'
+
+
+def alr_code(status, acts, close):
+    t, d, (a1, a2) = ALR_TEXT[status]
+    lines = ['<!-- no topo da página, abaixo do header -->',
+             '<div class="al-alert-slot">',
+             f'  <div class="al-alert al-alert--{status}">',
+             '    <div class="al-alert__body">',
+             f'      <svg class="al-icon al-icon--24 al-alert__icon" role="img" aria-label="{dict(ALR_STATUSES)[status]}" focusable="false">…{ALR_ICONS[status]}…</svg>',
+             '      <div class="al-alert__text">',
+             f'        <p class="al-alert__title">{t}</p>',
+             f'        <p class="al-alert__description">{d}</p>',
+             '      </div>']
+    if close:
+        lines += ['      <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close"',
+                  '              aria-label="Fechar aviso" data-al-alert-close>',
+                  '        <svg class="al-icon" aria-hidden="true" focusable="false">…x…</svg>',
+                  '      </button>']
+    lines.append('    </div>')
+    if acts:
+        lines += ['    <div class="al-alert__actions">',
+                  f'      <button type="button" class="al-btn al-btn--ghost al-btn--md">{a1}</button>',
+                  f'      <button type="button" class="al-btn al-btn--primary al-btn--md">{a2}</button>',
+                  '    </div>']
+    lines += ['  </div>', '</div>', '',
+              '<!-- inserido depois do carregamento: o alert.js põe o role -->',
+              f"<script>alAlert.show('alert-{status}');</script>"]
+    return '\n'.join(lines)
+
+
+ALR_KEYS = [(s, a, c) for s, _ in ALR_STATUSES for a, _ in ALR_ACTS for c, _ in ALR_CLOSES]
+ALR_DEMOS = {f'{s}-{a}-{c}': {'html': alr_alert(s, a == '1', c == '1'), 'code': alr_code(s, a == '1', c == '1')}
+             for s, a, c in ALR_KEYS}
+ALR_TEMPLATES = ''.join(f'<template id="alr-pg-{s}-{a}-{c}">{alr_alert(s, a == "1", c == "1")}</template>'
+                        for s, a, c in ALR_KEYS)
+
+
+def alert_token_rows():
+    rows = []
+    for name in ALR['alias']:
+        res = ALR['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, list) and len(res) == 4 and all(isinstance(n, (int, float)) for n in res):
+            light = dark = 'cubic-bezier(' + ', '.join(str(n) for n in res) + ')'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        elif name == 'alert-duration':
+            light = dark = f'{res}ms'
+        elif name == 'alert-title-font-weight':
+            light = dark = str(res)
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{ALR["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+ALR_DEFAULT = 'warning-1-0'
+
+ALERT_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage alr-stage" id="alert-stage"><div class="al-alert-slot alr-slot" id="alert-slot">{ALR_DEMOS[ALR_DEFAULT]["html"]}</div></div>
+    <div class="controls" id="alert-controls">
+      <div class="ctl"><span class="ctl-name">Status</span>{seg('alrstatus', ALR_STATUSES, 'warning')}</div>
+      <div class="ctl"><span class="ctl-name">Ações</span>{seg('alracts', ALR_ACTS, '1')}</div>
+      <div class="ctl"><span class="ctl-name">Fechar</span>{seg('alrclose', ALR_CLOSES, '0')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('alrtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><span class="ctl-name">Inserir</span><div><button type="button" class="al-btn al-btn--secondary al-btn--sm" id="alert-fire">
+        <span class="al-btn__label">Inserir com anúncio</span></button></div></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="alert-copy">Copiar</button></div>
+      <pre><code id="alert-code"></code></pre>
+    </div>
+  </div>
+  {ALR_TEMPLATES}
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O alerta do palco é o de verdade: o X fecha com o <code>alert.js</code>. Trocar um controle traz de volta.
+    <b>Inserir com anúncio</b> põe o mesmo alerta como se ele chegasse depois do carregamento — é aí que o
+    leitor de tela o anuncia. Ao trocar o status, o X segue a regra 20: Aviso e Perigo nascem sem ele.
+  </p>
+</section>
+
+<section>
+  <h2>Os quatro status</h2>
+  <p>O ícone diz o status sem depender da cor; a borda acompanha. Perigo é cuidado, não erro.</p>
+  <div class="alr-list" style="margin-top:16px">
+    {''.join(f'<div class="cell"><span class="lab" style="color:var(--al-text-secondary)">{lab}</span>'
+             f'{alr_frozen(s, False, ALR_CLOSE_DEFAULT[s] == "1")}</div>' for s, lab in ALR_STATUSES)}
+  </div>
+</section>'''
+
+
+ALERT_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-alert</code>: <code>alert-bg</code> (o fundo do Card), borda de 1px na cor do status, raio xl, padding 16, sem sombra.</span></div>
+    <div><b>Ícone</b><span>24px, alinhado ao topo, na entrelinha do título. Fixo por status, com <code>role="img"</code>: ele carrega o status.</span></div>
+    <div><b>Título</b><span>16/24 bold em <code>alert-title</code>, montado da escala — a Foundation não tem estilo 16 bold. Um <code>&lt;p&gt;</code>, nunca heading.</span></div>
+    <div><b>Descrição</b><span>Body/md 16/24 em <code>alert-description</code>, a 4 do título. Sempre presente.</span></div>
+    <div><b>Fechar</b><span>Icon Button Ghost sm, <code>aria-label="Fechar aviso"</code>. Opcional; Aviso e Perigo não levam enquanto a situação existir.</span></div>
+    <div><b>Ações</b><span>Button Ghost e Primary md, alinhados à direita, a 24 do texto e 16 entre si. Opcionais.</span></div>
+    <div><b>Lugar</b><span>Um <code>.al-alert-slot</code> no topo da página, abaixo do header, na largura do conteúdo.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Com e sem ações</h2>
+  <div class="alr-list" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Com ações e X</span>{alr_frozen('info')}</div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Só o texto</span>{alr_frozen('info', False, False)}</div>
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Alert</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{alert_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Nenhum valor declarado</b>
+    Todos os {N_ALR_TOKENS} tokens apontam para a Foundation. Sem largura: o Alert ocupa a do conteúdo.
+  </div>
+  <div class="note">
+    <b>O título é montado da escala</b>
+    Tamanho <code>md</code>, entrelinha <code>md</code> e peso <code>bold</code> — três tokens soltos, em vez de um
+    estilo novo na Foundation que só o Alert usaria.
+  </div>
+  <div class="note">
+    <b>Perigo usa o semântico <code>danger</code> com o próprio nome</b>
+    Diferente do Toast, onde o status se chama Erro: aqui o sentido é cuidado com o que vem, não falha.
+  </div>
+  <div class="note">
+    <b>Entra e sai em {ALR['resolved']['alert-duration']}ms</b>
+    Só opacidade, na duração dos controles: curva de entrada ao aparecer, de saída ao sair. Sem movimento com
+    movimento reduzido.
+  </div>
+  <div class="note">
+    <b>Botões sobre a superfície elevada</b>
+    O hover do Ghost e do X vem dos semânticos <code>-raised</code>, como no Modal, no Card e no Toast — no escuro,
+    o hover comum some sobre este fundo.
+  </div>
+</section>'''
+
+
+ALR_RULES = [
+    ('Quando usar cada status', [
+        ('Sucesso: um estado bom que continua valendo', '“Sua loja está publicada”. Não confirma um clique — isso é Toast. Precedentes: Polaris, Spectrum.'),
+        ('Informação: um contexto que muda o uso da página', '“Os relatórios são atualizados a cada hora”. Precedentes: Spectrum, Polaris.'),
+        ('Aviso: vai dar problema se nada for feito', '“Seu plano vence em 3 dias”. Precedentes: Polaris, Carbon.'),
+        ('Perigo: pede cuidado, não é erro', 'Uma ação irreversível adiante ou um risco ativo. Diverge de propósito do Polaris e do Carbon, que usam a cor para erro: no AL, erro de ação é Toast e erro de campo é do formulário. Precedente: Primer.'),
+    ]),
+    ('Quando não usar', [
+        ('O que acabou de acontecer é Toast', '“Alteração salva” aparece no canto e some. Precedente: Carbon separa inline de toast.'),
+        ('Erro de preenchimento fica no campo', 'Na mensagem do próprio campo. Precedentes: Carbon, Polaris.'),
+        ('Não aponte o que a tela deveria deixar claro', 'Se precisa de um aviso para achar o botão, o problema é o botão. Precedente: Polaris.'),
+        ('Conteúdo sem status é Card', 'O Alert é um card de assunto específico, não uma moldura bonita.'),
+    ]),
+    ('Posição e quantidade', [
+        ('No topo, abaixo do header', 'Antes do conteúdo da página. Precedentes: Material, Carbon.'),
+        ('Na largura do conteúdo', 'Sem largura fixa. Precedente: Material.'),
+        ('Um por página', 'Com dois assuntos, aparece o mais grave: Perigo, Aviso, Informação, Sucesso. Precedentes: Primer, Polaris, Material.'),
+    ]),
+    ('Conteúdo', [
+        ('Título curto, que diz o assunto', 'Só a primeira maiúscula, sem ponto final. Precedente: Polaris.'),
+        ('Descrição sempre, em até duas linhas', 'O que acontece e o que fazer, com ponto. Precedentes: Carbon, Polaris.'),
+        ('Sem título genérico', '“Atenção!” não diz nada; diga a consequência. Precedente: Polaris.'),
+    ]),
+    ('Ícone', [
+        ('Fixo por status, o mesmo do Toast', 'Círculo com check, triângulo, círculo com exclamação e “i”. Precedente: Spectrum.'),
+        ('Anunciado com o nome do status', '<code>role="img"</code> e <code>aria-label</code> — “Perigo”. Contrato do Icon do AL.'),
+    ]),
+    ('Ações', [
+        ('Até duas, alinhadas à direita', 'Ghost à esquerda, Primary à direita. Precedente: Primer.'),
+        ('O Primary do Alert é o da tela', 'Se a página já mostra outro Primary, o Alert usa só Ghost. Regra do Button: um por vez.'),
+        ('Verbo e objeto no rótulo', '“Renovar plano”. Nunca “OK” ou “Fechar” — quem fecha é o X. Precedentes: Polaris, Carbon.'),
+    ]),
+    ('Dispensar', [
+        ('X só no que pode ser ignorado', 'Sucesso e Informação podem ter; Aviso e Perigo não, enquanto a situação existir — saem quando ela se resolve. Precedentes: Primer, Polaris.'),
+        ('Fechou, não volta', 'A escolha fica guardada; o mesmo Alert não reaparece na próxima visita. Precedente: Primer.'),
+        ('O foco segue em frente', 'Ao fechar, vai para o próximo elemento focável; sem nenhum, para o conteúdo principal. WCAG 2.4.3.'),
+    ]),
+    ('Acessibilidade', [
+        ('Presente ao carregar, é conteúdo comum', 'Lido na ordem, sem região viva. Precedente: Spectrum reserva o alert para atenção imediata.'),
+        ('Inserido depois, é anunciado', 'Perigo em <code>role="alert"</code>; os outros em <code>role="status"</code>. Precedentes: Spectrum, Carbon.'),
+        ('Nunca rouba o foco', 'Precedente: Carbon.'),
+        ('O título não é heading', 'Fica acima do h1 e não entra no índice de títulos. Diverge de propósito do Spectrum; precedente interno: Accordion.'),
+        ('O X é um botão de verdade', '“Fechar aviso”, alcançável pelo Tab. Precedente: Carbon.'),
+    ]),
+    ('Fora de escopo', [
+        ('Sem neutro, fundo colorido, faixa de tela inteira ou tamanhos', 'Informação cobre o neutro; o fundo claro com borda é o do Toast.'),
+        ('Não some sozinho nem empilha', 'Isso é Toast. Precedente: Material — persistente até resolver ou fechar.'),
+    ]),
+]
+
+
+def alr_rules_html():
+    out, n = [], 0
+    for grupo, regras in ALR_RULES:
+        out.append(f'<h3 class="tb-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    assert n == 29, f'as regras aprovadas sao 29, o site tem {n}'
+    return '\n'.join(out)
+
+
+ALERT_GUIDE = f'''
+<section>
+  <h2>Assunto concreto, próximo passo claro</h2>
+  <div class="alr-list" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Diz a consequência</span>
+      {alr_frozen('warning', True, False)}
+      <p class="cap">O título é o assunto; a descrição, o que fazer. A ação resolve.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Um grito</span>
+      {alr_fake('<b>Atenção!</b> Verifique as informações da sua conta.')}
+      <p class="cap">Não diz o que está errado nem o que fazer.</p>
+    </div>
+    <div class="cell do">
+      <span class="lab">Perigo é cuidado</span>
+      {alr_frozen('danger', False, False)}
+      <p class="cap">Avisa do que é irreversível antes de acontecer. Sem X: fica enquanto o risco existir.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Confirmação de clique</span>
+      {alr_fake('<b>Alteração salva</b> Suas preferências foram atualizadas.')}
+      <p class="cap">O que acabou de acontecer é Toast, no canto, e some sozinho.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {alr_rules_html()}
+</section>'''
+
+
+def alert_a11y_rows():
+    out = []
+    for r in ALR_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{r["what"]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+N_ALR_MEDIDAS = len(ALR_A11Y['rows'])
+N_ALR_PASS = sum(1 for r in ALR_A11Y['rows'] if r['pass'])
+
+
+ALERT_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O Alert tem fundo opaco: título, descrição, ícone, o X e os botões só encostam no fundo do próprio Alert.
+  Quem encosta na página é a borda — e a página é a tela ou a superfície. A borda é decorativa (quem diz o
+  status é o ícone), mas é ela que separa a caixa da página, então passa no 3:1 igual. O X e o Ghost das ações
+  são medidos em repouso, hover e pressionado, e o anel de foco contra o fundo do Alert. O rótulo do Primary
+  fica de fora: ele só encosta no próprio botão, que não muda aqui.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_ALR_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_ALR_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>0</b><span>exceções</span></div>
+    <div class="stat"><b>{N_ALR_MEDIDAS - N_ALR_PASS}</b><span>reprovas</span></div>
+  </div>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{alert_a11y_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra dez regras lendo o HTML que este site emite: o alerta do palco e os
+  <b>{ALR_A11Y['markupChecked'] or 0} modelos</b> do Playground, nenhum fora do contrato. As
+  {ALR_A11Y['markupFrozen']} amostras congeladas desta documentação seguem a mesma marcação e ficam fora do
+  teclado e do leitor de tela.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Lugar</b><span>Um <code>.al-alert-slot</code> desde o carregamento, com no máximo um Alert dentro.</span></div>
+    <div><b>b · Sem região viva</b><span>Presente ao carregar, nem o Alert nem o slot têm <code>role</code> ou <code>aria-live</code>.</span></div>
+    <div><b>c · Modelo</b><span>Cada Alert inserido depois nasce de um <code>&lt;template&gt;</code> com a <code>.al-alert</code> como único filho.</span></div>
+    <div><b>d · Status</b><span>Um só: <code>--success</code>, <code>--warning</code>, <code>--danger</code> ou <code>--info</code>.</span></div>
+    <div><b>e · Partes</b><span>Corpo e, opcional, ações, nessa ordem.</span></div>
+    <div><b>f · Ícone</b><span>O do status, com <code>role="img"</code> e o nome do status no <code>aria-label</code>.</span></div>
+    <div><b>g · Texto</b><span>Título e descrição em <code>&lt;p&gt;</code>, os dois obrigatórios. Nenhum heading.</span></div>
+    <div><b>h · X</b><span>Opcional, Icon Button Ghost sm, <code>aria-label="Fechar aviso"</code>.</span></div>
+    <div><b>i · Ações</b><span>Um ou dois botões md; com dois, Ghost e depois Primary. Nada mais interativo.</span></div>
+    <div><b>j · Amostras</b><span>Alert fora do slot e do <code>&lt;template&gt;</code> só sob <code>inert</code> e <code>aria-hidden</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela</h2>
+  <div class="anat">
+    <div><b>Ao carregar</b><span>O Alert é lido na ordem da página, como qualquer texto. Sem região viva.</span></div>
+    <div><b>Inserido depois</b><span>O <code>alert.js</code> cria a região vazia e só então põe o Alert: Perigo interrompe (<code>role="alert"</code>), o resto espera (<code>role="status"</code>).</span></div>
+    <div><b>Foco</b><span>Nunca vai para o Alert sozinho. O X e as ações entram na ordem do Tab.</span></div>
+    <div><b>Ao fechar</b><span>O foco vai para o próximo elemento focável depois do Alert; sem nenhum, para o <code>&lt;main&gt;</code>.</span></div>
+    <div><b>Título</b><span>Um <code>&lt;p&gt;</code> em negrito: não entra na lista de títulos do leitor de tela.</span></div>
+    <div><b>Movimento reduzido</b><span>Aparece e some sem transição.</span></div>
+  </div>
+</section>'''
+
+
+# Miniatura do card: casca (o card inteiro ja e um link).
+TH_ALERT = ('<div class="th-alr" aria-hidden="true"><div class="th-alr-box"><i></i>'
+            '<span><b></b><b></b></span></div><em></em><em></em></div>')
+
+
+CHROME_ALERT = """
+/* ── páginas do Alert ──
+   Casca do site. O alerta vivo é a .al-alert do alert.css real, no
+   .al-alert-slot do palco. .alr-frozen é a amostra parada; .alr-fake é o
+   "a evitar", nunca uma .al-alert errada. */
+.alr-stage{min-height:220px; display:flex; align-items:flex-start; justify-content:center; padding:32px 16px}
+.alr-slot{inline-size:min(600px, 100%)}
+.alr-list{display:grid; gap:20px}
+.alr-list .cell{display:flex; flex-direction:column; gap:10px}
+.alr-frozen .al-alert{transition:none}
+.alr-fake{padding:16px; border-radius:12px; border:1px solid var(--al-border-default);
+  background:var(--al-bg-surface-raised); color:var(--al-text-primary); font-size:16px; line-height:24px}
+.alr-fake b{display:block}
+.th-alr{display:flex; flex-direction:column; gap:7px; width:100%; height:100%; padding:16px; box-sizing:border-box}
+.th-alr-box{display:flex; align-items:flex-start; gap:8px; padding:10px; border-radius:8px;
+  background:var(--al-alert-bg); border:1px solid var(--al-alert-warning-border)}
+.th-alr-box i{flex:none; width:11px; height:11px; border-radius:50%; border:1.5px solid var(--al-alert-warning-icon)}
+.th-alr-box span{flex:1; display:flex; flex-direction:column; gap:5px; padding-top:2px}
+.th-alr-box b{height:5px; border-radius:3px; background:var(--al-alert-title); width:55%}
+.th-alr-box b + b{background:var(--al-alert-description); width:90%; opacity:.6}
+.th-alr em{display:block; height:6px; border-radius:3px; background:var(--al-border-default); width:80%}
+.th-alr em + em{width:60%}
+"""
+
+
+JS_ALERT_DATA = ('var ALR_DEMOS = ' + json.dumps(ALR_DEMOS, ensure_ascii=False).replace('</', '<\\/') + ';\n'
+                 + 'var ALR_CLOSE_DEFAULT = ' + json.dumps(ALR_CLOSE_DEFAULT) + ';\n')
+
+JS_ALERT = r"""
+(function () {
+  // ── playground do Alert ──
+  var stage = document.getElementById('alert-stage');
+  if (!stage) return;
+  var slot = document.getElementById('alert-slot');
+  var code = document.getElementById('alert-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function key() { return pick('alrstatus') + '-' + pick('alracts') + '-' + pick('alrclose'); }
+
+  // O alerta do palco e vivo: o X o tira de verdade. Qualquer controle o
+  // devolve, sem anuncio - como um Alert presente no carregamento (regra 23).
+  function render() {
+    var theme = pick('alrtheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    slot.innerHTML = ALR_DEMOS[key()].html;
+    code.innerHTML = esc(ALR_DEMOS[key()].code);
+  }
+
+  // Regra 20: ao trocar o status, o X volta ao padrao dele.
+  document.querySelectorAll('input[name="alrstatus"]').forEach(function (inp) {
+    inp.addEventListener('input', function () {
+      var want = ALR_CLOSE_DEFAULT[pick('alrstatus')];
+      var c = document.querySelector('input[name="alrclose"][value="' + want + '"]');
+      if (c) c.checked = true;
+    });
+  });
+  document.querySelectorAll('#alert-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('alert-fire').addEventListener('click', function () {
+    if (window.alAlert) window.alAlert.show('alr-pg-' + key(), { slot: slot });
+  });
+  document.getElementById('alert-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -12053,16 +12527,17 @@ LANDING_COMPONENTES = f'''
     {card('breadcrumb', 'Breadcrumb', 'Onde a pessoa está na hierarquia, com um link para cada nível acima. Com 5 níveis ou mais, os do meio vão para o menu do “…”.', TH_BREADCRUMB)}
     {card('tooltip', 'Tooltip', 'O nome de um botão só com ícone, ou um complemento curto. Abre no hover e no foco, fecha no Esc, e nunca carrega o que a pessoa precisa para seguir.', TH_TOOLTIP)}
     {card('toast', 'Toast', 'A confirmação de algo que acabou de acontecer, no canto da tela. Um por vez, em fila; Sucesso e Informação saem sozinhos, Aviso e Erro esperam o X.', TH_TOAST)}
+    {card('alert', 'Alert', 'Um assunto que pede atenção, no topo da página, abaixo do header. Um por página; Aviso e Perigo ficam até a situação se resolver.', TH_ALERT)}
   </div>
 </section>
 
 <section>
-  <h2>O Tier 5 abriu</h2>
-  <p>Os primitivos, o formulário, a estrutura e a navegação atravessaram as oito etapas, um
-  componente de cada vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida
-  de “componente pronto sem documentação”. O tier de <b>feedback</b> é o último e abriu pelo Tooltip,
-  que também estreia o pipeline em duas sessões: a página nasce junto com o código e é nela que o
-  QA acontece.</p>
+  <h2>A V1 fechou</h2>
+  <p>Os primitivos, o formulário, a estrutura, a navegação e o feedback atravessaram as oito etapas,
+  um componente de cada vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida
+  de “componente pronto sem documentação”. O tier de <b>feedback</b> foi o último: Tooltip, Toast e
+  Alert, os três já no pipeline em duas sessões, em que a página nasce junto com o código e é nela que
+  o QA acontece. Com o Alert, os cinco tiers estão fechados.</p>
 </section>'''
 
 # O selo da pagina Componentes conta os cards publicados do indice - era um
@@ -12139,7 +12614,7 @@ PAGES = [
         'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
         'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
         'cresce devagar, um de cada vez.',
-        [(f'{N_PUBLICADOS} publicados', True), ('Tier 5 em andamento', False), ('8 etapas por componente', False)],
+        [(f'{N_PUBLICADOS} publicados', True), ('V1 completa', False), ('8 etapas por componente', False)],
         LANDING_COMPONENTES)),
 
     ('button', 'Componentes', page(
@@ -12317,7 +12792,7 @@ PAGES = [
         'Um texto curto que aparece sobre um elemento no hover e no foco do teclado: o nome de um botão só '
         'com ícone, ou um complemento de um que já tem nome. É um popover nativo, ligado ao gatilho pelo '
         'próprio ARIA; some no Esc e nunca tem nada clicável dentro.',
-        [('Em revisão', False), ('1 componente no Figma', False),
+        [('Estável', True), ('1 componente no Figma', False),
          (f'{N_TTP_TOKENS} tokens', False), (f'{N_TT_LITERALS} valores declarados', False)],
         [('overview', 'Visão geral', TOOLTIP_OVERVIEW), ('specs', 'Especificações', TOOLTIP_SPECS),
          ('guide', 'Diretrizes', TOOLTIP_GUIDE), ('a11y', 'Acessibilidade', TOOLTIP_A11Y_TAB)])),
@@ -12326,10 +12801,19 @@ PAGES = [
         'Uma mensagem curta no canto da tela sobre algo que acabou de acontecer: um sucesso, um aviso, um erro '
         'ou uma informação. Nunca rouba o foco, entra em fila, um por vez, e só some sozinho quando não é '
         'aviso nem erro.',
-        [('Em revisão', False), ('4 variantes no Figma', False),
+        [('Estável', True), ('4 variantes no Figma', False),
          (f'{N_TST_TOKENS} tokens', False), (f'{N_TS_LITERALS} valores declarados', False)],
         [('overview', 'Visão geral', TOAST_OVERVIEW), ('specs', 'Especificações', TOAST_SPECS),
          ('guide', 'Diretrizes', TOAST_GUIDE), ('a11y', 'Acessibilidade', TOAST_A11Y_TAB)])),
+    ('alert', 'Componentes', page(
+        'alert', 'Componentes', 'Alert',
+        'Um bloco no topo da página, abaixo do header, sobre um assunto que pede atenção: um sucesso que '
+        'continua valendo, uma informação, um aviso ou um perigo. Um por página, com até duas ações e um X '
+        'opcional — e só é anunciado quando chega depois do carregamento.',
+        [('Estável', True), ('4 variantes no Figma', False),
+         (f'{N_ALR_TOKENS} tokens', False), ('0 valores declarados', False)],
+        [('overview', 'Visão geral', ALERT_OVERVIEW), ('specs', 'Especificações', ALERT_SPECS),
+         ('guide', 'Diretrizes', ALERT_GUIDE), ('a11y', 'Acessibilidade', ALERT_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -12380,6 +12864,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/breadcrumb" data-page="breadcrumb">Breadcrumb</a>
         <a href="#/tooltip" data-page="tooltip">Tooltip</a>
         <a href="#/toast" data-page="toast">Toast</a>
+        <a href="#/alert" data-page="alert">Alert</a>
       </div>
     </div>
   </div>
@@ -14513,7 +14998,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -14530,6 +15015,7 @@ HTML = (
     + BCR_JS.replace('</', '<\\/') + JS_BREADCRUMB_DATA + JS_BREADCRUMB
     + TTP_JS.replace('</', '<\\/') + JS_TOOLTIP_DATA + JS_TOOLTIP
     + TST_JS.replace('</', '<\\/') + JS_TOAST_DATA + JS_TOAST
+    + ALR_JS.replace('</', '<\\/') + JS_ALERT_DATA + JS_ALERT
     + JS_MOTION + '</script>\n'
 )
 
@@ -14602,6 +15088,8 @@ print(f'  tokens do Tooltip : {N_TTP_TOKENS}  '
       f'({len(TTP_A11Y["rows"])} combinacoes medidas, {TTP_A11Y["markupChecked"]} tooltips no contrato de marcacao)')
 print(f'  tokens do Toast   : {N_TST_TOKENS}  '
       f'({N_TS_MEDIDAS} combinacoes medidas, {TST_A11Y["markupChecked"]} toasts no contrato de marcacao)')
+print(f'  tokens do Alert   : {N_ALR_TOKENS}  '
+      f'({N_ALR_MEDIDAS} combinacoes medidas, {ALR_A11Y["markupChecked"]} alerts no contrato de marcacao)')
 print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

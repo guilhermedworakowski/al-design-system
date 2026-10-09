@@ -2,7 +2,7 @@
   "component": "icon-button",
   "criterion": "WCAG 1.4.11 nao-textual",
   "floor": 3.0,
-  "markupChecked": 88,
+  "markupChecked": 99,
   "markupPending": false,
   "fails": 0,
   "targets": [
