@@ -1,106 +1,113 @@
 /* AL Design System - Radio
  *
- * Depende de: foundation/al-foundation.css
+ * Depends on: foundation/al-foundation.css
  *           + components/radio/al-radio-tokens.css
  *
- * E O <input type="radio"> NATIVO
- *   O controle e do navegador: as setas andam entre as opcoes e marcam, o Tab
- *   entra na pergunta uma vez so, marcar um desmarca o outro, o leitor de tela
- *   anuncia "2 de 3", o formulario envia o valor. Tudo isso depende de um so
- *   requisito: os radios da mesma pergunta dividem o mesmo `name`. Este arquivo
- *   so tira o circulo que o navegador desenha (`appearance: none`) e pinta o do
- *   AL no lugar. Nada de <div role="radio"> - primeira regra da ARIA.
+ * IT IS THE NATIVE <input type="radio">
+ *   The control belongs to the browser: the arrows move between the options
+ *   and check them, Tab enters the question only once, checking one unchecks
+ *   the other, the screen reader announces "2 of 3", the form submits the
+ *   value. All of that depends on a single requirement: the radios of the same
+ *   question share the same `name`. This file only removes the circle the
+ *   browser draws (`appearance: none`) and paints AL's in its place. No
+ *   <div role="radio"> - the first rule of ARIA.
  *
- * ANATOMIA - UM RADIO
+ * ANATOMY - ONE RADIO
  *   <label class="al-radio">
  *     <span class="al-radio__control">
- *       <input class="al-radio__input" type="radio" name="plano" value="mensal">
+ *       <input class="al-radio__input" type="radio" name="plan" value="monthly">
  *       <span class="al-radio__dot" aria-hidden="true"></span>
  *     </span>
- *     <span class="al-radio__label">Mensal</span>
+ *     <span class="al-radio__label">Monthly</span>
  *   </label>
  *
- *   O <label> envolve tudo: clicar no texto marca, e a area clicavel passa a
- *   ser a linha inteira (WCAG 2.5.8). Nao ha `for`/`id` a sincronizar.
+ *   The <label> wraps everything: clicking the text checks it, and the
+ *   clickable area becomes the whole row (WCAG 2.5.8). There is no `for`/`id`
+ *   to keep in sync.
  *
- *   O `__control` existe pela mesma razao do Checkbox: <input> nao tem filho,
- *   entao o ponto nao pode morar dentro dele. Ele e irmao, posicionado por
- *   cima, e `pointer-events: none` devolve o clique ao input. E um <span>, nao
- *   pseudo-elemento do input: `::before` em <input> nao e garantido em todo
- *   navegador.
+ *   `__control` exists for the same reason as in the Checkbox: <input> has no
+ *   children, so the dot can't live inside it. It is a sibling, positioned on
+ *   top, and `pointer-events: none` hands the click back to the input. It is a
+ *   <span>, not a pseudo-element of the input: `::before` on <input> is not
+ *   guaranteed in every browser.
  *
- * A PERGUNTA E DA APLICACAO - NAO HA COMPONENTE DE GRUPO
- *   Decisao de Gui na etapa 1. Quem monta o formulario escreve:
+ * THE QUESTION BELONGS TO THE APPLICATION - THERE IS NO GROUP COMPONENT
+ *   Decided in the audit. Whoever builds the form writes:
  *
  *   <fieldset>
- *     <legend>Cobranca</legend>
- *     <label class="al-radio">…Mensal…</label>
- *     <label class="al-radio">…Anual…</label>
+ *     <legend>Billing</legend>
+ *     <label class="al-radio">…Monthly…</label>
+ *     <label class="al-radio">…Yearly…</label>
  *   </fieldset>
  *
- *   Sem `legend`, o leitor anuncia "Mensal, botao de opcao" sem a pergunta
- *   (regra 6). O erro tambem e da pergunta - ver ERRO abaixo.
+ *   Without a `legend`, the reader announces "Monthly, radio button" without
+ *   the question (rule 6). The error belongs to the question too - see ERROR
+ *   below.
  *
- * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
- *   Marcado le `:checked`; erro le `aria-invalid="true"` na pergunta (ver ERRO
- *   abaixo); desabilitado le
- *   `:disabled`. Nao existe `.al-radio--error`: cor e anuncio saem da mesma
- *   fonte e nao divergem.
+ * THE STATE IS DRIVEN BY THE MARKUP, NOT BY A CLASS
+ *   Checked reads `:checked`; error reads `aria-invalid="true"` on the
+ *   question (see ERROR below); disabled reads `:disabled`. There is no
+ *   `.al-radio--error`: color and announcement come from the same source and
+ *   don't diverge.
  *
- * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - mesma tecnica do Checkbox
- *   Hover e foco escrevem em `--_*-state`; marcado, erro e desabilitado escrevem
- *   em `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
- *   todas decididas na etapa 3:
- *     marcado + hover     -> nada muda: o marcado forca `bg` e `border-checked`,
- *                            e o hover perde. Radio marcado nao desmarca com
- *                            clique - o hover prometeria uma acao (regra 15)
- *     marcado + foco      -> anel por cima do anel laranja
- *     erro + foco         -> anel padrao (nao ha anel de erro desenhado)
- *     erro + marcado      -> borda e ponto laranja, rotulo vermelho: o force de
- *                            erro so vale no circulo VAZIO, que e onde o erro mora
- *     marcado + disabled  -> circulo cinza, ponto em `dot-disabled`
- *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ * PRECEDENCE BY VARIABLE, NOT BY SPECIFICITY - same technique as the Checkbox
+ *   Hover and focus write to `--_*-state`; checked, error and disabled write to
+ *   `--_*-force`, which always wins because it is another property. The
+ *   consequences, all decided with the tokens:
+ *     checked + hover     -> nothing changes: checked forces `bg` and
+ *                            `border-checked`, and hover loses. A checked radio
+ *                            doesn't uncheck on click - the hover would promise
+ *                            an action (rule 15)
+ *     checked + focus     -> ring on top of the orange ring
+ *     error + focus       -> default ring (there is no drawn error ring)
+ *     error + checked     -> orange border and dot, red label: the error force
+ *                            only applies to the EMPTY circle, which is where
+ *                            the error lives
+ *     checked + disabled  -> gray circle, dot in `dot-disabled`
+ *   Disabled comes last in the file and wins over everything.
  *
- * MARCADO NAO PINTA O FUNDO - A DIFERENCA PARA O CHECKBOX
- *   O marcado forca o fundo de volta para `bg`: o anel branco entre a borda
- *   laranja e o ponto E o fundo. Sem esse force, o hover pintaria o anel de
- *   cinza no radio marcado.
+ * CHECKED DOESN'T PAINT THE BACKGROUND - THE DIFFERENCE FROM THE CHECKBOX
+ *   Checked forces the background back to `bg`: the white ring between the
+ *   orange border and the dot IS the background. Without that force, hover
+ *   would paint the ring gray on a checked radio.
  *
- * O FIGMA TEM UM EIXO SO DE ESTADO
- *   Seis variantes; as combinacoes acima nao tem variante e sao cobertas pelos
- *   mesmos tokens. `dot-disabled` e o unico token sem variante no Figma.
+ * FIGMA HAS A SINGLE STATE AXIS
+ *   Six variants; the combinations above have no variant and are covered by
+ *   the same tokens. `dot-disabled` is the only token with no variant in Figma.
  *
- * GEOMETRIA DERIVADA
- *   Circulo 24 = `box-size`. O ponto nao tem token: 14 = circulo - 2 x borda
- *   - 2 x padding, e a conta esta escrita abaixo em vez de um numero.
- *   `box-sizing: border-box` poe a borda DENTRO dos 24, entao o circulo nunca
- *   "pula" quando o estado troca a cor dela.
+ * DERIVED GEOMETRY
+ *   Circle 24 = `box-size`. The dot has no token: 14 = circle - 2 x border - 2 x
+ *   padding, and the math is written below instead of a number.
+ *   `box-sizing: border-box` puts the border INSIDE the 24, so the circle never
+ *   "jumps" when the state changes its color.
  *
- * ALINHAMENTO AO TOPO
- *   `align-items: flex-start`, nao `center`: rotulo longo quebra linha e o
- *   circulo fica na altura da primeira linha (Carbon, regra 13). Funciona sem
- *   ajuste porque o circulo (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ * TOP ALIGNMENT
+ *   `align-items: flex-start`, not `center`: a long label wraps and the circle
+ *   stays at the height of the first line (Carbon, rule 13). It works without
+ *   adjustment because the circle (24) and the label's line height (24) are the
+ *   same number.
  *
- * ERRO - E DA PERGUNTA, E SEM MENSAGEM NO COMPONENTE
- *   O erro e lido de um ANCESTRAL com `aria-invalid="true"` - na pratica o
- *   `fieldset` da pergunta -, nunca do radio: a ARIA nao preve `aria-invalid`
- *   num radio sozinho (Carbon, Spectrum, Polaris; regra 26). Consequencia boa:
- *   marcar o fieldset uma vez acende TODOS os radios da pergunta (regra 21), e
- *   nao ha como esquecer um. Quem monta o formulario escreve o erro em texto
- *   junto da pergunta e liga o `fieldset` a ele com `aria-describedby`
- *   (regras 22 e 26, WCAG 3.3.1 / 1.4.1). Achado da etapa 6: a primeira versao
- *   lia o erro no proprio radio, copiando o Checkbox.
+ * ERROR - IT BELONGS TO THE QUESTION, AND THERE IS NO MESSAGE IN THE COMPONENT
+ *   The error is read from an ANCESTOR with `aria-invalid="true"` - in practice
+ *   the question's `fieldset` -, never from the radio: ARIA doesn't provide for
+ *   `aria-invalid` on a single radio (Carbon, Spectrum, Polaris; rule 26). A
+ *   good consequence: marking the fieldset once lights up ALL the radios of
+ *   the question (rule 21), and there is no way to forget one. Whoever builds
+ *   the form writes the error in text next to the question and links the
+ *   `fieldset` to it with `aria-describedby` (rules 22 and 26, WCAG 3.3.1 /
+ *   1.4.1). A QA finding: the first version read the error on the radio
+ *   itself, copying the Checkbox.
  *
- * DURACAO DA TRANSICAO
- *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
- *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
- *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
- *   usa a curva do estado para onde a transicao vai.
+ * TRANSITION DURATION
+ *   Duration and curve are Foundation tokens. The base declares the EXIT
+ *   curve (--al-motion-easing-exit, ease-in); the ENTER block at the end of
+ *   the file declares the enter one (ease-out) on the destination states,
+ *   because CSS uses the curve of the state the transition goes to.
  *
- * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ * HANDWRITTEN. The tokens it consumes are generated by tokens.py.
  */
 
-/* ---------------------------------------------------------------- raiz */
+/* ---------------------------------------------------------------- root */
 .al-radio {
   display: inline-flex;
   align-items: flex-start;
@@ -109,7 +116,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ------------------------------------------------------------- circulo */
+/* ------------------------------------------------------------- circle */
 .al-radio__control {
   position: relative;
   display: block;
@@ -142,13 +149,13 @@
     box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
-/* nada aqui e `outline`: o anel e sombra, para respeitar o circulo */
+/* nothing here is `outline`: the ring is a shadow, to respect the circle */
 .al-radio__input:focus {
   outline: none;
 }
 
-/* --------------------------------------------------------------- ponto */
-/* Fica dentro da borda e do padding: 24 - 2x1 - 2x4 = 14, como no Figma. */
+/* ----------------------------------------------------------------- dot */
+/* It sits inside the border and the padding: 24 - 2x1 - 2x4 = 14, as in Figma. */
 .al-radio__dot {
   position: absolute;
   inset-block-start: calc(var(--al-radio-border-width) + var(--al-radio-padding));
@@ -161,7 +168,7 @@
                    - 2 * var(--al-radio-padding));
   border-radius: var(--al-radio-radius);
   background-color: var(--al-radio-dot);
-  /* devolve o clique ao input que esta embaixo */
+  /* hands the click back to the input underneath */
   pointer-events: none;
   visibility: hidden;
 }
@@ -170,7 +177,7 @@
   visibility: visible;
 }
 
-/* ------------------------------------------------------------- rotulo */
+/* ------------------------------------------------------------- label */
 .al-radio__label {
   color: var(--al-radio-label);
   font-family: var(--al-font-sans);
@@ -180,10 +187,10 @@
   letter-spacing: var(--al-radio-label-tracking);
 }
 
-/* ------------------------------------------------------------- estados */
-/* hover na linha inteira, nao so no circulo: clicar no rotulo tambem marca,
-   entao o rotulo tambem precisa anunciar que e clicavel. No marcado o force
-   vence, e o hover nao aparece. */
+/* -------------------------------------------------------------- states */
+/* hover on the whole row, not only the circle: clicking the label also checks
+   it, so the label also needs to show it is clickable. When checked the force
+   wins, and the hover doesn't show. */
 .al-radio:hover .al-radio__input:not(:disabled) {
   --_bg-state: var(--al-radio-bg-hover);
   --_border-state: var(--al-radio-border-hover);
@@ -194,14 +201,15 @@
   box-shadow: var(--al-radio-ring);
 }
 
-/* marcado: borda laranja, e o fundo forcado de volta ao `bg` - o anel branco */
+/* checked: orange border, and the background forced back to `bg` - the white ring */
 .al-radio__input:checked {
   --_bg-force: var(--al-radio-bg);
   --_border-force: var(--al-radio-border-checked);
 }
 
-/* erro: lido da PERGUNTA (o fieldset), nunca do radio - ver ERRO no cabecalho.
-   So no circulo VAZIO; marcado, ele segue laranja e so o rotulo avisa. */
+/* error: read from the QUESTION (the fieldset), never from the radio - see ERROR
+   in the header. Only on the EMPTY circle; checked, it stays orange and only
+   the label warns. */
 [aria-invalid="true"] .al-radio__input:not(:checked) {
   --_border-force: var(--al-radio-border-error);
 }
@@ -210,7 +218,7 @@
   color: var(--al-radio-label-error);
 }
 
-/* desabilitado - por ultimo, porque ganha de todos */
+/* disabled - last, because it wins over all */
 .al-radio__input:disabled {
   --_bg-force: var(--al-radio-bg-disabled);
   --_border-force: var(--al-radio-border-disabled);
@@ -228,9 +236,10 @@
   color: var(--al-radio-label-disabled);
 }
 
-/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
-   declara a de saida (ease-in); estes estados de destino declaram a de
-   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
 .al-radio:hover .al-radio__input,
 .al-radio__input:focus-visible,
 .al-radio__input:checked,
@@ -238,7 +247,7 @@
   transition-timing-function: var(--al-motion-easing-enter);
 }
 
-/* ------------------------------------------------------------ ambiente */
+/* --------------------------------------------------------- environment */
 @media (prefers-reduced-motion: reduce) {
   .al-radio__input {
     transition: none;

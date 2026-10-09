@@ -1,102 +1,102 @@
 """
-Camada de tokens do Select.
+Token layer for the Select.
 
-Regra unica desta camada: nada aqui inventa valor. Todo token aponta para um
-token da Foundation pelo NOME. O portao no fim do arquivo recusa qualquer
-coisa que seja um valor solto - hex, px, numero.
+The one rule of this layer: nothing here invents a value. Every token points
+to a Foundation token by NAME. The gate at the end of the file rejects
+anything that is a loose value - hex, px, number.
 
-Nomenclatura:
-  codigo -> select-border-hover      (hifen)
-  Figma  -> select/border/hover      (pasta)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> select-border-hover      (hyphen)
+  Figma -> select/border/hover      (folder)
+They are different layers. Never collapse one into the other.
 
-E O `<select>` NATIVO
+IT IS THE NATIVE `<select>`
 
-  A lista de opcoes e desenhada pelo navegador e pelo sistema operacional. O
-  componente entrega so o gatilho fechado. Isso nao e escopo faltando: e a
-  mesma distincao que o Carbon faz entre *Select* (nativo) e *Dropdown* /
-  *ComboBox* (desenhados). Consequencia pratica desta camada: nao existe
-  token de painel, de item de opcao nem de item selecionado, porque nada
-  disso e nosso para pintar.
+  The list of options is drawn by the browser and the operating system. The
+  component only delivers the closed trigger. That is not missing scope: it is
+  the same distinction Carbon makes between *Select* (native) and *Dropdown* /
+  *ComboBox* (drawn). The practical consequence for this layer: there is no
+  panel token, no option item token and no selected item token, because none
+  of that is ours to paint.
 
-A BORDA E O EIXO QUE CARREGA O ESTADO
+THE BORDER IS THE AXIS THAT CARRIES THE STATE
 
-  O fundo do campo nao muda entre repouso, hover, active, foco e erro - so a
-  borda muda. Por isso ha um `bg` e seis `border-*`. O unico estado que mexe
-  no fundo e o disabled, e ele mexe porque precisa parar de parecer um campo
-  onde se digita.
+  The field background doesn't change between rest, hover, active, focus and
+  error - only the border changes. That is why there is one `bg` and six
+  `border-*`. The only state that touches the background is disabled, and it
+  does because it needs to stop looking like a field you can type into.
 
-`border-active` E `border-focus` APONTAM PRO MESMO ALIAS, E SAO DOIS TOKENS
+`border-active` AND `border-focus` POINT TO THE SAME ALIAS, AND ARE TWO TOKENS
 
-  Active e o INSTANTE em que o botao do mouse esta pressionado; focus e o
-  estado que PERMANECE enquanto o campo estiver focado, por Tab ou por clique.
-  A leitura original ("focus e a chegada por Tab") caiu na etapa 6, medida:
-  o Chromium casa `:focus-visible` num <select> clicado com o mouse.
-  Hoje os dois resolvem em `border-brand` e
-  ficam pixel-identicos. Manter dois nomes e o que permite um divergir do
-  outro depois sem virar mudanca quebrada - e o que impede alguem de ler o
-  CSS e concluir que os dois estados sao a mesma coisa.
+  Active is the INSTANT the mouse button is held down; focus is the state that
+  STAYS while the field is focused, by Tab or by click. The original reading
+  ("focus is arriving by Tab") fell in QA, measured: Chromium matches
+  `:focus-visible` on a <select> clicked with the mouse. Today both resolve to
+  `border-brand` and are pixel-identical. Keeping two names is what lets one
+  diverge from the other later without a breaking change - and what stops
+  someone from reading the CSS and concluding that both states are the same
+  thing.
 
-O SELECT E O PRIMEIRO COMPONENTE COM TOKEN DE COR DE ICONE
+THE SELECT IS THE FIRST COMPONENT WITH AN ICON COLOR TOKEN
 
-  No Button e no Tag o icone e `currentColor`: herda a cor do rotulo e por
-  isso nao precisa de token. Aqui nao da. No repouso o texto do campo e
-  `text-placeholder` (#717171) e a seta e `text-primary` (#292929) - duas
-  cores diferentes dentro da mesma caixa. Se a seta herdasse, ela clarearia
-  junto com o placeholder, que nao e o desenho. Dai `select-icon` e
-  `select-icon-disabled` existirem.
+  In the Button and the Tag the icon is `currentColor`: it inherits the label's
+  color and so it needs no token. Not here. At rest the field text is
+  `text-placeholder` (#717171) and the chevron is `text-primary` (#292929) -
+  two different colors inside the same box. If the chevron inherited, it would
+  lighten together with the placeholder, which is not the design. That is why
+  `select-icon` and `select-icon-disabled` exist.
 
-  Piso da seta e 3:1 do 1.4.11 (nao-textual), nao 4.5:1 do 1.4.3 - mesma
-  regra ja fixada com o Icon e o Icon Button.
+  The chevron's floor is the 3:1 of 1.4.11 (non-text), not the 4.5:1 of 1.4.3
+  - the same rule already set with the Icon and the Icon Button.
 
-PLACEHOLDER x VALOR NAO E ESTADO DE INTERACAO
+PLACEHOLDER x VALUE IS NOT AN INTERACTION STATE
 
-  `select-text-placeholder` e `select-text-value` sao dois tokens que NAO
-  dependem dos sete estados. No Figma o texto escuro aparece no Active, no
-  Error e no focusError, e o cinza no Default, no Hover e no focusDefault -
-  mas isso e so o que cada mockup escolheu mostrar. Na tela, quem escolheu
-  uma opcao e tirou o mouse volta ao repouso COM o valor escolhido, e o texto
-  continua escuro. Em CSS a troca e `:has(option[value=""]:checked)` - "ainda
-  esta no placeholder" - e nunca `:hover` ou `:active`.
+  `select-text-placeholder` and `select-text-value` are two tokens that do NOT
+  depend on the seven states. In Figma the dark text shows up in Active, Error
+  and focusError, and the gray in Default, Hover and focusDefault - but that is
+  only what each mockup chose to show. On screen, someone who picked an option
+  and moved the mouse away goes back to rest WITH the chosen value, and the
+  text stays dark. In CSS the switch is `:has(option[value=""]:checked)` -
+  "still on the placeholder" - and never `:hover` or `:active`.
 
-ALTURA NAO E TOKEN
+HEIGHT IS NOT A TOKEN
 
-  48 = padding-y x2 + entrelinha do texto (12+24+12), com a borda de 1px
-  sobreposta ao padding - em CSS, `padding: calc(12px - 1px)`. E a mesma
-  convencao do Button e do Tag. Tokenizar a altura seria fixar em dois
-  lugares a mesma decisao, com duas chances de divergir.
+  48 = padding-y x2 + the text's line height (12+24+12), with the 1px border
+  overlapping the padding - in CSS, `padding: calc(12px - 1px)`. It is the same
+  convention as the Button and the Tag. Tokenizing the height would pin the
+  same decision in two places, with two chances to diverge.
 
-  A altura total tambem e derivada: rotulo 24 + gap 8 + campo 48 = 80, e 104
-  quando o texto de apoio aparece (+8 +16).
+  The total height is derived too: label 24 + gap 8 + field 48 = 80, and 104
+  when the help text shows (+8 +16).
 
-A MARCA "(OPCIONAL)" MARCA O INVERSO DO HABITUAL
+THE "(OPTIONAL)" MARK MARKS THE OPPOSITE OF THE USUAL
 
-  Gui fechou em 17/09/2026 que o AL marca o campo OPCIONAL, nao o obrigatorio:
-  quem nao tem a marca e obrigatorio. E a escola oposta a do asterisco do
-  Polaris, e ela ganha quando a maioria dos campos do formulario e
-  obrigatoria - marca-se a minoria. `select-optional` e `select-optional-font`
-  existem so por isso; a marca fica ao lado do rotulo, em `Body/sm`, uma
-  entrelinha menor que o rotulo de proposito, para nao competir com ele.
+  Decided on 2026-09-17: AL marks the OPTIONAL field, not the required one:
+  whatever has no mark is required. It is the opposite school to Polaris's
+  asterisk, and it wins when most of the form's fields are required - you mark
+  the minority. `select-optional` and `select-optional-font` exist only for
+  that; the mark sits next to the label, in `Body/sm`, one line height smaller
+  than the label on purpose, so it doesn't compete with it.
 
-  Nao ha token de "obrigatorio": a ausencia da marca E o obrigatorio, e
-  ausencia nao se tokeniza.
+  There is no "required" token: the absence of the mark IS required, and an
+  absence isn't tokenized.
 
-O GAP E UM SO NOS DOIS EIXOS
+THE GAP IS ONE ON BOTH AXES
 
-  `select-gap` vale para a pilha vertical (rotulo -> campo -> apoio) E para o
-  espaco horizontal entre o rotulo e a marca "(Opcional)". Os dois sao 8 e os
-  dois separam partes do MESMO componente. Dois tokens com o mesmo valor
-  seriam dois lugares para o mesmo respiro divergir por engano. Se um dia
-  precisarem divergir, ai sim vira `gap-x` e `gap-y`.
+  `select-gap` applies to the vertical stack (label -> field -> help) AND to
+  the horizontal space between the label and the "(Optional)" mark. Both are 8
+  and both separate parts of the SAME component. Two tokens with the same value
+  would be two places for the same breathing room to drift by mistake. If they
+  ever need to diverge, then it becomes `gap-x` and `gap-y`.
 
-LARGURA NAO E TOKEN
+WIDTH IS NOT A TOKEN
 
-  O campo ocupa 100% do conteiner. Formulario decide largura; componente nao.
+  The field takes 100% of its container. The form decides width; the
+  component doesn't.
 
-CINCO EXCECOES DECLARADAS DE CONTRASTE
+DECLARED CONTRAST EXCEPTIONS
 
-  Todas em `pending`, todas nomeadas, nenhuma silenciosa. Ver a docstring de
-  PENDING logo abaixo.
+  All in `pending`, all named, none silent. See PENDING right below.
 """
 import json, os, sys
 
@@ -111,9 +111,9 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
-# Um tamanho, sem variante: a lista e plana. O que varia e o estado, e o
-# estado quase sempre mexe so na borda.
+# ----------------------------------------------------------------- color
+# One size, no variant: the list is flat. What varies is the state, and the
+# state almost always only touches the border.
 COLOR = {
     'bg':               'bg-surface-raised',
     'bg-disabled':      'bg-disabled',
@@ -138,29 +138,29 @@ COLOR = {
 
     'optional':         'text-secondary',
 
-    'icon':             'text-primary',    # glifo vetorial - piso 3:1
+    'icon':             'text-primary',    # vector glyph - 3:1 floor
     'icon-disabled':    'text-disabled',
 }
 
-# O token aponta para a SOMBRA COMPOSTA, nao para a cor crua - mesma regra do
-# `button-*-ring`. A cor so e extraida para medicao, no RING_INK abaixo.
+# The token points to the COMPOSITE SHADOW, not the raw color - same rule as
+# `button-*-ring`. The color is only extracted for measuring, in RING_INK below.
 RING = {
     'ring':       'focusRing.default',
     'ring-error': 'focusRing.error',
 }
 
-# De onde sai a cor de cada anel quando o portao precisa medir contraste.
-# Nao vira token: seria o mesmo valor guardado duas vezes.
+# Where each ring's color comes from when the gate needs to measure contrast.
+# It doesn't become a token: it would be the same value stored twice.
 RING_INK = {
     'ring':       'shadow-focus-default',
     'ring-error': 'shadow-focus-error',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'padding-x':    'space.12',
     'padding-y':    'space.12',
-    'gap':          'space.8',       # rotulo -> campo -> texto de apoio
+    'gap':          'space.8',       # label -> field -> help text
     'radius':       'radius.lg',
     'border-width': 'border.width.1',
     'icon-size':    'iconSize.24',
@@ -174,65 +174,68 @@ TYPE = {
 }
 
 PENDING = {
-    'borda-abaixo-de-3-1': (
-        'A borda em repouso e no disabled usa `border-default`: 1.57:1 no claro e '
-        '2.42:1 no escuro, abaixo dos 3:1 do WCAG 1.4.11. Decisao consciente de Gui '
-        'em 17/09/2026, depois de ver os numeros. O criterio nao falha quando a borda '
-        'nao e o unico meio de perceber o componente, e aqui nao e: o campo tem rotulo '
-        'visivel acima e texto dentro. Hover (4.88:1), active e foco (3.34:1) e erro '
-        '(5.38:1) passam todos, entao a borda fraca existe so no repouso. '
-        'NAO "corrigir" sem falar com ele.'
+    'border-below-3-1': (
+        'The border at rest and in disabled uses `border-default`: 1.57:1 in light and '
+        '2.42:1 in dark, below the 3:1 of WCAG 1.4.11. A conscious decision made on '
+        '2026-09-17, after seeing the numbers. The criterion does not fail when the border '
+        'is not the only way to perceive the component, and here it is not: the field has '
+        'a visible label above and text inside. Hover (4.88:1), active and focus (3.34:1) '
+        'and error (5.38:1) all pass, so the weak border only exists at rest. '
+        'DO NOT "fix" it without revisiting that decision.'
     ),
-    'disabled-abaixo-de-aa': (
-        'Rotulo, texto e seta no disabled ficam entre 1.59:1 e 3.64:1. Isencao do WCAG '
-        '1.4.3 para componente inativo - mesma excecao permanente que o Button e o Tag '
-        'ja carregam. Subir esse contraste faz o desabilitado parecer clicavel.'
+    'disabled-below-aa': (
+        'Label, text and chevron in disabled sit between 1.59:1 and 3.64:1. WCAG 1.4.3 '
+        'exempts inactive components - the same permanent exception the Button and the '
+        'Tag already carry. Raising that contrast makes disabled look clickable.'
     ),
 }
 
-CANVAS = 'bg-canvas'   # nao e token do Select: e a tela onde ele e colocado
+CANVAS = 'bg-canvas'   # not a Select token: it is the canvas the Select is placed on
 
-# As combinacoes que o componente realmente renderiza: cada papel contra o
-# fundo em que ele vive de verdade. Rotulo, texto de apoio e anel de foco
-# vivem FORA do campo, entao medem contra a tela; o que esta dentro mede
-# contra o fundo do campo. Sem isso o portao mediria par de token no vacuo -
-# e no tema escuro a diferenca e real: a tela e #181818 e o campo e #3E3E3E.
+# The combinations the component really renders: each role against the
+# background it really lives on. Label, help text and focus ring live OUTSIDE
+# the field, so they measure against the canvas; what is inside measures
+# against the field background. Without that the gate would measure a token
+# pair in a vacuum - and in the dark theme the difference is real: the canvas
+# is #181818 and the field is #3E3E3E.
 #
-# A BORDA TEM DUAS SUPERFICIES VIZINHAS - a tela por fora e o fundo do campo
-# por dentro - e precisa se separar das DUAS para desenhar um limite. Por
-# isso o fundo dela e uma tupla: o portao mede contra cada uma e guarda a
-# PIOR. Medir so contra a tela deixaria passar uma borda que some por dentro.
+# THE BORDER HAS TWO NEIGHBORING SURFACES - the canvas outside and the field
+# background inside - and it has to separate from BOTH to draw a boundary.
+# That is why its background is a tuple: the gate measures against each one
+# and keeps the WORST. Measuring only against the canvas would let a border
+# that disappears on the inside pass.
 #
-# (papel, token do select, fundo(s), piso, chave da excecao em PENDING)
+# (role, select token, background(s), floor, exception key in PENDING)
 COMBOS = [
-    ('rotulo',           'label',            'canvas',                   4.5, None),
-    ('rotulo-erro',      'label-error',      'canvas',                   4.5, None),
-    ('rotulo-disabled',  'label-disabled',   'canvas',                   4.5, 'disabled-abaixo-de-aa'),
+    ('label',            'label',            'canvas',                   4.5, None),
+    ('label-error',      'label-error',      'canvas',                   4.5, None),
+    ('label-disabled',   'label-disabled',   'canvas',                   4.5, 'disabled-below-aa'),
     ('placeholder',      'text-placeholder', 'bg',                       4.5, None),
-    ('valor',            'text-value',       'bg',                       4.5, None),
-    ('texto-disabled',   'text-disabled',    'bg-disabled',              4.5, 'disabled-abaixo-de-aa'),
+    ('value',            'text-value',       'bg',                       4.5, None),
+    ('text-disabled',    'text-disabled',    'bg-disabled',              4.5, 'disabled-below-aa'),
     ('chevron',          'icon',             'bg',                       3.0, None),
-    ('chevron-disabled', 'icon-disabled',    'bg-disabled',              3.0, 'disabled-abaixo-de-aa'),
-    ('opcional',         'optional',         'canvas',                   4.5, None),
-    ('apoio',            'help',             'canvas',                   4.5, None),
-    ('apoio-erro',       'help-error',       'canvas',                   4.5, None),
-    ('borda-repouso',    'border',           ('canvas', 'bg'),           3.0, 'borda-abaixo-de-3-1'),
-    ('borda-hover',      'border-hover',     ('canvas', 'bg'),           3.0, None),
-    ('borda-active',     'border-active',    ('canvas', 'bg'),           3.0, None),
-    ('borda-focus',      'border-focus',     ('canvas', 'bg'),           3.0, None),
-    ('borda-erro',       'border-error',     ('canvas', 'bg'),           3.0, None),
-    ('borda-disabled',   'border-disabled',  ('canvas', 'bg-disabled'),  3.0, 'disabled-abaixo-de-aa'),
-    ('anel-foco',        'ring',             'canvas',                   3.0, None),
-    ('anel-foco-erro',   'ring-error',       'canvas',                   3.0, None),
+    ('chevron-disabled', 'icon-disabled',    'bg-disabled',              3.0, 'disabled-below-aa'),
+    ('optional',         'optional',         'canvas',                   4.5, None),
+    ('help',             'help',             'canvas',                   4.5, None),
+    ('help-error',       'help-error',       'canvas',                   4.5, None),
+    ('border-rest',      'border',           ('canvas', 'bg'),           3.0, 'border-below-3-1'),
+    ('border-hover',     'border-hover',     ('canvas', 'bg'),           3.0, None),
+    ('border-active',    'border-active',    ('canvas', 'bg'),           3.0, None),
+    ('border-focus',     'border-focus',     ('canvas', 'bg'),           3.0, None),
+    ('border-error',     'border-error',     ('canvas', 'bg'),           3.0, None),
+    ('border-disabled',  'border-disabled',  ('canvas', 'bg-disabled'),  3.0, 'disabled-below-aa'),
+    ('focus-ring',       'ring',             'canvas',                   3.0, None),
+    ('focus-ring-error', 'ring-error',       'canvas',                   3.0, None),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
-    """O semantico de cor por tras de um papel - seguindo o anel ate a cor.
+    """The color semantic behind a role - following the ring down to the color.
 
-    `canvas` nao e papel do Select: e a tela em que ele e colocado. Fica de
-    fora do COLOR de proposito - o componente nao pinta o fundo da pagina.
+    `canvas` is not a Select role: it is the canvas the Select is placed on. It
+    stays out of COLOR on purpose - the component doesn't paint the page
+    background.
     """
     if role == 'canvas':
         return CANVAS
@@ -242,17 +245,17 @@ def ink(role):
 
 
 def contrast_rows():
-    """Mede cada combinacao renderizada nos dois temas, cada uma contra o piso
-    que e dela: texto 4.5:1 do 1.4.3, borda e glifo 3:1 do 1.4.11."""
+    """Measures each rendered combination in both themes, each against its own
+    floor: text 4.5:1 from 1.4.3, border and glyph 3:1 from 1.4.11."""
     rows = []
     for what, fg_role, bg_spec, min_ratio, exc in COMBOS:
         fg_ref = ink(fg_role)
         bg_roles = bg_spec if isinstance(bg_spec, tuple) else (bg_spec,)
         for theme, i in (('light', 0), ('dark', 1)):
-            # quando ha mais de uma superficie vizinha, vale a PIOR
-            medidas = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
-                       for b in bg_roles]
-            ratio, bg_ref = min(medidas)
+            # when there is more than one neighboring surface, the WORST counts
+            measures = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
+                        for b in bg_roles]
+            ratio, bg_ref = min(measures)
             rows.append({
                 'theme': theme, 'what': what,
                 'fg': fg_ref, 'bg': bg_ref,
@@ -270,10 +273,10 @@ def run():
         name = f'select-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref}) - todo valor de cor nasce alias do semantico')
+            problems.append(f'{name}: loose hex ({ref}) - every color value is born as an alias of a semantic')
             continue
         if ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
             continue
         light, dark = SEM[ref]
         resolved[name] = {'light': light, 'dark': dark}
@@ -285,7 +288,7 @@ def run():
             v = resolve_foundation(ref)
             resolved[name] = {'light': v['light'], 'dark': v['dark']}
         except KeyError:
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for group in (GEOM, TYPE):
         for role, ref in group.items():
@@ -294,9 +297,9 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
-    # derivadas - conferencia, nao token. Ver nota no cabecalho.
+    # derived - a check, not a token. See the note in the header.
     pad_y = resolve_foundation(GEOM['padding-y'])
     gap = resolve_foundation(GEOM['gap'])
     field_line = resolve_foundation(TYPE['font'])[2]
@@ -314,44 +317,44 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO SELECT')
+    print('SELECT TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<26} -> {alias[name]}')
     print('-' * 74)
-    print(f'altura do campo derivada: {derived["field-height"]}px  '
-          f'(padding-y x2 + entrelinha; borda sobreposta ao padding)')
-    print(f'altura total: {derived["total-height"]}px  '
-          f'| com texto de apoio: {derived["total-height-with-help"]}px')
-    # conferencia, nao portao: a seta deve bater com a entrelinha do texto -
-    # e o que faz a seta nao mexer na altura do campo
+    print(f'derived field height: {derived["field-height"]}px  '
+          f'(padding-y x2 + line height; border overlapping the padding)')
+    print(f'total height: {derived["total-height"]}px  '
+          f'| with help text: {derived["total-height-with-help"]}px')
+    # a check, not a gate: the chevron must match the text's line height - that
+    # is what keeps the chevron from changing the field's height
     icon = resolve_foundation(GEOM['icon-size'])
     if icon != field_line:
-        print(f'  ATENCAO: icon-size {icon} != entrelinha {field_line} - a seta mexe na altura')
+        print(f'  WARNING: icon-size {icon} != line height {field_line} - the chevron changes the height')
     print('-' * 74)
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
-    limpas = [r for r in rows if r['pass']]
-    pior = min(limpas, key=lambda r: r['ratio'] / r['min'])
-    print(f'pior margem entre as que passam: {pior["what"]} ({pior["theme"]}) = '
-          f'{pior["ratio"]}:1 contra piso {pior["min"]}')
-    for chave in PENDING:
-        n = sum(1 for r in excs if r['exception'] == chave)
-        print(f'  excecao "{chave}": {n} medicoes')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
+    clean = [r for r in rows if r['pass']]
+    worst = min(clean, key=lambda r: r['ratio'] / r['min'])
+    print(f'worst margin among those that pass: {worst["what"]} ({worst["theme"]}) = '
+          f'{worst["ratio"]}:1 against floor {worst["min"]}')
+    for key in PENDING:
+        n = sum(1 for r in excs if r['exception'] == key)
+        print(f'  exception "{key}": {n} measurements')
     print('-' * 74)
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE:')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE:')
         for f in fails:
             print(f'    {f["what"]} ({f["theme"]}): {f["ratio"]}:1 < {f["min"]}')
         return 1
 
-    print(f'{len(alias)} tokens, todos alias da Foundation. 0 valores soltos.')
+    print(f'{len(alias)} tokens, all aliases of the Foundation. 0 loose values.')
 
     out = {
         'meta': {
@@ -363,18 +366,17 @@ def run():
             'sizes': ['md'],
             'states': ['default', 'hover', 'active', 'error',
                        'focus-error', 'disabled', 'focus'],
-            'nota': (
-                'E o <select> NATIVO: a lista de opcoes e desenhada pelo navegador, '
-                'entao nao ha token de painel, de opcao nem de item selecionado. '
-                'Um tamanho so (48px), por escolha declarada - como o lg que ficou de '
-                'fora do Button. A borda e o eixo que carrega o estado: o fundo so muda '
-                'no disabled. `border-active` e `border-focus` apontam pro mesmo alias '
-                'de proposito - clique e Tab sao estados distintos que hoje coincidem. '
-                'Primeiro componente do AL com token de cor de icone, porque a seta nao '
-                'pode herdar a cor do placeholder. A marca "(Opcional)" ao lado do '
-                'rotulo marca o INVERSO do habitual: quem nao tem a marca e '
-                'obrigatorio - nao existe token de obrigatorio. Cinco excecoes de '
-                'contraste declaradas em pending.'
+            'note': (
+                'It is the NATIVE <select>: the list of options is drawn by the browser, '
+                'so there is no panel, option or selected item token. One size only '
+                '(48px), a declared choice - like the lg left out of the Button. The '
+                'border is the axis that carries the state: the background only changes '
+                'in disabled. `border-active` and `border-focus` point to the same alias '
+                'on purpose - click and Tab are distinct states that coincide today. The '
+                'first AL component with an icon color token, because the chevron cannot '
+                'inherit the placeholder color. The "(Optional)" mark next to the label '
+                'marks the OPPOSITE of the usual: whatever has no mark is required - there '
+                'is no required token. Contrast exceptions declared in pending.'
             ),
         },
         'alias': alias,
@@ -384,66 +386,66 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('select', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/select/tokens.json escrito')
+    print('\nbuild/components/select/tokens.json written')
     write_css(alias, derived)
     return 0
 
 
-# ---------------------------------------------------------------- css
+# ------------------------------------------------------------------- css
 def write_css(alias, derived):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Select')
-    w(' * GERADO por src/components/select/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Select tokens')
+    w(' * GENERATED by src/components/select/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um')
-    w(' * semantico, e o tema troca no :root - o mesmo elemento onde estes alias')
-    w(' * sao declarados. Entao o :root re-substitui todos eles de uma vez.')
+    w(' * There is no theme block here, and that is the point: each token points')
+    w(' * to a semantic, and the theme switches on :root - the same element where')
+    w(' * these aliases are declared. So :root re-substitutes all of them at once.')
     w(' *')
-    w(f' * Altura do campo: {derived["field-height"]}px derivados, sem token.')
+    w(f' * Field height: {derived["field-height"]}px, derived, no token.')
     w(' */')
     w('')
     w(':root {')
 
     w('')
-    w('  /* fundo - so o disabled muda */')
+    w('  /* background - only disabled changes it */')
     for role in ('bg', 'bg-disabled'):
         w(f'  --al-select-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* borda - o eixo que carrega o estado */')
+    w('  /* border - the axis that carries the state */')
     for role in ('border', 'border-hover', 'border-active', 'border-focus',
                  'border-error', 'border-disabled'):
         w(f'  --al-select-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* texto dentro do campo - placeholder x valor NAO e estado de interacao */')
+    w('  /* text inside the field - placeholder x value is NOT an interaction state */')
     for role in ('text-placeholder', 'text-value', 'text-disabled'):
         w(f'  --al-select-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* rotulo, marca de opcional e apoio - vivem fora do campo, sobre a tela */')
+    w('  /* label, optional mark and help - they live outside the field, on the canvas */')
     for role in ('label', 'label-error', 'label-disabled',
                  'optional', 'help', 'help-error'):
         w(f'  --al-select-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* seta - nao herda a cor do texto, ver cabecalho do tokens.py */')
+    w('  /* chevron - it doesn\'t inherit the text color, see the tokens.py header */')
     for role in ('icon', 'icon-disabled'):
         w(f'  --al-select-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* anel de foco - aponta para a sombra composta, nao para a cor crua */')
+    w('  /* focus ring - points to the composite shadow, not the raw color */')
     for role, ref in RING.items():
         w(f'  --al-select-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-select-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* tipografia - um estilo vira quatro vars */')
+    w('  /* typography - one style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -458,19 +460,19 @@ def write_css(alias, derived):
     w('}')
     w('')
 
-    # Os grupos acima sao listas escritas a mao, para o CSS sair agrupado e
-    # comentado. O preco de escrever a mao e esquecer um papel novo - foi o que
-    # aconteceu quando `optional` entrou. Esta trava recusa a geracao se algum
-    # token de cor nao chegou ao arquivo: lista errada vira build quebrado, nao
-    # variavel faltando em silencio.
-    texto = '\n'.join(L)
-    faltando = [r for r in COLOR if f'--al-select-{r}:' not in texto]
-    if faltando:
+    # The groups above are handwritten lists, so the CSS comes out grouped and
+    # commented. The price of writing them by hand is forgetting a new role -
+    # which is what happened when `optional` came in. This lock refuses to
+    # generate if any color token didn't reach the file: a wrong list becomes a
+    # broken build, not a variable silently missing.
+    text = '\n'.join(L)
+    missing = [r for r in COLOR if f'--al-select-{r}:' not in text]
+    if missing:
         raise AssertionError(
-            'papeis de cor fora do CSS (alguma lista de grupo em write_css nao '
-            f'foi atualizada): {faltando}')
+            'color roles missing from the CSS (some group list in write_css was not '
+            f'updated): {missing}')
 
-    save_css('select', texto)
+    save_css('select', text)
 
 
 if __name__ == '__main__':

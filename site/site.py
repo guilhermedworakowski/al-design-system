@@ -3715,7 +3715,7 @@ def select_a11y_rows(papeis):
     como excecao, nunca como reprova e nunca escondida."""
     out = []
     for r in SELECT_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -3728,9 +3728,9 @@ def select_a11y_rows(papeis):
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -4016,7 +4016,7 @@ SELECT_A11Y_TAB = f'''
   <h2>Borda e anel — o não-textual, piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{select_a11y_rows(['borda', 'anel de foco', 'seta'])}</tbody>
+    <tbody>{select_a11y_rows(['border', 'focus ring', 'chevron'])}</tbody>
   </table></div>
 </section>
 
@@ -4024,7 +4024,7 @@ SELECT_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{select_a11y_rows(['rotulo', 'marca opcional', 'placeholder', 'valor', 'apoio', 'texto'])}</tbody>
+    <tbody>{select_a11y_rows(['label', 'optional mark', 'placeholder', 'value', 'help', 'text'])}</tbody>
   </table></div>
 </section>
 
@@ -4189,7 +4189,7 @@ def checkbox_geo_rows():
 def checkbox_a11y_rows(papeis):
     out = []
     for r in CHECKBOX_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -4199,13 +4199,13 @@ def checkbox_a11y_rows(papeis):
             verdict = '<span class="fail">reprova</span>'
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
                  f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['soNoCodigo'] else '')
+        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['codeOnly'] else '')
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{estado}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -4218,7 +4218,7 @@ N_CBX_PASSA = N_CBX_MEDIDAS - N_CBX_EXC
 
 def _cbx_borda(state, theme):
     return next(r['ratio'] for r in CHECKBOX_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == 'borda')
+                if r['state'] == state and r['theme'] == theme and r['role'] == 'border')
 
 
 CBX_LAYER = {t: {'rest': _cbx_borda('default', t), 'focused': _cbx_borda('focus', t)}
@@ -4507,7 +4507,7 @@ CHECKBOX_A11Y_TAB = f'''
   <h2>Não-textual — piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{checkbox_a11y_rows(['borda', 'caixa marcada', 'anel de foco', 'check', 'traco'])}</tbody>
+    <tbody>{checkbox_a11y_rows(['border', 'checked box', 'focus ring', 'check', 'dash'])}</tbody>
   </table></div>
 </section>
 
@@ -4515,7 +4515,7 @@ CHECKBOX_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{checkbox_a11y_rows(['rotulo'])}</tbody>
+    <tbody>{checkbox_a11y_rows(['label'])}</tbody>
   </table></div>
 </section>
 
@@ -4670,7 +4670,7 @@ def radio_geo_rows():
 def radio_a11y_rows(papeis):
     out = []
     for r in RADIO_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -4680,13 +4680,13 @@ def radio_a11y_rows(papeis):
             verdict = '<span class="fail">reprova</span>'
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
                  f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['soNoCodigo'] else '')
+        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['codeOnly'] else '')
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{estado}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -4699,7 +4699,7 @@ N_RD_PASSA = N_RD_MEDIDAS - N_RD_EXC
 
 def _rd_borda(state, theme):
     return next(r['ratio'] for r in RADIO_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == 'borda')
+                if r['state'] == state and r['theme'] == theme and r['role'] == 'border')
 
 
 RD_LAYER = {t: {'rest': _rd_borda('default', t), 'focused': _rd_borda('focus', t)}
@@ -4966,7 +4966,7 @@ RADIO_A11Y_TAB = f'''
   o anel que o cerca.</p>
   <p style="margin-top:12px">E a página não é uma só: o portão mede contra tela, faixa de seção e
   card, e guarda a pior. A menor margem entre as que passam é
-  <b>{RD_PIOR['papel']}</b> em <code>{RD_PIOR['state']}</code>, {RD_PIOR['ratio']:.2f}:1 contra o
+  <b>{RD_PIOR['role']}</b> em <code>{RD_PIOR['state']}</code>, {RD_PIOR['ratio']:.2f}:1 contra o
   piso de {RD_PIOR['floor']}:1 — na faixa cinza, que a etapa 3 não conseguia ver.</p>
   <div class="stats">
     <div class="stat hl"><b>{N_RD_MEDIDAS}</b><span>combinações medidas</span></div>
@@ -5014,7 +5014,7 @@ RADIO_A11Y_TAB = f'''
   <h2>Não-textual — piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{radio_a11y_rows(['borda', 'anel de foco', 'ponto'])}</tbody>
+    <tbody>{radio_a11y_rows(['border', 'focus ring', 'dot'])}</tbody>
   </table></div>
 </section>
 
@@ -5022,7 +5022,7 @@ RADIO_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{radio_a11y_rows(['rotulo'])}</tbody>
+    <tbody>{radio_a11y_rows(['label'])}</tbody>
   </table></div>
 </section>
 
@@ -5141,7 +5141,7 @@ def switch_geo_rows():
 def switch_a11y_rows(papeis):
     out = []
     for r in SWITCH_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -5151,13 +5151,13 @@ def switch_a11y_rows(papeis):
             verdict = '<span class="fail">reprova</span>'
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
                  f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['soNoCodigo'] else '')
+        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['codeOnly'] else '')
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{estado}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -5172,12 +5172,12 @@ SW_PIOR = min((r for r in SWITCH_A11Y['rows'] if r['pass']), key=lambda r: r['ra
 
 def _sw(state, theme, papel):
     return next(r['ratio'] for r in SWITCH_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+                if r['state'] == state and r['theme'] == theme and r['role'] == papel)
 
 
-SW_THUMB = {t: _sw('default', t, 'bolinha') for t in ('light', 'dark')}
-SW_BORDA = {t: _sw('default', t, 'borda') for t in ('light', 'dark')}
-SW_ON = {t: _sw('checked', t, 'bolinha') for t in ('light', 'dark')}
+SW_THUMB = {t: _sw('default', t, 'thumb') for t in ('light', 'dark')}
+SW_BORDA = {t: _sw('default', t, 'border') for t in ('light', 'dark')}
+SW_ON = {t: _sw('checked', t, 'thumb') for t in ('light', 'dark')}
 
 TH_SWITCH = ('<div class="th-sw" aria-hidden="true">'
              '<span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>E-mail</span>'
@@ -5407,7 +5407,7 @@ SWITCH_A11Y_TAB = f'''
   <p>O portão mede <b>combinação renderizada</b>: a borda contra a página por fora e o trilho por
   dentro, a bolinha contra o trilho, o rótulo contra a página. E a página não é uma só: tela,
   faixa de seção e card, guardando a pior. A menor margem entre as que passam é
-  <b>{SW_PIOR['papel']}</b> em <code>{SW_PIOR['state']}</code>, {SW_PIOR['ratio']:.2f}:1 contra o piso
+  <b>{SW_PIOR['role']}</b> em <code>{SW_PIOR['state']}</code>, {SW_PIOR['ratio']:.2f}:1 contra o piso
   de {SW_PIOR['floor']}:1.</p>
   <div class="stats">
     <div class="stat hl"><b>{N_SW_MEDIDAS}</b><span>combinações medidas</span></div>
@@ -5459,7 +5459,7 @@ SWITCH_A11Y_TAB = f'''
   <h2>Não-textual — piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{switch_a11y_rows(['borda', 'anel de foco', 'bolinha'])}</tbody>
+    <tbody>{switch_a11y_rows(['border', 'focus ring', 'thumb'])}</tbody>
   </table></div>
 </section>
 
@@ -5467,7 +5467,7 @@ SWITCH_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{switch_a11y_rows(['rotulo'])}</tbody>
+    <tbody>{switch_a11y_rows(['label'])}</tbody>
   </table></div>
 </section>
 
@@ -5620,7 +5620,7 @@ def input_a11y_rows(papeis):
     """Uma linha por medicao, filtrada pelo papel. Excecao aparece como excecao."""
     out = []
     for r in INPUT_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -5633,9 +5633,9 @@ def input_a11y_rows(papeis):
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -5649,7 +5649,7 @@ IN_LAYER = {d['theme']: d for d in INPUT_A11Y['layerEffect']}
 
 def _in(state, theme, papel):
     return next(r['ratio'] for r in INPUT_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+                if r['state'] == state and r['theme'] == theme and r['role'] == papel)
 
 
 TH_INPUT = ('<div class="th-input" aria-hidden="true">'
@@ -5952,7 +5952,7 @@ INPUT_A11Y_TAB = f'''
   <div class="note">
     <b>Borda abaixo de 3:1 no repouso e no read-only — decisão consciente</b>
     <code>border-default</code> dá {IN_LAYER['light']['rest']:.2f}:1 no claro; o read-only, em
-    <code>border-subtle</code>, chega a {_in('readonly', 'dark', 'borda'):.2f}:1 no escuro. O 1.4.11
+    <code>border-subtle</code>, chega a {_in('readonly', 'dark', 'border'):.2f}:1 no escuro. O 1.4.11
     não falha quando a borda não é o único meio de perceber o componente — e aqui não é: há rótulo
     visível e texto dentro. <b>Por isso “nunca use o Input sem rótulo visível” é regra de uso, e
     não sugestão:</b> é ela que sustenta esta exceção.
@@ -5964,7 +5964,7 @@ INPUT_A11Y_TAB = f'''
   </div>
   <div class="note" style="margin-top:16px">
     <b>O read-only não tem isenção — e não precisa</b>
-    O texto dele é o mesmo do campo editável: {_in('readonly', 'light', 'valor'):.2f}:1 no claro.
+    O texto dele é o mesmo do campo editável: {_in('readonly', 'light', 'value'):.2f}:1 no claro.
     O único texto que reprovaria ali é o placeholder (4,21:1), e ele não aparece: o CSS o torna
     transparente e o read-only vazio mostra “—”.
   </div>
@@ -5974,7 +5974,7 @@ INPUT_A11Y_TAB = f'''
   <h2>Borda e anel — o não-textual, piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{input_a11y_rows(['borda', 'anel de foco'])}</tbody>
+    <tbody>{input_a11y_rows(['border', 'focus ring'])}</tbody>
   </table></div>
 </section>
 
@@ -5982,7 +5982,7 @@ INPUT_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{input_a11y_rows(['rotulo', 'marca opcional', 'contador', 'contador acima do limite', 'apoio', 'mensagem de erro', 'placeholder', 'valor', 'afixo', 'texto'])}</tbody>
+    <tbody>{input_a11y_rows(['label', 'optional mark', 'counter', 'counter over limit', 'help', 'error message', 'placeholder', 'value', 'affix', 'text'])}</tbody>
   </table></div>
 </section>
 
@@ -6129,7 +6129,7 @@ def textarea_geo_rows():
 def textarea_a11y_rows(papeis):
     out = []
     for r in TEXTAREA_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -6142,9 +6142,9 @@ def textarea_a11y_rows(papeis):
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -6161,7 +6161,7 @@ TA_PAD = TEXTAREA['resolved']['textarea-padding-y']
 
 def _ta(state, theme, papel):
     return next(r['ratio'] for r in TEXTAREA_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+                if r['state'] == state and r['theme'] == theme and r['role'] == papel)
 
 
 TH_TEXTAREA = ('<div class="th-textarea" aria-hidden="true">'
@@ -6470,7 +6470,7 @@ TEXTAREA_A11Y_TAB = f'''
   <div class="note">
     <b>Borda abaixo de 3:1 no repouso e no read-only — decisão consciente</b>
     <code>border-default</code> dá {TA_LAYER['light']['rest']:.2f}:1 no claro; o read-only, em
-    <code>border-subtle</code>, chega a {_ta('readonly', 'dark', 'borda'):.2f}:1 no escuro. O 1.4.11
+    <code>border-subtle</code>, chega a {_ta('readonly', 'dark', 'border'):.2f}:1 no escuro. O 1.4.11
     não falha quando a borda não é o único meio de perceber o componente — há rótulo visível e
     texto dentro. <b>Por isso “nunca sem rótulo visível” é regra de uso:</b> é ela que sustenta
     esta exceção.
@@ -6485,7 +6485,7 @@ TEXTAREA_A11Y_TAB = f'''
   <h2>Borda e anel — o não-textual, piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{textarea_a11y_rows(['borda', 'anel de foco'])}</tbody>
+    <tbody>{textarea_a11y_rows(['border', 'focus ring'])}</tbody>
   </table></div>
 </section>
 
@@ -6493,7 +6493,7 @@ TEXTAREA_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{textarea_a11y_rows(['rotulo', 'marca opcional', 'contador', 'contador acima do limite', 'apoio', 'mensagem de erro', 'placeholder', 'valor', 'texto'])}</tbody>
+    <tbody>{textarea_a11y_rows(['label', 'optional mark', 'counter', 'counter over limit', 'help', 'error message', 'placeholder', 'value', 'text'])}</tbody>
   </table></div>
 </section>
 
@@ -6564,8 +6564,8 @@ def pwd(cid, rotulo='Senha', *, novo=False, erro=None, disabled=False, valor=Non
         a.append('disabled')
     b = ['class="al-password__toggle"', 'type="button"', f'aria-controls="{cid}"',
          'aria-label="Mostrar senha"']
-    if show:
-        b.append(f'data-label-show="{show}" data-label-hide="{hide}"')
+    # o pacote fala ingles; o site ainda e PT, entao os nomes vao sempre explicitos
+    b.append(f'data-label-show="{show or "Mostrar senha"}" data-label-hide="{hide or "Ocultar senha"}"')
     if disabled:
         b.append('disabled')
     b.append('hidden')
@@ -6644,7 +6644,7 @@ def password_geo_rows():
 def password_a11y_rows(papeis):
     out = []
     for r in PASSWORD_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -6657,9 +6657,9 @@ def password_a11y_rows(papeis):
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -6673,7 +6673,7 @@ PW_DER = PASSWORD['derived']
 
 def _pw(state, theme, papel):
     return next(r['ratio'] for r in PASSWORD_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+                if r['state'] == state and r['theme'] == theme and r['role'] == papel)
 
 
 TH_PASSWORD = ('<div class="th-password" aria-hidden="true">'
@@ -6925,8 +6925,8 @@ PASSWORD_A11Y_TAB = f'''
   <div class="scroller" style="margin-top:16px"><table>
     <thead><tr><th>Tema</th><th>Anel do olho</th><th>Olho</th></tr></thead>
     <tbody>
-      <tr><td class="tok dim">claro</td><td class="num strong">{_pw('default', 'light', 'anel do olho'):.2f}:1</td><td class="num">{_pw('default', 'light', 'olho'):.2f}:1</td></tr>
-      <tr><td class="tok dim">escuro</td><td class="num strong">{_pw('default', 'dark', 'anel do olho'):.2f}:1</td><td class="num">{_pw('default', 'dark', 'olho'):.2f}:1</td></tr>
+      <tr><td class="tok dim">claro</td><td class="num strong">{_pw('default', 'light', 'eye ring'):.2f}:1</td><td class="num">{_pw('default', 'light', 'eye'):.2f}:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num strong">{_pw('default', 'dark', 'eye ring'):.2f}:1</td><td class="num">{_pw('default', 'dark', 'eye'):.2f}:1</td></tr>
     </tbody>
   </table></div>
   <div class="stats">
@@ -6941,8 +6941,8 @@ PASSWORD_A11Y_TAB = f'''
   <h2>As duas exceções, nomeadas</h2>
   <div class="note">
     <b>Borda abaixo de 3:1 no repouso — decisão consciente</b>
-    <code>border-default</code> dá {_pw('default', 'light', 'borda'):.2f}:1 no claro e
-    {_pw('default', 'dark', 'borda'):.2f}:1 no escuro. O 1.4.11 não falha quando a borda não é o
+    <code>border-default</code> dá {_pw('default', 'light', 'border'):.2f}:1 no claro e
+    {_pw('default', 'dark', 'border'):.2f}:1 no escuro. O 1.4.11 não falha quando a borda não é o
     único meio de perceber o componente — há rótulo visível e o olho dentro. <b>Por isso “nunca sem
     rótulo visível” é regra de uso.</b>
   </div>
@@ -6957,7 +6957,7 @@ PASSWORD_A11Y_TAB = f'''
   <h2>Borda, anéis e olho — o não-textual, piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{password_a11y_rows(['borda', 'anel do campo', 'anel do olho', 'olho'])}</tbody>
+    <tbody>{password_a11y_rows(['border', 'field ring', 'eye ring', 'eye'])}</tbody>
   </table></div>
 </section>
 
@@ -6965,7 +6965,7 @@ PASSWORD_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{password_a11y_rows(['rotulo', 'mensagem de erro', 'placeholder', 'valor', 'texto'])}</tbody>
+    <tbody>{password_a11y_rows(['label', 'error message', 'placeholder', 'value', 'text'])}</tbody>
   </table></div>
 </section>
 
@@ -14432,7 +14432,8 @@ JS_PASSWORD = r"""
       if (erro) a.push('aria-invalid="true"');
       if (off) a.push('disabled');
       var b = ['class="al-password__toggle"', 'type="button"', 'aria-controls="' + id + '"',
-               'aria-label="Mostrar senha"'];
+               'aria-label="Mostrar senha"',
+               'data-label-show="Mostrar senha"', 'data-label-hide="Ocultar senha"'];
       if (off) b.push('disabled');
       b.push('hidden');
       var out = '';

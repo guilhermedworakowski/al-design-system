@@ -1,17 +1,18 @@
 /* AL Design System - Input
  *
- * Depende de: foundation/al-foundation.css
+ * Depends on: foundation/al-foundation.css
  *           + components/input/al-input-tokens.css
  *
- * CAMPO DE TEXTO DE UMA LINHA
- *   <input> nativo, `type` text, email, url ou tel. Senha e o componente
- *   Password; varias linhas e o Textarea. Nenhum dos dois estica este arquivo.
+ * SINGLE-LINE TEXT FIELD
+ *   A native <input>, `type` text, email, url or tel. Password is the Password
+ *   component; multiple lines is the Textarea. Neither of them stretches this
+ *   file.
  *
- * ANATOMIA
+ * ANATOMY
  *   <div class="al-input">
  *     <div class="al-input__labelrow">
- *       <label class="al-input__label" id="site-label" for="site">Site</label>
- *       <span class="al-input__optional">(Opcional)</span>
+ *       <label class="al-input__label" id="site-label" for="site">Website</label>
+ *       <span class="al-input__optional">(Optional)</span>
  *       <span class="al-input__counter" aria-live="off">0/100</span>
  *     </div>
  *     <div class="al-input__control">
@@ -21,87 +22,91 @@
  *              aria-describedby="site-help">
  *       <label class="al-input__affix" id="site-suffix" for="site">.com</label>
  *     </div>
- *     <p class="al-input__help" id="site-help">Texto de apoio</p>
+ *     <p class="al-input__help" id="site-help">Help text</p>
  *   </div>
  *
- *   Marca "(Opcional)", contador, prefixo, sufixo e texto de apoio sao
- *   MARCACAO, nao modificador: quem nao quer, nao escreve o elemento.
+ *   The "(Optional)" mark, counter, prefix, suffix and help text are MARKUP,
+ *   not a modifier: whoever doesn't want them doesn't write the element.
  *
- * A CAIXA E O `__control`, NAO O <input>
- *   Prefixo e sufixo precisam ficar DENTRO da borda, e <input> nao aceita
- *   filho. Entao borda, fundo, raio e anel moram no `__control`, e o <input>
- *   e transparente, sem borda, ocupando o espaco que sobra. Consequencia: o
- *   estado do campo e lido pelo conteiner via `:has()` - hover, foco, erro,
- *   desabilitado e read-only.
+ * THE BOX IS `__control`, NOT THE <input>
+ *   Prefix and suffix need to sit INSIDE the border, and <input> doesn't
+ *   accept children. So border, background, radius and ring live on
+ *   `__control`, and the <input> is transparent, borderless, taking the space
+ *   that is left. The consequence: the field's state is read by the container
+ *   through `:has()` - hover, focus, error, disabled and read-only.
  *
- *   Degradacao se `:has()` faltar: o campo fica sempre no estado de repouso -
- *   sem anel de foco pintado pelo AL. Por isso o `outline` so e zerado DENTRO
- *   de um `@supports selector(:has(*))`: sem `:has()` volta o anel nativo do
- *   navegador, e o foco nunca some.
+ *   Degradation if `:has()` is missing: the field always stays at rest - with
+ *   no focus ring painted by AL. That is why the `outline` is only removed
+ *   INSIDE an `@supports selector(:has(*))`: without `:has()` the browser's
+ *   native ring comes back, and focus never disappears.
  *
- * O AFIXO E <label for>, E NAO <span>
- *   Clicar em "www." precisa focar o campo, como clicar no rotulo. <label for>
- *   faz isso sem uma linha de JavaScript. O nome anunciado continua
- *   deterministico porque o <input> declara `aria-labelledby` = rotulo +
- *   prefixo + sufixo ("Site, www., .com"), e aria-labelledby vence as labels -
- *   solucao do Polaris, regra 29. Sem afixo, nao ha aria-labelledby: basta o
- *   <label for>.
+ * THE AFFIX IS A <label for>, NOT A <span>
+ *   Clicking "www." needs to focus the field, like clicking the label. A
+ *   <label for> does that without a line of JavaScript. The announced name
+ *   stays deterministic because the <input> declares `aria-labelledby` =
+ *   label + prefix + suffix ("Website, www., .com"), and aria-labelledby beats
+ *   the labels - Polaris's solution, rule 29. With no affix, there is no
+ *   aria-labelledby: the <label for> is enough.
  *
- *   O afixo e visual e NAO vai no envio (regra 10): esta fora do <input>.
+ *   The affix is visual and does NOT go in the submission (rule 10): it sits
+ *   outside the <input>.
  *
- * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
- *   Erro le `aria-invalid="true"`; desabilitado le `:disabled`; read-only le
- *   o atributo `[readonly]` - NUNCA `:read-only`, que tambem casa campo
- *   desabilitado e misturaria os dois estados. Mesmo motivo do Select: a cor
- *   nao pode divergir do que o leitor de tela anuncia.
+ * THE STATE IS DRIVEN BY THE MARKUP, NOT BY A CLASS
+ *   Error reads `aria-invalid="true"`; disabled reads `:disabled`; read-only
+ *   reads the `[readonly]` attribute - NEVER `:read-only`, which also matches
+ *   a disabled field and would mix the two states. The same reason as the
+ *   Select: the color can't disagree with what the screen reader announces.
  *
- *   A unica excecao e o contador acima do limite, `data-over-limit`. Nao ha
- *   atributo nativo para isso: sem `maxlength` (regra 14 - o limite nao trava
- *   a digitacao) o navegador nao sabe que passou. O JavaScript que ja atualiza
- *   o numero e o mesmo que liga o atributo.
+ *   The only exception is the counter over the limit, `data-over-limit`.
+ *   There is no native attribute for that: without `maxlength` (rule 14 - the
+ *   limit doesn't block typing) the browser doesn't know it went over. The
+ *   JavaScript that already updates the number is the same one that sets the
+ *   attribute.
  *
- * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE
- *   Mesma mecanica do Select: interacao escreve em `--_border-state`; erro,
- *   read-only e desabilitado escrevem em `--_border-force`, que vence sempre
- *   por ser outra propriedade. Entre os tres decide a ordem do arquivo:
- *   erro, read-only, desabilitado - o desabilitado ganha de todos.
+ * PRECEDENCE BY VARIABLE, NOT BY SPECIFICITY
+ *   The same mechanics as the Select: interaction writes to `--_border-state`;
+ *   error, read-only and disabled write to `--_border-force`, which always
+ *   wins because it is another property. Among the three the file order
+ *   decides: error, read-only, disabled - disabled wins over all.
  *
- * NAO EXISTE ACTIVE
- *   Campo de texto SEMPRE casa `:focus-visible`, inclusive no clique de mouse
- *   (a spec manda isso para todo elemento que aceita digitacao). A borda de
- *   1px de um Active seria coberta pelo anel no mesmo instante. Regra 20.
+ * THERE IS NO ACTIVE
+ *   A text field ALWAYS matches `:focus-visible`, including on mouse click
+ *   (the spec requires that for every element that accepts typing). The 1px
+ *   border of an Active would be covered by the ring in the same instant.
+ *   Rule 20.
  *
- * READ-ONLY NAO MOSTRA PLACEHOLDER
- *   O cinza do placeholder sobre `bg-readonly` da 4.21:1, abaixo do piso. E
- *   placeholder ensina a preencher, o que nao se aplica. O CSS o torna
- *   transparente; a regra 22 manda o read-only vazio mostrar "—" como valor.
+ * READ-ONLY DOESN'T SHOW A PLACEHOLDER
+ *   The placeholder gray on `bg-readonly` gives 4.21:1, below the floor. And a
+ *   placeholder teaches how to fill in, which doesn't apply. The CSS makes it
+ *   transparent; rule 22 tells an empty read-only to show "—" as its value.
  *
- * ALTURA E CONSEQUENCIA, NAO `height`
- *   48 = padding-y x2 + entrelinha, com a borda descontada do padding - a
- *   mesma convencao do Button, do Tag e do Select. A borda de 1px existe em
- *   todos os estados, entao o campo nunca "pula" quando o estado troca.
+ * HEIGHT IS A CONSEQUENCE, NOT `height`
+ *   48 = padding-y x2 + line height, with the border subtracted from the
+ *   padding - the same convention as the Button, the Tag and the Select. The
+ *   1px border exists in every state, so the field never "jumps" when the
+ *   state changes.
  *
- * LARGURA
- *   100% do conteiner. Formulario decide largura (regra 26).
+ * WIDTH
+ *   100% of the container. The form decides width (rule 26).
  *
- * DURACAO DA TRANSICAO
- *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
- *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
- *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
- *   usa a curva do estado para onde a transicao vai.
+ * TRANSITION DURATION
+ *   Duration and curve are Foundation tokens. The base declares the EXIT
+ *   curve (--al-motion-easing-exit, ease-in); the ENTER block at the end of
+ *   the file declares the enter one (ease-out) on the destination states,
+ *   because CSS uses the curve of the state the transition goes to.
  *
- * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ * HANDWRITTEN. The tokens it consumes are generated by tokens.py.
  */
 
-/* ---------------------------------------------------------------- raiz */
+/* ---------------------------------------------------------------- root */
 .al-input {
   display: flex;
   flex-direction: column;
   gap: var(--al-input-gap);
 }
 
-/* ------------------------------------------------------------ rotulo */
-/* baseline, nao center: rotulo tem entrelinha 24, marca e contador 20. */
+/* ------------------------------------------------------------ label */
+/* baseline, not center: the label has a 24 line height, mark and counter 20. */
 .al-input__labelrow {
   display: flex;
   align-items: baseline;
@@ -126,7 +131,7 @@
   letter-spacing: var(--al-input-optional-tracking);
 }
 
-/* empurrado para a direita da linha do rotulo - posicao do Carbon */
+/* pushed to the right of the label row - Carbon's position */
 .al-input__counter {
   margin-left: auto;
   color: var(--al-input-counter);
@@ -138,7 +143,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* ------------------------------------------------------------- caixa */
+/* --------------------------------------------------------------- box */
 .al-input__control {
   --_border-state: var(--al-input-border);
 
@@ -148,7 +153,7 @@
   gap: var(--al-input-gap);
   width: 100%;
 
-  /* a borda entra na caixa, entao descontar aqui fecha 48 exatos */
+  /* the border counts toward the box, so subtracting it here closes 48 exact */
   padding: calc(var(--al-input-padding-y) - var(--al-input-border-width))
            calc(var(--al-input-padding-x) - var(--al-input-border-width));
 
@@ -163,7 +168,7 @@
     box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
-/* ------------------------------------------------------------- campo */
+/* ------------------------------------------------------------- field */
 .al-input__field {
   --_text-state: var(--al-input-text-value);
 
@@ -183,21 +188,21 @@
   letter-spacing: var(--al-input-tracking);
 }
 
-/* Firefox baixa a opacidade do placeholder por conta propria; o token ja
-   carrega o cinza certo, entao a opacidade volta ao inteiro. */
+/* Firefox lowers the placeholder opacity on its own; the token already
+   carries the right gray, so the opacity goes back to full. */
 .al-input__field::placeholder {
   color: var(--al-input-text-placeholder);
   opacity: 1;
 }
 
-/* So zera o anel nativo onde o anel do AL existe - ver cabecalho. */
+/* Only removes the native ring where AL's ring exists - see the header. */
 @supports selector(:has(*)) {
   .al-input__field:focus {
     outline: none;
   }
 }
 
-/* ---------------------------------------------------- prefixo e sufixo */
+/* ------------------------------------------------------ prefix and suffix */
 .al-input__affix {
   flex: none;
   color: var(--al-input-affix);
@@ -210,7 +215,7 @@
   cursor: text;
 }
 
-/* -------------------------------------------------------- texto de apoio */
+/* ------------------------------------------------------------ help text */
 .al-input__help {
   color: var(--al-input-help);
   font-family: var(--al-font-sans);
@@ -221,19 +226,19 @@
   margin: 0;
 }
 
-/* ------------------------------------------------------------- estados */
-/* hover: nem desabilitado nem read-only reagem - regra 23 */
+/* -------------------------------------------------------------- states */
+/* hover: neither disabled nor read-only react - rule 23 */
 .al-input__control:hover:not(:has(.al-input__field:disabled, .al-input__field[readonly])) {
   --_border-state: var(--al-input-border-hover);
 }
 
-/* foco - por Tab OU por clique, e ele permanece. Nao ha Active. */
+/* focus - by Tab OR by click, and it stays. There is no Active. */
 .al-input__control:has(.al-input__field:focus-visible) {
   --_border-state: var(--al-input-border-focus);
   box-shadow: var(--_ring-force, var(--al-input-ring));
 }
 
-/* erro - vence hover e foco por escrever noutra propriedade */
+/* error - beats hover and focus by writing to another property */
 .al-input__control:has(.al-input__field[aria-invalid="true"]) {
   --_border-force: var(--al-input-border-error);
   --_ring-force: var(--al-input-ring-error);
@@ -247,13 +252,13 @@
   color: var(--al-input-help-error);
 }
 
-/* O contador so fica vermelho quando o erro E o limite - regra 15.
-   Erro por outro motivo deixa o contador cinza. */
+/* The counter only turns red when the error IS the limit - rule 15.
+   An error for another reason leaves the counter gray. */
 .al-input__counter[data-over-limit] {
   color: var(--al-input-counter-error);
 }
 
-/* read-only - `[readonly]`, nunca `:read-only` (casa o disabled tambem) */
+/* read-only - `[readonly]`, never `:read-only` (it matches disabled too) */
 .al-input__control:has(.al-input__field[readonly]) {
   --_border-force: var(--al-input-border-readonly);
   --_bg-force: var(--al-input-bg-readonly);
@@ -268,7 +273,7 @@
   color: transparent;
 }
 
-/* desabilitado - por ultimo, porque ganha de todos */
+/* disabled - last, because it wins over all */
 .al-input__control:has(.al-input__field:disabled) {
   --_border-force: var(--al-input-border-disabled);
   --_bg-force: var(--al-input-bg-disabled);
@@ -292,16 +297,17 @@
   color: var(--al-input-label-disabled);
 }
 
-/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
-   declara a de saida (ease-in); estes estados de destino declaram a de
-   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
 .al-input__control:hover,
 .al-input__control:has(.al-input__field:focus-visible),
 .al-input__control:has(.al-input__field[aria-invalid="true"]) {
   transition-timing-function: var(--al-motion-easing-enter);
 }
 
-/* ------------------------------------------------------------ ambiente */
+/* --------------------------------------------------------- environment */
 @media (prefers-reduced-motion: reduce) {
   .al-input__control {
     transition: none;

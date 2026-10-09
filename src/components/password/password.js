@@ -1,21 +1,22 @@
-/* AL Design System - Password: o comportamento do olho
+/* AL Design System - Password: the eye's behavior
  *
- * O CSS ja sabe tudo o que e visual - qual icone mostrar le o `type` do
- * campo. Este arquivo so faz o que CSS nao alcanca:
+ * The CSS already knows everything visual - which icon to show reads the
+ * field's `type`. This file only does what CSS can't reach:
  *
- *   1. tira o `hidden` do botao (sem JS o olho nao existe - GOV.UK);
- *   2. alterna `type` password <-> text e o `aria-label` do botao
- *      ("Mostrar senha" / "Ocultar senha", regra 28). O foco fica no botao
- *      e o valor nao e tocado (regra 15);
- *   3. esconde de novo quando o formulario e enviado (regra 16).
+ *   1. removes the button's `hidden` (without JS the eye doesn't exist - GOV.UK);
+ *   2. toggles `type` password <-> text and the button's `aria-label`
+ *      ("Show password" / "Hide password", rule 28). Focus stays on the button
+ *      and the value is not touched (rule 15);
+ *   3. hides it again when the form is submitted (rule 16).
  *
- * Varios campos na mesma tela: os nomes vem de `data-label-show` e
- * `data-label-hide` no botao ("Mostrar nova senha"), regra 17.
+ * Several fields on the same screen: the names come from `data-label-show`
+ * and `data-label-hide` on the button ("Show new password"), rule 17. They are
+ * also how a page in another language sets its own names.
  *
- * Campo desabilitado nunca alterna - e o botao leva `disabled` na marcacao.
+ * A disabled field never toggles - and the button gets `disabled` in the markup.
  *
- * Inicia sozinho no carregamento. Conteudo inserido depois:
- *   window.alPassword.init(elementoQueContemOsCampos)
+ * It starts by itself on load. Content inserted later:
+ *   window.alPassword.init(elementContainingTheFields)
  */
 (function () {
   'use strict';
@@ -26,8 +27,8 @@
     if (!field || !toggle || toggle.hasAttribute('data-al-ready')) return;
     toggle.setAttribute('data-al-ready', '');
 
-    var labelShow = toggle.getAttribute('data-label-show') || 'Mostrar senha';
-    var labelHide = toggle.getAttribute('data-label-hide') || 'Ocultar senha';
+    var labelShow = toggle.getAttribute('data-label-show') || 'Show password';
+    var labelHide = toggle.getAttribute('data-label-hide') || 'Hide password';
 
     function setVisible(visible) {
       field.type = visible ? 'text' : 'password';
@@ -45,7 +46,7 @@
       });
     }
 
-    setVisible(false);          // regra 13: nasce sempre escondida
+    setVisible(false);          // rule 13: it always starts hidden
     toggle.hidden = false;
   }
 
