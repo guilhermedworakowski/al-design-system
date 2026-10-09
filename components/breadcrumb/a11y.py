@@ -54,7 +54,7 @@ O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
 ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
 
 Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede site/breadcrumb-qa.html
+       sem argumento, mede site/index.html
 """
 import json
 import os
@@ -76,7 +76,7 @@ TEXT_FLOOR = 4.5         # 1.4.3
 NON_TEXT_FLOOR = 3.0     # 1.4.11
 EXC_BORDA = 'borda-de-regiao'
 
-DEFAULT_HTML = os.path.join(ROOT, 'site', 'breadcrumb-qa.html')
+DEFAULT_HTML = os.path.join(ROOT, 'site', 'index.html')
 OUT_JSON = os.path.join(HERE, 'a11y.json')
 
 PAGINAS = ('bg-canvas', 'bg-surface')
@@ -341,7 +341,7 @@ def markup_contract(path):
     if live > 1:
         problems.append(f'{live} breadcrumbs vivos no documento - um por pagina; exemplos ficam sob inert (regra 7)')
     if found == 0:
-        return None, ['nenhum .al-breadcrumb no HTML - rode qa.py antes']
+        return None, ['nenhum .al-breadcrumb no HTML - rode site/site.py antes']
     return found, problems
 
 

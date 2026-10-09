@@ -61,7 +61,7 @@ O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
 ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
 
 Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede site/sidebar-qa.html
+       sem argumento, mede site/index.html
 """
 import json
 import os
@@ -87,7 +87,7 @@ EXC_TONAL = 'selecao-tonal'
 EXC_MARCA = 'marca-no-hover-escuro'
 EXC_SCRIM = 'sidebar-nao-se-separa-do-scrim-no-escuro'
 
-DEFAULT_HTML = os.path.join(ROOT, 'site', 'sidebar-qa.html')
+DEFAULT_HTML = os.path.join(ROOT, 'site', 'index.html')
 OUT_JSON = os.path.join(HERE, 'a11y.json')
 
 VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
