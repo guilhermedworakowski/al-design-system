@@ -1,54 +1,55 @@
 """
-Camada de tokens do Alert.
+Token layer for the Alert.
 
-Regra desta camada: nada aqui inventa valor. Todo token aponta para um token da
-Foundation pelo NOME. Nao ha excecao de valor declarado: o Alert ocupa a
-largura do conteudo e nao tem tempo na tela.
+The rule of this layer: nothing here invents a value. Every token points to a
+Foundation token by NAME. There is no declared-value exception: the Alert
+takes the content width and has no time on screen.
 
-Nomenclatura:
-  codigo -> alert-danger-border   (hifen)
-  Figma  -> danger/border         (collection `25. Alert`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> alert-danger-border   (hyphen)
+  Figma -> danger/border         (collection `25. Alert`)
+They are different layers. Never collapse one into the other.
 
-TERCEIRO COMPONENTE DO TIER 5 E ULTIMO DA V1 (09/10/2026)
+THIRD COMPONENT OF TIER 5 AND LAST OF V1 (2026-10-09)
 
-  Component set `alert`, node 373:5186. 4 variantes `Status` (Success /
-  Warning / Danger / Info) e os booleanos `actions` e `close`. Icone 24 no
-  topo + titulo 16/24 bold + descricao Body/md (sempre presente) + X (Icon
-  Button Ghost sm). Linha de acoes a direita: Button Ghost md + Primary md.
-  Fundo bg-surface-raised (o mesmo do Card), borda 1px na cor do status, raio
-  xl, padding 16, sem sombra: o Alert mora no fluxo da pagina, no topo,
-  abaixo do header.
+  Component set `alert`, node 373:5186. 4 `Status` variants (Success /
+  Warning / Danger / Info) and the `actions` and `close` booleans. Icon 24 at
+  the top + 16/24 bold title + Body/md description (always present) + X
+  (Ghost sm Icon Button). Action row on the right: Ghost md + Primary md
+  Button. Background bg-surface-raised (the same as the Card), 1px border in
+  the status color, xl radius, padding 16, no shadow: the Alert lives in the
+  page flow, at the top, below the header.
 
-  Decisoes da etapa 1: Danger NAO e Error - e cuidado, nao falha (2); a
-  descricao e sempre visivel (3); titulo em 16 bold (A); acoes Ghost +
-  Primary md, alinhadas a direita (B, C); X opcional, Warning e Danger sem X
-  enquanto a situacao existir (D).
+  Scope decisions: Danger is NOT Error - it is caution, not failure; the
+  description is always visible; 16 bold title; Ghost + Primary md actions,
+  aligned to the right; optional X, Warning and Danger without an X while
+  the situation exists.
 
-O STATUS "danger" USA O SEMANTICO "danger"
+THE "danger" STATUS USES THE "danger" SEMANTIC
 
-  Diferente do Toast, onde o status se chama "error". No Alert o nome e o da
-  Foundation porque o sentido e outro (decisao 2 de Gui).
+  Unlike the Toast, where the status is called "error". In the Alert the
+  name is the Foundation's because the meaning is different.
 
-O TITULO NAO E UM ESTILO DA FOUNDATION
+THE TITLE IS NOT A FOUNDATION STYLE
 
-  16/24 bold nao existe em type.styles (Label/lg e medium). O titulo e montado
-  com tres tokens soltos da escala - tamanho md, entrelinha md, peso bold -
-  em vez de um estilo novo na Foundation (decisao F: so o Alert usaria).
+  16/24 bold doesn't exist in type.styles (Label/lg is medium). The title is
+  built from three loose scale tokens - md size, md line height, bold weight
+  - instead of a new style in the Foundation (only the Alert would use it).
 
-MOVIMENTO
+MOTION
 
-  Decisao E: entra e sai com a transicao rapida dos controles (duration-
-  feedback, 120ms), so opacidade. Entrar usa easing-enter, sair easing-exit.
+  Enters and exits with the controls' fast transition (duration-feedback,
+  120ms), opacity only. Entering uses easing-enter, exiting easing-exit.
 
-SEM TOKEN, DE PROPOSITO
+NO TOKEN, ON PURPOSE
 
-  Altura: sai do conteudo. Largura: a do conteudo da pagina. Icone:
-  `icon-size-24` direto da Foundation (regra do Tag e do Tooltip). Sombra:
-  nenhuma. Botoes e X: os componentes Button e Icon Button; sobre
-  bg-surface-raised o Ghost e o X usam `bg-hover-raised` / `bg-active-raised`
-  (licao do Modal 0.18.1), sem token novo. O rotulo branco do Primary em
-  repouso (3.34:1) e a excecao de marca do Button, herdada, nao nova.
+  Height: comes from the content. Width: the page content's. Icon:
+  `icon-size-24` straight from the Foundation (rule from the Tag and the
+  Tooltip). Shadow: none. Buttons and X: the Button and Icon Button
+  components; on bg-surface-raised the Ghost and the X use `bg-hover-raised`
+  / `bg-active-raised` (lesson from Modal 0.18.1), no new token. The
+  Primary's white label at rest (3.34:1) is the Button's brand exception,
+  inherited, not new.
 """
 import json, os, sys
 
@@ -63,32 +64,33 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
     'bg':          'bg-surface-raised',
     'title':       'text-primary',
     'description': 'text-secondary',
 }
 
-# O icone e a borda carregam o status; o icone e a pista que nao depende de
-# cor (Spectrum), a borda passa no 3:1 contra o fundo e contra a pagina.
+# The icon and the border carry the status; the icon is the clue that doesn't
+# depend on color (Spectrum), the border passes 3:1 against the background and
+# against the page.
 STATUS = ('success', 'warning', 'danger', 'info')
 for status in STATUS:
     COLOR[f'{status}-icon'] = f'text-{status}'
     COLOR[f'{status}-border'] = f'border-{status}'
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'padding':      'space.16',
-    'gap':          'space.16',             # icone -> texto -> X
-    'text-gap':     'space.4',              # titulo -> descricao
-    'section-gap':  'space.24',             # texto -> linha de acoes
-    'actions-gap':  'space.16',             # botao -> botao
+    'gap':          'space.16',             # icon -> text -> X
+    'text-gap':     'space.4',              # title -> description
+    'section-gap':  'space.24',             # text -> action row
+    'actions-gap':  'space.16',             # button -> button
     'radius':       'radius.xl',
     'border-width': 'border.width.1',
 }
 
-# Titulo montado da escala (decisao F); descricao e um estilo inteiro.
+# Title built from the scale; the description is a whole style.
 TITLE = {
     'title-font-size':   'type.size.md',
     'title-line-height': 'type.leading.md',
@@ -98,7 +100,7 @@ TYPE = {
     'description-font': 'type.styles.body-md',
 }
 
-# Decisao E: a transicao rapida dos controles.
+# The controls' fast transition.
 MOTION = {
     'duration':     'motion.duration.feedback',
     'easing-enter': 'motion.easing.enter',
@@ -107,23 +109,23 @@ MOTION = {
 
 PENDING = {}
 
-# Telas sobre as quais o alert aparece. Nao sao tokens do Alert.
+# Screens the alert appears on. They are not Alert tokens.
 PAGES = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
 }
 
-# (papel, fg, fundo(s), piso, excecao)
+# (role, fg, background(s), floor, exception)
 COMBOS = [
-    ('titulo',    'title',       'bg', 4.5, None),
-    ('descricao', 'description', 'bg', 4.5, None),
+    ('title',       'title',       'bg', 4.5, None),
+    ('description', 'description', 'bg', 4.5, None),
 ]
 for status in STATUS:
-    COMBOS.append((f'{status}/icone', f'{status}-icon', 'bg', 3.0, None))
-    COMBOS.append((f'{status}/borda', f'{status}-border', ('bg', 'canvas', 'surface'), 3.0, None))
+    COMBOS.append((f'{status}/icon', f'{status}-icon', 'bg', 3.0, None))
+    COMBOS.append((f'{status}/border', f'{status}-border', ('bg', 'canvas', 'surface'), 3.0, None))
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
     return PAGES.get(role) or COLOR[role]
 
@@ -150,9 +152,9 @@ def run():
         name = f'alert-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref})')
+            problems.append(f'{name}: loose hex ({ref})')
         elif ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
         else:
             resolved[name] = {'light': SEM[ref][0], 'dark': SEM[ref][1]}
 
@@ -163,10 +165,10 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -176,20 +178,20 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO ALERT')
+    print('ALERT TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<34} -> {alias[name]}')
     print('-' * 74)
     for r in rows:
-        tag = 'OK  ' if r['pass'] else ('EXCE' if r['exception'] else 'FALHA')
-        print(f'  {tag} {r["what"]:<34} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (piso {r["min"]})')
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
+        tag = 'OK  ' if r['pass'] else ('EXC ' if r['exception'] else 'FAIL')
+        print(f'  {tag} {r["what"]:<34} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (floor {r["min"]})')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE')
         return 1
-    print(f'{len(alias)} tokens, todos alias da Foundation.')
+    print(f'{len(alias)} tokens, all aliases of the Foundation.')
 
     out = {
         'meta': {
@@ -198,12 +200,12 @@ def run():
             'foundation': FOUND['meta']['version'],
             'figmaNode': '373:5186',
             'figmaCollection': '25. Alert',
-            'nota': (
-                'Fundo bg-surface-raised, borda 1px e icone 24 na cor do status, titulo '
-                '16/24 bold montado da escala, descricao Body/md sempre visivel, padding 16, '
-                'gap 16, 24 ate a linha de acoes, raio xl, sem sombra. No topo da pagina, '
-                'abaixo do header, na largura do conteudo. Entra e sai com opacidade em '
-                'duration-feedback. Sem excecao de contraste.'
+            'note': (
+                'Background bg-surface-raised, 1px border and icon 24 in the status color, 16/24 '
+                'bold title built from the scale, Body/md description always visible, padding 16, '
+                'gap 16, 24 to the action row, xl radius, no shadow. At the top of the page, below '
+                'the header, at the content width. Enters and exits with opacity in '
+                'duration-feedback. No contrast exception.'
             ),
         },
         'alias': alias,
@@ -212,7 +214,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('alert', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/alert/tokens.json escrito')
+    print('\nbuild/components/alert/tokens.json written')
     write_css(alias)
     return 0
 
@@ -222,37 +224,37 @@ def _scale_key(scale, v, what):
     for key, val in FOUND['type'][scale].items():
         if val == v:
             return key
-    raise KeyError(f'type.{scale} com valor {v} nao existe na Foundation ({what})')
+    raise KeyError(f'type.{scale} with value {v} does not exist in the Foundation ({what})')
 
 
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Alert')
-    w(' * GERADO por src/components/alert/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Alert tokens')
+    w(' * GENERATED by src/components/alert/tokens.py. Do not edit by hand.')
     w(' */')
     w('')
     w(':root {')
     w('')
-    w('  /* cor - caixa e texto */')
+    w('  /* color - box and text */')
     for role in ('bg', 'title', 'description'):
         w(f'  --al-alert-{role}: {css_ref(COLOR[role])};')
     w('')
-    w('  /* cor - status: icone e borda */')
+    w('  /* color - status: icon and border */')
     for status in STATUS:
         for part in ('icon', 'border'):
             role = f'{status}-{part}'
             w(f'  --al-alert-{role}: {css_ref(COLOR[role])};')
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-alert-{role}: {css_ref(ref)};')
     w('')
-    w('  /* movimento - a transicao rapida dos controles (decisao E) */')
+    w('  /* motion - the controls\' fast transition */')
     for role, ref in MOTION.items():
         w(f'  --al-alert-{role}: {css_ref(ref)};')
     w('')
-    w('  /* tipografia - titulo montado da escala (decisao F), descricao = Body/md */')
+    w('  /* typography - title built from the scale, description = Body/md */')
     for role, ref in TITLE.items():
         w(f'  --al-alert-{role}: {css_ref(ref)};')
     w('  --al-alert-title-tracking: 0em;')
@@ -265,18 +267,18 @@ def write_css(alias):
         w(f'  {prefix}-tracking: {style[4]};')
     w('}')
     w('')
-    texto = '\n'.join(L)
-    faltando = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in texto]
-    if faltando:
-        raise AssertionError(f'tokens fora do CSS: {faltando}')
-    save_css('alert', texto)
+    text = '\n'.join(L)
+    missing = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in text]
+    if missing:
+        raise AssertionError(f'tokens missing from the CSS: {missing}')
+    save_css('alert', text)
 
 
 def _weight_key(v):
     for key, val in FOUND['type']['weight'].items():
         if val == v:
             return key
-    raise KeyError(f'type.weight com valor {v} nao existe na Foundation')
+    raise KeyError(f'type.weight with value {v} does not exist in the Foundation')
 
 
 if __name__ == '__main__':

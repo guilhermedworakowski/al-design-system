@@ -1,71 +1,72 @@
 """
-QA de acessibilidade do Toast.
+Accessibility QA for the Toast.
 
-Como nos outros componentes, a validacao e por COMBINACAO RENDERIZADA - papel
-x status x tema - contra o fundo EFETIVO, nao par de token solto.
+As with the other components, validation is by RENDERED COMBINATION - role x
+status x theme - against the EFFECTIVE background, not a loose token pair.
 
-O QUE O FUNDO EFETIVO MUDA AQUI
+WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
-  O toast mora na top layer (a regiao e um popover), com fundo opaco
-  `toast-bg` (bg-surface-raised): titulo, descricao, icone e o X so encostam
-  no fundo do proprio toast. Quem encosta na pagina e a BORDA - e a pagina
-  pode ser a tela, a superficie ou um Modal/Drawer aberto (bg-surface-raised),
-  porque com um dialog aberto a regiao muda para dentro dele. Sobre o Modal,
-  fundo do toast e fundo da pagina sao a mesma cor: so a borda separa.
+  The toast lives in the top layer (the region is a popover), with an opaque
+  `toast-bg` background (bg-surface-raised): title, description, icon and the
+  X only touch the toast's own background. What touches the page is the
+  BORDER - and the page can be the canvas, the surface or an open
+  Modal/Drawer (bg-surface-raised), because with a dialog open the region
+  moves inside it. Over the Modal, toast background and page background are
+  the same color: only the border separates them.
 
-  O X e o Icon Button Ghost sm. Sobre surface-raised ele usa os -raised
-  (bg-hover-raised / bg-active-raised, licao do Modal 0.18.1): a tinta do
-  icone e medida contra o fundo de repouso, de hover e de pressionado. O anel
-  de foco e medido contra o fundo do toast - par que o portao do Icon Button,
-  medido sobre a pagina, nao cobre.
+  The X is the Ghost sm Icon Button. On surface-raised it uses the -raised
+  ones (bg-hover-raised / bg-active-raised, lesson from Modal 0.18.1): the
+  icon ink is measured against the rest, hover and pressed backgrounds. The
+  focus ring is measured against the toast background - a pair the Icon
+  Button gate, measured on the page, doesn't cover.
 
-QUATRO JULGAMENTOS
+FOUR JUDGMENTS
 
-  1. Titulo e descricao contra o fundo do toast: 4,5:1 do 1.4.3.
-  2. Icone de status contra o fundo do toast: 3:1 do 1.4.11. E o icone que
-     carrega o status (regra 14), entao ele tem que passar.
-  3. Borda de cada status contra cada fundo de pagina (canvas, surface,
-     surface-raised): 3:1. Decorativa no status, mas e ela que separa a
-     caixa da pagina.
-  4. X: tinta contra repouso, hover e pressionado; anel de foco contra o
-     fundo do toast. 3:1.
-  Sem excecao de contraste: nenhuma foi declarada nas etapas 1 a 4.
+  1. Title and description against the toast background: 4.5:1 from 1.4.3.
+  2. Status icon against the toast background: 3:1 from 1.4.11. The icon is
+     what carries the status (rule 14), so it must pass.
+  3. Border of each status against each page background (canvas, surface,
+     surface-raised): 3:1. Decorative for the status, but it is what
+     separates the box from the page.
+  4. X: ink against rest, hover and pressed; focus ring against the toast
+     background. 3:1.
+  No contrast exception: none was declared.
 
-O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
+THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Regras de uso da etapa 4, medidas no HTML emitido:
+  Usage rules from guidelines.md, measured on the emitted HTML:
 
-    a) uma unica .al-toast-region por documento: <section popover="manual">
-       com aria-label, fora de <template> e fora de inert (regra 23);
-    b) dentro dela, exatamente duas regioes vivas: um
-       <div class="al-toast-region__live" role="status"> e um com
-       role="alert" - VAZIAS no carregamento: a regiao existe antes da
-       primeira mensagem (regras 22 e 23);
-    c) todo toast vivo nasce de um <template> cujo unico filho e a
-       <div class="al-toast"> (o toast.js clona dali);
-    d) um, e so um, modificador de status: --success, --warning, --error ou
-       --info. Sem Neutral (regra 26);
-    e) primeiro filho = <svg class="al-icon al-icon--20 al-toast__icon">
-       com role="img", aria-label com o nome do status (Sucesso, Aviso, Erro,
-       Informação), sem aria-hidden, e o desenho do icone do status:
-       circle-check, triangle-alert, circle-alert, info (regras 13 e 14);
-    f) segundo filho = <div class="al-toast__text"> com um
-       <p class="al-toast__title"> com texto e, opcional, um
-       <p class="al-toast__description"> com texto - nada mais;
-    g) terceiro e ultimo filho = o X: <button type="button"> Icon Button
-       Ghost sm com a classe al-toast__close, aria-label="Fechar notificação"
-       e o icone dentro aria-hidden (regra 24);
-    h) nada interativo alem do X - sem link, campo, outro botao, tabindex ou
-       contenteditable (regra 25);
-    i) as amostras congeladas do site (.al-toast fora de <template>) ficam
-       sob `inert` e `aria-hidden` num ancestral: um toast parado para sempre
-       nao existe no componente. A marcacao delas cumpre (d) a (h) igual -
-       e o que a documentacao mostra.
+    a) a single .al-toast-region per document: <section popover="manual">
+       with aria-label, outside <template> and outside inert (rule 23);
+    b) inside it, exactly two live regions: one
+       <div class="al-toast-region__live" role="status"> and one with
+       role="alert" - EMPTY on load: the region exists before the first
+       message (rules 22 and 23);
+    c) every live toast is born from a <template> whose only child is the
+       <div class="al-toast"> (toast.js clones from there);
+    d) one, and only one, status modifier: --success, --warning, --error or
+       --info. No Neutral (rule 26);
+    e) first child = <svg class="al-icon al-icon--20 al-toast__icon"> with
+       role="img", aria-label with the status name, no aria-hidden, and the
+       status icon's drawing: circle-check, triangle-alert, circle-alert,
+       info (rules 13 and 14);
+    f) second child = <div class="al-toast__text"> with a
+       <p class="al-toast__title"> with text and, optionally, a
+       <p class="al-toast__description"> with text - nothing else;
+    g) third and last child = the X: <button type="button"> Ghost sm Icon
+       Button with the al-toast__close class, the close aria-label and the
+       icon inside aria-hidden (rule 24);
+    h) nothing interactive besides the X - no link, field, other button,
+       tabindex or contenteditable (rule 25);
+    i) the site's frozen samples (.al-toast outside <template>) sit under
+       `inert` and `aria-hidden` on an ancestor: a toast stuck forever
+       doesn't exist in the component. Their markup meets (d) to (h) all the
+       same - it is what the documentation shows.
 
-ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
+RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html (piloto: sem pagina de QA separada)
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -91,7 +92,9 @@ NON_TEXT_FLOOR = 3.0     # 1.4.11
 DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('toast', 'a11y.json')
 
-PAGINAS = ('bg-canvas', 'bg-surface', 'bg-surface-raised')
+PAGES = ('bg-canvas', 'bg-surface', 'bg-surface-raised')
+# The status names and the X name stay in Portuguese: the site this gate
+# measures is in Portuguese, and these are the exact strings it renders.
 STATUS = {
     'success': ('Sucesso', 'circle-check'),
     'warning': ('Aviso', 'triangle-alert'),
@@ -100,7 +103,7 @@ STATUS = {
 }
 CLOSE_CLASSES = {'al-icon-btn', 'al-icon-btn--ghost', 'al-icon-btn--sm', 'al-toast__close'}
 CLOSE_LABEL = 'Fechar notificação'
-INTERATIVOS = ('a', 'button', 'input', 'select', 'textarea', 'details', 'summary')
+INTERACTIVE = ('a', 'button', 'input', 'select', 'textarea', 'details', 'summary')
 
 
 def sem(name, theme):
@@ -126,32 +129,32 @@ def contrast_rows():
     ink_name = IB['alias']['icon-button-ghost-ink']
     for t in THEMES:
         bg = ts('bg', t)
-        # 1. texto
-        rows.append(row(t, 'titulo', ALIAS['toast-title'], ts('title', t), bg_name, bg, TEXT_FLOOR))
-        rows.append(row(t, 'descricao', ALIAS['toast-description'], ts('description', t), bg_name, bg,
+        # 1. text
+        rows.append(row(t, 'title', ALIAS['toast-title'], ts('title', t), bg_name, bg, TEXT_FLOOR))
+        rows.append(row(t, 'description', ALIAS['toast-description'], ts('description', t), bg_name, bg,
                         TEXT_FLOOR))
-        # 2. icone de status
+        # 2. status icon
         for s in STATUS:
-            rows.append(row(t, f'{s} / icone', ALIAS[f'toast-{s}-icon'], ts(f'{s}-icon', t),
+            rows.append(row(t, f'{s} / icon', ALIAS[f'toast-{s}-icon'], ts(f'{s}-icon', t),
                             bg_name, bg, NON_TEXT_FLOOR))
-        # 3. borda contra a pagina
+        # 3. border against the page
         for s in STATUS:
-            for p in PAGINAS:
-                rows.append(row(t, f'{s} / borda', ALIAS[f'toast-{s}-border'], ts(f'{s}-border', t),
+            for p in PAGES:
+                rows.append(row(t, f'{s} / border', ALIAS[f'toast-{s}-border'], ts(f'{s}-border', t),
                                 p, sem(p, t), NON_TEXT_FLOOR))
-        # 4. o X
+        # 4. the X
         ink = sem(ink_name, t)
-        for estado, fundo in (('repouso', bg_name), ('hover', 'bg-hover-raised'),
-                              ('pressionado', 'bg-active-raised')):
-            rows.append(row(t, f'X / {estado}', ink_name, ink, fundo, sem(fundo, t), NON_TEXT_FLOOR))
-        rows.append(row(t, 'X / anel de foco', 'shadow-focus-default', sem('shadow-focus-default', t),
+        for state, bg_role in (('rest', bg_name), ('hover', 'bg-hover-raised'),
+                               ('pressed', 'bg-active-raised')):
+            rows.append(row(t, f'X / {state}', ink_name, ink, bg_role, sem(bg_role, t), NON_TEXT_FLOOR))
+        rows.append(row(t, 'X / focus ring', 'shadow-focus-default', sem('shadow-focus-default', t),
                         bg_name, bg, NON_TEXT_FLOOR))
     return rows
 
 
-# ─────────────────────────────────────────────── marcacao
+# ─────────────────────────────────────────────── markup
 def shape(svg_kids):
-    """Assinatura do desenho: tag + atributos geometricos de cada filho."""
+    """Drawing signature: tag + geometric attributes of each child."""
     return [(k['tag'], tuple(sorted((a, v) for a, v in k['attrs'].items()
                                     if a not in ('class', 'style')))) for k in svg_kids]
 
@@ -171,59 +174,59 @@ def check_toast(el, problems, where):
     ln = el['line']
 
     def bad(msg):
-        problems.append(f'{where}linha {ln}: {msg}')
+        problems.append(f'{where}line {ln}: {msg}')
 
     # (d)
     mods = [s for s in STATUS if has(el, f'al-toast--{s}')]
     extra = [c for c in classes(el) if c.startswith('al-toast--') and c[10:] not in STATUS]
     if el['tag'] != 'div':
-        bad('o toast e uma <div class="al-toast">')
+        bad('the toast is a <div class="al-toast">')
     if len(mods) != 1 or extra:
-        bad(f'status {mods + extra} - um, e so um, entre success, warning, error e info (regra 26)')
+        bad(f'status {mods + extra} - one, and only one, of success, warning, error and info (rule 26)')
         return
     status = mods[0]
     label, icon = STATUS[status]
 
     kids = el['kids']
     if len(kids) != 3:
-        bad(f'{len(kids)} filhos - icone, texto e X, nada mais (regras 13, 24 e 25)')
+        bad(f'{len(kids)} children - icon, text and X, nothing else (rules 13, 24 and 25)')
         return
     ico, txt, close = kids
 
     # (e)
     ia = ico['attrs']
     if ico['tag'] != 'svg' or not {'al-icon', 'al-icon--20', 'al-toast__icon'} <= set(classes(ico)):
-        bad('primeiro filho = <svg class="al-icon al-icon--20 al-toast__icon"> (regra 13)')
+        bad('first child = <svg class="al-icon al-icon--20 al-toast__icon"> (rule 13)')
     else:
         if ia.get('role') != 'img' or ia.get('aria-label') != label or 'aria-hidden' in ia:
-            bad(f'icone de {status}: role="img" + aria-label="{label}", sem aria-hidden - '
-                f'o icone carrega o status (regra 14)')
+            bad(f'{status} icon: role="img" + aria-label="{label}", no aria-hidden - '
+                f'the icon carries the status (rule 14)')
         if shape(ico['kids']) != SHAPES[status]:
-            bad(f'icone de {status} nao e o {icon} (regra 13)')
+            bad(f'{status} icon is not {icon} (rule 13)')
 
     # (f)
     tk = txt['kids']
     if txt['tag'] != 'div' or not has(txt, 'al-toast__text'):
-        bad('segundo filho = <div class="al-toast__text">')
+        bad('second child = <div class="al-toast__text">')
     elif not tk or tk[0]['tag'] != 'p' or not has(tk[0], 'al-toast__title') or not text_of(tk[0]):
-        bad('o texto abre com <p class="al-toast__title"> com texto - o titulo e obrigatorio')
+        bad('the text opens with a <p class="al-toast__title"> with text - the title is required')
     elif len(tk) > 2 or (len(tk) == 2 and (tk[1]['tag'] != 'p' or not has(tk[1], 'al-toast__description')
                                            or not text_of(tk[1]))):
-        bad('depois do titulo, so um <p class="al-toast__description"> com texto (opcional)')
+        bad('after the title, only one <p class="al-toast__description"> with text (optional)')
 
     # (g)
     ca = close['attrs']
     if (close['tag'] != 'button' or ca.get('type') != 'button'
             or not CLOSE_CLASSES <= set(classes(close))):
-        bad('terceiro filho = <button type="button" class="al-icon-btn al-icon-btn--ghost '
-            'al-icon-btn--sm al-toast__close"> (regra 24)')
+        bad('third child = <button type="button" class="al-icon-btn al-icon-btn--ghost '
+            'al-icon-btn--sm al-toast__close"> (rule 24)')
     else:
         if ca.get('aria-label') != CLOSE_LABEL:
-            bad(f'o X se chama "{CLOSE_LABEL}" (regra 24)')
+            bad(f'the X is named "{CLOSE_LABEL}" (rule 24)')
         svgs = [k for k in close['kids'] if k['tag'] == 'svg']
         if (len(close['kids']) != 1 or len(svgs) != 1 or svgs[0]['attrs'].get('aria-hidden') != 'true'
                 or svgs[0]['attrs'].get('focusable') != 'false'):
-            bad('dentro do X, so o icone, com aria-hidden="true" focusable="false"')
+            bad('inside the X, only the icon, with aria-hidden="true" focusable="false"')
 
     # (h)
     for k in walk(el):
@@ -231,45 +234,45 @@ def check_toast(el, problems, where):
             continue
         if any(a is close for a in ancestors(k)):
             continue
-        if (k['tag'] in INTERATIVOS or 'tabindex' in k['attrs']
+        if (k['tag'] in INTERACTIVE or 'tabindex' in k['attrs']
                 or 'contenteditable' in k['attrs']):
-            bad(f'<{k["tag"]}> interativo dentro do toast - so o X (regra 25)')
+            bad(f'interactive <{k["tag"]}> inside the toast - only the X (rule 25)')
             break
     return status
 
 
 def check_region(regions, problems):
     if len(regions) != 1:
-        problems.append(f'{len(regions)} .al-toast-region no documento - tem que ser exatamente uma (regra 23)')
+        problems.append(f'{len(regions)} .al-toast-region in the document - it must be exactly one (rule 23)')
         if not regions:
             return
     for r in regions:
         a = r['attrs']
 
         def bad(msg):
-            problems.append(f'linha {r["line"]}: {msg}')
+            problems.append(f'line {r["line"]}: {msg}')
 
         # (a)
         if r['tag'] != 'section' or a.get('popover') != 'manual' or not a.get('aria-label', '').strip():
-            bad('regiao = <section class="al-toast-region" aria-label popover="manual"> (regra 23)')
-        sob = list(ancestors(r))
-        if any(x['tag'] == 'template' for x in sob):
-            bad('a regiao esta dentro de um <template> - ela existe desde o carregamento (regra 23)')
-        if any('inert' in x['attrs'] or x['attrs'].get('aria-hidden') == 'true' for x in [r] + sob):
-            bad('a regiao esta sob inert ou aria-hidden - o anuncio nao chega (regra 22)')
+            bad('region = <section class="al-toast-region" aria-label popover="manual"> (rule 23)')
+        under = list(ancestors(r))
+        if any(x['tag'] == 'template' for x in under):
+            bad('the region is inside a <template> - it exists from page load (rule 23)')
+        if any('inert' in x['attrs'] or x['attrs'].get('aria-hidden') == 'true' for x in [r] + under):
+            bad('the region is under inert or aria-hidden - the announcement does not arrive (rule 22)')
         # (b)
         roles = [k['attrs'].get('role') for k in r['kids']]
         lives = [k for k in r['kids'] if k['tag'] == 'div' and has(k, 'al-toast-region__live')]
         if len(r['kids']) != 2 or len(lives) != 2 or sorted(roles) != ['alert', 'status']:
-            bad('dentro da regiao: um __live role="status" e um role="alert", nada mais (regra 22)')
+            bad('inside the region: one __live role="status" and one role="alert", nothing else (rule 22)')
         for k in lives:
             if k['kids'] or k['text'].strip():
-                bad(f'a regiao viva role="{k["attrs"].get("role")}" nao nasce vazia - '
-                    f'mensagem que nasce junto com a regiao nao e anunciada (regra 23)')
+                bad(f'the live region role="{k["attrs"].get("role")}" is not born empty - '
+                    f'a message born together with the region is not announced (rule 23)')
 
 
 def markup_contract(html):
-    """Devolve (templates, congelados, por_status, problemas)."""
+    """Returns (templates, frozen, by_status, problems)."""
     t = Tree()
     t.feed(html)
     nodes = list(walk(t.root))
@@ -281,22 +284,22 @@ def markup_contract(html):
     for n in nodes:
         if not has(n, 'al-toast'):
             continue
-        sob = list(ancestors(n))
-        tpl = next((x for x in sob if x['tag'] == 'template'), None)
+        under = list(ancestors(n))
+        tpl = next((x for x in under if x['tag'] == 'template'), None)
         if tpl is None:
             # (i)
-            if not (any('inert' in x['attrs'] for x in sob)
-                    and any(x['attrs'].get('aria-hidden') == 'true' for x in sob)):
-                problems.append(f'linha {n["line"]}: .al-toast fora de <template> e fora de inert + '
-                                f'aria-hidden - toast parado para sempre nao existe')
+            if not (any('inert' in x['attrs'] for x in under)
+                    and any(x['attrs'].get('aria-hidden') == 'true' for x in under)):
+                problems.append(f'line {n["line"]}: .al-toast outside <template> and outside inert + '
+                                f'aria-hidden - a toast stuck forever does not exist')
             frozen += 1
-            check_toast(n, problems, 'amostra, ')
+            check_toast(n, problems, 'sample, ')
             continue
         # (c)
         live += 1
         if tpl['kids'] != [n]:
-            problems.append(f'linha {tpl["line"]}: <template id="{tpl["attrs"].get("id", "")}"> tem que '
-                            f'ter a .al-toast como unico filho - o toast.js clona o primeiro')
+            problems.append(f'line {tpl["line"]}: <template id="{tpl["attrs"].get("id", "")}"> must '
+                            f'have the .al-toast as its only child - toast.js clones the first one')
         s = check_toast(n, problems, '')
         if s:
             by_status[s] += 1
@@ -309,39 +312,39 @@ def run():
     fails = [r for r in rows if not r['pass']]
 
     print('=' * 74)
-    print('QA DE ACESSIBILIDADE DO TOAST')
+    print('TOAST ACCESSIBILITY QA')
     print('=' * 74)
     for r in fails:
-        nota = 'INVISIVEL - igual ao fundo' if r['invisible'] else 'REPROVA'
-        print(f'  XX {r["theme"]:<5} {r["what"]:<22} sobre {r["bg"]:<18} '
-              f'{r["fgHex"]} x {r["bgHex"]}  {r["ratio"]:5.2f}  {nota}')
+        note = 'INVISIBLE - equal to the background' if r['invisible'] else 'FAIL'
+        print(f'  XX {r["theme"]:<5} {r["what"]:<22} on {r["bg"]:<18} '
+              f'{r["fgHex"]} x {r["bgHex"]}  {r["ratio"]:5.2f}  {note}')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path, ROOT)}')
     by_status = {}
     if not os.path.exists(path):
-        live, frozen, mk = None, 0, [f'{path} nao existe']
+        live, frozen, mk = None, 0, [f'{path} does not exist']
     else:
         live, frozen, by_status, mk = markup_contract(open(path, encoding='utf-8').read())
         if live == 0:
-            live, mk = None, ['nenhum <template> com .al-toast no HTML - rode site.py antes']
+            live, mk = None, ['no <template> with .al-toast in the HTML - run site.py first']
     if live is None:
         for p in mk:
-            print(f'     PENDENTE: {p}')
+            print(f'     PENDING: {p}')
     else:
-        resumo = ', '.join(f'{s} {n}' for s, n in by_status.items())
-        print(f'     1 regiao + {live} template(s) conferido(s), 9 regras (a-i) - {resumo}; '
-              f'{frozen} amostra(s) congelada(s) sob inert')
+        summary = ', '.join(f'{s} {n}' for s, n in by_status.items())
+        print(f'     1 region + {live} template(s) checked, 9 rules (a-i) - {summary}; '
+              f'{frozen} frozen sample(s) under inert')
         for p in mk:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
     print('-' * 74)
-    print(f'{len(rows)} medicoes  |  passam: {len(rows) - len(fails)}  |  excecoes: 0  |  '
-          f'reprovas: {len(fails)}')
+    print(f'{len(rows)} measurements  |  pass: {len(rows) - len(fails)}  |  exceptions: 0  |  '
+          f'fail: {len(fails)}')
 
     json.dump({
         'component': 'toast',
-        'criterion': 'WCAG 1.4.3 texto + 1.4.11 nao-textual',
+        'criterion': 'WCAG 1.4.3 text + 1.4.11 non-text',
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': live,
         'markupByStatus': by_status,
@@ -350,14 +353,14 @@ def run():
         'markupProblems': mk if live is not None else [],
         'rows': rows,
     }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
-    print(f'{os.path.relpath(OUT_JSON, ROOT)} escrito')
+    print(f'{os.path.relpath(OUT_JSON, ROOT)} written')
 
-    falhou = bool(fails)
+    failed = bool(fails)
     if live is None or mk:
         print('-' * 74)
-        print(f'{len(mk)} PROBLEMA(S) DE MARCACAO - portao reprova')
-        falhou = True
-    return 1 if falhou else 0
+        print(f'{len(mk)} MARKUP PROBLEM(S) - gate fails')
+        failed = True
+    return 1 if failed else 0
 
 
 if __name__ == '__main__':

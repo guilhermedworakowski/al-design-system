@@ -1,47 +1,49 @@
 """
-Camada de tokens do Toast.
+Token layer for the Toast.
 
-Regra desta camada: nada aqui inventa valor. Todo token aponta para um token da
-Foundation pelo NOME. As UNICAS excecoes sao a largura maxima (WIDTH) e o tempo
-na tela (TIMEOUT), declarados, nomeados e travados pelo portao: a Foundation
-nao tem escala de largura de container nem de tempo de espera.
+The rule of this layer: nothing here invents a value. Every token points to a
+Foundation token by NAME. The ONLY exceptions are the maximum width (WIDTH)
+and the time on screen (TIMEOUT), declared, named and locked by the gate: the
+Foundation has no container width scale nor a wait time scale.
 
-Nomenclatura:
-  codigo -> toast-success-border   (hifen)
-  Figma  -> success/border         (collection `24. Toast`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> toast-success-border   (hyphen)
+  Figma -> success/border         (collection `24. Toast`)
+They are different layers. Never collapse one into the other.
 
-SEGUNDO COMPONENTE DO TIER 5 (08/10/2026)
+SECOND COMPONENT OF TIER 5 (2026-10-08)
 
-  Component set `Toast`, node 373:5287. 4 variantes `Status` (Success /
-  Warning / Error / Info) e o booleano da descricao. Icone 20 alinhado ao topo
-  + titulo Label/md + descricao Body/sm opcional + X (Icon Button Ghost sm).
-  Fundo bg-surface-raised, borda 1px na cor do status, raio lg, Elevation/3,
-  padding 12, gap 8, 4 entre titulo e descricao, largura maxima 380.
+  Component set `Toast`, node 373:5287. 4 `Status` variants (Success /
+  Warning / Error / Info) and the description boolean. Icon 20 aligned to the
+  top + Label/md title + optional Body/sm description + X (Ghost sm Icon
+  Button). Background bg-surface-raised, 1px border in the status color, lg
+  radius, Elevation/3, padding 12, gap 8, 4 between title and description,
+  maximum width 380.
 
-  Decisoes da etapa 1: icone no topo e 20 (1, 2), triangulo no Warning e
-  circulo com exclamacao no Error (3), descricao opcional (4), sem acao (5),
-  sem Neutral (6), Success/Info somem em 6s e Warning/Error ficam (7), um por
-  vez, canto inferior direito a 16 das bordas (8), fila (D).
+  Scope decisions: icon at the top and 20; a triangle on Warning and a circle
+  with an exclamation mark on Error; optional description; no action; no
+  Neutral; Success/Info disappear in 6s and Warning/Error stay; one at a
+  time, bottom right corner 16 from the edges; a queue.
 
-O STATUS "error" USA O SEMANTICO "danger"
+THE "error" STATUS USES THE "danger" SEMANTIC
 
-  Mesmo mapeamento do Tag: o nome do status e o do produto, a cor e a da
-  Foundation.
+  The same mapping as the Tag: the status name is the product's, the color is
+  the Foundation's.
 
-A BORDA E INSIDE
+THE BORDER IS INSIDE
 
-  No Figma o stroke nao entra no layout: 12 + 20 + 4 + 20 + 12 = 68 com a
-  borda por cima do padding. O CSS reproduz com `calc(padding - border-width)`,
-  como o Button e o Input.
+  In Figma the stroke doesn't enter the layout: 12 + 20 + 4 + 20 + 12 = 68
+  with the border over the padding. The CSS reproduces it with
+  `calc(padding - border-width)`, like the Button and the Input.
 
-SEM TOKEN, DE PROPOSITO
+NO TOKEN, ON PURPOSE
 
-  Altura: sai da conta (68 com descricao, 60 sem - o X de 36 manda). Icone:
-  `icon-size-20` direto da Foundation (regra do Tag e do Tooltip). X: e o Icon
-  Button Ghost sm; sobre bg-surface-raised o hover usa `bg-hover-raised` /
-  `bg-active-raised` (licao do Modal 0.18.1), sem token novo. Empilhamento:
-  o toast mora na top layer (popover), entao nao ha z-index.
+  Height: comes from the math (68 with a description, 60 without - the 36 X
+  rules). Icon: `icon-size-20` straight from the Foundation (rule from the Tag
+  and the Tooltip). X: it is the Ghost sm Icon Button; on bg-surface-raised
+  the hover uses `bg-hover-raised` / `bg-active-raised` (lesson from Modal
+  0.18.1), no new token. Stacking: the toast lives in the top layer
+  (popover), so there is no z-index.
 """
 import json, os, sys
 
@@ -56,15 +58,16 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
     'bg':          'bg-surface-raised',
     'title':       'text-primary',
     'description': 'text-secondary',
 }
 
-# Status -> semantico. O icone e a borda carregam o status; o icone e a pista
-# que nao depende de cor (Spectrum), a borda e decorativa e passa no 3:1 igual.
+# Status -> semantic. The icon and the border carry the status; the icon is
+# the clue that doesn't depend on color (Spectrum), the border is decorative
+# and passes 3:1 all the same.
 STATUS = {
     'success': 'success',
     'warning': 'warning',
@@ -75,19 +78,19 @@ for status, sem in STATUS.items():
     COLOR[f'{status}-icon'] = f'text-{sem}'
     COLOR[f'{status}-border'] = f'border-{sem}'
 
-# Elevacao: altura, nao estado. Mesma do Tooltip.
+# Elevation: height, not state. The same as the Tooltip.
 SHADOW = {
     'shadow': 'elevation.3',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'padding':      'space.12',
-    'gap':          'space.8',              # icone -> texto -> X
-    'text-gap':     'space.4',              # titulo -> descricao
+    'gap':          'space.8',              # icon -> text -> X
+    'text-gap':     'space.4',              # title -> description
     'radius':       'radius.lg',
     'border-width': 'border.width.1',
-    'offset':       'space.16',             # caixa -> borda da tela (decisao 8)
+    'offset':       'space.16',             # box -> screen edge
 }
 
 TYPE = {
@@ -95,45 +98,45 @@ TYPE = {
     'description-font': 'type.styles.body-sm',
 }
 
-# Movimento: popup = o que aparece pequeno por cima da tela (Tooltip e Toast).
+# Motion: popup = what appears small over the screen (Tooltip and Toast).
 MOTION = {
     'duration':     'motion.duration.popup',
     'easing-enter': 'motion.easing.enter',
     'easing-exit':  'motion.easing.exit',
 }
 
-# Excecao 1 (mesma da Sidebar, do Modal, do Drawer e do Tooltip): a Foundation
-# nao tem escala de largura de container. Maxima, nao fixa - no celular a
-# caixa encolhe ate sobrar o offset dos dois lados.
+# Exception 1 (the same as the Sidebar, the Modal, the Drawer and the Tooltip):
+# the Foundation has no container width scale. A maximum, not a fixed width -
+# on a phone the box shrinks until the offset is left on both sides.
 WIDTH = {
     'max-width': 380,
 }
 
-# Excecao 2 (decisao 7 de Gui, 08/10/2026): o tempo na tela de Success e Info
-# fica no componente, como os atrasos do Tooltip. Warning e Error nao somem.
+# Exception 2 (2026-10-08): the time on screen of Success and Info stays in the
+# component, like the Tooltip delays. Warning and Error don't disappear.
 TIMEOUT = {
     'timeout': 6000,
 }
 
 PENDING = {}
 
-# Telas sobre as quais o toast aparece. Nao sao tokens do Toast.
+# Screens the toast appears over. They are not Toast tokens.
 PAGES = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
 }
 
-# (papel, fg, fundo(s), piso, excecao)
+# (role, fg, background(s), floor, exception)
 COMBOS = [
-    ('titulo',    'title',       'bg', 4.5, None),
-    ('descricao', 'description', 'bg', 4.5, None),
+    ('title',       'title',       'bg', 4.5, None),
+    ('description', 'description', 'bg', 4.5, None),
 ]
 for status in STATUS:
-    COMBOS.append((f'{status}/icone', f'{status}-icon', 'bg', 3.0, None))
-    COMBOS.append((f'{status}/borda', f'{status}-border', ('bg', 'canvas', 'surface'), 3.0, None))
+    COMBOS.append((f'{status}/icon', f'{status}-icon', 'bg', 3.0, None))
+    COMBOS.append((f'{status}/border', f'{status}-border', ('bg', 'canvas', 'surface'), 3.0, None))
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
     return PAGES.get(role) or COLOR[role]
 
@@ -160,9 +163,9 @@ def run():
         name = f'toast-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref})')
+            problems.append(f'{name}: loose hex ({ref})')
         elif ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
         else:
             resolved[name] = {'light': SEM[ref][0], 'dark': SEM[ref][1]}
 
@@ -173,7 +176,7 @@ def run():
             v = resolve_foundation(ref)
             resolved[name] = {'light': v['light'], 'dark': v['dark']}
         except KeyError:
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for group in (GEOM, TYPE, MOTION):
         for role, ref in group.items():
@@ -182,9 +185,9 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
-    # Excecoes nomeadas: valor solto so e aceito para estes nomes.
+    # Named exceptions: a loose value is only accepted for these names.
     for role, px in WIDTH.items():
         alias[f'toast-{role}'] = f'{px}px'
         resolved[f'toast-{role}'] = px
@@ -193,7 +196,7 @@ def run():
         resolved[f'toast-{role}'] = ms
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -203,22 +206,22 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO TOAST')
+    print('TOAST TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<34} -> {alias[name]}')
     print('-' * 74)
     for r in rows:
-        tag = 'OK  ' if r['pass'] else ('EXCE' if r['exception'] else 'FALHA')
-        print(f'  {tag} {r["what"]:<34} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (piso {r["min"]})')
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
+        tag = 'OK  ' if r['pass'] else ('EXC ' if r['exception'] else 'FAIL')
+        print(f'  {tag} {r["what"]:<34} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (floor {r["min"]})')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE')
         return 1
     n_lit = len(WIDTH) + len(TIMEOUT)
-    print(f'{len(alias)} tokens: {len(alias) - n_lit} alias da Foundation, {n_lit} com valor '
-          f'declarado (largura maxima e tempo na tela).')
+    print(f'{len(alias)} tokens: {len(alias) - n_lit} aliases of the Foundation, {n_lit} with a '
+          f'declared value (maximum width and time on screen).')
 
     out = {
         'meta': {
@@ -227,12 +230,12 @@ def run():
             'foundation': FOUND['meta']['version'],
             'figmaNode': '373:5287',
             'figmaCollection': '24. Toast',
-            'nota': (
-                'Fundo bg-surface-raised, borda 1px e icone 20 na cor do status (error usa o '
-                'semantico danger), titulo Label/md, descricao Body/sm opcional, padding 12, '
-                'gap 8, raio lg, Elevation/3, largura maxima 380, a 16 das bordas da tela. '
-                'Success e Info somem em 6s (pausa em hover e foco); Warning e Error ficam. '
-                'Um por vez, em fila. Sem excecao de contraste.'
+            'note': (
+                'Background bg-surface-raised, 1px border and icon 20 in the status color (error '
+                'uses the danger semantic), Label/md title, optional Body/sm description, padding '
+                '12, gap 8, lg radius, Elevation/3, maximum width 380, 16 from the screen edges. '
+                'Success and Info disappear in 6s (paused on hover and focus); Warning and Error '
+                'stay. One at a time, in a queue. No contrast exception.'
             ),
         },
         'alias': alias,
@@ -241,7 +244,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('toast', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/toast/tokens.json escrito')
+    print('\nbuild/components/toast/tokens.json written')
     write_css(alias)
     return 0
 
@@ -250,43 +253,43 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Toast')
-    w(' * GERADO por src/components/toast/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Toast tokens')
+    w(' * GENERATED by src/components/toast/tokens.py. Do not edit by hand.')
     w(' */')
     w('')
     w(':root {')
     w('')
-    w('  /* cor - caixa e texto */')
+    w('  /* color - box and text */')
     for role in ('bg', 'title', 'description'):
         w(f'  --al-toast-{role}: {css_ref(COLOR[role])};')
     w('')
-    w('  /* cor - status: icone e borda */')
+    w('  /* color - status: icon and border */')
     for status in STATUS:
         for part in ('icon', 'border'):
             role = f'{status}-{part}'
             w(f'  --al-toast-{role}: {css_ref(COLOR[role])};')
     w('')
-    w('  /* elevacao - altura, nao estado */')
+    w('  /* elevation - height, not state */')
     for role, ref in SHADOW.items():
         w(f'  --al-toast-{role}: {css_ref(ref)};')
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-toast-{role}: {css_ref(ref)};')
     w('')
-    w('  /* largura maxima - valor declarado, sem escala na Foundation */')
+    w('  /* maximum width - declared value, no scale in the Foundation */')
     for role, px in WIDTH.items():
         w(f'  --al-toast-{role}: {px}px;')
     w('')
-    w('  /* movimento */')
+    w('  /* motion */')
     for role, ref in MOTION.items():
         w(f'  --al-toast-{role}: {css_ref(ref)};')
     w('')
-    w('  /* tempo na tela de Success e Info - valor declarado (decisao 7). Lido pelo toast.js */')
+    w('  /* time on screen of Success and Info - declared value. Read by toast.js */')
     for role, ms in TIMEOUT.items():
         w(f'  --al-toast-{role}: {ms}ms;')
     w('')
-    w('  /* tipografia - cada estilo vira quatro vars */')
+    w('  /* typography - each style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -297,11 +300,11 @@ def write_css(alias):
         w(f'  {prefix}-tracking: {style[4]};')
     w('}')
     w('')
-    texto = '\n'.join(L)
-    faltando = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in texto]
-    if faltando:
-        raise AssertionError(f'tokens fora do CSS: {faltando}')
-    save_css('toast', texto)
+    text = '\n'.join(L)
+    missing = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in text]
+    if missing:
+        raise AssertionError(f'tokens missing from the CSS: {missing}')
+    save_css('toast', text)
 
 
 if __name__ == '__main__':

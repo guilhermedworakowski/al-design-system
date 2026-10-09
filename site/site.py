@@ -11434,6 +11434,10 @@ TOOLTIP_GUIDE = f'''
 </section>'''
 
 
+TT_OQUE = {'text': 'texto', 'icon (currentColor)': 'icone (currentColor)',
+           'box on the page': 'caixa sobre a pagina'}
+
+
 def tooltip_a11y_rows():
     out = []
     for r in TTP_A11Y['rows']:
@@ -11442,7 +11446,7 @@ def tooltip_a11y_rows():
         v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["what"]}</td>'
+            f'<td class="name">{TT_OQUE[r["what"]]}</td>'
             f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
@@ -11890,6 +11894,12 @@ TOAST_GUIDE = f'''
 </section>'''
 
 
+TS_OQUE = {'title': 'titulo', 'description': 'descricao', 'X / rest': 'X / repouso',
+           'X / hover': 'X / hover', 'X / pressed': 'X / pressionado', 'X / focus ring': 'X / anel de foco'}
+TS_OQUE.update({f'{s} / {en}': f'{s} / {pt}' for s in ('success', 'warning', 'error', 'info')
+                for en, pt in (('icon', 'icone'), ('border', 'borda'))})
+
+
 def toast_a11y_rows():
     out = []
     for r in TST_A11Y['rows']:
@@ -11898,7 +11908,7 @@ def toast_a11y_rows():
         v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["what"]}</td>'
+            f'<td class="name">{TS_OQUE[r["what"]]}</td>'
             f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
@@ -12349,6 +12359,13 @@ ALERT_GUIDE = f'''
 </section>'''
 
 
+AL_OQUE = {'title': 'titulo', 'description': 'descricao', 'focus ring': 'anel de foco'}
+AL_OQUE.update({f'{s} / {en}': f'{s} / {pt}' for s in ('success', 'warning', 'danger', 'info')
+                for en, pt in (('icon', 'icone'), ('border', 'borda'))})
+AL_OQUE.update({f'{w} / {en}': f'{w} / {pt}' for w in ('X', 'Ghost')
+                for en, pt in (('rest', 'repouso'), ('hover', 'hover'), ('pressed', 'pressionado'))})
+
+
 def alert_a11y_rows():
     out = []
     for r in ALR_A11Y['rows']:
@@ -12357,7 +12374,7 @@ def alert_a11y_rows():
         v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["what"]}</td>'
+            f'<td class="name">{AL_OQUE[r["what"]]}</td>'
             f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
