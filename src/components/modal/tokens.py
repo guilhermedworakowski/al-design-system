@@ -1,40 +1,40 @@
 """
-Camada de tokens do Modal.
+Token layer for the Modal.
 
-Regra desta camada: nada aqui inventa valor. Todo token aponta para um token da
-Foundation pelo NOME. A UNICA excecao sao as tres larguras (WIDTH, abaixo), e
-ela e declarada, nomeada e travada pelo portao.
+The rule of this layer: nothing here invents a value. Every token points to a
+Foundation token by NAME. The ONLY exception is the three widths (WIDTH,
+below), and it is declared, named and locked by the gate.
 
-Nomenclatura:
-  codigo -> modal-bg                (hifen)
-  Figma  -> bg                      (collection `19. Modal`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> modal-bg                (hyphen)
+  Figma -> bg                      (collection `19. Modal`)
+They are different layers. Never collapse one into the other.
 
-QUINTO COMPONENTE DO TIER 3 (07/10/2026)
+FIFTH COMPONENT OF TIER 3 (2026-10-07)
 
-  Frame `modal`, node 305:1703, pagina `Tier 3` do Figma. 3 variantes, eixo
-  `Size` (sm 320 / md 480 / lg 640). Props: `Title`, `actions` (bool) e o slot
-  `content`. Marcacao nativa `<dialog>` com `showModal()` (decisao A). Fora por
-  escolha: botao de fechar (B - o AL exige ao menos um botao no rodape, e o
-  secundario ja fecha), divisoria entre miolo e titulo/rodape (E).
+  Frame `modal`, node 305:1703, page `Tier 3` in Figma. 3 variants, axis
+  `Size` (sm 320 / md 480 / lg 640). Props: `Title`, `actions` (bool) and the
+  `content` slot. Native `<dialog>` markup with `showModal()`. Left out on
+  purpose: a close button (AL requires at least one button in the footer, and
+  the secondary one already closes), a divider between body and title/footer.
 
 SCRIM
 
-  `bg-scrim` nasceu na Foundation para este componente (decisao D) e serve ao
-  Drawer. E o unico semantico com transparencia (#RRGGBBAA). Por isso nao entra
-  em PAIRS da Foundation: o contraste dele so existe COMPOSTO sobre a pagina, e
-  quem mede e este arquivo.
+  `bg-scrim` was born in the Foundation for this component and serves the
+  Drawer. It is the only semantic with transparency (#RRGGBBAA). That is why
+  it is not in the Foundation's PAIRS: its contrast only exists COMPOSITED on
+  the page, and this file is what measures it.
 
-SEM TOKEN, DE PROPOSITO
+NO TOKEN, ON PURPOSE
 
-  Entrada e saida: o card sobe ao abrir e desce ao fechar (Gui, 07/10/2026),
-  `modal-offset` = space.96. A Foundation nao tem escala de deslocamento de
-  movimento; o espacamento serve de alias.
+  Enter and exit: the card rises on opening and sinks on closing
+  (2026-10-07), `modal-offset` = space.96. The Foundation has no scale for
+  motion offset; the spacing serves as the alias.
 
-  Altura: hug com maximo (decisao E: so o miolo rola). Largura no celular:
-  100vw - 2 x modal-margin (decisao F/H). Botoes do rodape: tokens do Button.
-  Alinhamento das acoes: layout. Easing: easing-enter na abertura, easing-exit
-  no fechamento, direto da Foundation.
+  Height: hug with a maximum (only the body scrolls). Width on a phone:
+  100vw - 2 x modal-margin. Footer buttons: Button tokens. Action alignment:
+  layout. Easing: easing-enter on opening, easing-exit on closing, straight
+  from the Foundation.
 """
 import json, os, sys
 
@@ -50,29 +50,29 @@ from contrast import composite            # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
     'bg':     'bg-surface-raised',
     'title':  'text-primary',
-    'scrim':  'bg-scrim',               # com transparencia - ver nota SCRIM
+    'scrim':  'bg-scrim',               # with transparency - see the SCRIM note
 }
 
-# Elevacao e altura, nao estado: fica fora da camada de cor.
+# Elevation is height, not state: it stays out of the color layer.
 SHADOW = {
     'shadow': 'elevation.5',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'padding': 'space.24',
-    'gap':     'space.24',              # titulo / miolo / acoes
-    'margin':  'space.16',              # contra a borda da tela (decisao H)
-    'offset':  'space.96',              # quanto o card sobe ao abrir e desce ao fechar
+    'gap':     'space.24',              # title / body / actions
+    'margin':  'space.16',              # against the screen edge
+    'offset':  'space.96',              # how far the card rises on opening and sinks on closing
     'radius':  'radius.2xl',
 }
 
-# Movimento: o token aponta para a duracao da Foundation (panel = o que cobre
-# a tela). O easing nao vira token do componente.
+# Motion: the token points to the Foundation duration (panel = what covers
+# the screen). The easing doesn't become a component token.
 MOTION = {
     'duration': 'motion.duration.panel',
 }
@@ -81,9 +81,9 @@ TYPE = {
     'title-font': 'type.styles.heading-sm',
 }
 
-# UNICA excecao a "todo token e alias" (decisao G de Gui, 07/10/2026): a
-# Foundation nao tem escala de largura de container (o espaco acaba em 96).
-# Os valores vem do Figma. Quando a escala existir, estes tres viram alias.
+# The ONLY exception to "every token is an alias" (2026-10-07): the Foundation
+# has no container width scale (space ends at 96). The values come from Figma.
+# When the scale exists, these three become aliases.
 WIDTH = {
     'width-sm': 320,
     'width-md': 480,
@@ -91,32 +91,33 @@ WIDTH = {
 }
 
 PENDING = {
-    'card-nao-se-separa-do-scrim-no-escuro': (
-        'No escuro o card (bg-surface-raised, neutral-800) contra a pagina escurecida pelo '
-        'scrim fica em ~1.8:1, abaixo dos 3:1 do 1.4.11. Quem sustenta a separacao e o card '
-        'CLAREAR (cue primario da Foundation no escuro) mais a sombra. Subir a opacidade nao '
-        'resolve: a 72% o par vai a 1.88:1, porque o fundo ja e quase preto. Decisao G de Gui '
-        '(sem contorno no escuro) e excecao aprovada em 07/10/2026. NAO "corrigir" escurecendo.'
+    'card-not-separated-from-scrim-in-dark': (
+        'In dark the card (bg-surface-raised, neutral-800) against the page dimmed by the scrim '
+        'sits at ~1.8:1, below the 3:1 of 1.4.11. The separation is carried by the card '
+        'LIGHTENING (the Foundation\'s primary cue in dark) plus the shadow. Raising the opacity '
+        'doesn\'t solve it: at 72% the pair goes to 1.88:1, because the background is already '
+        'almost black. No outline in dark, exception approved on 2026-10-07. DO NOT "fix" it by '
+        'darkening.'
     ),
 }
 
-# Fundos sobre os quais o Modal abre. Nao sao tokens do Modal.
+# Backgrounds the Modal opens over. They are not Modal tokens.
 PAGES = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
 }
 
-# (papel, fg, bg, piso, excecao). `scrim:<pagina>` = pagina com o scrim composto.
+# (role, fg, bg, floor, exception). `scrim:<page>` = page with the scrim composited.
 COMBOS = [
-    ('titulo',                   'title', 'bg',             4.5, None),
-    ('card-na-tela-escurecida',  'bg',    'scrim:canvas',   3.0, 'card-nao-se-separa-do-scrim-no-escuro'),
-    ('card-em-superficie-escurecida', 'bg', 'scrim:surface', 3.0, 'card-nao-se-separa-do-scrim-no-escuro'),
+    ('title',                   'title', 'bg',            4.5, None),
+    ('card-on-dimmed-canvas',   'bg',    'scrim:canvas',  3.0, 'card-not-separated-from-scrim-in-dark'),
+    ('card-on-dimmed-surface',  'bg',    'scrim:surface', 3.0, 'card-not-separated-from-scrim-in-dark'),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def color_of(role, i):
-    """Cor renderizada de um papel no tema i (0 claro, 1 escuro)."""
+    """Rendered color of a role in theme i (0 light, 1 dark)."""
     if role.startswith('scrim:'):
         page = PAGES[role.split(':')[1]]
         return composite(SEM[COLOR['scrim']][i], SEM[page][i])
@@ -142,9 +143,9 @@ def run():
         name = f'modal-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref})')
+            problems.append(f'{name}: loose hex ({ref})')
         elif ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
         else:
             resolved[name] = {'light': SEM[ref][0], 'dark': SEM[ref][1]}
 
@@ -155,16 +156,16 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
-    # Excecao nomeada: valor solto so e aceito para estes tres nomes.
+    # Named exception: a loose value is only accepted for these three names.
     for role, px in WIDTH.items():
         name = f'modal-{role}'
         alias[name] = f'{px}px'
         resolved[name] = px
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -174,22 +175,22 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO MODAL')
+    print('MODAL TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<22} -> {alias[name]}')
     print('-' * 74)
     for r in rows:
-        tag = 'OK  ' if r['pass'] else ('EXCE' if r['exception'] else 'FALHA')
-        print(f'  {tag} {r["what"]:<32} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (piso {r["min"]})')
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
+        tag = 'OK  ' if r['pass'] else ('EXC ' if r['exception'] else 'FAIL')
+        print(f'  {tag} {r["what"]:<32} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (floor {r["min"]})')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE')
         return 1
     n_lit = len(WIDTH)
-    print(f'{len(alias)} tokens: {len(alias) - n_lit} alias da Foundation, {n_lit} larguras com valor '
-          f'declarado (decisao G).')
+    print(f'{len(alias)} tokens: {len(alias) - n_lit} aliases of the Foundation, {n_lit} widths with '
+          f'a declared value.')
 
     out = {
         'meta': {
@@ -199,10 +200,11 @@ def run():
             'figmaNode': '305:1703',
             'figmaCollection': '19. Modal',
             'sizes': ['sm', 'md', 'lg'],
-            'nota': (
-                '<dialog> nativo com showModal(). Fundo bg-surface-raised, sombra elevation.5, '
-                'scrim bg-scrim (novo, com transparencia). Sem botao de fechar, sem divisorias; so '
-                'o miolo rola. Tres larguras com valor declarado. Uma excecao de contraste em pending.'
+            'note': (
+                'Native <dialog> with showModal(). Background bg-surface-raised, shadow '
+                'elevation.5, scrim bg-scrim (new, with transparency). No close button, no '
+                'dividers; only the body scrolls. Three widths with a declared value. One '
+                'contrast exception in pending.'
             ),
         },
         'alias': alias,
@@ -211,7 +213,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('modal', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/modal/tokens.json escrito')
+    print('\nbuild/components/modal/tokens.json written')
     write_css(alias)
     return 0
 
@@ -220,33 +222,33 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Modal')
-    w(' * GERADO por src/components/modal/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Modal tokens')
+    w(' * GENERATED by src/components/modal/tokens.py. Do not edit by hand.')
     w(' */')
     w('')
     w(':root {')
     w('')
-    w('  /* cor - o scrim tem transparencia; o tema troca no :root */')
+    w('  /* color - the scrim has transparency; the theme switches on :root */')
     for role in COLOR:
         w(f'  --al-modal-{role}: {css_ref(COLOR[role])};')
     w('')
-    w('  /* elevacao */')
+    w('  /* elevation */')
     for role, ref in SHADOW.items():
         w(f'  --al-modal-{role}: {css_ref(ref)};')
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-modal-{role}: {css_ref(ref)};')
     w('')
-    w('  /* largura - valor declarado, sem escala na Foundation (decisao G) */')
+    w('  /* width - declared value, no scale in the Foundation */')
     for role, px in WIDTH.items():
         w(f'  --al-modal-{role}: {px}px;')
     w('')
-    w('  /* movimento - easing vem direto da Foundation */')
+    w('  /* motion - easing comes straight from the Foundation */')
     for role, ref in MOTION.items():
         w(f'  --al-modal-{role}: {css_ref(ref)};')
     w('')
-    w('  /* tipografia - um estilo vira quatro vars */')
+    w('  /* typography - one style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -257,11 +259,11 @@ def write_css(alias):
         w(f'  {prefix}-tracking: {style[4]};')
     w('}')
     w('')
-    texto = '\n'.join(L)
-    faltando = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in texto]
-    if faltando:
-        raise AssertionError(f'tokens fora do CSS: {faltando}')
-    save_css('modal', texto)
+    text = '\n'.join(L)
+    missing = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in text]
+    if missing:
+        raise AssertionError(f'tokens missing from the CSS: {missing}')
+    save_css('modal', text)
 
 
 if __name__ == '__main__':

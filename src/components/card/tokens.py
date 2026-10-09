@@ -1,71 +1,75 @@
 """
-Camada de tokens do Card.
+Token layer for the Card.
 
-Regra unica desta camada: nada aqui inventa valor. Todo token aponta para um
-token da Foundation pelo NOME. O portao no fim do arquivo recusa qualquer
-coisa que seja um valor solto - hex, px, numero.
+The one rule of this layer: nothing here invents a value. Every token points
+to a Foundation token by NAME. The gate at the end of the file rejects
+anything that is a loose value - hex, px, number.
 
-Nomenclatura:
-  codigo -> card-border-hover       (hifen)
-  Figma  -> border/hover            (collection `16. Card`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> card-border-hover       (hyphen)
+  Figma -> border/hover            (collection `16. Card`)
+They are different layers. Never collapse one into the other.
 
-SEGUNDO COMPONENTE DO TIER 3 (07/10/2026)
+SECOND COMPONENT OF TIER 3 (2026-10-07)
 
-  Component set `card`, node 302:870, pagina `Tier 3` do Figma. 36 variantes:
+  Component set `card`, node 302:870, page `Tier 3` in Figma. 36 variants:
   `Type` (Filled / Border / Elevated) x `Padding` (Spaced 24 / Default 16 /
-  Tight 8) x `Interaction` (estatico ou clicavel) x `State`. O estatico so tem
-  repouso; o clicavel tem repouso, hover e foco. Fora por escolha: card
-  selecionavel (e Radio/Checkbox), expansivel (e o Accordion), pressionado e
-  disabled (card nao se desabilita - se esconde ou se explica).
+  Tight 8) x `Interaction` (static or clickable) x `State`. The static one
+  only has rest; the clickable one has rest, hover and focus. Left out on
+  purpose: selectable card (that is Radio/Checkbox), expandable (that is the
+  Accordion), pressed and disabled (a card isn't disabled - it hides or
+  explains itself).
 
-O FUNDO E `bg-surface-raised`, NAO `bg-canvas`
+THE BACKGROUND IS `bg-surface-raised`, NOT `bg-canvas`
 
-  No claro os dois sao branco. No escuro a Foundation decidiu que a elevacao
-  aparece porque a SUPERFICIE CLAREIA (950 -> 800); a sombra e pista
-  secundaria. Com `bg-canvas` o card escuro ficava da cor da tela.
+  In light both are white. In dark the Foundation decided that elevation shows
+  because the SURFACE LIGHTENS (950 -> 800); the shadow is a secondary clue.
+  With `bg-canvas` the dark card took the color of the canvas.
 
-A BORDA E `border-default`, NAO `border-subtle`
+THE BORDER IS `border-default`, NOT `border-subtle`
 
-  Mesma licao do Divider: `border-subtle` e `bg-surface-raised` sao o mesmo
-  neutral-800 no escuro, e a borda sumia (1,00:1). O hover escurece para
-  `border-strong` (precedente Material); laranja ficou reservado ao foco, que
-  e `border-brand` + anel - o mesmo padrao do Input.
+  Same lesson as the Divider: `border-subtle` and `bg-surface-raised` are the
+  same neutral-800 in dark, and the border disappeared (1.00:1). Hover darkens
+  it to `border-strong` (precedent: Material); orange is reserved for focus,
+  which is `border-brand` + ring - the same pattern as the Input.
 
-TRES PADDINGS, NOMES QUE NAO CARREGAM O VALOR
+THREE PADDINGS, NAMES THAT DON'T CARRY THE VALUE
 
-  Spaced 24, Default 16, Tight 8. Decisao B de Gui: se a escala mudar, renomeia.
+  Spaced 24, Default 16, Tight 8. If the scale changes, rename.
 
-A BORDA E OUTSIDE - DECISAO F DE GUI
+THE BORDER IS OUTSIDE
 
-  No Figma o stroke e OUTSIDE: nao entra no layout, e os tres tipos medem igual
-  sem descontar padding. O CSS reproduz isso desenhando a borda FORA da caixa
-  (sombra de 1px ou outline), nao com `border` - e por isso nao ha
-  `calc(padding - border-width)` aqui, ao contrario do Button e do Input.
-  Os tipos sem borda NAO ganham borda transparente.
+  In Figma the stroke is OUTSIDE: it doesn't enter the layout, and the three
+  types measure the same without discounting padding. The CSS reproduces this
+  by drawing the border OUTSIDE the box (a 1px shadow or outline), not with
+  `border` - and that is why there is no `calc(padding - border-width)` here,
+  unlike the Button and the Input. The types without a border do NOT get a
+  transparent border.
 
-FOCO DO ELEVATED SOMA ANEL E SOMBRA - DECISAO D DE GUI
+ELEVATED FOCUS ADDS RING AND SHADOW
 
-  No Figma a variante so aceita um effect style e o Elevated com foco mostra
-  so o anel. No CSS o box-shadow empilha `card-ring` + `card-elevated-shadow`:
-  o card nao "afunda" ao receber foco (precedente Material). Sem token novo.
+  In Figma the variant accepts only one effect style and the focused Elevated
+  shows only the ring. In CSS the box-shadow stacks `card-ring` +
+  `card-elevated-shadow`: the card doesn't "sink" when it receives focus
+  (precedent: Material). No new token.
 
-TITULO E DESCRICAO SAO ORIENTACAO, NAO OBRIGACAO - DECISAO E DE GUI
+TITLE AND DESCRIPTION ARE GUIDANCE, NOT OBLIGATION
 
-  O card traz titulo e descricao opcionais com tokens proprios, para que a
-  familia nao se perca entre produtos (precedente Material/Spectrum). O slot
-  aceita qualquer conteudo no lugar deles.
+  The card brings an optional title and description with their own tokens, so
+  the family doesn't get lost across products (precedent: Material/Spectrum).
+  The slot accepts any content in their place.
 
-SEM TOKEN, DE PROPOSITO
+NO TOKEN, ON PURPOSE
 
-  Largura e altura: a largura e do conteiner (os 320 do Figma sao exemplo) e
-  a altura e padding + conteudo. Clicavel em repouso e identico ao estatico -
-  o que muda e marcacao e cursor. O gap de 8 do frame do card no Figma nao faz
-  nada (ele tem um filho so, o slot); o que vale e o gap de dentro do slot.
+  Width and height: the width belongs to the container (the 320 in Figma is a
+  sample) and the height is padding + content. Clickable at rest is identical
+  to static - what changes is markup and cursor. The gap of 8 on the card's
+  frame in Figma does nothing (it has a single child, the slot); what counts
+  is the gap inside the slot.
 
-DUAS EXCECOES DECLARADAS DE CONTRASTE
+TWO DECLARED CONTRAST EXCEPTIONS
 
-  Ver PENDING.
+  See PENDING.
 """
 import json, os, sys
 
@@ -80,7 +84,7 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
     'bg':           'bg-surface-raised',
 
@@ -92,8 +96,8 @@ COLOR = {
     'description':  'text-secondary',
 }
 
-# O token aponta para a SOMBRA COMPOSTA, nao para a cor crua - mesma regra do
-# `button-*-ring`. A cor so e extraida para medicao, no RING_INK abaixo.
+# The token points to the COMPOSITE SHADOW, not the raw color - same rule as
+# `button-*-ring`. The color is only extracted for measuring, in RING_INK below.
 RING = {
     'ring': 'focusRing.default',
 }
@@ -102,20 +106,20 @@ RING_INK = {
     'ring': 'shadow-focus-default',
 }
 
-# Elevacao e altura, nao estado: fica fora da camada de cor de proposito.
+# Elevation is height, not state: it stays out of the color layer on purpose.
 SHADOW = {
     'elevated-shadow':       'elevation.2',
     'elevated-shadow-hover': 'elevation.4',
     'filled-shadow-hover':   'elevation.2',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'padding-spaced':  'space.24',
     'padding-default': 'space.16',
     'padding-tight':   'space.8',
-    'gap':             'space.8',     # entre blocos dentro do slot
-    'text-gap':        'space.4',     # titulo -> descricao
+    'gap':             'space.8',     # between blocks inside the slot
+    'text-gap':        'space.4',     # title -> description
     'radius':          'radius.lg',
     'border-width':    'border.width.1',
 }
@@ -126,45 +130,46 @@ TYPE = {
 }
 
 PENDING = {
-    'borda-abaixo-de-3-1': (
-        'A borda do tipo Border usa `border-default`: 1.57:1 no claro e 1.46:1 no escuro '
-        'contra o card, e entre 1.47:1 e 2.42:1 contra as paginas. Abaixo dos 3:1 do WCAG '
-        '1.4.11. Decisao C de Gui (07/10/2026): o card se reconhece pelo conteudo, nao pela '
-        'linha. A excecao cobre linha DISCRETA, nunca invisivel - por isso nao e '
-        '`border-subtle`, que dava 1,00:1 no escuro. NAO "corrigir" escurecendo.'
+    'border-below-3-1': (
+        'The border of the Border type uses `border-default`: 1.57:1 in light and 1.46:1 in dark '
+        'against the card, and between 1.47:1 and 2.42:1 against the pages. Below the 3:1 of '
+        'WCAG 1.4.11. Decided on 2026-10-07: the card is recognized by its content, not by the '
+        'line. The exception covers a SUBTLE line, never an invisible one - that is why it is '
+        'not `border-subtle`, which gave 1.00:1 in dark. DO NOT "fix" it by darkening.'
     ),
-    'card-nao-se-separa-pelo-fundo': (
-        'O fundo do card contra a pagina: 1.00:1 sobre a tela e 1.07:1 sobre superficie no '
-        'claro; 1.66:1 e 1.36:1 no escuro. A separacao vem da borda (Border), da sombra '
-        '(Elevated) ou de colocar o Filled sobre `bg-surface` (decisao A de Gui). Quem '
-        'sustenta a excecao e a regra de uso da etapa 4: Filled nunca direto sobre a tela.'
+    'card-not-separated-by-bg': (
+        'The card background against the page: 1.00:1 on the canvas and 1.07:1 on the surface '
+        'in light; 1.66:1 and 1.36:1 in dark. The separation comes from the border (Border), '
+        'the shadow (Elevated) or placing the Filled on `bg-surface`. The exception is backed by '
+        'usage rule 2 in guidelines.md: Filled never directly on the canvas.'
     ),
 }
 
-# Fundos onde o card e colocado. Nao sao tokens do Card.
+# Backgrounds the card is placed on. They are not Card tokens.
 PAGES = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
 }
 
-# (papel, token do card, fundo(s), piso, chave da excecao em PENDING)
-# Texto mede contra o fundo do card. Borda mede contra o card E as paginas e
-# guarda a pior. Anel mede contra as paginas: e desenhado fora do card.
+# (role, card token, background(s), floor, exception key in PENDING)
+# Text measures against the card background. The border measures against the
+# card AND the pages and keeps the worst. The ring measures against the pages:
+# it is drawn outside the card.
 COMBOS = [
-    ('titulo',           'title',        'bg',                          4.5, None),
-    ('descricao',        'description',  'bg',                          4.5, None),
-    ('borda-repouso',    'border',       ('bg', 'canvas', 'surface'),   3.0, 'borda-abaixo-de-3-1'),
-    ('borda-hover',      'border-hover', ('bg', 'canvas', 'surface'),   3.0, None),
-    ('borda-foco',       'border-focus', ('bg', 'canvas', 'surface'),   3.0, None),
-    ('anel-foco',        'ring',         ('canvas', 'surface'),         3.0, None),
-    ('fundo-na-tela',    'bg',           'canvas',                      3.0, 'card-nao-se-separa-pelo-fundo'),
-    ('fundo-em-superficie', 'bg',        'surface',                     3.0, 'card-nao-se-separa-pelo-fundo'),
+    ('title',          'title',        'bg',                          4.5, None),
+    ('description',    'description',  'bg',                          4.5, None),
+    ('border-rest',    'border',       ('bg', 'canvas', 'surface'),   3.0, 'border-below-3-1'),
+    ('border-hover',   'border-hover', ('bg', 'canvas', 'surface'),   3.0, None),
+    ('border-focus',   'border-focus', ('bg', 'canvas', 'surface'),   3.0, None),
+    ('focus-ring',     'ring',         ('canvas', 'surface'),         3.0, None),
+    ('bg-on-canvas',   'bg',           'canvas',                      3.0, 'card-not-separated-by-bg'),
+    ('bg-on-surface',  'bg',           'surface',                     3.0, 'card-not-separated-by-bg'),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
-    """O semantico de cor por tras de um papel - seguindo o anel ate a cor."""
+    """The color semantic behind a role - following the ring down to the color."""
     if role in PAGES:
         return PAGES[role]
     if role in RING_INK:
@@ -173,16 +178,16 @@ def ink(role):
 
 
 def contrast_rows():
-    """Mede cada combinacao renderizada nos dois temas, cada uma contra o piso
-    que e dela: texto 4.5:1 do 1.4.3, borda, anel e fundo 3:1 do 1.4.11."""
+    """Measures each rendered combination in both themes, each against its own
+    floor: text 4.5:1 from 1.4.3, border, ring and background 3:1 from 1.4.11."""
     rows = []
     for what, fg_role, bg_spec, min_ratio, exc in COMBOS:
         fg_ref = ink(fg_role)
         bg_roles = bg_spec if isinstance(bg_spec, tuple) else (bg_spec,)
         for theme, i in (('light', 0), ('dark', 1)):
-            medidas = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
-                       for b in bg_roles]
-            ratio, bg_ref = min(medidas)
+            measures = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
+                        for b in bg_roles]
+            ratio, bg_ref = min(measures)
             rows.append({
                 'theme': theme, 'what': what,
                 'fg': fg_ref, 'bg': bg_ref,
@@ -200,10 +205,10 @@ def run():
         name = f'card-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref}) - todo valor de cor nasce alias do semantico')
+            problems.append(f'{name}: loose hex ({ref}) - every color value is born as an alias of a semantic')
             continue
         if ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
             continue
         light, dark = SEM[ref]
         resolved[name] = {'light': light, 'dark': dark}
@@ -216,7 +221,7 @@ def run():
                 v = resolve_foundation(ref)
                 resolved[name] = {'light': v['light'], 'dark': v['dark']}
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for group in (GEOM, TYPE):
         for role, ref in group.items():
@@ -225,10 +230,10 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -238,29 +243,29 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO CARD')
+    print('CARD TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<30} -> {alias[name]}')
     print('-' * 74)
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
-    limpas = [r for r in rows if r['pass']]
-    pior = min(limpas, key=lambda r: r['ratio'] / r['min'])
-    print(f'pior margem entre as que passam: {pior["what"]} ({pior["theme"]}) = '
-          f'{pior["ratio"]}:1 contra piso {pior["min"]}')
-    for chave in PENDING:
-        n = sum(1 for r in excs if r['exception'] == chave)
-        print(f'  excecao "{chave}": {n} medicoes')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
+    clean = [r for r in rows if r['pass']]
+    worst = min(clean, key=lambda r: r['ratio'] / r['min'])
+    print(f'worst margin among those that pass: {worst["what"]} ({worst["theme"]}) = '
+          f'{worst["ratio"]}:1 against floor {worst["min"]}')
+    for key in PENDING:
+        n = sum(1 for r in excs if r['exception'] == key)
+        print(f'  exception "{key}": {n} measurements')
     print('-' * 74)
 
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE:')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE:')
         for f in fails:
             print(f'    {f["what"]} ({f["theme"]}): {f["ratio"]}:1 < {f["min"]}')
         return 1
 
-    print(f'{len(alias)} tokens, todos alias da Foundation. 0 valores soltos.')
+    print(f'{len(alias)} tokens, all aliases of the Foundation. 0 loose values.')
 
     out = {
         'meta': {
@@ -272,13 +277,13 @@ def run():
             'variants': ['filled', 'border', 'elevated'],
             'sizes': ['spaced', 'default', 'tight'],
             'states': ['default', 'hover', 'focus'],
-            'nota': (
-                'Conteiner de conteudo, estatico ou clicavel. Tres tipos (Filled, Border, '
-                'Elevated) e tres paddings (24/16/8). Fundo bg-surface-raised: no escuro a '
-                'superficie clareia. Borda outside (nao entra no layout) e foco = border-brand '
-                '+ anel no Border; no Elevated o foco soma anel e sombra. Titulo e descricao '
-                'sao opcionais e substituiveis pelo slot. Duas excecoes de contraste '
-                'declaradas em pending.'
+            'note': (
+                'Content container, static or clickable. Three types (Filled, Border, '
+                'Elevated) and three paddings (24/16/8). Background bg-surface-raised: in dark '
+                'the surface lightens. Outside border (it doesn\'t enter the layout) and focus = '
+                'border-brand + ring on the Border; on the Elevated, focus adds ring and shadow. '
+                'Title and description are optional and replaceable by the slot. Two contrast '
+                'exceptions declared in pending.'
             ),
         },
         'alias': alias,
@@ -287,7 +292,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('card', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/card/tokens.json escrito')
+    print('\nbuild/components/card/tokens.json written')
     write_css(alias)
     return 0
 
@@ -296,46 +301,46 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Card')
-    w(' * GERADO por src/components/card/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Card tokens')
+    w(' * GENERATED by src/components/card/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema')
-    w(' * troca no :root - o mesmo elemento onde estes alias sao declarados.')
+    w(' * There is no theme block here: each token points to a semantic, and the')
+    w(' * theme switches on :root - the same element where these aliases are declared.')
     w(' */')
     w('')
     w(':root {')
 
     w('')
-    w('  /* fundo - o mesmo nos tres tipos */')
+    w('  /* background - the same in all three types */')
     w(f'  --al-card-bg: {css_ref(COLOR["bg"])};')
 
     w('')
-    w('  /* borda do tipo Border - laranja so no foco */')
+    w('  /* border of the Border type - orange only on focus */')
     for role in ('border', 'border-hover', 'border-focus'):
         w(f'  --al-card-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* titulo e descricao - opcionais, substituiveis pelo slot */')
+    w('  /* title and description - optional, replaceable by the slot */')
     for role in ('title', 'description'):
         w(f'  --al-card-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* anel de foco - aponta para a sombra composta, nao para a cor crua */')
+    w('  /* focus ring - points to the composite shadow, not the raw color */')
     for role, ref in RING.items():
         w(f'  --al-card-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* elevacao - altura, nao estado */')
+    w('  /* elevation - height, not state */')
     for role, ref in SHADOW.items():
         w(f'  --al-card-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-card-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* tipografia - um estilo vira quatro vars */')
+    w('  /* typography - one style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -348,17 +353,17 @@ def write_css(alias):
     w('}')
     w('')
 
-    # Trava herdada do Select: lista de grupo esquecida vira build quebrado,
-    # nao variavel faltando em silencio.
-    texto = '\n'.join(L)
-    faltando = [n for n in alias
-                if not n.endswith('-font') and f'--al-{n}:' not in texto]
-    if faltando:
+    # Lock inherited from the Select: a forgotten group list breaks the build
+    # instead of leaving a variable silently missing.
+    text = '\n'.join(L)
+    missing = [n for n in alias
+               if not n.endswith('-font') and f'--al-{n}:' not in text]
+    if missing:
         raise AssertionError(
-            'tokens fora do CSS (alguma lista de grupo em write_css nao '
-            f'foi atualizada): {faltando}')
+            'tokens missing from the CSS (some group list in write_css was not '
+            f'updated): {missing}')
 
-    save_css('card', texto)
+    save_css('card', text)
 
 
 if __name__ == '__main__':

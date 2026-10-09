@@ -1,58 +1,60 @@
 """
-QA de acessibilidade do Card.
+Accessibility QA for the Card.
 
-Como nos outros componentes, a validacao e por COMBINACAO RENDERIZADA - tipo x
-estado x tema x pagina onde o card e colocado - contra o fundo EFETIVO, nao
-par de token solto.
+As with the other components, validation is by RENDERED COMBINATION - type x
+state x theme x page the card is placed on - against the EFFECTIVE background,
+not a loose token pair.
 
-O QUE O FUNDO EFETIVO MUDA AQUI
+WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
-  O texto mede contra o fundo do card (`bg-surface-raised`), o mesmo nos tres
-  tipos. Borda, anel e o proprio card medem contra a PAGINA, e a pagina muda
-  por tipo, porque a regra de uso manda:
-    - Filled so sobre `bg-surface` (regra 2) - sobre a tela ele some;
-    - Border e Elevated sobre a tela ou sobre superficie (regras 3 e 4).
-  O anel de foco e desenhado FORA do card, sobre a pagina, com o respiro em
-  `bg-canvas` - por isso ele mede contra as duas paginas.
+  Text measures against the card background (`bg-surface-raised`), the same
+  in all three types. Border, ring and the card itself measure against the
+  PAGE, and the page changes per type, because the usage rules say so:
+    - Filled only on `bg-surface` (rule 2) - on the canvas it disappears;
+    - Border and Elevated on the canvas or on the surface (rules 3 and 4).
+  The focus ring is drawn OUTSIDE the card, on the page, with the gap in
+  `bg-canvas` - that is why it measures against both pages.
 
-TRES JULGAMENTOS
+THREE JUDGMENTS
 
-  1. Texto: piso 4,5:1 do 1.4.3. Tem que passar - sem excecao.
-  2. Borda, anel e limite do card: piso 3:1 do 1.4.11. A borda em repouso e o
-     limite pelo fundo ficam abaixo, e isso sao as excecoes declaradas
-     `borda-abaixo-de-3-1` e `card-nao-se-separa-pelo-fundo` (decisoes A e C).
-     Hover e foco tem que passar.
-  3. Card INVISIVEL - nenhuma pista separa o card da pagina: fundo igual,
-     sem borda e sem sombra. A excecao cobre card discreto, nao card que nao
-     existe. Isso reprova. O Elevated sobre a tela clara tem fundo igual mas
-     tem sombra, entao nao e invisivel; o Filled sobre a tela seria, e por
-     isso a combinacao nem entra - a regra 2 proibe.
+  1. Text: 4.5:1 floor from 1.4.3. It must pass - no exception.
+  2. Border, ring and card boundary: 3:1 floor from 1.4.11. The border at
+     rest and the boundary by background fall below, and those are the
+     declared exceptions `border-below-3-1` and `card-not-separated-by-bg`.
+     Hover and focus must pass.
+  3. INVISIBLE card - no clue separates the card from the page: same
+     background, no border and no shadow. The exception covers a subtle card,
+     not a card that doesn't exist. This fails. The Elevated on the light
+     canvas has the same background but has a shadow, so it isn't invisible;
+     the Filled on the canvas would be, and that is why the combination
+     isn't even measured - rule 2 forbids it.
 
-O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
+THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Regras de uso da etapa 4, medidas no HTML emitido:
+  Usage rules from guidelines.md, measured on the emitted HTML:
 
-    a) `.al-card__title` e um titulo de verdade, h1 a h6 (regra 11);
-    b) card clicavel tem UM `.al-card__link`, e ele mora dentro do titulo
-       (regras 13 e 16);
-    c) `.al-card__link` e `<a href>` ou `<button type="button">`, com nome
-       (regra 16);
-    d) nada clicavel alem do link dentro do card clicavel - link, botao,
-       campo, tabindex (regra 15);
-    e) o card em si nao e clicavel: nem <a>/<button>, nem onclick, nem
-       tabindex, nem role de acionavel (regra 16);
-    f) `.al-card__link` fora de card clicavel nao existe - sem o modificador
-       o link estica sem hover nem anel (regra 13);
-    g) `<li class="al-card">` so dentro de <ul>/<ol> (regra 22);
-    h) nada de card dentro de card (regra 6);
-    i) sem disabled: nem `disabled`, nem `aria-disabled` no card (regra 19);
-    j) um tipo e um padding por card - `--border` com `--elevated`, ou
-       `--spaced` com `--tight`, e marcacao contraditoria.
+    a) `.al-card__title` is a real heading, h1 to h6 (rule 11);
+    b) a clickable card has ONE `.al-card__link`, and it lives inside the
+       title (rules 13 and 16);
+    c) `.al-card__link` is `<a href>` or `<button type="button">`, with a
+       name (rule 16);
+    d) nothing clickable besides the link inside a clickable card - link,
+       button, field, tabindex (rule 15);
+    e) the card itself is not clickable: no <a>/<button>, no onclick, no
+       tabindex, no actionable role (rule 16);
+    f) `.al-card__link` outside a clickable card doesn't exist - without the
+       modifier the link stretches with no hover or ring (rule 13);
+    g) `<li class="al-card">` only inside <ul>/<ol> (rule 22);
+    h) no card inside a card (rule 6);
+    i) no disabled: neither `disabled` nor `aria-disabled` on the card
+       (rule 19);
+    j) one type and one padding per card - `--border` with `--elevated`, or
+       `--spaced` with `--tight`, is contradictory markup.
 
-ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
+RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -72,14 +74,14 @@ THEMES = ('light', 'dark')
 
 TEXT_FLOOR = 4.5          # 1.4.3
 NON_TEXT_FLOOR = 3.0      # 1.4.11
-EXC_BORDA = 'borda-abaixo-de-3-1'
-EXC_FUNDO = 'card-nao-se-separa-pelo-fundo'
+EXC_BORDER = 'border-below-3-1'
+EXC_BG = 'card-not-separated-by-bg'
 
 DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('card', 'a11y.json')
 
-# paginas onde cada tipo pode ser colocado (regras 2, 3 e 4)
-PAGINAS = {
+# pages each type can be placed on (rules 2, 3 and 4)
+PAGES = {
     'filled':   ('bg-surface',),
     'border':   ('bg-canvas', 'bg-surface'),
     'elevated': ('bg-canvas', 'bg-surface'),
@@ -90,22 +92,22 @@ ACTIONABLE_ROLES = {'button', 'link', 'checkbox', 'radio', 'switch', 'menuitem',
 
 
 def sem(name, theme):
-    """tokens.json guarda o semantico como [claro, escuro]."""
+    """tokens.json stores the semantic as [light, dark]."""
     v = SEM[name]
     return v[THEMES.index(theme)] if isinstance(v, list) else v[theme]
 
 
 def card(role, theme):
-    """Cor de um papel do Card, seguindo o alias ate o semantico."""
+    """Color of a Card role, following the alias down to the semantic."""
     return sem(ALIAS[f'card-{role}'], theme)
 
 
-# ─────────────────────────────────────────────── contraste
-def row(theme, tipo, estado, what, fg_name, fg, bg_name, bg, floor, exc=None, invisible=False):
+# ─────────────────────────────────────────────── contrast
+def row(theme, kind, state, what, fg_name, fg, bg_name, bg, floor, exc=None, invisible=False):
     ratio = round(cr(fg, bg), 2)
     ok = ratio >= floor
     return {
-        'theme': theme, 'type': tipo, 'state': estado, 'what': what,
+        'theme': theme, 'type': kind, 'state': state, 'what': what,
         'fg': fg_name, 'fgHex': fg, 'bg': bg_name, 'bgHex': bg,
         'ratio': ratio, 'floor': floor, 'pass': ok,
         'invisible': invisible,
@@ -116,56 +118,57 @@ def row(theme, tipo, estado, what, fg_name, fg, bg_name, bg, floor, exc=None, in
 def contrast_rows():
     rows = []
     for theme in THEMES:
-        fundo = card('bg', theme)
-        anel = sem('shadow-focus-default', theme)
+        bg = card('bg', theme)
+        ring = sem('shadow-focus-default', theme)
 
-        # 1. texto - o fundo do card e o mesmo nos tres tipos e nos estados
-        for papel, what in (('title', 'titulo'), ('description', 'descricao')):
-            rows.append(row(theme, 'todos', 'todos', what,
-                            ALIAS[f'card-{papel}'], card(papel, theme),
-                            'card-bg', fundo, TEXT_FLOOR))
+        # 1. text - the card background is the same in all types and states
+        for role, what in (('title', 'title'), ('description', 'description')):
+            rows.append(row(theme, 'all', 'all', what,
+                            ALIAS[f'card-{role}'], card(role, theme),
+                            'card-bg', bg, TEXT_FLOOR))
 
-        for tipo, paginas in PAGINAS.items():
-            for pagina in paginas:
-                pg = sem(pagina, theme)
+        for kind, pages in PAGES.items():
+            for page in pages:
+                pg = sem(page, theme)
 
-                # 2. limite do card em repouso
-                if tipo == 'border':
-                    borda = card('border', theme)
-                    pior = min((cr(borda, fundo), 'card-bg', fundo),
-                               (cr(borda, pg), pagina, pg))
-                    rows.append(row(theme, tipo, 'repouso', 'borda',
-                                    ALIAS['card-border'], borda, pior[1], pior[2],
-                                    NON_TEXT_FLOOR, EXC_BORDA,
-                                    invisible=borda.lower() in (fundo.lower(), pg.lower())))
+                # 2. card boundary at rest
+                if kind == 'border':
+                    border = card('border', theme)
+                    worst = min((cr(border, bg), 'card-bg', bg),
+                                (cr(border, pg), page, pg))
+                    rows.append(row(theme, kind, 'rest', 'border',
+                                    ALIAS['card-border'], border, worst[1], worst[2],
+                                    NON_TEXT_FLOOR, EXC_BORDER,
+                                    invisible=border.lower() in (bg.lower(), pg.lower())))
                 else:
-                    # sem borda: o limite e o fundo do card contra a pagina.
-                    # Elevated tem sombra, entao fundo igual nao o apaga.
-                    tem_sombra = tipo == 'elevated'
-                    rows.append(row(theme, tipo, 'repouso', 'limite-pelo-fundo',
-                                    'card-bg', fundo, pagina, pg,
-                                    NON_TEXT_FLOOR, EXC_FUNDO,
-                                    invisible=(fundo.lower() == pg.lower() and not tem_sombra)))
+                    # no border: the boundary is the card background against the
+                    # page. The Elevated has a shadow, so an equal background
+                    # doesn't erase it.
+                    has_shadow = kind == 'elevated'
+                    rows.append(row(theme, kind, 'rest', 'bg-boundary',
+                                    'card-bg', bg, page, pg,
+                                    NON_TEXT_FLOOR, EXC_BG,
+                                    invisible=(bg.lower() == pg.lower() and not has_shadow)))
 
-                # 3. hover e foco - so o Border muda a cor da borda
-                if tipo == 'border':
-                    for estado, papel in (('hover', 'border-hover'), ('foco', 'border-focus')):
-                        c = card(papel, theme)
-                        pior = min((cr(c, fundo), 'card-bg', fundo), (cr(c, pg), pagina, pg))
-                        rows.append(row(theme, tipo, estado, 'borda',
-                                        ALIAS[f'card-{papel}'], c, pior[1], pior[2],
+                # 3. hover and focus - only the Border changes the border color
+                if kind == 'border':
+                    for state, role in (('hover', 'border-hover'), ('focus', 'border-focus')):
+                        c = card(role, theme)
+                        worst = min((cr(c, bg), 'card-bg', bg), (cr(c, pg), page, pg))
+                        rows.append(row(theme, kind, state, 'border',
+                                        ALIAS[f'card-{role}'], c, worst[1], worst[2],
                                         NON_TEXT_FLOOR))
 
-                # 4. anel - fora do card, sobre a pagina; o respiro e bg-canvas
-                respiro = sem('bg-canvas', theme)
-                pior = min((cr(anel, pg), pagina, pg), (cr(anel, respiro), 'bg-canvas (respiro)', respiro))
-                rows.append(row(theme, tipo, 'foco', 'anel',
-                                'shadow-focus-default', anel, pior[1], pior[2],
+                # 4. ring - outside the card, on the page; the gap is bg-canvas
+                gap = sem('bg-canvas', theme)
+                worst = min((cr(ring, pg), page, pg), (cr(ring, gap), 'bg-canvas (gap)', gap))
+                rows.append(row(theme, kind, 'focus', 'ring',
+                                'shadow-focus-default', ring, worst[1], worst[2],
                                 NON_TEXT_FLOOR))
     return rows
 
 
-# ─────────────────────────────────────────────── marcacao
+# ─────────────────────────────────────────────── markup
 def interactive(node):
     a, tag = node['attrs'], node['tag']
     if tag == 'a' and 'href' in a:
@@ -179,7 +182,7 @@ def interactive(node):
 
 def markup_contract(path):
     if not os.path.exists(path):
-        return None, [f'{path} nao existe']
+        return None, [f'{path} does not exist']
     t = Tree()
     t.feed(open(path, encoding='utf-8').read())
 
@@ -187,95 +190,95 @@ def markup_contract(path):
     for n in walk(t.root):
         a, tag, ln = n['attrs'], n['tag'], n['line']
 
-        # (a) titulo e titulo
+        # (a) the title is a heading
         if has(n, 'al-card__title') and tag not in HEADINGS:
-            problems.append(f'linha {ln}: .al-card__title em <{tag}> - o titulo do card e '
-                            f'h1-h6 conforme a pagina, nunca paragrafo (regra 11)')
+            problems.append(f'line {ln}: .al-card__title on <{tag}> - the card title is '
+                            f'h1-h6 according to the page, never a paragraph (rule 11)')
 
-        # (f) link sem card clicavel
+        # (f) link without a clickable card
         if has(n, 'al-card__link'):
-            dono = next((p for p in ancestors(n) if has(p, 'al-card')), None)
-            if dono is None or not has(dono, 'al-card--clickable'):
-                problems.append(f'linha {ln}: .al-card__link fora de .al-card--clickable - '
-                                f'o link estica sobre o card sem hover nem anel (regra 13)')
+            owner = next((p for p in ancestors(n) if has(p, 'al-card')), None)
+            if owner is None or not has(owner, 'al-card--clickable'):
+                problems.append(f'line {ln}: .al-card__link outside .al-card--clickable - '
+                                f'the link stretches over the card with no hover or ring (rule 13)')
 
         if not has(n, 'al-card'):
             continue
         checked += 1
         cl = classes(n)
 
-        # (e) o card em si nao e acionavel
+        # (e) the card itself is not actionable
         if tag in ('a', 'button'):
-            problems.append(f'linha {ln}: .al-card em <{tag}> - o link vai no titulo e '
-                            f'estica; nunca embrulha o card (regra 16)')
+            problems.append(f'line {ln}: .al-card on <{tag}> - the link goes in the title and '
+                            f'stretches; it never wraps the card (rule 16)')
         if 'tabindex' in a:
-            problems.append(f'linha {ln}: tabindex no card - quem recebe o Tab e o link '
-                            f'do titulo (regra 16)')
+            problems.append(f'line {ln}: tabindex on the card - the title link is what '
+                            f'receives Tab (rule 16)')
         if any(k.startswith('on') for k in a):
-            problems.append(f'linha {ln}: manipulador de evento no card - use o link do '
-                            f'titulo (regra 16)')
+            problems.append(f'line {ln}: event handler on the card - use the title '
+                            f'link (rule 16)')
         if a.get('role') in ACTIONABLE_ROLES:
-            problems.append(f'linha {ln}: role="{a["role"]}" no card - o card nao e '
-                            f'acionavel, o link do titulo e (regra 16)')
+            problems.append(f'line {ln}: role="{a["role"]}" on the card - the card is not '
+                            f'actionable, the title link is (rule 16)')
 
-        # (g) item de lista
+        # (g) list item
         if tag == 'li' and n['parent']['tag'] not in ('ul', 'ol'):
-            problems.append(f'linha {ln}: <li class="al-card"> fora de <ul>/<ol> (regra 22)')
+            problems.append(f'line {ln}: <li class="al-card"> outside <ul>/<ol> (rule 22)')
 
-        # (h) card dentro de card
+        # (h) card inside a card
         if any(has(p, 'al-card') for p in ancestors(n)):
-            problems.append(f'linha {ln}: card dentro de card - subdivida com Divider ou '
-                            f'titulo (regra 6)')
+            problems.append(f'line {ln}: card inside a card - subdivide with a Divider or '
+                            f'a heading (rule 6)')
 
-        # (i) sem disabled
+        # (i) no disabled
         if 'disabled' in a or 'aria-disabled' in a:
-            problems.append(f'linha {ln}: card desabilitado - ele some ou explica no '
-                            f'conteudo (regra 19)')
+            problems.append(f'line {ln}: disabled card - it hides or explains itself in '
+                            f'the content (rule 19)')
 
-        # (j) modificadores coerentes
+        # (j) consistent modifiers
         if 'al-card--border' in cl and 'al-card--elevated' in cl:
-            problems.append(f'linha {ln}: --border e --elevated no mesmo card - um tipo so')
+            problems.append(f'line {ln}: --border and --elevated on the same card - one type only')
         if 'al-card--spaced' in cl and 'al-card--tight' in cl:
-            problems.append(f'linha {ln}: --spaced e --tight no mesmo card - um padding so')
+            problems.append(f'line {ln}: --spaced and --tight on the same card - one padding only')
 
         if 'al-card--clickable' not in cl:
             continue
 
-        # (b) um link, dentro do titulo
+        # (b) one link, inside the title
         desc = list(walk(n))
         links = [d for d in desc if has(d, 'al-card__link')]
         if len(links) != 1:
-            problems.append(f'linha {ln}: card clicavel com {len(links)} .al-card__link - '
-                            f'tem que ser exatamente um (regra 13)')
+            problems.append(f'line {ln}: clickable card with {len(links)} .al-card__link - '
+                            f'it must be exactly one (rule 13)')
         for lk in links:
             if not any(has(p, 'al-card__title') for p in ancestors(lk)):
-                problems.append(f'linha {lk["line"]}: .al-card__link fora do titulo - o '
-                                f'nome anunciado tem que ser o titulo (regra 16)')
-            # (c) elemento e nome
+                problems.append(f'line {lk["line"]}: .al-card__link outside the title - the '
+                                f'announced name must be the title (rule 16)')
+            # (c) element and name
             la = lk['attrs']
             if lk['tag'] == 'a' and 'href' not in la:
-                problems.append(f'linha {lk["line"]}: <a class="al-card__link"> sem href - '
-                                f'nao e link, nao recebe Tab (regra 16)')
+                problems.append(f'line {lk["line"]}: <a class="al-card__link"> without href - '
+                                f'it is not a link, it doesn\'t receive Tab (rule 16)')
             elif lk['tag'] == 'button' and la.get('type') != 'button':
-                problems.append(f'linha {lk["line"]}: <button class="al-card__link"> sem '
-                                f'type="button" - dentro de formulario ele enviaria (regra 16)')
+                problems.append(f'line {lk["line"]}: <button class="al-card__link"> without '
+                                f'type="button" - inside a form it would submit (rule 16)')
             elif lk['tag'] not in ('a', 'button'):
-                problems.append(f'linha {lk["line"]}: .al-card__link em <{lk["tag"]}> - '
-                                f'use <a href> ou <button type="button"> (regra 16)')
+                problems.append(f'line {lk["line"]}: .al-card__link on <{lk["tag"]}> - '
+                                f'use <a href> or <button type="button"> (rule 16)')
             if not text_of(lk) and not la.get('aria-label'):
-                problems.append(f'linha {lk["line"]}: .al-card__link sem nome (regra 16)')
+                problems.append(f'line {lk["line"]}: .al-card__link without a name (rule 16)')
 
-        # (d) nada clicavel alem do link
+        # (d) nothing clickable besides the link
         for d in desc:
             if d in links or any(d is x for lk in links for x in walk(lk)):
                 continue
             if interactive(d):
-                problems.append(f'linha {d["line"]}: <{d["tag"]}> interativo dentro de card '
-                                f'clicavel - alvo sobreposto ao link (regra 15)')
+                problems.append(f'line {d["line"]}: interactive <{d["tag"]}> inside a clickable '
+                                f'card - target overlapping the link (rule 15)')
 
     if checked == 0:
-        return None, ['nenhum .al-card no HTML - o componente entra no site na '
-                      'etapa 7; ate la este portao fica PENDENTE']
+        return None, ['no .al-card in the HTML - the component enters the site with '
+                      'its playground; until then this gate stays pending']
     return checked, problems
 
 
@@ -285,43 +288,43 @@ def run():
     invis = [r for r in rows if r['invisible']]
     fails = [r for r in rows if not r['pass'] and not r['exception'] and not r['invisible']]
     excs = [r for r in rows if r['exception']]
-    passa = [r for r in rows if r['pass']]
+    passing = [r for r in rows if r['pass']]
 
     checked, mk = markup_contract(path)
 
     print('=' * 78)
-    print('QA DE ACESSIBILIDADE DO CARD')
+    print('CARD ACCESSIBILITY QA')
     print('=' * 78)
-    print('\nCOMBINACOES RENDERIZADAS (tema x tipo x estado x pagina)')
+    print('\nRENDERED COMBINATIONS (theme x type x state x page)')
     for r in rows:
         if r['invisible']:
-            mark, nota = 'XX', 'INVISIVEL - nada separa o card da pagina'
+            mark, note = 'XX', 'INVISIBLE - nothing separates the card from the page'
         elif r['pass']:
-            mark, nota = 'ok', 'passa'
+            mark, note = 'ok', 'pass'
         elif r['exception']:
-            mark, nota = '~~', f'excecao "{r["exception"]}"'
+            mark, note = '~~', f'exception "{r["exception"]}"'
         else:
-            mark, nota = 'XX', 'REPROVA'
+            mark, note = 'XX', 'FAIL'
         print(f'  {mark} {r["theme"]:<5} {r["type"]:<8} {r["state"]:<7} {r["what"]:<17} '
-              f'x {r["bg"]:<19} {r["ratio"]:5.2f} (piso {r["floor"]})  {nota}')
+              f'x {r["bg"]:<19} {r["ratio"]:5.2f} (floor {r["floor"]})  {note}')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path, ROOT)}')
     if checked is None:
         for p in mk:
-            print(f'     PENDENTE: {p}')
+            print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} card(s) conferido(s), 10 regras (a-j)')
+        print(f'     {checked} card(s) checked, 10 rules (a-j)')
         for p in mk:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
     print('-' * 78)
-    print(f'{len(rows)} medicoes  |  passam: {len(passa)}  |  excecoes: {len(excs)}  |  '
-          f'reprovas: {len(fails) + len(invis)}')
+    print(f'{len(rows)} measurements  |  pass: {len(passing)}  |  exceptions: {len(excs)}  |  '
+          f'fail: {len(fails) + len(invis)}')
 
     json.dump({
         'component': 'card',
-        'criterion': 'WCAG 1.4.3 texto + 1.4.11 nao-textual + card visivel',
+        'criterion': 'WCAG 1.4.3 text + 1.4.11 non-text + visible card',
         'floors': {'text': TEXT_FLOOR, 'nonText': NON_TEXT_FLOOR},
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': checked,
@@ -329,20 +332,20 @@ def run():
         'markupProblems': mk if checked is not None else [],
         'rows': rows,
     }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
-    print(f'{os.path.relpath(OUT_JSON, ROOT)} escrito')
+    print(f'{os.path.relpath(OUT_JSON, ROOT)} written')
 
-    falhou = False
+    failed = False
     if invis or fails:
         print('-' * 78)
-        print(f'{len(invis) + len(fails)} COMBINACAO(OES) REPROVAM:')
+        print(f'{len(invis) + len(fails)} COMBINATION(S) FAIL:')
         for r in invis + fails:
             print(f'   {r["theme"]} {r["type"]} {r["state"]} {r["what"]} x {r["bg"]}: {r["ratio"]}:1')
-        falhou = True
+        failed = True
     if checked is not None and mk:
         print('-' * 78)
-        print(f'{len(mk)} PROBLEMA(S) DE MARCACAO - portao reprova')
-        falhou = True
-    return 1 if falhou else 0
+        print(f'{len(mk)} MARKUP PROBLEM(S) - gate fails')
+        failed = True
+    return 1 if failed else 0
 
 
 if __name__ == '__main__':

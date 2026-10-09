@@ -1,57 +1,57 @@
 """
-Camada de tokens do Tab.
+Token layer for the Tab.
 
-Regra unica desta camada: nada aqui inventa valor. Todo token aponta para um
-token da Foundation pelo NOME. O portao no fim do arquivo recusa qualquer
-coisa que seja um valor solto - hex, px, numero.
+The one rule of this layer: nothing here invents a value. Every token points
+to a Foundation token by NAME. The gate at the end of the file rejects
+anything that is a loose value - hex, px, number.
 
-Nomenclatura:
-  codigo -> tab-line-indicator-selected   (hifen)
-  Figma  -> line/indicator/selected       (collection `17. Tab`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> tab-line-indicator-selected   (hyphen)
+  Figma -> line/indicator/selected       (collection `17. Tab`)
+They are different layers. Never collapse one into the other.
 
-TERCEIRO COMPONENTE DO TIER 3 (07/10/2026)
+THIRD COMPONENT OF TIER 3 (2026-10-07)
 
-  Component set `tab`, node 306:2532, pagina `Tier 3` do Figma. 16 variantes:
+  Component set `tab`, node 306:2532, page `Tier 3` in Figma. 16 variants:
   `Type` (Line / Square) x `State` (Default / Hover / Pressed / Focus) x
-  `Selected`. Um tamanho. Fora por escolha: disabled (decisao D de Gui - aba
-  indisponivel sai da tela), icone, contador, rolagem, vertical, fechar.
+  `Selected`. One size. Left out on purpose: disabled (an unavailable tab
+  leaves the screen), icon, counter, scrolling, vertical, close.
 
-  Uso principal e trocar conteudo na mesma tela (tablist/tab/tabpanel), mas o
-  Tab tambem monta sidebar e navbar com links (decisao E). O visual e o mesmo;
-  a marcacao muda - isso e da etapa 5, nao desta camada.
+  The main use is switching content on the same screen (tablist/tab/tabpanel),
+  but the Tab also builds sidebars and navbars with links. The look is the
+  same; the markup changes - that belongs to the CSS, not to this layer.
 
-O LINE MARCA A SELECAO PELA LINHA, NAO PELO TEXTO - DECISAO A DE GUI
+LINE MARKS THE SELECTION WITH THE LINE, NOT THE TEXT
 
-  Selecionado, o rotulo e `text-primary` como o hover; quem diz "esta aqui" e
-  a linha laranja (precedente Primer e Material secundario). Isso tambem
-  resolveu o pressed escuro: `text-brand` sobre `bg-active` dava 3,34:1.
+  Selected, the label is `text-primary` like the hover; what says "you are
+  here" is the orange line (precedent: Primer and secondary Material). This
+  also solved the dark pressed state: `text-brand` on `bg-active` gave 3.34:1.
 
-A LINHA FICA NA ABA, NAO NO GRUPO - DECISAO B DE GUI
+THE LINE BELONGS TO THE TAB, NOT TO THE GROUP
 
-  Cada aba desenha a propria linha (cinza ou laranja). As abas ficam coladas,
-  sem gap, e o espaco entre rotulos vem do padding de cada uma.
+  Each tab draws its own line (gray or orange). Tabs sit flush, with no gap,
+  and the space between labels comes from each tab's padding.
 
-O SQUARE SELECIONADO E TONAL, E ESCURECE NA MARCA AO INTERAGIR
+THE SELECTED SQUARE IS TONAL, AND DARKENS INTO THE BRAND ON INTERACTION
 
-  Repouso e foco: `bg-brand-subtle` + `text-brand`. Hover: `bg-brand-hover` e
-  pressed: `bg-brand-active`, os dois com `text-on-brand` - os mesmos
-  semanticos de marca do Button (decisoes C, F, G de Gui).
+  Rest and focus: `bg-brand-subtle` + `text-brand`. Hover: `bg-brand-hover`
+  and pressed: `bg-brand-active`, both with `text-on-brand` - the same brand
+  semantics as the Button.
 
-FOCO E O REPOUSO MAIS O ANEL
+FOCUS IS REST PLUS THE RING
 
-  Sem fundo de hover. No Figma as variantes de foco sem fundo levam
-  `bg/canvas` so para o Figma projetar o anel (preenchimento com opacidade 0
-  nao projeta - testado); no CSS o fundo continua transparente.
+  No hover background. In Figma the focus variants without a background use
+  `bg/canvas` only so Figma can project the ring (a fill at opacity 0 doesn't
+  project - tested); in CSS the background stays transparent.
 
-SEM TOKEN, DE PROPOSITO
+NO TOKEN, ON PURPOSE
 
-  Altura: Square 32 = 4 + 24 + 4; Line 42 = 32 + 8 + 2. Largura: o rotulo.
-  Fundo em repouso: transparente, nao ha o que tokenizar. Gap entre abas: zero.
+  Height: Square 32 = 4 + 24 + 4; Line 42 = 32 + 8 + 2. Width: the label.
+  Resting background: transparent, nothing to tokenize. Gap between tabs: zero.
 
-QUATRO EXCECOES DECLARADAS DE CONTRASTE
+FOUR DECLARED CONTRAST EXCEPTIONS
 
-  Ver PENDING.
+  See PENDING.
 """
 import json, os, sys
 
@@ -66,9 +66,9 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
-    # os dois tipos, aba nao selecionada
+    # both types, tab not selected
     'label':        'text-secondary',
     'label-hover':  'text-primary',
     'label-active': 'text-primary',
@@ -80,7 +80,7 @@ COLOR = {
     'line-indicator':          'border-subtle',
     'line-indicator-selected': 'border-brand',
 
-    # Square selecionado
+    # selected Square
     'square-bg-selected':           'bg-brand-subtle',
     'square-label-selected':        'text-brand',
     'square-bg-selected-hover':     'bg-brand-hover',
@@ -89,8 +89,8 @@ COLOR = {
     'square-label-selected-active': 'text-on-brand',
 }
 
-# O token aponta para a SOMBRA COMPOSTA, nao para a cor crua - mesma regra do
-# `button-*-ring`. A cor so e extraida para medicao, no RING_INK abaixo.
+# The token points to the COMPOSITE SHADOW, not the raw color - same rule as
+# `button-*-ring`. The color is only extracted for measuring, in RING_INK below.
 RING = {
     'ring': 'focusRing.default',
 }
@@ -99,75 +99,75 @@ RING_INK = {
     'ring': 'shadow-focus-default',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'padding-x':            'space.12',
     'padding-y':            'space.4',
     'radius':               'radius.lg',
-    'line-gap':             'space.8',          # caixa do rotulo -> linha
+    'line-gap':             'space.8',          # label box -> line
     'line-indicator-width': 'border.width.2',
 }
 
 TYPE = {
-    'label-font': 'type.styles.body-md',   # 'font' gerava --al-tab-line-height, lido como tipo Line
+    'label-font': 'type.styles.body-md',   # 'font' produced --al-tab-line-height, read as the Line type
 }
 
 PENDING = {
-    'trilho-decorativo': (
-        'A linha cinza do Line (`border-subtle`) da 1.32:1 no claro e 1.66:1 no escuro contra '
-        'a tela, e menos sobre superficie. Ela nao carrega estado: a selecao e a linha laranja '
-        '(`border-brand`), que passa 3:1 em todo fundo. Mesmo raciocinio do Divider. NAO '
-        '"corrigir" escurecendo.'
+    'decorative-track': (
+        'The gray line of the Line (`border-subtle`) gives 1.32:1 in light and 1.66:1 in dark '
+        'against the canvas, and less on the surface. It carries no state: the selection is the '
+        'orange line (`border-brand`), which passes 3:1 on every background. Same reasoning as '
+        'the Divider. DO NOT "fix" it by darkening.'
     ),
-    'selecao-tonal': (
-        'O fundo do Square selecionado (`bg-brand-subtle`) mal se separa da pagina: 1.16:1 / '
-        '1.08:1 no claro e 1.01:1 / 1.23:1 no escuro (tela / superficie). No escuro o rotulo '
-        'laranja e o cinza das outras abas tem quase a mesma luminancia (1.05:1) - a selecao '
-        'e marcada pelo matiz. Decisao H de Gui (07/10/2026, opcao a), tomada sabendo disso. '
-        'Quem sustenta: regra de uso da etapa 4.'
+    'tonal-selection': (
+        'The background of the selected Square (`bg-brand-subtle`) barely separates from the '
+        'page: 1.16:1 / 1.08:1 in light and 1.01:1 / 1.23:1 in dark (canvas / surface). In dark '
+        'mode the orange label and the gray of the other tabs have almost the same luminance '
+        '(1.05:1) - the selection is marked by hue. Accepted knowing this (2026-10-07). '
+        'Backed by usage rule 25 in guidelines.md.'
     ),
-    'pressed-na-superficie-escura': (
-        'O fundo do Square selecionado PRESSIONADO (`bg-brand-active`) contra `bg-surface` no '
-        'escuro = 2.74:1. E o numero que a decisao H cobria quando a selecionada era toda '
-        'brand-active; Gui aceitou H(a) e reconfirmou na etapa 6 (07/10/2026). O estado so dura '
-        'enquanto o clique esta apertado, a selecao aparece antes e depois, e o rotulo dentro '
-        'passa (5.30:1). Sobre a tela escura passa (3.35:1). NAO escurecer o semantico.'
+    'pressed-on-dark-surface': (
+        'The background of the selected Square while PRESSED (`bg-brand-active`) against '
+        '`bg-surface` in dark = 2.74:1. Accepted with the tonal selection and confirmed again in '
+        'QA (2026-10-07). The state only lasts while the click is held, the selection shows '
+        'before and after, and the label inside passes (5.30:1). On the dark canvas it passes '
+        '(3.35:1). DO NOT darken the semantic.'
     ),
-    'marca-no-hover-escuro': (
-        'Branco sobre `bg-brand-hover` no escuro = 3.85:1. E a excecao de marca que a '
-        'Foundation ja declara (dark text-on-brand / bg-brand-hover), herdada do Button, com '
-        'piso rigido de 3:1. No claro passa (5.30:1).'
+    'brand-on-dark-hover': (
+        'White on `bg-brand-hover` in dark = 3.85:1. It is the brand exception the Foundation '
+        'already declares (dark text-on-brand / bg-brand-hover), inherited from the Button, with '
+        'a hard floor of 3:1. In light it passes (5.30:1).'
     ),
 }
 
-# Fundos onde o tab e colocado. Nao sao tokens do Tab.
+# Backgrounds the tab is placed on. They are not Tab tokens.
 PAGES = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
 }
 
-# (papel, token do tab, fundo(s), piso, chave da excecao em PENDING)
-# Rotulo sem fundo proprio mede contra as paginas. Linha, fundo selecionado e
-# anel medem contra as paginas e guardam a pior.
+# (role, tab token, background(s), floor, exception key in PENDING)
+# A label with no background of its own measures against the pages. Line,
+# selected background and ring measure against the pages and keep the worst.
 COMBOS = [
-    ('rotulo-repouso',               'label',                        ('canvas', 'surface'), 4.5, None),
-    ('rotulo-hover',                 'label-hover',                  'bg-hover',            4.5, None),
-    ('rotulo-pressed',               'label-active',                 'bg-active',           4.5, None),
-    ('line-rotulo-selecionado',      'line-label-selected',          ('canvas', 'surface'), 4.5, None),
-    ('line-indicador-selecionado',   'line-indicator-selected',      ('canvas', 'surface'), 3.0, None),
-    ('line-trilho',                  'line-indicator',               ('canvas', 'surface'), 3.0, 'trilho-decorativo'),
-    ('square-rotulo-selecionado',    'square-label-selected',        'square-bg-selected',  4.5, None),
-    ('square-rotulo-sel-hover',      'square-label-selected-hover',  'square-bg-selected-hover', 4.5, 'marca-no-hover-escuro'),
-    ('square-rotulo-sel-pressed',    'square-label-selected-active', 'square-bg-selected-active', 4.5, None),
-    ('square-fundo-selecionado',     'square-bg-selected',           ('canvas', 'surface'), 3.0, 'selecao-tonal'),
-    ('square-fundo-sel-pressed',     'square-bg-selected-active',    ('canvas', 'surface'), 3.0, 'pressed-na-superficie-escura'),
-    ('anel-foco',                    'ring',                         ('canvas', 'surface'), 3.0, None),
+    ('label-rest',                   'label',                        ('canvas', 'surface'), 4.5, None),
+    ('label-hover',                  'label-hover',                  'bg-hover',            4.5, None),
+    ('label-pressed',                'label-active',                 'bg-active',           4.5, None),
+    ('line-label-selected',          'line-label-selected',          ('canvas', 'surface'), 4.5, None),
+    ('line-indicator-selected',      'line-indicator-selected',      ('canvas', 'surface'), 3.0, None),
+    ('line-track',                   'line-indicator',               ('canvas', 'surface'), 3.0, 'decorative-track'),
+    ('square-label-selected',        'square-label-selected',        'square-bg-selected',  4.5, None),
+    ('square-label-sel-hover',       'square-label-selected-hover',  'square-bg-selected-hover', 4.5, 'brand-on-dark-hover'),
+    ('square-label-sel-pressed',     'square-label-selected-active', 'square-bg-selected-active', 4.5, None),
+    ('square-bg-selected',           'square-bg-selected',           ('canvas', 'surface'), 3.0, 'tonal-selection'),
+    ('square-bg-sel-pressed',        'square-bg-selected-active',    ('canvas', 'surface'), 3.0, 'pressed-on-dark-surface'),
+    ('focus-ring',                   'ring',                         ('canvas', 'surface'), 3.0, None),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
-    """O semantico de cor por tras de um papel - seguindo o anel ate a cor."""
+    """The color semantic behind a role - following the ring down to the color."""
     if role in PAGES:
         return PAGES[role]
     if role in RING_INK:
@@ -176,16 +176,16 @@ def ink(role):
 
 
 def contrast_rows():
-    """Mede cada combinacao renderizada nos dois temas, cada uma contra o piso
-    que e dela: texto 4.5:1 do 1.4.3, borda, anel e fundo 3:1 do 1.4.11."""
+    """Measures each rendered combination in both themes, each against its own
+    floor: text 4.5:1 from 1.4.3, border, ring and background 3:1 from 1.4.11."""
     rows = []
     for what, fg_role, bg_spec, min_ratio, exc in COMBOS:
         fg_ref = ink(fg_role)
         bg_roles = bg_spec if isinstance(bg_spec, tuple) else (bg_spec,)
         for theme, i in (('light', 0), ('dark', 1)):
-            medidas = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
+            measures = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
                        for b in bg_roles]
-            ratio, bg_ref = min(medidas)
+            ratio, bg_ref = min(measures)
             rows.append({
                 'theme': theme, 'what': what,
                 'fg': fg_ref, 'bg': bg_ref,
@@ -203,10 +203,10 @@ def run():
         name = f'tab-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref}) - todo valor de cor nasce alias do semantico')
+            problems.append(f'{name}: loose hex ({ref}) - every color value is born as an alias of a semantic')
             continue
         if ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
             continue
         light, dark = SEM[ref]
         resolved[name] = {'light': light, 'dark': dark}
@@ -219,7 +219,7 @@ def run():
                 v = resolve_foundation(ref)
                 resolved[name] = {'light': v['light'], 'dark': v['dark']}
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for group in (GEOM, TYPE):
         for role, ref in group.items():
@@ -228,10 +228,10 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -241,29 +241,29 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO TAB')
+    print('TAB TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<30} -> {alias[name]}')
     print('-' * 74)
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
-    limpas = [r for r in rows if r['pass']]
-    pior = min(limpas, key=lambda r: r['ratio'] / r['min'])
-    print(f'pior margem entre as que passam: {pior["what"]} ({pior["theme"]}) = '
-          f'{pior["ratio"]}:1 contra piso {pior["min"]}')
-    for chave in PENDING:
-        n = sum(1 for r in excs if r['exception'] == chave)
-        print(f'  excecao "{chave}": {n} medicoes')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
+    clean = [r for r in rows if r['pass']]
+    worst = min(clean, key=lambda r: r['ratio'] / r['min'])
+    print(f'worst margin among those that pass: {worst["what"]} ({worst["theme"]}) = '
+          f'{worst["ratio"]}:1 against floor {worst["min"]}')
+    for key in PENDING:
+        n = sum(1 for r in excs if r['exception'] == key)
+        print(f'  exception "{key}": {n} measurements')
     print('-' * 74)
 
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE:')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE:')
         for f in fails:
             print(f'    {f["what"]} ({f["theme"]}): {f["ratio"]}:1 < {f["min"]}')
         return 1
 
-    print(f'{len(alias)} tokens, todos alias da Foundation. 0 valores soltos.')
+    print(f'{len(alias)} tokens, all aliases of the Foundation. 0 loose values.')
 
     out = {
         'meta': {
@@ -276,11 +276,12 @@ def run():
             'sizes': [],
             'states': ['default', 'hover', 'pressed', 'focus'],
             'selected': [False, True],
-            'nota': (
-                'Aba para trocar conteudo na mesma tela (e, com links, montar sidebar/navbar). '
-                'Line marca a selecao pela linha laranja, rotulo text-primary. Square selecionado '
-                'e tonal em repouso e escurece na marca no hover/pressed. Foco = repouso + anel. '
-                'Um tamanho, sem disabled. Quatro excecoes de contraste declaradas em pending.'
+            'note': (
+                'Tab for switching content on the same screen (and, with links, building a '
+                'sidebar/navbar). Line marks the selection with the orange line, label '
+                'text-primary. The selected Square is tonal at rest and darkens into the brand on '
+                'hover/pressed. Focus = rest + ring. One size, no disabled. Four contrast '
+                'exceptions declared in pending.'
             ),
         },
         'alias': alias,
@@ -289,7 +290,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('tab', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/tab/tokens.json escrito')
+    print('\nbuild/components/tab/tokens.json written')
     write_css(alias)
     return 0
 
@@ -298,44 +299,44 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Tab')
-    w(' * GERADO por src/components/tab/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Tab tokens')
+    w(' * GENERATED by src/components/tab/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema')
-    w(' * troca no :root - o mesmo elemento onde estes alias sao declarados.')
+    w(' * There is no theme block here: each token points to a semantic, and the')
+    w(' * theme switches on :root - the same element where these aliases are declared.')
     w(' */')
     w('')
     w(':root {')
 
     w('')
-    w('  /* os dois tipos, aba nao selecionada - hover e pressed escurecem o rotulo */')
+    w('  /* both types, tab not selected - hover and pressed darken the label */')
     for role in ('label', 'label-hover', 'label-active', 'bg-hover', 'bg-active'):
         w(f'  --al-tab-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* Line - a linha e de cada aba; a laranja e quem marca a selecao */')
+    w('  /* Line - each tab owns its line; the orange one marks the selection */')
     for role in ('line-label-selected', 'line-indicator', 'line-indicator-selected'):
         w(f'  --al-tab-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* Square selecionado - tonal em repouso, marca no hover e no pressed */')
+    w('  /* selected Square - tonal at rest, brand on hover and pressed */')
     for role in ('square-bg-selected', 'square-label-selected',
                  'square-bg-selected-hover', 'square-label-selected-hover',
                  'square-bg-selected-active', 'square-label-selected-active'):
         w(f'  --al-tab-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* anel de foco - aponta para a sombra composta, nao para a cor crua */')
+    w('  /* focus ring - points to the composite shadow, not the raw color */')
     for role, ref in RING.items():
         w(f'  --al-tab-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-tab-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* tipografia - um estilo vira quatro vars */')
+    w('  /* typography - one style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -348,17 +349,17 @@ def write_css(alias):
     w('}')
     w('')
 
-    # Trava herdada do Select: lista de grupo esquecida vira build quebrado,
-    # nao variavel faltando em silencio.
-    texto = '\n'.join(L)
-    faltando = [n for n in alias
-                if not n.endswith('-font') and f'--al-{n}:' not in texto]
-    if faltando:
+    # Lock inherited from the Select: a forgotten group list breaks the build
+    # instead of leaving a variable silently missing.
+    text = '\n'.join(L)
+    missing = [n for n in alias
+               if not n.endswith('-font') and f'--al-{n}:' not in text]
+    if missing:
         raise AssertionError(
-            'tokens fora do CSS (alguma lista de grupo em write_css nao '
-            f'foi atualizada): {faltando}')
+            'tokens missing from the CSS (some group list in write_css was not '
+            f'updated): {missing}')
 
-    save_css('tab', texto)
+    save_css('tab', text)
 
 
 if __name__ == '__main__':

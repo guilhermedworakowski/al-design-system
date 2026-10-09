@@ -1,75 +1,81 @@
 /* AL Design System - Card
- * Escrito a mao. Depende de al-foundation.css e al-card-tokens.css, nesta
- * ordem.
+ * Written by hand. Depends on al-foundation.css and al-card-tokens.css, in
+ * that order.
  *
- * Nenhum valor aqui e literal: cor, espaco, raio, sombra e tipografia entram
- * por var(--al-card-*). O check.py ao lado recusa o arquivo se algum escapar.
- * Duracao e curva da transicao sao tokens de
- * motion; o bloco ENTRADA, perto do fim, troca a curva nos estados de destino.
+ * No value here is literal: color, space, radius, shadow and typography come
+ * in through var(--al-card-*). The check.py next to it rejects the file if any
+ * escapes. Transition duration and curve are motion tokens; the ENTER block,
+ * near the end, swaps the curve on the destination states.
  *
- * CONTRATO DE MARCACAO
+ * MARKUP CONTRACT
  *
- *   estatico (Filled, Default):
+ *   static (Filled, Default):
  *     <div class="al-card">
  *       <div class="al-card__header">
- *         <h3 class="al-card__title">Pedido #1042</h3>
- *         <p class="al-card__description">Entregue em 3 de outubro.</p>
+ *         <h3 class="al-card__title">Order #1042</h3>
+ *         <p class="al-card__description">Delivered on October 3.</p>
  *       </div>
- *       ...qualquer conteudo, inclusive botoes no fim (regra 12)
+ *       ...any content, including buttons at the end (rule 12)
  *     </div>
  *
- *   clicavel (regras 13 a 17) - link real NO TITULO, esticado sobre o card:
+ *   clickable (rules 13 to 17) - a real link IN THE TITLE, stretched over the card:
  *     <div class="al-card al-card--border al-card--clickable">
  *       <div class="al-card__header">
  *         <h3 class="al-card__title">
- *           <a class="al-card__link" href="/pedidos/1042">Pedido #1042</a>
+ *           <a class="al-card__link" href="/orders/1042">Order #1042</a>
  *         </h3>
- *         <p class="al-card__description">Entregue em 3 de outubro.</p>
+ *         <p class="al-card__description">Delivered on October 3.</p>
  *       </div>
  *     </div>
- *     Nada clicavel alem do link (regra 15). Acao que nao navega troca o
- *     <a> por <button class="al-card__link" type="button"> (regra 16).
+ *     Nothing clickable besides the link (rule 15). An action that doesn't
+ *     navigate swaps the <a> for <button class="al-card__link" type="button">
+ *     (rule 16).
  *
- *   lista de cards (regra 22): <ul> com <li class="al-card">.
+ *   list of cards (rule 22): <ul> with <li class="al-card">.
  *
- *   modificadores - tipo:    (nenhum) = Filled | --border | --elevated
- *                   padding: --spaced (24) | (nenhum) = Default (16) | --tight (8)
+ *   modifiers - type:    (none) = Filled | --border | --elevated
+ *               padding: --spaced (24) | (none) = Default (16) | --tight (8)
  *
- * TITULO E DESCRICAO SAO OPCIONAIS (DECISAO E)
- *   `__header`, `__title` e `__description` sao orientacao: o card aceita
- *   qualquer conteudo no lugar deles. O nivel do titulo (h2, h3...) e da
- *   pagina, nunca do componente (regra 11) - por isso a classe nao prende tag.
+ * TITLE AND DESCRIPTION ARE OPTIONAL
+ *   `__header`, `__title` and `__description` are guidance: the card accepts
+ *   any content in their place. The title level (h2, h3...) belongs to the
+ *   page, never to the component (rule 11) - that is why the class doesn't
+ *   pin a tag.
  *
- * A BORDA E OUTSIDE (DECISAO F)
- *   No Figma o stroke do Border e OUTSIDE: nao entra no layout. Aqui a borda e
- *   uma sombra de 1px sem desfoque, desenhada FORA da caixa - os tres tipos
- *   medem igual e o padding nao desconta nada. Por isso nao ha `border` nem
- *   `calc(padding - border-width)`, ao contrario do Button e do Input.
+ * THE BORDER IS OUTSIDE
+ *   In Figma the Border's stroke is OUTSIDE: it doesn't enter the layout. Here
+ *   the border is a 1px shadow with no blur, drawn OUTSIDE the box - the three
+ *   types measure the same and the padding discounts nothing. That is why
+ *   there is no `border` nor `calc(padding - border-width)`, unlike the Button
+ *   and the Input.
  *
- * UMA PROPRIEDADE, TRES CAMADAS
- *   Borda, anel de foco e elevacao sao todos box-shadow. Para nenhum estado
- *   apagar o outro, cada um vive numa variavel interna e o box-shadow as
- *   empilha numa ordem fixa: borda por cima, anel no meio, elevacao embaixo.
- *   Com a borda por cima do respiro do anel, o foco do Border fica igual ao
- *   Figma (1px de marca, 1px de respiro, 2px de anel). E e assim que o
- *   Elevated com foco mantem a sombra (decisao D): o foco troca so o anel.
+ * ONE PROPERTY, THREE LAYERS
+ *   Border, focus ring and elevation are all box-shadow. So that no state
+ *   erases another, each one lives in an internal variable and box-shadow
+ *   stacks them in a fixed order: border on top, ring in the middle,
+ *   elevation at the bottom. With the border above the ring's gap, the
+ *   Border's focus matches Figma (1px of brand, 1px of gap, 2px of ring). And
+ *   that is how the focused Elevated keeps its shadow: focus only swaps the
+ *   ring.
  *
- * O FOCO E DO LINK, O ANEL E DO CARD
- *   Quem recebe o Tab e o link do titulo. `:has()` leva o anel para o card
- *   inteiro (regra 17) e so entao some o contorno nativo do link - navegador
- *   sem `:has()` mantem o contorno do proprio navegador, nunca fica sem foco.
+ * FOCUS BELONGS TO THE LINK, THE RING TO THE CARD
+ *   The title link is what receives Tab. `:has()` takes the ring to the whole
+ *   card (rule 17) and only then removes the link's native outline - a
+ *   browser without `:has()` keeps its own outline, it is never left without
+ *   focus.
  *
- * ALTO CONTRASTE
- *   No `forced-colors` o sistema remove fundo e sombra: Filled e Elevated
- *   sumiriam inteiros, e a borda do Border (que e sombra) junto. Ali os tres
- *   tipos ganham contorno na cor do texto do sistema, e o foco ganha o
- *   contorno `Highlight` - mesmo padrao do Button.
+ * HIGH CONTRAST
+ *   In `forced-colors` the system removes background and shadow: Filled and
+ *   Elevated would disappear entirely, and the Border's border (which is a
+ *   shadow) with them. There the three types get an outline in the system's
+ *   text color, and focus gets the `Highlight` outline - same pattern as the
+ *   Button.
  *
- * SEM DISABLED NEM PRESSIONADO, POR DECISAO (regras 19 e 20).
+ * NO DISABLED OR PRESSED, BY DECISION (rules 19 and 20).
  */
 
 .al-card {
-  /* camadas de sombra - ver "Uma propriedade, tres camadas" */
+  /* shadow layers - see "One property, three layers" */
   --_edge: 0 0 0 0 transparent;
   --_ring: 0 0 0 0 transparent;
   --_lift: 0 0 0 0 transparent;
@@ -88,7 +94,7 @@
   transition: box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
-/* ------------------------------------------------------------------ tipo */
+/* ------------------------------------------------------------------ type */
 .al-card--border {
   --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border);
 }
@@ -106,7 +112,7 @@
   padding: var(--al-card-padding-tight);
 }
 
-/* ------------------------------------------------- titulo e descricao */
+/* ---------------------------------------------- title and description */
 .al-card__header {
   display: flex;
   flex-direction: column;
@@ -133,11 +139,12 @@
   color: var(--al-card-description);
 }
 
-/* --------------------------------------------------- botoes dentro do card */
-/* Ghost e secondary (Button e Icon Button) leem bg-hover/bg-active, feitos
-   para bg-surface. O fundo do Card e surface-raised, que no escuro e igual ao
-   bg-hover: o hover sumia. Aqui o estado vem dos semanticos -raised, os mesmos
-   do Modal e do Accordion. So muda o fundo de hover/pressed. */
+/* ------------------------------------------------- buttons inside the card */
+/* Ghost and secondary (Button and Icon Button) read bg-hover/bg-active, made
+   for bg-surface. The Card background is surface-raised, which in dark equals
+   bg-hover: the hover disappeared. Here the state comes from the -raised
+   semantics, the same as the Modal and the Accordion. Only the hover/pressed
+   background changes. */
 .al-card .al-btn--ghost,
 .al-card .al-btn--secondary,
 .al-card .al-icon-btn--ghost,
@@ -146,9 +153,10 @@
   --_bg-active: var(--al-bg-active-raised);
 }
 
-/* --------------------------------------------------------------- clicavel */
-/* O link herda a aparencia do titulo: quem diz que e clicavel e o destino
-   escrito no titulo, a seta recomendada (regra 14) e o hover. */
+/* -------------------------------------------------------------- clickable */
+/* The link inherits the title's look: what says it is clickable is the
+   destination written in the title, the recommended arrow (rule 14) and the
+   hover. */
 .al-card__link {
   margin: 0;
   padding: 0;
@@ -162,8 +170,8 @@
   cursor: pointer;
 }
 
-/* O pseudo-elemento cobre o card inteiro: o card todo e o alvo do clique,
-   mas o nome anunciado continua sendo so o titulo (regra 16). */
+/* The pseudo-element covers the whole card: the whole card is the click
+   target, but the announced name is still only the title (rule 16). */
 .al-card__link::after {
   content: "";
   position: absolute;
@@ -171,7 +179,7 @@
   border-radius: inherit;
 }
 
-/* hover - o tipo decide o que muda */
+/* hover - the type decides what changes */
 .al-card--clickable:hover {
   --_lift: var(--al-card-filled-shadow-hover);
 }
@@ -185,7 +193,7 @@
   --_lift: 0 0 0 0 transparent;
 }
 
-/* foco - so com :has(); sem ele, fica o contorno nativo do link */
+/* focus - only with :has(); without it, the link's native outline stays */
 @supports selector(:has(*)) {
   .al-card__link:focus {
     outline: none;
@@ -200,9 +208,10 @@
   }
 }
 
-/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
-   declara a de saida (ease-in); estes estados de destino declaram a de
-   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
 .al-card--clickable:hover,
 .al-card--clickable:has(.al-card__link:focus-visible) {
   transition-timing-function: var(--al-motion-easing-enter);

@@ -1,43 +1,44 @@
 """
-Camada de tokens do Drawer.
+Token layer for the Drawer.
 
-Regra desta camada: nada aqui inventa valor. Todo token aponta para um token da
-Foundation pelo NOME. A UNICA excecao sao as tres larguras (WIDTH, abaixo), e
-ela e declarada, nomeada e travada pelo portao. A mesma excecao do Modal,
-repetida de proposito: cada componente fica independente e, quando a Foundation
-ganhar uma escala de largura de container, os seis tokens viram alias de uma vez.
+The rule of this layer: nothing here invents a value. Every token points to a
+Foundation token by NAME. The ONLY exception is the three widths (WIDTH,
+below), and it is declared, named and locked by the gate. It is the Modal's
+exception, repeated on purpose: each component stays independent and, when the
+Foundation gains a container width scale, the six tokens become aliases at once.
 
-Nomenclatura:
-  codigo -> drawer-bg               (hifen)
-  Figma  -> bg                      (collection `20. Drawer`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> drawer-bg               (hyphen)
+  Figma -> bg                      (collection `20. Drawer`)
+They are different layers. Never collapse one into the other.
 
-SEXTO E ULTIMO COMPONENTE DO TIER 3 (07/10/2026)
+SIXTH AND LAST COMPONENT OF TIER 3 (2026-10-07)
 
-  Frame `drawer`, node 306:2264, pagina `Tier 3` do Figma. 3 variantes, eixo
+  Frame `drawer`, node 306:2264, page `Tier 3` in Figma. 3 variants, axis
   `Size` (sm 320 / md 480 / lg 640). Props: `Title`, `Close button` (bool),
-  `Actions` (bool) e o slot `content`. Marcacao nativa `<dialog>` com
-  `showModal()` (decisao A). So na direita (B). Botao X mantido (C). Fecha no
-  scrim so sem campos, como o Modal (D). Celular: 100vw - drawer-margin (E).
-  Sombra e escuro como no Modal (F). Sem divisoria (G).
+  `Actions` (bool) and the `content` slot. Native `<dialog>` markup with
+  `showModal()`. Right side only. X button kept. Closes on the scrim only
+  with no fields, like the Modal. Phone: 100vw - drawer-margin. Shadow and
+  dark mode as in the Modal. No divider.
 
 SCRIM
 
-  `bg-scrim` nasceu na Foundation para o Modal e serve ao Drawer. E o unico
-  semantico com transparencia (#RRGGBBAA). Por isso nao entra em PAIRS da
-  Foundation: o contraste dele so existe COMPOSTO sobre a pagina, e quem mede e
-  este arquivo.
+  `bg-scrim` was born in the Foundation for the Modal and serves the Drawer.
+  It is the only semantic with transparency (#RRGGBBAA). That is why it is
+  not in the Foundation's PAIRS: its contrast only exists COMPOSITED on the
+  page, and this file is what measures it.
 
-SEM TOKEN, DE PROPOSITO
+NO TOKEN, ON PURPOSE
 
-  Entrada e saida: o painel desliza a propria largura (translateX(100%)),
-  entrando da direita para a esquerda e saindo da esquerda para a direita.
-  Nao ha valor de deslocamento para guardar, entao nao existe `drawer-offset`.
+  Enter and exit: the panel slides its own width (translateX(100%)),
+  entering from right to left and exiting from left to right. There is no
+  offset value to keep, so there is no `drawer-offset`.
 
-  Altura: 100dvh (a altura da tela; o 1024 do Figma e so o quadro de exemplo).
-  Largura no celular: 100vw - drawer-margin. Botoes do rodape e o X: tokens do
-  Button e do Icon Button. Rodape com botoes que esticam: layout. Easing:
-  easing-enter na abertura, easing-exit no fechamento, direto da Foundation.
+  Height: 100dvh (the screen height; the 1024 in Figma is only the sample
+  frame). Width on a phone: 100vw - drawer-margin. Footer buttons and the X:
+  Button and Icon Button tokens. Footer with stretching buttons: layout.
+  Easing: easing-enter on opening, easing-exit on closing, straight from the
+  Foundation.
 """
 import json, os, sys
 
@@ -53,28 +54,28 @@ from contrast import composite            # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
     'bg':     'bg-surface-raised',
     'title':  'text-primary',
-    'scrim':  'bg-scrim',               # com transparencia - ver nota SCRIM
+    'scrim':  'bg-scrim',               # with transparency - see the SCRIM note
 }
 
-# Elevacao e altura, nao estado: fica fora da camada de cor.
+# Elevation is height, not state: it stays out of the color layer.
 SHADOW = {
     'shadow': 'elevation.5',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'padding': 'space.24',
-    'gap':     'space.24',              # cabecalho / miolo / acoes e entre os botoes
-    'margin':  'space.16',              # respiro a esquerda no celular (decisao E)
-    'radius':  'radius.2xl',            # so nos cantos de dentro (esquerda)
+    'gap':     'space.24',              # header / body / actions and between the buttons
+    'margin':  'space.16',              # gap on the left on a phone
+    'radius':  'radius.2xl',            # only on the inner corners (left)
 }
 
-# Movimento: o token aponta para a duracao da Foundation (panel = o que cobre
-# a tela). O easing nao vira token do componente.
+# Motion: the token points to the Foundation duration (panel = what covers
+# the screen). The easing doesn't become a component token.
 MOTION = {
     'duration': 'motion.duration.panel',
 }
@@ -83,10 +84,9 @@ TYPE = {
     'title-font': 'type.styles.heading-sm',
 }
 
-# UNICA excecao a "todo token e alias" (mesma do Modal, decisao G de Gui,
-# repetida em 07/10/2026): a Foundation nao tem escala de largura de container
-# (o espaco acaba em 96). Os valores vem do Figma. Quando a escala existir,
-# estes tres viram alias.
+# The ONLY exception to "every token is an alias" (the Modal's, repeated on
+# 2026-10-07): the Foundation has no container width scale (space ends at 96).
+# The values come from Figma. When the scale exists, these three become aliases.
 WIDTH = {
     'width-sm': 320,
     'width-md': 480,
@@ -94,34 +94,34 @@ WIDTH = {
 }
 
 PENDING = {
-    'card-nao-se-separa-do-scrim-no-escuro': (
-        'No escuro o painel (bg-surface-raised, neutral-800) contra a pagina escurecida pelo '
-        'scrim fica em ~1.8:1, abaixo dos 3:1 do 1.4.11. Quem sustenta a separacao e o painel '
-        'CLAREAR (cue primario da Foundation no escuro) mais a sombra. Subir a opacidade nao '
-        'resolve: a 72% o par vai a 1.88:1, porque o fundo ja e quase preto. Mesma excecao do '
-        'Modal (decisao G, sem contorno no escuro), valendo so para a borda de dentro do Drawer. '
-        'Aprovada em 07/10/2026. NAO "corrigir" escurecendo.'
+    'card-not-separated-from-scrim-in-dark': (
+        'In dark the panel (bg-surface-raised, neutral-800) against the page dimmed by the scrim '
+        'sits at ~1.8:1, below the 3:1 of 1.4.11. The separation is carried by the panel '
+        'LIGHTENING (the Foundation\'s primary cue in dark) plus the shadow. Raising the opacity '
+        'doesn\'t solve it: at 72% the pair goes to 1.88:1, because the background is already '
+        'almost black. Same exception as the Modal (no outline in dark), applying only to the '
+        'Drawer\'s inner edge. Approved on 2026-10-07. DO NOT "fix" it by darkening.'
     ),
 }
 
-# Fundos sobre os quais o Drawer abre. Nao sao tokens do Drawer.
+# Backgrounds the Drawer opens over. They are not Drawer tokens.
 PAGES = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
 }
 
-# (papel, fg, bg, piso, excecao). `scrim:<pagina>` = pagina com o scrim composto.
-# O X de fechar usa text-primary sobre o mesmo fundo do titulo: o par e o mesmo.
+# (role, fg, bg, floor, exception). `scrim:<page>` = page with the scrim composited.
+# The close X uses text-primary on the same background as the title: the pair is the same.
 COMBOS = [
-    ('titulo',                   'title', 'bg',             4.5, None),
-    ('painel-na-tela-escurecida', 'bg',   'scrim:canvas',   3.0, 'card-nao-se-separa-do-scrim-no-escuro'),
-    ('painel-em-superficie-escurecida', 'bg', 'scrim:surface', 3.0, 'card-nao-se-separa-do-scrim-no-escuro'),
+    ('title',                   'title', 'bg',            4.5, None),
+    ('panel-on-dimmed-canvas',  'bg',    'scrim:canvas',  3.0, 'card-not-separated-from-scrim-in-dark'),
+    ('panel-on-dimmed-surface', 'bg',    'scrim:surface', 3.0, 'card-not-separated-from-scrim-in-dark'),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def color_of(role, i):
-    """Cor renderizada de um papel no tema i (0 claro, 1 escuro)."""
+    """Rendered color of a role in theme i (0 light, 1 dark)."""
     if role.startswith('scrim:'):
         page = PAGES[role.split(':')[1]]
         return composite(SEM[COLOR['scrim']][i], SEM[page][i])
@@ -147,9 +147,9 @@ def run():
         name = f'drawer-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref})')
+            problems.append(f'{name}: loose hex ({ref})')
         elif ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
         else:
             resolved[name] = {'light': SEM[ref][0], 'dark': SEM[ref][1]}
 
@@ -160,16 +160,16 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
-    # Excecao nomeada: valor solto so e aceito para estes tres nomes.
+    # Named exception: a loose value is only accepted for these three names.
     for role, px in WIDTH.items():
         name = f'drawer-{role}'
         alias[name] = f'{px}px'
         resolved[name] = px
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -179,22 +179,22 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO DRAWER')
+    print('DRAWER TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<22} -> {alias[name]}')
     print('-' * 74)
     for r in rows:
-        tag = 'OK  ' if r['pass'] else ('EXCE' if r['exception'] else 'FALHA')
-        print(f'  {tag} {r["what"]:<34} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (piso {r["min"]})')
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
+        tag = 'OK  ' if r['pass'] else ('EXC ' if r['exception'] else 'FAIL')
+        print(f'  {tag} {r["what"]:<34} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (floor {r["min"]})')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE')
         return 1
     n_lit = len(WIDTH)
-    print(f'{len(alias)} tokens: {len(alias) - n_lit} alias da Foundation, {n_lit} larguras com valor '
-          f'declarado (decisao G, repetida do Modal).')
+    print(f'{len(alias)} tokens: {len(alias) - n_lit} aliases of the Foundation, {n_lit} widths with '
+          f'a declared value (the same exception as the Modal).')
 
     out = {
         'meta': {
@@ -204,11 +204,11 @@ def run():
             'figmaNode': '306:2264',
             'figmaCollection': '20. Drawer',
             'sizes': ['sm', 'md', 'lg'],
-            'nota': (
-                '<dialog> nativo com showModal(), so na direita. Fundo bg-surface-raised, sombra '
-                'elevation.5, scrim bg-scrim. Botao X mantido, sem divisorias; so o miolo rola. '
-                'Entra da direita para a esquerda e sai da esquerda para a direita. Tres larguras '
-                'com valor declarado. Uma excecao de contraste em pending.'
+            'note': (
+                'Native <dialog> with showModal(), right side only. Background bg-surface-raised, '
+                'shadow elevation.5, scrim bg-scrim. X button kept, no dividers; only the body '
+                'scrolls. Enters from right to left and exits from left to right. Three widths '
+                'with a declared value. One contrast exception in pending.'
             ),
         },
         'alias': alias,
@@ -217,7 +217,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('drawer', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/drawer/tokens.json escrito')
+    print('\nbuild/components/drawer/tokens.json written')
     write_css(alias)
     return 0
 
@@ -226,33 +226,33 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Drawer')
-    w(' * GERADO por src/components/drawer/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Drawer tokens')
+    w(' * GENERATED by src/components/drawer/tokens.py. Do not edit by hand.')
     w(' */')
     w('')
     w(':root {')
     w('')
-    w('  /* cor - o scrim tem transparencia; o tema troca no :root */')
+    w('  /* color - the scrim has transparency; the theme switches on :root */')
     for role in COLOR:
         w(f'  --al-drawer-{role}: {css_ref(COLOR[role])};')
     w('')
-    w('  /* elevacao */')
+    w('  /* elevation */')
     for role, ref in SHADOW.items():
         w(f'  --al-drawer-{role}: {css_ref(ref)};')
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-drawer-{role}: {css_ref(ref)};')
     w('')
-    w('  /* largura - valor declarado, sem escala na Foundation (decisao G, repetida do Modal) */')
+    w('  /* width - declared value, no scale in the Foundation (same as the Modal) */')
     for role, px in WIDTH.items():
         w(f'  --al-drawer-{role}: {px}px;')
     w('')
-    w('  /* movimento - easing vem direto da Foundation */')
+    w('  /* motion - easing comes straight from the Foundation */')
     for role, ref in MOTION.items():
         w(f'  --al-drawer-{role}: {css_ref(ref)};')
     w('')
-    w('  /* tipografia - um estilo vira quatro vars */')
+    w('  /* typography - one style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -263,11 +263,11 @@ def write_css(alias):
         w(f'  {prefix}-tracking: {style[4]};')
     w('}')
     w('')
-    texto = '\n'.join(L)
-    faltando = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in texto]
-    if faltando:
-        raise AssertionError(f'tokens fora do CSS: {faltando}')
-    save_css('drawer', texto)
+    text = '\n'.join(L)
+    missing = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in text]
+    if missing:
+        raise AssertionError(f'tokens missing from the CSS: {missing}')
+    save_css('drawer', text)
 
 
 if __name__ == '__main__':

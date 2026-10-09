@@ -1,44 +1,46 @@
 """
-QA de acessibilidade do Divider.
+Accessibility QA for the Divider.
 
-Como nos outros componentes, a validacao e por COMBINACAO RENDERIZADA - a linha
-contra o fundo EFETIVO onde ela e colocada, nao par de token solto.
+As with the other components, validation is by RENDERED COMBINATION - the line
+against the EFFECTIVE background it is placed on, not a loose token pair.
 
-O QUE O FUNDO EFETIVO MUDA AQUI
+WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
-  A etapa 3 mediu a linha contra a tela (`bg-canvas`) e a faixa de secao
-  (`bg-surface`). Faltava a terceira superficie do sistema: card e modal
-  (`bg-surface-raised`) - justamente onde o divisor mais aparece (rodape de
-  card, grupos de menu). Ela entra aqui, e vale cada uma.
+  The token layer measures the line against the canvas (`bg-canvas`) and the
+  section band (`bg-surface`). The system's third surface is measured here
+  too: card and modal (`bg-surface-raised`) - exactly where the divider shows
+  up the most (card footer, menu groups). Each one counts.
 
-DOIS JULGAMENTOS, NAO UM
+TWO JUDGMENTS, NOT ONE
 
-  1. Piso de 3:1 do 1.4.11. A linha fica abaixo em todo fundo, e isso e a
-     excecao declarada `linha-abaixo-de-3-1`, sustentada pela regra 8 (a linha
-     nunca e a unica pista do agrupamento). Nao reprova.
-  2. Linha INVISIVEL - cor da linha identica a do fundo. A excecao cobre uma
-     linha discreta; nao cobre uma linha que nao existe na tela. Isso reprova.
+  1. 3:1 floor from 1.4.11. The line falls below it on every background, and
+     that is the declared exception `line-below-3-1`, backed by rule 8 (the
+     line is never the only clue of the grouping). It does not fail.
+  2. INVISIBLE line - line color identical to the background. The exception
+     covers a subtle line; it does not cover a line that doesn't exist on
+     screen. This fails.
 
-O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
+THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Regras de uso da etapa 4, medidas no HTML emitido:
+  Usage rules from guidelines.md, measured on the emitted HTML:
 
-    a) `.al-divider` e `<hr>` ou `<li role="separator">` - nada de <div>
-       pintado (regras 12 e 15);
-    b) `<hr>` nunca e filho direto de <ul>/<ol> - la so cabe <li> (regra 15);
-    c) o separador em lista e vazio - sem texto no divisor (regra 11);
-    d) vertical anunciada leva aria-orientation="vertical"; horizontal nao
-       (regra 14);
-    e) nunca focavel nem clicavel: sem tabindex, sem onclick, sem role que nao
-       seja `separator` (regra 16);
-    f) decorativo e aria-hidden="true" e nada mais (regra 13);
-    g) nada de divisor no comeco ou no fim do conteiner, nem dois seguidos
-       (regra 4).
+    a) `.al-divider` is `<hr>` or `<li role="separator">` - no painted <div>
+       (rules 12 and 15);
+    b) `<hr>` is never a direct child of <ul>/<ol> - only <li> fits there
+       (rule 15);
+    c) the separator in a list is empty - no text in the divider (rule 11);
+    d) an announced vertical one has aria-orientation="vertical"; a
+       horizontal one doesn't (rule 14);
+    e) never focusable or clickable: no tabindex, no onclick, no role other
+       than `separator` (rule 16);
+    f) decorative is aria-hidden="true" and nothing else (rule 13);
+    g) no divider at the start or end of the container, nor two in a row
+       (rule 4).
 
-ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
+RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -58,47 +60,47 @@ RES = DIVIDER['resolved']
 THEMES = ('light', 'dark')
 
 NON_TEXT_FLOOR = 3.0      # 1.4.11
-EXC = 'linha-abaixo-de-3-1'
+EXC = 'line-below-3-1'
 
 DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('divider', 'a11y.json')
 
-PAGINAS = ('bg-canvas', 'bg-surface', 'bg-surface-raised')
+PAGES = ('bg-canvas', 'bg-surface', 'bg-surface-raised')
 
 
 def sem(name, theme):
-    """tokens.json guarda o semantico como [claro, escuro]."""
+    """tokens.json stores the semantic as [light, dark]."""
     v = SEM[name]
     return v[THEMES.index(theme)] if isinstance(v, list) else v[theme]
 
 
-# ─────────────────────────────────────────────── contraste
+# ─────────────────────────────────────────────── contrast
 def contrast_rows():
     rows = []
     for theme in THEMES:
         fg = RES['divider-color'][theme]
-        for page in PAGINAS:
+        for page in PAGES:
             bg = sem(page, theme)
             ratio = round(cr(fg, bg), 2)
-            invisivel = fg.lower() == bg.lower()
+            invisible = fg.lower() == bg.lower()
             rows.append({
                 'theme': theme, 'bg': page, 'fg': fg, 'bgHex': bg,
                 'ratio': ratio, 'floor': NON_TEXT_FLOOR,
                 'pass': ratio >= NON_TEXT_FLOOR,
-                'invisible': invisivel,
-                'exception': None if ratio >= NON_TEXT_FLOOR or invisivel else EXC,
+                'invisible': invisible,
+                'exception': None if ratio >= NON_TEXT_FLOOR or invisible else EXC,
             })
     return rows
 
 
-# ─────────────────────────────────────────────── marcacao
+# ─────────────────────────────────────────────── markup
 def is_divider(node):
     return 'al-divider' in node['attrs'].get('class', '').split()
 
 
 def markup_contract(path):
     if not os.path.exists(path):
-        return None, [f'{path} nao existe']
+        return None, [f'{path} does not exist']
     t = Tree()
     t.feed(open(path, encoding='utf-8').read())
 
@@ -112,63 +114,63 @@ def markup_contract(path):
         hidden = a.get('aria-hidden')
         parent = n['parent']
 
-        # (a) elemento certo
+        # (a) the right element
         if tag not in ('hr', 'li'):
-            problems.append(f'linha {ln}: .al-divider em <{tag}> - use <hr> (ou '
-                            f'<li role="separator"> em lista) (regras 12 e 15)')
+            problems.append(f'line {ln}: .al-divider on <{tag}> - use <hr> (or '
+                            f'<li role="separator"> in a list) (rules 12 and 15)')
         if tag == 'li' and a.get('role') != 'separator' and hidden != 'true':
-            problems.append(f'linha {ln}: <li class="al-divider"> sem role="separator" '
-                            f'- o leitor de tela anunciaria um item vazio (regra 15)')
+            problems.append(f'line {ln}: <li class="al-divider"> without role="separator" '
+                            f'- the screen reader would announce an empty item (rule 15)')
 
-        # (b) <hr> solto em lista
+        # (b) loose <hr> in a list
         if tag == 'hr' and parent['tag'] in ('ul', 'ol'):
-            problems.append(f'linha {ln}: <hr> filho direto de <{parent["tag"]}> - '
-                            f'HTML invalido, use <li role="separator"> (regra 15)')
+            problems.append(f'line {ln}: <hr> as a direct child of <{parent["tag"]}> - '
+                            f'invalid HTML, use <li role="separator"> (rule 15)')
 
-        # (c) sem texto
+        # (c) no text
         if tag == 'li' and (n['text'].strip() or n['kids']):
-            problems.append(f'linha {ln}: separador com conteudo - o divisor nao '
-                            f'leva texto; nomeie o grupo com um titulo (regra 11)')
+            problems.append(f'line {ln}: separator with content - the divider takes '
+                            f'no text; name the group with a heading (rule 11)')
 
-        # (d) orientacao
+        # (d) orientation
         vertical = 'al-divider--vertical' in classes
         orient = a.get('aria-orientation')
         if vertical and hidden != 'true' and orient != 'vertical':
-            problems.append(f'linha {ln}: vertical anunciada sem aria-orientation='
-                            f'"vertical" - o separador e horizontal por padrao (regra 14)')
+            problems.append(f'line {ln}: announced vertical without aria-orientation='
+                            f'"vertical" - the separator is horizontal by default (rule 14)')
         if not vertical and orient == 'vertical':
-            problems.append(f'linha {ln}: aria-orientation="vertical" num divisor '
-                            f'horizontal - anuncio diverge da tela (regra 14)')
+            problems.append(f'line {ln}: aria-orientation="vertical" on a horizontal '
+                            f'divider - the announcement diverges from the screen (rule 14)')
 
-        # (e) nunca focavel nem clicavel
+        # (e) never focusable or clickable
         if 'tabindex' in a:
-            problems.append(f'linha {ln}: tabindex no divisor - separador focavel e '
-                            f'Window Splitter, outro componente (regra 16)')
+            problems.append(f'line {ln}: tabindex on the divider - a focusable separator '
+                            f'is a Window Splitter, another component (rule 16)')
         if any(k.startswith('on') for k in a):
-            problems.append(f'linha {ln}: manipulador de evento no divisor - ele '
-                            f'nunca e clicavel (regra 16)')
+            problems.append(f'line {ln}: event handler on the divider - it is never '
+                            f'clickable (rule 16)')
         role = a.get('role')
         if role and role != 'separator':
-            problems.append(f'linha {ln}: role="{role}" - o unico papel do divisor e '
-                            f'separator; decorativo e aria-hidden (regras 13 e 16)')
+            problems.append(f'line {ln}: role="{role}" - the divider\'s only role is '
+                            f'separator; decorative is aria-hidden (rules 13 and 16)')
 
-        # (f) decorativo
+        # (f) decorative
         if hidden is not None and hidden != 'true':
-            problems.append(f'linha {ln}: aria-hidden="{hidden}" - decorativo e '
-                            f'"true"; anunciado nao leva o atributo (regra 13)')
+            problems.append(f'line {ln}: aria-hidden="{hidden}" - decorative is '
+                            f'"true"; announced has no attribute (rule 13)')
 
-        # (g) posicao no conteiner
-        irmaos = [k for k in parent['kids']]
-        i = irmaos.index(n)
-        if i == 0 or i == len(irmaos) - 1:
-            problems.append(f'linha {ln}: divisor no {"comeco" if i == 0 else "fim"} '
-                            f'do <{parent["tag"]}> - nao separa nada (regra 4)')
-        if i > 0 and is_divider(irmaos[i - 1]) and not (n['text'] or '').strip():
-            problems.append(f'linha {ln}: dois divisores seguidos - linha dupla (regra 4)')
+        # (g) position in the container
+        siblings = [k for k in parent['kids']]
+        i = siblings.index(n)
+        if i == 0 or i == len(siblings) - 1:
+            problems.append(f'line {ln}: divider at the {"start" if i == 0 else "end"} '
+                            f'of the <{parent["tag"]}> - it separates nothing (rule 4)')
+        if i > 0 and is_divider(siblings[i - 1]) and not (n['text'] or '').strip():
+            problems.append(f'line {ln}: two dividers in a row - double line (rule 4)')
 
     if checked == 0:
-        return None, ['nenhum .al-divider no HTML - o componente entra no site na '
-                      'etapa 7; ate la este portao fica PENDENTE']
+        return None, ['no .al-divider in the HTML - the component enters the site with '
+                      'its playground; until then this gate stays pending']
     return checked, problems
 
 
@@ -177,44 +179,44 @@ def run():
     rows = contrast_rows()
     invis = [r for r in rows if r['invisible']]
     excs = [r for r in rows if r['exception']]
-    passa = [r for r in rows if r['pass']]
+    passing = [r for r in rows if r['pass']]
 
     checked, mk = markup_contract(path)
 
     print('=' * 74)
-    print('QA DE ACESSIBILIDADE DO DIVIDER')
+    print('DIVIDER ACCESSIBILITY QA')
     print('=' * 74)
-    print('\nLINHA contra cada superficie onde ela e colocada')
+    print('\nLINE against each surface it is placed on')
     for r in rows:
         if r['invisible']:
-            mark, nota = 'XX', 'INVISIVEL - linha e fundo tem a mesma cor'
+            mark, note = 'XX', 'INVISIBLE - line and background have the same color'
         elif r['pass']:
-            mark, nota = 'ok', 'passa'
+            mark, note = 'ok', 'pass'
         else:
-            mark, nota = '~~', f'excecao "{EXC}"'
-        print(f'  {mark} {r["theme"]:<5} sobre {r["bg"]:<18} {r["fg"]} x {r["bgHex"]}  '
-              f'{r["ratio"]:5.2f}  {nota}')
+            mark, note = '~~', f'exception "{EXC}"'
+        print(f'  {mark} {r["theme"]:<5} on {r["bg"]:<18} {r["fg"]} x {r["bgHex"]}  '
+              f'{r["ratio"]:5.2f}  {note}')
 
-    print('\nANEL DE FOCO')
-    print('     n/a - o divisor nunca recebe foco (regra 16)')
+    print('\nFOCUS RING')
+    print('     n/a - the divider never receives focus (rule 16)')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path, ROOT)}')
     if checked is None:
         for p in mk:
-            print(f'     PENDENTE: {p}')
+            print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} divisor(es) conferido(s), 7 regras (a-g)')
+        print(f'     {checked} divider(s) checked, 7 rules (a-g)')
         for p in mk:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
     print('-' * 74)
-    print(f'{len(rows)} medicoes  |  passam: {len(passa)}  |  excecoes: {len(excs)}  |  '
-          f'reprovas: {len(invis)}')
+    print(f'{len(rows)} measurements  |  pass: {len(passing)}  |  exceptions: {len(excs)}  |  '
+          f'fail: {len(invis)}')
 
     json.dump({
         'component': 'divider',
-        'criterion': 'WCAG 1.4.11 nao-textual + linha visivel',
+        'criterion': 'WCAG 1.4.11 non-text + visible line',
         'floor': NON_TEXT_FLOOR,
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': checked,
@@ -222,20 +224,20 @@ def run():
         'markupProblems': mk if checked is not None else [],
         'rows': rows,
     }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
-    print(f'{os.path.relpath(OUT_JSON, ROOT)} escrito')
+    print(f'{os.path.relpath(OUT_JSON, ROOT)} written')
 
-    falhou = False
+    failed = False
     if invis:
         print('-' * 74)
-        print(f'{len(invis)} SUPERFICIE(S) ONDE A LINHA NAO EXISTE NA TELA:')
+        print(f'{len(invis)} SURFACE(S) WHERE THE LINE DOES NOT EXIST ON SCREEN:')
         for r in invis:
-            print(f'   {r["theme"]} sobre {r["bg"]}: {r["fg"]} = {r["bgHex"]}')
-        falhou = True
+            print(f'   {r["theme"]} on {r["bg"]}: {r["fg"]} = {r["bgHex"]}')
+        failed = True
     if checked is not None and mk:
         print('-' * 74)
-        print(f'{len(mk)} PROBLEMA(S) DE MARCACAO - portao reprova')
-        falhou = True
-    return 1 if falhou else 0
+        print(f'{len(mk)} MARKUP PROBLEM(S) - gate fails')
+        failed = True
+    return 1 if failed else 0
 
 
 if __name__ == '__main__':

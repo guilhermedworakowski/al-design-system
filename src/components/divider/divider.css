@@ -1,48 +1,49 @@
 /* AL Design System - Divider
- * Escrito a mao. Depende de al-foundation.css e al-divider-tokens.css, nesta
- * ordem.
+ * Written by hand. Depends on al-foundation.css and al-divider-tokens.css, in
+ * that order.
  *
- * Nenhum valor aqui e literal: a cor e a espessura entram por
- * var(--al-divider-*). O check.py ao lado recusa o arquivo se algum escapar.
+ * No value here is literal: color and thickness come in through
+ * var(--al-divider-*). The check.py next to it rejects the file if any escapes.
  *
- * CONTRATO DE MARCACAO
+ * MARKUP CONTRACT
  *
- *   anunciado, horizontal (o padrao - opcao A de Gui, 07/10/2026):
+ *   announced, horizontal (the default):
  *     <hr class="al-divider">
  *
- *   anunciado, vertical (regra 14 - o separador e horizontal por padrao):
+ *   announced, vertical (rule 14 - the separator is horizontal by default):
  *     <hr class="al-divider al-divider--vertical" aria-orientation="vertical">
  *
- *   decorativo (regra 13 - a estrutura ja separa):
+ *   decorative (rule 13 - the structure already separates):
  *     <hr class="al-divider" aria-hidden="true">
  *
- *   dentro de lista ou menu (regra 15 - <ul> so aceita <li>):
+ *   inside a list or menu (rule 15 - <ul> only accepts <li>):
  *     <li class="al-divider" role="separator"></li>
  *
- * POR QUE `<hr>` NAS DUAS ORIENTACOES
- *   O `<hr>` ja tem o papel `separator` sem atributo nenhum, e o ARIA aceita
- *   `aria-orientation` nele. Um elemento so para os dois casos e um contrato
- *   so para o portao de marcacao da etapa 6 medir.
+ * WHY `<hr>` IN BOTH ORIENTATIONS
+ *   `<hr>` already has the `separator` role with no attribute, and ARIA
+ *   accepts `aria-orientation` on it. One element for both cases means one
+ *   contract for the markup gate (a11y.py) to measure.
  *
- * A LINHA E BORDA, NAO FUNDO
- *   No Figma a linha e um retangulo preenchido de 1px. Aqui ela e a borda de
- *   uma caixa de espessura zero, por dois motivos: o `<hr>` do navegador ja e
- *   desenhado assim (so trocamos estilo e cor), e no modo de alto contraste
- *   do sistema a borda e repintada com a cor do texto - um fundo sumiria.
- *   O resultado visual e o mesmo: 1px em border-default.
+ * THE LINE IS A BORDER, NOT A BACKGROUND
+ *   In Figma the line is a filled 1px rectangle. Here it is the border of a
+ *   zero-thickness box, for two reasons: the browser's `<hr>` is already drawn
+ *   this way (we only swap style and color), and in the system's high contrast
+ *   mode the border is repainted with the text color - a background would
+ *   disappear. The visual result is the same: 1px in border-default.
  *
- * COMPRIMENTO E MARGEM SAO DO LAYOUT
- *   A horizontal ocupa a largura do conteiner (comportamento de bloco). A
- *   vertical estica na altura da linha (`align-self: stretch`), entao PRECISA
- *   de um pai em flex ou grid em linha - fora disso ela nao tem altura, e isso
- *   e correto: vertical so existe entre itens lado a lado (regra 5).
- *   A margem e zerada porque o `<hr>` do navegador traz uma propria; o espaco
- *   em volta e decisao de quem monta a tela (regra 9, opcao B).
+ * LENGTH AND MARGIN BELONG TO THE LAYOUT
+ *   The horizontal one takes the container's width (block behavior). The
+ *   vertical one stretches to the row's height (`align-self: stretch`), so it
+ *   NEEDS a parent in row flex or grid - outside that it has no height, and
+ *   that is correct: vertical only exists between side-by-side items (rule 5).
+ *   The margin is zeroed because the browser's `<hr>` brings its own; the
+ *   space around it is decided by whoever builds the screen (rule 9).
  *
- * SEM ESTADO, POR DECISAO
- *   Sem hover, foco, transicao ou disabled. O divisor nunca e focavel nem
- *   clicavel (regra 16): separador focavel no ARIA e o Window Splitter, outro
- *   componente. Por isso este arquivo nao tem duracao literal nenhuma.
+ * NO STATE, BY DECISION
+ *   No hover, focus, transition or disabled. The divider is never focusable
+ *   or clickable (rule 16): a focusable separator in ARIA is the Window
+ *   Splitter, another component. That is why this file has no literal
+ *   duration at all.
  */
 
 .al-divider {

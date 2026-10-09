@@ -21,7 +21,7 @@ QUATRO JULGAMENTOS
      piso 4,5:1 do 1.4.3. Tem que passar - salvo `marca-no-hover-escuro`,
      excecao da Foundation herdada do Tab.
   2. Anel de foco, icone do botao e fundo do item selecionado/pressionado
-     contra a Sidebar: 3:1 do 1.4.11 - salvo `selecao-tonal`, herdada do Tab.
+     contra a Sidebar: 3:1 do 1.4.11 - salvo `tonal-selection`, herdada do Tab.
   3. Hover e pressed do item e do botao tem que ser DIFERENTES do fundo da
      Sidebar (o defeito que a decisao A evitou). Igual = reprova.
   4. Borda da Sidebar: `borda-de-regiao` (etapa 3), contra a pagina ao lado e,
@@ -85,7 +85,7 @@ THEMES = ('light', 'dark')
 TEXT_FLOOR = 4.5
 NON_TEXT_FLOOR = 3.0
 EXC_BORDA = 'borda-de-regiao'
-EXC_TONAL = 'selecao-tonal'
+EXC_TONAL = 'tonal-selection'
 EXC_MARCA = 'marca-no-hover-escuro'
 EXC_SCRIM = 'sidebar-nao-se-separa-do-scrim-no-escuro'
 

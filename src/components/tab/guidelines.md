@@ -126,11 +126,11 @@ The selected tab's line takes the system's highlight color, and the selected Squ
 ### Contrast exceptions, and what pays for them
 
 **25. The panel starts with a heading equal to the label.**
-It's what pays for `selecao-tonal` (tonal selection): in dark mode, the selected Square is told apart only by hue, and the heading says where the person is. The screen reader already hears "selected" or "current page".
+It's what pays for `tonal-selection`: in dark mode, the selected Square is told apart only by hue, and the heading says where the person is. The screen reader already hears "selected" or "current page".
 *Precedents: Material, Carbon.*
 
 **26. The gray line is only a track.**
-`trilho-decorativo` (decorative track): it doesn't communicate state, so don't use the color for anything else and don't darken it to "fix" it. `marca-no-hover-escuro` and `pressed-na-superficie-escura` belong to the brand, inherited from the Foundation and the Button.
+`decorative-track`: it doesn't communicate state, so don't use the color for anything else and don't darken it to "fix" it. `brand-on-dark-hover` and `pressed-on-dark-surface` belong to the brand, inherited from the Foundation and the Button.
 
 ## Out of scope, on purpose
 

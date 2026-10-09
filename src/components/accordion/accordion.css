@@ -1,62 +1,62 @@
 /* AL Design System - Accordion
- * Escrito a mao. Depende de al-foundation.css, icon.css e
- * al-accordion-tokens.css, nesta ordem.
+ * Written by hand. Depends on al-foundation.css, icon.css and
+ * al-accordion-tokens.css, in that order.
  *
- * Nenhum valor aqui e literal: cor, espaco, raio, anel e tipografia entram
- * por var(--al-accordion-*). O check.py ao lado recusa o arquivo se algum
- * escapar. Duracao e curva da transicao sao tokens de
- * motion; o bloco ENTRADA, perto do fim, troca a curva nos estados de destino.
+ * No value here is literal: color, space, radius, ring and typography come in
+ * through var(--al-accordion-*). The check.py next to it rejects the file if
+ * any escapes. Transition duration and curve are motion tokens; the ENTER
+ * block, near the end, swaps the curve on the destination states.
  *
- * CONTRATO DE MARCACAO - NATIVO, SEM JS (DECISAO B, REGRA 24)
+ * MARKUP CONTRACT - NATIVE, NO JS (RULE 24)
  *
  *   <details class="al-accordion">
  *     <summary class="al-accordion__header">
  *       <svg class="al-icon al-accordion__icon" aria-hidden="true" focusable="false">…</svg>
- *       <span class="al-accordion__title">Como funciona o reembolso?</span>
+ *       <span class="al-accordion__title">How do refunds work?</span>
  *       <svg class="al-icon al-accordion__chevron" aria-hidden="true" focusable="false">…chevron-down…</svg>
  *     </summary>
  *     <div class="al-accordion__content">
- *       …qualquer conteudo, menos outro Accordion (regra 5)
+ *       …any content, except another Accordion (rule 5)
  *     </div>
  *   </details>
  *
- *   - O icone a esquerda e opcional e decorativo (regra 18). O chevron e
- *     sempre o `chevron-down`: aberto, o CSS o espelha (regra 19).
- *   - Nada de <h2>/<h3> dentro do <summary> (regra 25), nada clicavel
- *     dentro dele (regra 17). O nome anunciado e o texto do titulo.
- *   - Comeca aberto: atributo `open` (regra 9).
- *   - Exclusivo, um aberto por vez: o mesmo `name="…"` em cada <details> da
- *     pilha (regra 8). O padrao e sem `name`: varios abertos.
- *   - Pilha: itens irmaos, o espaco entre eles e do layout (decisao A,
- *     regra 7). Nao ha classe de grupo.
+ *   - The left icon is optional and decorative (rule 18). The chevron is
+ *     always `chevron-down`: when open, the CSS flips it (rule 19).
+ *   - No <h2>/<h3> inside the <summary> (rule 25), nothing clickable inside
+ *     it (rule 17). The announced name is the title text.
+ *   - Starts open: the `open` attribute (rule 9).
+ *   - Exclusive, one open at a time: the same `name="…"` on each <details> in
+ *     the stack (rule 8). The default has no `name`: several open.
+ *   - Stack: sibling items, the space between them belongs to the layout
+ *     (rule 7). There is no group class.
  *
- * SO O CABECALHO REAGE (REGRA 21)
- *   Hover e pressed pintam o <summary>, nunca o conteudo. Fundo `-raised`
- *   porque o item mora em bg-surface-raised (decisao G).
+ * ONLY THE HEADER REACTS (RULE 21)
+ *   Hover and pressed paint the <summary>, never the content. `-raised`
+ *   background because the item lives on bg-surface-raised.
  *
- * A DIVISORIA E DO CONTEUDO, NAO DO CABECALHO
- *   No Figma a linha e o stroke de baixo do cabecalho aberto. Aqui ela e a
- *   borda de cima do conteudo: o desenho e o mesmo pixel a pixel, e o
- *   cabecalho mede 76 aberto ou fechado - nada pula ao abrir.
+ * THE DIVIDER BELONGS TO THE CONTENT, NOT THE HEADER
+ *   In Figma the line is the bottom stroke of the open header. Here it is the
+ *   content's top border: the drawing is the same pixel by pixel, and the
+ *   header measures 76 open or closed - nothing jumps on opening.
  *
- * O ANEL FICA POR CIMA DO CONTEUDO (REGRA 22)
- *   O anel e box-shadow do <summary>, e o irmao de baixo (o conteudo) pinta
- *   por cima de sombra de quem vem antes. `position` + `z-index` no
- *   <summary> levantam o anel. No Figma foi o mesmo problema, resolvido com
- *   `itemReverseZIndex` na variante Focus/Opened.
+ * THE RING SITS ABOVE THE CONTENT (RULE 22)
+ *   The ring is the <summary>'s box-shadow, and the sibling below (the
+ *   content) paints over the shadow of what comes before it. `position` +
+ *   `z-index` on the <summary> lift the ring. In Figma it was the same
+ *   problem, solved with `itemReverseZIndex` on the Focus/Opened variant.
  *
- * CHEVRON NA PRIMEIRA LINHA (REGRA 12)
- *   Titulo longo quebra em varias linhas; os icones ficam no alto, centrados
- *   na primeira linha: (entrelinha - icone) / 2 de margem, derivado, sem
- *   token.
+ * CHEVRON ON THE FIRST LINE (RULE 12)
+ *   A long title wraps into several lines; the icons stay at the top,
+ *   centered on the first line: (line height - icon) / 2 of margin, derived,
+ *   no token.
  *
- * ALTO CONTRASTE (REGRA 27)
- *   No `forced-colors` o fundo some e o item se perderia: ganha contorno na
- *   cor do texto do sistema; o foco ganha contorno `Highlight`. A divisoria
- *   ja e borda e fica.
+ * HIGH CONTRAST (RULE 27)
+ *   In `forced-colors` the background disappears and the item would get
+ *   lost: it gets an outline in the system's text color; focus gets the
+ *   `Highlight` outline. The divider is already a border and stays.
  *
- * SEM DISABLED (REGRA 20). SEM ANIMAR ALTURA (DECISAO K): o conteudo aparece
- * de uma vez; so o chevron gira.
+ * NO DISABLED (RULE 20). NO HEIGHT ANIMATION: the content appears at once;
+ * only the chevron turns.
  */
 
 .al-accordion {
@@ -67,7 +67,7 @@
   font-family: var(--al-font-sans);
 }
 
-/* ------------------------------------------------------------ cabecalho */
+/* --------------------------------------------------------------- header */
 .al-accordion__header {
   position: relative;
   display: flex;
@@ -82,8 +82,8 @@
   transition: background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
-/* o triangulo nativo: `list-style` some com ele no Chrome e no Firefox,
-   o Safari ainda pede o pseudo-elemento proprio */
+/* the native triangle: `list-style` removes it in Chrome and Firefox,
+   Safari still needs its own pseudo-element */
 .al-accordion__header::-webkit-details-marker {
   display: none;
 }
@@ -101,8 +101,8 @@
   background-color: var(--al-accordion-bg-active);
 }
 
-/* foco = repouso + anel, so por teclado (decisao I). O fundo volta ao
-   repouso mesmo com o mouse em cima: o anel e quem fala. */
+/* focus = rest + ring, keyboard only. The background goes back to rest
+   even with the mouse over it: the ring is what speaks. */
 .al-accordion__header:focus {
   outline: none;
 }
@@ -113,7 +113,7 @@
   box-shadow: var(--al-accordion-ring);
 }
 
-/* ---------------------------------------------------------------- titulo */
+/* ----------------------------------------------------------------- title */
 .al-accordion__title {
   flex: 1;
   min-inline-size: 0;
@@ -124,8 +124,8 @@
   letter-spacing: var(--al-accordion-title-tracking);
 }
 
-/* --------------------------------------------------------------- icones */
-/* cor por currentColor (vem do <summary>); tamanho pelo token */
+/* ----------------------------------------------------------------- icons */
+/* color through currentColor (comes from the <summary>); size from the token */
 .al-accordion__icon,
 .al-accordion__chevron {
   --al-icon-box: var(--al-accordion-icon-size);
@@ -140,7 +140,7 @@
   scale: 1 -1;
 }
 
-/* -------------------------------------------------------------- conteudo */
+/* --------------------------------------------------------------- content */
 .al-accordion__content {
   display: flex;
   flex-direction: column;
@@ -149,9 +149,10 @@
   border-block-start: var(--al-accordion-divider-width) solid var(--al-accordion-divider);
 }
 
-/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
-   declara a de saida (ease-in); estes estados de destino declaram a de
-   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
 .al-accordion__header:hover,
 .al-accordion__header:active,
 .al-accordion__header:focus-visible,

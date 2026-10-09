@@ -1,52 +1,53 @@
 """
-QA de acessibilidade do Accordion.
+Accessibility QA for the Accordion.
 
-Como nos outros componentes, a validacao e por COMBINACAO RENDERIZADA - estado
-x tema - contra o fundo EFETIVO, nao par de token solto.
+As with the other components, validation is by RENDERED COMBINATION - state x
+theme - against the EFFECTIVE background, not a loose token pair.
 
-O QUE O FUNDO EFETIVO MUDA AQUI
+WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
-  So o cabecalho (<summary>) muda de fundo: repouso, hover, pressed. O foco
-  volta ao repouso e soma o anel (decisao I). Titulo e chevron medem contra o
-  fundo do cabecalho em cada estado. A divisoria e a borda de cima do
-  conteudo: encosta no cabecalho por cima e no conteudo por baixo, e mede
-  contra os dois, guardando o pior. O item mede contra a PAGINA, e a pagina e
-  so `bg-surface` - a regra 14 proibe a tela e o card. O anel e desenhado
-  fora do cabecalho, com o respiro em `bg-canvas`: mede contra a pagina e
-  contra o respiro.
+  Only the header (<summary>) changes background: rest, hover, pressed. Focus
+  goes back to rest and adds the ring. Title and chevron measure against the
+  header background in each state. The divider is the content's top border:
+  it touches the header above and the content below, and measures against
+  both, keeping the worst. The item measures against the PAGE, and the page
+  is only `bg-surface` - rule 14 forbids the canvas and the card. The ring is
+  drawn outside the header, with the gap in `bg-canvas`: it measures against
+  the page and against the gap.
 
-TRES JULGAMENTOS
+THREE JUDGMENTS
 
-  1. Texto: piso 4,5:1 do 1.4.3. Tem que passar - sem excecao.
-  2. Chevron, divisoria, limite do item e anel: piso 3:1 do 1.4.11. Divisoria
-     e limite ficam abaixo - sao as excecoes declaradas `divisoria-decorativa`
-     e `item-nao-se-separa-pelo-fundo` (etapa 3). Chevron e anel tem que passar.
-  3. Item INVISIVEL - fundo igual a pagina. A excecao cobre item discreto, nao
-     item que nao existe. Isso reprova.
+  1. Text: 4.5:1 floor from 1.4.3. It must pass - no exception.
+  2. Chevron, divider, item boundary and ring: 3:1 floor from 1.4.11. Divider
+     and boundary fall below - they are the declared exceptions
+     `decorative-divider` and `item-not-separated-by-bg` (see tokens.py).
+     Chevron and ring must pass.
+  3. INVISIBLE item - background equal to the page. The exception covers a
+     subtle item, not an item that doesn't exist. This fails.
 
-O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
+THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Regras de uso da etapa 4, medidas no HTML emitido:
+  Usage rules from guidelines.md, measured on the emitted HTML:
 
-    a) `.al-accordion` e um <details> (regra 24);
-    b) o primeiro filho e o <summary class="al-accordion__header"> - e
-       `.al-accordion__header` so existe em <summary> (regra 24);
-    c) o <summary> tem nome: `.al-accordion__title` com texto (regra 15);
-    d) nada de <h1>-<h6> dentro do <summary> (regra 25);
-    e) nada interativo dentro do <summary> - link, botao, campo, tabindex,
-       role de acionavel (regra 17);
-    f) icone e chevron com aria-hidden="true" (regras 18 e 19);
-    g) nada de Accordion dentro de Accordion (regra 5);
-    h) nativo puro: sem role, aria-expanded, aria-controls nem tabindex no
-       <details> ou no <summary> (regra 24);
-    i) sem disabled: nem `disabled`, nem `aria-disabled` (regra 20);
-    j) exatamente um `.al-accordion__content`, filho direto, depois do
+    a) `.al-accordion` is a <details> (rule 24);
+    b) the first child is the <summary class="al-accordion__header"> - and
+       `.al-accordion__header` only exists on <summary> (rule 24);
+    c) the <summary> has a name: `.al-accordion__title` with text (rule 15);
+    d) no <h1>-<h6> inside the <summary> (rule 25);
+    e) nothing interactive inside the <summary> - link, button, field,
+       tabindex, actionable role (rule 17);
+    f) icon and chevron with aria-hidden="true" (rules 18 and 19);
+    g) no Accordion inside an Accordion (rule 5);
+    h) pure native: no role, aria-expanded, aria-controls or tabindex on the
+       <details> or the <summary> (rule 24);
+    i) no disabled: neither `disabled` nor `aria-disabled` (rule 20);
+    j) exactly one `.al-accordion__content`, direct child, after the
        <summary>.
 
-ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
+RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -66,38 +67,38 @@ THEMES = ('light', 'dark')
 
 TEXT_FLOOR = 4.5          # 1.4.3
 NON_TEXT_FLOOR = 3.0      # 1.4.11
-EXC_DIV = 'divisoria-decorativa'
-EXC_ITEM = 'item-nao-se-separa-pelo-fundo'
+EXC_DIV = 'decorative-divider'
+EXC_ITEM = 'item-not-separated-by-bg'
 
 DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('accordion', 'a11y.json')
 
-PAGINA = 'bg-surface'     # regra 14: so aqui
+PAGE = 'bg-surface'     # rule 14: only here
 
-# estado -> papel do fundo do cabecalho. Foco = repouso (decisao I).
-ESTADOS = (('repouso', 'bg'), ('hover', 'bg-hover'), ('pressed', 'bg-active'), ('foco', 'bg'))
+# state -> role of the header background. Focus = rest.
+STATES = (('rest', 'bg'), ('hover', 'bg-hover'), ('pressed', 'bg-active'), ('focus', 'bg'))
 
 HEADINGS = {'h1', 'h2', 'h3', 'h4', 'h5', 'h6'}
 ACTIONABLE_ROLES = {'button', 'link', 'checkbox', 'radio', 'switch', 'menuitem', 'tab', 'option'}
 
 
 def sem(name, theme):
-    """tokens.json guarda o semantico como [claro, escuro]."""
+    """tokens.json stores the semantic as [light, dark]."""
     v = SEM[name]
     return v[THEMES.index(theme)] if isinstance(v, list) else v[theme]
 
 
 def acc(role, theme):
-    """Cor de um papel do Accordion, seguindo o alias ate o semantico."""
+    """Color of an Accordion role, following the alias down to the semantic."""
     return sem(ALIAS[f'accordion-{role}'], theme)
 
 
-# ─────────────────────────────────────────────── contraste
-def row(theme, estado, what, fg_name, fg, bg_name, bg, floor, exc=None, invisible=False):
+# ─────────────────────────────────────────────── contrast
+def row(theme, state, what, fg_name, fg, bg_name, bg, floor, exc=None, invisible=False):
     ratio = round(cr(fg, bg), 2)
     ok = ratio >= floor
     return {
-        'theme': theme, 'state': estado, 'what': what,
+        'theme': theme, 'state': state, 'what': what,
         'fg': fg_name, 'fgHex': fg, 'bg': bg_name, 'bgHex': bg,
         'ratio': ratio, 'floor': floor, 'pass': ok,
         'invisible': invisible,
@@ -108,41 +109,41 @@ def row(theme, estado, what, fg_name, fg, bg_name, bg, floor, exc=None, invisibl
 def contrast_rows():
     rows = []
     for theme in THEMES:
-        titulo = acc('title', theme)
-        conteudo = acc('bg', theme)
-        linha = acc('divider', theme)
-        pg = sem(PAGINA, theme)
+        title = acc('title', theme)
+        content = acc('bg', theme)
+        line = acc('divider', theme)
+        pg = sem(PAGE, theme)
 
-        for estado, papel in ESTADOS:
-            cab = acc(papel, theme)
-            nome = ALIAS[f'accordion-{papel}']
-            # 1. titulo e chevron (currentColor) contra o cabecalho
-            rows.append(row(theme, estado, 'titulo', ALIAS['accordion-title'], titulo,
-                            nome, cab, TEXT_FLOOR))
-            rows.append(row(theme, estado, 'chevron', ALIAS['accordion-title'], titulo,
-                            nome, cab, NON_TEXT_FLOOR))
-            # 2. divisoria (so aberto) - entre cabecalho e conteudo, o pior
-            if estado != 'foco':      # foco tem o fundo do repouso: mesma medida
-                pior = min((cr(linha, cab), nome, cab),
-                           (cr(linha, conteudo), ALIAS['accordion-bg'], conteudo))
-                rows.append(row(theme, estado, 'divisoria', ALIAS['accordion-divider'], linha,
-                                pior[1], pior[2], NON_TEXT_FLOOR, EXC_DIV))
+        for state, role in STATES:
+            head = acc(role, theme)
+            name = ALIAS[f'accordion-{role}']
+            # 1. title and chevron (currentColor) against the header
+            rows.append(row(theme, state, 'title', ALIAS['accordion-title'], title,
+                            name, head, TEXT_FLOOR))
+            rows.append(row(theme, state, 'chevron', ALIAS['accordion-title'], title,
+                            name, head, NON_TEXT_FLOOR))
+            # 2. divider (open only) - between header and content, the worst
+            if state != 'focus':      # focus has the rest background: same measurement
+                worst = min((cr(line, head), name, head),
+                            (cr(line, content), ALIAS['accordion-bg'], content))
+                rows.append(row(theme, state, 'divider', ALIAS['accordion-divider'], line,
+                                worst[1], worst[2], NON_TEXT_FLOOR, EXC_DIV))
 
-        # 3. limite do item contra a pagina
-        rows.append(row(theme, 'repouso', 'limite-pelo-fundo', ALIAS['accordion-bg'], conteudo,
-                        PAGINA, pg, NON_TEXT_FLOOR, EXC_ITEM,
-                        invisible=conteudo.lower() == pg.lower()))
+        # 3. item boundary against the page
+        rows.append(row(theme, 'rest', 'bg-boundary', ALIAS['accordion-bg'], content,
+                        PAGE, pg, NON_TEXT_FLOOR, EXC_ITEM,
+                        invisible=content.lower() == pg.lower()))
 
-        # 4. anel - fora do cabecalho; o respiro e bg-canvas
-        anel = sem('shadow-focus-default', theme)
-        respiro = sem('bg-canvas', theme)
-        pior = min((cr(anel, pg), PAGINA, pg), (cr(anel, respiro), 'bg-canvas (respiro)', respiro))
-        rows.append(row(theme, 'foco', 'anel', 'shadow-focus-default', anel,
-                        pior[1], pior[2], NON_TEXT_FLOOR))
+        # 4. ring - outside the header; the gap is bg-canvas
+        ring = sem('shadow-focus-default', theme)
+        gap = sem('bg-canvas', theme)
+        worst = min((cr(ring, pg), PAGE, pg), (cr(ring, gap), 'bg-canvas (gap)', gap))
+        rows.append(row(theme, 'focus', 'ring', 'shadow-focus-default', ring,
+                        worst[1], worst[2], NON_TEXT_FLOOR))
     return rows
 
 
-# ─────────────────────────────────────────────── marcacao
+# ─────────────────────────────────────────────── markup
 def interactive(node):
     a, tag = node['attrs'], node['tag']
     if tag == 'a' and 'href' in a:
@@ -159,7 +160,7 @@ NATIVE_ONLY = ('role', 'aria-expanded', 'aria-controls', 'tabindex')
 
 def markup_contract(path):
     if not os.path.exists(path):
-        return None, [f'{path} nao existe']
+        return None, [f'{path} does not exist']
     t = Tree()
     t.feed(open(path, encoding='utf-8').read())
 
@@ -167,10 +168,10 @@ def markup_contract(path):
     for n in walk(t.root):
         a, tag, ln = n['attrs'], n['tag'], n['line']
 
-        # (b) o cabecalho so existe em <summary>
+        # (b) the header only exists on <summary>
         if has(n, 'al-accordion__header') and tag != 'summary':
-            problems.append(f'linha {ln}: .al-accordion__header em <{tag}> - o cabecalho e o '
-                            f'<summary> nativo (regra 24)')
+            problems.append(f'line {ln}: .al-accordion__header on <{tag}> - the header is the '
+                            f'native <summary> (rule 24)')
 
         if not has(n, 'al-accordion'):
             continue
@@ -178,74 +179,74 @@ def markup_contract(path):
 
         # (a) <details>
         if tag != 'details':
-            problems.append(f'linha {ln}: .al-accordion em <{tag}> - o item e um <details> '
-                            f'nativo (regra 24)')
+            problems.append(f'line {ln}: .al-accordion on <{tag}> - the item is a native '
+                            f'<details> (rule 24)')
 
-        # (g) nada de Accordion dentro de Accordion
+        # (g) no Accordion inside an Accordion
         if any(has(p, 'al-accordion') for p in ancestors(n)):
-            problems.append(f'linha {ln}: Accordion dentro de Accordion (regra 5)')
+            problems.append(f'line {ln}: Accordion inside an Accordion (rule 5)')
 
-        # (i) sem disabled
+        # (i) no disabled
         if 'disabled' in a or 'aria-disabled' in a:
-            problems.append(f'linha {ln}: Accordion desabilitado - item sem conteudo sai da '
-                            f'pilha (regra 20)')
+            problems.append(f'line {ln}: disabled Accordion - an item with no content leaves '
+                            f'the stack (rule 20)')
 
-        # (h) nativo puro no <details>
+        # (h) pure native on <details>
         for attr in NATIVE_ONLY:
             if attr in a:
-                problems.append(f'linha {ln}: {attr} no <details> - o navegador ja anuncia o '
-                                f'estado; nada de ARIA manual (regra 24)')
+                problems.append(f'line {ln}: {attr} on <details> - the browser already announces '
+                                f'the state; no manual ARIA (rule 24)')
 
         kids = n['kids']
-        # (b) o primeiro filho e o summary do componente
+        # (b) the first child is the component's summary
         head = kids[0] if kids else None
         if head is None or head['tag'] != 'summary' or not has(head, 'al-accordion__header'):
-            problems.append(f'linha {ln}: o primeiro filho do Accordion tem que ser '
-                            f'<summary class="al-accordion__header"> (regra 24)')
+            problems.append(f'line {ln}: the Accordion\'s first child must be '
+                            f'<summary class="al-accordion__header"> (rule 24)')
             continue
 
         ha, hl = head['attrs'], head['line']
-        # (h) nativo puro no <summary>
+        # (h) pure native on <summary>
         for attr in NATIVE_ONLY:
             if attr in ha:
-                problems.append(f'linha {hl}: {attr} no <summary> - nativo puro (regra 24)')
+                problems.append(f'line {hl}: {attr} on <summary> - pure native (rule 24)')
         if 'disabled' in ha or 'aria-disabled' in ha:
-            problems.append(f'linha {hl}: <summary> desabilitado (regra 20)')
+            problems.append(f'line {hl}: disabled <summary> (rule 20)')
 
         desc = list(walk(head))
-        # (c) nome
-        titulos = [d for d in desc if has(d, 'al-accordion__title')]
-        if len(titulos) != 1 or not text_of(titulos[0]):
-            problems.append(f'linha {hl}: o <summary> precisa de um .al-accordion__title com '
-                            f'texto - e o nome anunciado (regra 15)')
+        # (c) name
+        titles = [d for d in desc if has(d, 'al-accordion__title')]
+        if len(titles) != 1 or not text_of(titles[0]):
+            problems.append(f'line {hl}: the <summary> needs one .al-accordion__title with '
+                            f'text - it is the announced name (rule 15)')
         for d in desc:
             # (d) heading
             if d['tag'] in HEADINGS:
-                problems.append(f'linha {d["line"]}: <{d["tag"]}> dentro do <summary> - em parte '
-                                f'dos leitores sai da lista de titulos; o titulo real vai '
-                                f'ANTES da pilha (regra 25)')
-            # (e) interativo
+                problems.append(f'line {d["line"]}: <{d["tag"]}> inside the <summary> - in some '
+                                f'screen readers it leaves the headings list; the real heading '
+                                f'goes BEFORE the stack (rule 25)')
+            # (e) interactive
             if interactive(d):
-                problems.append(f'linha {d["line"]}: <{d["tag"]}> interativo dentro do <summary> '
-                                f'- o cabecalho inteiro ja e o botao (regra 17)')
-            # (f) icones decorativos
+                problems.append(f'line {d["line"]}: interactive <{d["tag"]}> inside the <summary> '
+                                f'- the whole header is already the button (rule 17)')
+            # (f) decorative icons
             if (has(d, 'al-accordion__icon') or has(d, 'al-accordion__chevron')) \
                     and d['attrs'].get('aria-hidden') != 'true':
-                problems.append(f'linha {d["line"]}: icone do Accordion sem aria-hidden="true" - '
-                                f'e decorativo; quem fala e o titulo (regras 18 e 19)')
+                problems.append(f'line {d["line"]}: Accordion icon without aria-hidden="true" - '
+                                f'it is decorative; the title is what speaks (rules 18 and 19)')
 
-        # (j) um conteudo, filho direto, depois do summary
-        conteudos = [k for k in kids if has(k, 'al-accordion__content')]
-        soltos = [d for d in walk(n) if has(d, 'al-accordion__content') and d['parent'] is not n]
-        if len(conteudos) != 1 or soltos:
-            problems.append(f'linha {ln}: o Accordion tem que ter exatamente um '
-                            f'.al-accordion__content, filho direto do <details>')
-        elif kids.index(conteudos[0]) == 0:
-            problems.append(f'linha {ln}: .al-accordion__content antes do <summary>')
+        # (j) one content, direct child, after the summary
+        contents = [k for k in kids if has(k, 'al-accordion__content')]
+        loose = [d for d in walk(n) if has(d, 'al-accordion__content') and d['parent'] is not n]
+        if len(contents) != 1 or loose:
+            problems.append(f'line {ln}: the Accordion must have exactly one '
+                            f'.al-accordion__content, direct child of the <details>')
+        elif kids.index(contents[0]) == 0:
+            problems.append(f'line {ln}: .al-accordion__content before the <summary>')
 
     if checked == 0:
-        return None, ['nenhum .al-accordion no HTML - o componente entra no site na '
-                      'etapa 7; ate la este portao fica PENDENTE']
+        return None, ['no .al-accordion in the HTML - the component enters the site with '
+                      'its playground; until then this gate stays pending']
     return checked, problems
 
 
@@ -255,43 +256,43 @@ def run():
     invis = [r for r in rows if r['invisible']]
     fails = [r for r in rows if not r['pass'] and not r['exception'] and not r['invisible']]
     excs = [r for r in rows if r['exception']]
-    passa = [r for r in rows if r['pass']]
+    passing = [r for r in rows if r['pass']]
 
     checked, mk = markup_contract(path)
 
     print('=' * 78)
-    print('QA DE ACESSIBILIDADE DO ACCORDION')
+    print('ACCORDION ACCESSIBILITY QA')
     print('=' * 78)
-    print('\nCOMBINACOES RENDERIZADAS (tema x estado), pagina bg-surface')
+    print('\nRENDERED COMBINATIONS (theme x state), page bg-surface')
     for r in rows:
         if r['invisible']:
-            mark, nota = 'XX', 'INVISIVEL - nada separa o item da pagina'
+            mark, note = 'XX', 'INVISIBLE - nothing separates the item from the page'
         elif r['pass']:
-            mark, nota = 'ok', 'passa'
+            mark, note = 'ok', 'pass'
         elif r['exception']:
-            mark, nota = '~~', f'excecao "{r["exception"]}"'
+            mark, note = '~~', f'exception "{r["exception"]}"'
         else:
-            mark, nota = 'XX', 'REPROVA'
+            mark, note = 'XX', 'FAIL'
         print(f'  {mark} {r["theme"]:<5} {r["state"]:<8} {r["what"]:<17} '
-              f'x {r["bg"]:<20} {r["ratio"]:5.2f} (piso {r["floor"]})  {nota}')
+              f'x {r["bg"]:<20} {r["ratio"]:5.2f} (floor {r["floor"]})  {note}')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path, ROOT)}')
     if checked is None:
         for p in mk:
-            print(f'     PENDENTE: {p}')
+            print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} accordion(s) conferido(s), 10 regras (a-j)')
+        print(f'     {checked} accordion(s) checked, 10 rules (a-j)')
         for p in mk:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
     print('-' * 78)
-    print(f'{len(rows)} medicoes  |  passam: {len(passa)}  |  excecoes: {len(excs)}  |  '
-          f'reprovas: {len(fails) + len(invis)}')
+    print(f'{len(rows)} measurements  |  pass: {len(passing)}  |  exceptions: {len(excs)}  |  '
+          f'fail: {len(fails) + len(invis)}')
 
     json.dump({
         'component': 'accordion',
-        'criterion': 'WCAG 1.4.3 texto + 1.4.11 nao-textual + item visivel',
+        'criterion': 'WCAG 1.4.3 text + 1.4.11 non-text + visible item',
         'floors': {'text': TEXT_FLOOR, 'nonText': NON_TEXT_FLOOR},
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': checked,
@@ -299,20 +300,20 @@ def run():
         'markupProblems': mk if checked is not None else [],
         'rows': rows,
     }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
-    print(f'{os.path.relpath(OUT_JSON, ROOT)} escrito')
+    print(f'{os.path.relpath(OUT_JSON, ROOT)} written')
 
-    falhou = False
+    failed = False
     if invis or fails:
         print('-' * 78)
-        print(f'{len(invis) + len(fails)} COMBINACAO(OES) REPROVAM:')
+        print(f'{len(invis) + len(fails)} COMBINATION(S) FAIL:')
         for r in invis + fails:
             print(f'   {r["theme"]} {r["state"]} {r["what"]} x {r["bg"]}: {r["ratio"]}:1')
-        falhou = True
+        failed = True
     if checked is not None and mk:
         print('-' * 78)
-        print(f'{len(mk)} PROBLEMA(S) DE MARCACAO - portao reprova')
-        falhou = True
-    return 1 if falhou else 0
+        print(f'{len(mk)} MARKUP PROBLEM(S) - gate fails')
+        failed = True
+    return 1 if failed else 0
 
 
 if __name__ == '__main__':

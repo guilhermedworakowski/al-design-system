@@ -1,71 +1,75 @@
 /* AL Design System - Modal
- * Escrito a mao. Depende de al-foundation.css, button.css e
- * al-modal-tokens.css, nesta ordem. O comportamento (abrir, fechar no scrim,
- * foco inicial) vive em modal.js.
+ * Written by hand. Depends on al-foundation.css, button.css and
+ * al-modal-tokens.css, in that order. The behavior (opening, closing on the
+ * scrim, initial focus) lives in modal.js.
  *
- * Nenhum valor aqui e literal: cor, espaco, raio, sombra, tipografia, largura e
- * duracao entram por var(--al-modal-*). O check.py ao lado recusa o arquivo se
- * algum escapar.
+ * No value here is literal: color, space, radius, shadow, typography, width
+ * and duration come in through var(--al-modal-*). The check.py next to it
+ * rejects the file if any escapes.
  *
- * CONTRATO DE MARCACAO - <dialog> NATIVO (DECISAO A, REGRA 24)
+ * MARKUP CONTRACT - NATIVE <dialog> (RULE 24)
  *
  *   <dialog class="al-modal al-modal--md" aria-labelledby="t1">
- *     <h2 class="al-modal__title" id="t1">Excluir cliente?</h2>
- *     <div class="al-modal__content">…qualquer conteudo…</div>
+ *     <h2 class="al-modal__title" id="t1">Delete customer?</h2>
+ *     <div class="al-modal__content">…any content…</div>
  *     <div class="al-modal__actions">
  *       <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
- *         <span class="al-btn__label">Cancelar</span></button>
+ *         <span class="al-btn__label">Cancel</span></button>
  *       <button type="button" class="al-btn al-btn--danger al-btn--md">
- *         <span class="al-btn__label">Excluir cliente</span></button>
+ *         <span class="al-btn__label">Delete customer</span></button>
  *     </div>
  *   </dialog>
  *
- *   - Tamanho: --sm | --md | --lg. Sem modificador = md.
- *   - Abrir: `data-al-modal-open="<id do dialog>"` no botao, ou showModal().
- *     Sempre showModal(), nunca `open` na marcacao nem show() (regra 24).
- *   - Fechar: `data-al-modal-close` no botao, ou <form method="dialog">.
- *     Esc fecha sempre (regra 15); o <dialog> ja faz.
- *   - Sem botao X (regra 16): o secundario do rodape e a saida. Sem divisoria
- *     (regra 10): quem separa as partes e o espaco.
- *   - Nome acessivel: aria-labelledby apontando para o titulo (regra 25).
- *   - Acoes: a secundaria vem primeiro, a principal por ultimo (regra 19).
+ *   - Size: --sm | --md | --lg. No modifier = md.
+ *   - Open: `data-al-modal-open="<dialog id>"` on the button, or showModal().
+ *     Always showModal(), never `open` in the markup nor show() (rule 24).
+ *   - Close: `data-al-modal-close` on the button, or <form method="dialog">.
+ *     Esc always closes (rule 15); the <dialog> already does it.
+ *   - No X button (rule 16): the footer's secondary is the way out. No
+ *     divider (rule 10): space is what separates the parts.
+ *   - Accessible name: aria-labelledby pointing to the title (rule 25).
+ *   - Actions: the secondary comes first, the main one last (rule 19).
  *
- * ALTURA E ROLAGEM (DECISAO E, REGRA 28)
- *   A altura e do conteudo (hug). Passou da tela, so o miolo rola; titulo e
- *   acoes ficam fixos. O miolo ganha um respiro do tamanho do anel de foco e
- *   desconta com margem negativa: o overflow cortaria o anel de um campo
- *   encostado na borda do miolo, e o respiro devolve o espaco sem mexer no
- *   layout. Derivado dos tokens de foco da Foundation, sem valor novo.
+ * HEIGHT AND SCROLLING (RULE 28)
+ *   The height is the content's (hug). Past the screen, only the body
+ *   scrolls; title and actions stay fixed. The body gets a gap the size of
+ *   the focus ring and discounts it with a negative margin: the overflow
+ *   would clip the ring of a field touching the body's edge, and the gap
+ *   gives the space back without moving the layout. Derived from the
+ *   Foundation's focus tokens, no new value.
  *
- * LARGURA NO CELULAR (DECISOES F E H, REGRA 13)
- *   Largura do tamanho, limitada a 100% menos a margem dos dois lados. Num
- *   <dialog> modal o 100% e a viewport.
+ * WIDTH ON A PHONE (RULE 13)
+ *   The size's width, capped at 100% minus the margin on both sides. In a
+ *   modal <dialog> the 100% is the viewport.
  *
- * ENTRADA E SAIDA (REGRA 17)
- *   O card SOBE ao abrir e DESCE ao fechar, com fade, em 300ms
- *   (modal-duration). O deslocamento e `modal-offset` (space.96): o card nasce
- *   96 abaixo do lugar dele e volta para la. A curva e a do estado de destino:
- *   entrada ease-out, saida ease-in. O scrim so aparece e some. Usa
- *   @starting-style e transition-behavior: allow-discrete para animar o
- *   display e a camada de topo; em navegador sem isso o Modal abre e fecha
- *   sem animacao e continua funcionando.
- *   O layout em coluna fica na base, nao no [open]: ao fechar o display segue
- *   `flex` pela duracao da saida, e um layout so do [open] fazia o miolo ser
- *   comprimido na frente do usuario.
+ * ENTER AND EXIT (RULE 17)
+ *   The card RISES on opening and SINKS on closing, with a fade, in 300ms
+ *   (modal-duration). The offset is `modal-offset` (space.96): the card is
+ *   born 96 below its place and goes back there. The curve is the
+ *   destination state's: ease-out on enter, ease-in on exit. The scrim only
+ *   appears and disappears. Uses @starting-style and transition-behavior:
+ *   allow-discrete to animate display and the top layer; in a browser
+ *   without them the Modal opens and closes without animation and keeps
+ *   working.
+ *   The column layout stays on the base, not on [open]: on closing, display
+ *   stays `flex` for the exit duration, and a layout only on [open] made the
+ *   body get squeezed in front of the user.
  *
- * SCRIM (REGRA 27)
- *   ::backdrop herda as custom properties do <dialog>. Decoracao: nao recebe
- *   foco. O fechamento por clique nele (so sem campos, regra 14) e do JS.
+ * SCRIM (RULE 27)
+ *   ::backdrop inherits the <dialog>'s custom properties. Decoration: it
+ *   doesn't receive focus. Closing by clicking it (only with no fields,
+ *   rule 14) belongs to the JS.
  *
- * COR DO TEXTO DO MIOLO
- *   O <dialog> ganha a cor do titulo (text-primary) e o miolo herda. Sem
- *   isso o UA pinta CanvasText.
+ * BODY TEXT COLOR
+ *   The <dialog> gets the title color (text-primary) and the body inherits
+ *   it. Without it the UA paints CanvasText.
  *
- * ALTO CONTRASTE
- *   Sem o fundo e a sombra o Modal se perderia: ganha contorno CanvasText.
+ * HIGH CONTRAST
+ *   Without the background and the shadow the Modal would get lost: it gets
+ *   a CanvasText outline.
  */
 
-/* ---------------------------------------------------------------- caixa */
+/* ------------------------------------------------------------------ box */
 .al-modal {
   box-sizing: border-box;
   inline-size: var(--al-modal-width-md);
@@ -86,10 +90,10 @@
 .al-modal--md { inline-size: var(--al-modal-width-md); }
 .al-modal--lg { inline-size: var(--al-modal-width-lg); }
 
-/* O layout (coluna, gap) fica na base e so o display depende do [open]: dialog
-   fechado precisa seguir display: none. Se o gap e a direcao ficassem no
-   [open], ao fechar o Modal voltaria a ser bloco durante a saida e o miolo
-   seria comprimido na frente do usuario. */
+/* The layout (column, gap) stays on the base and only display depends on
+   [open]: a closed dialog must stay display: none. If gap and direction
+   lived on [open], on closing the Modal would go back to block during the
+   exit and the body would get squeezed in front of the user. */
 .al-modal {
   flex-direction: column;
   gap: var(--al-modal-gap);
@@ -99,10 +103,10 @@
   display: flex;
 }
 
-/* --------------------------------------------------------------- titulo */
-/* O titulo costuma ser um <h2>, e quem usa pode ter um estilo global de h2
-   (mono, caixa alta, cor, linha embaixo). Estes resets sao do componente: o
-   titulo do Modal e o que o modal.css diz, em qualquer pagina. */
+/* ---------------------------------------------------------------- title */
+/* The title is usually an <h2>, and the user may have a global h2 style
+   (mono, uppercase, color, underline). These resets belong to the
+   component: the Modal title is what modal.css says, on any page. */
 .al-modal__title {
   flex: none;
   margin: 0;
@@ -118,7 +122,7 @@
   letter-spacing: var(--al-modal-title-tracking);
 }
 
-/* ---------------------------------------------------------------- miolo */
+/* ----------------------------------------------------------------- body */
 .al-modal__content {
   --_ring-room: calc(var(--al-border-focus-offset) + var(--al-border-width-focus));
   flex: 1 1 auto;
@@ -129,7 +133,7 @@
   overscroll-behavior: contain;
 }
 
-/* ---------------------------------------------------------------- acoes */
+/* -------------------------------------------------------------- actions */
 .al-modal__actions {
   flex: none;
   display: flex;
@@ -139,10 +143,11 @@
   gap: var(--al-modal-gap);
 }
 
-/* Botoes ghost e secondary sobre o fundo elevado: o Button le bg-hover/bg-active, feitos para
-   bg-surface. No escuro o fundo do Modal (surface-raised) e igual ao bg-hover,
-   e o hover sumia. Aqui o estado vem dos semanticos -raised, os mesmos
-   que o Accordion ja usa. So muda o fundo de hover/pressed; o resto e do Button. */
+/* Ghost and secondary buttons on the raised background: the Button reads
+   bg-hover/bg-active, made for bg-surface. In dark the Modal background
+   (surface-raised) equals bg-hover, and the hover disappeared. Here the state
+   comes from the -raised semantics, the same the Accordion already uses. Only
+   the hover/pressed background changes; the rest belongs to the Button. */
 .al-modal .al-btn--ghost,
 .al-modal .al-btn--secondary,
 .al-modal .al-icon-btn--ghost,
@@ -151,18 +156,18 @@
   --_bg-active: var(--al-bg-active-raised);
 }
 
-/* ---------------------------------------------------------- pagina atras */
-/* regra 28: a pagina nao rola com o Modal aberto. `:modal` e so o aberto por
-   showModal(): um <dialog open> solto, como os congelados da pagina de QA,
-   nao trava a rolagem */
+/* ------------------------------------------------------- page behind */
+/* rule 28: the page doesn't scroll with the Modal open. `:modal` is only the
+   one opened by showModal(): a loose <dialog open>, like the frozen ones on
+   the QA page, doesn't lock scrolling */
 :root:has(.al-modal:modal) {
   overflow: hidden;
 }
 
-/* ------------------------------------------------------ entrada e saida */
-/* O estado base e o de FORA: transparente e deslocado para baixo. Aberto, ele
-   sobe e aparece; ao fechar volta para o estado base e desce. A mesma regra
-   serve aos dois sentidos. */
+/* ------------------------------------------------------- enter and exit */
+/* The base state is the OUTSIDE one: transparent and shifted down. Open, it
+   rises and appears; on closing it goes back to the base state and sinks.
+   The same rule serves both directions. */
 .al-modal {
   opacity: 0;
   translate: 0 var(--al-modal-offset);
@@ -179,7 +184,7 @@
   transition-timing-function: var(--al-motion-easing-enter);
 }
 
-/* o scrim so aparece e some; quem sobe e desce e o card */
+/* the scrim only appears and disappears; the card is what rises and sinks */
 .al-modal::backdrop {
   background-color: var(--al-modal-scrim);
   opacity: 0;

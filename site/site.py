@@ -7540,9 +7540,9 @@ def card_token_rows():
 
 
 def card_a11y_rows():
-    nomes = {'filled': 'Filled', 'border': 'Border', 'elevated': 'Elevated', 'todos': 'Todos'}
-    oque = {'titulo': 'título', 'descricao': 'descrição', 'borda': 'borda',
-            'limite-pelo-fundo': 'fundo × página', 'anel': 'anel de foco'}
+    nomes = {'filled': 'Filled', 'border': 'Border', 'elevated': 'Elevated', 'all': 'Todos'}
+    oque = {'title': 'título', 'description': 'descrição', 'border': 'borda',
+            'bg-boundary': 'fundo × página', 'ring': 'anel de foco'}
     out = []
     for r in CARD_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -8001,8 +8001,8 @@ def tab_token_rows():
 
 
 def tab_a11y_rows():
-    oque = {'rotulo': 'rótulo', 'linha': 'linha', 'fundo-selecionado': 'fundo × página',
-            'anel': 'anel de foco', 'selecao': 'seleção'}
+    oque = {'label': 'rótulo', 'line': 'linha', 'selected-bg': 'fundo × página',
+            'ring': 'anel de foco', 'selection': 'seleção'}
     out = []
     for r in TAB_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -8198,8 +8198,8 @@ TB_RULES = [
         ('No alto contraste a seleção continua visível', 'A linha da selecionada fica na cor de destaque do sistema e a Square selecionada ganha contorno. Mesma lição do Divider.'),
     ]),
     ('Exceções de contraste, e o que as paga', [
-        ('O painel começa com um título igual ao rótulo', 'É o que paga a <code>selecao-tonal</code>: no escuro a Square selecionada se distingue só pelo matiz, e o título diz onde a pessoa está. O leitor de tela já ouve “selecionada” ou “página atual”. Precedentes: Material, Carbon.'),
-        ('A linha cinza é só trilho', '<code>trilho-decorativo</code>: ela não comunica estado, então não use a cor para mais nada e não escureça para “corrigir”. <code>marca-no-hover-escuro</code> e <code>pressed-na-superficie-escura</code> são da marca, herdadas da Foundation e do Button.'),
+        ('O painel começa com um título igual ao rótulo', 'É o que paga a <code>tonal-selection</code>: no escuro a Square selecionada se distingue só pelo matiz, e o título diz onde a pessoa está. O leitor de tela já ouve “selecionada” ou “página atual”. Precedentes: Material, Carbon.'),
+        ('A linha cinza é só trilho', '<code>decorative-track</code>: ela não comunica estado, então não use a cor para mais nada e não escureça para “corrigir”. <code>brand-on-dark-hover</code> e <code>pressed-on-dark-surface</code> são da marca, herdadas da Foundation e do Button.'),
     ]),
 ]
 
@@ -8433,8 +8433,8 @@ def accordion_token_rows():
 
 
 def accordion_a11y_rows():
-    oque = {'titulo': 'título', 'chevron': 'chevron', 'divisoria': 'divisória',
-            'limite-pelo-fundo': 'item × página', 'anel': 'anel de foco'}
+    oque = {'title': 'título', 'chevron': 'chevron', 'divider': 'divisória',
+            'bg-boundary': 'item × página', 'ring': 'anel de foco'}
     out = []
     for r in ACC_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -8897,11 +8897,11 @@ def modal_token_rows():
 
 
 def modal_a11y_rows():
-    oque = {'titulo': 'título e texto do miolo', 'anel-no-card': 'anel de foco no card',
-            'botao-principal-no-card': 'botão Primary no card', 'botao-perigo-no-card': 'botão Danger no card',
-            'botao-secundario-borda-no-card': 'borda do Secondary no card',
-            'card-na-canvas-escurecida': 'card × tela escurecida',
-            'card-na-surface-escurecida': 'card × superfície escurecida'}
+    oque = {'title': 'título e texto do miolo', 'ring-on-card': 'anel de foco no card',
+            'primary-button-on-card': 'botão Primary no card', 'danger-button-on-card': 'botão Danger no card',
+            'secondary-border-on-card': 'borda do Secondary no card',
+            'card-on-dimmed-canvas': 'card × tela escurecida',
+            'card-on-dimmed-surface': 'card × superfície escurecida'}
     out = []
     for r in MOD_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -9505,13 +9505,13 @@ def drawer_token_rows():
 
 
 def drawer_a11y_rows():
-    oque = {'titulo': 'título e texto do miolo', 'x-icone-no-painel': 'ícone do X no painel',
-            'anel-no-painel': 'anel de foco no painel', 'botao-principal-no-painel': 'botão Primary no painel',
-            'botao-secundario-borda-no-painel': 'borda do Secondary no painel',
-            'ghost-hover-texto': 'texto do Ghost em hover', 'ghost-hover-distinto-do-painel': 'hover do Ghost × painel',
-            'ghost-active-texto': 'texto do Ghost pressionado', 'ghost-active-distinto-do-painel': 'pressed do Ghost × painel',
-            'painel-na-canvas-escurecida': 'painel × tela escurecida',
-            'painel-na-surface-escurecida': 'painel × superfície escurecida'}
+    oque = {'title': 'título e texto do miolo', 'x-icon-on-panel': 'ícone do X no painel',
+            'ring-on-panel': 'anel de foco no painel', 'primary-button-on-panel': 'botão Primary no painel',
+            'secondary-border-on-panel': 'borda do Secondary no painel',
+            'ghost-hover-text': 'texto do Ghost em hover', 'ghost-hover-distinct-from-panel': 'hover do Ghost × painel',
+            'ghost-active-text': 'texto do Ghost pressionado', 'ghost-active-distinct-from-panel': 'pressed do Ghost × painel',
+            'panel-on-dimmed-canvas': 'painel × tela escurecida',
+            'panel-on-dimmed-surface': 'painel × superfície escurecida'}
     out = []
     for r in DRW_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -10394,7 +10394,7 @@ SIDEBAR_A11Y_TAB = f'''
   </div>
   <div class="note">
     <b>Herdadas</b>
-    <code>borda-de-regiao</code> (a borda é de região, não de controle), <code>selecao-tonal</code> (paga pelo
+    <code>borda-de-regiao</code> (a borda é de região, não de controle), <code>tonal-selection</code> (paga pelo
     título da página igual ao rótulo do item atual) e <code>marca-no-hover-escuro</code> (a exceção de marca da
     Foundation, 3,85:1 no hover do item atual).
   </div>
