@@ -170,6 +170,9 @@ O arquivo `.svg` traz só o desenho: a classe `.al-icon` e o contrato de acessib
 ## Estrutura
 
 ```
+build.py         # o build completo num comando: todos os geradores e portões, na ordem
+.github/workflows/build.yml  # roda python3 build.py --check em cada PR
+
 foundation/
   color.py       # motor OKLCH -> sRGB, gamut mapping, contraste
   build.py       # camada semântica + portão de contraste (WCAG 2.1 AA)
@@ -214,42 +217,36 @@ components/select/
   select.css     # o componente, escrito à mão
   check.py       # portão do CSS: recusa valor literal e token órfão em select.css
   a11y.py        # QA de acessibilidade + contrato de marcação de formulário, gera a11y.json
-  qa.py          # gera site/select-qa.html, a visualização da etapa 6
 
 components/checkbox/
   tokens.py      # camada de alias do Checkbox + portão de alias + portão de contraste, gera tokens.json e o CSS
   checkbox.css   # o componente, escrito à mão
   check.py       # portão do CSS: recusa valor literal e token órfão em checkbox.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/checkbox-qa.html, a visualização da etapa 6
 
 components/radio/
   tokens.py      # camada de alias do Radio + portão de alias + portão de contraste, gera tokens.json e o CSS
   radio.css      # o componente, escrito à mão
   check.py       # portão do CSS: recusa valor literal e token órfão em radio.css
   a11y.py        # QA de acessibilidade + contrato de marcação da pergunta, gera a11y.json
-  qa.py          # gera site/radio-qa.html, a visualização da etapa 6
 
 components/switch/
   tokens.py      # camada de alias do Switch + portão de alias + portão de contraste, gera tokens.json e o CSS
   switch.css     # o componente, escrito à mão
   check.py       # portão do CSS: recusa valor literal e token órfão em switch.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/switch-qa.html, a visualização da etapa 6
 
 components/input/
   tokens.py      # camada de alias do Input + portão de alias + portão de contraste, gera tokens.json e o CSS
   input.css      # o componente, escrito à mão
   check.py       # portão do CSS: recusa valor literal e token órfão em input.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/input-qa.html, a visualização da etapa 6
 
 components/textarea/
   tokens.py      # camada de alias do Textarea + portão de alias + portão de contraste, gera tokens.json e o CSS
   textarea.css   # o componente, escrito à mão
   check.py       # portão do CSS: recusa valor literal, token órfão e piso de linhas fora do ROWS
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/textarea-qa.html, a visualização da etapa 6
 
 components/password/
   tokens.py      # camada de alias do Password + portão de alias + portão de contraste, gera tokens.json e o CSS
@@ -257,21 +254,18 @@ components/password/
   password.js    # o olho: revela o botão, alterna type e nome, esconde no envio
   check.py       # portão do CSS: recusa valor literal e token órfão em password.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/password-qa.html, a visualização da etapa 6
 
 components/divider/
   tokens.py      # camada de alias do Divider + portão de alias + portão de contraste, gera tokens.json e o CSS
   divider.css    # o componente, escrito à mão
   check.py       # portão do CSS: recusa valor literal e token órfão em divider.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/divider-qa.html, a visualização da etapa 6
 
 components/card/
   tokens.py      # camada de alias do Card + portão de alias + portão de contraste, gera tokens.json e o CSS
   card.css       # o componente, escrito à mão
   check.py       # portão do CSS: recusa valor literal e token órfão em card.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/card-qa.html, a visualização da etapa 6
 
 components/tab/
   tokens.py      # camada de alias do Tab + portão de alias + portão de contraste, gera tokens.json e o CSS
@@ -279,14 +273,12 @@ components/tab/
   tab.js         # o teclado do padrão de abas: roving tabindex, setas, Home, End, ativação manual
   check.py       # portão do CSS: recusa valor literal e token órfão em tab.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/tab-qa.html, a visualização da etapa 6
 
 components/accordion/
   tokens.py      # camada de alias do Accordion + portão de alias + portão de contraste + estado distinto, gera tokens.json e o CSS
   accordion.css  # o componente, escrito à mão — <details>/<summary> nativo, sem script
   check.py       # portão do CSS: recusa valor literal e token órfão em accordion.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/accordion-qa.html, a visualização da etapa 6
 
 components/modal/
   tokens.py      # camada de alias do Modal + portão de alias + portão de contraste (scrim composto sobre a página), gera tokens.json e o CSS
@@ -294,7 +286,6 @@ components/modal/
   modal.js       # abrir e fechar por atributo, clique no fundo só sem campos, foco inicial
   check.py       # portão do CSS: recusa valor literal e token órfão em modal.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/modal-qa.html, a visualização da etapa 6
 
 components/drawer/
   tokens.py      # camada de alias do Drawer + portão de alias + portão de contraste (scrim composto sobre a página), gera tokens.json e o CSS
@@ -302,7 +293,6 @@ components/drawer/
   drawer.js      # abrir e fechar por atributo, clique no fundo só sem campos, foco inicial (campo, principal, X)
   check.py       # portão do CSS: recusa valor literal e token órfão em drawer.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/drawer-qa.html, a visualização da etapa 6
 
 components/sidebar/
   tokens.py      # camada de alias da Sidebar + portão de alias + portão de contraste, gera tokens.json e o CSS
@@ -310,7 +300,6 @@ components/sidebar/
   sidebar.js     # abaixo de 1024px: move a <aside> para um <dialog>, foco no item atual, fecha no destino, no fundo e ao alargar
   check.py       # portão do CSS: recusa valor literal (fora o ponto de quebra) e token órfão em sidebar.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/sidebar-qa.html, a visualização da etapa 6
 
 components/breadcrumb/
   tokens.py      # camada de alias do Breadcrumb (com o _breadcrumb-more) + portão de alias + portão de contraste, gera tokens.json e o CSS
@@ -318,14 +307,13 @@ components/breadcrumb/
   breadcrumb.js  # o menu do “…”: abre e fecha, foco fica no botão, Esc devolve o foco, fecha fora e ao escolher
   check.py       # portão do CSS: recusa valor literal e token órfão em breadcrumb.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
-  qa.py          # gera site/breadcrumb-qa.html, a visualização da etapa 6
 
 components/tooltip/
   tokens.py      # camada de alias do Tooltip + portão de alias + portão de contraste, gera tokens.json e o CSS
   tooltip.css    # o componente, escrito à mão — popover manual, fundo invertido, ícone sempre, sem seta
   tooltip.js     # mostra e esconde: hover com atraso, foco na hora, Esc na captura, um por vez, vira de lado
   check.py       # portão do CSS: recusa valor literal e token órfão em tooltip.css
-  a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json (sem qa.py: o QA é no playground)
+  a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
 
 components/toast/
   tokens.py      # camada de alias do Toast + portão de alias + portão de contraste, gera tokens.json e o CSS
@@ -356,83 +344,14 @@ O `site/index.html` é o site: ele lê o `tokens.json` e embute o `al-foundation
 ## Rodando localmente
 
 ```bash
-python3 foundation/export.py       # tokens.json + portão de contraste
-python3 foundation/css.py          # al-foundation.css
-python3 components/button/tokens.py  # tokens do Button + portão de alias + CSS
-python3 components/button/check.py   # portão do CSS do componente
-python3 components/button/a11y.py    # QA de acessibilidade
-python3 components/icon/tokens.py    # tokens do Icon + portão de alias + CSS
-python3 components/icon/check.py     # portão do CSS do Icon
-python3 components/icon/icons.py     # portão do desenho + manifesto
-python3 components/icon-button/tokens.py  # tokens do Icon Button + portão de alias + CSS
-python3 components/icon-button/check.py   # portão do CSS do Icon Button
-python3 components/tag/tokens.py     # tokens do Tag + portão de alias + portão de contraste + CSS
-python3 components/tag/check.py      # portão do CSS do Tag
-python3 components/avatar/tokens.py  # tokens do Avatar + portão de alias + portão de contraste + CSS
-python3 components/avatar/check.py   # portão do CSS do Avatar
-python3 components/select/tokens.py  # tokens do Select + portão de alias + portão de contraste + CSS
-python3 components/select/check.py   # portão do CSS do Select + token órfão
-python3 components/checkbox/tokens.py  # tokens do Checkbox + portão de alias + portão de contraste + CSS
-python3 components/checkbox/check.py   # portão do CSS do Checkbox + token órfão
-python3 components/radio/tokens.py  # tokens do Radio + portão de alias + portão de contraste + CSS
-python3 components/radio/check.py   # portão do CSS do Radio + token órfão
-python3 components/switch/tokens.py  # tokens do Switch + portão de alias + portão de contraste + CSS
-python3 components/switch/check.py   # portão do CSS do Switch + token órfão
-python3 components/input/tokens.py  # tokens do Input + portão de alias + portão de contraste + CSS
-python3 components/input/check.py   # portão do CSS do Input + token órfão
-python3 components/textarea/tokens.py  # tokens do Textarea + portão de alias + portão de contraste + CSS
-python3 components/textarea/check.py   # portão do CSS do Textarea + token órfão + piso de linhas
-python3 components/password/tokens.py  # tokens do Password + portão de alias + portão de contraste + CSS
-python3 components/password/check.py   # portão do CSS do Password + token órfão
-python3 components/divider/tokens.py  # tokens do Divider + portão de alias + portão de contraste + CSS
-python3 components/divider/check.py   # portão do CSS do Divider + token órfão
-python3 components/card/tokens.py     # tokens do Card + portão de alias + portão de contraste + CSS
-python3 components/card/check.py      # portão do CSS do Card + token órfão
-python3 components/tab/tokens.py      # tokens do Tab + portão de alias + portão de contraste + CSS
-python3 components/tab/check.py       # portão do CSS do Tab + token órfão
-python3 components/accordion/tokens.py  # tokens do Accordion + portão de alias + portão de contraste + CSS
-python3 components/accordion/check.py   # portão do CSS do Accordion + token órfão
-python3 components/modal/tokens.py      # tokens do Modal + portão de alias + portão de contraste + CSS
-python3 components/modal/check.py       # portão do CSS do Modal + token órfão
-python3 components/drawer/tokens.py     # tokens do Drawer + portão de alias + portão de contraste + CSS
-python3 components/drawer/check.py      # portão do CSS do Drawer + token órfão
-python3 components/sidebar/tokens.py    # tokens da Sidebar + portão de alias + portão de contraste + CSS
-python3 components/sidebar/check.py     # portão do CSS da Sidebar + token órfão + ponto de quebra
-python3 components/breadcrumb/tokens.py # tokens do Breadcrumb + portão de alias + portão de contraste + CSS
-python3 components/breadcrumb/check.py  # portão do CSS do Breadcrumb + token órfão
-python3 components/tooltip/tokens.py    # tokens do Tooltip + portão de alias + portão de contraste + CSS
-python3 components/tooltip/check.py     # portão do CSS do Tooltip + token órfão
-python3 components/toast/tokens.py      # tokens do Toast + portão de alias + portão de contraste + CSS
-python3 components/toast/check.py       # portão do CSS do Toast + token órfão
-python3 components/alert/tokens.py      # tokens do Alert + portão de alias + portão de contraste + CSS
-python3 components/alert/check.py       # portão do CSS do Alert + token órfão
-python3 site/site.py               # o site: Foundation + componentes
-python3 components/icon/a11y.py      # QA do Icon — depois do site, ver abaixo
-python3 components/icon-button/a11y.py    # QA do Icon Button — idem
-python3 components/tag/a11y.py       # QA do Tag — idem
-python3 components/avatar/a11y.py    # QA do Avatar — idem
-python3 components/select/a11y.py    # QA do Select — idem
-python3 components/checkbox/a11y.py  # QA do Checkbox — idem
-python3 components/radio/a11y.py     # QA do Radio — idem
-python3 components/switch/a11y.py    # QA do Switch — idem
-python3 components/input/a11y.py     # QA do Input — idem
-python3 components/textarea/a11y.py  # QA do Textarea — idem
-python3 components/password/a11y.py  # QA do Password — idem
-python3 components/divider/a11y.py   # QA do Divider — idem
-python3 components/card/a11y.py      # QA do Card — idem
-python3 components/tab/a11y.py       # QA do Tab — idem
-python3 components/accordion/a11y.py # QA do Accordion — idem
-python3 components/modal/a11y.py     # QA do Modal — idem
-python3 components/drawer/a11y.py    # QA do Drawer — idem
-python3 components/sidebar/a11y.py   # QA da Sidebar — idem
-python3 components/breadcrumb/a11y.py   # QA do Breadcrumb — idem
-python3 components/tooltip/a11y.py      # QA do Tooltip — idem
-python3 components/toast/a11y.py        # QA do Toast — idem
-python3 components/alert/a11y.py        # QA do Alert — idem
-python3 site/site.py               # de novo, para o site ler os a11y.json atualizados
+python3 build.py
 ```
 
-Nesta ordem, e de qualquer diretório. O `export.py` vem antes do `css.py` por necessidade: o CSS copia a versão do `tokens.json`, que só o `export.py` regrava.
+Um comando, da raiz do repo, com o Python 3.9 ou mais novo e nada além da biblioteca padrão. Ele roda os 74 passos na ordem certa (Foundation, tokens e portão de cada componente, o site, o QA de acessibilidade de cada componente e o site de novo), leva uns 10 segundos e para no primeiro portão que reprovar, mostrando o motivo. Para ver a saída de todos os passos, use `python3 build.py --verbose`.
+
+`python3 build.py --check` faz o mesmo e depois confere que os arquivos gerados batem com os commitados. É o que o GitHub Actions roda em cada PR: se alguém mudar uma fonte e esquecer de regerar e commitar a saída, o PR fica vermelho.
+
+A ordem mora no `build.py`, e componente novo entra no fim da lista `COMPONENTS`. Cada script também roda sozinho (`python3 components/tag/check.py`, por exemplo), de qualquer diretório. O `export.py` vem antes do `css.py` por necessidade: o CSS copia a versão do `tokens.json`, que só o `export.py` regrava.
 
 Os `a11y.py` são os únicos que rodam **depois** do site, e pelo mesmo motivo: além do
 contraste, eles conferem o contrato de marcação no HTML que o site realmente emite —

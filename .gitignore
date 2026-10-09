@@ -5,3 +5,6 @@ dist/
 .env
 .cache/
 coverage/
+.claude/
+__pycache__/
+*.pyc

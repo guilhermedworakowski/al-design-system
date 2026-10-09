@@ -1,8 +1,8 @@
 {
   "component": "breadcrumb",
   "criterion": "WCAG 1.4.3 texto + 1.4.11 nao-textual + estado visivel",
-  "markupSource": "site/breadcrumb-qa.html",
-  "markupChecked": 12,
+  "markupSource": "site/index.html",
+  "markupChecked": 10,
   "markupPending": false,
   "markupProblems": [],
   "rows": [

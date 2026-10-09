@@ -5,8 +5,8 @@
     "text": 4.5,
     "nonText": 3.0
   },
-  "markupSource": "site/sidebar-qa.html",
-  "markupChecked": 3,
+  "markupSource": "site/index.html",
+  "markupChecked": 2,
   "markupPending": false,
   "markupProblems": [],
   "rows": [

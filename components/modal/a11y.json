@@ -5,8 +5,8 @@
     "text": 4.5,
     "nonText": 3.0
   },
-  "markupSource": "site/modal-qa.html",
-  "markupChecked": 7,
+  "markupSource": "site/index.html",
+  "markupChecked": 8,
   "markupPending": false,
   "markupProblems": [],
   "rows": [
