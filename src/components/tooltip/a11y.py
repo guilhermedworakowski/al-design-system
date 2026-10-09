@@ -1,62 +1,64 @@
 """
-QA de acessibilidade do Tooltip.
+Accessibility QA for the Tooltip.
 
-Como nos outros componentes, a validacao e por COMBINACAO RENDERIZADA - papel
-x tema - contra o fundo EFETIVO, nao par de token solto.
+As with the other components, validation is by RENDERED COMBINATION - role x
+theme - against the EFFECTIVE background, not a loose token pair.
 
-O QUE O FUNDO EFETIVO MUDA AQUI
+WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
-  Quase nada, e e isso que este portao confirma. O tooltip mora na top layer
-  do navegador (popover), com fundo opaco `tooltip-bg` e opacidade 1 quando
-  aberto: o texto e o icone so encostam no fundo do proprio tooltip, nunca na
-  pagina. O icone herda a cor do texto (currentColor, regra 12). A caixa, por
-  sua vez, pode cair sobre qualquer fundo de pagina - inclusive o
-  `bg-surface-raised` de um Modal ou Drawer, que e onde ela aparece por cima
-  de tudo.
+  Almost nothing, and that is what this gate confirms. The tooltip lives in
+  the browser's top layer (popover), with an opaque `tooltip-bg` background
+  and opacity 1 when open: text and icon only touch the tooltip's own
+  background, never the page. The icon inherits the text color
+  (currentColor, rule 12). The box, in turn, can land on any page background
+  - including the `bg-surface-raised` of a Modal or Drawer, which is where it
+  shows up on top of everything.
 
-TRES JULGAMENTOS
+THREE JUDGMENTS
 
-  1. Texto contra o fundo do tooltip: 4,5:1 do 1.4.3. Tem que passar.
-  2. Icone contra o fundo do tooltip: 3:1 do 1.4.11. Tem que passar.
-  3. Caixa contra cada fundo de pagina (canvas, surface, surface-raised): 3:1.
-     Sem borda e sem seta (regra 14), a caixa so se separa da pagina pelo
-     fundo invertido - se ela some, o texto flutua solto. Tem que passar.
-  Sem excecao de contraste: nenhuma foi declarada nas etapas 1 a 4.
+  1. Text against the tooltip background: 4.5:1 from 1.4.3. It must pass.
+  2. Icon against the tooltip background: 3:1 from 1.4.11. It must pass.
+  3. Box against each page background (canvas, surface, surface-raised):
+     3:1. With no border and no arrow (rule 14), the box only separates from
+     the page by the inverted background - if it disappears, the text floats
+     loose. It must pass.
+  No contrast exception: none was declared.
 
-O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
+THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Regras de uso da etapa 4, medidas no HTML emitido:
+  Usage rules from guidelines.md, measured on the emitted HTML:
 
-    a) todo tooltip vivo e <div class="al-tooltip" id role="tooltip"
-       popover="manual"> com id unico (regra 24; "manual" pelo Esc do Modal);
-    b) data-placement, se existir, e top, bottom, left ou right (regra 13);
-    c) dentro, nesta ordem e nada mais: o <svg class="al-icon al-icon--20
-       al-tooltip__icon"> com aria-hidden="true" focusable="false" (regras 11
-       e 12; o icone e sempre presente) e um <span class="al-tooltip__text">
-       com texto;
-    d) nada interativo dentro - sem link, botao, campo, tabindex ou
-       contenteditable (regra 10);
-    e) exatamente um gatilho aponta para ele, por aria-labelledby OU
-       aria-describedby - nunca os dois no mesmo gatilho (regra 24);
-    f) o gatilho e focavel (botao, link com href, campo, ou tabindex >= 0) e
-       nunca `disabled` (regras 22 e 23);
-    g) o tooltip e o elemento logo depois do gatilho (regra 25);
-    h) gatilho com aria-labelledby nao leva aria-label (decisao (a), Icon
-       Button); gatilho com aria-describedby ja tem nome proprio - texto ou
-       aria-label (regra 24);
-    i) as amostras congeladas do site (.al-tooltip sem popover) ficam sob
-       `inert` e `aria-hidden` num ancestral: um tooltip aberto para sempre
-       nao existe no componente e nao conta.
+    a) every live tooltip is <div class="al-tooltip" id role="tooltip"
+       popover="manual"> with a unique id (rule 24; "manual" because of the
+       Modal's Esc);
+    b) data-placement, if present, is top, bottom, left or right (rule 13);
+    c) inside, in this order and nothing else: the <svg class="al-icon
+       al-icon--20 al-tooltip__icon"> with aria-hidden="true"
+       focusable="false" (rules 11 and 12; the icon is always present) and a
+       <span class="al-tooltip__text"> with text;
+    d) nothing interactive inside - no link, button, field, tabindex or
+       contenteditable (rule 10);
+    e) exactly one trigger points to it, through aria-labelledby OR
+       aria-describedby - never both on the same trigger (rule 24);
+    f) the trigger is focusable (button, link with href, field, or
+       tabindex >= 0) and never `disabled` (rules 22 and 23);
+    g) the tooltip is the element right after the trigger (rule 25);
+    h) a trigger with aria-labelledby doesn't take aria-label (as in the Icon
+       Button); a trigger with aria-describedby already has its own name -
+       text or aria-label (rule 24);
+    i) the site's frozen samples (.al-tooltip without popover) sit under
+       `inert` and `aria-hidden` on an ancestor: a tooltip open forever
+       doesn't exist in the component and doesn't count.
 
-  O playground troca o palco por JavaScript (Uso x Lado): as variantes saem
-  de `var TT_DEMOS` no proprio HTML. O portao le esse objeto e confere cada
-  fragmento tambem - assim o caminho do aria-describedby, que nao esta no
-  palco quando a pagina carrega, nao escapa.
+  The playground swaps the stage with JavaScript (Use x Side): the variants
+  come from `var TT_DEMOS` in the HTML itself. The gate reads that object and
+  checks each fragment too - that way the aria-describedby path, which isn't
+  on the stage when the page loads, doesn't escape.
 
-ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
+RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html (piloto: sem pagina de QA separada)
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -81,9 +83,9 @@ NON_TEXT_FLOOR = 3.0     # 1.4.11
 DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('tooltip', 'a11y.json')
 
-PAGINAS = ('bg-canvas', 'bg-surface', 'bg-surface-raised')
+PAGES = ('bg-canvas', 'bg-surface', 'bg-surface-raised')
 PLACEMENTS = ('top', 'bottom', 'left', 'right')
-INTERATIVOS = ('a', 'button', 'input', 'select', 'textarea', 'details', 'summary')
+INTERACTIVE = ('a', 'button', 'input', 'select', 'textarea', 'details', 'summary')
 
 
 def sem(name, theme):
@@ -107,16 +109,16 @@ def contrast_rows():
     rows = []
     for t in THEMES:
         bg, fg = tt('bg', t), tt('text', t)
-        rows.append(row(t, 'texto', ALIAS['tooltip-text'], fg, ALIAS['tooltip-bg'], bg, TEXT_FLOOR))
-        rows.append(row(t, 'icone (currentColor)', ALIAS['tooltip-text'], fg, ALIAS['tooltip-bg'], bg,
+        rows.append(row(t, 'text', ALIAS['tooltip-text'], fg, ALIAS['tooltip-bg'], bg, TEXT_FLOOR))
+        rows.append(row(t, 'icon (currentColor)', ALIAS['tooltip-text'], fg, ALIAS['tooltip-bg'], bg,
                         NON_TEXT_FLOOR))
-        for p in PAGINAS:
-            rows.append(row(t, 'caixa sobre a pagina', ALIAS['tooltip-bg'], bg, p, sem(p, t),
+        for p in PAGES:
+            rows.append(row(t, 'box on the page', ALIAS['tooltip-bg'], bg, p, sem(p, t),
                             NON_TEXT_FLOOR))
     return rows
 
 
-# ─────────────────────────────────────────────── marcacao
+# ─────────────────────────────────────────────── markup
 def next_element(node):
     sibs = node['parent']['kids']
     i = sibs.index(node)
@@ -147,59 +149,59 @@ def check_tooltip(tip, triggers, problems, where):
     a = tip['attrs']
 
     def bad(msg):
-        problems.append(f'{where}linha {ln}: {msg}')
+        problems.append(f'{where}line {ln}: {msg}')
 
     # (a)
     if tip['tag'] != 'div' or a.get('role') != 'tooltip' or a.get('popover') != 'manual':
-        bad('tooltip vivo = <div role="tooltip" popover="manual"> (regra 24)')
+        bad('live tooltip = <div role="tooltip" popover="manual"> (rule 24)')
     # (b)
     if 'data-placement' in a and a['data-placement'] not in PLACEMENTS:
-        bad(f'data-placement="{a["data-placement"]}" - so top, bottom, left ou right (regra 13)')
+        bad(f'data-placement="{a["data-placement"]}" - only top, bottom, left or right (rule 13)')
     # (c)
     kids = tip['kids']
     if len(kids) != 2:
-        bad('dentro do tooltip: icone + texto, nada mais (regras 11 e 12)')
+        bad('inside the tooltip: icon + text, nothing else (rules 11 and 12)')
     else:
         ico, txt = kids
         ia = ico['attrs']
         if (ico['tag'] != 'svg' or not {'al-icon', 'al-icon--20', 'al-tooltip__icon'} <= set(classes(ico))
                 or ia.get('aria-hidden') != 'true' or ia.get('focusable') != 'false'):
-            bad('primeiro filho = <svg class="al-icon al-icon--20 al-tooltip__icon" '
-                'aria-hidden="true" focusable="false"> (regras 11 e 12)')
+            bad('first child = <svg class="al-icon al-icon--20 al-tooltip__icon" '
+                'aria-hidden="true" focusable="false"> (rules 11 and 12)')
         if txt['tag'] != 'span' or not has(txt, 'al-tooltip__text') or not text_of(txt):
-            bad('segundo filho = <span class="al-tooltip__text"> com texto')
+            bad('second child = <span class="al-tooltip__text"> with text')
     # (d)
     for k in walk(tip):
-        if (k['tag'] in INTERATIVOS or 'tabindex' in k['attrs']
+        if (k['tag'] in INTERACTIVE or 'tabindex' in k['attrs']
                 or 'contenteditable' in k['attrs']):
-            bad(f'<{k["tag"]}> interativo dentro do tooltip (regra 10)')
+            bad(f'interactive <{k["tag"]}> inside the tooltip (rule 10)')
             break
     # (e)
     if len(triggers) != 1:
-        bad(f'{len(triggers)} gatilhos apontam para "{a.get("id")}" - tem que ser exatamente um (regra 24)')
+        bad(f'{len(triggers)} triggers point to "{a.get("id")}" - it must be exactly one (rule 24)')
         return
     trig = triggers[0]
     by_label = a['id'] in refs(trig, 'aria-labelledby')
     by_desc = a['id'] in refs(trig, 'aria-describedby')
     if by_label and by_desc:
-        bad('o gatilho aponta pelos dois atributos - nome OU descricao (regra 24)')
+        bad('the trigger points through both attributes - name OR description (rule 24)')
     # (f)
     if not focusable(trig):
-        bad(f'gatilho <{trig["tag"]}> nao e focavel (regra 22)')
+        bad(f'trigger <{trig["tag"]}> is not focusable (rule 22)')
     if 'disabled' in trig['attrs']:
-        bad('gatilho disabled - para explicar bloqueio use aria-disabled (regra 23)')
+        bad('disabled trigger - to explain a block use aria-disabled (rule 23)')
     # (g)
     if next_element(trig) is not tip:
-        bad('o tooltip nao vem logo depois do gatilho (regra 25)')
+        bad('the tooltip does not come right after the trigger (rule 25)')
     # (h)
     if by_label and 'aria-label' in trig['attrs']:
-        bad('gatilho com aria-labelledby e aria-label juntos - com tooltip, so labelledby (decisao (a))')
+        bad('trigger with aria-labelledby and aria-label together - with a tooltip, only labelledby (as in the Icon Button)')
     if by_desc and not by_label and not (trig['attrs'].get('aria-label', '').strip() or text_of(trig)):
-        bad('gatilho de descricao sem nome proprio - sem nome, o tooltip e o nome: aria-labelledby (regra 24)')
+        bad('description trigger without its own name - with no name, the tooltip is the name: aria-labelledby (rule 24)')
 
 
 def markup_contract(html, where=''):
-    """Confere um documento (ou fragmento). Devolve (vivos, congelados, problemas)."""
+    """Checks a document (or fragment). Returns (live, frozen, problems)."""
     t = Tree(skip=SKIP_TEMPLATE)
     t.feed(html)
     nodes = list(walk(t.root))
@@ -216,21 +218,21 @@ def markup_contract(html, where=''):
         if not has(n, 'al-tooltip'):
             continue
         if 'popover' not in n['attrs']:
-            # (i) amostra congelada
-            sob = list(ancestors(n))
-            if not (any('inert' in x['attrs'] for x in sob)
-                    and any(x['attrs'].get('aria-hidden') == 'true' for x in sob)):
-                problems.append(f'{where}linha {n["line"]}: .al-tooltip sem popover fora de inert + '
-                                f'aria-hidden - tooltip aberto para sempre nao existe')
+            # (i) frozen sample
+            under = list(ancestors(n))
+            if not (any('inert' in x['attrs'] for x in under)
+                    and any(x['attrs'].get('aria-hidden') == 'true' for x in under)):
+                problems.append(f'{where}line {n["line"]}: .al-tooltip without popover outside inert + '
+                                f'aria-hidden - a tooltip open forever does not exist')
             frozen += 1
             continue
         live += 1
         tid = n['attrs'].get('id', '')
         if not tid:
-            problems.append(f'{where}linha {n["line"]}: tooltip vivo sem id (regra 24)')
+            problems.append(f'{where}line {n["line"]}: live tooltip without id (rule 24)')
             continue
         if len(ids.get(tid, [])) > 1:
-            problems.append(f'{where}linha {n["line"]}: id "{tid}" repetido no documento')
+            problems.append(f'{where}line {n["line"]}: id "{tid}" repeated in the document')
         triggers = [x for x in nodes if tid in refs(x, 'aria-labelledby') + refs(x, 'aria-describedby')]
         check_tooltip(n, triggers, problems, where)
     return live, frozen, problems
@@ -247,17 +249,17 @@ def run():
     fails = [r for r in rows if not r['pass']]
 
     print('=' * 74)
-    print('QA DE ACESSIBILIDADE DO TOOLTIP')
+    print('TOOLTIP ACCESSIBILITY QA')
     print('=' * 74)
     for r in rows:
-        nota = 'INVISIVEL - igual ao fundo' if r['invisible'] else ('passa' if r['pass'] else 'REPROVA')
-        print(f'  {"ok" if r["pass"] else "XX"} {r["theme"]:<5} {r["what"]:<22} sobre {r["bg"]:<18} '
-              f'{r["fgHex"]} x {r["bgHex"]}  {r["ratio"]:5.2f}  {nota}')
+        note = 'INVISIBLE - equal to the background' if r['invisible'] else ('pass' if r['pass'] else 'FAIL')
+        print(f'  {"ok" if r["pass"] else "XX"} {r["theme"]:<5} {r["what"]:<22} on {r["bg"]:<18} '
+              f'{r["fgHex"]} x {r["bgHex"]}  {r["ratio"]:5.2f}  {note}')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path, ROOT)}')
     if not os.path.exists(path):
-        live, frozen, mk, demos = None, 0, [f'{path} nao existe'], {}
+        live, frozen, mk, demos = None, 0, [f'{path} does not exist'], {}
     else:
         html = open(path, encoding='utf-8').read()
         live, frozen, mk = markup_contract(html)
@@ -267,23 +269,23 @@ def run():
             live += dl
             mk += dp
         if live == 0:
-            live, mk = None, ['nenhum .al-tooltip vivo no HTML - rode site.py antes']
+            live, mk = None, ['no live .al-tooltip in the HTML - run site.py first']
     if live is None:
         for p in mk:
-            print(f'     PENDENTE: {p}')
+            print(f'     PENDING: {p}')
     else:
-        print(f'     {live} tooltip(s) vivo(s) conferido(s), 9 regras (a-i) - '
-              f'{len(demos)} variantes do playground incluidas; {frozen} amostra(s) congelada(s) sob inert')
+        print(f'     {live} live tooltip(s) checked, 9 rules (a-i) - '
+              f'{len(demos)} playground variants included; {frozen} frozen sample(s) under inert')
         for p in mk:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
     print('-' * 74)
-    print(f'{len(rows)} medicoes  |  passam: {len(rows) - len(fails)}  |  excecoes: 0  |  '
-          f'reprovas: {len(fails)}')
+    print(f'{len(rows)} measurements  |  pass: {len(rows) - len(fails)}  |  exceptions: 0  |  '
+          f'fail: {len(fails)}')
 
     json.dump({
         'component': 'tooltip',
-        'criterion': 'WCAG 1.4.3 texto + 1.4.11 nao-textual',
+        'criterion': 'WCAG 1.4.3 text + 1.4.11 non-text',
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': live,
         'markupFrozen': frozen,
@@ -292,14 +294,14 @@ def run():
         'markupProblems': mk if live is not None else [],
         'rows': rows,
     }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
-    print(f'{os.path.relpath(OUT_JSON, ROOT)} escrito')
+    print(f'{os.path.relpath(OUT_JSON, ROOT)} written')
 
-    falhou = bool(fails)
+    failed = bool(fails)
     if live is None or mk:
         print('-' * 74)
-        print(f'{len(mk)} PROBLEMA(S) DE MARCACAO - portao reprova')
-        falhou = True
-    return 1 if falhou else 0
+        print(f'{len(mk)} MARKUP PROBLEM(S) - gate fails')
+        failed = True
+    return 1 if failed else 0
 
 
 if __name__ == '__main__':

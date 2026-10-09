@@ -1,27 +1,28 @@
-/* AL Design System - Drawer, comportamento
+/* AL Design System - Drawer, behavior
  *
- * O <dialog> nativo ja faz o grosso (regra 24): prende o foco, deixa a pagina
- * inerte, fecha com Esc (regra 15) e devolve o foco a quem abriu (regra 17).
- * Este arquivo cobre so o que o nativo nao faz:
- *   - abrir e fechar por atributo, sem JS na pagina:
- *       data-al-drawer-open="<id>"   no botao que abre
- *       data-al-drawer-close         no botao que fecha (dentro do dialog)
- *   - clique no scrim fecha SO quando nao ha campos (regra 16). Com campo, o
- *     clique acidental perderia o que foi digitado;
- *   - foco inicial (regra 27), quando a marcacao nao pede um com `autofocus`.
- *     O nativo foca o primeiro focavel na ordem do documento, e no Drawer esse
- *     e o X do cabecalho; por isso a ordem aqui e explicita:
- *       com campo        -> o primeiro campo do miolo
- *       sem campo        -> a acao principal (a ultima do rodape)
- *       sem rodape       -> o X (o nativo ja faz, nao mexe)
+ * The native <dialog> already does the bulk (rule 24): it traps focus, makes
+ * the page inert, closes with Esc (rule 15) and returns focus to the opener
+ * (rule 17). This file only covers what the native one doesn't:
+ *   - opening and closing by attribute, with no JS on the page:
+ *       data-al-drawer-open="<id>"   on the button that opens
+ *       data-al-drawer-close         on the button that closes (inside the dialog)
+ *   - a click on the scrim closes ONLY when there are no fields (rule 16).
+ *     With a field, an accidental click would lose what was typed;
+ *   - initial focus (rule 27), when the markup doesn't ask for one with
+ *     `autofocus`. The native one focuses the first focusable in document
+ *     order, and in the Drawer that is the header's X; that is why the order
+ *     here is explicit:
+ *       with a field     -> the first field in the body
+ *       no field         -> the main action (the last one in the footer)
+ *       no footer        -> the X (the native one already does it)
  *
- * Fechar com mudanca nao salva e do formulario, nao deste arquivo (regra 19):
- * ele escuta o evento `cancel` do <dialog> e decide.
+ * Closing with unsaved changes belongs to the form, not to this file
+ * (rule 19): it listens to the <dialog>'s `cancel` event and decides.
  *
- * Uso:
- *   carregar este arquivo com um script src  -> liga sozinho quando a pagina carrega
- *   alDrawers.init(container)                -> liga em conteudo inserido depois
- * Ligar duas vezes o mesmo dialog nao duplica nada.
+ * Usage:
+ *   load this file with a script src  -> binds by itself when the page loads
+ *   alDrawers.init(container)         -> binds content inserted later
+ * Binding the same dialog twice duplicates nothing.
  */
 (function () {
   'use strict';
@@ -39,32 +40,32 @@
   }
 
   function initialFocus(dialog) {
-    if (dialog.querySelector('[autofocus]')) return;   // a marcacao decidiu
+    if (dialog.querySelector('[autofocus]')) return;   // the markup decided
     var content = dialog.querySelector('.al-drawer__content');
     var field = content && content.querySelector(FOCUSABLE_FIELD);
-    if (field) { field.focus(); return; }               // regra 27: o primeiro campo
+    if (field) { field.focus(); return; }               // rule 27: the first field
     var actions = dialog.querySelectorAll('.al-drawer__actions button, .al-drawer__actions a[href]');
-    if (actions.length) actions[actions.length - 1].focus();   // regra 27: a principal
+    if (actions.length) actions[actions.length - 1].focus();   // rule 27: the main one
   }
 
   function bind(dialog) {
     if (dialog.hasAttribute('data-al-drawer')) return;
     dialog.setAttribute('data-al-drawer', '');
 
-    // O clique so conta se o aperto E a soltura foram no scrim: arrastar para
-    // selecionar texto dentro do Drawer e soltar fora nao fecha nada.
+    // The click only counts if the press AND the release were on the scrim:
+    // dragging to select text inside the Drawer and releasing outside closes nothing.
     var pressedOnScrim = false;
     dialog.addEventListener('pointerdown', function (e) {
       pressedOnScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
     });
     dialog.addEventListener('click', function (e) {
       var onScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
-      if (onScrim && pressedOnScrim && !hasFields(dialog)) dialog.close();   // regra 16
+      if (onScrim && pressedOnScrim && !hasFields(dialog)) dialog.close();   // rule 16
       pressedOnScrim = false;
     });
 
-    // foco inicial: observa o `open`, porque quem abre pode ser o atributo de
-    // dados ou um showModal() de fora
+    // initial focus: watches `open`, because the opener may be the data
+    // attribute or a showModal() from outside
     new MutationObserver(function () {
       if (dialog.open) initialFocus(dialog);
     }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
@@ -74,8 +75,8 @@
     [].slice.call((root || document).querySelectorAll('dialog.al-drawer')).forEach(bind);
   }
 
-  // Abrir e fechar por atributo: delegado no documento, uma vez so, entao
-  // vale tambem para botao inserido depois.
+  // Opening and closing by attribute: delegated on the document, only once, so
+  // it also works for a button inserted later.
   document.addEventListener('click', function (e) {
     var opener = e.target.closest && e.target.closest('[data-al-drawer-open]');
     if (opener) {

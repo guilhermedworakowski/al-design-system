@@ -1,11 +1,11 @@
 """
-Portao do CSS do Accordion.
+CSS gate for the Accordion.
 
-A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
-de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
-nenhum token inventado. Aqui fica so o que e proprio do Accordion.
+The rule is the same for every component and lives in tools/cssgate.py: no
+literal values (color, length, weight, duration), no orphan tokens and no
+invented tokens. Only what is specific to the Accordion stays here.
 
-Rodar: python3 check.py (ou o build completo: python3 build.py)
+Run: python3 check.py (or the full build: python3 build.py)
 """
 import os
 import sys
@@ -14,16 +14,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from cssgate import gate  # noqa: E402
 
-# O que este portao NAO alcanca: marcacao so existe na saida renderizada.
-# O a11y.py da etapa 6 cobra estas regras no HTML que o site emite.
-FORA_DO_CSS = [
-    'marcacao nativa <details>/<summary>, sem role nem aria-expanded manual (regra 24)',
-    'nada de <h1>-<h6> nem elemento clicavel dentro do <summary> (regras 17 e 25)',
-    'icone e chevron com aria-hidden="true" (regras 18 e 19)',
-    'nunca .al-accordion dentro de .al-accordion (regra 5)',
-    'sobre bg-surface, nunca na tela nem dentro de card (regra 14) - layout, sem portao possivel',
+# What this gate does NOT reach: markup only exists in the rendered output.
+# a11y.py enforces these rules on the HTML the site emits.
+OUTSIDE_CSS = [
+    'native <details>/<summary> markup, no role and no manual aria-expanded (rule 24)',
+    'no <h1>-<h6> and no clickable element inside the <summary> (rules 17 and 25)',
+    'icon and chevron with aria-hidden="true" (rules 18 and 19)',
+    'never .al-accordion inside .al-accordion (rule 5)',
+    'on bg-surface, never on the canvas or inside a card (rule 14) - layout, no gate possible',
 ]
 
 
 if __name__ == '__main__':
-    sys.exit(gate('accordion', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('accordion', outside_css=OUTSIDE_CSS))

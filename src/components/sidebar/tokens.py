@@ -1,42 +1,43 @@
 """
-Camada de tokens do Sidebar.
+Token layer for the Sidebar.
 
-Regra desta camada: nada aqui inventa valor. Todo token aponta para um token da
-Foundation pelo NOME. A UNICA excecao e a largura (WIDTH, abaixo), declarada,
-nomeada e travada pelo portao - a mesma do Modal e do Drawer: a Foundation nao
-tem escala de largura de container.
+The rule of this layer: nothing here invents a value. Every token points to a
+Foundation token by NAME. The ONLY exception is the width (WIDTH, below),
+declared, named and locked by the gate - the same as the Modal and the Drawer:
+the Foundation has no container width scale.
 
-Nomenclatura:
-  codigo -> sidebar-profile-gap     (hifen)
-  Figma  -> profile/gap             (collection `21. Sidebar`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> sidebar-profile-gap     (hyphen)
+  Figma -> profile/gap             (collection `21. Sidebar`)
+They are different layers. Never collapse one into the other.
 
-PRIMEIRO COMPONENTE DO TIER 4 (08/10/2026)
+FIRST COMPONENT OF TIER 4 (2026-10-08)
 
-  Componente `sidebar`, node 339:2916, pagina `Tier 4` do Figma. Uma variante
-  so, 296 de largura. Cabecalho de perfil (Avatar md + nome + e-mail + Icon
-  Button Ghost sm), slot `content` com os grupos de navegacao e a secao de
-  Ajuda (rotulo de grupo + itens). Props: `Avatar`, `Support area`, `Support`
-  (texto), `Item 1..3`, `content` (slot).
+  Component `sidebar`, node 339:2916, page `Tier 4` in Figma. One variant,
+  296 wide. Profile header (Avatar md + name + e-mail + Ghost sm Icon
+  Button), `content` slot with the navigation groups, and the Help section
+  (group label + items). Props: `Avatar`, `Support area`, `Support` (text),
+  `Item 1..3`, `content` (slot).
 
-  Decisoes da etapa 1: fundo `bg-canvas` com borda a direita em
-  `border-default` (A), e-mail em `text-secondary` (B), perfil com Icon Button
-  (C), itens sem icone (D), sem aninhamento (E), altura da tela com so o miolo
-  rolando (F), no celular vira painel modal pela esquerda reaproveitando o
-  Drawer (G), sem modo recolhido (H).
+  Scope decisions: `bg-canvas` background with a right border in
+  `border-default`, e-mail in `text-secondary`, profile with an Icon Button,
+  items without icons, no nesting, screen height with only the body
+  scrolling, on a phone it becomes a modal panel from the left reusing the
+  Drawer, no collapsed mode.
 
-O ITEM E O TAB
+THE ITEM IS THE TAB
 
-  Cada item e um Tab Square de largura cheia (regra 4 e decisao J do Tab). Os
-  pares dele ja foram medidos sobre `bg-canvas` em components/tab/tokens.py, e
-  o botao do perfil em components/icon-button/tokens.py. Por isso o fundo da
-  sidebar e a tela: com `bg-surface-raised` o hover sumia no escuro (1,00:1).
+  Each item is a full-width Tab Square (Tab rule 4). Its pairs were already
+  measured on `bg-canvas` in components/tab/tokens.py, and the profile button
+  in components/icon-button/tokens.py. That is why the sidebar background is
+  the canvas: with `bg-surface-raised` the hover disappeared in dark (1.00:1).
 
-SEM TOKEN, DE PROPOSITO
+NO TOKEN, ON PURPOSE
 
-  Altura: 100dvh (o 1024 do Figma e so o quadro). Raio: nenhum, a sidebar cola
-  na borda da tela. Item, Avatar e Icon Button: tokens dos proprios
-  componentes. Celular: scrim, duracao e sombra do Drawer, no CSS da etapa 5.
+  Height: 100dvh (the 1024 in Figma is only the frame). Radius: none, the
+  sidebar sticks to the screen edge. Item, Avatar and Icon Button: their own
+  components' tokens. Phone: the Drawer's scrim, duration and shadow, in
+  sidebar.css.
 """
 import json, os, sys
 
@@ -51,24 +52,24 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
     'bg':          'bg-canvas',
-    'border':      'border-default',      # a cor do Divider
+    'border':      'border-default',      # the Divider's color
     'name':        'text-primary',
     'email':       'text-secondary',
     'group-label': 'text-secondary',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'border-width':      'border.width.1',
     'padding':           'space.24',
-    'gap':               'space.24',      # perfil / miolo / ajuda, e entre grupos
-    'profile-gap':       'space.8',       # avatar -> textos
-    'profile-text-gap':  'space.4',       # nome -> e-mail, textos -> botao
-    'group-gap':         'space.16',      # rotulo do grupo -> itens
-    'item-gap':          'space.8',       # entre itens
+    'gap':               'space.24',      # profile / body / help, and between groups
+    'profile-gap':       'space.8',       # avatar -> texts
+    'profile-text-gap':  'space.4',       # name -> e-mail, texts -> button
+    'group-gap':         'space.16',      # group label -> items
+    'item-gap':          'space.8',       # between items
 }
 
 TYPE = {
@@ -77,41 +78,42 @@ TYPE = {
     'group-label-font': 'type.styles.code-md',
 }
 
-# Estilos que nao usam a familia padrao (sans).
+# Styles that don't use the default family (sans).
 MONO = {'group-label-font'}
 
-# UNICA excecao a "todo token e alias" (mesma do Modal e do Drawer): a
-# Foundation nao tem escala de largura de container. Quando existir, vira alias.
+# The ONLY exception to "every token is an alias" (the same as the Modal and the
+# Drawer): the Foundation has no container width scale. When it exists, this
+# becomes an alias.
 WIDTH = {
     'width': 296,
 }
 
 PENDING = {
-    'borda-de-regiao': (
-        'A linha a direita (`border-default`) da 1.57:1 no claro e 2.42:1 no escuro contra a '
-        'sidebar, e 1.47:1 / 1.98:1 contra uma pagina em `bg-surface`. O 3:1 do WCAG 1.4.11 '
-        'vale para o contorno de CONTROLES; a sidebar e uma regiao da pagina, reconhecida pelo '
-        'conteudo e, no leitor de tela, pelo nome do <nav>. Mesmo raciocinio do Divider e da '
-        'borda do Card (decisao A de Gui, 08/10/2026). NAO "corrigir" escurecendo.'
+    'region-border': (
+        'The line on the right (`border-default`) gives 1.57:1 in light and 2.42:1 in dark '
+        'against the sidebar, and 1.47:1 / 1.98:1 against a page in `bg-surface`. The 3:1 of '
+        'WCAG 1.4.11 applies to the outline of CONTROLS; the sidebar is a region of the page, '
+        'recognized by its content and, by the screen reader, by the <nav> name. Same reasoning '
+        'as the Divider and the Card border (2026-10-08). DO NOT "fix" it by darkening.'
     ),
 }
 
-# Fundos ao lado dos quais a sidebar fica. Nao sao tokens do Sidebar.
+# Backgrounds the sidebar sits next to. They are not Sidebar tokens.
 PAGES = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
 }
 
-# (papel, fg, fundo(s), piso, excecao)
+# (role, fg, background(s), floor, exception)
 COMBOS = [
-    ('nome',          'name',        'bg',                 4.5, None),
-    ('email',         'email',       'bg',                 4.5, None),
-    ('rotulo-grupo',  'group-label', 'bg',                 4.5, None),
-    ('borda',         'border',      ('bg', 'surface'),    3.0, 'borda-de-regiao'),
+    ('name',         'name',        'bg',                 4.5, None),
+    ('email',        'email',       'bg',                 4.5, None),
+    ('group-label',  'group-label', 'bg',                 4.5, None),
+    ('border',       'border',      ('bg', 'surface'),    3.0, 'region-border'),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
     if role in PAGES:
         return PAGES[role]
@@ -140,9 +142,9 @@ def run():
         name = f'sidebar-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref})')
+            problems.append(f'{name}: loose hex ({ref})')
         elif ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
         else:
             resolved[name] = {'light': SEM[ref][0], 'dark': SEM[ref][1]}
 
@@ -153,16 +155,16 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
-    # Excecao nomeada: valor solto so e aceito para este nome.
+    # Named exception: a loose value is only accepted for this name.
     for role, px in WIDTH.items():
         name = f'sidebar-{role}'
         alias[name] = f'{px}px'
         resolved[name] = px
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -172,22 +174,22 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO SIDEBAR')
+    print('SIDEBAR TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<30} -> {alias[name]}')
     print('-' * 74)
     for r in rows:
-        tag = 'OK  ' if r['pass'] else ('EXCE' if r['exception'] else 'FALHA')
-        print(f'  {tag} {r["what"]:<24} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (piso {r["min"]})')
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
+        tag = 'OK  ' if r['pass'] else ('EXC ' if r['exception'] else 'FAIL')
+        print(f'  {tag} {r["what"]:<24} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (floor {r["min"]})')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE')
         return 1
     n_lit = len(WIDTH)
-    print(f'{len(alias)} tokens: {len(alias) - n_lit} alias da Foundation, {n_lit} largura com valor '
-          f'declarado (mesma excecao do Modal e do Drawer).')
+    print(f'{len(alias)} tokens: {len(alias) - n_lit} aliases of the Foundation, {n_lit} width with a '
+          f'declared value (the same exception as the Modal and the Drawer).')
 
     out = {
         'meta': {
@@ -196,11 +198,11 @@ def run():
             'foundation': FOUND['meta']['version'],
             'figmaNode': '339:2916',
             'figmaCollection': '21. Sidebar',
-            'nota': (
-                'Navegacao lateral fixa, 296 de largura, fundo bg-canvas com borda a direita em '
-                'border-default. Perfil, slot de grupos e secao de Ajuda; itens sao Tab Square de '
-                'largura cheia. Altura da tela, so o miolo rola. No celular vira painel modal pela '
-                'esquerda (mecanismo do Drawer). Uma excecao de contraste em pending.'
+            'note': (
+                'Fixed side navigation, 296 wide, bg-canvas background with a right border in '
+                'border-default. Profile, group slot and Help section; items are full-width Tab '
+                'Square. Screen height, only the body scrolls. On a phone it becomes a modal '
+                'panel from the left (the Drawer mechanism). One contrast exception in pending.'
             ),
         },
         'alias': alias,
@@ -209,7 +211,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('sidebar', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/sidebar/tokens.json escrito')
+    print('\nbuild/components/sidebar/tokens.json written')
     write_css(alias)
     return 0
 
@@ -218,25 +220,25 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Sidebar')
-    w(' * GERADO por src/components/sidebar/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Sidebar tokens')
+    w(' * GENERATED by src/components/sidebar/tokens.py. Do not edit by hand.')
     w(' */')
     w('')
     w(':root {')
     w('')
-    w('  /* cor - o tema troca no :root */')
+    w('  /* color - the theme switches on :root */')
     for role, ref in COLOR.items():
         w(f'  --al-sidebar-{role}: {css_ref(ref)};')
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-sidebar-{role}: {css_ref(ref)};')
     w('')
-    w('  /* largura - valor declarado, sem escala na Foundation (mesma excecao do Modal e do Drawer) */')
+    w('  /* width - declared value, no scale in the Foundation (the same exception as the Modal and the Drawer) */')
     for role, px in WIDTH.items():
         w(f'  --al-sidebar-{role}: {px}px;')
     w('')
-    w('  /* tipografia - um estilo vira quatro vars (cinco no rotulo, que e mono) */')
+    w('  /* typography - one style becomes four vars (five on the label, which is mono) */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -249,11 +251,11 @@ def write_css(alias):
         w(f'  {prefix}-tracking: {style[4]};')
     w('}')
     w('')
-    texto = '\n'.join(L)
-    faltando = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in texto]
-    if faltando:
-        raise AssertionError(f'tokens fora do CSS: {faltando}')
-    save_css('sidebar', texto)
+    text = '\n'.join(L)
+    missing = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in text]
+    if missing:
+        raise AssertionError(f'tokens missing from the CSS: {missing}')
+    save_css('sidebar', text)
 
 
 if __name__ == '__main__':

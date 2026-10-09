@@ -1,30 +1,32 @@
-/* AL Design System - Toast (regras 15 a 24)
+/* AL Design System - Toast (rules 15 to 24)
  *
- * A marcacao do toast mora na pagina, num <template>; este arquivo so cuida
- * de MOSTRAR, CRONOMETRAR e TIRAR. Ver o contrato no cabecalho do toast.css.
+ * The toast markup lives on the page, in a <template>; this file only takes
+ * care of SHOWING, TIMING and REMOVING. See the contract in toast.css's header.
  *
- *   - um por vez: quem chega com outro na tela espera na fila (regra 15);
- *   - Success e Info saem depois de `toast-timeout` (6000ms); o relogio pausa
- *     com o ponteiro em cima ou o foco dentro, e retoma de onde parou
- *     (regra 17);
- *   - Warning e Error so saem pelo X ou pelo Esc - e seguram a fila (regra 18);
- *   - o X fecha sempre; Esc fecha com o foco dentro do toast, e o Esc para ai:
- *     sobre um Modal, o primeiro Esc fecha so o toast (regra 19);
- *   - nunca move o foco para o toast (regra 21). Se a pessoa tabulou ate o X
- *     e o toast saiu, o foco volta para onde ela estava antes de entrar;
- *   - Error entra na regiao role="alert", os outros na role="status"
- *     (regra 22). As duas regioes ja existem na pagina (regra 23).
- * O tempo na tela e a duracao da saida sao lidos dos tokens no CSS, nunca
- * escritos aqui.
+ *   - one at a time: whoever arrives with another on screen waits in the
+ *     queue (rule 15);
+ *   - Success and Info leave after `toast-timeout` (6000ms); the clock pauses
+ *     with the pointer over it or focus inside, and resumes where it stopped
+ *     (rule 17);
+ *   - Warning and Error only leave through the X or Esc - and they hold the
+ *     queue (rule 18);
+ *   - the X always closes; Esc closes with focus inside the toast, and Esc
+ *     stops there: over a Modal, the first Esc closes only the toast (rule 19);
+ *   - never moves focus to the toast (rule 21). If the person tabbed to the X
+ *     and the toast left, focus goes back to where they were before entering;
+ *   - Error goes into the role="alert" region, the others into role="status"
+ *     (rule 22). Both regions already exist on the page (rule 23).
+ * The time on screen and the exit duration are read from the tokens in the
+ * CSS, never written here.
  *
- * Uso:
+ * Usage:
  *   <script src="toast.js"></script>
- *   alToast.show('toast-salvo')                        -> clona o <template id>
- *   alToast.show(tpl, { title: '…', description: '…' }) -> troca os textos
- *   alToast.dismiss()                                  -> tira o da tela
- *   alToast.clear()                                    -> esvazia a fila e tira o da tela
- * Navegador sem popover: a regiao fica no fluxo, no fim da pagina, e o anuncio
- * continua chegando ao leitor de tela.
+ *   alToast.show('toast-saved')                        -> clones the <template id>
+ *   alToast.show(tpl, { title: '…', description: '…' }) -> swaps the texts
+ *   alToast.dismiss()                                  -> removes the one on screen
+ *   alToast.clear()                                    -> empties the queue and removes the one on screen
+ * A browser without popover: the region stays in the flow, at the end of the
+ * page, and the announcement still reaches the screen reader.
  */
 (function () {
   'use strict';
@@ -40,12 +42,12 @@
     return document.querySelector('.al-toast-region');
   }
 
-  // A regiao fica aberta para sempre. Um Modal ou Drawer aberto (dialog:modal)
-  // torna INERTE tudo que esta fora dele - inclusive a regiao, mesmo desenhada
-  // por cima: o X nao recebe clique nem foco e o leitor de tela deixa de ver o
-  // toast. Entao, enquanto houver um aberto, a regiao mora DENTRO dele, e volta
-  // para o <body> quando ele fecha. Mover tira o popover da top layer; abrir de
-  // novo a poe no topo, acima do proprio dialog.
+  // The region stays open forever. An open Modal or Drawer (dialog:modal) makes
+  // everything outside it INERT - including the region, even drawn on top: the
+  // X gets no click or focus and the screen reader stops seeing the toast. So,
+  // while one is open, the region lives INSIDE it, and goes back to <body>
+  // when it closes. Moving takes the popover out of the top layer; opening it
+  // again puts it on top, above the dialog itself.
   function host() {
     var open = document.querySelectorAll('dialog:modal');
     return open.length ? open[open.length - 1] : document.body;
@@ -61,8 +63,8 @@
     var h = host();
     if (r.parentNode !== h) {
       h.appendChild(r);
-      // Observa o atributo `open` em vez do evento `close`: o observer roda
-      // logo depois do close(), o evento espera uma tarefa da fila.
+      // Watches the `open` attribute instead of the `close` event: the observer
+      // runs right after close(), the event waits for a queued task.
       if (h !== document.body) {
         var watch = new MutationObserver(function () {
           if (h.open) return;
@@ -79,7 +81,7 @@
     return el.classList.contains('al-toast--warning') || el.classList.contains('al-toast--error');
   }
 
-  // ---------------------------------------------------------------- relogio
+  // ------------------------------------------------------------------ clock
   function stopClock() {
     if (!current || !current.timer) return;
     clearTimeout(current.timer);
@@ -95,7 +97,7 @@
     current.timer = setTimeout(function () { dismiss(el); }, Math.max(current.remaining, 0));
   }
 
-  // --------------------------------------------------------------- entra/sai
+  // ------------------------------------------------------------ enter/exit
   function build(source, text) {
     var tpl = typeof source === 'string' ? document.getElementById(source) : source;
     if (!tpl) return null;

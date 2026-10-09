@@ -1,88 +1,90 @@
 /* AL Design System - Switch
  *
- * Depende de: foundation/al-foundation.css
+ * Depends on: foundation/al-foundation.css
  *           + components/switch/al-switch-tokens.css
  *
- * E O <input type="checkbox" role="switch"> NATIVO
- *   O controle e do navegador: Espaco alterna, clicar no rotulo alterna, o
- *   formulario envia o valor. `role="switch"` so troca o anuncio do leitor de
- *   tela de "caixa de selecao, marcada" para "chave, ligada". Este arquivo tira
- *   a caixa que o navegador desenha (`appearance: none`) e pinta o trilho do AL
- *   no lugar. Nada de <div role="switch"> nem <button aria-pressed> - primeira
- *   regra da ARIA (regra 22; divergencia consciente do Primer).
+ * IT IS THE NATIVE <input type="checkbox" role="switch">
+ *   The control belongs to the browser: Space toggles it, clicking the label
+ *   toggles it, the form submits the value. `role="switch"` only changes the
+ *   screen reader's announcement from "checkbox, checked" to "switch, on".
+ *   This file removes the box the browser draws (`appearance: none`) and paints
+ *   AL's track in its place. No <div role="switch"> and no <button
+ *   aria-pressed> - the first rule of ARIA (rule 22; a conscious divergence
+ *   from Primer).
  *
- * ANATOMIA
+ * ANATOMY
  *   <label class="al-switch">
  *     <span class="al-switch__control">
  *       <input class="al-switch__input" type="checkbox" role="switch">
  *       <span class="al-switch__thumb" aria-hidden="true"></span>
  *     </span>
- *     <span class="al-switch__label">Notificacoes por e-mail</span>
+ *     <span class="al-switch__label">Email notifications</span>
  *   </label>
  *
- *   O <label> envolve tudo: clicar no texto alterna, e a area clicavel passa a
- *   ser a linha inteira (WCAG 2.5.8, regra 7). Nao ha `for`/`id` a sincronizar.
+ *   The <label> wraps everything: clicking the text toggles it, and the
+ *   clickable area becomes the whole row (WCAG 2.5.8, rule 7). There is no
+ *   `for`/`id` to keep in sync.
  *
- *   O proprio <input> E o trilho. A bolinha e um <span> irmao, posicionado por
- *   cima, pela mesma razao do ponto do Radio: <input> nao tem filho, e
- *   `::before` em <input> nao e garantido em todo navegador.
- *   `pointer-events: none` devolve o clique ao input.
+ *   The <input> itself IS the track. The thumb is a sibling <span>, positioned
+ *   on top, for the same reason as the Radio's dot: <input> has no children,
+ *   and `::before` on <input> is not guaranteed in every browser.
+ *   `pointer-events: none` hands the click back to the input.
  *
- * O ESTADO E DIRIGIDO PELA MARCACAO, NAO POR CLASSE
- *   Ligado le `:checked`; desabilitado le `:disabled`. Nao existe
- *   `.al-switch--on`: o que o leitor anuncia e o que a tela pinta saem da mesma
- *   fonte e nao divergem. Nao ha erro - o switch tem efeito imediato e nao
- *   valida (etapa 1, regra 20).
+ * THE STATE IS DRIVEN BY THE MARKUP, NOT BY A CLASS
+ *   On reads `:checked`; disabled reads `:disabled`. There is no
+ *   `.al-switch--on`: what the reader announces and what the screen paints
+ *   come from the same source and don't diverge. There is no error - the
+ *   switch takes effect immediately and doesn't validate (rule 20).
  *
- * PRECEDENCIA POR VARIAVEL, NAO POR ESPECIFICIDADE - tecnica do Checkbox/Radio
- *   Hover escreve em `--_border-state`; ligado e desabilitado escrevem em
- *   `--_*-force`, que vence sempre por ser outra propriedade. Consequencias,
- *   decididas nas etapas 1 e 3:
- *     ligado + hover      -> nada muda: o ligado forca `border-checked` (regra 14)
- *     ligado + foco       -> anel por fora do trilho laranja
- *     foco                -> a borda fica a de repouso; quem sinaliza e o anel
- *     ligado + disabled   -> trilho cinza, bolinha a direita em
- *                            `thumb-checked-disabled`, sem laranja (regra 19)
- *   Desabilitado vem por ultimo no arquivo e ganha de tudo.
+ * PRECEDENCE BY VARIABLE, NOT BY SPECIFICITY - the Checkbox/Radio technique
+ *   Hover writes to `--_border-state`; on and disabled write to `--_*-force`,
+ *   which always wins because it is another property. The consequences:
+ *     on + hover       -> nothing changes: on forces `border-checked` (rule 14)
+ *     on + focus       -> ring outside the orange track
+ *     focus            -> the border stays at rest; the ring signals it
+ *     on + disabled    -> gray track, thumb on the right in
+ *                         `thumb-checked-disabled`, no orange (rule 19)
+ *   Disabled comes last in the file and wins over everything.
  *
- * O FIGMA TEM UM EIXO SO DE ESTADO
- *   Cinco variantes; as combinacoes acima nao tem variante e sao cobertas pelos
- *   mesmos tokens. `thumb-checked-disabled` e o unico token sem variante.
+ * FIGMA HAS A SINGLE STATE AXIS
+ *   Five variants; the combinations above have no variant and are covered by
+ *   the same tokens. `thumb-checked-disabled` is the only token with no variant.
  *
- * GEOMETRIA DERIVADA - NENHUM NUMERO ALEM DOS TOKENS
- *   altura  = `track-height` (24, a entrelinha do rotulo)
- *   bolinha = altura - 2 x borda - 2 x padding              = 14
- *   largura = 2 x altura - 2 x borda - 2 x padding          = 38
- *             (e o mesmo que 2 x bolinha + 2 x padding + 2 x borda)
- *   curso   = a propria bolinha                             = 14
- *   As contas estao escritas abaixo em vez de numeros. `box-sizing:
- *   border-box` poe a borda DENTRO dos 38x24, entao o trilho nunca "pula"
- *   quando o estado troca a cor dela.
+ * DERIVED GEOMETRY - NO NUMBER BEYOND THE TOKENS
+ *   height = `track-height` (24, the label's line height)
+ *   thumb  = height - 2 x border - 2 x padding              = 14
+ *   width  = 2 x height - 2 x border - 2 x padding          = 38
+ *            (the same as 2 x thumb + 2 x padding + 2 x border)
+ *   travel = the thumb itself                               = 14
+ *   The math is written below instead of numbers. `box-sizing: border-box`
+ *   puts the border INSIDE the 38x24, so the track never "jumps" when the state
+ *   changes its color.
  *
- * A BOLINHA ANDA POR `inset-inline-start`, NAO POR `transform`
- *   Assim o lado "ligado" segue a direcao do texto sozinho: em pagina da
- *   direita para a esquerda, ligado fica a esquerda sem regra extra.
+ * THE THUMB MOVES WITH `inset-inline-start`, NOT `transform`
+ *   That way the "on" side follows the text direction by itself: on a
+ *   right-to-left page, on sits on the left with no extra rule.
  *
- * ALINHAMENTO AO TOPO
- *   `align-items: flex-start`: rotulo longo quebra linha e o trilho fica na
- *   altura da primeira linha (regra 11). Funciona sem ajuste porque a altura
- *   do trilho (24) e a entrelinha do rotulo (24) sao o mesmo numero.
+ * TOP ALIGNMENT
+ *   `align-items: flex-start`: a long label wraps and the track stays at the
+ *   height of the first line (rule 11). It works without adjustment because
+ *   the track height (24) and the label's line height (24) are the same number.
  *
- * O QUE ESTE ARQUIVO NAO FAZ - REGRA 21 (opcao A, decisao de Gui)
- *   Se a acao falhar, a aplicacao desmarca o input de volta e avisa em texto.
- *   O componente nao tem estado de carregamento nem de erro.
+ * WHAT THIS FILE DOESN'T DO - RULE 21
+ *   If the action fails, the application unchecks the input back and says so
+ *   in text. The component has no loading state and no error state.
  *
- * DURACAO DA TRANSICAO
- *   Duracao e curva sao tokens da Foundation. A base declara a curva de SAIDA
- *   (--al-motion-easing-exit, ease-in); o bloco ENTRADA do fim do arquivo
- *   declara a de entrada (ease-out) nos estados de destino, porque o CSS
- *   usa a curva do estado para onde a transicao vai.
- *   Com `prefers-reduced-motion`, a bolinha troca de lado sem deslizar (regra 25).
+ * TRANSITION DURATION
+ *   Duration and curve are Foundation tokens. The base declares the EXIT
+ *   curve (--al-motion-easing-exit, ease-in); the ENTER block at the end of
+ *   the file declares the enter one (ease-out) on the destination states,
+ *   because CSS uses the curve of the state the transition goes to.
+ *   With `prefers-reduced-motion`, the thumb switches sides without sliding
+ *   (rule 25).
  *
- * GERADO A MAO. Os tokens que ele consome sao gerados por tokens.py.
+ * HANDWRITTEN. The tokens it consumes are generated by tokens.py.
  */
 
-/* ---------------------------------------------------------------- raiz */
+/* ---------------------------------------------------------------- root */
 .al-switch {
   display: inline-flex;
   align-items: flex-start;
@@ -91,7 +93,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* -------------------------------------------------------------- trilho */
+/* --------------------------------------------------------------- track */
 .al-switch__control {
   position: relative;
   display: block;
@@ -125,13 +127,13 @@
     box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
-/* nada aqui e `outline`: o anel e sombra, para respeitar o trilho arredondado */
+/* nothing here is `outline`: the ring is a shadow, to respect the rounded track */
 .al-switch__input:focus {
   outline: none;
 }
 
-/* ------------------------------------------------------------- bolinha */
-/* Dentro da borda e do padding: 24 - 2x1 - 2x4 = 14, como no Figma. */
+/* --------------------------------------------------------------- thumb */
+/* Inside the border and the padding: 24 - 2x1 - 2x4 = 14, as in Figma. */
 .al-switch__thumb {
   --_thumb: calc(var(--al-switch-track-height)
                  - 2 * var(--al-switch-border-width)
@@ -145,7 +147,7 @@
   block-size: var(--_thumb);
   border-radius: var(--al-switch-radius);
   background-color: var(--al-switch-thumb);
-  /* devolve o clique ao input que esta embaixo */
+  /* hands the click back to the input underneath */
   pointer-events: none;
 
   transition:
@@ -153,13 +155,13 @@
     background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
-/* ligado: a bolinha anda o proprio tamanho */
+/* on: the thumb moves its own size */
 .al-switch__input:checked ~ .al-switch__thumb {
   inset-inline-start: calc(var(--_inset) + var(--_thumb));
   background-color: var(--al-switch-thumb-checked);
 }
 
-/* ------------------------------------------------------------- rotulo */
+/* ------------------------------------------------------------- label */
 .al-switch__label {
   color: var(--al-switch-label);
   font-family: var(--al-font-sans);
@@ -169,25 +171,25 @@
   letter-spacing: var(--al-switch-label-tracking);
 }
 
-/* ------------------------------------------------------------- estados */
-/* hover na linha inteira: clicar no rotulo tambem alterna, entao o rotulo
-   tambem anuncia que e clicavel. So a borda muda; no ligado o force vence. */
+/* -------------------------------------------------------------- states */
+/* hover on the whole row: clicking the label also toggles it, so the label
+   also shows it is clickable. Only the border changes; when on, the force wins. */
 .al-switch:hover .al-switch__input:not(:disabled) {
   --_border-state: var(--al-switch-border-hover);
 }
 
-/* foco: so o anel - a borda fica a de repouso, como no Figma */
+/* focus: only the ring - the border stays at rest, as in Figma */
 .al-switch__input:focus-visible {
   box-shadow: var(--al-switch-ring);
 }
 
-/* ligado: o laranja e quem diz o estado */
+/* on: the orange is what says the state */
 .al-switch__input:checked {
   --_bg-force: var(--al-switch-track-checked);
   --_border-force: var(--al-switch-border-checked);
 }
 
-/* desabilitado - por ultimo, porque ganha de todos */
+/* disabled - last, because it wins over all */
 .al-switch__input:disabled {
   --_bg-force: var(--al-switch-track-disabled);
   --_border-force: var(--al-switch-border-disabled);
@@ -197,7 +199,7 @@
   background-color: var(--al-switch-thumb-disabled);
 }
 
-/* ligado + desabilitado: sem variante no Figma, sem laranja (regra 19) */
+/* on + disabled: no variant in Figma, no orange (rule 19) */
 .al-switch__input:checked:disabled ~ .al-switch__thumb {
   background-color: var(--al-switch-thumb-checked-disabled);
 }
@@ -210,9 +212,10 @@
   color: var(--al-switch-label-disabled);
 }
 
-/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
-   declara a de saida (ease-in); estes estados de destino declaram a de
-   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
 .al-switch:hover .al-switch__input,
 .al-switch__input:focus-visible,
 .al-switch__input:checked,
@@ -220,7 +223,7 @@
   transition-timing-function: var(--al-motion-easing-enter);
 }
 
-/* ------------------------------------------------------------ ambiente */
+/* --------------------------------------------------------- environment */
 @media (prefers-reduced-motion: reduce) {
   .al-switch__input,
   .al-switch__thumb {

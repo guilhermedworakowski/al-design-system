@@ -1,71 +1,76 @@
 """
-Camada de tokens do Checkbox.
+Token layer for the Checkbox.
 
-Regra unica desta camada: nada aqui inventa valor. Todo token aponta para um
-token da Foundation pelo NOME. O portao no fim do arquivo recusa qualquer
-coisa que seja um valor solto - hex, px, numero.
+The one rule of this layer: nothing here invents a value. Every token points
+to a Foundation token by NAME. The gate at the end of the file rejects
+anything that is a loose value - hex, px, number.
 
-Nomenclatura:
-  codigo -> checkbox-border-hover      (hifen)
-  Figma  -> checkbox/border/hover      (pasta)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> checkbox-border-hover      (hyphen)
+  Figma -> checkbox/border/hover      (folder)
+They are different layers. Never collapse one into the other.
 
-E O `<input type="checkbox">` NATIVO
+IT IS THE NATIVE `<input type="checkbox">`
 
-  Mesma escolha do Select: o controle e do navegador, o componente pinta a
-  caixa por cima com `appearance: none`. Teclado (Espaco), estado marcado e
-  `indeterminate` sao do input - nao ha comportamento proprio a construir.
+  The same choice as the Select: the control belongs to the browser, the
+  component paints the box on top with `appearance: none`. Keyboard (Space),
+  the checked state and `indeterminate` belong to the input - there is no
+  behavior of its own to build.
 
-UM TAMANHO SO - REGRA DO TIER 2
+ONE SIZE ONLY - THE TIER 2 RULE
 
-  Gui fechou em 23/09/2026 que todo input do Tier 2 tem um tamanho so. A caixa
-  e 24x24, o mesmo grid de 24 do desenho Lucide do check, e a mesma entrelinha
-  do rotulo - e isso que alinha a caixa com a primeira linha do texto.
+  Decided on 2026-09-23: every Tier 2 input has a single size. The box is
+  24x24, the same 24 grid as the Lucide check drawing, and the same line
+  height as the label - that is what aligns the box with the first line of
+  text.
 
-O FIGMA TEM UM EIXO SO, O NAVEGADOR TEM DOIS
+FIGMA HAS ONE AXIS, THE BROWSER HAS TWO
 
-  O component set (node 229:509) tem sete variantes num eixo `State`: Default,
-  Hover, Active (= marcado), Error, Disabled, Focus, Indeterminate. Variantes
-  combinadas (marcado + hover, marcado + disabled...) ficaram de fora desta
-  primeira versao por decisao de Gui. Mas o input nativo produz essas
-  combinacoes de qualquer jeito, entao os tokens abaixo as cobrem SEM token
-  novo, com uma excecao aprovada:
+  The component set (node 229:509) has seven variants on one `State` axis:
+  Default, Hover, Active (= checked), Error, Disabled, Focus, Indeterminate.
+  Combined variants (checked + hover, checked + disabled...) were left out of
+  this first version by design. But the native input produces those
+  combinations anyway, so the tokens below cover them WITHOUT a new token,
+  with one approved exception:
 
-    marcado + hover        -> caixa laranja nao muda; hover so no desmarcado
-    marcado + foco         -> anel por cima da caixa laranja
-    erro + foco            -> anel padrao (nao ha anel de erro desenhado)
-    erro + marcado         -> caixa laranja, rotulo vermelho
-    marcado + disabled     -> `bg-disabled` com o check em `icon-disabled`
+    checked + hover        -> the orange box doesn't change; hover only when unchecked
+    checked + focus        -> ring on top of the orange box
+    error + focus          -> default ring (there is no drawn error ring)
+    error + checked        -> orange box, red label
+    checked + disabled     -> `bg-disabled` with the check in `icon-disabled`
 
-  `checkbox-icon-disabled` e o unico token que nao tem variante no Figma. Gui
-  aprovou em 23/09/2026 (opcao "a" da etapa 3): o caso aparece em qualquer tela
-  de configuracao bloqueada, e uma regra de "nao usar" seria quebrada no
-  primeiro uso.
+  `checkbox-icon-disabled` is the only token with no variant in Figma.
+  Approved on 2026-09-23: the case shows up on any locked settings screen, and
+  a "don't use" rule would be broken on first use.
 
-`bg-checked` VALE PARA MARCADO E INDETERMINADO
+`bg-checked` APPLIES TO CHECKED AND INDETERMINATE
 
-  O que diferencia os dois e o glifo (check x traco), nao a caixa. Um token so
-  de fundo e um so de borda, igual ao desenho.
+  What tells them apart is the glyph (check x dash), not the box. One
+  background token and one border token, like the design.
 
-`border-hover` E `border-focus` APONTAM PRO MESMO ALIAS, E SAO DOIS TOKENS
+`border-hover` AND `border-focus` POINT TO THE SAME ALIAS, AND ARE TWO TOKENS
 
-  Mesma logica do `border-active` / `border-focus` do Select: hoje coincidem,
-  e dois nomes deixam um divergir do outro depois sem mudanca quebrada.
+  The same logic as the Select's `border-active` / `border-focus`: today they
+  coincide, and two names let one diverge from the other later without a
+  breaking change.
 
-O ICONE TEM TOKEN DE COR
+THE ICON HAS A COLOR TOKEN
 
-  O rotulo e escuro e o check e branco - nao da para herdar `currentColor`.
-  Piso do check e 3:1 do 1.4.11 (glifo), nao 4.5:1: branco sobre a marca da
-  3.34:1 e passa com folga. Nao e excecao.
+  The label is dark and the check is white - `currentColor` can't be
+  inherited. The check's floor is the 3:1 of 1.4.11 (glyph), not 4.5:1: white
+  on the brand gives 3.34:1 and passes with room to spare. It is not an
+  exception.
 
-O ICONE NAO TEM TOKEN DE TAMANHO
+THE ICON HAS NO SIZE TOKEN
 
-  18 = caixa 24 - 2 x borda 1 - 2 x padding 2. E derivado, e 18 nem existe na
-  escala `icon-size` - tokenizar seria guardar a mesma decisao em dois lugares.
+  18 = box 24 - 2 x border 1 - 2 x padding 2. It is derived, and 18 doesn't
+  even exist on the `icon-size` scale - tokenizing it would store the same
+  decision in two places.
 
-DUAS EXCECOES DECLARADAS DE CONTRASTE
+TWO DECLARED CONTRAST EXCEPTIONS
 
-  Ver PENDING. A da borda em repouso NAO e a mesma do Select, e isso importa.
+  See PENDING. The resting border one is NOT the same as the Select's, and
+  that matters.
 """
 import json, os, sys
 
@@ -80,11 +85,11 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ----------------------------------------------------------------- color
 COLOR = {
     'bg':               'bg-surface-raised',
     'bg-hover':         'bg-hover',
-    'bg-checked':       'bg-brand',        # marcado e indeterminado
+    'bg-checked':       'bg-brand',        # checked and indeterminate
     'bg-disabled':      'bg-disabled',
 
     'border':           'border-default',
@@ -94,15 +99,15 @@ COLOR = {
     'border-error':     'border-danger',
     'border-disabled':  'border-default',
 
-    'icon':             'text-on-brand',   # check e traco - piso 3:1
-    'icon-disabled':    'text-disabled',   # marcado + disabled, sem variante no Figma
+    'icon':             'text-on-brand',   # check and dash - 3:1 floor
+    'icon-disabled':    'text-disabled',   # checked + disabled, no variant in Figma
 
     'label':            'text-primary',
     'label-error':      'text-danger',
     'label-disabled':   'text-disabled',
 }
 
-# O token aponta para a SOMBRA COMPOSTA, nao para a cor crua.
+# The token points to the COMPOSITE SHADOW, not the raw color.
 RING = {
     'ring': 'focusRing.default',
 }
@@ -111,11 +116,11 @@ RING_INK = {
     'ring': 'shadow-focus-default',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'box-size':     'iconSize.24',
-    'padding':      'space.2',        # borda -> glifo
-    'gap':          'space.8',        # caixa -> rotulo
+    'padding':      'space.2',        # border -> glyph
+    'gap':          'space.8',        # box -> label
     'radius':       'radius.sm',
     'border-width': 'border.width.1',
 }
@@ -125,47 +130,49 @@ TYPE = {
 }
 
 PENDING = {
-    'borda-abaixo-de-3-1': (
-        'A borda da caixa desmarcada em repouso usa `border-default`: 1.57:1 no claro e '
-        '1.46:1 no escuro (contra o fundo da caixa), abaixo dos 3:1 do WCAG 1.4.11. '
-        'Decisao consciente de Gui em 23/09/2026, para seguir o padrao dos inputs do DS '
-        '(o Select usa a mesma borda). ATENCAO: o argumento do Select NAO vale aqui - '
-        'no Checkbox a borda e o unico desenho do controle desmarcado; foi apontado como '
-        'bloqueante na etapa 1 e mantido por decisao de padrao. Hover e foco (border-strong) '
-        'e erro (border-danger) passam. NAO "corrigir" sem falar com ele.'
+    'border-below-3-1': (
+        'The border of the unchecked box at rest uses `border-default`: 1.57:1 in light and '
+        '1.46:1 in dark (against the box background), below the 3:1 of WCAG 1.4.11. '
+        'A conscious decision made on 2026-09-23, to follow the pattern of the DS inputs '
+        '(the Select uses the same border). WARNING: the Select\'s argument does NOT hold '
+        'here - in the Checkbox the border is the only drawing of the unchecked control; it '
+        'was flagged as blocking in the audit and kept as a pattern decision. Hover and '
+        'focus (border-strong) and error (border-danger) pass. DO NOT "fix" it without '
+        'revisiting that decision.'
     ),
-    'disabled-abaixo-de-aa': (
-        'Rotulo, borda e check no disabled ficam abaixo do piso. Isencao do WCAG 1.4.3 / '
-        '1.4.11 para componente inativo - mesma excecao permanente do Button, do Tag e do '
-        'Select. Subir esse contraste faz o desabilitado parecer clicavel.'
+    'disabled-below-aa': (
+        'Label, border and check in disabled fall below the floor. WCAG 1.4.3 / 1.4.11 '
+        'exempt inactive components - the same permanent exception as the Button, the Tag '
+        'and the Select. Raising that contrast makes disabled look clickable.'
     ),
 }
 
-CANVAS = 'bg-canvas'   # nao e token do Checkbox: e a tela onde ele e colocado
+CANVAS = 'bg-canvas'   # not a Checkbox token: it is the canvas the Checkbox is placed on
 
-# (papel, token do checkbox, fundo(s), piso, chave da excecao em PENDING)
-# A borda tem duas superficies vizinhas - a tela por fora e a caixa por dentro -
-# e vale a PIOR das duas. A caixa marcada mede o PREENCHIMENTO contra a tela:
-# e ele, nao a borda, que desenha o limite do controle marcado.
+# (role, checkbox token, background(s), floor, exception key in PENDING)
+# The border has two neighboring surfaces - the canvas outside and the box
+# inside - and the WORSE of the two counts. The checked box measures the FILL
+# against the canvas: it is the fill, not the border, that draws the boundary
+# of the checked control.
 COMBOS = [
-    ('rotulo',          'label',           'canvas',                   4.5, None),
-    ('rotulo-erro',     'label-error',     'canvas',                   4.5, None),
-    ('rotulo-disabled', 'label-disabled',  'canvas',                   4.5, 'disabled-abaixo-de-aa'),
-    ('borda-repouso',   'border',          ('canvas', 'bg'),           3.0, 'borda-abaixo-de-3-1'),
-    ('borda-hover',     'border-hover',    ('canvas', 'bg-hover'),     3.0, None),
-    ('borda-focus',     'border-focus',    ('canvas', 'bg'),           3.0, None),
-    ('borda-erro',      'border-error',    ('canvas', 'bg'),           3.0, None),
-    ('borda-disabled',  'border-disabled', ('canvas', 'bg-disabled'),  3.0, 'disabled-abaixo-de-aa'),
-    ('caixa-marcada',   'bg-checked',      'canvas',                   3.0, None),
+    ('label',           'label',           'canvas',                   4.5, None),
+    ('label-error',     'label-error',     'canvas',                   4.5, None),
+    ('label-disabled',  'label-disabled',  'canvas',                   4.5, 'disabled-below-aa'),
+    ('border-rest',     'border',          ('canvas', 'bg'),           3.0, 'border-below-3-1'),
+    ('border-hover',    'border-hover',    ('canvas', 'bg-hover'),     3.0, None),
+    ('border-focus',    'border-focus',    ('canvas', 'bg'),           3.0, None),
+    ('border-error',    'border-error',    ('canvas', 'bg'),           3.0, None),
+    ('border-disabled', 'border-disabled', ('canvas', 'bg-disabled'),  3.0, 'disabled-below-aa'),
+    ('checked-box',     'bg-checked',      'canvas',                   3.0, None),
     ('check',           'icon',            'bg-checked',               3.0, None),
-    ('check-disabled',  'icon-disabled',   'bg-disabled',              3.0, 'disabled-abaixo-de-aa'),
-    ('anel-foco',       'ring',            'canvas',                   3.0, None),
+    ('check-disabled',  'icon-disabled',   'bg-disabled',              3.0, 'disabled-below-aa'),
+    ('focus-ring',      'ring',            'canvas',                   3.0, None),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
-    """O semantico de cor por tras de um papel - seguindo o anel ate a cor."""
+    """The color semantic behind a role - following the ring down to the color."""
     if role == 'canvas':
         return CANVAS
     if role in RING_INK:
@@ -174,16 +181,16 @@ def ink(role):
 
 
 def contrast_rows():
-    """Mede cada combinacao renderizada nos dois temas, cada uma contra o piso
-    que e dela: texto 4.5:1 do 1.4.3, borda e glifo 3:1 do 1.4.11."""
+    """Measures each rendered combination in both themes, each against its own
+    floor: text 4.5:1 from 1.4.3, border and glyph 3:1 from 1.4.11."""
     rows = []
     for what, fg_role, bg_spec, min_ratio, exc in COMBOS:
         fg_ref = ink(fg_role)
         bg_roles = bg_spec if isinstance(bg_spec, tuple) else (bg_spec,)
         for theme, i in (('light', 0), ('dark', 1)):
-            medidas = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
-                       for b in bg_roles]
-            ratio, bg_ref = min(medidas)
+            measures = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
+                        for b in bg_roles]
+            ratio, bg_ref = min(measures)
             rows.append({
                 'theme': theme, 'what': what,
                 'fg': fg_ref, 'bg': bg_ref,
@@ -201,10 +208,10 @@ def run():
         name = f'checkbox-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref}) - todo valor de cor nasce alias do semantico')
+            problems.append(f'{name}: loose hex ({ref}) - every color value is born as an alias of a semantic')
             continue
         if ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
             continue
         light, dark = SEM[ref]
         resolved[name] = {'light': light, 'dark': dark}
@@ -216,7 +223,7 @@ def run():
             v = resolve_foundation(ref)
             resolved[name] = {'light': v['light'], 'dark': v['dark']}
         except KeyError:
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for group in (GEOM, TYPE):
         for role, ref in group.items():
@@ -225,15 +232,15 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
 
-    # derivadas - conferencia, nao token. Ver nota no cabecalho.
+    # derived - a check, not a token. See the note in the header.
     box = resolve_foundation(GEOM['box-size'])
     pad = resolve_foundation(GEOM['padding'])
     bw = resolve_foundation(GEOM['border-width'])
@@ -248,36 +255,36 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO CHECKBOX')
+    print('CHECKBOX TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<26} -> {alias[name]}')
     print('-' * 74)
-    print(f'glifo derivado: {derived["icon-size"]}px  (caixa - 2 x borda - 2 x padding)')
-    print(f'altura da linha: {derived["row-height"]}px')
-    # conferencia, nao portao: caixa e entrelinha devem bater - e o que alinha
-    # a caixa com a primeira linha do rotulo sem mexer na altura
+    print(f'derived glyph: {derived["icon-size"]}px  (box - 2 x border - 2 x padding)')
+    print(f'row height: {derived["row-height"]}px')
+    # a check, not a gate: box and line height must match - that is what aligns
+    # the box with the label's first line without changing the height
     if box != line:
-        print(f'  ATENCAO: box-size {box} != entrelinha do rotulo {line}')
+        print(f'  WARNING: box-size {box} != label line height {line}')
     print('-' * 74)
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
-    limpas = [r for r in rows if r['pass']]
-    pior = min(limpas, key=lambda r: r['ratio'] / r['min'])
-    print(f'pior margem entre as que passam: {pior["what"]} ({pior["theme"]}) = '
-          f'{pior["ratio"]}:1 contra piso {pior["min"]}')
-    for chave in PENDING:
-        n = sum(1 for r in excs if r['exception'] == chave)
-        print(f'  excecao "{chave}": {n} medicoes')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
+    clean = [r for r in rows if r['pass']]
+    worst = min(clean, key=lambda r: r['ratio'] / r['min'])
+    print(f'worst margin among those that pass: {worst["what"]} ({worst["theme"]}) = '
+          f'{worst["ratio"]}:1 against floor {worst["min"]}')
+    for key in PENDING:
+        n = sum(1 for r in excs if r['exception'] == key)
+        print(f'  exception "{key}": {n} measurements')
     print('-' * 74)
 
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE:')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE:')
         for f in fails:
             print(f'    {f["what"]} ({f["theme"]}): {f["ratio"]}:1 < {f["min"]}')
         return 1
 
-    print(f'{len(alias)} tokens, todos alias da Foundation. 0 valores soltos.')
+    print(f'{len(alias)} tokens, all aliases of the Foundation. 0 loose values.')
 
     out = {
         'meta': {
@@ -289,14 +296,14 @@ def run():
             'sizes': ['md'],
             'states': ['default', 'hover', 'checked', 'error',
                        'disabled', 'focus', 'indeterminate'],
-            'nota': (
-                'E o <input type="checkbox"> NATIVO, com a caixa pintada por cima. '
-                'Um tamanho so (caixa 24px), regra de todo input do Tier 2. O Figma '
-                'tem um eixo so de estado; as combinacoes que o navegador produz '
-                '(marcado + hover/foco/disabled/erro) sao cobertas pelos mesmos tokens, '
-                'mais `icon-disabled`, que nao tem variante no Figma. `bg-checked` vale '
-                'para marcado e indeterminado. Sem texto de apoio/erro: a mensagem de '
-                'erro e do formulario. Duas excecoes de contraste declaradas em pending.'
+            'note': (
+                'It is the NATIVE <input type="checkbox">, with the box painted on top. '
+                'One size only (24px box), the rule for every Tier 2 input. Figma has a '
+                'single state axis; the combinations the browser produces (checked + '
+                'hover/focus/disabled/error) are covered by the same tokens, plus '
+                '`icon-disabled`, which has no variant in Figma. `bg-checked` applies to '
+                'checked and indeterminate. No help/error text: the error message belongs '
+                'to the form. Two contrast exceptions declared in pending.'
             ),
         },
         'alias': alias,
@@ -306,59 +313,59 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('checkbox', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/checkbox/tokens.json escrito')
+    print('\nbuild/components/checkbox/tokens.json written')
     write_css(alias, derived)
     return 0
 
 
-# ---------------------------------------------------------------- css
+# ------------------------------------------------------------------- css
 def write_css(alias, derived):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Checkbox')
-    w(' * GERADO por src/components/checkbox/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Checkbox tokens')
+    w(' * GENERATED by src/components/checkbox/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Sem bloco de tema: cada token aponta para um semantico, e o tema troca')
-    w(' * no :root - o mesmo elemento onde estes alias sao declarados.')
+    w(' * No theme block: each token points to a semantic, and the theme switches')
+    w(' * on :root - the same element where these aliases are declared.')
     w(' *')
-    w(f' * Glifo: {derived["icon-size"]}px derivados, sem token.')
+    w(f' * Glyph: {derived["icon-size"]}px, derived, no token.')
     w(' */')
     w('')
     w(':root {')
 
     w('')
-    w('  /* fundo da caixa - marcado e indeterminado dividem o mesmo */')
+    w('  /* box background - checked and indeterminate share the same one */')
     for role in ('bg', 'bg-hover', 'bg-checked', 'bg-disabled'):
         w(f'  --al-checkbox-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* borda da caixa */')
+    w('  /* box border */')
     for role in ('border', 'border-hover', 'border-focus', 'border-checked',
                  'border-error', 'border-disabled'):
         w(f'  --al-checkbox-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* check e traco - nao herdam a cor do rotulo */')
+    w('  /* check and dash - they don\'t inherit the label color */')
     for role in ('icon', 'icon-disabled'):
         w(f'  --al-checkbox-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* rotulo - vive fora da caixa, sobre a tela */')
+    w('  /* label - it lives outside the box, on the canvas */')
     for role in ('label', 'label-error', 'label-disabled'):
         w(f'  --al-checkbox-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* anel de foco - aponta para a sombra composta, nao para a cor crua */')
+    w('  /* focus ring - points to the composite shadow, not the raw color */')
     for role, ref in RING.items():
         w(f'  --al-checkbox-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-checkbox-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* tipografia - um estilo vira quatro vars */')
+    w('  /* typography - one style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -371,15 +378,15 @@ def write_css(alias, derived):
     w('}')
     w('')
 
-    # Trava: lista de grupo esquecida vira build quebrado, nao variavel faltando.
-    texto = '\n'.join(L)
-    faltando = [r for r in COLOR if f'--al-checkbox-{r}:' not in texto]
-    if faltando:
+    # Lock: a forgotten group list becomes a broken build, not a missing variable.
+    text = '\n'.join(L)
+    missing = [r for r in COLOR if f'--al-checkbox-{r}:' not in text]
+    if missing:
         raise AssertionError(
-            'papeis de cor fora do CSS (alguma lista de grupo em write_css nao '
-            f'foi atualizada): {faltando}')
+            'color roles missing from the CSS (some group list in write_css was not '
+            f'updated): {missing}')
 
-    save_css('checkbox', texto)
+    save_css('checkbox', text)
 
 
 if __name__ == '__main__':

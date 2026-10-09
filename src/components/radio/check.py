@@ -1,11 +1,11 @@
 """
-Portao do CSS do Radio.
+CSS gate for the Radio.
 
-A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
-de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
-nenhum token inventado. Aqui fica so o que e proprio do Radio.
+The rule is the same for every component and lives in tools/cssgate.py: no
+literal values (color, length, weight, duration), no orphan tokens and no
+invented tokens. Only what is specific to the Radio stays here.
 
-Rodar: python3 check.py (ou o build completo: python3 build.py)
+Run: python3 check.py (or the full build: python3 build.py)
 """
 import os
 import sys
@@ -14,16 +14,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from cssgate import gate  # noqa: E402
 
-# O que este portao NAO alcanca: marcacao so existe na saida renderizada.
-# O a11y.py da etapa 6 cobra estas regras no HTML que o site emite.
-FORA_DO_CSS = [
-    '<label class="al-radio"> envolvendo o input - rotulo visivel, sem aria-label',
-    'input nativo type="radio" - nunca <div role="radio">',
-    'mesmo `name` em todos os radios da pergunta, dentro de <fieldset> + <legend>',
-    'ponto com aria-hidden="true"',
-    'erro: aria-invalid="true" + aria-describedby no FIELDSET (nunca no radio) para a mensagem QUE O FORMULARIO mostra',
+# What this gate does NOT reach: markup only exists in the rendered output.
+# a11y.py enforces these rules on the HTML the site emits.
+OUTSIDE_CSS = [
+    '<label class="al-radio"> wrapping the input - visible label, no aria-label',
+    'native input type="radio" - never <div role="radio">',
+    'the same `name` on every radio of the question, inside <fieldset> + <legend>',
+    'dot with aria-hidden="true"',
+    'error: aria-invalid="true" + aria-describedby on the FIELDSET (never on the radio) to the message THE FORM shows',
 ]
 
 
 if __name__ == '__main__':
-    sys.exit(gate('radio', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('radio', outside_css=OUTSIDE_CSS))

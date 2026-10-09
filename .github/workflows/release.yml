@@ -1,13 +1,14 @@
-# Publica um release quando uma tag vX.Y.Z chega ao GitHub.
+# Publishes a release when a vX.Y.Z tag reaches GitHub.
 #
-# Roda o build completo (todos os portoes), confere que a tag bate com a versao
-# do package.json, anexa o dist/ em zip ao Release do GitHub e publica no npm.
+# Runs the full build (every gate), checks that the tag matches the version in
+# package.json, attaches dist/ as a zip to the GitHub Release and publishes to
+# npm.
 #
-# A publicacao no npm usa Trusted Publisher (OIDC): nenhum token fica guardado
-# no repo, e o npm gera o selo de proveniencia sozinho. Enquanto o Trusted
-# Publisher nao estiver configurado no npmjs.com, o passo do npm falha - o
-# Release do GitHub sai do mesmo jeito. Se a versao ja estiver no npm (a
-# primeira, publicada a mao), o passo e pulado.
+# Publishing to npm uses Trusted Publisher (OIDC): no token is stored in the
+# repo, and npm generates the provenance badge by itself. Until Trusted
+# Publisher is configured on npmjs.com, the npm step fails - the GitHub Release
+# goes out anyway. If the version is already on npm (the first one, published
+# by hand), the step is skipped.
 name: release
 
 on:
@@ -15,8 +16,8 @@ on:
     tags: ['v*.*.*']
 
 permissions:
-  contents: write   # criar o Release e anexar o zip
-  id-token: write   # OIDC do Trusted Publisher no npm
+  contents: write   # create the Release and attach the zip
+  id-token: write   # OIDC for the npm Trusted Publisher
 
 jobs:
   release:
@@ -33,16 +34,16 @@ jobs:
 
       - run: python3 build.py --check
 
-      - name: Tag e versao batem
+      - name: Tag and version match
         run: |
           VERSION=$(node -p "require('./package.json').version")
           if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
-            echo "A tag $GITHUB_REF_NAME nao bate com a versao $VERSION do package.json."
+            echo "The tag $GITHUB_REF_NAME does not match version $VERSION in package.json."
             exit 1
           fi
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Zip do dist/ no Release do GitHub
+      - name: Zip of dist/ on the GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -54,10 +55,10 @@ jobs:
             gh release create "$GITHUB_REF_NAME" "$ZIP" --title "$GITHUB_REF_NAME" --generate-notes
           fi
 
-      - name: Publica no npm
+      - name: Publish to npm
         run: |
           if npm view "al-design-system@$VERSION" version >/dev/null 2>&1; then
-            echo "al-design-system@$VERSION ja esta no npm; nada a publicar."
+            echo "al-design-system@$VERSION is already on npm; nothing to publish."
           else
             npm publish
           fi

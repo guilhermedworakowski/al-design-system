@@ -1,65 +1,67 @@
 /* AL Design System - Tooltip
  *
- * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css + icon.css e
- * al-tooltip-tokens.css, nesta ordem. Comportamento: tooltip.js.
+ * Written by hand. Depends on al-foundation.css, al-icon-tokens.css + icon.css
+ * and al-tooltip-tokens.css, in that order. Behavior: tooltip.js.
  *
- * Nenhum valor aqui e literal: cor, espaco, raio, sombra, largura, movimento e
- * tipografia entram por var(--al-tooltip-*). O check.py ao lado recusa o
- * arquivo se algum escapar.
+ * No value here is literal: color, space, radius, shadow, width, motion and
+ * typography come in through var(--al-tooltip-*). The check.py next to it
+ * rejects the file if any escapes.
  *
- * CONTRATO DE MARCACAO (regras 22 a 25)
+ * MARKUP CONTRACT (rules 22 to 25)
  *
  *   <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"
- *           aria-labelledby="tt-excluir">
+ *           aria-labelledby="tt-delete">
  *     <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
  *   </button>
- *   <div class="al-tooltip" id="tt-excluir" role="tooltip" popover="manual">
+ *   <div class="al-tooltip" id="tt-delete" role="tooltip" popover="manual">
  *     <svg class="al-icon al-icon--20 al-tooltip__icon" aria-hidden="true"
  *          focusable="false">…info…</svg>
- *     <span class="al-tooltip__text">Excluir</span>
+ *     <span class="al-tooltip__text">Delete</span>
  *   </div>
  *
- *   - O tooltip vem LOGO DEPOIS do gatilho no HTML (regra 25).
- *   - Quem liga os dois e o proprio atributo ARIA do gatilho, nao uma classe:
- *     aria-labelledby quando o tooltip e o NOME (botao so com icone),
- *     aria-describedby quando ele COMPLEMENTA um elemento que ja tem nome
- *     (regra 24). O tooltip.js acha o gatilho por esses dois atributos.
- *   - O gatilho e sempre focavel e nunca `disabled` (regras 22 e 23).
- *   - Icon Button com tooltip NAO leva aria-label: o nome vem so do
- *     tooltip. O portao do Icon Button recusa os dois juntos.
- *   - Nada interativo dentro (regra 10). O icone e decorativo (regra 11).
- *   - Lado preferido: data-placement="top | bottom | left | right" no
- *     .al-tooltip; sem ele, top (regra 13).
+ *   - The tooltip comes RIGHT AFTER the trigger in the HTML (rule 25).
+ *   - What links the two is the trigger's own ARIA attribute, not a class:
+ *     aria-labelledby when the tooltip is the NAME (icon-only button),
+ *     aria-describedby when it COMPLEMENTS an element that already has a name
+ *     (rule 24). tooltip.js finds the trigger through these two attributes.
+ *   - The trigger is always focusable and never `disabled` (rules 22 and 23).
+ *   - An Icon Button with a tooltip does NOT take aria-label: the name comes
+ *     only from the tooltip. The Icon Button gate rejects the two together.
+ *   - Nothing interactive inside (rule 10). The icon is decorative (rule 11).
+ *   - Preferred side: data-placement="top | bottom | left | right" on the
+ *     .al-tooltip; without it, top (rule 13).
  *
  * POPOVER
- *   popover="manual" poe o tooltip na top layer do navegador: fica acima de
- *   tudo sem z-index, e escondido quando fechado pela folha do proprio
- *   navegador. "manual" porque quem abre e fecha e o tooltip.js (hover, foco,
- *   Esc) - o "auto" fecharia no clique e roubaria o Esc do Modal e do Drawer.
- *   O display so e declarado no estado aberto: declarado na base, venceria o
- *   display:none do navegador e o tooltip apareceria sempre.
+ *   popover="manual" puts the tooltip in the browser's top layer: it stays
+ *   above everything with no z-index, and hidden when closed by the browser's
+ *   own stylesheet. "manual" because tooltip.js is what opens and closes it
+ *   (hover, focus, Esc) - "auto" would close on click and steal the Esc from
+ *   the Modal and the Drawer.
+ *   display is only declared in the open state: declared on the base, it
+ *   would beat the browser's display:none and the tooltip would always show.
  *
- * POSICAO
- *   `position: fixed` com top/left escritos pelo tooltip.js a partir da caixa
- *   do gatilho, `tooltip-offset` de distancia, sem seta (regra 14). Se o lado
- *   preferido nao cabe na tela, ele vira para o oposto; nunca cobre o gatilho
- *   (regra 15).
+ * POSITION
+ *   `position: fixed` with top/left written by tooltip.js from the trigger's
+ *   box, `tooltip-offset` away, no arrow (rule 14). If the preferred side
+ *   doesn't fit on screen, it flips to the opposite; it never covers the
+ *   trigger (rule 15).
  *
- * ALTURA
- *   Sem height: sai de padding-y x 2 + entrelinha do Body/sm (36 numa linha).
- *   Icone alinhado ao topo: numa linha so da no mesmo que o centro do Figma;
- *   em duas, o icone fica com a primeira linha em vez de flutuar no meio.
+ * HEIGHT
+ *   No height: comes from padding-y x 2 + the Body/sm line height (36 on one
+ *   line). Icon aligned to the top: on a single line it is the same as
+ *   Figma's center; on two, the icon stays with the first line instead of
+ *   floating in the middle.
  *
- * MOTION (regra 21)
- *   Fade de opacidade em `tooltip-duration` (popup, 200ms): curva de entrada
- *   ao abrir, de saida ao fechar. @starting-style da o ponto de partida, e
- *   `allow-discrete` segura display e overlay ate o fade de saida terminar -
- *   o mesmo mecanismo do Modal e do Drawer. Sem deslocamento. Sem transicao
- *   com prefers-reduced-motion.
+ * MOTION (rule 21)
+ *   Opacity fade in `tooltip-duration` (popup, 200ms): enter curve on
+ *   opening, exit curve on closing. @starting-style gives the starting point,
+ *   and `allow-discrete` holds display and overlay until the exit fade ends -
+ *   the same mechanism as the Modal and the Drawer. No offset. No transition
+ *   with prefers-reduced-motion.
  */
 
 .al-tooltip {
-  /* zera o que a folha do navegador da a todo [popover] */
+  /* resets what the browser stylesheet gives every [popover] */
   position: fixed;
   inset: auto;
   margin: 0;
@@ -102,7 +104,7 @@
   }
 }
 
-/* o icone herda a cor do texto (currentColor, regra 12) */
+/* the icon inherits the text color (currentColor, rule 12) */
 .al-tooltip__icon {
   color: inherit;
 }
@@ -117,9 +119,9 @@
   }
 }
 
-/* --------------------------------------------------------- alto contraste */
-/* Sem sombra e com o fundo trocado pelo do sistema, a caixa sumiria: o
-   contorno devolve a borda. */
+/* ---------------------------------------------------------- high contrast */
+/* With no shadow and the background swapped for the system's, the box would
+   disappear: the outline gives the edge back. */
 @media (forced-colors: active) {
   .al-tooltip {
     outline: var(--al-border-width-1) solid CanvasText;

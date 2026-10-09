@@ -1,74 +1,76 @@
 """
-Camada de tokens do Radio.
+Token layer for the Radio.
 
-Regra unica desta camada: nada aqui inventa valor. Todo token aponta para um
-token da Foundation pelo NOME. O portao no fim do arquivo recusa qualquer
-coisa que seja um valor solto - hex, px, numero.
+The one rule of this layer: nothing here invents a value. Every token points
+to a Foundation token by NAME. The gate at the end of the file rejects
+anything that is a loose value - hex, px, number.
 
-Nomenclatura:
-  codigo -> radio-border-hover      (hifen)
-  Figma  -> radio/border/hover      (pasta, collection `10. Radio`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> radio-border-hover      (hyphen)
+  Figma -> radio/border/hover      (folder, collection `10. Radio`)
+They are different layers. Never collapse one into the other.
 
-E O `<input type="radio">` NATIVO
+IT IS THE NATIVE `<input type="radio">`
 
-  Mesma escolha do Select e do Checkbox: o controle e do navegador, o
-  componente pinta o circulo por cima com `appearance: none`. Setas dentro do
-  grupo, Tab entrando uma vez so e "marcar um desmarca o outro" sao do input,
-  desde que os radios da mesma pergunta dividam o mesmo `name`.
+  The same choice as the Select and the Checkbox: the control belongs to the
+  browser, the component paints the circle on top with `appearance: none`.
+  Arrows inside the group, Tab entering only once and "checking one unchecks
+  the other" belong to the input, as long as the radios of the same question
+  share the same `name`.
 
-UM TAMANHO SO - REGRA DO TIER 2
+ONE SIZE ONLY - THE TIER 2 RULE
 
-  Circulo 24x24, o mesmo da caixa do Checkbox e da entrelinha do rotulo - e
-  isso que alinha o circulo com a primeira linha do texto.
+  A 24x24 circle, the same as the Checkbox box and the label's line height -
+  that is what aligns the circle with the first line of text.
 
-MARCADO NAO PINTA O FUNDO - E A DIFERENCA PARA O CHECKBOX
+CHECKED DOESN'T PAINT THE BACKGROUND - THE DIFFERENCE FROM THE CHECKBOX
 
-  No Checkbox, marcado = caixa laranja. No Radio, marcado = borda laranja +
-  ponto laranja, com o fundo continuando `bg`: o anel branco entre a borda e o
-  ponto E o fundo. Por isso nao existe `bg-checked`, e existem `dot` e
-  `dot-disabled` no lugar do `icon` / `icon-disabled`.
+  In the Checkbox, checked = orange box. In the Radio, checked = orange border
+  + orange dot, with the background staying `bg`: the white ring between the
+  border and the dot IS the background. That is why there is no `bg-checked`,
+  and there are `dot` and `dot-disabled` instead of `icon` / `icon-disabled`.
 
-O FIGMA TEM UM EIXO SO, O NAVEGADOR TEM DOIS
+FIGMA HAS ONE AXIS, THE BROWSER HAS TWO
 
-  O component set (node 230:611) tem seis variantes num eixo `State`: Default,
-  Hover, Active (= marcado), Error, Disabled, Focus. As combinacoes que o input
-  produz sao cobertas pelos mesmos tokens, com a mesma solucao do Checkbox
-  (decisao de Gui na etapa 1, 24/09/2026):
+  The component set (node 230:611) has six variants on one `State` axis:
+  Default, Hover, Active (= checked), Error, Disabled, Focus. The combinations
+  the input produces are covered by the same tokens, with the same solution as
+  the Checkbox (decided in the audit, 2026-09-24):
 
-    marcado + hover        -> nada muda; hover so no desmarcado (radio marcado
-                              nao desmarca com clique - o hover prometeria acao)
-    marcado + foco         -> anel por cima do anel laranja
-    erro + marcado         -> borda e ponto laranja, rotulo vermelho
-    marcado + disabled     -> `bg-disabled`, `border-disabled`, ponto em
+    checked + hover        -> nothing changes; hover only when unchecked (a
+                              checked radio doesn't uncheck on click - the hover
+                              would promise an action)
+    checked + focus        -> ring on top of the orange ring
+    error + checked        -> orange border and dot, red label
+    checked + disabled     -> `bg-disabled`, `border-disabled`, dot in
                               `dot-disabled`
 
-  `radio-dot-disabled` e o unico token sem variante no Figma - espelho do
-  `checkbox-icon-disabled`.
+  `radio-dot-disabled` is the only token with no variant in Figma - the mirror
+  of `checkbox-icon-disabled`.
 
-O ERRO E DA PERGUNTA, NAO DO RADIO
+THE ERROR BELONGS TO THE QUESTION, NOT TO THE RADIO
 
-  Precedente Primer / Carbon / Spectrum / Polaris: a variante Error acende em
-  TODOS os radios da mesma pergunta ao mesmo tempo, nunca num so. Nao ha
-  componente de grupo (decisao de Gui): mensagem e `aria-invalid` sao do
-  formulario. Isso e regra de uso, nao token.
+  Precedent Primer / Carbon / Spectrum / Polaris: the Error variant lights up
+  on ALL the radios of the same question at once, never on just one. There is
+  no group component (by design): the message and `aria-invalid` belong to the
+  form. That is a usage rule, not a token.
 
-`border-hover` E `border-focus` APONTAM PRO MESMO ALIAS, E SAO DOIS TOKENS
+`border-hover` AND `border-focus` POINT TO THE SAME ALIAS, AND ARE TWO TOKENS
 
-  Mesma logica do Select e do Checkbox: hoje coincidem, e dois nomes deixam um
-  divergir do outro depois sem mudanca quebrada.
+  The same logic as the Select and the Checkbox: today they coincide, and two
+  names let one diverge from the other later without a breaking change.
 
-O PONTO NAO TEM TOKEN DE TAMANHO
+THE DOT HAS NO SIZE TOKEN
 
-  14 = circulo 24 - 2 x borda 1 - 2 x padding 4. E derivado, e 14 nem existe
-  na escala - tokenizar seria guardar a mesma decisao em dois lugares. O padding
-  e `space-4` (nao o `space-2` do Checkbox) desde a etapa 1: com 18px o ponto
-  enchia o circulo e o marcado + disabled virava um disco cinza igual ao
-  desmarcado + disabled.
+  14 = circle 24 - 2 x border 1 - 2 x padding 4. It is derived, and 14 doesn't
+  even exist on the scale - tokenizing it would store the same decision in two
+  places. The padding is `space-4` (not the Checkbox's `space-2`) since the
+  audit: at 18px the dot filled the circle and checked + disabled became a gray
+  disc identical to unchecked + disabled.
 
-DUAS EXCECOES DECLARADAS DE CONTRASTE
+TWO DECLARED CONTRAST EXCEPTIONS
 
-  Ver PENDING. As mesmas do Checkbox.
+  See PENDING. The same as the Checkbox.
 """
 import json, os, sys
 
@@ -83,9 +85,9 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ----------------------------------------------------------------- color
 COLOR = {
-    'bg':               'bg-surface-raised',   # desmarcado E marcado (anel branco)
+    'bg':               'bg-surface-raised',   # unchecked AND checked (white ring)
     'bg-hover':         'bg-hover',
     'bg-disabled':      'bg-disabled',
 
@@ -96,15 +98,15 @@ COLOR = {
     'border-error':     'border-danger',
     'border-disabled':  'border-default',
 
-    'dot':              'bg-brand',        # ponto do marcado - piso 3:1
-    'dot-disabled':     'text-disabled',   # marcado + disabled, sem variante no Figma
+    'dot':              'bg-brand',        # the checked dot - 3:1 floor
+    'dot-disabled':     'text-disabled',   # checked + disabled, no variant in Figma
 
     'label':            'text-primary',
     'label-error':      'text-danger',
     'label-disabled':   'text-disabled',
 }
 
-# O token aponta para a SOMBRA COMPOSTA, nao para a cor crua.
+# The token points to the COMPOSITE SHADOW, not the raw color.
 RING = {
     'ring': 'focusRing.default',
 }
@@ -113,11 +115,11 @@ RING_INK = {
     'ring': 'shadow-focus-default',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'box-size':     'iconSize.24',
-    'padding':      'space.4',        # borda -> ponto
-    'gap':          'space.8',        # circulo -> rotulo
+    'padding':      'space.4',        # border -> dot
+    'gap':          'space.8',        # circle -> label
     'radius':       'radius.full',
     'border-width': 'border.width.1',
 }
@@ -127,47 +129,47 @@ TYPE = {
 }
 
 PENDING = {
-    'borda-abaixo-de-3-1': (
-        'A borda do circulo desmarcado em repouso usa `border-default`: 1.57:1 no claro e '
-        '1.46:1 no escuro (contra o fundo do circulo), abaixo dos 3:1 do WCAG 1.4.11. '
-        'Mesma decisao consciente de Gui do Checkbox (23/09/2026), herdada no Radio em '
-        '24/09/2026: seguir o padrao dos inputs do DS. A borda e o unico desenho do controle '
-        'desmarcado; quem sustenta a excecao e a regra do rotulo visivel. Hover e foco '
-        '(border-strong), marcado (border-brand) e erro (border-danger) passam. NAO '
-        '"corrigir" sem falar com ele.'
+    'border-below-3-1': (
+        'The border of the unchecked circle at rest uses `border-default`: 1.57:1 in light '
+        'and 1.46:1 in dark (against the circle background), below the 3:1 of WCAG 1.4.11. '
+        'The same conscious decision as the Checkbox (2026-09-23), carried over to the Radio '
+        'on 2026-09-24: follow the pattern of the DS inputs. The border is the only drawing '
+        'of the unchecked control; the visible label rule is what backs the exception. '
+        'Hover and focus (border-strong), checked (border-brand) and error (border-danger) '
+        'pass. DO NOT "fix" it without revisiting that decision.'
     ),
-    'disabled-abaixo-de-aa': (
-        'Rotulo, borda e ponto no disabled ficam abaixo do piso. Isencao do WCAG 1.4.3 / '
-        '1.4.11 para componente inativo - mesma excecao permanente do Button, do Tag, do '
-        'Select e do Checkbox. Subir esse contraste faz o desabilitado parecer clicavel.'
+    'disabled-below-aa': (
+        'Label, border and dot in disabled fall below the floor. WCAG 1.4.3 / 1.4.11 exempt '
+        'inactive components - the same permanent exception as the Button, the Tag, the '
+        'Select and the Checkbox. Raising that contrast makes disabled look clickable.'
     ),
 }
 
-CANVAS = 'bg-canvas'   # nao e token do Radio: e a tela onde ele e colocado
+CANVAS = 'bg-canvas'   # not a Radio token: it is the canvas the Radio is placed on
 
-# (papel, token do radio, fundo(s), piso, chave da excecao em PENDING)
-# A borda tem duas superficies vizinhas - a tela por fora e o circulo por
-# dentro - e vale a PIOR das duas. O ponto mede contra o `bg`: e o anel branco
-# que o separa da borda, nao a tela.
+# (role, radio token, background(s), floor, exception key in PENDING)
+# The border has two neighboring surfaces - the canvas outside and the circle
+# inside - and the WORSE of the two counts. The dot measures against `bg`: it
+# is the white ring that separates it from the border, not the canvas.
 COMBOS = [
-    ('rotulo',          'label',           'canvas',                   4.5, None),
-    ('rotulo-erro',     'label-error',     'canvas',                   4.5, None),
-    ('rotulo-disabled', 'label-disabled',  'canvas',                   4.5, 'disabled-abaixo-de-aa'),
-    ('borda-repouso',   'border',          ('canvas', 'bg'),           3.0, 'borda-abaixo-de-3-1'),
-    ('borda-hover',     'border-hover',    ('canvas', 'bg-hover'),     3.0, None),
-    ('borda-focus',     'border-focus',    ('canvas', 'bg'),           3.0, None),
-    ('borda-marcada',   'border-checked',  ('canvas', 'bg'),           3.0, None),
-    ('borda-erro',      'border-error',    ('canvas', 'bg'),           3.0, None),
-    ('borda-disabled',  'border-disabled', ('canvas', 'bg-disabled'),  3.0, 'disabled-abaixo-de-aa'),
-    ('ponto',           'dot',             'bg',                       3.0, None),
-    ('ponto-disabled',  'dot-disabled',    'bg-disabled',              3.0, 'disabled-abaixo-de-aa'),
-    ('anel-foco',       'ring',            'canvas',                   3.0, None),
+    ('label',           'label',           'canvas',                   4.5, None),
+    ('label-error',     'label-error',     'canvas',                   4.5, None),
+    ('label-disabled',  'label-disabled',  'canvas',                   4.5, 'disabled-below-aa'),
+    ('border-rest',     'border',          ('canvas', 'bg'),           3.0, 'border-below-3-1'),
+    ('border-hover',    'border-hover',    ('canvas', 'bg-hover'),     3.0, None),
+    ('border-focus',    'border-focus',    ('canvas', 'bg'),           3.0, None),
+    ('border-checked',  'border-checked',  ('canvas', 'bg'),           3.0, None),
+    ('border-error',    'border-error',    ('canvas', 'bg'),           3.0, None),
+    ('border-disabled', 'border-disabled', ('canvas', 'bg-disabled'),  3.0, 'disabled-below-aa'),
+    ('dot',             'dot',             'bg',                       3.0, None),
+    ('dot-disabled',    'dot-disabled',    'bg-disabled',              3.0, 'disabled-below-aa'),
+    ('focus-ring',      'ring',            'canvas',                   3.0, None),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
-    """O semantico de cor por tras de um papel - seguindo o anel ate a cor."""
+    """The color semantic behind a role - following the ring down to the color."""
     if role == 'canvas':
         return CANVAS
     if role in RING_INK:
@@ -176,16 +178,16 @@ def ink(role):
 
 
 def contrast_rows():
-    """Mede cada combinacao renderizada nos dois temas, cada uma contra o piso
-    que e dela: texto 4.5:1 do 1.4.3, borda e ponto 3:1 do 1.4.11."""
+    """Measures each rendered combination in both themes, each against its own
+    floor: text 4.5:1 from 1.4.3, border and dot 3:1 from 1.4.11."""
     rows = []
     for what, fg_role, bg_spec, min_ratio, exc in COMBOS:
         fg_ref = ink(fg_role)
         bg_roles = bg_spec if isinstance(bg_spec, tuple) else (bg_spec,)
         for theme, i in (('light', 0), ('dark', 1)):
-            medidas = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
-                       for b in bg_roles]
-            ratio, bg_ref = min(medidas)
+            measures = [(round(cr(SEM[fg_ref][i], SEM[ink(b)][i]), 2), ink(b))
+                        for b in bg_roles]
+            ratio, bg_ref = min(measures)
             rows.append({
                 'theme': theme, 'what': what,
                 'fg': fg_ref, 'bg': bg_ref,
@@ -203,10 +205,10 @@ def run():
         name = f'radio-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref}) - todo valor de cor nasce alias do semantico')
+            problems.append(f'{name}: loose hex ({ref}) - every color value is born as an alias of a semantic')
             continue
         if ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
             continue
         light, dark = SEM[ref]
         resolved[name] = {'light': light, 'dark': dark}
@@ -218,7 +220,7 @@ def run():
             v = resolve_foundation(ref)
             resolved[name] = {'light': v['light'], 'dark': v['dark']}
         except KeyError:
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for group in (GEOM, TYPE):
         for role, ref in group.items():
@@ -227,15 +229,15 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
 
-    # derivadas - conferencia, nao token. Ver nota no cabecalho.
+    # derived - a check, not a token. See the note in the header.
     box = resolve_foundation(GEOM['box-size'])
     pad = resolve_foundation(GEOM['padding'])
     bw = resolve_foundation(GEOM['border-width'])
@@ -250,36 +252,36 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO RADIO')
+    print('RADIO TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<26} -> {alias[name]}')
     print('-' * 74)
-    print(f'ponto derivado: {derived["dot-size"]}px  (circulo - 2 x borda - 2 x padding)')
-    print(f'altura da linha: {derived["row-height"]}px')
-    # conferencia, nao portao: circulo e entrelinha devem bater - e o que
-    # alinha o circulo com a primeira linha do rotulo sem mexer na altura
+    print(f'derived dot: {derived["dot-size"]}px  (circle - 2 x border - 2 x padding)')
+    print(f'row height: {derived["row-height"]}px')
+    # a check, not a gate: circle and line height must match - that is what
+    # aligns the circle with the label's first line without changing the height
     if box != line:
-        print(f'  ATENCAO: box-size {box} != entrelinha do rotulo {line}')
+        print(f'  WARNING: box-size {box} != label line height {line}')
     print('-' * 74)
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
-    limpas = [r for r in rows if r['pass']]
-    pior = min(limpas, key=lambda r: r['ratio'] / r['min'])
-    print(f'pior margem entre as que passam: {pior["what"]} ({pior["theme"]}) = '
-          f'{pior["ratio"]}:1 contra piso {pior["min"]}')
-    for chave in PENDING:
-        n = sum(1 for r in excs if r['exception'] == chave)
-        print(f'  excecao "{chave}": {n} medicoes')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
+    clean = [r for r in rows if r['pass']]
+    worst = min(clean, key=lambda r: r['ratio'] / r['min'])
+    print(f'worst margin among those that pass: {worst["what"]} ({worst["theme"]}) = '
+          f'{worst["ratio"]}:1 against floor {worst["min"]}')
+    for key in PENDING:
+        n = sum(1 for r in excs if r['exception'] == key)
+        print(f'  exception "{key}": {n} measurements')
     print('-' * 74)
 
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE:')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE:')
         for f in fails:
             print(f'    {f["what"]} ({f["theme"]}): {f["ratio"]}:1 < {f["min"]}')
         return 1
 
-    print(f'{len(alias)} tokens, todos alias da Foundation. 0 valores soltos.')
+    print(f'{len(alias)} tokens, all aliases of the Foundation. 0 loose values.')
 
     out = {
         'meta': {
@@ -291,15 +293,15 @@ def run():
             'variants': [],
             'sizes': ['md'],
             'states': ['default', 'hover', 'checked', 'error', 'disabled', 'focus'],
-            'nota': (
-                'E o <input type="radio"> NATIVO, com o circulo pintado por cima. '
-                'Um tamanho so (circulo 24px), regra de todo input do Tier 2. Marcado '
-                'nao pinta o fundo: borda e ponto laranja, com o anel branco entre eles. '
-                'O Figma tem um eixo so de estado; as combinacoes que o navegador produz '
-                '(marcado + foco/disabled/erro) sao cobertas pelos mesmos tokens, mais '
-                '`dot-disabled`, que nao tem variante no Figma. O erro acende em todos os '
-                'radios da pergunta; mensagem e aria-invalid sao do formulario. Duas '
-                'excecoes de contraste declaradas em pending.'
+            'note': (
+                'It is the NATIVE <input type="radio">, with the circle painted on top. '
+                'One size only (24px circle), the rule for every Tier 2 input. Checked '
+                'doesn\'t paint the background: orange border and dot, with the white ring '
+                'between them. Figma has a single state axis; the combinations the browser '
+                'produces (checked + focus/disabled/error) are covered by the same tokens, '
+                'plus `dot-disabled`, which has no variant in Figma. The error lights up on '
+                'every radio of the question; message and aria-invalid belong to the form. '
+                'Two contrast exceptions declared in pending.'
             ),
         },
         'alias': alias,
@@ -309,59 +311,59 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('radio', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/radio/tokens.json escrito')
+    print('\nbuild/components/radio/tokens.json written')
     write_css(alias, derived)
     return 0
 
 
-# ---------------------------------------------------------------- css
+# ------------------------------------------------------------------- css
 def write_css(alias, derived):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Radio')
-    w(' * GERADO por src/components/radio/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Radio tokens')
+    w(' * GENERATED by src/components/radio/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Sem bloco de tema: cada token aponta para um semantico, e o tema troca')
-    w(' * no :root - o mesmo elemento onde estes alias sao declarados.')
+    w(' * No theme block: each token points to a semantic, and the theme switches')
+    w(' * on :root - the same element where these aliases are declared.')
     w(' *')
-    w(f' * Ponto: {derived["dot-size"]}px derivados, sem token.')
+    w(f' * Dot: {derived["dot-size"]}px, derived, no token.')
     w(' */')
     w('')
     w(':root {')
 
     w('')
-    w('  /* fundo do circulo - o marcado continua em `bg`: e o anel branco */')
+    w('  /* circle background - checked stays on `bg`: it is the white ring */')
     for role in ('bg', 'bg-hover', 'bg-disabled'):
         w(f'  --al-radio-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* borda do circulo */')
+    w('  /* circle border */')
     for role in ('border', 'border-hover', 'border-focus', 'border-checked',
                  'border-error', 'border-disabled'):
         w(f'  --al-radio-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* ponto do marcado */')
+    w('  /* the checked dot */')
     for role in ('dot', 'dot-disabled'):
         w(f'  --al-radio-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* rotulo - vive fora do circulo, sobre a tela */')
+    w('  /* label - it lives outside the circle, on the canvas */')
     for role in ('label', 'label-error', 'label-disabled'):
         w(f'  --al-radio-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* anel de foco - aponta para a sombra composta, nao para a cor crua */')
+    w('  /* focus ring - points to the composite shadow, not the raw color */')
     for role, ref in RING.items():
         w(f'  --al-radio-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-radio-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* tipografia - um estilo vira quatro vars */')
+    w('  /* typography - one style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -374,15 +376,15 @@ def write_css(alias, derived):
     w('}')
     w('')
 
-    # Trava: lista de grupo esquecida vira build quebrado, nao variavel faltando.
-    texto = '\n'.join(L)
-    faltando = [r for r in COLOR if f'--al-radio-{r}:' not in texto]
-    if faltando:
+    # Lock: a forgotten group list becomes a broken build, not a missing variable.
+    text = '\n'.join(L)
+    missing = [r for r in COLOR if f'--al-radio-{r}:' not in text]
+    if missing:
         raise AssertionError(
-            'papeis de cor fora do CSS (alguma lista de grupo em write_css nao '
-            f'foi atualizada): {faltando}')
+            'color roles missing from the CSS (some group list in write_css was not '
+            f'updated): {missing}')
 
-    save_css('radio', texto)
+    save_css('radio', text)
 
 
 if __name__ == '__main__':

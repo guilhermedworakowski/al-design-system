@@ -1,30 +1,31 @@
 """
-Leitor de HTML dos portoes de acessibilidade, num lugar so.
+HTML reader for the accessibility gates, in one place.
 
-Os a11y.py medem o HTML que o site emite. Para isso, montam uma arvore simples
-com o HTMLParser da biblioteca padrao: cada no e um dict com tag, attrs, kids
-(filhos), text (texto direto), line (linha no arquivo) e parent.
+The a11y.py files measure the HTML the site emits. To do that, they build a
+simple tree with the standard library's HTMLParser: each node is a dict with
+tag, attrs, kids (children), text (direct text), line (line in the file) and
+parent.
 
-    t = Tree(); t.feed(html)      monta a arvore; a raiz fica em t.root
-    walk(no)                      todos os descendentes, em ordem de documento
-    classes(no) / has(no, cls)    classes do no / se tem uma classe
-    ancestors(no)                 pais, do mais perto ao mais longe (sem a raiz)
-    text_of(no)                   texto do no e dos filhos, sem as pontas
-    text_flat(no)                 o mesmo, com todo espaco repetido virando um so
+    t = Tree(); t.feed(html)      builds the tree; the root is t.root
+    walk(node)                    every descendant, in document order
+    classes(node) / has(node, c)  the node's classes / whether it has a class
+    ancestors(node)               parents, nearest to farthest (without the root)
+    text_of(node)                 text of the node and its children, trimmed
+    text_flat(node)               the same, with all repeated whitespace collapsed
 
-O que fica de fora da arvore: o conteudo de <style> e <script> (nao e marcacao).
-O <template> entra por padrao, porque e la que mora a marcacao que o JS insere
-depois (Toast, Alert). Quem nao quer as amostras de template passa
+What stays out of the tree: the content of <style> and <script> (not markup).
+<template> goes in by default, because that is where the markup the JS inserts
+later lives (Toast, Alert). Whoever doesn't want the template samples passes
 Tree(skip=SKIP_TEMPLATE).
 """
 from html.parser import HTMLParser
 
-# Elementos sem fechamento: nunca tem filhos, entao nao entram na pilha.
+# Void elements: they never have children, so they don't go on the stack.
 VOID = {
     'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
     'meta', 'source', 'track', 'wbr',
-    # formas do SVG: no site sempre vem fechadas (<path ... />), mas um <path>
-    # sem a barra nao pode engolir os irmaos
+    # SVG shapes: on the site they always come self-closed (<path ... />), but a
+    # <path> without the slash must not swallow its siblings
     'path', 'circle', 'line', 'rect', 'polyline', 'polygon', 'ellipse',
 }
 

@@ -1,11 +1,11 @@
 """
-Portao do CSS do Toast.
+CSS gate for the Toast.
 
-A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
-de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
-nenhum token inventado. Aqui fica so o que e proprio do Toast.
+The rule is the same for every component and lives in tools/cssgate.py: no
+literal values (color, length, weight, duration), no orphan tokens and no
+invented tokens. Only what is specific to the Toast stays here.
 
-Rodar: python3 check.py (ou o build completo: python3 build.py)
+Run: python3 check.py (or the full build: python3 build.py)
 """
 import os
 import sys
@@ -14,15 +14,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from cssgate import gate  # noqa: E402
 
-# O que este portao NAO alcanca: marcacao so existe na saida renderizada.
-# O a11y.py da etapa 6 cobra estas regras no HTML que o site emite.
-FORA_DO_CSS = [
-    'uma .al-toast-region com popover="manual" e as duas regioes vivas (status e alert) desde o carregamento (regras 22 e 23)',
-    'cada toast num <template>, um modificador de status, titulo e descricao opcional (regras 11 e 13)',
-    'icone de status com role="img" + aria-label; X com nome "Fechar notificação" (regras 14 e 24)',
-    'fila, tempo na tela, pausa, Esc e foco: toast.js (regras 15 a 21)',
+# What this gate does NOT reach: markup only exists in the rendered output.
+# a11y.py enforces these rules on the HTML the site emits.
+OUTSIDE_CSS = [
+    'one .al-toast-region with popover="manual" and both live regions (status and alert) from load (rules 22 and 23)',
+    'each toast in a <template>, one status modifier, title and optional description (rules 11 and 13)',
+    'status icon with role="img" + aria-label; the X with its fixed name (rules 14 and 24)',
+    'queue, time on screen, pause, Esc and focus: toast.js (rules 15 to 21)',
 ]
 
 
 if __name__ == '__main__':
-    sys.exit(gate('toast', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('toast', outside_css=OUTSIDE_CSS))

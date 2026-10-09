@@ -1,61 +1,67 @@
 """
-QA de acessibilidade do Drawer.
+Accessibility QA for the Drawer.
 
-Como nos outros componentes, a validacao e por COMBINACAO RENDERIZADA - papel
-x tema - contra o fundo EFETIVO, nao par de token solto.
+As with the other components, validation is by RENDERED COMBINATION - role x
+theme - against the EFFECTIVE background, not a loose token pair.
 
-O QUE O FUNDO EFETIVO MUDA AQUI
+WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
-  O Drawer e uma camada, como o Modal: o que o usuario ve atras dele e a pagina
-  ESCURECIDA pelo scrim, composta (scrim com transparencia sobre bg-canvas ou
-  bg-surface). Dentro dele tudo mora em `bg-surface-raised`, inclusive o X e os
-  botoes do rodape - entao o par que importa para eles nao e o da etapa do
-  Button/Icon Button (contra tela e superficie) e sim contra o painel.
+  The Drawer is a layer, like the Modal: what the user sees behind it is the
+  page DIMMED by the scrim, composited (scrim with transparency over
+  bg-canvas or bg-surface). Inside it everything lives on
+  `bg-surface-raised`, including the X and the footer buttons - so the pair
+  that matters for them is not the Button/Icon Button's own (against canvas
+  and surface) but against the panel.
 
-CINCO JULGAMENTOS
+FIVE JUDGMENTS
 
-  1. Texto (titulo e ink do X): piso 4,5:1 do 1.4.3. Tem que passar.
-  2. Anel de foco e fundo dos botoes de acao DENTRO do painel: piso 3:1 do
-     1.4.11. Tem que passar - e e o par que a etapa 3 nao media.
-  3. Painel contra a pagina escurecida: 3:1. No escuro fica em ~1,8:1: e a
-     excecao `card-nao-se-separa-do-scrim-no-escuro` (etapa 3, mesma do Modal).
-  4. Painel INVISIVEL (igual a pagina escurecida) reprova. A excecao cobre
-     separacao discreta, nao ausencia.
-  5. Hover/pressed -raised do Ghost e do Secondary (e do X): o texto passa 4,5:1
-     sobre eles E eles tem que ser DIFERENTES do painel. Era o defeito do
-     Modal 0.18.1 (hover igual ao fundo, no escuro, e o estado sumia); o
-     Drawer nasce com o override e este julgamento o tranca.
+  1. Text (title and the X's ink): 4.5:1 floor from 1.4.3. It must pass.
+  2. Focus ring and background of the action buttons INSIDE the panel: 3:1
+     floor from 1.4.11. It must pass - and it is the pair the token layer
+     doesn't measure.
+  3. Panel against the dimmed page: 3:1. In dark it sits at ~1.8:1: that is
+     the exception `card-not-separated-from-scrim-in-dark` (see tokens.py,
+     the same as the Modal).
+  4. INVISIBLE panel (equal to the dimmed page) fails. The exception covers
+     a subtle separation, not its absence.
+  5. -raised hover/pressed of the Ghost and the Secondary (and of the X): the
+     text passes 4.5:1 on them AND they must be DIFFERENT from the panel. It
+     was the Modal 0.18.1 defect (hover equal to the background, in dark,
+     and the state disappeared); the Drawer is born with the override and
+     this judgment locks it.
 
-O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
+THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Regras de uso da etapa 4, medidas no HTML emitido:
+  Usage rules from guidelines.md, measured on the emitted HTML:
 
-    a) `.al-drawer` e um <dialog> (regra 24);
-    b) sem `open` na marcacao: abre por showModal(), nunca por atributo nem
-       show(). Os congelados da matriz ficam sob `inert` e sao isentos;
-    c) aria-labelledby aponta para um .al-drawer__title que existe (regra 25);
-    d) exatamente um .al-drawer__title com texto, dentro do cabecalho (regra 6);
-    e) filhos na ordem cabecalho, miolo, acoes - as acoes sao opcionais, e sem
-       divisoria nem peca solta entre as partes (regra 9);
-    f) .al-drawer__actions, quando existe, tem 1 ou 2 acoes (regra 20);
-    g) a acao secundaria vem antes da principal; a principal e Primary e NUNCA
-       Danger (regras 20 e 22);
-    h) existe SEMPRE uma saida visivel (regra 14): o X, ou o rodape com um botao
-       data-al-drawer-close, ou um <form method="dialog">;
-    i) o X, quando existe, e um Icon Button (.al-icon-btn) com aria-label nao
-       vazio, type="button", data-al-drawer-close e svg aria-hidden; nenhum
-       outro botao sem texto visivel dentro do dialog (regra 26);
-    j) nunca Drawer dentro de Drawer (regra 4);
-    k) todo data-al-drawer-open aponta para um <dialog class="al-drawer"> que
-       existe;
-    l) botao dentro do rodape tem type="button" (ou fica em <form>): sem isso o
-       clique envia formulario;
-    m) tamanho: no maximo um modificador --sm|--md|--lg (sem modificador = md).
+    a) `.al-drawer` is a <dialog> (rule 24);
+    b) no `open` in the markup: it opens through showModal(), never through
+       the attribute or show(). The frozen ones in the matrix sit under
+       `inert` and are exempt;
+    c) aria-labelledby points to a .al-drawer__title that exists (rule 25);
+    d) exactly one .al-drawer__title with text, inside the header (rule 6);
+    e) children in the order header, body, actions - the actions are
+       optional, and no divider or loose piece between the parts (rule 9);
+    f) .al-drawer__actions, when it exists, has 1 or 2 actions (rule 20);
+    g) the secondary action comes before the main one; the main one is
+       Primary and NEVER Danger (rules 20 and 22);
+    h) there is ALWAYS a visible way out (rule 14): the X, or the footer with
+       a data-al-drawer-close button, or a <form method="dialog">;
+    i) the X, when it exists, is an Icon Button (.al-icon-btn) with a
+       non-empty aria-label, type="button", data-al-drawer-close and an
+       aria-hidden svg; no other button without visible text inside the
+       dialog (rule 26);
+    j) never a Drawer inside a Drawer (rule 4);
+    k) every data-al-drawer-open points to a <dialog class="al-drawer"> that
+       exists;
+    l) a button inside the footer has type="button" (or sits in a <form>):
+       without it the click submits the form;
+    m) size: at most one --sm|--md|--lg modifier (no modifier = md).
 
-ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
+RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -76,12 +82,12 @@ THEMES = ('light', 'dark')
 
 TEXT_FLOOR = 4.5
 NON_TEXT_FLOOR = 3.0
-EXC_SCRIM = 'card-nao-se-separa-do-scrim-no-escuro'
+EXC_SCRIM = 'card-not-separated-from-scrim-in-dark'
 
 DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('drawer', 'a11y.json')
 
-PAGINAS = (('canvas', 'bg-canvas'), ('surface', 'bg-surface'))
+PAGES = (('canvas', 'bg-canvas'), ('surface', 'bg-surface'))
 
 
 def sem(name, theme):
@@ -93,7 +99,7 @@ def drw(role, theme):
     return sem(ALIAS[f'drawer-{role}'], theme)
 
 
-# ─────────────────────────────────────────────── contraste
+# ─────────────────────────────────────────────── contrast
 def row(theme, what, fg_name, fg, bg_name, bg, floor, exc=None, invisible=False):
     ratio = round(cr(fg, bg), 2)
     ok = ratio >= floor
@@ -112,52 +118,52 @@ def contrast_rows():
         card = drw('bg', theme)
         card_name = ALIAS['drawer-bg']
 
-        # 1. titulo (e o texto do miolo, que herda a mesma cor) e ink do X
-        rows.append(row(theme, 'titulo', ALIAS['drawer-title'], drw('title', theme),
+        # 1. title (and the body text, which inherits the same color) and the X's ink
+        rows.append(row(theme, 'title', ALIAS['drawer-title'], drw('title', theme),
                         card_name, card, TEXT_FLOOR))
-        rows.append(row(theme, 'x-icone-no-painel', 'text-primary', sem('text-primary', theme),
+        rows.append(row(theme, 'x-icon-on-panel', 'text-primary', sem('text-primary', theme),
                         card_name, card, NON_TEXT_FLOOR))
 
-        # 2. o que mora DENTRO do painel - o par que a etapa do Button nao media
-        rows.append(row(theme, 'anel-no-painel', 'shadow-focus-default',
+        # 2. what lives INSIDE the panel - the pair the Button's gate doesn't measure
+        rows.append(row(theme, 'ring-on-panel', 'shadow-focus-default',
                         sem('shadow-focus-default', theme), card_name, card, NON_TEXT_FLOOR))
-        rows.append(row(theme, 'botao-principal-no-painel', 'bg-brand', sem('bg-brand', theme),
+        rows.append(row(theme, 'primary-button-on-panel', 'bg-brand', sem('bg-brand', theme),
                         card_name, card, NON_TEXT_FLOOR))
         sec = sem(BTN['alias']['button-secondary-border'], theme)
-        rows.append(row(theme, 'botao-secundario-borda-no-painel',
+        rows.append(row(theme, 'secondary-border-on-panel',
                         BTN['alias']['button-secondary-border'], sec, card_name, card,
                         NON_TEXT_FLOOR))
 
-        # 5. hover e pressed -raised: texto legivel E diferente do painel
-        for estado in ('hover', 'active'):
-            nome = f'bg-{estado}-raised'
-            fundo = sem(nome, theme)
-            rows.append(row(theme, f'ghost-{estado}-texto', 'text-primary',
-                            sem('text-primary', theme), nome, fundo, TEXT_FLOOR))
-            rows.append(row(theme, f'ghost-{estado}-distinto-do-painel', nome, fundo,
+        # 5. -raised hover and pressed: readable text AND different from the panel
+        for state in ('hover', 'active'):
+            name = f'bg-{state}-raised'
+            bg = sem(name, theme)
+            rows.append(row(theme, f'ghost-{state}-text', 'text-primary',
+                            sem('text-primary', theme), name, bg, TEXT_FLOOR))
+            rows.append(row(theme, f'ghost-{state}-distinct-from-panel', name, bg,
                             card_name, card, 1.0,
-                            invisible=fundo.lower() == card.lower()))
+                            invisible=bg.lower() == card.lower()))
 
-        # 3. painel contra a pagina ESCURECIDA pelo scrim
-        for nome, papel in PAGINAS:
-            pagina = composite(drw('scrim', theme), sem(papel, theme))
-            rows.append(row(theme, f'painel-na-{nome}-escurecida', card_name, card,
-                            f'{papel}+scrim', pagina, NON_TEXT_FLOOR, EXC_SCRIM,
-                            invisible=card.lower() == pagina.lower()))
+        # 3. panel against the page DIMMED by the scrim
+        for name, role in PAGES:
+            page = composite(drw('scrim', theme), sem(role, theme))
+            rows.append(row(theme, f'panel-on-dimmed-{name}', card_name, card,
+                            f'{role}+scrim', page, NON_TEXT_FLOOR, EXC_SCRIM,
+                            invisible=card.lower() == page.lower()))
     return rows
 
 
-# ─────────────────────────────────────────────── marcacao
+# ─────────────────────────────────────────────── markup
 def is_action(n):
     return n['tag'] == 'button' or (n['tag'] == 'a' and 'href' in n['attrs'])
 
 
-PARTES = ('al-drawer__header', 'al-drawer__content', 'al-drawer__actions')
+PARTS = ('al-drawer__header', 'al-drawer__content', 'al-drawer__actions')
 
 
 def markup_contract(path):
     if not os.path.exists(path):
-        return None, [f'{path} nao existe']
+        return None, [f'{path} does not exist']
     t = Tree()
     t.feed(open(path, encoding='utf-8').read())
     nodes = list(walk(t.root))
@@ -165,13 +171,13 @@ def markup_contract(path):
 
     checked, problems = 0, []
 
-    # (k) todo opener aponta para um <dialog>
+    # (k) every opener points to a <dialog>
     for n in nodes:
-        alvo = n['attrs'].get('data-al-drawer-open')
-        if alvo is not None:
-            d = ids.get(alvo)
+        target = n['attrs'].get('data-al-drawer-open')
+        if target is not None:
+            d = ids.get(target)
             if d is None or d['tag'] != 'dialog' or not has(d, 'al-drawer'):
-                problems.append(f'linha {n["line"]}: data-al-drawer-open="{alvo}" nao aponta para um '
+                problems.append(f'line {n["line"]}: data-al-drawer-open="{target}" does not point to a '
                                 f'<dialog class="al-drawer">')
 
     for n in nodes:
@@ -179,117 +185,117 @@ def markup_contract(path):
         if not has(n, 'al-drawer'):
             continue
         checked += 1
-        congelado = any('inert' in p['attrs'] for p in ancestors(n))
+        frozen = any('inert' in p['attrs'] for p in ancestors(n))
 
         # (a)
         if tag != 'dialog':
-            problems.append(f'linha {ln}: .al-drawer em <{tag}> - o Drawer e um <dialog> nativo (regra 24)')
+            problems.append(f'line {ln}: .al-drawer on <{tag}> - the Drawer is a native <dialog> (rule 24)')
             continue
         # (b)
-        if 'open' in a and not congelado:
-            problems.append(f'linha {ln}: <dialog open> - o Drawer abre por showModal(), nunca por '
-                            f'atributo (regra 24)')
+        if 'open' in a and not frozen:
+            problems.append(f'line {ln}: <dialog open> - the Drawer opens through showModal(), never '
+                            f'through the attribute (rule 24)')
         # (j)
         if any(has(p, 'al-drawer') for p in ancestors(n)):
-            problems.append(f'linha {ln}: Drawer dentro de Drawer (regra 4)')
+            problems.append(f'line {ln}: Drawer inside a Drawer (rule 4)')
         # (m)
-        tams = [c for c in classes(n) if c in ('al-drawer--sm', 'al-drawer--md', 'al-drawer--lg')]
-        if len(tams) > 1 or any(c.startswith('al-drawer--') and c not in tams for c in classes(n)):
-            problems.append(f'linha {ln}: tamanho invalido - um de --sm, --md ou --lg')
+        sizes = [c for c in classes(n) if c in ('al-drawer--sm', 'al-drawer--md', 'al-drawer--lg')]
+        if len(sizes) > 1 or any(c.startswith('al-drawer--') and c not in sizes for c in classes(n)):
+            problems.append(f'line {ln}: invalid size - one of --sm, --md or --lg')
 
         kids = [k for k in n['kids']]
-        titulos = [d for d in walk(n) if has(d, 'al-drawer__title')]
-        cabecalhos = [k for k in kids if has(k, 'al-drawer__header')]
+        titles = [d for d in walk(n) if has(d, 'al-drawer__title')]
+        headers = [k for k in kids if has(k, 'al-drawer__header')]
         # (d)
-        if len(titulos) != 1 or not text_of(titulos[0]):
-            problems.append(f'linha {ln}: o Drawer precisa de exatamente um .al-drawer__title com '
-                            f'texto (regra 6)')
-        elif len(cabecalhos) != 1 or titulos[0] not in list(walk(cabecalhos[0])):
-            problems.append(f'linha {ln}: o titulo mora dentro do .al-drawer__header (regra 6)')
+        if len(titles) != 1 or not text_of(titles[0]):
+            problems.append(f'line {ln}: the Drawer needs exactly one .al-drawer__title with '
+                            f'text (rule 6)')
+        elif len(headers) != 1 or titles[0] not in list(walk(headers[0])):
+            problems.append(f'line {ln}: the title lives inside the .al-drawer__header (rule 6)')
         # (c)
         lab = a.get('aria-labelledby')
         if not lab:
-            problems.append(f'linha {ln}: sem aria-labelledby - o <dialog> nao se nomeia sozinho '
-                            f'(regra 25)')
+            problems.append(f'line {ln}: no aria-labelledby - the <dialog> doesn\'t name itself '
+                            f'(rule 25)')
         elif lab not in ids or not has(ids[lab], 'al-drawer__title'):
-            problems.append(f'linha {ln}: aria-labelledby="{lab}" nao aponta para um '
-                            f'.al-drawer__title (regra 25)')
-        elif titulos and ids[lab] is not titulos[0]:
-            problems.append(f'linha {ln}: aria-labelledby aponta para o titulo de OUTRO Drawer (regra 25)')
+            problems.append(f'line {ln}: aria-labelledby="{lab}" does not point to a '
+                            f'.al-drawer__title (rule 25)')
+        elif titles and ids[lab] is not titles[0]:
+            problems.append(f'line {ln}: aria-labelledby points to the title of ANOTHER Drawer (rule 25)')
 
-        # (e) ordem cabecalho, miolo, acoes; acoes opcionais
-        ordem = [next((c for c in PARTES if has(k, c)), None) for k in kids]
-        esperado = [c for c in PARTES if c in ordem]
-        if [o for o in ordem if o] != esperado or (ordem and ordem[0] != 'al-drawer__header'):
-            problems.append(f'linha {ln}: filhos fora da ordem cabecalho, miolo, acoes (regra 9)')
-        if any(o is None for o in ordem):
-            problems.append(f'linha {ln}: filho direto sem classe do Drawer - sem divisoria nem '
-                            f'peca solta entre as partes (regra 9)')
-        if 'al-drawer__content' not in ordem:
-            problems.append(f'linha {ln}: falta o .al-drawer__content')
+        # (e) order header, body, actions; actions optional
+        order = [next((c for c in PARTS if has(k, c)), None) for k in kids]
+        expected = [c for c in PARTS if c in order]
+        if [o for o in order if o] != expected or (order and order[0] != 'al-drawer__header'):
+            problems.append(f'line {ln}: children out of the order header, body, actions (rule 9)')
+        if any(o is None for o in order):
+            problems.append(f'line {ln}: direct child without a Drawer class - no divider or '
+                            f'loose piece between the parts (rule 9)')
+        if 'al-drawer__content' not in order:
+            problems.append(f'line {ln}: the .al-drawer__content is missing')
 
-        # (i) o X
-        cab = cabecalhos[0] if cabecalhos else None
-        x_btns = [d for d in walk(cab) if is_action(d)] if cab else []
+        # (i) the X
+        head = headers[0] if headers else None
+        x_btns = [d for d in walk(head) if is_action(d)] if head else []
         for x in x_btns:
             if not has(x, 'al-icon-btn'):
-                problems.append(f'linha {x["line"]}: o unico botao do cabecalho e o X, um Icon Button (regra 26)')
+                problems.append(f'line {x["line"]}: the only button in the header is the X, an Icon Button (rule 26)')
                 continue
             if not x['attrs'].get('aria-label', '').strip():
-                problems.append(f'linha {x["line"]}: X sem aria-label - Icon Button sem nome e botao mudo (regra 26)')
+                problems.append(f'line {x["line"]}: X without aria-label - an Icon Button without a name is a mute button (rule 26)')
             if x['attrs'].get('type') != 'button':
-                problems.append(f'linha {x["line"]}: X sem type="button"')
+                problems.append(f'line {x["line"]}: X without type="button"')
             if 'data-al-drawer-close' not in x['attrs']:
-                problems.append(f'linha {x["line"]}: X sem data-al-drawer-close - nao fecha')
+                problems.append(f'line {x["line"]}: X without data-al-drawer-close - it doesn\'t close')
             for s in walk(x):
                 if s['tag'] == 'svg' and s['attrs'].get('aria-hidden') != 'true':
-                    problems.append(f'linha {s["line"]}: svg do X sem aria-hidden="true"')
+                    problems.append(f'line {s["line"]}: the X\'s svg without aria-hidden="true"')
         if len(x_btns) > 1:
-            problems.append(f'linha {ln}: mais de um botao no cabecalho (so o X)')
-        tem_x = len(x_btns) == 1 and has(x_btns[0], 'al-icon-btn')
+            problems.append(f'line {ln}: more than one button in the header (only the X)')
+        has_x = len(x_btns) == 1 and has(x_btns[0], 'al-icon-btn')
 
-        # outros botoes sem rotulo visivel (fora o X)
+        # other buttons without a visible label (besides the X)
         for d in walk(n):
             if d['tag'] == 'button' and not text_of(d) and d not in x_btns:
-                problems.append(f'linha {d["line"]}: botao sem texto visivel fora o X (regra 26)')
+                problems.append(f'line {d["line"]}: button without visible text besides the X (rule 26)')
 
-        acoes_box = [k for k in kids if has(k, 'al-drawer__actions')]
-        acoes = []
-        if len(acoes_box) > 1:
-            problems.append(f'linha {ln}: mais de um .al-drawer__actions')
-        elif acoes_box:
-            acoes = [d for d in walk(acoes_box[0]) if is_action(d)]
+        actions_box = [k for k in kids if has(k, 'al-drawer__actions')]
+        actions = []
+        if len(actions_box) > 1:
+            problems.append(f'line {ln}: more than one .al-drawer__actions')
+        elif actions_box:
+            actions = [d for d in walk(actions_box[0]) if is_action(d)]
             # (f)
-            if not 1 <= len(acoes) <= 2:
-                problems.append(f'linha {ln}: {len(acoes)} acoes no rodape - sao uma ou duas (regra 20)')
+            if not 1 <= len(actions) <= 2:
+                problems.append(f'line {ln}: {len(actions)} actions in the footer - one or two (rule 20)')
             # (g)
-            if len(acoes) == 2:
-                primeira, ultima = acoes
-                if has(primeira, 'al-btn--primary') or has(primeira, 'al-btn--danger'):
-                    problems.append(f'linha {primeira["line"]}: a acao principal vem POR ULTIMO; a '
-                                    f'primeira e a secundaria (regra 20)')
-                if not has(ultima, 'al-btn--primary'):
-                    problems.append(f'linha {ultima["line"]}: a ultima acao deveria ser Primary - '
-                                    f'destrutiva abre um Modal, nao e o principal do Drawer (regras 20 e 22)')
-            if len(acoes) == 1 and has(acoes[0], 'al-btn--danger'):
-                problems.append(f'linha {acoes[0]["line"]}: Danger nao e o principal do Drawer (regra 22)')
+            if len(actions) == 2:
+                first, last = actions
+                if has(first, 'al-btn--primary') or has(first, 'al-btn--danger'):
+                    problems.append(f'line {first["line"]}: the main action comes LAST; the '
+                                    f'first one is the secondary (rule 20)')
+                if not has(last, 'al-btn--primary'):
+                    problems.append(f'line {last["line"]}: the last action should be Primary - '
+                                    f'a destructive one opens a Modal, it is not the Drawer\'s main action (rules 20 and 22)')
+            if len(actions) == 1 and has(actions[0], 'al-btn--danger'):
+                problems.append(f'line {actions[0]["line"]}: Danger is not the Drawer\'s main action (rule 22)')
             # (l) type
-            for ac in acoes:
+            for ac in actions:
                 if ac['tag'] == 'button' and ac['attrs'].get('type') not in ('button', 'submit', 'reset'):
-                    problems.append(f'linha {ac["line"]}: <button> sem type - dentro de <form> o padrao '
-                                    f'e submit')
+                    problems.append(f'line {ac["line"]}: <button> without type - inside a <form> the '
+                                    f'default is submit')
 
-        # (h) sempre uma saida visivel
-        saida_rodape = any('data-al-drawer-close' in d['attrs'] for d in acoes) or \
+        # (h) always a visible way out
+        footer_exit = any('data-al-drawer-close' in d['attrs'] for d in actions) or \
             any(d['tag'] == 'form' and d['attrs'].get('method') == 'dialog' for d in walk(n))
-        if not tem_x and not saida_rodape:
-            problems.append(f'linha {ln}: nenhuma saida visivel - sem X e sem botao de rodape que '
-                            f'feche (regra 14)')
-        if not tem_x and not acoes:
-            problems.append(f'linha {ln}: sem X e sem rodape - o Drawer fica sem saida visivel (regra 14)')
+        if not has_x and not footer_exit:
+            problems.append(f'line {ln}: no visible way out - no X and no footer button that '
+                            f'closes (rule 14)')
+        if not has_x and not actions:
+            problems.append(f'line {ln}: no X and no footer - the Drawer has no visible way out (rule 14)')
 
     if checked == 0:
-        return None, ['nenhum .al-drawer no HTML']
+        return None, ['no .al-drawer in the HTML']
     return checked, problems
 
 
@@ -299,43 +305,43 @@ def run():
     invis = [r for r in rows if r['invisible']]
     fails = [r for r in rows if not r['pass'] and not r['exception'] and not r['invisible']]
     excs = [r for r in rows if r['exception']]
-    passa = [r for r in rows if r['pass']]
+    passing = [r for r in rows if r['pass']]
 
     checked, mk = markup_contract(path)
 
     print('=' * 78)
-    print('QA DE ACESSIBILIDADE DO DRAWER')
+    print('DRAWER ACCESSIBILITY QA')
     print('=' * 78)
-    print('\nCOMBINACOES RENDERIZADAS (tema x papel)')
+    print('\nRENDERED COMBINATIONS (theme x role)')
     for r in rows:
         if r['invisible']:
-            mark, nota = 'XX', 'INVISIVEL - nada separa os dois fundos'
+            mark, note = 'XX', 'INVISIBLE - nothing separates the two backgrounds'
         elif r['pass']:
-            mark, nota = 'ok', 'passa'
+            mark, note = 'ok', 'pass'
         elif r['exception']:
-            mark, nota = '~~', f'excecao "{r["exception"]}"'
+            mark, note = '~~', f'exception "{r["exception"]}"'
         else:
-            mark, nota = 'XX', 'REPROVA'
+            mark, note = 'XX', 'FAIL'
         print(f'  {mark} {r["theme"]:<5} {r["what"]:<36} x {r["bg"]:<20} '
-              f'{r["ratio"]:5.2f} (piso {r["floor"]})  {nota}')
+              f'{r["ratio"]:5.2f} (floor {r["floor"]})  {note}')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path, ROOT)}')
     if checked is None:
         for p in mk:
-            print(f'     PENDENTE: {p}')
+            print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} drawer(s) conferido(s), 13 regras (a-m)')
+        print(f'     {checked} drawer(s) checked, 13 rules (a-m)')
         for p in mk:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
     print('-' * 78)
-    print(f'{len(rows)} medicoes  |  passam: {len(passa)}  |  excecoes: {len(excs)}  |  '
-          f'reprovas: {len(fails) + len(invis)}')
+    print(f'{len(rows)} measurements  |  pass: {len(passing)}  |  exceptions: {len(excs)}  |  '
+          f'fail: {len(fails) + len(invis)}')
 
     json.dump({
         'component': 'drawer',
-        'criterion': 'WCAG 1.4.3 texto + 1.4.11 nao-textual + painel visivel + hover-raised distinto',
+        'criterion': 'WCAG 1.4.3 text + 1.4.11 non-text + visible panel + distinct -raised hover',
         'floors': {'text': TEXT_FLOOR, 'nonText': NON_TEXT_FLOOR},
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': checked,
@@ -343,22 +349,22 @@ def run():
         'markupProblems': mk if checked is not None else [],
         'rows': rows,
     }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
-    print(f'{os.path.relpath(OUT_JSON, ROOT)} escrito')
+    print(f'{os.path.relpath(OUT_JSON, ROOT)} written')
 
-    falhou = False
+    failed = False
     if invis or fails:
         print('-' * 78)
-        print(f'{len(invis) + len(fails)} COMBINACAO(OES) REPROVAM:')
+        print(f'{len(invis) + len(fails)} COMBINATION(S) FAIL:')
         for r in invis + fails:
             print(f'   {r["theme"]} {r["what"]} x {r["bg"]}: {r["ratio"]}:1')
-        falhou = True
+        failed = True
     if checked is not None and mk:
         print('-' * 78)
-        print(f'{len(mk)} PROBLEMA(S) DE MARCACAO - portao reprova')
-        falhou = True
+        print(f'{len(mk)} MARKUP PROBLEM(S) - gate fails')
+        failed = True
     if checked is None:
-        falhou = True
-    return 1 if falhou else 0
+        failed = True
+    return 1 if failed else 0
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
-# Roda o build completo em cada PR e em cada push para dev e main.
-# Reprova se algum portao falhar ou se os arquivos gerados commitados
-# estiverem diferentes do que as fontes geram (python3 build.py --check).
+# Runs the full build on every PR and on every push to dev and main.
+# Fails if any gate fails or if the build writes anything outside build/ and
+# dist/ (python3 build.py --check).
 name: build
 
 on:

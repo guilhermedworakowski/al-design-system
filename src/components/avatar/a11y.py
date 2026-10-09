@@ -1,47 +1,47 @@
 """
-QA de acessibilidade do Avatar.
+Accessibility QA for the Avatar.
 
-Como no Button, Icon Button, Icon e Tag, a validacao e por COMBINACAO
-RENDERIZADA - cada papel de cor contra o fundo efetivo, nao par de token solto.
-Mas o fundo do Avatar nunca varia: e sempre `avatar-bg`, solido, nos tres tipos
-(inclusive no Photo, onde ele e o chao enquanto a imagem carrega). Entao a
-medicao de contraste aqui e a mais curta do sistema ate agora - dois papeis,
-dois temas, quatro linhas - porque nao ha combinacao de tipo x status a
-multiplicar.
+As in the Button, Icon Button, Icon and Tag, validation is by RENDERED
+COMBINATION - each color role against the effective background, not a loose
+token pair. But the Avatar's background never varies: it is always
+`avatar-bg`, solid, in all three types (including the Photo, where it is the
+floor while the image loads). So the contrast measurement here is the
+shortest in the system so far - two roles, two themes, four rows - because
+there is no type x status combination to multiply.
 
-DOIS PISOS, NO MESMO PAR DE COR
+TWO FLOORS, ON THE SAME COLOR PAIR
 
-  `label` (iniciais) e texto: piso 4,5:1 do 1.4.3.
-  `icon` (glifo do tipo Icon) e nao-textual: piso 3:1 do 1.4.11.
-  Os dois resolvem no mesmo hex hoje (os dois apontam para `text-primary`), mas
-  cada um e medido contra o piso que e dele - nao contra o mais facil, mesma
-  regra que o Tag fixou para o rotulo dele.
+  `label` (initials) is text: 4.5:1 floor from 1.4.3.
+  `icon` (the Icon type's glyph) is non-text: 3:1 floor from 1.4.11.
+  Both resolve to the same hex today (both point to `text-primary`), but each
+  one is measured against its own floor - not against the easier one, the same
+  rule the Tag set for its label.
 
-O QUE NAO EXISTE AQUI, E POR QUE
+WHAT DOESN'T EXIST HERE, AND WHY
 
-  Sem secao de ANEL DE FOCO: o Avatar nunca recebe foco (achado 8 da etapa 1),
-  entao nao ha anel para medir. Omissao deliberada, nao esquecida.
-  Sem secao de ALVO DE TOQUE: o Avatar nao e acionavel, entao o piso do 2.5.8
-  (area minima de toque) nao se aplica - ele nao e um controle.
+  No FOCUS RING section: the Avatar never gets focus (a finding of the audit),
+  so there is no ring to measure. A deliberate omission, not a forgotten one.
+  No TOUCH TARGET section: the Avatar is not actionable, so the 2.5.8 floor
+  (minimum touch area) doesn't apply - it is not a control.
 
-O CONTRATO DE MARCACAO E O CORACAO DESTA ETAPA
+THE MARKUP CONTRACT IS THE HEART OF THIS GATE
 
-  Tres regras, todas da etapa 4 (regra 12):
+  Three rules, all from usage rule 12:
 
-    a) o involucro `.al-avatar` e SEMPRE decorativo (aria-hidden="true") OU
-       carrega o sentido (role="img" + aria-label nao vazio) - nunca nenhum
-       dos dois, nunca os dois ao mesmo tempo;
-    b) a foto (`.al-avatar__photo`) tem `alt=""` SEMPRE, porque o nome mora no
-       involucro - um alt preenchido duplicaria o anuncio;
-    c) o icone (`.al-icon` dentro do Avatar) e SEMPRE decorativo na propria
-       tag, porque o sentido do tipo Icon (se houver) mora no involucro, nunca
-       no glifo - mesmo contrato que o icon.css ja documenta para dentro de
-       qualquer acionavel.
+    a) the `.al-avatar` wrapper is ALWAYS decorative (aria-hidden="true") OR
+       carries the meaning (role="img" + a non-empty aria-label) - never
+       neither, never both at the same time;
+    b) the photo (`.al-avatar__photo`) ALWAYS has `alt=""`, because the name
+       lives on the wrapper - a filled alt would duplicate the announcement;
+    c) the icon (`.al-icon` inside the Avatar) is ALWAYS decorative on its own
+       tag, because the Icon type's meaning (if any) lives on the wrapper,
+       never on the glyph - the same contract icon.css already documents for
+       the inside of any actionable element.
 
-  Isso e verificavel de verdade no HTML emitido, e e o que esta secao faz.
+  That is really checkable on the emitted HTML, and it is what this section does.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html (o componente entra la na etapa 7)
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -59,8 +59,8 @@ SEM = FOUND['color']['semantic']
 RES = AVATAR['resolved']
 THEMES = ('light', 'dark')
 
-TEXT_FLOOR = 4.5          # 1.4.3 - as iniciais sao texto
-NON_TEXT_FLOOR = 3.0      # 1.4.11 - o icone e elemento grafico
+TEXT_FLOOR = 4.5          # 1.4.3 - the initials are text
+NON_TEXT_FLOOR = 3.0      # 1.4.11 - the icon is a graphic element
 
 SITE = SITE_HTML
 
@@ -70,7 +70,7 @@ def tok(name, theme):
     return v[theme] if isinstance(v, dict) else v
 
 
-# ─────────────────────────────────────────────── contrato de marcacao
+# ─────────────────────────────────────────────── markup contract
 OPEN_AVATAR = re.compile(r'<(\w+)\b([^>]*\bclass="[^"]*\bal-avatar\b[^"]*"[^>]*)>')
 IMG_TAG = re.compile(r'<img\b[^>]*\bclass="[^"]*\bal-avatar__photo\b[^"]*"[^>]*/?>')
 SVG_TAG = re.compile(r'<svg\b[^>]*\bclass="[^"]*\bal-icon\b[^"]*"[^>]*>')
@@ -82,9 +82,9 @@ def attrs_of(tag_str):
 
 
 def find_matching_close(html, start, elem):
-    """Acha o </elem> que fecha a tag aberta em `start`, respeitando
-    aninhamento do MESMO elemento (o involucro e um <span>, e as Iniciais
-    tambem sao um <span> - fechar no primeiro </span> pegaria o filho)."""
+    """Finds the </elem> that closes the tag opened at `start`, respecting the
+    nesting of the SAME element (the wrapper is a <span>, and the Initials are
+    a <span> too - closing at the first </span> would catch the child)."""
     open_re = re.compile(rf'<{elem}\b')
     close_re = re.compile(rf'</{elem}>')
     depth, pos = 1, start
@@ -103,15 +103,15 @@ def find_matching_close(html, start, elem):
 
 
 def markup_contract(path):
-    """Cobra o contrato de cada .al-avatar no HTML. Ver docstring do modulo
-    para as tres regras (a, b, c).
+    """Enforces the contract of each .al-avatar on the HTML. See the module
+    docstring for the three rules (a, b, c).
 
-    Retorna (checked, problems). checked = None quando o HTML ainda nao emite
-    o componente - o caso ate a etapa 7 montar o playground. PENDENTE, nao
-    reprova: o portao passa a valer sozinho quando o HTML aparecer.
+    Returns (checked, problems). checked = None when the HTML doesn't emit the
+    component yet - the case until the playground is built. PENDING, not a
+    failure: the gate starts counting by itself when the HTML shows up.
     """
     if not os.path.exists(path):
-        return None, [f'{path} nao existe']
+        return None, [f'{path} does not exist']
 
     html = open(path).read()
     for pat in (r'<style\b.*?</style>', r'<script\b.*?</script>', r'<!--.*?-->'):
@@ -125,30 +125,30 @@ def markup_contract(path):
         line = html.count('\n', 0, m.start()) + 1
         checked += 1
 
-        # (a) decorativo XOR carrega o sentido - nunca nenhum, nunca os dois
+        # (a) decorative XOR carries the meaning - never neither, never both
         hidden = attrs.get('aria-hidden') == 'true'
         role_img = attrs.get('role') == 'img'
         label = attrs.get('aria-label', '').strip()
 
         if elem.lower() == 'button':
-            problems.append(f'linha {line}: .al-avatar e <button> - ele e conteudo, '
-                            f'nao controle; avatar clicavel embrulha um acionavel POR FORA')
+            problems.append(f'line {line}: .al-avatar is a <button> - it is content, '
+                            f'not a control; a clickable avatar wraps an actionable OUTSIDE it')
         if 'role="button"' in attr_str:
-            problems.append(f'linha {line}: role="button" no avatar - ele nunca e '
-                            f'acionavel por conta propria')
+            problems.append(f'line {line}: role="button" on the avatar - it is never '
+                            f'actionable on its own')
         if re.search(r'\btabindex="0"', attr_str):
-            problems.append(f'linha {line}: tabindex="0" no avatar - ele fica fora '
-                            f'da ordem de tabulacao por decisao (achado 8 da etapa 1)')
+            problems.append(f'line {line}: tabindex="0" on the avatar - it stays out '
+                            f'of the tab order by design')
 
         if hidden and role_img:
-            problems.append(f'linha {line}: aria-hidden="true" e role="img" juntos - '
-                            f'contraditorio, o leitor de tela nao sabe qual seguir')
+            problems.append(f'line {line}: aria-hidden="true" and role="img" together - '
+                            f'contradictory, the screen reader doesn\'t know which to follow')
         elif not hidden and not role_img:
-            problems.append(f'linha {line}: nem aria-hidden nem role="img" - o '
-                            f'contrato exige um dos dois, nunca nenhum')
+            problems.append(f'line {line}: neither aria-hidden nor role="img" - the '
+                            f'contract requires one of the two, never neither')
         elif role_img and not label:
-            problems.append(f'linha {line}: role="img" sem aria-label (ou vazio) - '
-                            f'avatar sozinho sem nome acessivel')
+            problems.append(f'line {line}: role="img" without aria-label (or empty) - '
+                            f'an avatar on its own with no accessible name')
 
         close = find_matching_close(html, m.end(), elem)
         inner = html[m.end():close[0]] if close else html[m.end():]
@@ -157,42 +157,42 @@ def markup_contract(path):
         if img_m:
             img_attrs = attrs_of(img_m.group(0))
             if 'alt' not in img_attrs:
-                problems.append(f'linha {line}: .al-avatar__photo sem atributo alt - '
-                                f'precisa existir e ser vazio, o nome mora no involucro')
+                problems.append(f'line {line}: .al-avatar__photo without an alt attribute - '
+                                f'it has to exist and be empty, the name lives on the wrapper')
             elif img_attrs['alt'] != '':
-                problems.append(f'linha {line}: .al-avatar__photo com alt="'
-                                f'{img_attrs["alt"]}" - precisa ser vazio, ou o nome '
-                                f'e anunciado duas vezes (regra 12, etapa 4)')
+                problems.append(f'line {line}: .al-avatar__photo with alt="'
+                                f'{img_attrs["alt"]}" - it has to be empty, or the name '
+                                f'is announced twice (rule 12)')
 
         svg_m = SVG_TAG.search(inner)
         if svg_m:
             svg_attrs = attrs_of(svg_m.group(0))
             if svg_attrs.get('aria-hidden') != 'true':
-                problems.append(f'linha {line}: .al-icon dentro do avatar sem '
-                                f'aria-hidden="true" - o sentido mora no involucro, '
-                                f'nunca no glifo')
+                problems.append(f'line {line}: .al-icon inside the avatar without '
+                                f'aria-hidden="true" - the meaning lives on the wrapper, '
+                                f'never on the glyph')
             if svg_attrs.get('focusable') != 'false':
-                problems.append(f'linha {line}: .al-icon dentro do avatar sem '
-                                f'focusable="false" - SVG inline entra na ordem de '
-                                f'tabulacao sozinho em alguns navegadores')
+                problems.append(f'line {line}: .al-icon inside the avatar without '
+                                f'focusable="false" - inline SVG enters the tab order '
+                                f'by itself in some browsers')
 
     if checked == 0:
-        return None, ['nenhum .al-avatar no HTML - o componente entra no site na '
-                      'etapa 7 (playground); ate la este portao fica pendente']
+        return None, ['no .al-avatar in the HTML - the component enters the site with '
+                      'its playground; until then this gate stays pending']
     return checked, problems
 
 
 def write_report(rows, checked, path_html):
     out = {
         'component': 'avatar',
-        'criterion': 'WCAG 1.4.3 texto (iniciais) + 1.4.11 nao-textual (icone)',
+        'criterion': 'WCAG 1.4.3 text (initials) + 1.4.11 non-text (icon)',
         'floors': {'text': TEXT_FLOOR, 'nonText': NON_TEXT_FLOOR},
         'markupSource': os.path.relpath(path_html, ROOT),
         'markupChecked': checked,
         'markupPending': checked is None,
         'fails': sum(1 for r in rows if not r[5]),
-        'noFocusRing': 'o avatar nunca recebe foco (achado 8, etapa 1) - sem secao de anel',
-        'noTouchTarget': 'o avatar nao e acionavel - o piso do 2.5.8 nao se aplica',
+        'noFocusRing': 'the avatar never gets focus - no ring section',
+        'noTouchTarget': 'the avatar is not actionable - the 2.5.8 floor does not apply',
         'rows': [{'theme': t, 'what': w, 'fg': fg, 'bg': bg,
                   'ratio': round(ratio, 2), 'floor': floor, 'pass': ok}
                  for t, w, fg, bg, ratio, ok, floor in rows],
@@ -219,46 +219,46 @@ def run(path_html):
     checked, mk_problems = markup_contract(path_html)
 
     print('=' * 74)
-    print('QA DE ACESSIBILIDADE DO AVATAR')
+    print('AVATAR ACCESSIBILITY QA')
     print('=' * 74)
-    print('\nCOR contra o fundo efetivo (avatar-bg, o mesmo nos tres tipos)')
+    print('\nCOLOR against the effective background (avatar-bg, the same in all three types)')
     for theme, what, fg, bg, ratio, ok, floor in rows:
         mark = 'ok' if ok else 'XX'
-        criterio = '1.4.3 texto' if what == 'label' else '1.4.11 nao-textual'
-        print(f'  {mark} {theme:<5} {what:<6} {fg} sobre {bg}  {ratio:5.2f}  '
-              f'piso {floor} ({criterio})')
+        criterion = '1.4.3 text' if what == 'label' else '1.4.11 non-text'
+        print(f'  {mark} {theme:<5} {what:<6} {fg} on {bg}  {ratio:5.2f}  '
+              f'floor {floor} ({criterion})')
 
-    print('\nANEL DE FOCO')
-    print('     n/a - o avatar nunca recebe foco (achado 8 da etapa 1)')
-    print('\nALVO DE TOQUE')
-    print('     n/a - o avatar nao e acionavel, 2.5.8 nao se aplica')
+    print('\nFOCUS RING')
+    print('     n/a - the avatar never gets focus')
+    print('\nTOUCH TARGET')
+    print('     n/a - the avatar is not actionable, 2.5.8 does not apply')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path_html, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path_html, ROOT)}')
     if checked is None:
         for p in mk_problems:
-            print(f'     pendente: {p}')
+            print(f'     pending: {p}')
     else:
-        print(f'     {checked} avatar(es) conferido(s)')
+        print(f'     {checked} avatar(s) checked')
         for p in mk_problems:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
     print('-' * 74)
-    print(f'{len(rows)} combinacoes  |  passam: {len(rows) - len(failures)}  |  '
-          f'reprovam: {len(failures)}  |  excecoes: 0')
+    print(f'{len(rows)} combinations  |  pass: {len(rows) - len(failures)}  |  '
+          f'fail: {len(failures)}  |  exceptions: 0')
 
     path = write_report(rows, checked, path_html)
-    print(f'{os.path.relpath(path, ROOT)} escrito')
+    print(f'{os.path.relpath(path, ROOT)} written')
 
     if failures:
         print('-' * 74)
-        print(f'{len(failures)} COMBINACAO(OES) REPROVAM:')
+        print(f'{len(failures)} COMBINATION(S) FAIL:')
         for theme, what, ratio, floor in failures:
             print(f'   {theme} {what}: {ratio:.2f} < {floor}')
         return 1
     if checked is not None and mk_problems:
         print('-' * 74)
-        print(f'{len(mk_problems)} PROBLEMA(S) DE MARCACAO - portao reprova')
+        print(f'{len(mk_problems)} MARKUP PROBLEM(S) - gate fails')
         return 1
     return 0
 

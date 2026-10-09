@@ -1,31 +1,31 @@
 """
-Camada de tokens do Icon.
+Token layer for the Icon.
 
-Mesma regra unica da camada do Button: nada aqui inventa valor. Todo token do
-Icon aponta para um token da Foundation pelo NOME, e o portao no fim do arquivo
-recusa qualquer coisa que seja valor solto.
+Same one rule as the Button's layer: nothing here invents a value. Every Icon
+token points to a Foundation token by NAME, and the gate at the end of the file
+rejects anything that is a loose value.
 
-Nomenclatura:
-  codigo -> icon-ink-on-brand      (hifen)
-  Figma  -> icon/ink               (pasta, collection `3. Icon ink`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> icon-ink-on-brand      (hyphen)
+  Figma -> icon/ink               (folder, collection `3. Icon ink`)
+They are different layers. Never collapse one into the other.
 
-Duas decisoes desta camada que o diff nao explica sozinho:
+Two decisions in this layer that the diff doesn't explain on its own:
 
-1. A CAIXA se chama `icon-box`, nao `icon-size`. `--al-icon-size-16` ja existe
-   e e a primitiva da Foundation; se o token do componente tivesse o mesmo
-   nome, ele apontaria para si mesmo e a custom property morreria em ciclo.
-   `box` e o papel no componente, `size` e o degrau na escala.
+1. The BOX is called `icon-box`, not `icon-size`. `--al-icon-size-16` already
+   exists and is the Foundation primitive; if the component token had the same
+   name, it would point to itself and the custom property would die in a cycle.
+   `box` is the role in the component, `size` is the step on the scale.
 
-2. A TINTA tem quatro tokens porque a collection `3. Icon ink` do Figma tem
-   quatro modes. Mas o default do CSS nao e nenhum deles: e `currentColor`.
-   Os modes existem no Figma porque o Figma nao tem `currentColor` - dentro do
-   Button, o icone precisa que ALGUEM diga de que cor ele e. Na web o icone
-   herda a cor do rotulo sozinho, e uma palavra-chave substitui a collection
-   inteira. Estes quatro tokens sao a saida EXPLICITA, para icone que vive
-   fora de um acionavel e nao tem de quem herdar.
+2. The INK has four tokens because the `3. Icon ink` collection in Figma has
+   four modes. But the CSS default is none of them: it is `currentColor`. The
+   modes exist in Figma because Figma has no `currentColor` - inside the
+   Button, the icon needs SOMEONE to say what color it is. On the web the icon
+   inherits the label's color by itself, and one keyword replaces the whole
+   collection. These four tokens are the EXPLICIT output, for an icon that
+   lives outside an actionable element and has nothing to inherit from.
 
-Rodar: python3 tokens.py     (escreve al-icon-tokens.css, nao redirecionar stdout)
+Run: python3 tokens.py     (writes al-icon-tokens.css, don't redirect stdout)
 """
 import json, os, sys
 
@@ -40,10 +40,10 @@ from tokenlib import resolve_foundation, css_ref, save_css  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
 
-# ---------------------------------------------------------------- caixa
-# Os quatro degraus recorrentes. Nao sao um teto: `--al-icon-box` e publica e
-# aceita qualquer valor no ponto de uso. O componente e vetorizado no grid de
-# 24 e vale em qualquer tamanho - estes quatro so nomeiam o que se repete.
+# ------------------------------------------------------------------- box
+# The four recurring steps. They are not a ceiling: `--al-icon-box` is public
+# and accepts any value at the point of use. The component is outlined on the
+# 24 grid and works at any size - these four only name what repeats.
 BOX = {
   '16': 'iconSize.16',
   '20': 'iconSize.20',
@@ -51,8 +51,8 @@ BOX = {
   '32': 'iconSize.32',
 }
 
-# ---------------------------------------------------------------- tinta
-# Uma linha por mode da collection `3. Icon ink`. A ordem e a mesma do Figma.
+# ------------------------------------------------------------------- ink
+# One line per mode of the `3. Icon ink` collection. Same order as Figma.
 INK = {
   'default':  'text-primary',
   'on-brand': 'text-on-brand',
@@ -60,12 +60,12 @@ INK = {
   'disabled': 'text-disabled',
 }
 
-# Degrau padrao do componente. Vive aqui e nao no CSS para que trocar o padrao
-# seja uma linha de token, nao uma edicao de folha de estilo.
+# The component's default step. It lives here and not in the CSS so that
+# changing the default is one token line, not a stylesheet edit.
 DEFAULT_BOX = '24'
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def run():
     alias, resolved, problems = {}, {}, []
 
@@ -75,40 +75,40 @@ def run():
         try:
             resolved[name] = resolve_foundation(ref)
         except (KeyError, TypeError):
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for mode, ref in INK.items():
         name = f'icon-ink-{mode}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref}) - toda cor nasce alias do semantico')
+            problems.append(f'{name}: loose hex ({ref}) - every color is born as an alias of a semantic')
             continue
         if ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
             continue
         light, dark = SEM[ref]
         resolved[name] = {'light': light, 'dark': dark}
 
     if DEFAULT_BOX not in BOX:
-        problems.append(f'degrau padrao {DEFAULT_BOX} nao existe em BOX')
+        problems.append(f'default step {DEFAULT_BOX} does not exist in BOX')
 
     print('=' * 70)
-    print('CAMADA DE TOKENS DO ICON')
+    print('ICON TOKEN LAYER')
     print('=' * 70)
     for name in sorted(alias):
         print(f'  {name:<24} -> {alias[name]}')
     print('-' * 70)
-    print(f'degrau padrao: {DEFAULT_BOX}px  (o resto e modificador ou valor no ponto de uso)')
-    print('pendencias: nenhuma')
+    print(f'default step: {DEFAULT_BOX}px  (the rest is a modifier or a value at the point of use)')
+    print('pending: none')
     print('-' * 70)
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
 
-    print(f'{len(alias)} tokens: {len(alias)} alias da Foundation, 0 valores soltos.')
+    print(f'{len(alias)} tokens: {len(alias)} aliases of the Foundation, 0 loose values.')
     write_css(alias)
     write_json(alias, resolved)
     return 0
@@ -117,21 +117,21 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Icon')
-    w(' * GERADO por src/components/icon/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Icon tokens')
+    w(' * GENERATED by src/components/icon/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Nao ha bloco de tema aqui: cada tinta aponta para um semantico, e o tema')
-    w(' * troca no :root - o mesmo elemento onde estes alias sao declarados. Entao o')
-    w(' * :root re-substitui todos eles de uma vez.')
+    w(' * There is no theme block here: each ink points to a semantic, and the')
+    w(' * theme switches on :root - the same element where these aliases are')
+    w(' * declared. So :root re-substitutes all of them at once.')
     w(' */')
     w('')
     w(':root {')
     w('')
-    w('  /* caixa - degrau recorrente, nao teto */')
+    w('  /* box - a recurring step, not a ceiling */')
     for step in BOX:
         w(f'  --al-icon-box-{step}: {css_ref(BOX[step])};')
     w('')
-    w('  /* tinta - saida explicita. O default do componente e currentColor. */')
+    w('  /* ink - explicit output. The component default is currentColor. */')
     for mode in INK:
         w(f'  --al-icon-ink-{mode}: {css_ref(INK[mode])};')
     w('}')
@@ -152,8 +152,8 @@ def write_json(alias, resolved):
             'strokeWidth': 2,
             'boxes': list(BOX),
             'inks': list(INK),
-            'nota': 'A cor padrao do componente nao e nenhum dos icon-ink-*: e '
-                    'currentColor. Os quatro tokens sao a saida explicita.',
+            'note': 'The component\'s default color is none of the icon-ink-*: it is '
+                    'currentColor. The four tokens are the explicit output.',
         },
         'defaultBox': DEFAULT_BOX,
         'alias': alias,
@@ -162,7 +162,7 @@ def write_json(alias, resolved):
     }
     path = comp_out('icon', 'tokens.json')
     json.dump(out, open(path, 'w'), indent=2, ensure_ascii=False)
-    print('build/components/icon/tokens.json escrito')
+    print('build/components/icon/tokens.json written')
 
 
 if __name__ == '__main__':

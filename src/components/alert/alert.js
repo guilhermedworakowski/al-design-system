@@ -1,27 +1,28 @@
-/* AL Design System - Alert (regras 11, 20 a 25)
+/* AL Design System - Alert (rules 11, 20 to 25)
  *
- * O Alert e marcacao comum da pagina (contrato no cabecalho do alert.css).
- * Este arquivo so cuida de FECHAR e de INSERIR DEPOIS do carregamento:
+ * The Alert is regular page markup (contract in alert.css's header). This
+ * file only takes care of CLOSING and INSERTING AFTER page load:
  *
- *   - o X ([data-al-alert-close]) tira o Alert com fade de saida e dispara o
- *     evento `al-alert-close` no slot, para o produto guardar a escolha e o
- *     Alert nao voltar na proxima visita (regra 21);
- *   - se o foco estava dentro, ele vai para o proximo elemento focavel depois
- *     do Alert; sem nenhum, para o <main> (regra 22). Nunca se perde no body;
- *   - alAlert.show() poe um Alert vindo de um <template> no slot. Um por
- *     pagina: o que estava la sai (regra 11). Ele entra numa regiao viva que
- *     nasce VAZIA e so depois recebe o Alert - regiao que nasce junto com a
- *     mensagem nao e anunciada. Danger vai em role="alert", os outros em
- *     role="status" (regra 24). O foco nao se move (regra 25).
- *   - Alert presente no carregamento nao ganha role nenhum (regra 23).
- * A duracao da saida e lida do token no CSS, nunca escrita aqui.
+ *   - the X ([data-al-alert-close]) removes the Alert with an exit fade and
+ *     fires the `al-alert-close` event on the slot, so the product stores the
+ *     choice and the Alert doesn't come back on the next visit (rule 21);
+ *   - if focus was inside, it goes to the next focusable element after the
+ *     Alert; with none, to <main> (rule 22). It never gets lost on the body;
+ *   - alAlert.show() puts an Alert coming from a <template> into the slot.
+ *     One per page: the one that was there leaves (rule 11). It enters a
+ *     live region that is born EMPTY and only then receives the Alert - a
+ *     region born together with the message isn't announced. Danger goes in
+ *     role="alert", the others in role="status" (rule 24). Focus doesn't
+ *     move (rule 25).
+ *   - an Alert present on page load gets no role at all (rule 23).
+ * The exit duration is read from the token in the CSS, never written here.
  *
- * Uso:
+ * Usage:
  *   <script src="alert.js"></script>
- *   alAlert.show('alert-plano')                       -> clona o <template id> no .al-alert-slot
- *   alAlert.show(tpl, { slot: el })                   -> noutro slot
- *   alAlert.dismiss(el)                               -> tira o Alert (o mesmo que o X)
- *   slot.addEventListener('al-alert-close', e => …)    -> e.detail.alert e o que saiu
+ *   alAlert.show('alert-plan')                        -> clones the <template id> into the .al-alert-slot
+ *   alAlert.show(tpl, { slot: el })                   -> into another slot
+ *   alAlert.dismiss(el)                               -> removes the Alert (the same as the X)
+ *   slot.addEventListener('al-alert-close', e => …)    -> e.detail.alert is the one that left
  */
 (function () {
   'use strict';
@@ -41,7 +42,7 @@
     return !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
   }
 
-  // Regra 22: o proximo focavel DEPOIS do Alert na ordem do documento.
+  // Rule 22: the next focusable AFTER the Alert in document order.
   function nextFocus(alert) {
     var all = document.querySelectorAll(FOCUSABLE);
     for (var i = 0; i < all.length; i++) {
@@ -82,8 +83,8 @@
 
     var alert = tpl.content.querySelector('.al-alert').cloneNode(true);
 
-    // Regra 11: um por pagina. O anterior sai na hora, sem fade - o novo
-    // ocupa o mesmo lugar.
+    // Rule 11: one per page. The previous one leaves at once, no fade - the new
+    // one takes the same place.
     var old = slot.querySelectorAll('.al-alert-live, .al-alert');
     for (var i = 0; i < old.length; i++) {
       if (old[i].parentNode === slot) old[i].remove();
@@ -93,7 +94,7 @@
     live.className = 'al-alert-live';
     live.setAttribute('role', alert.classList.contains('al-alert--danger') ? 'alert' : 'status');
     slot.appendChild(live);
-    // A regiao precisa existir vazia antes da mensagem para o leitor anunciar.
+    // The region must exist empty before the message for the reader to announce it.
     setTimeout(function () { live.appendChild(alert); }, 50);
     return alert;
   }

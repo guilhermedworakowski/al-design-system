@@ -1,46 +1,47 @@
 """
-Camada de tokens do Breadcrumb (com o `_breadcrumb-more`).
+Token layer for the Breadcrumb (with `_breadcrumb-more`).
 
-Regra desta camada: nada aqui inventa valor. Todo token aponta para um token da
-Foundation pelo NOME. A UNICA excecao e a largura minima do menu (WIDTH,
-abaixo), declarada, nomeada e travada pelo portao - a mesma da Sidebar, do
-Modal e do Drawer: a Foundation nao tem escala de largura de container.
+The rule of this layer: nothing here invents a value. Every token points to a
+Foundation token by NAME. The ONLY exception is the menu's minimum width
+(WIDTH, below), declared, named and locked by the gate - the same as the
+Sidebar, the Modal and the Drawer: the Foundation has no container width scale.
 
-Nomenclatura:
-  codigo -> breadcrumb-menu-bg      (hifen)
-  Figma  -> menu/bg                 (collection `22. Breadcrumb`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> breadcrumb-menu-bg      (hyphen)
+  Figma -> menu/bg                 (collection `22. Breadcrumb`)
+They are different layers. Never collapse one into the other.
 
-ULTIMO COMPONENTE DO TIER 4 (08/10/2026)
+LAST COMPONENT OF TIER 4 (2026-10-08)
 
-  Dois componentes que andam juntos em todas as etapas, pagina `Tier 4` do
-  Figma:
-    `breadcrumb`        COMPONENT_SET 339:3785 - Size Short (2 niveis), Medium
-                        (3) e Large (primeiro, segundo, `...`, atual). Props de
-                        texto First page, Second page, Current page.
-    `_breadcrumb-more`  COMPONENT_SET 339:4046 - State Opened / Closed. O `...`
-                        e o gatilho; o menu sai 8 abaixo, centralizado, com
-                        itens Tab Square.
+  Two components that go together in every step, page `Tier 4` in Figma:
+    `breadcrumb`        COMPONENT_SET 339:3785 - Size Short (2 levels), Medium
+                        (3) and Large (first, second, `...`, current). Text
+                        props First page, Second page, Current page.
+    `_breadcrumb-more`  COMPONENT_SET 339:4046 - State Opened / Closed. The
+                        `...` is the trigger; the menu opens 8 below, centered,
+                        with Tab Square items.
 
-  Decisoes da etapa 1: sem hover (so o cursor muda); menu = botao + lista de
-  links com JS pequeno (5a); colapsa com 5 niveis ou mais, no formato da Large
-  (6); pagina atual e texto com aria-current, nao link (7); separador em
-  `text-secondary` (8, Gui ajustou no Figma); quebra de linha em tela estreita
-  (9); foco com o anel padrao (10). Menu com Elevation/3 (4, Gui criou).
-  Etapa 3: largura minima 108, o menu cresce com o texto (A = a).
+  Scope decisions: no hover (only the cursor changes); menu = button + list
+  of links with a small JS; collapses at 5 levels or more, in the Large
+  format; the current page is text with aria-current, not a link; separator
+  in `text-secondary`; line wrapping on a narrow screen; focus with the
+  default ring. Menu with Elevation/3. Minimum width 108, the menu grows with
+  the text.
 
-O ITEM DO MENU E O TAB
+THE MENU ITEM IS THE TAB
 
-  Cada item do menu e um Tab Square (texto, padding, raio e rotulo vem de
-  components/tab/tokens.py). O que muda e o fundo de hover e pressed: o menu
-  mora em `bg-surface-raised`, onde `bg-hover` some no escuro (1,00:1) - o
-  mesmo defeito do Modal 0.18.1. Por isso os dois `-raised` abaixo.
+  Each menu item is a Tab Square (text, padding, radius and label come from
+  components/tab/tokens.py). What changes is the hover and pressed
+  background: the menu lives on `bg-surface-raised`, where `bg-hover`
+  disappears in dark (1.00:1) - the same defect as Modal 0.18.1. Hence the
+  two `-raised` below.
 
-SEM TOKEN, DE PROPOSITO
+NO TOKEN, ON PURPOSE
 
-  Altura: sai da entrelinha do Label/md (20). Tamanho do separador:
-  `icon-size-16` direto da Foundation (regra do Tag e do Icon Button). Posicao
-  horizontal do menu: centralizado sob o `...`, calculado no CSS.
+  Height: comes from the Label/md line height (20). Separator size:
+  `icon-size-16` straight from the Foundation (rule from the Tag and the Icon
+  Button). Horizontal position of the menu: centered under the `...`,
+  computed in the CSS.
 """
 import json, os, sys
 
@@ -55,12 +56,12 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
     'link':      'text-secondary',
     'current':   'text-brand',
-    'separator': 'text-secondary',        # decisao 8 (Gui ajustou no Figma)
-    'more':      'text-secondary',        # o gatilho `...`
+    'separator': 'text-secondary',
+    'more':      'text-secondary',        # the `...` trigger
 
     'menu-bg':             'bg-surface-raised',
     'menu-border':         'border-default',
@@ -68,8 +69,8 @@ COLOR = {
     'menu-item-bg-active': 'bg-active-raised',
 }
 
-# Anel de foco: aponta para a sombra composta da Foundation, como o
-# `button-*-ring`. A cor so e extraida para medicao, no RING_INK abaixo.
+# Focus ring: points to the Foundation's composite shadow, like
+# `button-*-ring`. The color is only extracted for measuring, in RING_INK below.
 RING = {
     'ring': 'focusRing.default',
 }
@@ -78,17 +79,17 @@ RING_INK = {
     'ring': 'shadow-focus-default',
 }
 
-# Elevacao: altura, nao estado (decisao 4 de Gui, Elevation/3).
+# Elevation: height, not state (Elevation/3).
 SHADOW = {
     'menu-shadow': 'elevation.3',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
-    'gap':               'space.8',           # item -> separador -> item
-    'ring-radius':       'radius.sm',         # canto do anel em link e `…` (decisao C)
+    'gap':               'space.8',           # item -> separator -> item
+    'ring-radius':       'radius.sm',         # ring corner on link and `…`
     'menu-padding':      'space.8',
-    'menu-gap':          'space.8',           # entre itens do menu
+    'menu-gap':          'space.8',           # between menu items
     'menu-offset':       'space.8',           # `...` -> menu
     'menu-radius':       'radius.xl',
     'menu-border-width': 'border.width.1',
@@ -98,52 +99,52 @@ TYPE = {
     'label-font': 'type.styles.label-md',
 }
 
-# UNICA excecao a "todo token e alias" (mesma da Sidebar, do Modal e do Drawer):
-# a Foundation nao tem escala de largura de container. Minima, nao fixa: o menu
-# cresce com o nome da pagina (decisao A de Gui, 08/10/2026).
+# The ONLY exception to "every token is an alias" (the same as the Sidebar, the
+# Modal and the Drawer): the Foundation has no container width scale. A minimum,
+# not a fixed width: the menu grows with the page name (2026-10-08).
 WIDTH = {
     'menu-min-width': 108,
 }
 
 PENDING = {
-    'borda-de-regiao': (
-        'A borda do menu (`border-default`) da 1.57:1 no claro e 2.42:1 no escuro contra a '
-        'tela, e 1.47:1 / 1.98:1 contra uma pagina em `bg-surface`. O 3:1 do WCAG 1.4.11 vale '
-        'para o contorno de CONTROLES; o menu e uma caixa de conteudo, reconhecida pelos itens '
-        'e, desde a etapa 1, pela sombra Elevation/3. Mesmo raciocinio da Sidebar e do Card. '
-        'NAO "corrigir" escurecendo.'
+    'region-border': (
+        'The menu border (`border-default`) gives 1.57:1 in light and 2.42:1 in dark against the '
+        'canvas, and 1.47:1 / 1.98:1 against a page in `bg-surface`. The 3:1 of WCAG 1.4.11 '
+        'applies to the outline of CONTROLS; the menu is a content box, recognized by its items '
+        'and by the Elevation/3 shadow. Same reasoning as the Sidebar and the Card. DO NOT "fix" '
+        'it by darkening.'
     ),
 }
 
-# Fundos sobre os quais o breadcrumb fica. Nao sao tokens do Breadcrumb.
+# Backgrounds the breadcrumb sits on. They are not Breadcrumb tokens.
 PAGES = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
 }
 
-# Rotulo do item do menu: vem do Tab Square (tab-label, tab-label-hover).
+# Menu item label: comes from the Tab Square (tab-label, tab-label-hover).
 TAB_INK = {
     'item':       'text-secondary',
     'item-hover': 'text-primary',
 }
 
-# (papel, fg, fundo(s), piso, excecao)
+# (role, fg, background(s), floor, exception)
 COMBOS = [
-    ('link',             'link',       ('canvas', 'surface'),     4.5, None),
-    ('pagina-atual',     'current',    ('canvas', 'surface'),     4.5, None),
-    ('mais',             'more',       ('canvas', 'surface'),     4.5, None),
-    ('item-menu',        'item',       'menu-bg',                 4.5, None),
-    ('item-menu-hover',  'item-hover', 'menu-item-bg-hover',      4.5, None),
-    ('item-menu-active', 'item-hover', 'menu-item-bg-active',     4.5, None),
-    ('anel-trilha',      'ring',       ('canvas', 'surface'),     3.0, None),
-    ('anel-menu',        'ring',       'menu-bg',                 3.0, None),
-    ('borda-menu',       'menu-border', ('canvas', 'surface'),    3.0, 'borda-de-regiao'),
+    ('link',             'link',        ('canvas', 'surface'),    4.5, None),
+    ('current-page',     'current',     ('canvas', 'surface'),    4.5, None),
+    ('more',             'more',        ('canvas', 'surface'),    4.5, None),
+    ('menu-item',        'item',        'menu-bg',                4.5, None),
+    ('menu-item-hover',  'item-hover',  'menu-item-bg-hover',     4.5, None),
+    ('menu-item-active', 'item-hover',  'menu-item-bg-active',    4.5, None),
+    ('trail-ring',       'ring',        ('canvas', 'surface'),    3.0, None),
+    ('menu-ring',        'ring',        'menu-bg',                3.0, None),
+    ('menu-border',      'menu-border', ('canvas', 'surface'),    3.0, 'region-border'),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
-    """O semantico de cor por tras de um papel - seguindo o anel ate a cor."""
+    """The color semantic behind a role - following the ring down to the color."""
     for table in (PAGES, RING_INK, TAB_INK):
         if role in table:
             return table[role]
@@ -172,9 +173,9 @@ def run():
         name = f'breadcrumb-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref})')
+            problems.append(f'{name}: loose hex ({ref})')
         elif ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
         else:
             resolved[name] = {'light': SEM[ref][0], 'dark': SEM[ref][1]}
 
@@ -186,7 +187,7 @@ def run():
                 v = resolve_foundation(ref)
                 resolved[name] = {'light': v['light'], 'dark': v['dark']}
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for group in (GEOM, TYPE):
         for role, ref in group.items():
@@ -195,16 +196,16 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
-    # Excecao nomeada: valor solto so e aceito para este nome.
+    # Named exception: a loose value is only accepted for this name.
     for role, px in WIDTH.items():
         name = f'breadcrumb-{role}'
         alias[name] = f'{px}px'
         resolved[name] = px
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -214,22 +215,22 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO BREADCRUMB')
+    print('BREADCRUMB TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<34} -> {alias[name]}')
     print('-' * 74)
     for r in rows:
-        tag = 'OK  ' if r['pass'] else ('EXCE' if r['exception'] else 'FALHA')
-        print(f'  {tag} {r["what"]:<34} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (piso {r["min"]})')
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
+        tag = 'OK  ' if r['pass'] else ('EXC ' if r['exception'] else 'FAIL')
+        print(f'  {tag} {r["what"]:<34} {r["theme"]:<5} {r["fg"]} / {r["bg"]}  {r["ratio"]}:1 (floor {r["min"]})')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE')
         return 1
     n_lit = len(WIDTH)
-    print(f'{len(alias)} tokens: {len(alias) - n_lit} alias da Foundation, {n_lit} largura com valor '
-          f'declarado (mesma excecao da Sidebar, do Modal e do Drawer).')
+    print(f'{len(alias)} tokens: {len(alias) - n_lit} aliases of the Foundation, {n_lit} width with a '
+          f'declared value (the same exception as the Sidebar, the Modal and the Drawer).')
 
     out = {
         'meta': {
@@ -238,12 +239,12 @@ def run():
             'foundation': FOUND['meta']['version'],
             'figmaNode': '339:3785 + 339:4046',
             'figmaCollection': '22. Breadcrumb',
-            'nota': (
-                'Trilha de navegacao: links em text-secondary, pagina atual em text-brand (texto, '
-                'nao link), separador chevron 16 em text-secondary, Label/md, gap 8. Com 5 niveis '
-                'ou mais os do meio vao para o menu do `...` (bg-surface-raised, borda, raio xl, '
-                'Elevation/3, itens Tab Square com hover -raised). Sem hover na trilha: so o '
-                'cursor muda. Uma excecao de contraste em pending.'
+            'note': (
+                'Navigation trail: links in text-secondary, current page in text-brand (text, not '
+                'a link), chevron 16 separator in text-secondary, Label/md, gap 8. With 5 levels '
+                'or more the middle ones go into the `...` menu (bg-surface-raised, border, xl '
+                'radius, Elevation/3, Tab Square items with -raised hover). No hover on the '
+                'trail: only the cursor changes. One contrast exception in pending.'
             ),
         },
         'alias': alias,
@@ -252,7 +253,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('breadcrumb', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/breadcrumb/tokens.json escrito')
+    print('\nbuild/components/breadcrumb/tokens.json written')
     write_css(alias)
     return 0
 
@@ -261,37 +262,37 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Breadcrumb (com o _breadcrumb-more)')
-    w(' * GERADO por src/components/breadcrumb/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Breadcrumb tokens (with _breadcrumb-more)')
+    w(' * GENERATED by src/components/breadcrumb/tokens.py. Do not edit by hand.')
     w(' */')
     w('')
     w(':root {')
     w('')
-    w('  /* trilha - o tema troca no :root */')
+    w('  /* trail - the theme switches on :root */')
     for role in ('link', 'current', 'separator', 'more'):
         w(f'  --al-breadcrumb-{role}: {css_ref(COLOR[role])};')
     w('')
-    w('  /* menu do ... - hover e pressed -raised (o menu mora em surface-raised) */')
+    w('  /* ... menu - -raised hover and pressed (the menu lives on surface-raised) */')
     for role in ('menu-bg', 'menu-border', 'menu-item-bg-hover', 'menu-item-bg-active'):
         w(f'  --al-breadcrumb-{role}: {css_ref(COLOR[role])};')
     w('')
-    w('  /* anel de foco - aponta para a sombra composta, nao para a cor crua */')
+    w('  /* focus ring - points to the composite shadow, not the raw color */')
     for role, ref in RING.items():
         w(f'  --al-breadcrumb-{role}: {css_ref(ref)};')
     w('')
-    w('  /* elevacao do menu - altura, nao estado */')
+    w('  /* menu elevation - height, not state */')
     for role, ref in SHADOW.items():
         w(f'  --al-breadcrumb-{role}: {css_ref(ref)};')
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-breadcrumb-{role}: {css_ref(ref)};')
     w('')
-    w('  /* largura minima do menu - valor declarado, sem escala na Foundation */')
+    w('  /* menu minimum width - declared value, no scale in the Foundation */')
     for role, px in WIDTH.items():
         w(f'  --al-breadcrumb-{role}: {px}px;')
     w('')
-    w('  /* tipografia - um estilo vira quatro vars */')
+    w('  /* typography - one style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -302,11 +303,11 @@ def write_css(alias):
         w(f'  {prefix}-tracking: {style[4]};')
     w('}')
     w('')
-    texto = '\n'.join(L)
-    faltando = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in texto]
-    if faltando:
-        raise AssertionError(f'tokens fora do CSS: {faltando}')
-    save_css('breadcrumb', texto)
+    text = '\n'.join(L)
+    missing = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in text]
+    if missing:
+        raise AssertionError(f'tokens missing from the CSS: {missing}')
+    save_css('breadcrumb', text)
 
 
 if __name__ == '__main__':

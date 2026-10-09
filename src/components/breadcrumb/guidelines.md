@@ -125,7 +125,7 @@ The default one, with a 4px corner. Menu items use the Tab Square ring.
 ### Exceptions and what pays for them
 
 **25. The menu border falls below 3:1.**
-`borda-de-regiao` (region border): the menu is a content box, not a control, and it separates through its shadow. Don't darken it. The same case as the Sidebar and the Card.
+`region-border`: the menu is a content box, not a control, and it separates through its shadow. Don't darken it. The same case as the Sidebar and the Card.
 
 **26. The menu background is always `bg-surface-raised`.**
 With the `-raised` hover and pressed states. Changing the background makes the hover disappear in dark mode (Modal 0.18.1).
@@ -133,7 +133,7 @@ With the `-raised` hover and pressed states. Changing the background makes the h
 ### Out of scope
 
 **27. No home icon, no per-item menu, no history, no larger size.**
-If the need comes up, it opens a new round at step 1. Spectrum has a per-item menu; AL doesn't.
+If the need comes up, it reopens the component's scope. Spectrum has a per-item menu; AL doesn't.
 
 **28. It doesn't replace the back button.**
 Polaris swapped the trail for a back action. In AL, the two are separate.

@@ -1,20 +1,21 @@
-/* AL Design System - Breadcrumb, menu do `…` (decisoes 5a e B)
+/* AL Design System - Breadcrumb, the `…` menu
  *
- * So a Large precisa deste arquivo. Short e Medium sao links e texto: nada
- * para ligar.
+ * Only the Large needs this file. Short and Medium are links and text:
+ * nothing to bind.
  *
- * Padrao "disclosure navigation" do W3C (regra 17), nao menu de acoes:
- *   - o `…` abre e fecha a lista (hidden) e mantem aria-expanded em dia;
- *   - ao abrir, o foco FICA no `…` (decisao B = a); o Tab do teclado entra nos
- *     links, na ordem. Sem setas, sem role="menu";
- *   - fecha com Esc - e o foco volta ao `…` (regra 16);
- *   - fecha no clique fora, e quando o foco sai do `…` e do menu;
- *   - fecha ao escolher um link (a navegacao segue normalmente).
+ * W3C "disclosure navigation" pattern (rule 17), not an actions menu:
+ *   - the `…` opens and closes the list (hidden) and keeps aria-expanded up
+ *     to date;
+ *   - on opening, focus STAYS on the `…`; the keyboard Tab enters the links,
+ *     in order. No arrows, no role="menu";
+ *   - closes with Esc - and focus goes back to the `…` (rule 16);
+ *   - closes on a click outside, and when focus leaves the `…` and the menu;
+ *   - closes on choosing a link (navigation proceeds normally).
  *
- * Uso:
- *   <script src="breadcrumb.js"></script>   -> liga sozinho quando a pagina carrega
- *   alBreadcrumb.init(container)             -> liga em conteudo inserido depois
- * Ligar duas vezes o mesmo `…` nao duplica nada.
+ * Usage:
+ *   <script src="breadcrumb.js"></script>   -> binds by itself when the page loads
+ *   alBreadcrumb.init(container)             -> binds content inserted later
+ * Binding the same `…` twice duplicates nothing.
  */
 (function () {
   'use strict';
@@ -33,7 +34,7 @@
       menu.hidden = !open;
     }
 
-    set(isOpen());   // marcacao e estado sempre concordam
+    set(isOpen());   // markup and state always agree
 
     button.addEventListener('click', function () { set(!isOpen()); });
 
@@ -44,7 +45,7 @@
       button.focus();
     });
 
-    // foco saiu do `…` e do menu (Tab depois do ultimo link, Shift+Tab antes do `…`)
+    // focus left the `…` and the menu (Tab after the last link, Shift+Tab before the `…`)
     wrap.addEventListener('focusout', function (e) {
       if (isOpen() && e.relatedTarget && !wrap.contains(e.relatedTarget)) set(false);
     });

@@ -1,47 +1,47 @@
 """
-QA de acessibilidade do Tag.
+Accessibility QA for the Tag.
 
-Como no Button e no Icon Button, a validacao e por COMBINACAO RENDERIZADA -
-cada tipo, cada status, cada tema, contra o fundo efetivo que o elemento
-realmente tem na tela. Tipo sem preenchimento encosta na TELA, nao em
-"transparente" - e, como a tag costuma viver dentro de um card, encosta tambem
-em bg-surface. Os dois fundos sao medidos.
+As in the Button and the Icon Button, validation is by RENDERED COMBINATION -
+each type, each status, each theme, against the effective background the
+element really has on screen. A type with no fill touches the CANVAS, not
+"transparent" - and, since a tag usually lives inside a card, it also touches
+bg-surface. Both backgrounds are measured.
 
-O QUE MUDA EM RELACAO AO ICON BUTTON
+WHAT CHANGES COMPARED WITH THE ICON BUTTON
 
-  La o portador do sentido e um icone: piso de 3:1, criterio 1.4.11.
-  Aqui o portador e um ROTULO DE TEXTO: piso de 4,5:1, criterio 1.4.3.
-  E por isso que o status Brand saiu do escopo - branco sobre bg-brand da
-  3,34:1, que passa como icone e reprova como texto. Mesma cor, criterio
-  diferente, decisao diferente.
+  There, an icon carries the meaning: 3:1 floor, criterion 1.4.11.
+  Here a TEXT LABEL carries it: 4.5:1 floor, criterion 1.4.3.
+  That is why the Brand status left the scope - white on bg-brand gives
+  3.34:1, which passes as an icon and fails as text. Same color, different
+  criterion, different decision.
 
-O LIMITE DO PILL NAO E PORTAO, E RELATORIO
+THE PILL BOUNDARY IS NOT A GATE, IT IS A REPORT
 
-  No Icon Button o limite visivel do componente e medido como portao, porque
-  sem rotulo o proprio desenho e a unica coisa que informa que existe um
-  acionavel ali. Aqui nao: quem informa e o texto. O contorno do pill e
-  decoracao, e o 1.4.11 cobra contraste de elemento grafico NECESSARIO para
-  entender o conteudo - o que este nao e.
+  In the Icon Button the component's visible boundary is measured as a gate,
+  because with no label the drawing itself is the only thing that says there
+  is an actionable element there. Not here: the text says it. The pill outline
+  is decoration, and 1.4.11 requires contrast for a graphic element that is
+  NEEDED to understand the content - which this one is not.
 
-  A consequencia concreta e o filled neutral, que da 1,32:1 contra a tela clara.
-  Isso foi medido e aceito na etapa 1 (achado 5). Fica medido e listado aqui
-  como ISENTO, nunca como reprova - e nunca some do relatorio, para ninguem
-  "corrigir" achando que escapou.
+  The concrete consequence is the filled neutral, which gives 1.32:1 against
+  the light canvas. That was measured and accepted in the audit. It stays
+  measured and listed here as EXEMPT, never as a failure - and it never leaves
+  the report, so nobody "fixes" it thinking it slipped.
 
-O CONTRATO DE MARCACAO
+THE MARKUP CONTRACT
 
-  Dois contratos deste componente nao vivem no CSS:
+  Two of this component's contracts don't live in the CSS:
 
-    a) a tag read-only NAO e focavel e NAO e acionavel - ela e conteudo;
-    b) o X precisa de aria-label que INCLUA o rotulo da tag. Numa lista de seis
-       filtros, seis botoes chamados "Remover" sao indistinguiveis por leitor
-       de tela.
+    a) the read-only tag is NOT focusable and NOT actionable - it is content;
+    b) the X needs an aria-label that INCLUDES the tag's label. In a list of
+       six filters, six buttons called "Remove" are indistinguishable to a
+       screen reader.
 
-  O (b) e verificavel de verdade: da para extrair o texto da tag e conferir se
-  ele aparece dentro do aria-label. E o que a secao de marcacao faz.
+  (b) is really checkable: the tag's text can be extracted and looked up
+  inside the aria-label. That is what the markup section does.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html (o componente entra la na etapa 7)
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -61,11 +61,11 @@ THEMES = ('light', 'dark')
 TYPES = ('filled', 'outlined')
 STATUSES = ('success', 'warning', 'error', 'info', 'neutral')
 
-TEXT_FLOOR = 4.5          # 1.4.3 - o rotulo e texto
-NON_TEXT_FLOOR = 3.0      # 1.4.11 - o anel de foco e elemento nao-textual
+TEXT_FLOOR = 4.5          # 1.4.3 - the label is text
+NON_TEXT_FLOOR = 3.0      # 1.4.11 - the focus ring is a non-text element
 
-# Os dois fundos onde uma tag realmente aparece. bg-surface importa porque tag
-# quase sempre vive dentro de card, tabela ou painel, nao solta na tela.
+# The two backgrounds where a tag really appears. bg-surface matters because a
+# tag almost always lives inside a card, table or panel, not loose on the canvas.
 UNDERS = ('bg-canvas', 'bg-surface')
 
 SITE = SITE_HTML
@@ -80,14 +80,14 @@ def sem(name, theme):
     return SEM[name][0 if theme == 'light' else 1]
 
 
-def effective_bg(tipo, status, theme, under):
-    """Fundo que o rotulo realmente encosta. Transparente = o fundo aparece."""
-    key = f'{tipo}-{status}-bg' if tipo == 'filled' else f'{tipo}-bg'
+def effective_bg(kind, status, theme, under):
+    """The background the label actually touches. Transparent = the background shows."""
+    key = f'{kind}-{status}-bg' if kind == 'filled' else f'{kind}-bg'
     value = tok(key, theme)
     return sem(under, theme) if value == 'transparent' else value
 
 
-# ─────────────────────────────────────────────── contrato de marcacao
+# ─────────────────────────────────────────────── markup contract
 OPEN_TAG = re.compile(r'<(\w+)\b([^>]*\bclass="[^"]*\bal-tag\b[^"]*"[^>]*)>')
 DISMISS = re.compile(r'<button\b[^>]*\bclass="[^"]*\bal-tag__dismiss\b[^"]*"[^>]*>')
 
@@ -97,21 +97,21 @@ def strip_tags(s):
 
 
 def markup_contract(path):
-    """Cobra o contrato de cada .al-tag no HTML.
+    """Enforces the contract of each .al-tag on the HTML.
 
-    Regras, todas da etapa 4:
-      23/24  a tag read-only nao e focavel nem acionavel - nada de <button>,
-             role="button" ou tabindex no proprio .al-tag
-      25     o X tem aria-label nao vazio E que inclui o rotulo da tag
-      -      o X e type="button": dentro de <form> o padrao do HTML e submit
-      -      o svg dentro do X e decorativo: aria-hidden
+    Usage rules:
+      23/24  the read-only tag is not focusable or actionable - no <button>,
+             role="button" or tabindex on the .al-tag itself
+      25     the X has a non-empty aria-label AND it includes the tag's label
+      -      the X is type="button": inside a <form> the HTML default is submit
+      -      the svg inside the X is decorative: aria-hidden
 
-    Retorna (checked, problems). checked = None quando o HTML ainda nao emite o
-    componente - o caso ate a etapa 7 montar o playground. Isso e PENDENTE, nao
-    aprovacao: o portao passa a valer sozinho quando o HTML aparecer.
+    Returns (checked, problems). checked = None when the HTML doesn't emit the
+    component yet - the case until the playground is built. That is PENDING,
+    not a pass: the gate starts counting by itself when the HTML shows up.
     """
     if not os.path.exists(path):
-        return None, [f'{path} nao existe']
+        return None, [f'{path} does not exist']
 
     html = open(path).read()
     for pat in (r'<style\b.*?</style>', r'<script\b.*?</script>', r'<!--.*?-->'):
@@ -121,19 +121,19 @@ def markup_contract(path):
 
     for m in OPEN_TAG.finditer(html):
         elem, attrs = m.group(1), m.group(2)
-        if re.search(r'\bal-tag__', attrs):      # o proprio X, tratado abaixo
+        if re.search(r'\bal-tag__', attrs):      # the X itself, handled below
             continue
         checked += 1
         line = html.count('\n', 0, m.start()) + 1
         if elem.lower() == 'button':
-            problems.append(f'linha {line}: a tag e <button> - ela e conteudo, '
-                            f'nao controle; so o X e acionavel')
+            problems.append(f'line {line}: the tag is a <button> - it is content, '
+                            f'not a control; only the X is actionable')
         if 'role="button"' in attrs:
-            problems.append(f'linha {line}: role="button" na tag - clicar no rotulo '
-                            f'nao faz nada, e anuncia-la como botao mente')
+            problems.append(f'line {line}: role="button" on the tag - clicking the label '
+                            f'does nothing, and announcing it as a button lies')
         if re.search(r'\btabindex="0"', attrs):
-            problems.append(f'linha {line}: tabindex="0" na tag - a read-only fica '
-                            f'fora da ordem de tabulacao')
+            problems.append(f'line {line}: tabindex="0" on the tag - the read-only tag '
+                            f'stays out of the tab order')
 
     for m in DISMISS.finditer(html):
         tagstr = m.group(0)
@@ -141,45 +141,45 @@ def markup_contract(path):
 
         label = re.search(r'aria-label="([^"]*)"', tagstr)
         if not (label and label.group(1).strip()):
-            problems.append(f'linha {line}: X sem aria-label - botao mudo para '
-                            f'leitor de tela')
+            problems.append(f'line {line}: X without aria-label - a mute button for '
+                            f'the screen reader')
         else:
-            # o rotulo da tag e o texto entre a abertura do .al-tag e o X
+            # the tag's label is the text between the .al-tag opening and the X
             start = html.rfind('class="', 0, m.start())
             open_m = None
             for om in OPEN_TAG.finditer(html[:m.start()]):
                 if not re.search(r'\bal-tag__', om.group(2)):
                     open_m = om
-            texto = strip_tags(html[open_m.end():m.start()]) if open_m else ''
-            if texto and texto.lower() not in label.group(1).lower():
+            text = strip_tags(html[open_m.end():m.start()]) if open_m else ''
+            if text and text.lower() not in label.group(1).lower():
                 problems.append(
-                    f'linha {line}: aria-label "{label.group(1)}" nao inclui o rotulo '
-                    f'"{texto}" - numa lista de filtros, varios "Remover" sao '
-                    f'indistinguiveis por leitor de tela')
+                    f'line {line}: aria-label "{label.group(1)}" does not include the label '
+                    f'"{text}" - in a list of filters, several "Remove" buttons are '
+                    f'indistinguishable to a screen reader')
 
         if not re.search(r'type="button"', tagstr):
-            problems.append(f'linha {line}: X sem type="button" - dentro de <form> '
-                            f'o padrao do HTML e submit')
+            problems.append(f'line {line}: X without type="button" - inside a <form> '
+                            f'the HTML default is submit')
 
     n_dismiss = len(DISMISS.findall(html))
     for m in DISMISS.finditer(html):
-        fim = html.find('</button>', m.end())
-        corpo = html[m.end():fim if fim > 0 else m.end()]
-        if '<svg' in corpo and 'aria-hidden="true"' not in corpo:
+        end = html.find('</button>', m.end())
+        body = html[m.end():end if end > 0 else m.end()]
+        if '<svg' in body and 'aria-hidden="true"' not in body:
             line = html.count('\n', 0, m.start()) + 1
-            problems.append(f'linha {line}: svg do X sem aria-hidden - o nome vive '
-                            f'no botao, anunciar os dois e ruido duplicado')
+            problems.append(f'line {line}: X svg without aria-hidden - the name lives '
+                            f'on the button, announcing both is duplicate noise')
 
     if checked == 0:
-        return None, ['nenhum .al-tag no HTML - o componente entra no site na etapa 7 '
-                      '(playground); ate la este portao fica pendente']
+        return None, ['no .al-tag in the HTML - the component enters the site with its '
+                      'playground; until then this gate stays pending']
     return checked, problems
 
 
 def write_report(rows, checked, targets, path_html):
     out = {
         'component': 'tag',
-        'criterion': 'WCAG 1.4.3 texto (rotulo) + 1.4.11 nao-textual (anel de foco)',
+        'criterion': 'WCAG 1.4.3 text (label) + 1.4.11 non-text (focus ring)',
         'floors': {'text': TEXT_FLOOR, 'nonText': NON_TEXT_FLOOR},
         'markupSource': os.path.relpath(path_html, ROOT),
         'markupChecked': checked,
@@ -199,102 +199,102 @@ def write_report(rows, checked, targets, path_html):
 def run(path_html):
     rows, failures = [], []
 
-    # ---- 1. rotulo contra o fundo efetivo (1.4.3, 4,5:1) ----
+    # ---- 1. label against the effective background (1.4.3, 4.5:1) ----
     for theme in THEMES:
-        for tipo in TYPES:
+        for kind in TYPES:
             for status in STATUSES:
-                fg = tok(f'{tipo}-{status}-label', theme)
+                fg = tok(f'{kind}-{status}-label', theme)
                 for under in UNDERS:
-                    bg = effective_bg(tipo, status, theme, under)
+                    bg = effective_bg(kind, status, theme, under)
                     ratio = cr(fg, bg)
                     ok = ratio >= TEXT_FLOOR
-                    rows.append(('rotulo', theme, f'{tipo} {status} · sobre {under}',
+                    rows.append(('label', theme, f'{kind} {status} · on {under}',
                                  fg, bg, ratio, TEXT_FLOOR, ok))
                     if not ok:
-                        failures.append((theme, tipo, status, under, ratio, TEXT_FLOOR))
-                    if tipo == 'filled':
-                        break   # o preenchimento cobre o fundo: medir uma vez basta
+                        failures.append((theme, kind, status, under, ratio, TEXT_FLOOR))
+                    if kind == 'filled':
+                        break   # the fill covers the background: measuring once is enough
 
-    # ---- 2. limite do pill: medido, ISENTO, nunca portao ----
-    # Ver o cabecalho: quem carrega o sentido e o texto, entao o contorno e
-    # decoracao e o 1.4.11 nao se aplica. O neutral em 1,32 e o caso conhecido.
+    # ---- 2. pill boundary: measured, EXEMPT, never a gate ----
+    # See the header: the text carries the meaning, so the outline is decoration
+    # and 1.4.11 doesn't apply. The neutral at 1.32 is the known case.
     for theme in THEMES:
-        for tipo in TYPES:
+        for kind in TYPES:
             for status in STATUSES:
-                key = f'{tipo}-{status}-bg' if tipo == 'filled' else f'{tipo}-{status}-border'
+                key = f'{kind}-{status}-bg' if kind == 'filled' else f'{kind}-{status}-border'
                 edge = tok(key, theme)
                 if edge == 'transparent':
                     continue
                 for under in UNDERS:
-                    rows.append(('limite', theme, f'{tipo} {status} · sobre {under}',
+                    rows.append(('boundary', theme, f'{kind} {status} · on {under}',
                                  edge, sem(under, theme), cr(edge, sem(under, theme)),
                                  None, True))
 
-    # ---- 3. anel de foco do X contra o fundo (1.4.11, 3:1) ----
-    # O anel e composto: 2px de bg-canvas como respiro, depois 4px na cor do
-    # foco. Quem precisa se destacar do fundo e a cor externa.
+    # ---- 3. the X focus ring against the background (1.4.11, 3:1) ----
+    # The ring is composite: 2px of bg-canvas as a gap, then 4px in the focus
+    # color. The outer color is what has to stand out from the background.
     for theme in THEMES:
         fg = sem('shadow-focus-default', theme)
         for under in UNDERS:
             bg = sem(under, theme)
             ratio = cr(fg, bg)
             ok = ratio >= NON_TEXT_FLOOR
-            rows.append(('foco', theme, f'anel do X · sobre {under}',
+            rows.append(('focus', theme, f'X ring · on {under}',
                          fg, bg, ratio, NON_TEXT_FLOOR, ok))
             if not ok:
                 failures.append((theme, 'dismiss', 'ring', under, ratio, NON_TEXT_FLOOR))
 
-    # ---- 4. alvo de toque do X ----
+    # ---- 4. the X touch target ----
     targets = [(s, TAG['resolved'][f'tag-{s}-icon-size']) for s in ('sm', 'md')]
 
     checked, mk_problems = markup_contract(path_html)
 
     print('=' * 74)
-    print('QA DE ACESSIBILIDADE DO TAG')
+    print('TAG ACCESSIBILITY QA')
     print('=' * 74)
-    for group, title in (('rotulo', 'ROTULO contra o fundo efetivo (1.4.3, piso 4,5)'),
-                         ('foco', 'ANEL DE FOCO do X contra o fundo (1.4.11, piso 3,0)'),
-                         ('limite', 'LIMITE do pill - medido, ISENTO (o texto carrega o sentido)')):
+    for group, title in (('label', 'LABEL against the effective background (1.4.3, floor 4.5)'),
+                         ('focus', 'X FOCUS RING against the background (1.4.11, floor 3.0)'),
+                         ('boundary', 'PILL BOUNDARY - measured, EXEMPT (the text carries the meaning)')):
         sel = [r for r in rows if r[0] == group]
         print(f'\n{title}')
         for _, theme, label, fg, bg, ratio, floor, ok in sel:
             mark = '  ' if floor is None else ('ok' if ok else 'XX')
-            piso = '  isento' if floor is None else f'piso {floor}'
-            print(f'  {mark} {theme:<5} {label:<40} {fg} sobre {bg}  {ratio:5.2f}  {piso}')
+            floor_s = '  exempt' if floor is None else f'floor {floor}'
+            print(f'  {mark} {theme:<5} {label:<40} {fg} on {bg}  {ratio:5.2f}  {floor_s}')
 
-    print('\nALVO DE TOQUE do X (WCAG 2.5.8, minimo 24px)')
+    print('\nX TOUCH TARGET (WCAG 2.5.8, minimum 24px)')
     for size, box in targets:
-        estado = 'ok' if box >= 24 else 'abaixo do minimo - excecao consciente da etapa 3'
-        print(f'     {size:<5} {box}x{box}px  {estado}')
+        state = 'ok' if box >= 24 else 'below the minimum - a conscious, declared exception'
+        print(f'     {size:<5} {box}x{box}px  {state}')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path_html, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path_html, ROOT)}')
     if checked is None:
         for p in mk_problems:
-            print(f'     pendente: {p}')
+            print(f'     pending: {p}')
     else:
-        print(f'     {checked} tag(s) conferida(s)')
+        print(f'     {checked} tag(s) checked')
         for p in mk_problems:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
-    medidas = [r for r in rows if r[6] is not None]
-    isentas = [r for r in rows if r[6] is None]
+    measured = [r for r in rows if r[6] is not None]
+    exempt = [r for r in rows if r[6] is None]
     print('-' * 74)
-    print(f'{len(medidas)} combinacoes com piso  |  passam: {len(medidas) - len(failures)}  |  '
-          f'reprovam: {len(failures)}  |  isentas medidas: {len(isentas)}')
+    print(f'{len(measured)} combinations with a floor  |  pass: {len(measured) - len(failures)}  |  '
+          f'fail: {len(failures)}  |  exempt, measured: {len(exempt)}')
 
     path = write_report(rows, checked, targets, path_html)
-    print(f'{os.path.relpath(path, ROOT)} escrito')
+    print(f'{os.path.relpath(path, ROOT)} written')
 
     if failures:
         print('-' * 74)
-        print(f'{len(failures)} COMBINACAO(OES) REPROVAM:')
-        for theme, tipo, status, under, ratio, floor in failures:
-            print(f'   {theme} {tipo} {status} sobre {under}: {ratio:.2f} < {floor}')
+        print(f'{len(failures)} COMBINATION(S) FAIL:')
+        for theme, kind, status, under, ratio, floor in failures:
+            print(f'   {theme} {kind} {status} on {under}: {ratio:.2f} < {floor}')
         return 1
     if checked is not None and mk_problems:
         print('-' * 74)
-        print(f'{len(mk_problems)} PROBLEMA(S) DE MARCACAO - portao reprova')
+        print(f'{len(mk_problems)} MARKUP PROBLEM(S) - gate fails')
         return 1
     return 0
 

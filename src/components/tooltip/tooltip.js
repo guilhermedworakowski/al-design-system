@@ -1,33 +1,34 @@
-/* AL Design System - Tooltip (regras 13 a 20)
+/* AL Design System - Tooltip (rules 13 to 20)
  *
- * Quem liga gatilho e tooltip e o ARIA do gatilho, nao uma classe:
- *   aria-labelledby="<id>"   o tooltip e o nome do gatilho
- *   aria-describedby="<id>"  o tooltip complementa um gatilho que ja tem nome
- * Este arquivo so cuida de MOSTRAR e ESCONDER. O nome e a descricao funcionam
- * sem ele: o leitor de tela le o tooltip escondido pelo atributo.
+ * What links trigger and tooltip is the trigger's ARIA, not a class:
+ *   aria-labelledby="<id>"   the tooltip is the trigger's name
+ *   aria-describedby="<id>"  the tooltip complements a trigger that already has a name
+ * This file only takes care of SHOWING and HIDING. Name and description work
+ * without it: the screen reader reads the hidden tooltip through the attribute.
  *
- *   - hover: abre depois de `tooltip-delay-show` (500ms). Se outro tooltip ja
- *     esta aberto, troca na hora - quem esta lendo uma fileira de botoes nao
- *     espera de novo a cada um (regra 16);
- *   - foco por teclado (:focus-visible): abre na hora. Foco por clique nao
- *     abre (regras 16 e 20);
- *   - toque nao abre, clique fecha (regra 20);
- *   - fica aberto enquanto o ponteiro esta no gatilho OU no tooltip, ou o
- *     foco de teclado esta no gatilho; `tooltip-delay-hide` (100ms) de folga
- *     para o ponteiro atravessar o vao de 4 (regra 17, WCAG 1.4.13);
- *   - Esc fecha sem mover o foco, e o Esc para ai: com um tooltip aberto
- *     dentro de um Modal, o primeiro Esc fecha so o tooltip (regra 18);
- *   - um aberto por vez (regra 19);
- *   - lado: data-placement do .al-tooltip, top por padrao; vira para o
- *     oposto se nao couber, e acompanha rolagem e redimensionamento (regras
- *     13 e 15).
- * Os tempos e a distancia sao lidos dos tokens no CSS, nunca escritos aqui.
+ *   - hover: opens after `tooltip-delay-show` (500ms). If another tooltip is
+ *     already open, it switches at once - whoever is reading a row of buttons
+ *     doesn't wait again on each one (rule 16);
+ *   - keyboard focus (:focus-visible): opens at once. Click focus doesn't
+ *     open (rules 16 and 20);
+ *   - touch doesn't open, click closes (rule 20);
+ *   - stays open while the pointer is on the trigger OR on the tooltip, or
+ *     keyboard focus is on the trigger; `tooltip-delay-hide` (100ms) of slack
+ *     for the pointer to cross the 4 gap (rule 17, WCAG 1.4.13);
+ *   - Esc closes without moving focus, and Esc stops there: with a tooltip
+ *     open inside a Modal, the first Esc closes only the tooltip (rule 18);
+ *   - one open at a time (rule 19);
+ *   - side: the .al-tooltip's data-placement, top by default; flips to the
+ *     opposite if it doesn't fit, and follows scrolling and resizing (rules
+ *     13 and 15).
+ * Times and distance are read from the tokens in the CSS, never written here.
  *
- * Uso:
- *   <script src="tooltip.js"></script>   -> liga sozinho quando a pagina carrega
- *   alTooltip.init(container)             -> liga em conteudo inserido depois
- * Ligar duas vezes o mesmo gatilho nao duplica nada. Navegador sem popover:
- * o tooltip nunca aparece, e o nome continua chegando ao leitor de tela.
+ * Usage:
+ *   <script src="tooltip.js"></script>   -> binds by itself when the page loads
+ *   alTooltip.init(container)             -> binds content inserted later
+ * Binding the same trigger twice duplicates nothing. A browser without
+ * popover: the tooltip never appears, and the name still reaches the screen
+ * reader.
  */
 (function () {
   'use strict';
@@ -82,7 +83,7 @@
     clearTimeout(showTimer);
     clearTimeout(hideTimer);
     if (current && current.tip === tip) return;
-    hide();                                         // um por vez
+    hide();                                         // one at a time
     if (trigger.disabled || !trigger.isConnected) return;
     tip.showPopover();
     place(trigger, tip);
@@ -109,7 +110,7 @@
     trigger.addEventListener('pointerenter', function (e) {
       if (e.pointerType === 'touch') return;
       clearTimeout(hideTimer);
-      if (current) { show(trigger, tip); return; }   // ja tem um aberto: troca na hora
+      if (current) { show(trigger, tip); return; }   // one is already open: switch at once
       clearTimeout(showTimer);
       showTimer = setTimeout(function () { show(trigger, tip); }, token(tip, 'delay-show'));
     });
@@ -145,7 +146,7 @@
     });
   }
 
-  // Esc na captura: fecha o tooltip antes de o Modal ou o Drawer ouvirem.
+  // Esc in the capture phase: closes the tooltip before the Modal or the Drawer hear it.
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape' || !current) return;
     e.preventDefault();

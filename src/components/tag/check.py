@@ -1,11 +1,11 @@
 """
-Portao do CSS do Tag.
+CSS gate for the Tag.
 
-A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
-de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
-nenhum token inventado. Aqui fica so o que e proprio do Tag.
+The rule is the same for every component and lives in tools/cssgate.py: no
+literal values (color, length, weight, duration), no orphan tokens and no
+invented tokens. Only what is specific to the Tag stays here.
 
-Rodar: python3 check.py (ou o build completo: python3 build.py)
+Run: python3 check.py (or the full build: python3 build.py)
 """
 import os
 import sys
@@ -14,13 +14,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from cssgate import gate  # noqa: E402
 
-# O que este portao NAO alcanca: marcacao so existe na saida renderizada.
-# O a11y.py da etapa 6 cobra estas regras no HTML que o site emite.
-FORA_DO_CSS = [
-    'o rotulo carrega o sentido, a cor nao - nenhum portao mede isso, e regra de uso',
-    'aria-label obrigatorio no <button> do X, incluindo o rotulo - medido pelo a11y.py',
+# What this gate does NOT reach: markup only exists in the rendered output.
+# a11y.py enforces these rules on the HTML the site emits.
+OUTSIDE_CSS = [
+    'the label carries the meaning, the color doesn\'t - no gate measures this, it is a usage rule',
+    'aria-label required on the X <button>, including the label - measured by a11y.py',
 ]
 
 
 if __name__ == '__main__':
-    sys.exit(gate('tag', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('tag', outside_css=OUTSIDE_CSS))

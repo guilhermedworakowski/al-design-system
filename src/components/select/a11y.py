@@ -1,66 +1,70 @@
 """
-QA de acessibilidade do Select.
+Accessibility QA for the Select.
 
-Como no Button, Icon Button, Icon, Tag e Avatar, a validacao e por COMBINACAO
-RENDERIZADA - cada papel de cor contra o fundo EFETIVO, nao par de token solto.
+As in the Button, Icon Button, Icon, Tag and Avatar, validation is by RENDERED
+COMBINATION - each color role against the EFFECTIVE background, not a loose
+token pair.
 
-O QUE O FUNDO EFETIVO MUDA AQUI, E QUE A ETAPA 3 NAO PODIA VER
+WHAT THE EFFECTIVE BACKGROUND CHANGES HERE, THAT THE TOKEN LAYER COULDN'T SEE
 
-  1. A BORDA TROCA DE VIZINHO QUANDO O CAMPO RECEBE FOCO. Em repouso ela toca a
-     pagina, que pode ser `bg-canvas` OU `bg-surface-raised` (campo dentro de
-     card ou modal) - o portao mede a pior das duas. Com foco, o anel desenha
-     um respiro de 2px em `bg-canvas` colado na borda, entao a vizinha externa
-     passa a ser `bg-canvas` SEMPRE, independente de onde o campo foi colocado.
-     Isso e ordem de camada, nao par de token: so aparece medindo o renderizado.
+  1. THE BORDER CHANGES NEIGHBOR WHEN THE FIELD GETS FOCUS. At rest it touches
+     the page, which can be `bg-canvas` OR `bg-surface-raised` (a field inside
+     a card or modal) - the gate measures the worse of the two. With focus,
+     the ring draws a 2px gap in `bg-canvas` right against the border, so the
+     outer neighbor becomes `bg-canvas` ALWAYS, wherever the field was placed.
+     That is layer order, not a token pair: it only shows up by measuring the
+     rendered output.
 
-  2. A COR DO ANEL SAI DO PROPRIO box-shadow. `select-ring` resolve para a
-     sombra composta ("0 0 0 2px #FFF, 0 0 0 4px #FC5000"), e este portao le o
-     ULTIMO hex da string - a cor que de fato pinta o anel. Nao ha definicao
-     paralela para divergir do CSS.
+  2. THE RING COLOR COMES FROM THE box-shadow ITSELF. `select-ring` resolves to
+     the composite shadow ("0 0 0 2px #FFF, 0 0 0 4px #FC5000"), and this gate
+     reads the LAST hex in the string - the color that actually paints the
+     ring. There is no parallel definition to drift from the CSS.
 
-  3. A BORDA TEM DUAS VIZINHAS. Por fora a pagina (ou o respiro do anel), por
-     dentro o preenchimento do campo. Vale a PIOR das duas: borda que some por
-     dentro nao desenha limite nenhum.
+  3. THE BORDER HAS TWO NEIGHBORS. Outside the page (or the ring's gap),
+     inside the field's fill. The WORSE of the two counts: a border that
+     disappears on the inside draws no boundary at all.
 
-DOIS PISOS, DE PROPOSITO
+TWO FLOORS, ON PURPOSE
 
-  Texto (rotulo, marca, valor, apoio) = 4,5:1 do 1.4.3.
-  Nao-textual (borda, seta, anel)     = 3:1 do 1.4.11.
-  Cada papel contra o piso que e dele, nunca contra o mais facil.
+  Text (label, mark, value, help) = 4.5:1 from 1.4.3.
+  Non-text (border, chevron, ring) = 3:1 from 1.4.11.
+  Each role against its own floor, never against the easier one.
 
-O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
+THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Num campo de formulario, quase tudo que da errado e marcacao, nao estilo - e
-  marcacao so existe na saida renderizada. Cinco regras, todas da etapa 4:
+  In a form field, almost everything that goes wrong is markup, not style -
+  and markup only exists in the rendered output. The usage rules:
 
-    a) todo `.al-select__field` tem `id`, e existe um `<label for>` apontando
-       para ele (regras 5 e 24);
-    b) campo com `aria-invalid="true"` tem `aria-describedby`, e o id apontado
-       existe de verdade no documento (regra 26);
-    c) o placeholder e a primeira <option> com `value=""` e `selected`, nunca
-       um atributo inventado (regra 12);
-    d) a seta e decorativa: `aria-hidden="true"` e `focusable="false"` na
-       propria tag - o sentido mora no rotulo (contrato do icon.css);
-    e) nenhum campo usa `aria-label` havendo rotulo visivel, porque o nome
-       anunciado tem que bater com o texto que a pessoa le (regra 24);
-    f) o `id` do campo e UNICO no documento. Sem isso o `<label for>` liga no
-       primeiro elemento com aquele id, que pode nao ser o campo - foi o que
-       aconteceu no playground do site ate 0.11.0: o campo chamava `pg-select`,
-       o mesmo id do conteiner da pagina, e o rotulo apontava para a pagina.
-       As regras (a) a (e) passavam todas; so contar o id pegou.
+    a) every `.al-select__field` has an `id`, and there is a `<label for>`
+       pointing to it (rules 5 and 24);
+    b) a field with `aria-invalid="true"` has `aria-describedby`, and the id it
+       points to really exists in the document (rule 26);
+    c) the placeholder is the first <option> with `value=""` and `selected`,
+       never an invented attribute (rule 12);
+    d) the chevron is decorative: `aria-hidden="true"` and `focusable="false"`
+       on its own tag - the meaning lives in the label (icon.css contract);
+    e) no field uses `aria-label` when there is a visible label, because the
+       announced name has to match the text the person reads (rule 24);
+    f) the field's `id` is UNIQUE in the document. Without it the `<label for>`
+       links to the first element with that id, which may not be the field -
+       that is what happened on the site's playground until 0.11.0: the field
+       was called `pg-select`, the same id as the page's container, and the
+       label pointed to the page. Rules (a) to (e) all passed; only counting
+       the id caught it.
 
-  Regra escrita numa pagina envelhece; regra medida quebra o build.
+  A rule written on a page goes stale; a measured rule breaks the build.
 
-ORDEM DE EXECUCAO - este portao roda DEPOIS do site.py
+RUN ORDER - this gate runs AFTER site.py
 
-  Mesmo arranjo que o Icon ja usa, e pela mesma razao mecanica: o portao
-  precisa do HTML emitido para cobrar marcacao, e o site precisa do `a11y.json`
-  que este portao escreve para montar a aba de Acessibilidade. As duas geracoes
-  convergem numa passada - nao ha loop. Enquanto o site ainda nao tiver Select,
-  o JSON sai com `markupPending: true` e o portao diz isso em voz alta.
+  The same arrangement the Icon already uses, for the same mechanical reason:
+  the gate needs the emitted HTML to enforce markup, and the site needs the
+  `a11y.json` this gate writes to build the Accessibility tab. The two
+  generations converge in one pass - there is no loop. While the site doesn't
+  have a Select yet, the JSON comes out with `markupPending: true` and the gate
+  says so out loud.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -70,7 +74,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
-# este portao compara a razao ja arredondada em 2 casas, como sempre fez
+# this gate compares the ratio already rounded to 2 places, as it always has
 from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 SELECT = json.load(open(comp_out('select', 'tokens.json')))
@@ -85,24 +89,24 @@ NON_TEXT_FLOOR = 3.0      # 1.4.11
 DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('select', 'a11y.json')
 
-# Onde o campo pode ser colocado. A borda em repouso tem que se virar contra as
-# duas: pagina nua e superficie elevada (card, modal).
-PAGINAS = ('bg-canvas', 'bg-surface-raised')
+# Where the field can be placed. The border at rest has to hold up against
+# both: the bare page and a raised surface (card, modal).
+PAGES = ('bg-canvas', 'bg-surface-raised')
 
-# estado -> papeis. `ring=None` significa que aquele estado nao desenha anel.
+# state -> roles. `ring=None` means that state draws no ring.
 STATES = {
-    'default':     {'border': 'select-border',          'surface': 'select-bg',          'ring': None,                'erro': False, 'off': False},
-    'hover':       {'border': 'select-border-hover',    'surface': 'select-bg',          'ring': None,                'erro': False, 'off': False},
-    'active':      {'border': 'select-border-active',   'surface': 'select-bg',          'ring': None,                'erro': False, 'off': False},
-    'focus':       {'border': 'select-border-focus',    'surface': 'select-bg',          'ring': 'select-ring',       'erro': False, 'off': False},
-    'error':       {'border': 'select-border-error',    'surface': 'select-bg',          'ring': None,                'erro': True,  'off': False},
-    'focus-error': {'border': 'select-border-error',    'surface': 'select-bg',          'ring': 'select-ring-error', 'erro': True,  'off': False},
-    'disabled':    {'border': 'select-border-disabled', 'surface': 'select-bg-disabled', 'ring': None,                'erro': False, 'off': True},
+    'default':     {'border': 'select-border',          'surface': 'select-bg',          'ring': None,                'error': False, 'off': False},
+    'hover':       {'border': 'select-border-hover',    'surface': 'select-bg',          'ring': None,                'error': False, 'off': False},
+    'active':      {'border': 'select-border-active',   'surface': 'select-bg',          'ring': None,                'error': False, 'off': False},
+    'focus':       {'border': 'select-border-focus',    'surface': 'select-bg',          'ring': 'select-ring',       'error': False, 'off': False},
+    'error':       {'border': 'select-border-error',    'surface': 'select-bg',          'ring': None,                'error': True,  'off': False},
+    'focus-error': {'border': 'select-border-error',    'surface': 'select-bg',          'ring': 'select-ring-error', 'error': True,  'off': False},
+    'disabled':    {'border': 'select-border-disabled', 'surface': 'select-bg-disabled', 'ring': None,                'error': False, 'off': True},
 }
 
 
 def tok(name, theme):
-    """Hex de um token do Select no tema pedido."""
+    """Hex of a Select token in the requested theme."""
     return RES[name][theme]
 
 
@@ -111,269 +115,270 @@ def sem(name, theme):
 
 
 def ring_ink(name, theme):
-    """A cor que pinta o anel, lida do PROPRIO box-shadow que o CSS emite -
-    o ultimo hex da sombra composta. Sem definicao paralela para divergir."""
+    """The color that paints the ring, read from the box-shadow the CSS itself
+    emits - the last hex in the composite shadow. No parallel definition to
+    drift."""
     shadow = RES[name][theme]
     hexes = re.findall(r'#[0-9a-fA-F]{6}', shadow)
     if not hexes:
-        raise ValueError(f'{name} ({theme}): box-shadow sem cor legivel -> {shadow}')
+        raise ValueError(f'{name} ({theme}): box-shadow with no readable color -> {shadow}')
     return hexes[-1]
 
 
-def pior(fg, fundos):
-    """A pior razao entre um primeiro plano e as superficies que ele toca."""
-    medidas = [(cr(fg, bg), bg) for bg in fundos]
-    return min(medidas)
+def worst(fg, backgrounds):
+    """The worst ratio between a foreground and the surfaces it touches."""
+    measures = [(cr(fg, bg), bg) for bg in backgrounds]
+    return min(measures)
 
 
-def medir():
-    linhas = []
+def measure():
+    rows = []
     for state, cfg in STATES.items():
         for theme, _ in THEMES:
             surface = tok(cfg['surface'], theme)
-            paginas = [sem(p, theme) for p in PAGINAS]
+            pages = [sem(p, theme) for p in PAGES]
 
-            # 1. a borda. Por fora: o respiro do anel quando ha foco, senao a
-            #    pagina (pior caso). Por dentro: o preenchimento do campo.
+            # 1. the border. Outside: the ring's gap when there is focus,
+            #    otherwise the page (worst case). Inside: the field's fill.
             if cfg['ring']:
-                fora = [sem('bg-canvas', theme)]
-                nota_fora = 'respiro do anel (bg-canvas)'
+                outside = [sem('bg-canvas', theme)]
+                outside_note = 'ring gap (bg-canvas)'
             else:
-                fora = paginas
-                nota_fora = 'pagina (pior de canvas / surface-raised)'
+                outside = pages
+                outside_note = 'page (worse of canvas / surface-raised)'
             fg_hex = tok(cfg['border'], theme)
-            ratio, bg_hex = pior(fg_hex, fora + [surface])
-            linhas.append(dict(
-                state=state, theme=theme, papel='borda', ratio=ratio,
+            ratio, bg_hex = worst(fg_hex, outside + [surface])
+            rows.append(dict(
+                state=state, theme=theme, role='border', ratio=ratio,
                 token=f'select-{cfg["border"].split("select-")[-1]}'
                       if cfg['border'].startswith('select-') else cfg['border'],
                 fgHex=fg_hex, bgHex=bg_hex,
-                floor=NON_TEXT_FLOOR, contra=f'{nota_fora} + preenchimento',
-                exc='borda-abaixo-de-3-1' if cfg['border'] in
+                floor=NON_TEXT_FLOOR, against=f'{outside_note} + fill',
+                exc='border-below-3-1' if cfg['border'] in
                     ('select-border', 'select-border-disabled') else None))
 
-            # 2. o anel, quando existe. Por dentro o proprio respiro em
-            #    bg-canvas, por fora a pagina.
+            # 2. the ring, when there is one. Inside its own gap in bg-canvas,
+            #    outside the page.
             if cfg['ring']:
                 ink = ring_ink(cfg['ring'], theme)
-                ratio, bg_hex = pior(ink, [sem('bg-canvas', theme)] + paginas)
-                linhas.append(dict(
-                    state=state, theme=theme, papel='anel de foco', ratio=ratio,
+                ratio, bg_hex = worst(ink, [sem('bg-canvas', theme)] + pages)
+                rows.append(dict(
+                    state=state, theme=theme, role='focus ring', ratio=ratio,
                     token=cfg['ring'], fgHex=ink, bgHex=bg_hex,
-                    floor=NON_TEXT_FLOOR, contra='respiro + pagina', exc=None))
+                    floor=NON_TEXT_FLOOR, against='gap + page', exc=None))
 
-            # 3. o que vive DENTRO do campo, contra o preenchimento dele
+            # 3. what lives INSIDE the field, against its fill
             if cfg['off']:
-                dentro = [('texto', 'select-text-disabled', TEXT_FLOOR, 'disabled-abaixo-de-aa'),
-                          ('seta', 'select-icon-disabled', NON_TEXT_FLOOR, 'disabled-abaixo-de-aa')]
+                inside = [('text', 'select-text-disabled', TEXT_FLOOR, 'disabled-below-aa'),
+                          ('chevron', 'select-icon-disabled', NON_TEXT_FLOOR, 'disabled-below-aa')]
             else:
-                dentro = [('placeholder', 'select-text-placeholder', TEXT_FLOOR, None),
-                          ('valor', 'select-text-value', TEXT_FLOOR, None),
-                          ('seta', 'select-icon', NON_TEXT_FLOOR, None)]
-            for papel, token_nome, floor, exc in dentro:
-                fg_hex = tok(token_nome, theme)
-                linhas.append(dict(
-                    state=state, theme=theme, papel=papel,
-                    token=token_nome, fgHex=fg_hex, bgHex=surface,
+                inside = [('placeholder', 'select-text-placeholder', TEXT_FLOOR, None),
+                          ('value', 'select-text-value', TEXT_FLOOR, None),
+                          ('chevron', 'select-icon', NON_TEXT_FLOOR, None)]
+            for role, token_name, floor, exc in inside:
+                fg_hex = tok(token_name, theme)
+                rows.append(dict(
+                    state=state, theme=theme, role=role,
+                    token=token_name, fgHex=fg_hex, bgHex=surface,
                     ratio=cr(fg_hex, surface),
-                    floor=floor, contra='preenchimento do campo', exc=exc))
+                    floor=floor, against='field fill', exc=exc))
 
-            # 4. o que vive FORA do campo, contra a pagina (pior caso)
+            # 4. what lives OUTSIDE the field, against the page (worst case)
             if cfg['off']:
-                fora_campo = [('rotulo', 'select-label-disabled', 'disabled-abaixo-de-aa'),
-                              ('marca opcional', 'select-label-disabled', 'disabled-abaixo-de-aa')]
-            elif cfg['erro']:
-                fora_campo = [('rotulo', 'select-label-error', None),
-                              ('marca opcional', 'select-optional', None),
-                              ('apoio', 'select-help-error', None)]
+                outside_field = [('label', 'select-label-disabled', 'disabled-below-aa'),
+                                 ('optional mark', 'select-label-disabled', 'disabled-below-aa')]
+            elif cfg['error']:
+                outside_field = [('label', 'select-label-error', None),
+                                 ('optional mark', 'select-optional', None),
+                                 ('help', 'select-help-error', None)]
             else:
-                fora_campo = [('rotulo', 'select-label', None),
-                              ('marca opcional', 'select-optional', None),
-                              ('apoio', 'select-help', None)]
-            for papel, token_nome, exc in fora_campo:
-                fg_hex = tok(token_nome, theme)
-                ratio, bg_hex = pior(fg_hex, paginas)
-                linhas.append(dict(
-                    state=state, theme=theme, papel=papel,
-                    token=token_nome, fgHex=fg_hex, bgHex=bg_hex, ratio=ratio,
-                    floor=TEXT_FLOOR, contra='pagina (pior caso)', exc=exc))
+                outside_field = [('label', 'select-label', None),
+                                 ('optional mark', 'select-optional', None),
+                                 ('help', 'select-help', None)]
+            for role, token_name, exc in outside_field:
+                fg_hex = tok(token_name, theme)
+                ratio, bg_hex = worst(fg_hex, pages)
+                rows.append(dict(
+                    state=state, theme=theme, role=role,
+                    token=token_name, fgHex=fg_hex, bgHex=bg_hex, ratio=ratio,
+                    floor=TEXT_FLOOR, against='page (worst case)', exc=exc))
 
-    for l in linhas:
+    for l in rows:
         l['pass'] = l['ratio'] >= l['floor']
-    return linhas
+    return rows
 
 
-# ------------------------------------------------------- contrato de marcacao
-def so_marcacao(html):
-    """Tira <style> e <script> antes de procurar marcacao.
+# ------------------------------------------------------------ markup contract
+def markup_only(html):
+    """Strips <style> and <script> before looking for markup.
 
-    Nao e zelo: o select.css traz a ANATOMIA num comentario de cabecalho, com
-    um <select> e um <label> de exemplo dentro. A pagina de QA inlina esse CSS,
-    entao sem esta limpeza o portao media o exemplo do comentario como se fosse
-    um campo de verdade - e ele PASSAVA, porque o exemplo esta correto. Portao
-    que aprova lendo comentario tambem reprova lendo comentario.
+    It isn't overcaution: select.css carries the ANATOMY in a header comment,
+    with an example <select> and <label> inside. The QA page inlines that CSS,
+    so without this cleanup the gate would measure the comment's example as if
+    it were a real field - and it PASSED, because the example is correct. A
+    gate that passes by reading a comment also fails by reading a comment.
     """
     html = re.sub(r'<style\b[^>]*>.*?</style>', '', html, flags=re.S | re.I)
     html = re.sub(r'<script\b[^>]*>.*?</script>', '', html, flags=re.S | re.I)
     return html
 
 
-def marcacao(path):
-    """Le o HTML renderizado e cobra as cinco regras. Devolve (achados, contagem)."""
+def markup(path):
+    """Reads the rendered HTML and enforces the rules. Returns (findings, count)."""
     if not os.path.exists(path):
-        return ([f'HTML nao encontrado em {path} - contrato de marcacao NAO medido'], 0)
+        return ([f'HTML not found at {path} - markup contract NOT measured'], 0)
 
-    html = so_marcacao(open(path, encoding='utf-8').read())
-    achados = []
+    html = markup_only(open(path, encoding='utf-8').read())
+    findings = []
 
-    campos = re.findall(r'<select\b[^>]*class="[^"]*al-select__field[^"]*"[^>]*>', html)
-    ids_label = dict(re.findall(r'<label\b[^>]*for="([^"]+)"[^>]*>(.*?)</label>', html, flags=re.S))
+    fields = re.findall(r'<select\b[^>]*class="[^"]*al-select__field[^"]*"[^>]*>', html)
+    label_ids = dict(re.findall(r'<label\b[^>]*for="([^"]+)"[^>]*>(.*?)</label>', html, flags=re.S))
 
-    for tag in campos:
+    for tag in fields:
         m_id = re.search(r'\bid="([^"]+)"', tag)
         if not m_id:
-            achados.append(f'(a) <select> sem id: {tag[:70]}')
+            findings.append(f'(a) <select> without id: {tag[:70]}')
             continue
         sid = m_id.group(1)
         n_id = len(re.findall(rf'\bid="{re.escape(sid)}"', html))
         if n_id > 1:
-            achados.append(f'(f) id "{sid}" aparece {n_id} vezes - o <label for> pode ligar em outro elemento')
-        if sid not in ids_label:
-            achados.append(f'(a) nenhum <label for="{sid}"> aponta para este campo')
-        if 'aria-label' in tag and sid in ids_label:
-            achados.append(f'(e) campo "{sid}" usa aria-label havendo rotulo visivel')
+            findings.append(f'(f) id "{sid}" appears {n_id} times - the <label for> may link to another element')
+        if sid not in label_ids:
+            findings.append(f'(a) no <label for="{sid}"> points to this field')
+        if 'aria-label' in tag and sid in label_ids:
+            findings.append(f'(e) field "{sid}" uses aria-label when there is a visible label')
         if re.search(r'aria-invalid="true"', tag):
             m_desc = re.search(r'aria-describedby="([^"]+)"', tag)
             if not m_desc:
-                achados.append(f'(b) campo "{sid}" esta em erro e nao tem aria-describedby')
+                findings.append(f'(b) field "{sid}" is in error and has no aria-describedby')
             else:
                 for ref in m_desc.group(1).split():
                     if not re.search(rf'\bid="{re.escape(ref)}"', html):
-                        achados.append(f'(b) campo "{sid}" descreve por "{ref}", que nao existe')
+                        findings.append(f'(b) field "{sid}" is described by "{ref}", which does not exist')
 
-    # (c) placeholder: primeira <option> vazia tem que estar selecionada
-    for bloco in re.findall(r'<select\b[^>]*al-select__field.*?</select>', html, flags=re.S):
-        vazias = re.findall(r'<option\b[^>]*value=""[^>]*>', bloco)
-        for op in vazias:
+    # (c) placeholder: the first empty <option> has to be selected
+    for block in re.findall(r'<select\b[^>]*al-select__field.*?</select>', html, flags=re.S):
+        empty = re.findall(r'<option\b[^>]*value=""[^>]*>', block)
+        for op in empty:
             if 'selected' not in op:
-                achados.append(f'(c) <option value=""> sem selected: {op[:60]}')
+                findings.append(f'(c) <option value=""> without selected: {op[:60]}')
 
-    # (d) a seta e decorativa
+    # (d) the chevron is decorative
     for svg in re.findall(r'<svg\b[^>]*al-select__chevron[^>]*>', html):
         if 'aria-hidden="true"' not in svg:
-            achados.append(f'(d) seta sem aria-hidden="true": {svg[:60]}')
+            findings.append(f'(d) chevron without aria-hidden="true": {svg[:60]}')
         if 'focusable="false"' not in svg:
-            achados.append(f'(d) seta sem focusable="false": {svg[:60]}')
+            findings.append(f'(d) chevron without focusable="false": {svg[:60]}')
 
-    return (achados, len(campos))
+    return (findings, len(fields))
 
 
 def run():
     path = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_HTML
-    linhas = medir()
+    rows = measure()
 
-    reprovas = [l for l in linhas if not l['pass'] and not l['exc']]
-    excecoes = [l for l in linhas if not l['pass'] and l['exc']]
-    passam = [l for l in linhas if l['pass']]
+    fails = [l for l in rows if not l['pass'] and not l['exc']]
+    exceptions = [l for l in rows if not l['pass'] and l['exc']]
+    passing = [l for l in rows if l['pass']]
 
     print('=' * 78)
-    print('QA DE ACESSIBILIDADE DO SELECT')
+    print('SELECT ACCESSIBILITY QA')
     print('=' * 78)
-    print(f'  combinacoes medidas : {len(linhas)}  (7 estados x 2 temas x papeis visiveis)')
-    print(f'  passam              : {len(passam)}')
-    print(f'  excecoes declaradas : {len(excecoes)}')
-    print(f'  reprovas            : {len(reprovas)}')
+    print(f'  combinations measured : {len(rows)}  (7 states x 2 themes x visible roles)')
+    print(f'  pass                  : {len(passing)}')
+    print(f'  declared exceptions   : {len(exceptions)}')
+    print(f'  fail                  : {len(fails)}')
     print('-' * 78)
 
     for state in STATES:
-        do_estado = [l for l in linhas if l['state'] == state]
-        pior_l = min(do_estado, key=lambda l: l['ratio'] / l['floor'])
-        marca = 'EXC' if pior_l['exc'] and not pior_l['pass'] else ('ok' if pior_l['pass'] else 'XX')
-        print(f'  {state:<12} pior papel: {pior_l["papel"]:<15} '
-              f'{pior_l["ratio"]:>6}:1 / {pior_l["floor"]}  [{pior_l["theme"]}] {marca}')
+        of_state = [l for l in rows if l['state'] == state]
+        worst_l = min(of_state, key=lambda l: l['ratio'] / l['floor'])
+        mark = 'EXC' if worst_l['exc'] and not worst_l['pass'] else ('ok' if worst_l['pass'] else 'XX')
+        print(f'  {state:<12} worst role: {worst_l["role"]:<15} '
+              f'{worst_l["ratio"]:>6}:1 / {worst_l["floor"]}  [{worst_l["theme"]}] {mark}')
 
     print('-' * 78)
-    print('efeito da ordem de camada (o que a etapa 3 nao podia ver):')
+    print('effect of layer order (what the token layer could not see):')
     for theme, _ in THEMES:
-        rep = next(l for l in linhas if l['state'] == 'default' and l['theme'] == theme and l['papel'] == 'borda')
-        foc = next(l for l in linhas if l['state'] == 'focus' and l['theme'] == theme and l['papel'] == 'borda')
-        print(f'  borda [{theme:<5}] repouso {rep["ratio"]}:1 contra a pagina  ->  '
-              f'foco {foc["ratio"]}:1 contra o respiro do anel')
+        rest = next(l for l in rows if l['state'] == 'default' and l['theme'] == theme and l['role'] == 'border')
+        foc = next(l for l in rows if l['state'] == 'focus' and l['theme'] == theme and l['role'] == 'border')
+        print(f'  border [{theme:<5}] rest {rest["ratio"]}:1 against the page  ->  '
+              f'focus {foc["ratio"]}:1 against the ring gap')
     print('-' * 78)
 
-    if excecoes:
-        print(f'excecoes conscientes - {len(excecoes)} medicoes, nenhuma e achado novo:')
-        for chave in PENDING:
-            n = [l for l in excecoes if l['exc'] == chave]
+    if exceptions:
+        print(f'conscious exceptions - {len(exceptions)} measurements, none is a new finding:')
+        for key in PENDING:
+            n = [l for l in exceptions if l['exc'] == key]
             if n:
-                faixa = f'{min(l["ratio"] for l in n)}:1 a {max(l["ratio"] for l in n)}:1'
-                print(f'   {chave}: {len(n)} medicoes, {faixa}')
+                span = f'{min(l["ratio"] for l in n)}:1 to {max(l["ratio"] for l in n)}:1'
+                print(f'   {key}: {len(n)} measurements, {span}')
     print('-' * 78)
 
-    achados, n_campos = marcacao(path)
-    print(f'contrato de marcacao - {os.path.relpath(path, ROOT)}  '
-          f'({n_campos} campo(s) medido(s)):')
-    if achados:
-        for a in achados:
+    findings, n_fields = markup(path)
+    print(f'markup contract - {os.path.relpath(path, ROOT)}  '
+          f'({n_fields} field(s) measured):')
+    if findings:
+        for a in findings:
             print('   ', a)
-    elif n_campos == 0:
-        # zero campo nao e zero problema: e nada medido. Dizer "passa" aqui
-        # seria a pior mentira que um portao pode contar.
-        print('    PENDENTE - nenhum campo neste HTML. Rodar site/site.py e chamar')
-        print('    este portao de novo (ver ORDEM DE EXECUCAO no cabecalho).')
+    elif n_fields == 0:
+        # zero fields is not zero problems: it is nothing measured. Saying
+        # "pass" here would be the worst lie a gate can tell.
+        print('    PENDING - no field in this HTML. Run site/site.py and call')
+        print('    this gate again (see RUN ORDER in the header).')
     else:
-        print('    as seis regras passam em todos os campos')
+        print('    the six rules pass on every field')
     print('-' * 78)
 
-    # O site le este arquivo para montar a aba de Acessibilidade.
+    # The site reads this file to build the Accessibility tab.
     json.dump({
         'component': 'select',
-        'criterion': 'WCAG 1.4.3 texto (rotulo, marca, valor, apoio) + '
-                     '1.4.11 nao-textual (borda, seta, anel)',
+        'criterion': 'WCAG 1.4.3 text (label, mark, value, help) + '
+                     '1.4.11 non-text (border, chevron, ring)',
         'floors': {'text': TEXT_FLOOR, 'nonText': NON_TEXT_FLOOR},
         'markupSource': os.path.relpath(path, ROOT),
-        'markupChecked': n_campos,
-        'markupPending': n_campos == 0,
+        'markupChecked': n_fields,
+        'markupPending': n_fields == 0,
         'markupRules': [
-            'todo campo tem id e um <label for> apontando para ele',
-            'campo em erro tem aria-invalid="true" e aria-describedby que existe',
-            'o placeholder e a primeira <option value=""> selecionada',
-            'a seta e decorativa: aria-hidden="true" e focusable="false"',
-            'nenhum campo usa aria-label havendo rotulo visivel',
-            'o id do campo e unico no documento',
+            'every field has an id and a <label for> pointing to it',
+            'a field in error has aria-invalid="true" and an aria-describedby that exists',
+            'the placeholder is the first selected <option value="">',
+            'the chevron is decorative: aria-hidden="true" and focusable="false"',
+            'no field uses aria-label when there is a visible label',
+            'the field id is unique in the document',
         ],
-        'fails': len(reprovas),
-        'exceptions': {k: len([l for l in excecoes if l['exc'] == k]) for k in PENDING},
+        'fails': len(fails),
+        'exceptions': {k: len([l for l in exceptions if l['exc'] == k]) for k in PENDING},
         'layerEffect': [
             {'theme': theme,
-             'rest': next(l['ratio'] for l in linhas if l['state'] == 'default'
-                          and l['theme'] == theme and l['papel'] == 'borda'),
-             'focused': next(l['ratio'] for l in linhas if l['state'] == 'focus'
-                             and l['theme'] == theme and l['papel'] == 'borda')}
+             'rest': next(l['ratio'] for l in rows if l['state'] == 'default'
+                          and l['theme'] == theme and l['role'] == 'border'),
+             'focused': next(l['ratio'] for l in rows if l['state'] == 'focus'
+                             and l['theme'] == theme and l['role'] == 'border')}
             for theme, _ in THEMES],
-        'rows': linhas,
+        'rows': rows,
     }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
-    print(f'build/components/select/a11y.json escrito ({len(linhas)} medicoes)')
+    print(f'build/components/select/a11y.json written ({len(rows)} measurements)')
     print('-' * 78)
 
-    if reprovas:
-        print(f'{len(reprovas)} COMBINACAO(OES) REPROVAM:')
-        for l in reprovas:
-            print(f'   {l["state"]}/{l["theme"]} {l["papel"]}: {l["ratio"]}:1 < {l["floor"]} '
-                  f'(contra {l["contra"]})')
+    if fails:
+        print(f'{len(fails)} COMBINATION(S) FAIL:')
+        for l in fails:
+            print(f'   {l["state"]}/{l["theme"]} {l["role"]}: {l["ratio"]}:1 < {l["floor"]} '
+                  f'(against {l["against"]})')
         return 1
-    if achados:
-        if n_campos == 0:
-            print('contrato de marcacao PENDENTE - o site ainda nao emite Select.')
-            print('Rodar site/site.py e chamar este portao de novo (ver ORDEM no cabecalho).')
+    if findings:
+        if n_fields == 0:
+            print('markup contract PENDING - the site does not emit a Select yet.')
+            print('Run site/site.py and call this gate again (see RUN ORDER in the header).')
             return 0
-        print(f'{len(achados)} QUEBRA(S) DE CONTRATO DE MARCACAO - PORTAO REPROVA.')
+        print(f'{len(findings)} MARKUP CONTRACT BREAK(S) - GATE FAILS.')
         return 1
 
-    if n_campos == 0:
-        print('contraste renderizado: em ordem. Marcacao: PENDENTE, nada medido ainda.')
+    if n_fields == 0:
+        print('rendered contrast: in order. Markup: PENDING, nothing measured yet.')
         return 0
-    print('contraste renderizado e contrato de marcacao: tudo em ordem.')
+    print('rendered contrast and markup contract: all in order.')
     return 0
 
 

@@ -1,23 +1,23 @@
 """
-Monta o pacote publicado (dist/) a partir de build/ e src/.
+Assembles the published package (dist/) from build/ and src/.
 
     dist/
-      al.css                   Foundation + os 23 componentes, num arquivo so
-      foundation.css           so a Foundation
-      tokens.json              os tokens da Foundation, para ler por codigo
-      components/<c>.css       tokens do componente + CSS dele, num arquivo
-      components/<c>.js        o comportamento, nos componentes que tem script
-      icons/*.svg, icons.json  os icones (Lucide, ISC - ver icons/NOTICE)
+      al.css                   Foundation + the 23 components, in one file
+      foundation.css           only the Foundation
+      tokens.json              the Foundation tokens, to read from code
+      components/<c>.css       the component's tokens + its CSS, in one file
+      components/<c>.js        the behavior, for components that have a script
+      icons/*.svg, icons.json  the icons (Lucide, ISC - see icons/NOTICE)
       icons/NOTICE
 
-Quem usa escolhe: al.css inteiro, ou foundation.css + o CSS de cada componente
-que for usar. Todo CSS de componente depende da Foundation.
+Users choose: the whole al.css, or foundation.css + the CSS of each component
+they use. Every component CSS depends on the Foundation.
 
-Roda no fim do build.py, depois de todos os portoes: dist/ so existe se tudo
-passou. Apaga e remonta a pasta inteira a cada vez, para nao sobrar arquivo de
-um build anterior.
+Runs at the end of build.py, after every gate: dist/ only exists if everything
+passed. It deletes and rebuilds the whole folder each time, so no file from a
+previous build is left behind.
 
-Rodar: python3 tools/dist.py (ou o build completo: python3 build.py)
+Run: python3 tools/dist.py (or the full build: python3 build.py)
 """
 import json
 import os
@@ -38,11 +38,11 @@ def write(path, text):
 
 
 def run():
-    pastas = sorted(os.listdir(os.path.join(SRC, 'components')))
-    fora = sorted(set(pastas) - set(COMPONENTS))
-    if fora:
-        print(f'Componente fora da lista COMPONENTS de tools/paths.py: {", ".join(fora)}')
-        print('Sem entrar na lista, ele nao vai para o pacote.')
+    folders = sorted(os.listdir(os.path.join(SRC, 'components')))
+    missing = sorted(set(folders) - set(COMPONENTS))
+    if missing:
+        print(f'Component missing from the COMPONENTS list in tools/paths.py: {", ".join(missing)}')
+        print('Unless it is on the list, it does not go into the package.')
         return 1
 
     if os.path.exists(DIST):
@@ -53,7 +53,7 @@ def run():
     write(os.path.join(DIST, 'foundation.css'), foundation)
     shutil.copyfile(TOKENS_JSON, os.path.join(DIST, 'tokens.json'))
 
-    # Mesma juncao que o site faz: tokens do componente, depois o CSS dele.
+    # Same join the site does: the component's tokens, then its CSS.
     parts, scripts = [], []
     for c in COMPONENTS:
         css = read(comp_out(c, f'al-{c}-tokens.css')) + '\n' + read(comp_src(c, f'{c}.css'))
@@ -64,7 +64,7 @@ def run():
             shutil.copyfile(js, os.path.join(DIST, 'components', f'{c}.js'))
             scripts.append(c)
 
-    banner = (f'/* AL Design System {version} - Foundation + {len(COMPONENTS)} componentes.\n'
+    banner = (f'/* AL Design System {version} - Foundation + {len(COMPONENTS)} components.\n'
               f' * MIT. https://github.com/guilhermedworakowski/al-design-system\n'
               f' */\n')
     write(os.path.join(DIST, 'al.css'), banner + foundation + '\n' + '\n'.join(parts))
@@ -77,10 +77,10 @@ def run():
 
     total = sum(os.path.getsize(os.path.join(d, f))
                 for d, _, fs in os.walk(DIST) for f in fs)
-    print(f'{rel(DIST)}/ montado - versao {version}')
+    print(f'{rel(DIST)}/ assembled - version {version}')
     print(f'  al.css            : {os.path.getsize(os.path.join(DIST, "al.css")):,} bytes')
-    print(f'  componentes       : {len(COMPONENTS)} CSS, {len(scripts)} JS ({", ".join(scripts)})')
-    print(f'  icones            : {n_icons}')
+    print(f'  components        : {len(COMPONENTS)} CSS, {len(scripts)} JS ({", ".join(scripts)})')
+    print(f'  icons             : {n_icons}')
     print(f'  total             : {total:,} bytes')
     return 0
 

@@ -1,14 +1,14 @@
 """
-Camada de tokens do Button.
+Token layer for the Button.
 
-Regra unica desta camada: nada aqui inventa valor. Todo token do Button
-aponta para um token da Foundation pelo NOME. O portao no fim do arquivo
-recusa qualquer coisa que seja um valor solto - hex, px, numero.
+The one rule of this layer: nothing here invents a value. Every Button token
+points to a Foundation token by NAME. The gate at the end of the file rejects
+anything that is a loose value - hex, px, number.
 
-Nomenclatura:
-  codigo -> button-primary-bg-hover     (hifen)
-  Figma  -> button/primary/bg-hover     (pasta)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> button-primary-bg-hover     (hyphen)
+  Figma -> button/primary/bg-hover     (folder)
+They are different layers. Never collapse one into the other.
 """
 import json, os, sys
 
@@ -20,16 +20,16 @@ sys.path.insert(0, FOUNDATION_SRC)
 from palette import SEM                     # noqa: E402
 from tokenlib import resolve_foundation, css_ref, save_css  # noqa: E402
 
-# Fonte unica, na raiz. O chdir que existia aqui apontava para uma copia em
-# foundation/, e era ela - nao a raiz - que os portoes liam.
+# Single source, at the root. The chdir that used to be here pointed to a copy
+# in foundation/, and that copy - not the root - was what the gates read.
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-TRANSPARENT = 'transparent'   # ausencia de cor, nao uma escolha de cor
+TRANSPARENT = 'transparent'   # absence of color, not a color choice
 
-# ---------------------------------------------------------------- cor
-# Cada variante repete a mesma forma: fundo em 4 estados, rotulo em 2,
-# borda em 2, anel de foco. Onde a variante nao tem aquele papel, o valor
-# e transparente - a geometria nao muda entre estados, so a cor.
+# ---------------------------------------------------------------- color
+# Each variant repeats the same shape: background in 4 states, label in 2,
+# border in 2, focus ring. Where the variant doesn't have that role, the value
+# is transparent - the geometry doesn't change between states, only the color.
 COLOR = {
   'primary': {
     'bg':               'bg-brand',
@@ -73,8 +73,8 @@ COLOR = {
   },
 }
 
-# Anel de foco: aponta para a sombra composta da Foundation, nao para a cor
-# crua. Danger usa o anel de erro; o resto usa o padrao.
+# Focus ring: points to the Foundation's composite shadow, not the raw color.
+# Danger uses the error ring; the rest use the default.
 RING = {
   'primary':   'focusRing.default',
   'secondary': 'focusRing.default',
@@ -82,15 +82,15 @@ RING = {
   'danger':    'focusRing.error',
 }
 
-# ------------------------------------------------------------ geometria
-# Nao existe token de altura. A altura e consequencia: padding-y x2 mais a
-# entrelinha do rotulo. sm = 8+20+8 = 36. md = 12+24+12 = 48. Criar um
-# token de altura seria fixar em dois lugares a mesma decisao.
+# ------------------------------------------------------------- geometry
+# There is no height token. Height is a consequence: padding-y x2 plus the
+# label's line height. sm = 8+20+8 = 36. md = 12+24+12 = 48. A height token
+# would pin the same decision in two places.
 #
-# O icone tambem entra aqui, e nao no SHARED, porque ele nao tem tamanho
-# proprio: ele tem a ALTURA DA LINHA do rotulo. sm usa label-md, entrelinha 20;
-# md usa label-lg, entrelinha 24. E por isso que ligar o icone nao mexe na
-# altura do botao - ele ocupa exatamente a caixa que a linha de texto ja ocupa.
+# The icon also goes here, and not in SHARED, because it has no size of its
+# own: it has the label's LINE HEIGHT. sm uses label-md, line height 20; md
+# uses label-lg, line height 24. That is why turning the icon on doesn't change
+# the button's height - it takes exactly the box the line of text already takes.
 SIZE = {
   'sm': {'padding-x': 'space.12', 'padding-y': 'space.8',
          'gap': 'space.8', 'font': 'type.styles.label-md',
@@ -105,29 +105,31 @@ SHARED = {
   'border-width': 'border.width.1',
 }
 
-# Resolvida em 06/09/2026: a escala de icone nasceu na Foundation junto com o
-# componente Icon, e o icon-size do Button virou alias puro. O valor renderizado
-# nao mudou naquele momento - eram 16px literais, viraram 16px por token.
+# Resolved on 2026-09-06: the icon scale was born in the Foundation together
+# with the Icon component, and the Button's icon-size became a pure alias. The
+# rendered value didn't change at that moment - it was 16px literal, it became
+# 16px by token.
 #
-# Resolvida em 07/09/2026, no PR de migracao: o desenho subiu o icone para 20 no
-# sm e 24 no md, colando na entrelinha do rotulo. Com isso o token deixou de ser
-# um so (button-icon-size) e virou um por tamanho - por isso saiu do SHARED e
-# entrou no SIZE.
+# Resolved on 2026-09-07, in the migration PR: the design moved the icon up to
+# 20 in sm and 24 in md, matching the label's line height. With that the token
+# stopped being a single one (button-icon-size) and became one per size - that
+# is why it left SHARED and went into SIZE.
 #
-# Corrigido em 08/09/2026: a nota anterior dizia que o Icon Button usaria 20 nos
-# dois tamanhos. Nao foi o que aconteceu - ele fechou em 20 no sm e 24 no md,
-# os mesmos degraus daqui. O motivo nao e imitacao: la a caixa e padding x2 mais
-# o icone, e 36 e 48 so fecham com 8+20+8 e 12+24+12, porque 14 nao e degrau de
-# espacamento. A razao de existir de cada token continua diferente - aqui o
-# icone acompanha a entrelinha do rotulo, la ele e o conteudo inteiro - mas o
-# valor coincide, e e isso que mantem os dois alinhados numa toolbar.
+# Corrected on 2026-09-08: the previous note said the Icon Button would use 20
+# in both sizes. That's not what happened - it closed at 20 in sm and 24 in md,
+# the same steps as here. The reason isn't imitation: there the box is padding
+# x2 plus the icon, and 36 and 48 only work out with 8+20+8 and 12+24+12,
+# because 14 is not a spacing step. Each token's reason to exist is still
+# different - here the icon follows the label's line height, there it is the
+# whole content - but the value matches, and that is what keeps both aligned
+# in a toolbar.
 #
-# O mecanismo fica de pe, vazio. Pendencia some do relatorio quando some de
-# verdade, nunca por esquecimento.
+# The mechanism stays in place, empty. A pending item leaves the report when it
+# is really gone, never by forgetting.
 PENDING = {}
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def run():
     alias, resolved, problems = {}, {}, []
 
@@ -139,10 +141,10 @@ def run():
                 resolved[name] = {'light': TRANSPARENT, 'dark': TRANSPARENT}
                 continue
             if ref.startswith('#'):
-                problems.append(f'{name}: hex solto ({ref}) - todo valor de cor nasce alias do semantico')
+                problems.append(f'{name}: loose hex ({ref}) - every color value is born as an alias of a semantic')
                 continue
             if ref not in SEM:
-                problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+                problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
                 continue
             light, dark = SEM[ref]
             resolved[name] = {'light': light, 'dark': dark}
@@ -154,7 +156,7 @@ def run():
             v = resolve_foundation(ref)
             resolved[name] = {'light': v['light'], 'dark': v['dark']}
         except KeyError:
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for size, roles in SIZE.items():
         for role, ref in roles.items():
@@ -163,7 +165,7 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for role, ref in SHARED.items():
         name = f'button-{role}'
@@ -171,62 +173,62 @@ def run():
         try:
             resolved[name] = resolve_foundation(ref)
         except KeyError:
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
-    # altura derivada, so para conferencia - nao vira token
+    # derived height, only for checking - it doesn't become a token
     heights = {}
     for size in SIZE:
         py = resolve_foundation(SIZE[size]['padding-y'])
         style = resolve_foundation(SIZE[size]['font'])
-        heights[size] = py * 2 + style[2]   # (nome, size, leading, ...) -> leading
+        heights[size] = py * 2 + style[2]   # (name, size, leading, ...) -> leading
 
     print('=' * 70)
-    print('CAMADA DE TOKENS DO BUTTON')
+    print('BUTTON TOKEN LAYER')
     print('=' * 70)
     for name in sorted(alias):
         ref = alias[name]
-        tag = 'transparente' if ref == TRANSPARENT else f'-> {ref}'
+        tag = 'transparent' if ref == TRANSPARENT else f'-> {ref}'
         print(f'  {name:<34} {tag}')
     print('-' * 70)
-    print(f'altura derivada: sm {heights["sm"]}px   md {heights["md"]}px  (padding-y x2 + entrelinha)')
-    # conferencia, nao portao: o icone deve bater com a entrelinha do rotulo -
-    # e o que faz ligar o icone nao mexer na altura do botao
+    print(f'derived height: sm {heights["sm"]}px   md {heights["md"]}px  (padding-y x2 + line height)')
+    # a check, not a gate: the icon must match the label's line height - that
+    # is what makes turning the icon on not change the button's height
     for size in SIZE:
         box = resolve_foundation(SIZE[size]['icon-size'])
         lead = resolve_foundation(SIZE[size]['font'])[2]
-        sinal = '=' if box == lead else 'DIFERE DE'
-        print(f'icone {size}: {box}px {sinal} entrelinha {lead}px')
+        sign = '=' if box == lead else 'DIFFERS FROM'
+        print(f'icon {size}: {box}px {sign} line height {lead}px')
     if PENDING:
         for k, v in PENDING.items():
-            print(f'pendente: {k} - {v}')
+            print(f'pending: {k} - {v}')
     else:
-        print('pendencias: nenhuma')
+        print('pending: none')
     print('-' * 70)
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
 
     n_alias = sum(1 for r in alias.values() if r != TRANSPARENT)
     n_tr = len(alias) - n_alias
-    print(f'{len(alias)} tokens: {n_alias} alias da Foundation, {n_tr} transparentes.')
-    print('0 valores soltos.')
+    print(f'{len(alias)} tokens: {n_alias} aliases of the Foundation, {n_tr} transparent.')
+    print('0 loose values.')
 
     out = {
         'meta': {
             'component': 'Button',
-            # 0.2.0: o icone passou a ter um token por tamanho (20 no sm, 24 no
-            # md). O token button-icon-size deixou de existir e o valor
-            # renderizado mudou - entao MINOR, nao PATCH.
+            # 0.2.0: the icon got one token per size (20 in sm, 24 in md). The
+            # button-icon-size token stopped existing and the rendered value
+            # changed - so MINOR, not PATCH.
             'version': '0.2.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '23:123',
             'variants': list(COLOR),
             'sizes': list(SIZE),
             'states': ['default', 'hover', 'pressed', 'focus', 'disabled'],
-            'nota': 'button-*-ring aponta para a sombra composta, nao para a cor crua.',
+            'note': 'button-*-ring points to the composite shadow, not the raw color.',
         },
         'alias': alias,
         'resolved': resolved,
@@ -234,27 +236,27 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('button', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print(f'\nbuild/components/button/tokens.json escrito')
+    print(f'\nbuild/components/button/tokens.json written')
     write_css(alias, heights)
     return 0
 
 
-# ---------------------------------------------------------------- css
+# ------------------------------------------------------------------- css
 def write_css(alias, heights):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Button')
-    w(' * GERADO por src/components/button/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Button tokens')
+    w(' * GENERATED by src/components/button/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um')
-    w(' * semantico, e o tema troca no :root - o mesmo elemento onde estes alias')
-    w(' * sao declarados. Entao o :root re-substitui todos eles de uma vez, e o')
-    w(' * Button inteiro acompanha sem uma linha a mais.')
+    w(' * There is no theme block here, and that is the point: each token points')
+    w(' * to a semantic, and the theme switches on :root - the same element where')
+    w(' * these aliases are declared. So :root re-substitutes all of them at once,')
+    w(' * and the whole Button follows without one extra line.')
     w(' *')
-    w(' * Cuidado: substituicao de custom property acontece no elemento onde ela e')
-    w(' * DECLARADA, nao no ponto de uso. Um alias declarado aqui desce ja resolvido.')
-    w(' * Por isso tematizar um container solto (e nao o :root) exige re-declarar')
-    w(' * esta camada dentro do bloco daquele container - ver site/site.py.')
+    w(' * Careful: custom property substitution happens on the element where it is')
+    w(' * DECLARED, not at the point of use. An alias declared here inherits already')
+    w(' * resolved. That is why theming a loose container (not :root) requires')
+    w(' * re-declaring this layer inside that container\'s block - see site/site.py.')
     w(' */')
     w('')
     w(':root {')
@@ -268,7 +270,7 @@ def write_css(alias, heights):
 
     for size, roles in SIZE.items():
         w('')
-        w(f'  /* tamanho {size} - altura resultante: {heights[size]}px */')
+        w(f'  /* size {size} - resulting height: {heights[size]}px */')
         for role, ref in roles.items():
             if role == 'font':
                 style = resolve_foundation(ref)
@@ -280,7 +282,7 @@ def write_css(alias, heights):
                 w(f'  --al-button-{size}-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* compartilhado */')
+    w('  /* shared */')
     for role, ref in SHARED.items():
         w(f'  --al-button-{role}: {css_ref(ref)};')
     w('}')
@@ -305,7 +307,7 @@ def scale_key_in(d, value, label):
     for k, x in d.items():
         if x == value:
             return k
-    raise KeyError(f'{value} nao e um degrau de {label}')
+    raise KeyError(f'{value} is not a {label} step')
 
 
 if __name__ == '__main__':

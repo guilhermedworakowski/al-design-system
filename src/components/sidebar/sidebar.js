@@ -1,23 +1,26 @@
-/* AL Design System - Sidebar, comportamento da tela estreita
+/* AL Design System - Sidebar, narrow screen behavior
  *
- * Acima de 1024px a Sidebar e so marcacao e CSS: nao ha nada para ligar.
- * Abaixo disso ela vira painel modal pela esquerda (regras 24 e 25), e este
- * arquivo cobre o que o CSS nao faz:
- *   - abrir pelo botao Menu do produto: data-al-sidebar-open="<id da aside>".
- *     A MESMA <aside> e movida para dentro de um <dialog class="al-sidebar-modal">
- *     e volta para o lugar dela ao fechar - nunca ha duas copias da navegacao;
- *   - o <dialog> nativo prende o foco, deixa a pagina inerte, fecha com Esc e
- *     devolve o foco ao botao Menu;
- *   - foco inicial no item atual (aria-current), senao no primeiro item;
- *   - fecha ao escolher um destino (clique num link do <nav>);
- *   - fecha SEMPRE no clique no scrim: a Sidebar nao tem campos;
- *   - sem X (decisao 3): Menu, Esc e scrim bastam;
- *   - se a tela alargar com o painel aberto, fecha e a Sidebar volta a pagina;
- *   - mantem aria-expanded do botao Menu em dia.
+ * Above 1024px the Sidebar is only markup and CSS: there is nothing to bind.
+ * Below that it becomes a modal panel from the left (rules 24 and 25), and
+ * this file covers what the CSS doesn't:
+ *   - opening from the product's Menu button: data-al-sidebar-open="<aside id>".
+ *     The SAME <aside> is moved into a <dialog class="al-sidebar-modal"> and
+ *     goes back to its place on closing - there are never two copies of the
+ *     navigation;
+ *   - the native <dialog> traps focus, makes the page inert, closes with Esc
+ *     and returns focus to the Menu button;
+ *   - initial focus on the current item (aria-current), otherwise on the
+ *     first item;
+ *   - closes on choosing a destination (a click on a <nav> link);
+ *   - ALWAYS closes on a scrim click: the Sidebar has no fields;
+ *   - no X: Menu, Esc and the scrim are enough;
+ *   - if the screen widens with the panel open, it closes and the Sidebar
+ *     goes back to the page;
+ *   - keeps the Menu button's aria-expanded up to date.
  *
- * Uso:
- *   carregar este arquivo com um script src  -> liga sozinho
- * O ponto de quebra repete o do sidebar.css (excecao `ponto-de-quebra`).
+ * Usage:
+ *   load this file with a script src  -> binds by itself
+ * The breakpoint repeats sidebar.css's (exception `breakpoint`).
  */
 (function () {
   'use strict';
@@ -57,8 +60,8 @@
     dialog.appendChild(aside);
     open = { aside: aside, dialog: dialog, marker: marker, opener: opener };
 
-    // So devolve a <aside> depois da animacao de saida: o evento `close` vem
-    // na hora, mas o painel ainda esta deslizando.
+    // Only gives the <aside> back after the exit animation: the `close` event
+    // comes right away, but the panel is still sliding.
     dialog.addEventListener('close', function () {
       if (opener) opener.setAttribute('aria-expanded', 'false');
       var done = false;
@@ -79,7 +82,7 @@
       if (onScrim && pressedOnScrim) { dialog.close(); return; }
       pressedOnScrim = false;
       var link = e.target.closest && e.target.closest('.al-sidebar__nav a[href], .al-sidebar__profile a[href]');
-      if (link) dialog.close();                    // regra 25: escolheu, fecha
+      if (link) dialog.close();                    // rule 25: chose, closes
     });
 
     dialog.showModal();
@@ -94,7 +97,7 @@
     if (aside) show(aside, opener);
   });
 
-  // Tela alargou com o painel aberto: fecha e devolve na hora, sem animacao.
+  // The screen widened with the panel open: close and give back at once, no animation.
   NARROW.addEventListener('change', function (e) {
     if (!e.matches && open) {
       var d = open.dialog;

@@ -1,11 +1,11 @@
 """
-Portao do CSS do Divider.
+CSS gate for the Divider.
 
-A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
-de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
-nenhum token inventado. Aqui fica so o que e proprio do Divider.
+The rule is the same for every component and lives in tools/cssgate.py: no
+literal values (color, length, weight, duration), no orphan tokens and no
+invented tokens. Only what is specific to the Divider stays here.
 
-Rodar: python3 check.py (ou o build completo: python3 build.py)
+Run: python3 check.py (or the full build: python3 build.py)
 """
 import os
 import sys
@@ -14,17 +14,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from cssgate import gate  # noqa: E402
 
-# O que este portao NAO alcanca: marcacao so existe na saida renderizada.
-# O a11y.py da etapa 6 cobra estas regras no HTML que o site emite.
-FORA_DO_CSS = [
-    'padrao anunciado: <hr class="al-divider"> sem aria-hidden (regra 12)',
-    'decorativo: aria-hidden="true" (regra 13)',
-    'vertical anunciada: aria-orientation="vertical" (regra 14)',
-    'em <ul>/menu: <li role="separator">, nunca <hr> solto (regra 15)',
-    'nunca focavel nem clicavel: sem tabindex, sem onclick (regra 16)',
-    'a linha nunca e a unica pista do agrupamento (regra 8) - sem portao possivel',
+# What this gate does NOT reach: markup only exists in the rendered output.
+# a11y.py enforces these rules on the HTML the site emits.
+OUTSIDE_CSS = [
+    'announced default: <hr class="al-divider"> without aria-hidden (rule 12)',
+    'decorative: aria-hidden="true" (rule 13)',
+    'announced vertical: aria-orientation="vertical" (rule 14)',
+    'in a <ul>/menu: <li role="separator">, never a loose <hr> (rule 15)',
+    'never focusable or clickable: no tabindex, no onclick (rule 16)',
+    'the line is never the only clue of the grouping (rule 8) - no gate possible',
 ]
 
 
 if __name__ == '__main__':
-    sys.exit(gate('divider', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('divider', outside_css=OUTSIDE_CSS))

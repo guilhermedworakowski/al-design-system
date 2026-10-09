@@ -1,71 +1,75 @@
 /* AL Design System - Alert
  *
- * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css + icon.css,
- * os tokens e o CSS do Button e do Icon Button e al-alert-tokens.css, nesta
- * ordem. Comportamento (fechar e inserir depois do carregamento): alert.js.
+ * Written by hand. Depends on al-foundation.css, al-icon-tokens.css + icon.css,
+ * the Button and Icon Button tokens and CSS and al-alert-tokens.css, in that
+ * order. Behavior (closing and inserting after page load): alert.js.
  *
- * Nenhum valor aqui e literal: cor, espaco, raio, movimento e tipografia
- * entram por var(--al-alert-*). O check.py ao lado recusa o arquivo se algum
- * escapar.
+ * No value here is literal: color, space, radius, motion and typography come
+ * in through var(--al-alert-*). The check.py next to it rejects the file if
+ * any escapes.
  *
- * CONTRATO DE MARCACAO (regras 9, 15, 16, 17, 23, 26, 27)
+ * MARKUP CONTRACT (rules 9, 15, 16, 17, 23, 26, 27)
  *
- *   No topo da pagina, abaixo do header, antes do conteudo (regra 9), dentro
- *   de um lugar fixo - o .al-alert-slot - que existe desde o carregamento:
+ *   At the top of the page, below the header, before the content (rule 9),
+ *   inside a fixed place - the .al-alert-slot - that exists from page load:
  *
  *   <div class="al-alert-slot">
  *     <div class="al-alert al-alert--warning">
  *       <div class="al-alert__body">
  *         <svg class="al-icon al-icon--24 al-alert__icon" role="img"
- *              aria-label="Aviso">…triangle-alert…</svg>
+ *              aria-label="Warning">…triangle-alert…</svg>
  *         <div class="al-alert__text">
- *           <p class="al-alert__title">Seu plano vence em 3 dias</p>
- *           <p class="al-alert__description">Renove para não perder os relatórios.</p>
+ *           <p class="al-alert__title">Your plan expires in 3 days</p>
+ *           <p class="al-alert__description">Renew it to keep your reports.</p>
  *         </div>
  *         <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-alert__close"
- *                 aria-label="Fechar aviso" data-al-alert-close>          (opcional)
+ *                 aria-label="Close alert" data-al-alert-close>          (optional)
  *           <svg class="al-icon" aria-hidden="true" focusable="false">…x…</svg>
  *         </button>
  *       </div>
- *       <div class="al-alert__actions">                                   (opcional)
- *         <button type="button" class="al-btn al-btn--ghost al-btn--md">Ver detalhes</button>
- *         <button type="button" class="al-btn al-btn--primary al-btn--md">Renovar plano</button>
+ *       <div class="al-alert__actions">                                   (optional)
+ *         <button type="button" class="al-btn al-btn--ghost al-btn--md">See details</button>
+ *         <button type="button" class="al-btn al-btn--primary al-btn--md">Renew plan</button>
  *       </div>
  *     </div>
  *   </div>
  *
- *   - Status por modificador: --success, --warning, --danger, --info. Danger
- *     e cuidado, nao erro (regra 4). Sem Neutral (regra 28). Icone fixo por
- *     status: circle-check, triangle-alert, circle-alert, info (regra 15).
- *   - O icone CARREGA o status: role="img" + aria-label com o nome do status
- *     ("Sucesso", "Aviso", "Perigo", "Informação") - regra 16.
- *   - Titulo e descricao sao <p>, nunca heading: o Alert fica acima do h1 e
- *     nao entra no indice de titulos (regra 26). A descricao e obrigatoria.
- *   - Ate duas acoes, Ghost a esquerda e Primary a direita (regra 17), md.
- *   - X: Icon Button Ghost sm, "Fechar aviso" (regra 27). Warning e Danger
- *     nao levam X enquanto a situacao existir (regra 20) - isso e regra de
- *     uso, o CSS nao impede.
- *   - Presente no carregamento, o Alert e conteudo comum: sem role de regiao
- *     viva (regra 23). Inserido depois, o alert.js poe o role (regra 24).
+ *   - Status by modifier: --success, --warning, --danger, --info. Danger is
+ *     caution, not error (rule 4). No Neutral (rule 28). A fixed icon per
+ *     status: circle-check, triangle-alert, circle-alert, info (rule 15).
+ *   - The icon CARRIES the status: role="img" + aria-label with the status
+ *     name ("Success", "Warning", "Danger", "Information") - rule 16.
+ *   - Title and description are <p>, never a heading: the Alert sits above
+ *     the h1 and doesn't enter the headings index (rule 26). The description
+ *     is required.
+ *   - Up to two actions, Ghost on the left and Primary on the right (rule
+ *     17), md.
+ *   - X: Ghost sm Icon Button, "Close alert" (rule 27). Warning and Danger
+ *     don't take an X while the situation exists (rule 20) - that is a usage
+ *     rule, the CSS doesn't prevent it.
+ *   - The site is in Portuguese, so a11y.py checks the Portuguese names it
+ *     renders; the names above are the English equivalents.
+ *   - Present on page load, the Alert is regular content: no live region role
+ *     (rule 23). Inserted later, alert.js sets the role (rule 24).
  *
  * LAYOUT
- *   Coluna: corpo em cima, acoes embaixo, `alert-section-gap` (24) entre os
- *   dois. Corpo em linha: icone, texto e X separados por `alert-gap` (16), tudo
- *   alinhado ao topo - icone 24 na entrelinha 24 do titulo. Acoes alinhadas a
- *   direita, `alert-actions-gap` (16) entre os botoes; quebram de linha se nao
- *   couberem. Largura: a do conteudo da pagina, sem width (regra 10).
+ *   Column: body on top, actions below, `alert-section-gap` (24) between the
+ *   two. Body in a row: icon, text and X separated by `alert-gap` (16), all
+ *   aligned to the top - icon 24 on the title's 24 line height. Actions
+ *   aligned to the right, `alert-actions-gap` (16) between the buttons; they
+ *   wrap if they don't fit. Width: the page content's, no width (rule 10).
  *
- * BORDA E ALTURA
- *   Borda inside, como no Figma: o padding desconta a borda. Sem height.
+ * BORDER AND HEIGHT
+ *   Inside border, as in Figma: the padding discounts the border. No height.
  *
- * MOTION (decisao E)
- *   Entra e sai so com opacidade em `alert-duration` (duration-feedback,
- *   120ms, a dos botoes): curva de entrada ao aparecer, de saida ao sair.
- *   @starting-style da o ponto de partida; a saida e o [data-leaving] que o
- *   alert.js poe antes de remover. Sem transicao com prefers-reduced-motion.
+ * MOTION
+ *   Enters and exits with opacity only in `alert-duration` (duration-feedback,
+ *   120ms, the buttons'): enter curve on appearing, exit curve on leaving.
+ *   @starting-style gives the starting point; the exit is the [data-leaving]
+ *   alert.js sets before removing. No transition with prefers-reduced-motion.
  */
 
-/* ------------------------------------------------------------------- caixa */
+/* --------------------------------------------------------------------- box */
 .al-alert {
   --_icon: var(--al-alert-info-icon);
   --_border: var(--al-alert-info-border);
@@ -101,7 +105,7 @@
 .al-alert--danger  { --_icon: var(--al-alert-danger-icon);  --_border: var(--al-alert-danger-border); }
 .al-alert--info    { --_icon: var(--al-alert-info-icon);    --_border: var(--al-alert-info-border); }
 
-/* -------------------------------------------------------------------- corpo */
+/* --------------------------------------------------------------------- body */
 .al-alert__body {
   display: flex;
   align-items: flex-start;
@@ -144,7 +148,7 @@
   flex: none;
 }
 
-/* -------------------------------------------------------------------- acoes */
+/* ------------------------------------------------------------------ actions */
 .al-alert__actions {
   display: flex;
   flex-wrap: wrap;
@@ -153,10 +157,10 @@
   gap: var(--al-alert-actions-gap);
 }
 
-/* Botoes ghost e secondary sobre o fundo elevado: o Button le bg-hover/
-   bg-active, feitos para bg-surface. No escuro o fundo do Alert
-   (surface-raised) e igual ao bg-hover, e o hover sumia. Mesma correcao do
-   Modal (0.18.1), do Card e do Toast; sem token novo. */
+/* Ghost and secondary buttons on the raised background: the Button reads
+   bg-hover/bg-active, made for bg-surface. In dark the Alert background
+   (surface-raised) equals bg-hover, and the hover disappeared. The same fix
+   as the Modal (0.18.1), the Card and the Toast; no new token. */
 .al-alert .al-btn--ghost,
 .al-alert .al-btn--secondary,
 .al-alert .al-icon-btn--ghost,

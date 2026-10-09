@@ -1,80 +1,81 @@
-/* AL Design System - Breadcrumb (com o _breadcrumb-more)
+/* AL Design System - Breadcrumb (with _breadcrumb-more)
  *
- * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css + icon.css,
- * al-tab-tokens.css + tab.css (itens do menu) e al-breadcrumb-tokens.css,
- * nesta ordem. Comportamento do menu: breadcrumb.js.
+ * Written by hand. Depends on al-foundation.css, al-icon-tokens.css + icon.css,
+ * al-tab-tokens.css + tab.css (menu items) and al-breadcrumb-tokens.css, in
+ * that order. Menu behavior: breadcrumb.js.
  *
- * Nenhum valor aqui e literal: cor, espaco, raio, borda, sombra, anel e
- * tipografia entram por var(--al-breadcrumb-*). O check.py ao lado recusa o
- * arquivo se algum escapar.
+ * No value here is literal: color, space, radius, border, shadow, ring and
+ * typography come in through var(--al-breadcrumb-*). The check.py next to it
+ * rejects the file if any escapes.
  *
- * CONTRATO DE MARCACAO (regras 19 a 22)
+ * MARKUP CONTRACT (rules 19 to 22)
  *
- *   <nav class="al-breadcrumb" aria-label="Trilha de navegação">
+ *   <nav class="al-breadcrumb" aria-label="Breadcrumb">
  *     <ol class="al-breadcrumb__list">
  *       <li class="al-breadcrumb__item">
- *         <a class="al-breadcrumb__link" href="/">Início</a>
+ *         <a class="al-breadcrumb__link" href="/">Home</a>
  *         <svg class="al-icon al-icon--16 al-breadcrumb__separator" viewBox="0 0 24 24"
  *              aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
  *       </li>
  *       <li class="al-breadcrumb__item">
- *         <a class="al-breadcrumb__link" href="/vendas">Vendas</a>
+ *         <a class="al-breadcrumb__link" href="/sales">Sales</a>
  *         <svg class="al-icon al-icon--16 al-breadcrumb__separator" …></svg>
  *       </li>
- *       <li class="al-breadcrumb__item al-breadcrumb__more">            so na Large (regra 5)
+ *       <li class="al-breadcrumb__item al-breadcrumb__more">            Large only (rule 5)
  *         <button class="al-breadcrumb__more-button" type="button"
- *                 aria-label="Mostrar mais páginas"
- *                 aria-expanded="false" aria-controls="bc-mais">…</button>
- *         <ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-mais" hidden>
- *           <li><a class="al-tab" href="/vendas/pedidos">
- *             <span class="al-tab__label">Pedidos</span></a></li>
+ *                 aria-label="Show more pages"
+ *                 aria-expanded="false" aria-controls="bc-more">…</button>
+ *         <ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-more" hidden>
+ *           <li><a class="al-tab" href="/sales/orders">
+ *             <span class="al-tab__label">Orders</span></a></li>
  *         </ul>
  *         <svg class="al-icon al-icon--16 al-breadcrumb__separator" …></svg>
  *       </li>
  *       <li class="al-breadcrumb__item">
- *         <span class="al-breadcrumb__current" aria-current="page">Pedido 1042</span>
+ *         <span class="al-breadcrumb__current" aria-current="page">Order 1042</span>
  *       </li>
  *     </ol>
  *   </nav>
  *
- *   - <ol>: a ordem tem significado (regra 19).
- *   - O separador fica DENTRO do item que ele fecha, depois do link, e e
- *     aria-hidden: o leitor de tela nao le "seta" a cada nivel (regra 21). O
- *     ultimo item nao tem separador.
- *   - Pagina atual: <span aria-current="page">, nunca <a> - nao clica e nao
- *     recebe foco (regras 15 e 20).
- *   - Os itens do menu sao links (Tab Square de navegacao), nunca role="menu"
- *     (regra 17). Ordem de hierarquia, do mais alto para o mais baixo (regra 6).
+ *   - <ol>: the order has meaning (rule 19).
+ *   - The separator sits INSIDE the item it closes, after the link, and is
+ *     aria-hidden: the screen reader doesn't read "arrow" at every level
+ *     (rule 21). The last item has no separator.
+ *   - Current page: <span aria-current="page">, never <a> - it doesn't click
+ *     and doesn't receive focus (rules 15 and 20).
+ *   - The menu items are links (navigation Tab Square), never role="menu"
+ *     (rule 17). Hierarchy order, from highest to lowest (rule 6).
  *
- * QUANDO A LARGE APARECE (regra 5)
- *   Ate 4 niveis: todos os itens, sem o `…`. 5 ou mais: primeiro, segundo,
- *   `…` e a atual. Quem decide e quem monta a pagina - o componente nao mede.
+ * WHEN THE LARGE APPEARS (rule 5)
+ *   Up to 4 levels: all items, no `…`. 5 or more: first, second, `…` and the
+ *   current one. Whoever builds the page decides - the component doesn't
+ *   measure.
  *
- * SEM HOVER VISUAL NA TRILHA (regra 14)
- *   Link e `…` so trocam o cursor. Nenhuma regra :hover/:active de cor aqui,
- *   de proposito. Os itens DO MENU tem hover e pressed - sao Tab Square.
+ * NO VISUAL HOVER ON THE TRAIL (rule 14)
+ *   Link and `…` only change the cursor. No :hover/:active color rule here,
+ *   on purpose. The MENU items have hover and pressed - they are Tab Square.
  *
- * HOVER -raised NO MENU (regra 26)
- *   O menu mora em surface-raised, onde o bg-hover do Tab some no escuro.
- *   Em vez de reescrever o tab.css, o menu redefine as duas custom properties
- *   do Tab dentro dele - o tab.css continua sendo o unico que pinta o item.
+ * -raised HOVER IN THE MENU (rule 26)
+ *   The menu lives on surface-raised, where the Tab's bg-hover disappears in
+ *   dark. Instead of rewriting tab.css, the menu redefines the Tab's two
+ *   custom properties inside it - tab.css is still the only one that paints
+ *   the item.
  *
- * QUEBRA DE LINHA (regra 12)
- *   A lista quebra para a linha de baixo em tela estreita; o rotulo nunca e
- *   cortado. O item nao quebra por dentro: link e separador andam juntos.
+ * LINE WRAPPING (rule 12)
+ *   The list wraps to the next line on a narrow screen; the label is never
+ *   cut. The item doesn't wrap inside: link and separator go together.
  *
  * MOTION
- *   O menu entra e sai em fade de `motion-duration-feedback` (120ms, a do
- *   Button): ease-out ao abrir, ease-in ao fechar. Sem movimento com
- *   prefers-reduced-motion. A trilha nao anima nada (regra 14).
+ *   The menu enters and exits with a `motion-duration-feedback` fade (120ms,
+ *   the Button's): ease-out on opening, ease-in on closing. No motion with
+ *   prefers-reduced-motion. The trail animates nothing (rule 14).
  *
- * FOCO
- *   Anel padrao por teclado (:focus-visible) em link e `…`, com o canto em
- *   ring-radius (decisao C). Os itens do menu
- *   usam o anel do proprio Tab Square (regra 24).
+ * FOCUS
+ *   Default keyboard ring (:focus-visible) on link and `…`, with the corner in
+ *   ring-radius. The menu items use the Tab Square's own ring (rule 24).
  */
 
-/* ----------------------------------------------------------------- trilha */
+/* ------------------------------------------------------------------ trail */
 .al-breadcrumb__list {
   display: flex;
   flex-wrap: wrap;
@@ -117,20 +118,21 @@
   box-shadow: var(--al-breadcrumb-ring);
 }
 
-/* O canto vale sempre, nao so no foco: assim o anel nao muda de forma ao
-   aparecer. Link e `…` nao tem fundo, entao o raio so se ve no anel (C). */
+/* The corner always applies, not only on focus: that way the ring doesn't
+   change shape when it appears. Link and `…` have no background, so the
+   radius only shows on the ring. */
 .al-breadcrumb__link,
 .al-breadcrumb__more-button {
   border-radius: var(--al-breadcrumb-ring-radius);
 }
 
 /* ------------------------------------------------------------------- `…` */
-/* Grade, nao flex: o menu (absoluto) se posiciona pela COLUNA do `…`, nao
-   pelo item inteiro - o item tambem carrega o separador, e centralizar nele
-   deslocava o menu meio separador para a direita. Filho absoluto de grade
-   com grid-column usa a area da coluna como bloco de referencia - desde que
-   a coluna seja EXPLICITA (coluna implicita conta como `auto` e o menu
-   voltava a centralizar no item inteiro; medido na etapa 6). */
+/* Grid, not flex: the menu (absolute) positions itself by the `…` COLUMN, not
+   by the whole item - the item also carries the separator, and centering on
+   it shifted the menu half a separator to the right. An absolute grid child
+   with grid-column uses the column area as its containing block - as long as
+   the column is EXPLICIT (an implicit column counts as `auto` and the menu
+   went back to centering on the whole item; measured in QA). */
 .al-breadcrumb__more {
   position: relative;
   display: grid;
@@ -149,14 +151,14 @@
 }
 
 /* ------------------------------------------------------------------- menu */
-/* Centralizado sob o `…`, `menu-offset` abaixo dele - como no Figma. Cresce
-   com o rotulo a partir da largura minima (decisao A). */
+/* Centered under the `…`, `menu-offset` below it - as in Figma. Grows with
+   the label from the minimum width. */
 .al-breadcrumb__menu {
   --al-tab-bg-hover: var(--al-breadcrumb-menu-item-bg-hover);
   --al-tab-bg-active: var(--al-breadcrumb-menu-item-bg-active);
 
   position: absolute;
-  grid-column: 1 / 2;   /* as duas linhas: em absoluto, fim `auto` vira a borda do item */
+  grid-column: 1 / 2;   /* both lines: when absolute, an `auto` end becomes the item's edge */
   grid-row: 1 / 2;
   top: calc(100% + var(--al-breadcrumb-menu-offset));
   left: 50%;
@@ -189,13 +191,13 @@
   flex: 1 1 auto;
 }
 
-/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
-   declara a de saida (ease-in, ao fechar); o menu aberto declara a de entrada
-   (ease-out). @starting-style da o ponto de partida do fade ao abrir, e
-   `allow-discrete` segura o display:none do [hidden] ate o fade de saida
-   terminar - o mesmo mecanismo do Modal, na duracao de feedback (120ms, a do
-   Button), porque o menu e pequeno e responde a um clique. Sem deslocamento:
-   so opacidade, a posicao e a do Figma do comeco ao fim. */
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in, on closing); the open menu declares the
+   enter one (ease-out). @starting-style gives the starting point of the fade
+   on opening, and `allow-discrete` holds the [hidden] display:none until the
+   exit fade ends - the same mechanism as the Modal, at the feedback duration
+   (120ms, the Button's), because the menu is small and answers a click. No
+   offset: only opacity, the position is Figma's from start to end. */
 .al-breadcrumb__menu:not([hidden]) {
   transition-timing-function: var(--al-motion-easing-enter);
 }
@@ -212,7 +214,7 @@
   }
 }
 
-/* --------------------------------------------------------- alto contraste */
+/* ---------------------------------------------------------- high contrast */
 @media (forced-colors: active) {
   .al-breadcrumb__link:focus-visible,
   .al-breadcrumb__more-button:focus-visible {

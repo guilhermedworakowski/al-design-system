@@ -1,51 +1,51 @@
 """
-Camada de tokens do Divider.
+Token layer for the Divider.
 
-Regra unica desta camada: nada aqui inventa valor. Todo token aponta para um
-token da Foundation pelo NOME. O portao no fim do arquivo recusa qualquer
-coisa que seja um valor solto - hex, px, numero.
+The one rule of this layer: nothing here invents a value. Every token points
+to a Foundation token by NAME. The gate at the end of the file rejects
+anything that is a loose value - hex, px, number.
 
-Nomenclatura:
-  codigo -> divider-color             (hifen)
-  Figma  -> color                     (collection `15. Divider`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> divider-color             (hyphen)
+  Figma -> color                     (collection `15. Divider`)
+They are different layers. Never collapse one into the other.
 
-PRIMEIRO COMPONENTE DO TIER 3 (07/10/2026)
+FIRST COMPONENT OF TIER 3 (2026-10-07)
 
-  Component set `divider`, node 304:1076, pagina `Tier 3` do Figma. Um eixo
-  `Orientation` (Horizontal / Vertical). Uma espessura so (precedente Polaris),
-  sem recuo, sem texto no meio, sem cor de marca ou de status.
+  Component set `divider`, node 304:1076, page `Tier 3` in Figma. One axis,
+  `Orientation` (Horizontal / Vertical). One thickness only (precedent:
+  Polaris), no inset, no text in the middle, no brand or status color.
 
-A COR E `border-default`, NAO `border-subtle` (opcao A de Gui, etapa 6)
+THE COLOR IS `border-default`, NOT `border-subtle`
 
-  Nasceu `border-subtle`. O portao da etapa 6 mediu a terceira superficie do
-  sistema e achou a linha INVISIVEL no escuro sobre card e modal:
-  `border-subtle` e `bg-surface-raised` sao o mesmo neutral-800 ali. Trocar so
-  o Divider resolve sem mexer na Foundation nem nos outros componentes que
-  usam `border-subtle`.
+  It was born `border-subtle`. The contrast gate measured the system's third
+  surface and found the line INVISIBLE in dark on card and modal:
+  `border-subtle` and `bg-surface-raised` are the same neutral-800 there.
+  Changing only the Divider solves it without touching the Foundation or the
+  other components that use `border-subtle`.
 
-A LINHA E O COMPONENTE - POR ISSO `color` E `thickness`
+THE LINE IS THE COMPONENT - HENCE `color` AND `thickness`
 
-  Nos outros componentes a borda contorna uma caixa e o token se chama
-  `border` / `border-width`. Aqui a linha e o proprio componente; `color` e
-  `thickness` sao os nomes do Spectrum e do Material e leem igual nas duas
-  orientacoes. No Figma a linha e um retangulo PREENCHIDO de 1px, nao um
-  contorno - a espessura e a altura (ou a largura, na vertical).
+  In the other components the border outlines a box and the token is called
+  `border` / `border-width`. Here the line is the component itself; `color`
+  and `thickness` are the names Spectrum and Material use, and they read the
+  same in both orientations. In Figma the line is a FILLED 1px rectangle, not
+  a stroke - the thickness is the height (or the width, when vertical).
 
-COMPRIMENTO E MARGEM NAO TEM TOKEN
+LENGTH AND MARGIN HAVE NO TOKEN
 
-  Horizontal ocupa a largura do conteiner, vertical acompanha a altura dele.
-  O espaco em volta e decisao do layout (etapa 1). Os 158/160 do Figma sao
-  medida de exemplo.
+  Horizontal takes the container's width, vertical follows its height. The
+  space around it is a layout decision. The 158/160 in Figma are sample
+  measurements.
 
-ANUNCIADO OU DECORATIVO E MARCACAO, NAO TOKEN
+ANNOUNCED OR DECORATIVE IS MARKUP, NOT A TOKEN
 
-  Opcao A de Gui (07/10/2026): `<hr>` anunciado ("separador") e o padrao;
-  decorativo (`aria-hidden`) e escolha de quem usa. Visualmente identicos.
+  Decided on 2026-10-07: an announced `<hr>` ("separator") is the default;
+  decorative (`aria-hidden`) is the user's choice. Visually identical.
 
-UMA EXCECAO DECLARADA DE CONTRASTE
+ONE DECLARED CONTRAST EXCEPTION
 
-  Ver PENDING.
+  See PENDING.
 """
 import json, os, sys
 
@@ -60,46 +60,47 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
-    'color': 'border-default',   # era border-subtle - ver cabecalho
+    'color': 'border-default',   # was border-subtle - see the header
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
     'thickness': 'border.width.1',
 }
 
 PENDING = {
-    'linha-abaixo-de-3-1': (
-        'A linha usa `border-default`: 1.57:1 sobre a tela, 1.47:1 sobre superficie e 1.57:1 sobre '
-        'card no claro; 2.42:1 / 1.98:1 / 1.46:1 no escuro - abaixo dos 3:1 do WCAG 1.4.11. O criterio so vale para '
-        'objeto grafico NECESSARIO para entender o conteudo, e o divisor nunca pode ser a '
-        'unica pista do agrupamento: espaco ou titulo fazem esse papel, e o leitor de tela '
-        'ouve "separador" no <hr>. A excecao cobre linha DISCRETA, nunca linha invisivel: o subtle '
-        'da etapa 1 sumia sobre card no escuro e foi trocado na etapa 6 (opcao A de Gui, 07/10/2026). '
-        'Quem sustenta a excecao e a regra de uso da etapa 4. NAO "corrigir" escurecendo.'
+    'line-below-3-1': (
+        'The line uses `border-default`: 1.57:1 on the canvas, 1.47:1 on the surface and 1.57:1 '
+        'on a card in light; 2.42:1 / 1.98:1 / 1.46:1 in dark - below the 3:1 of WCAG 1.4.11. The '
+        'criterion only applies to a graphical object REQUIRED to understand the content, and the '
+        'divider can never be the only clue of the grouping: space or a heading does that job, '
+        'and the screen reader hears "separator" on the <hr>. The exception covers a SUBTLE line, '
+        'never an invisible one: the original border-subtle disappeared on a card in dark and was '
+        'replaced (2026-10-07). The exception is backed by usage rule 8 in guidelines.md. DO NOT '
+        '"fix" it by darkening.'
     ),
 }
 
-# Fundos onde o divisor e colocado. Nao sao tokens do Divider.
+# Backgrounds the divider is placed on. They are not Divider tokens.
 BACKGROUNDS = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
-    'raised':  'bg-surface-raised',   # card e modal - entrou na etapa 6
+    'raised':  'bg-surface-raised',   # card and modal
 }
 
-# (papel, token do divider, fundo, piso, chave da excecao em PENDING)
+# (role, divider token, background, floor, exception key in PENDING)
 COMBOS = [
-    ('linha-na-tela',       'color', 'canvas',  3.0, 'linha-abaixo-de-3-1'),
-    ('linha-em-superficie', 'color', 'surface', 3.0, 'linha-abaixo-de-3-1'),
-    ('linha-em-card',       'color', 'raised',  3.0, 'linha-abaixo-de-3-1'),
+    ('line-on-canvas',  'color', 'canvas',  3.0, 'line-below-3-1'),
+    ('line-on-surface', 'color', 'surface', 3.0, 'line-below-3-1'),
+    ('line-on-card',    'color', 'raised',  3.0, 'line-below-3-1'),
 ]
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def contrast_rows():
-    """Mede a linha contra cada fundo nos dois temas, contra o piso 3:1 do 1.4.11."""
+    """Measures the line against each background in both themes, against the 3:1 floor from 1.4.11."""
     rows = []
     for what, fg_role, bg_role, min_ratio, exc in COMBOS:
         fg_ref, bg_ref = COLOR[fg_role], BACKGROUNDS[bg_role]
@@ -122,10 +123,10 @@ def run():
         name = f'divider-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref}) - todo valor de cor nasce alias do semantico')
+            problems.append(f'{name}: loose hex ({ref}) - every color value is born as an alias of a semantic')
             continue
         if ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
             continue
         light, dark = SEM[ref]
         resolved[name] = {'light': light, 'dark': dark}
@@ -136,10 +137,10 @@ def run():
         try:
             resolved[name] = resolve_foundation(ref)
         except KeyError:
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -149,27 +150,27 @@ def run():
     excs = [r for r in rows if not r['pass'] and r['exception']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO DIVIDER')
+    print('DIVIDER TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<30} -> {alias[name]}')
     print('-' * 74)
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
     for r in rows:
-        print(f'  {r["what"]:<22} {r["theme"]:<6} {r["ratio"]}:1  (piso {r["min"]})')
-    for chave in PENDING:
-        n = sum(1 for r in excs if r['exception'] == chave)
-        print(f'  excecao "{chave}": {n} medicoes')
+        print(f'  {r["what"]:<22} {r["theme"]:<6} {r["ratio"]}:1  (floor {r["min"]})')
+    for key in PENDING:
+        n = sum(1 for r in excs if r['exception'] == key)
+        print(f'  exception "{key}": {n} measurements')
     print('-' * 74)
 
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE:')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE:')
         for f in fails:
             print(f'    {f["what"]} ({f["theme"]}): {f["ratio"]}:1 < {f["min"]}')
         return 1
 
-    print(f'{len(alias)} tokens, todos alias da Foundation. 0 valores soltos.')
+    print(f'{len(alias)} tokens, all aliases of the Foundation. 0 loose values.')
 
     out = {
         'meta': {
@@ -181,11 +182,11 @@ def run():
             'variants': ['horizontal', 'vertical'],
             'sizes': [],
             'states': [],
-            'nota': (
-                'Linha de 1px em border-default, horizontal ou vertical. Sem estado, sem '
-                'tamanho, sem recuo: comprimento e margem sao do layout. <hr> anunciado e o '
-                'padrao (opcao A); decorativo e marcacao, nao token. Uma excecao de '
-                'contraste declarada em pending.'
+            'note': (
+                '1px line in border-default, horizontal or vertical. No state, no size, no '
+                'inset: length and margin belong to the layout. An announced <hr> is the '
+                'default; decorative is markup, not a token. One contrast exception declared '
+                'in pending.'
             ),
         },
         'alias': alias,
@@ -194,7 +195,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('divider', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/divider/tokens.json escrito')
+    print('\nbuild/components/divider/tokens.json written')
     write_css(alias)
     return 0
 
@@ -203,11 +204,11 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Divider')
-    w(' * GERADO por src/components/divider/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Divider tokens')
+    w(' * GENERATED by src/components/divider/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Sem bloco de tema: cada token aponta para um semantico, e o tema troca')
-    w(' * no :root - o mesmo elemento onde estes alias sao declarados.')
+    w(' * There is no theme block here: each token points to a semantic, and the')
+    w(' * theme switches on :root - the same element where these aliases are declared.')
     w(' */')
     w('')
     w(':root {')
@@ -218,12 +219,12 @@ def write_css(alias):
     w('}')
     w('')
 
-    texto = '\n'.join(L)
-    faltando = [n for n in alias if f'--al-{n}:' not in texto]
-    if faltando:
-        raise AssertionError(f'tokens fora do CSS: {faltando}')
+    text = '\n'.join(L)
+    missing = [n for n in alias if f'--al-{n}:' not in text]
+    if missing:
+        raise AssertionError(f'tokens missing from the CSS: {missing}')
 
-    save_css('divider', texto)
+    save_css('divider', text)
 
 
 if __name__ == '__main__':

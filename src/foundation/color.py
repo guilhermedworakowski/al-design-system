@@ -1,8 +1,8 @@
-"""AL Design System - gerador de escalas de cor em OKLCH com gamut mapping sRGB."""
+"""AL Design System - OKLCH color scale generator with sRGB gamut mapping."""
 import math, json, os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'tools'))
 
-# ---------- conversao ----------
+# ---------- conversion ----------
 def _lin(c): return c/12.92 if c <= 0.04045 else ((c+0.055)/1.055)**2.4
 def _gam(c): return 12.92*c if c <= 0.0031308 else 1.055*(c**(1/2.4)) - 0.055
 
@@ -21,7 +21,7 @@ def in_gamut(L, C, H, eps=1e-4):
     return all(-eps <= c <= 1+eps for c in oklch_to_lrgb(L, C, H))
 
 def oklch_to_hex(L, C, H):
-    """Reduz chroma por busca binaria ate caber no sRGB (preserva L e H)."""
+    """Reduces chroma by binary search until it fits sRGB (keeps L and H)."""
     if not in_gamut(L, C, H):
         lo, hi = 0.0, C
         for _ in range(40):
@@ -47,46 +47,46 @@ def hex_to_oklch(h):
     B = 0.0259040371*l + 0.7827717662*m - 0.8086757660*s
     return L, math.hypot(A,B), math.degrees(math.atan2(B,A)) % 360
 
-# Contraste WCAG: a conta mora em tools/contrast.py, para todos usarem a mesma.
+# WCAG contrast: the math lives in tools/contrast.py, so everyone uses the same one.
 from contrast import lum, cr  # noqa: E402,F401
 
 def dE_ok(h1, h2):
-    """Distancia OKLab entre duas cores (perceptual)."""
+    """OKLab distance between two colors (perceptual)."""
     def lab(h):
         L, C, H = hex_to_oklch(h)
         return L, C*math.cos(math.radians(H)), C*math.sin(math.radians(H))
     a, b = lab(h1), lab(h2)
     return math.dist(a, b)
 
-# ---------- a escada de lightness compartilhada ----------
+# ---------- the shared lightness ladder ----------
 STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]
-# passo extra da marca: a janela de luminancia do label escuro so comporta 1 estado de hover
+# extra brand step: the luminance window of the dark label only fits 1 hover state
 BRAND_HOVER = '#EA4900'
 L_LADDER = {
     50: 0.977, 100: 0.950, 200: 0.908, 300: 0.852, 400: 0.768,
-    # 600 e calibrado, nao escolhido: e o L mais claro em que o cinza acromatico
-    # ainda da 4.5:1 contra neutral-50. Com o neutro frio antigo cabia 0.552;
-    # sem o chroma a luminancia sobe e o degrau precisou escurecer.
+    # 600 is calibrated, not chosen: it is the lightest L at which the achromatic
+    # gray still gives 4.5:1 against neutral-50. With the old cool neutral 0.552
+    # fit; without the chroma the luminance goes up and the step had to darken.
     500: 0.666, 600: 0.550, 700: 0.452, 800: 0.362, 900: 0.282, 950: 0.208,
 }
-# curva de chroma relativa ao pico da familia
+# chroma curve relative to the family's peak
 C_REL = {
     50: 0.09, 100: 0.19, 200: 0.36, 300: 0.57, 400: 0.80, 500: 1.00,
     600: 0.95, 700: 0.85, 800: 0.72, 900: 0.57, 950: 0.42,
 }
 
 FAMILIES = {
-    # nome:      (hue, chroma pico, drift de hue por step)
+    # name:      (hue, peak chroma, hue drift per step)
     'orange':  dict(hue=37.9, peak=0.219, drift={50: 14, 100: 12, 200: 9, 300: 7, 400: 4, 500: 0, 600: -1, 700: -2, 800: 2, 900: 5, 950: 8}),
     'red':     dict(hue=20.0, peak=0.205, drift={50: -5, 100: -4, 200: -3, 300: -2, 400: -1, 500: 0, 600: 0, 700: 1, 800: 3, 900: 5, 950: 7}),
     'amber':   dict(hue=85.0, peak=0.180, drift={50: 8, 100: 6, 200: 4, 300: 2, 400: 1, 500: 0, 600: -2, 700: -4, 800: -5, 900: -6, 950: -6}),
     'green':   dict(hue=148.0, peak=0.185, drift={50: 6, 100: 5, 200: 3, 300: 1, 400: 0, 500: 0, 600: -2, 700: -4, 800: -5, 900: -6, 950: -6}),
     'blue':    dict(hue=252.0, peak=0.200, drift={50: -6, 100: -5, 200: -3, 300: -2, 400: -1, 500: 0, 600: 1, 700: 2, 800: 3, 900: 4, 950: 5}),
 }
-# neutro acromatico: preto/cinza puro, chroma zero em toda a rampa.
-# A marca trocou o cinza frio (hue 264) por uma escala neutra de verdade -
-# os swatches novos da pagina Assets vem com r=g=b. Com C=0 o hue nao tem
-# efeito nenhum; a constante fica so para nao quebrar quem a importa.
+# achromatic neutral: pure black/gray, zero chroma across the whole ramp.
+# The brand swapped the cool gray (hue 264) for a true neutral scale - the new
+# swatches on the Assets page come with r=g=b. With C=0 the hue has no effect
+# at all; the constant stays only so nothing that imports it breaks.
 NEUTRAL_HUE = 0.0
 NEUTRAL_C = {s: 0.0 for s in STEPS}
 
@@ -116,5 +116,5 @@ if __name__ == '__main__':
             h = vals[s]
             L, C, H = hex_to_oklch(h)
             print(f"  {fam}-{s:<4} {h}  L {L:.3f}  C {C:.3f}  H {H:6.1f}   vs#FFF {cr(h,'#FFFFFF'):5.2f}  vs {vals[950]} {cr(h,vals[950]):5.2f}")
-    print("\n=== ancora da marca ===")
-    print("  orange-500 =", sc['orange'][500], "(alvo #FC5000)", "OK" if sc['orange'][500]=='#FC5000' else "DIVERGE")
+    print("\n=== brand anchor ===")
+    print("  orange-500 =", sc['orange'][500], "(target #FC5000)", "OK" if sc['orange'][500]=='#FC5000' else "DIVERGES")

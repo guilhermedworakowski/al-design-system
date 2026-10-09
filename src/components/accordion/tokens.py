@@ -1,59 +1,58 @@
 """
-Camada de tokens do Accordion.
+Token layer for the Accordion.
 
-Regra unica desta camada: nada aqui inventa valor. Todo token aponta para um
-token da Foundation pelo NOME. O portao no fim do arquivo recusa qualquer
-coisa que seja um valor solto - hex, px, numero.
+The one rule of this layer: nothing here invents a value. Every token points
+to a Foundation token by NAME. The gate at the end of the file rejects
+anything that is a loose value - hex, px, number.
 
-Nomenclatura:
-  codigo -> accordion-bg-hover      (hifen)
-  Figma  -> bg/hover                (collection `18. Accordion`)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> accordion-bg-hover      (hyphen)
+  Figma -> bg/hover                (collection `18. Accordion`)
+They are different layers. Never collapse one into the other.
 
-QUARTO COMPONENTE DO TIER 3 (07/10/2026)
+FOURTH COMPONENT OF TIER 3 (2026-10-07)
 
-  Component set `Accordion`, node 306:2643, pagina `Tier 3` do Figma. 8
-  variantes: `State` (Default / Hover / Pressed / Focus) x `Type` (Closed /
-  Opened). Um item so, um tamanho so, sem desabilitado. Fora por escolha:
-  componente de grupo (decisao A - como o Radio, quem empilha decide o espaco),
-  tamanhos (F) e desabilitado (E - painel que nao abre e conteudo escondido
-  sem saida). Marcacao nativa `<details>`/`<summary>`, `name=` para o
-  exclusivo (decisao B).
+  Component set `Accordion`, node 306:2643, page `Tier 3` in Figma. 8
+  variants: `State` (Default / Hover / Pressed / Focus) x `Type` (Closed /
+  Opened). One item, one size, no disabled. Left out on purpose: a group
+  component (like the Radio, whoever stacks decides the space), sizes, and
+  disabled (a panel that doesn't open is hidden content with no way out).
+  Native `<details>`/`<summary>` markup, `name=` for the exclusive mode.
 
-O CABECALHO E O UNICO QUE REAGE
+THE HEADER IS THE ONLY PART THAT REACTS
 
-  Hover, pressed e anel ficam no cabecalho - e o `<summary>`, a unica parte
-  clicavel. O conteudo fica no fundo de repouso em todos os estados: pintar o
-  conteudo sugeriria que ele tambem e clicavel.
+  Hover, pressed and ring stay on the header - it is the `<summary>`, the
+  only clickable part. The content stays on the rest background in every
+  state: painting the content would suggest it is clickable too.
 
-HOVER E PRESSED SAO `-raised` - DECISAO G DE GUI
+HOVER AND PRESSED ARE `-raised`
 
-  O item mora em `bg-surface-raised` (como o Card). No escuro, `bg-hover` e o
-  mesmo neutral-800 da superficie elevada, e o hover sumia (1,00:1). A
-  Foundation ganhou `bg-hover-raised` e `bg-active-raised`, um degrau acima no
-  escuro. O portao `estado-distinto` abaixo trava a regressao.
+  The item lives on `bg-surface-raised` (like the Card). In dark, `bg-hover`
+  is the same neutral-800 as the raised surface, and the hover disappeared
+  (1.00:1). The Foundation gained `bg-hover-raised` and `bg-active-raised`,
+  one step above in dark. The distinct-state gate below locks the regression.
 
-FOCO = REPOUSO + ANEL - DECISAO I DE GUI
+FOCUS = REST + RING
 
-  Como no Tab. Quem chega pelo teclado nao ve o fundo de hover sem o mouse.
+  As in the Tab. Whoever arrives by keyboard doesn't see the hover background
+  without the mouse.
 
-DIVISORIA DE 1px EM `border-default` - DECISAO H DE GUI
+1px DIVIDER IN `border-default`
 
-  A mesma linha do Divider. Fica parada em todos os estados: so o fundo do
-  cabecalho muda.
+  The same line as the Divider. It stays still in every state: only the
+  header background changes.
 
-SEM TOKEN, DE PROPOSITO
+NO TOKEN, ON PURPOSE
 
-  Cor do chevron e do icone: e a do titulo, entao e `currentColor` (regra do
-  Button e do Tag; o Select so tem token de icone porque la a cor difere do
-  rotulo). Altura: padding + entrelinha + padding = 76. Largura: do conteiner.
-  Espaco entre itens empilhados: do layout (decisao A). Giro do chevron: a
-  Foundation nao tem escala de movimento - os 120ms entram como pendencia no
-  check.py, como nos outros componentes.
+  Chevron and icon color: it is the title's, so it is `currentColor` (rule
+  from the Button and the Tag; the Select only has an icon token because
+  there the color differs from the label). Height: padding + line height +
+  padding = 76. Width: the container's. Space between stacked items: the
+  layout's. Chevron rotation: the motion tokens, in accordion.css.
 
-DUAS EXCECOES DECLARADAS DE CONTRASTE
+TWO DECLARED CONTRAST EXCEPTIONS
 
-  Ver PENDING.
+  See PENDING.
 """
 import json, os, sys
 
@@ -68,19 +67,19 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
+# ------------------------------------------------------------- color
 COLOR = {
-    'bg':        'bg-surface-raised',   # item, cabecalho em repouso e foco, conteudo
-    'bg-hover':  'bg-hover-raised',     # cabecalho
-    'bg-active': 'bg-active-raised',    # cabecalho
+    'bg':        'bg-surface-raised',   # item, header at rest and focus, content
+    'bg-hover':  'bg-hover-raised',     # header
+    'bg-active': 'bg-active-raised',    # header
 
-    'title':     'text-primary',        # chevron e icone herdam (currentColor)
+    'title':     'text-primary',        # chevron and icon inherit (currentColor)
 
     'divider':   'border-default',
 }
 
-# O token aponta para a SOMBRA COMPOSTA, nao para a cor crua - mesma regra do
-# `button-*-ring`. A cor so e extraida para medicao, no RING_INK abaixo.
+# The token points to the COMPOSITE SHADOW, not the raw color - same rule as
+# `button-*-ring`. The color is only extracted for measuring, in RING_INK below.
 RING = {
     'ring': 'focusRing.default',
 }
@@ -89,14 +88,14 @@ RING_INK = {
     'ring': 'shadow-focus-default',
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 GEOM = {
-    'padding':       'space.24',        # cabecalho e conteudo
-    'gap':           'space.8',         # icone -> titulo
-    'content-gap':   'space.8',         # entre blocos dentro do conteudo
+    'padding':       'space.24',        # header and content
+    'gap':           'space.8',         # icon -> title
+    'content-gap':   'space.8',         # between blocks inside the content
     'radius':        'radius.lg',
     'divider-width': 'border.width.1',
-    'icon-size':     'iconSize.24',     # icone a esquerda e chevron
+    'icon-size':     'iconSize.24',     # left icon and chevron
 }
 
 TYPE = {
@@ -104,61 +103,61 @@ TYPE = {
 }
 
 PENDING = {
-    'divisoria-decorativa': (
-        'A linha entre cabecalho e conteudo usa `border-default`: entre 1.19:1 e 1.57:1 no '
-        'claro e entre 1.00:1 e 1.50:1 no escuro contra o cabecalho. Ela so separa - quem diz '
-        'que o item esta aberto e o chevron e o conteudo aparecendo. O 1.00 e o hover escuro '
-        '(border-default e bg-hover-raised sao o mesmo neutral-700); ali o limite segue '
-        'visivel porque o cabecalho se separa do conteudo pelo fundo (1.46:1). Mesma logica '
-        'do Divider. NAO "corrigir" escurecendo.'
+    'decorative-divider': (
+        'The line between header and content uses `border-default`: between 1.19:1 and 1.57:1 '
+        'in light and between 1.00:1 and 1.50:1 in dark against the header. It only separates - '
+        'what says the item is open is the chevron and the content appearing. The 1.00 is the '
+        'dark hover (border-default and bg-hover-raised are the same neutral-700); there the '
+        'boundary stays visible because the header separates from the content by background '
+        '(1.46:1). Same logic as the Divider. DO NOT "fix" it by darkening.'
     ),
-    'item-nao-se-separa-pelo-fundo': (
-        'O fundo do item contra a pagina: 1.00:1 sobre a tela e 1.07:1 sobre superficie no '
-        'claro; 1.66:1 e 1.36:1 no escuro. Mesmo caso do Card Filled (decisao C de Gui): '
-        'quem sustenta a excecao e a regra de uso da etapa 4 - o Accordion vai sobre '
-        '`bg-surface`, nunca direto sobre a tela.'
+    'item-not-separated-by-bg': (
+        'The item background against the page: 1.00:1 on the canvas and 1.07:1 on the surface '
+        'in light; 1.66:1 and 1.36:1 in dark. Same case as the Filled Card: the exception is '
+        'backed by usage rule 14 in guidelines.md - the Accordion goes on `bg-surface`, never '
+        'directly on the canvas.'
     ),
 }
 
-# Fundos onde o item e colocado. Nao sao tokens do Accordion.
+# Backgrounds the item is placed on. They are not Accordion tokens.
 PAGES = {
     'canvas':  'bg-canvas',
     'surface': 'bg-surface',
 }
 
-# (papel, token do accordion, fundo, piso, chave da excecao em PENDING)
-# Titulo e chevron medem contra o cabecalho em cada estado. A divisoria mede
-# contra o cabecalho em cada estado. O anel mede contra a pagina: a camada
-# interna do anel e da cor da tela, entao ele nunca encosta no item.
+# (role, accordion token, background, floor, exception key in PENDING)
+# Title and chevron measure against the header in each state, and so does the
+# divider. The ring measures against the page: the ring's inner layer is the
+# canvas color, so it never touches the item.
 COMBOS = [
-    ('titulo-repouso',      'title',   'bg',        4.5, None),
-    ('titulo-hover',        'title',   'bg-hover',  4.5, None),
-    ('titulo-pressed',      'title',   'bg-active', 4.5, None),
-    ('chevron-repouso',     'title',   'bg',        3.0, None),
-    ('chevron-hover',       'title',   'bg-hover',  3.0, None),
-    ('chevron-pressed',     'title',   'bg-active', 3.0, None),
-    ('divisoria-repouso',   'divider', 'bg',        3.0, 'divisoria-decorativa'),
-    ('divisoria-hover',     'divider', 'bg-hover',  3.0, 'divisoria-decorativa'),
-    ('divisoria-pressed',   'divider', 'bg-active', 3.0, 'divisoria-decorativa'),
-    ('item-na-tela',        'bg',      'canvas',    3.0, 'item-nao-se-separa-pelo-fundo'),
-    ('item-em-superficie',  'bg',      'surface',   3.0, 'item-nao-se-separa-pelo-fundo'),
-    ('anel-na-tela',        'ring',    'canvas',    3.0, None),
-    ('anel-em-superficie',  'ring',    'surface',   3.0, None),
+    ('title-rest',      'title',   'bg',        4.5, None),
+    ('title-hover',     'title',   'bg-hover',  4.5, None),
+    ('title-pressed',   'title',   'bg-active', 4.5, None),
+    ('chevron-rest',    'title',   'bg',        3.0, None),
+    ('chevron-hover',   'title',   'bg-hover',  3.0, None),
+    ('chevron-pressed', 'title',   'bg-active', 3.0, None),
+    ('divider-rest',    'divider', 'bg',        3.0, 'decorative-divider'),
+    ('divider-hover',   'divider', 'bg-hover',  3.0, 'decorative-divider'),
+    ('divider-pressed', 'divider', 'bg-active', 3.0, 'decorative-divider'),
+    ('item-on-canvas',  'bg',      'canvas',    3.0, 'item-not-separated-by-bg'),
+    ('item-on-surface', 'bg',      'surface',   3.0, 'item-not-separated-by-bg'),
+    ('ring-on-canvas',  'ring',    'canvas',    3.0, None),
+    ('ring-on-surface', 'ring',    'surface',   3.0, None),
 ]
 
-# Nao e piso WCAG: e a trava da decisao G. Hover e pressed precisam se
-# distinguir do repouso nos dois temas, senao o cabecalho nao reage.
+# Not a WCAG floor: it locks the -raised hover. Hover and pressed must be
+# distinguishable from rest in both themes, or the header doesn't react.
 DISTINCT = [
-    ('hover-vs-repouso',   'bg-hover',  'bg'),
-    ('pressed-vs-repouso', 'bg-active', 'bg'),
-    ('pressed-vs-hover',   'bg-active', 'bg-hover'),
+    ('hover-vs-rest',    'bg-hover',  'bg'),
+    ('pressed-vs-rest',  'bg-active', 'bg'),
+    ('pressed-vs-hover', 'bg-active', 'bg-hover'),
 ]
 DISTINCT_MIN = 1.1
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def ink(role):
-    """O semantico de cor por tras de um papel - seguindo o anel ate a cor."""
+    """The color semantic behind a role - following the ring down to the color."""
     if role in PAGES:
         return PAGES[role]
     if role in RING_INK:
@@ -167,8 +166,8 @@ def ink(role):
 
 
 def contrast_rows():
-    """Mede cada combinacao renderizada nos dois temas, cada uma contra o piso
-    que e dela: texto 4.5:1 do 1.4.3, glifo, linha, anel e fundo 3:1 do 1.4.11."""
+    """Measures each rendered combination in both themes, each against its own
+    floor: text 4.5:1 from 1.4.3, glyph, line, ring and background 3:1 from 1.4.11."""
     rows = []
     for what, fg_role, bg_role, min_ratio, exc in COMBOS:
         fg_ref, bg_ref = ink(fg_role), ink(bg_role)
@@ -201,10 +200,10 @@ def run():
         name = f'accordion-{role}'
         alias[name] = ref
         if ref.startswith('#'):
-            problems.append(f'{name}: hex solto ({ref}) - todo valor de cor nasce alias do semantico')
+            problems.append(f'{name}: loose hex ({ref}) - every color value is born as an alias of a semantic')
             continue
         if ref not in SEM:
-            problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+            problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
             continue
         light, dark = SEM[ref]
         resolved[name] = {'light': light, 'dark': dark}
@@ -216,7 +215,7 @@ def run():
             v = resolve_foundation(ref)
             resolved[name] = {'light': v['light'], 'dark': v['dark']}
         except KeyError:
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for group in (GEOM, TYPE):
         for role, ref in group.items():
@@ -225,10 +224,10 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
@@ -240,36 +239,36 @@ def run():
     dist_fails = [r for r in dist if not r['pass']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO ACCORDION')
+    print('ACCORDION TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<30} -> {alias[name]}')
     print('-' * 74)
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails) - len(excs)}  |  '
-          f'excecoes declaradas: {len(excs)}  |  reprovas: {len(fails)}')
-    limpas = [r for r in rows if r['pass']]
-    pior = min(limpas, key=lambda r: r['ratio'] / r['min'])
-    print(f'pior margem entre as que passam: {pior["what"]} ({pior["theme"]}) = '
-          f'{pior["ratio"]}:1 contra piso {pior["min"]}')
-    for chave in PENDING:
-        n = sum(1 for r in excs if r['exception'] == chave)
-        print(f'  excecao "{chave}": {n} medicoes')
-    print(f'estado distinto (piso {DISTINCT_MIN}:1, trava da decisao G): '
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails) - len(excs)}  |  '
+          f'declared exceptions: {len(excs)}  |  fail: {len(fails)}')
+    clean = [r for r in rows if r['pass']]
+    worst = min(clean, key=lambda r: r['ratio'] / r['min'])
+    print(f'worst margin among those that pass: {worst["what"]} ({worst["theme"]}) = '
+          f'{worst["ratio"]}:1 against floor {worst["min"]}')
+    for key in PENDING:
+        n = sum(1 for r in excs if r['exception'] == key)
+        print(f'  exception "{key}": {n} measurements')
+    print(f'distinct state (floor {DISTINCT_MIN}:1, locks the -raised hover): '
           + '  '.join(f'{r["what"]} {r["theme"]} {r["ratio"]}' for r in dist))
     print('-' * 74)
 
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE:')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE:')
         for f in fails:
             print(f'    {f["what"]} ({f["theme"]}): {f["ratio"]}:1 < {f["min"]}')
         return 1
     if dist_fails:
-        print(f'{len(dist_fails)} ESTADO(S) NAO SE DISTINGUEM DO VIZINHO:')
+        print(f'{len(dist_fails)} STATE(S) NOT DISTINGUISHABLE FROM THE NEIGHBOR:')
         for f in dist_fails:
             print(f'    {f["what"]} ({f["theme"]}): {f["ratio"]}:1 < {DISTINCT_MIN}')
         return 1
 
-    print(f'{len(alias)} tokens, todos alias da Foundation. 0 valores soltos.')
+    print(f'{len(alias)} tokens, all aliases of the Foundation. 0 loose values.')
 
     out = {
         'meta': {
@@ -281,11 +280,11 @@ def run():
             'variants': ['closed', 'opened'],
             'sizes': ['default'],
             'states': ['default', 'hover', 'pressed', 'focus'],
-            'nota': (
-                'Item de conteudo expansivel, nativo (<details>/<summary>). Um tamanho, sem '
-                'desabilitado, sem componente de grupo. Fundo bg-surface-raised; so o cabecalho '
-                'reage, com hover e pressed -raised (decisao G). Foco = repouso + anel. '
-                'Divisoria 1px border-default. Duas excecoes de contraste declaradas em pending.'
+            'note': (
+                'Expandable content item, native (<details>/<summary>). One size, no disabled, '
+                'no group component. Background bg-surface-raised; only the header reacts, with '
+                '-raised hover and pressed. Focus = rest + ring. 1px border-default divider. Two '
+                'contrast exceptions declared in pending.'
             ),
         },
         'alias': alias,
@@ -295,7 +294,7 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('accordion', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/accordion/tokens.json escrito')
+    print('\nbuild/components/accordion/tokens.json written')
     write_css(alias)
     return 0
 
@@ -304,40 +303,40 @@ def run():
 def write_css(alias):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Accordion')
-    w(' * GERADO por src/components/accordion/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Accordion tokens')
+    w(' * GENERATED by src/components/accordion/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema')
-    w(' * troca no :root - o mesmo elemento onde estes alias sao declarados.')
+    w(' * There is no theme block here: each token points to a semantic, and the')
+    w(' * theme switches on :root - the same element where these aliases are declared.')
     w(' */')
     w('')
     w(':root {')
 
     w('')
-    w('  /* fundo - so o cabecalho reage; o conteudo fica no repouso */')
+    w('  /* background - only the header reacts; the content stays at rest */')
     for role in ('bg', 'bg-hover', 'bg-active'):
         w(f'  --al-accordion-{role}: {css_ref(COLOR[role])};')
 
     w('')
-    w('  /* titulo - chevron e icone herdam por currentColor */')
+    w('  /* title - chevron and icon inherit through currentColor */')
     w(f'  --al-accordion-title: {css_ref(COLOR["title"])};')
 
     w('')
-    w('  /* divisoria entre cabecalho e conteudo - parada em todos os estados */')
+    w('  /* divider between header and content - still in every state */')
     w(f'  --al-accordion-divider: {css_ref(COLOR["divider"])};')
 
     w('')
-    w('  /* anel de foco - aponta para a sombra composta, nao para a cor crua */')
+    w('  /* focus ring - points to the composite shadow, not the raw color */')
     for role, ref in RING.items():
         w(f'  --al-accordion-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* geometria */')
+    w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-accordion-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* tipografia - um estilo vira quatro vars */')
+    w('  /* typography - one style becomes four vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
         key = size_key(style[1])
@@ -350,17 +349,17 @@ def write_css(alias):
     w('}')
     w('')
 
-    # Trava herdada do Select: lista de grupo esquecida vira build quebrado,
-    # nao variavel faltando em silencio.
-    texto = '\n'.join(L)
-    faltando = [n for n in alias
-                if not n.endswith('-font') and f'--al-{n}:' not in texto]
-    if faltando:
+    # Lock inherited from the Select: a forgotten group list breaks the build
+    # instead of leaving a variable silently missing.
+    text = '\n'.join(L)
+    missing = [n for n in alias
+               if not n.endswith('-font') and f'--al-{n}:' not in text]
+    if missing:
         raise AssertionError(
-            'tokens fora do CSS (alguma lista de grupo em write_css nao '
-            f'foi atualizada): {faltando}')
+            'tokens missing from the CSS (some group list in write_css was not '
+            f'updated): {missing}')
 
-    save_css('accordion', texto)
+    save_css('accordion', text)
 
 
 if __name__ == '__main__':

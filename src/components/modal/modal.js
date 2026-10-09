@@ -1,24 +1,24 @@
-/* AL Design System - Modal, comportamento
+/* AL Design System - Modal, behavior
  *
- * O <dialog> nativo ja faz o grosso (regra 24): prende o foco, deixa a pagina
- * inerte, fecha com Esc (regra 15) e devolve o foco a quem abriu (regra 17).
- * Este arquivo cobre so o que o nativo nao faz:
- *   - abrir e fechar por atributo, sem JS na pagina:
- *       data-al-modal-open="<id>"   no botao que abre
- *       data-al-modal-close         no botao que fecha (dentro do dialog)
- *   - clique no scrim fecha SO quando nao ha campos (regra 14). Com campo, o
- *     clique acidental perderia o que foi digitado;
- *   - foco inicial (regras 26 e 29), quando a marcacao nao pede um com
- *     `autofocus`:
- *       com campo        -> o primeiro campo (o nativo ja faz, nao mexe)
- *       sem campo        -> a acao principal (a ultima do rodape)
- *       principal Danger -> a acao SECUNDARIA: o Enter nao pode ficar a um
- *                           toque de apagar (regras 23 e 29)
+ * The native <dialog> already does the bulk (rule 24): it traps focus, makes
+ * the page inert, closes with Esc (rule 15) and returns focus to the opener
+ * (rule 17). This file only covers what the native one doesn't:
+ *   - opening and closing by attribute, with no JS on the page:
+ *       data-al-modal-open="<id>"   on the button that opens
+ *       data-al-modal-close         on the button that closes (inside the dialog)
+ *   - a click on the scrim closes ONLY when there are no fields (rule 14).
+ *     With a field, an accidental click would lose what was typed;
+ *   - initial focus (rules 26 and 29), when the markup doesn't ask for one
+ *     with `autofocus`:
+ *       with a field     -> the first field (the native one already does it)
+ *       no field         -> the main action (the last one in the footer)
+ *       Danger main      -> the SECONDARY action: Enter can't be one press
+ *                           away from deleting (rules 23 and 29)
  *
- * Uso:
- *   carregar este arquivo com um script src       -> liga sozinho quando a pagina carrega
- *   alModals.init(container)            -> liga em conteudo inserido depois
- * Ligar duas vezes o mesmo dialog nao duplica nada.
+ * Usage:
+ *   load this file with a script src    -> binds by itself when the page loads
+ *   alModals.init(container)            -> binds content inserted later
+ * Binding the same dialog twice duplicates nothing.
  */
 (function () {
   'use strict';
@@ -36,12 +36,12 @@
   }
 
   function initialFocus(dialog) {
-    if (dialog.querySelector('[autofocus]')) return;   // a marcacao decidiu
-    if (hasFields(dialog)) return;                      // regra 26: o nativo foca o campo
+    if (dialog.querySelector('[autofocus]')) return;   // the markup decided
+    if (hasFields(dialog)) return;                      // rule 26: the native one focuses the field
     var actions = dialog.querySelectorAll('.al-modal__actions button, .al-modal__actions a[href]');
     if (!actions.length) return;
     var primary = actions[actions.length - 1];
-    var target = primary.matches(DANGER) ? actions[0] : primary;   // regra 29
+    var target = primary.matches(DANGER) ? actions[0] : primary;   // rule 29
     target.focus();
   }
 
@@ -49,20 +49,20 @@
     if (dialog.hasAttribute('data-al-modal')) return;
     dialog.setAttribute('data-al-modal', '');
 
-    // O clique so conta se o aperto E a soltura foram no scrim: arrastar para
-    // selecionar texto dentro do Modal e soltar fora nao fecha nada.
+    // The click only counts if the press AND the release were on the scrim:
+    // dragging to select text inside the Modal and releasing outside closes nothing.
     var pressedOnScrim = false;
     dialog.addEventListener('pointerdown', function (e) {
       pressedOnScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
     });
     dialog.addEventListener('click', function (e) {
       var onScrim = e.target === dialog && !inside(dialog, e.clientX, e.clientY);
-      if (onScrim && pressedOnScrim && !hasFields(dialog)) dialog.close();   // regra 14
+      if (onScrim && pressedOnScrim && !hasFields(dialog)) dialog.close();   // rule 14
       pressedOnScrim = false;
     });
 
-    // foco inicial: observa o `open`, porque quem abre pode ser o atributo de
-    // dados ou um showModal() de fora
+    // initial focus: watches `open`, because the opener may be the data
+    // attribute or a showModal() from outside
     new MutationObserver(function () {
       if (dialog.open) initialFocus(dialog);
     }).observe(dialog, { attributes: true, attributeFilter: ['open'] });
@@ -72,8 +72,8 @@
     [].slice.call((root || document).querySelectorAll('dialog.al-modal')).forEach(bind);
   }
 
-  // Abrir e fechar por atributo: delegado no documento, uma vez so, entao
-  // vale tambem para botao inserido depois.
+  // Opening and closing by attribute: delegated on the document, only once, so
+  // it also works for a button inserted later.
   document.addEventListener('click', function (e) {
     var opener = e.target.closest && e.target.closest('[data-al-modal-open]');
     if (opener) {

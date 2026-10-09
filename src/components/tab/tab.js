@@ -1,26 +1,29 @@
-/* AL Design System - Tab, comportamento de teclado (decisao de Gui na etapa 5)
+/* AL Design System - Tab, keyboard behavior
  *
- * So o uso de PAINEL precisa deste arquivo. Navegacao por links (regra 22) e
- * <a> comum: o Tab do teclado passa por todos e nada aqui se aplica.
+ * Only the PANEL use needs this file. Navigation with links (rule 22) is a
+ * plain <a>: the keyboard Tab goes through all of them and nothing here
+ * applies.
  *
- * O que ele faz em todo grupo .al-tabs[role="tablist"] dentro de `root`
- * (padrao de abas da APG, regra 21):
- *   - so a aba selecionada fica em tabindex 0 (roving tabindex);
- *   - seta direita/esquerda vai para a proxima/anterior, dando a volta;
- *     Home e End vao para a primeira e a ultima;
- *   - ativacao AUTOMATICA: a aba que recebe o foco abre o painel. Grupo com
- *     data-activation="manual" so move o foco - Enter/Espaco (o clique nativo
- *     do <button>) abre. Use manual quando o painel carrega da rede;
- *   - painel e escondido com `hidden`, nunca removido: o que foi digitado
- *     nele continua la (regra 20);
- *   - clicar na aba ja aberta nao faz nada (regra 19);
- *   - a aba aberta pelo clique recebe `data-al-just-selected` ate o proximo
- *     aperto, para nao pintar o pressed de selecionada (ver o click abaixo).
+ * What it does on every .al-tabs[role="tablist"] group inside `root`
+ * (APG tabs pattern, rule 21):
+ *   - only the selected tab sits at tabindex 0 (roving tabindex);
+ *   - right/left arrow goes to the next/previous one, wrapping around;
+ *     Home and End go to the first and the last;
+ *   - AUTOMATIC activation: the tab that receives focus opens its panel. A
+ *     group with data-activation="manual" only moves focus - Enter/Space (the
+ *     native <button> click) opens it. Use manual when the panel loads from
+ *     the network;
+ *   - a panel is hidden with `hidden`, never removed: whatever was typed in
+ *     it stays there (rule 20);
+ *   - clicking the tab that is already open does nothing (rule 19);
+ *   - the tab opened by a click gets `data-al-just-selected` until the next
+ *     press, so it doesn't paint the selected pressed state (see the click
+ *     below).
  *
- * Uso:
- *   <script src="tab.js"></script>   -> liga sozinho quando a pagina carrega
- *   alTabs.init(container)            -> liga em conteudo inserido depois
- * Ligar duas vezes o mesmo grupo nao duplica nada.
+ * Usage:
+ *   <script src="tab.js"></script>   -> binds itself when the page loads
+ *   alTabs.init(container)            -> binds content inserted later
+ * Binding the same group twice duplicates nothing.
  */
 (function () {
   'use strict';
@@ -41,7 +44,7 @@
     }
 
     function select(tab) {
-      if (tab.getAttribute('aria-selected') === 'true') return;  // regra 19
+      if (tab.getAttribute('aria-selected') === 'true') return;  // rule 19
       tabs.forEach(function (t) {
         var on = t === tab;
         t.setAttribute('aria-selected', on ? 'true' : 'false');
@@ -51,7 +54,7 @@
       });
     }
 
-    // estado inicial coerente: exatamente uma selecionada (regra 7)
+    // consistent initial state: exactly one selected (rule 7)
     var start = tabs.filter(function (t) {
       return t.getAttribute('aria-selected') === 'true';
     })[0] || tabs[0];
@@ -59,16 +62,16 @@
     select(start);
 
     tabs.forEach(function (tab, i) {
-      // A aba selecionada PELO PROPRIO clique nao pinta o pressed de
-      // selecionada: alguns navegadores (Safari) ainda a consideram :active
-      // quando o clique dispara, e ela iria de bg-active para brand-active
-      // no meio do aperto. A marca some no proximo aperto - ai sim e o
-      // pressed da aba que ja estava aberta.
+      // A tab selected BY ITS OWN click doesn't paint the selected pressed
+      // state: some browsers (Safari) still consider it :active when the
+      // click fires, and it would go from bg-active to brand-active in the
+      // middle of the press. The mark goes away on the next press - then it
+      // really is the pressed state of a tab that was already open.
       tab.addEventListener('pointerdown', function () {
         tab.removeAttribute('data-al-just-selected');
       });
       tab.addEventListener('click', function () {
-        if (tab.getAttribute('aria-selected') === 'true') return;  // regra 19
+        if (tab.getAttribute('aria-selected') === 'true') return;  // rule 19
         select(tab);
         tab.setAttribute('data-al-just-selected', '');
       });
@@ -88,8 +91,8 @@
       });
     });
 
-    // no manual o foco pode sair de uma aba nao aberta; ao sair do grupo, a
-    // entrada pelo Tab volta a ser a aba selecionada
+    // in manual mode focus can leave from a tab that isn't open; when it
+    // leaves the group, the Tab key entry point goes back to the selected tab
     list.addEventListener('focusout', function (e) {
       if (list.contains(e.relatedTarget)) return;
       tabs.forEach(function (t) {
