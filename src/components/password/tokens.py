@@ -67,6 +67,7 @@ from paths import FOUNDATION_SRC, TOKENS_JSON, comp_out  # noqa: E402
 sys.path.insert(0, FOUNDATION_SRC)
 
 from palette import SEM                     # noqa: E402
+from tokenlib import resolve_foundation, css_ref, size_key, save_css  # noqa: E402
 from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
@@ -173,27 +174,6 @@ COMBOS = [
 
 
 # ---------------------------------------------------------------- portao
-def resolve_foundation(path):
-    """Segue um caminho pontuado dentro de tokens.json. Levanta se nao existir.
-
-    type.styles e uma lista de tuplas (nome, size, leading, weight, ...), nao
-    um dicionario - entao o ultimo trecho do caminho casa contra o nome do
-    estilo.
-    """
-    node = FOUND
-    for part in path.split('.'):
-        if isinstance(node, list):
-            match = next((s for s in node if s and s[0] == part), None)
-            if match is None:
-                raise KeyError(path)
-            node = match
-            continue
-        if not isinstance(node, dict) or part not in node:
-            raise KeyError(path)
-        node = node[part]
-    return node
-
-
 def ink(role):
     """O semantico de cor por tras de um papel - seguindo o anel ate a cor."""
     if role == 'canvas':
@@ -348,35 +328,11 @@ def run():
 
 
 # ---------------------------------------------------------------- css
-def css_ref(ref):
-    """Traduz a referencia da Foundation para a custom property equivalente."""
-    if ref.startswith('focusRing.'):
-        return f'var(--al-focus-ring-{ref.split(".")[1]})'
-    if ref.startswith('space.'):
-        return f'var(--al-space-{ref.split(".")[1]})'
-    if ref.startswith('radius.'):
-        return f'var(--al-radius-{ref.split(".")[1]})'
-    if ref.startswith('border.width.'):
-        return f'var(--al-border-width-{ref.split(".")[2]})'
-    if ref.startswith('iconSize.'):
-        return f'var(--al-icon-size-{ref.split(".")[1]})'
-    return f'var(--al-{ref})'          # semantico de cor
-
-
-def _size_key(font_size):
-    """Acha o nome do degrau cujo font-size bate, na escala da Foundation.
-    Ver a nota do Select: line-height usa o MESMO nome de degrau."""
-    for key, v in FOUND['type']['size'].items():
-        if v == font_size:
-            return key
-    raise KeyError(f'type.size com valor {font_size} nao existe na Foundation')
-
-
 def write_css(alias, derived):
     L = []
     w = L.append
     w('/* AL Design System - tokens do Password')
-    w(' * GERADO por components/password/tokens.py. Nao editar a mao.')
+    w(' * GERADO por src/components/password/tokens.py. Nao editar a mao.')
     w(' *')
     w(' * Nao ha bloco de tema aqui: cada token aponta para um semantico, e o tema')
     w(' * troca no :root - o mesmo elemento onde estes alias sao declarados.')
@@ -427,7 +383,7 @@ def write_css(alias, derived):
     w('  /* tipografia - um estilo vira quatro vars */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
-        key = _size_key(style[1])
+        key = size_key(style[1])
         prefix = f'--al-password-{role}'.replace('-font', '')
         if role == 'font':
             prefix = '--al-password'
@@ -448,9 +404,7 @@ def write_css(alias, derived):
             'papeis de cor fora do CSS (alguma lista de grupo em write_css nao '
             f'foi atualizada): {faltando}')
 
-    path = comp_out('password', 'al-password-tokens.css')
-    open(path, 'w').write(texto)
-    print(f'build/components/password/al-password-tokens.css escrito ({os.path.getsize(path)} bytes)')
+    save_css('password', texto)
 
 
 if __name__ == '__main__':

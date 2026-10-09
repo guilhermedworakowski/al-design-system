@@ -35,6 +35,7 @@ from paths import FOUNDATION_SRC, TOKENS_JSON, comp_out  # noqa: E402
 sys.path.insert(0, FOUNDATION_SRC)
 
 from palette import SEM                     # noqa: E402
+from tokenlib import resolve_foundation, css_ref, save_css  # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
@@ -65,14 +66,6 @@ DEFAULT_BOX = '24'
 
 
 # ---------------------------------------------------------------- portao
-def resolve_foundation(path):
-    """Segue um caminho pontuado dentro de tokens.json. Levanta se nao existir."""
-    node = FOUND
-    for part in path.split('.'):
-        node = node[part]
-    return node
-
-
 def run():
     alias, resolved, problems = {}, {}, []
 
@@ -121,18 +114,11 @@ def run():
     return 0
 
 
-def css_ref(ref):
-    """Traduz a referencia da Foundation para a custom property equivalente."""
-    if ref.startswith('iconSize.'):
-        return f'var(--al-icon-size-{ref.split(".")[1]})'
-    return f'var(--al-{ref})'          # semantico de cor
-
-
 def write_css(alias):
     L = []
     w = L.append
     w('/* AL Design System - tokens do Icon')
-    w(' * GERADO por components/icon/tokens.py. Nao editar a mao.')
+    w(' * GERADO por src/components/icon/tokens.py. Nao editar a mao.')
     w(' *')
     w(' * Nao ha bloco de tema aqui: cada tinta aponta para um semantico, e o tema')
     w(' * troca no :root - o mesmo elemento onde estes alias sao declarados. Entao o')
@@ -151,9 +137,7 @@ def write_css(alias):
     w('}')
     w('')
 
-    path = comp_out('icon', 'al-icon-tokens.css')
-    open(path, 'w').write('\n'.join(L))
-    print(f'build/components/icon/al-icon-tokens.css escrito ({os.path.getsize(path)} bytes)')
+    save_css('icon', '\n'.join(L))
 
 
 def write_json(alias, resolved):

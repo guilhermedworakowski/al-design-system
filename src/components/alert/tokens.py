@@ -58,6 +58,7 @@ from paths import FOUNDATION_SRC, TOKENS_JSON, comp_out  # noqa: E402
 sys.path.insert(0, FOUNDATION_SRC)
 
 from palette import SEM                     # noqa: E402
+from tokenlib import resolve_foundation, css_ref, save_css  # noqa: E402
 from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
@@ -123,21 +124,6 @@ for status in STATUS:
 
 
 # ---------------------------------------------------------------- portao
-def resolve_foundation(path):
-    node = FOUND
-    for part in path.split('.'):
-        if isinstance(node, list):
-            match = next((s for s in node if s and s[0] == part), None)
-            if match is None:
-                raise KeyError(path)
-            node = match
-            continue
-        if not isinstance(node, dict) or part not in node:
-            raise KeyError(path)
-        node = node[part]
-    return node
-
-
 def ink(role):
     return PAGES.get(role) or COLOR[role]
 
@@ -239,30 +225,11 @@ def _scale_key(scale, v, what):
     raise KeyError(f'type.{scale} com valor {v} nao existe na Foundation ({what})')
 
 
-def css_ref(ref):
-    if ref.startswith('space.'):
-        return f'var(--al-space-{ref.split(".")[1]})'
-    if ref.startswith('radius.'):
-        return f'var(--al-radius-{ref.split(".")[1]})'
-    if ref.startswith('border.width.'):
-        return f'var(--al-border-width-{ref.split(".")[2]})'
-    if ref.startswith('motion.'):
-        _, kind, key = ref.split('.')
-        return f'var(--al-motion-{kind}-{key})'
-    if ref.startswith('type.size.'):
-        return f'var(--al-font-size-{ref.split(".")[2]})'
-    if ref.startswith('type.leading.'):
-        return f'var(--al-line-height-{ref.split(".")[2]})'
-    if ref.startswith('type.weight.'):
-        return f'var(--al-font-weight-{ref.split(".")[2]})'
-    return f'var(--al-{ref})'          # semantico de cor
-
-
 def write_css(alias):
     L = []
     w = L.append
     w('/* AL Design System - tokens do Alert')
-    w(' * GERADO por components/alert/tokens.py. Nao editar a mao.')
+    w(' * GERADO por src/components/alert/tokens.py. Nao editar a mao.')
     w(' */')
     w('')
     w(':root {')
@@ -302,9 +269,7 @@ def write_css(alias):
     faltando = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in texto]
     if faltando:
         raise AssertionError(f'tokens fora do CSS: {faltando}')
-    path = comp_out('alert', 'al-alert-tokens.css')
-    open(path, 'w').write(texto)
-    print(f'build/components/alert/al-alert-tokens.css escrito ({os.path.getsize(path)} bytes)')
+    save_css('alert', texto)
 
 
 def _weight_key(v):

@@ -46,6 +46,7 @@ from paths import FOUNDATION_SRC, TOKENS_JSON, comp_out  # noqa: E402
 sys.path.insert(0, FOUNDATION_SRC)
 
 from palette import SEM                     # noqa: E402
+from tokenlib import resolve_foundation, css_ref, size_key, save_css  # noqa: E402
 from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
@@ -111,21 +112,6 @@ COMBOS = [
 
 
 # ---------------------------------------------------------------- portao
-def resolve_foundation(path):
-    node = FOUND
-    for part in path.split('.'):
-        if isinstance(node, list):
-            match = next((s for s in node if s and s[0] == part), None)
-            if match is None:
-                raise KeyError(path)
-            node = match
-            continue
-        if not isinstance(node, dict) or part not in node:
-            raise KeyError(path)
-        node = node[part]
-    return node
-
-
 def ink(role):
     if role in PAGES:
         return PAGES[role]
@@ -229,26 +215,11 @@ def run():
 
 
 # ---------------------------------------------------------------- css
-def css_ref(ref):
-    if ref.startswith('space.'):
-        return f'var(--al-space-{ref.split(".")[1]})'
-    if ref.startswith('border.width.'):
-        return f'var(--al-border-width-{ref.split(".")[2]})'
-    return f'var(--al-{ref})'
-
-
-def _size_key(font_size):
-    for key, v in FOUND['type']['size'].items():
-        if v == font_size:
-            return key
-    raise KeyError(f'type.size com valor {font_size} nao existe na Foundation')
-
-
 def write_css(alias):
     L = []
     w = L.append
     w('/* AL Design System - tokens do Sidebar')
-    w(' * GERADO por components/sidebar/tokens.py. Nao editar a mao.')
+    w(' * GERADO por src/components/sidebar/tokens.py. Nao editar a mao.')
     w(' */')
     w('')
     w(':root {')
@@ -268,7 +239,7 @@ def write_css(alias):
     w('  /* tipografia - um estilo vira quatro vars (cinco no rotulo, que e mono) */')
     for role, ref in TYPE.items():
         style = resolve_foundation(ref)
-        key = _size_key(style[1])
+        key = size_key(style[1])
         prefix = f'--al-sidebar-{role}'.replace('-font', '')
         if role in MONO:
             w(f'  {prefix}-font-family: var(--al-font-mono);')
@@ -282,9 +253,7 @@ def write_css(alias):
     faltando = [n for n in alias if not n.endswith('-font') and f'--al-{n}:' not in texto]
     if faltando:
         raise AssertionError(f'tokens fora do CSS: {faltando}')
-    path = comp_out('sidebar', 'al-sidebar-tokens.css')
-    open(path, 'w').write(texto)
-    print(f'build/components/sidebar/al-sidebar-tokens.css escrito ({os.path.getsize(path)} bytes)')
+    save_css('sidebar', texto)
 
 
 if __name__ == '__main__':

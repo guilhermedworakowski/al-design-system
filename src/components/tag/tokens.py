@@ -46,6 +46,7 @@ from paths import FOUNDATION_SRC, TOKENS_JSON, comp_out  # noqa: E402
 sys.path.insert(0, FOUNDATION_SRC)
 
 from palette import SEM                     # noqa: E402
+from tokenlib import resolve_foundation, css_ref, save_css  # noqa: E402
 from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
@@ -129,22 +130,6 @@ PENDING = {
 
 
 # ---------------------------------------------------------------- portao
-def resolve_foundation(path):
-    """Segue um caminho pontuado dentro de tokens.json. Levanta se nao existir."""
-    node = FOUND
-    for part in path.split('.'):
-        if isinstance(node, list):
-            match = next((s for s in node if s and s[0] == part), None)
-            if match is None:
-                raise KeyError(path)
-            node = match
-            continue
-        if not isinstance(node, dict) or part not in node:
-            raise KeyError(path)
-        node = node[part]
-    return node
-
-
 def bind_color(name, ref, alias, resolved, problems):
     """Um token de cor: registra o alias e resolve nos dois temas, ou reprova."""
     alias[name] = ref
@@ -318,30 +303,11 @@ def run():
 
 
 # ---------------------------------------------------------------- css
-def css_ref(ref):
-    """Traduz a referencia da Foundation para a custom property equivalente."""
-    if ref == TRANSPARENT:
-        return 'transparent'
-    if ref.startswith('focusRing.'):
-        return f'var(--al-focus-ring-{ref.split(".")[1]})'
-    if ref.startswith('space.'):
-        return f'var(--al-space-{ref.split(".")[1]})'
-    if ref.startswith('radius.'):
-        return f'var(--al-radius-{ref.split(".")[1]})'
-    if ref.startswith('border.width.'):
-        return f'var(--al-border-width-{ref.split(".")[2]})'
-    if ref.startswith('iconSize.'):
-        return f'var(--al-icon-size-{ref.split(".")[1]})'
-    if ref.startswith('type.styles.'):
-        return ref.split('.')[2]          # tratado a parte: um estilo vira tres vars
-    return f'var(--al-{ref})'             # semantico de cor
-
-
 def write_css(alias, heights):
     L = []
     w = L.append
     w('/* AL Design System - tokens do Tag')
-    w(' * GERADO por components/tag/tokens.py. Nao editar a mao.')
+    w(' * GERADO por src/components/tag/tokens.py. Nao editar a mao.')
     w(' *')
     w(' * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um')
     w(' * semantico, e o tema troca no :root - o mesmo elemento onde estes alias')
@@ -389,9 +355,7 @@ def write_css(alias, heights):
     w('}')
     w('')
 
-    path = comp_out('tag', 'al-tag-tokens.css')
-    open(path, 'w').write('\n'.join(L))
-    print(f'build/components/tag/al-tag-tokens.css escrito ({os.path.getsize(path)} bytes)')
+    save_css('tag', '\n'.join(L))
 
 
 if __name__ == '__main__':

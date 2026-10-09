@@ -55,6 +55,7 @@ from paths import FOUNDATION_SRC, TOKENS_JSON, comp_out  # noqa: E402
 sys.path.insert(0, FOUNDATION_SRC)
 
 from palette import SEM                     # noqa: E402
+from tokenlib import resolve_foundation, css_ref, save_css  # noqa: E402
 from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
@@ -97,16 +98,6 @@ COMBOS = [
 
 
 # ---------------------------------------------------------------- portao
-def resolve_foundation(path):
-    """Segue um caminho pontuado dentro de tokens.json. Levanta se nao existir."""
-    node = FOUND
-    for part in path.split('.'):
-        if not isinstance(node, dict) or part not in node:
-            raise KeyError(path)
-        node = node[part]
-    return node
-
-
 def contrast_rows():
     """Mede a linha contra cada fundo nos dois temas, contra o piso 3:1 do 1.4.11."""
     rows = []
@@ -209,18 +200,11 @@ def run():
 
 
 # ---------------------------------------------------------------- css
-def css_ref(ref):
-    """Traduz a referencia da Foundation para a custom property equivalente."""
-    if ref.startswith('border.width.'):
-        return f'var(--al-border-width-{ref.split(".")[2]})'
-    return f'var(--al-{ref})'          # semantico de cor
-
-
 def write_css(alias):
     L = []
     w = L.append
     w('/* AL Design System - tokens do Divider')
-    w(' * GERADO por components/divider/tokens.py. Nao editar a mao.')
+    w(' * GERADO por src/components/divider/tokens.py. Nao editar a mao.')
     w(' *')
     w(' * Sem bloco de tema: cada token aponta para um semantico, e o tema troca')
     w(' * no :root - o mesmo elemento onde estes alias sao declarados.')
@@ -239,9 +223,7 @@ def write_css(alias):
     if faltando:
         raise AssertionError(f'tokens fora do CSS: {faltando}')
 
-    path = comp_out('divider', 'al-divider-tokens.css')
-    open(path, 'w').write(texto)
-    print(f'build/components/divider/al-divider-tokens.css escrito ({os.path.getsize(path)} bytes)')
+    save_css('divider', texto)
 
 
 if __name__ == '__main__':

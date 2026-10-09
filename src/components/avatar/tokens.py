@@ -67,6 +67,7 @@ from paths import FOUNDATION_SRC, TOKENS_JSON, comp_out  # noqa: E402
 sys.path.insert(0, FOUNDATION_SRC)
 
 from palette import SEM                     # noqa: E402
+from tokenlib import resolve_foundation, css_ref, size_key, save_css  # noqa: E402
 from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
@@ -94,22 +95,6 @@ PENDING = {}   # nenhuma pendencia nesta versao - ver docstring
 
 
 # ---------------------------------------------------------------- portao
-def resolve_foundation(path):
-    """Segue um caminho pontuado dentro de tokens.json. Levanta se nao existir."""
-    node = FOUND
-    for part in path.split('.'):
-        if isinstance(node, list):
-            match = next((s for s in node if s and s[0] == part), None)
-            if match is None:
-                raise KeyError(path)
-            node = match
-            continue
-        if not isinstance(node, dict) or part not in node:
-            raise KeyError(path)
-        node = node[part]
-    return node
-
-
 def bind_color(name, ref, alias, resolved, problems):
     """Um token de cor: registra o alias e resolve nos dois temas, ou reprova."""
     alias[name] = ref
@@ -240,40 +225,11 @@ def run():
 
 
 # ---------------------------------------------------------------- css
-def css_ref(ref):
-    """Traduz a referencia da Foundation para a custom property equivalente."""
-    if ref.startswith('space.'):
-        return f'var(--al-space-{ref.split(".")[1]})'
-    if ref.startswith('radius.'):
-        return f'var(--al-radius-{ref.split(".")[1]})'
-    if ref.startswith('iconSize.'):
-        return f'var(--al-icon-size-{ref.split(".")[1]})'
-    if ref.startswith('type.styles.'):
-        return ref.split('.')[2]          # tratado a parte: um estilo vira quatro vars
-    return f'var(--al-{ref})'             # semantico de cor
-
-
-def _size_key(font_size):
-    """Acha o nome do degrau (xs, sm, ..., 2xl) cujo font-size bate, na
-    propria escala da Foundation. `type.size` nao tem valor repetido - dá pra
-    resolver por valor com seguranca.
-
-    O nome de line-height NAO pode nascer do mesmo truque: `leading.lg` e
-    `leading.xl` valem os dois 28px, entao buscar por VALOR e ambiguo e pode
-    emitir a variavel errada sem mudar nada na tela - erro silencioso. A
-    saida e usar o MESMO nome de degrau do font-size (todo estilo de texto da
-    Foundation casa um size e um leading do mesmo degrau nomeado)."""
-    for key, v in FOUND['type']['size'].items():
-        if v == font_size:
-            return key
-    raise KeyError(f'type.size com valor {font_size} nao existe na Foundation')
-
-
 def write_css(alias, diameters):
     L = []
     w = L.append
     w('/* AL Design System - tokens do Avatar')
-    w(' * GERADO por components/avatar/tokens.py. Nao editar a mao.')
+    w(' * GERADO por src/components/avatar/tokens.py. Nao editar a mao.')
     w(' *')
     w(' * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um')
     w(' * semantico, e o tema troca no :root - o mesmo elemento onde estes alias')
@@ -295,7 +251,7 @@ def write_css(alias, diameters):
         for role, ref in roles.items():
             if ref.startswith('type.styles.'):
                 style = resolve_foundation(ref)
-                key = _size_key(style[1])
+                key = size_key(style[1])
                 w(f'  --al-avatar-{size}-font-size: var(--al-font-size-{key});')
                 w(f'  --al-avatar-{size}-line-height: var(--al-line-height-{key});')
                 w(f'  --al-avatar-{size}-font-weight: {style[3]};')
@@ -310,9 +266,7 @@ def write_css(alias, diameters):
     w('}')
     w('')
 
-    path = comp_out('avatar', 'al-avatar-tokens.css')
-    open(path, 'w').write('\n'.join(L))
-    print(f'build/components/avatar/al-avatar-tokens.css escrito ({os.path.getsize(path)} bytes)')
+    save_css('avatar', '\n'.join(L))
 
 
 if __name__ == '__main__':
