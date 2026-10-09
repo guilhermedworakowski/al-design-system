@@ -14,17 +14,18 @@ fundo nao era visual:
     componente quebrar, a pagina quebra junto - que e o que se quer.
 
 Navegacao em duas camadas, como Carbon e Material fazem:
-  trilho a esquerda = assunto, em dois grupos que abrem um de cada vez
-  abas no topo      = recorte do assunto
-  paginas-indice    = um card por assunto interno, com a miniatura montada
-                      com os proprios tokens que ela documenta
+  Sidebar a esquerda = assunto: a .al-sidebar do proprio AL, com um grupo
+                       para a Foundation e um para cada tipo de componente
+  abas no topo       = recorte do assunto
+  paginas-indice     = um card por assunto interno, com a miniatura montada
+                       com os proprios tokens que ela documenta
 
-Interatividade so onde ela prova alguma coisa: o playground do Button, o
-trilho, as abas e o switch de tema. As paginas da Foundation sao estaticas.
+Interatividade so onde ela prova alguma coisa: os playgrounds, a navegacao,
+as abas e o switch de tema. As paginas da Foundation sao estaticas.
 
-Os icones do trilho sao casca do site. O switch de tema NAO e: desde a etapa 7
-do Switch (25/09/2026) ele e o componente do AL, com rotulo visivel - o portao
-de marcacao do src/components/switch/a11y.py cobra isso no HTML emitido.
+A navegacao e o switch de tema sao componentes do AL, nao casca: os portoes de
+marcacao da Sidebar, do Tab, do Avatar, do Icon Button, do Divider e do Switch
+leem o HTML emitido e cobram o contrato de cada um.
 
 Rodar: python3 site/site.py     (escreve build/site/index.html)
 """
@@ -693,59 +694,26 @@ body{
   font-family:var(--al-font-sans); font-size:15px; line-height:1.6;
   -webkit-font-smoothing:antialiased;
 }
-.shell{display:grid; grid-template-columns:236px 1fr; min-height:100vh}
+.shell{display:flex; min-height:100vh}
+.main{flex:1; min-width:0; outline:none}
 
-/* ── trilho ── */
-.rail{
-  border-right:1px solid var(--al-border-subtle); background:var(--al-bg-surface);
-  padding:26px 0 0; position:sticky; top:0; height:100vh; overflow-y:auto;
-  display:flex; flex-direction:column;
-}
-.brand{display:flex; align-items:center; gap:10px; padding:0 22px 22px; margin-bottom:6px;
-  border-bottom:1px solid var(--al-border-subtle)}
-.brand-mark{width:26px; height:26px; border-radius:7px; background:var(--al-bg-brand);
-  display:grid; place-items:center; color:#fff; font-weight:700; font-size:13px; flex:none}
-.brand-name{font-weight:600; font-size:14px; letter-spacing:-.01em; line-height:1.25}
-.brand-name small{display:block; font-weight:400; font-size:11px; color:var(--al-text-secondary)}
-/* Trilho no estilo do Material 3: o item primario e uma pilula com icone, e a
-   lista de sub-itens abre embaixo dele. Sub-item nao tem icone - o recuo e o
-   alinhamento com o rotulo do pai ja dizem a hierarquia. */
-.rail-nav{padding:10px 10px 0; flex:1}
-.nav-group + .nav-group{margin-top:4px}
-.nav-primary{
-  display:flex; align-items:center; gap:12px;
-  padding:10px 14px; border-radius:9999px; text-decoration:none;
-  color:var(--al-text-primary); font-size:14px; font-weight:500;
-}
-.nav-primary:hover{background:var(--al-bg-hover)}
-.nav-primary[aria-current]{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
-.nav-primary:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
-.nav-ico{width:20px; height:20px; flex:none; display:block; color:currentColor}
-.nav-ico svg{display:block; width:100%; height:100%}
-.nav-label{flex:1; min-width:0}
-/* o chevron mora dentro do proprio item: um alvo so, um clique so */
-.nav-chev{flex:none; width:16px; height:16px; display:block; opacity:.75}
-.nav-chev svg{display:block; width:100%; height:100%; transition:transform 160ms ease}
-.nav-group.is-open .nav-chev svg{transform:rotate(180deg)}
-.nav-sub{display:flex; flex-direction:column; gap:1px; padding:2px 0 4px}
-.nav-sub a{
-  display:block; padding:8px 14px 8px 46px; border-radius:9999px;
-  color:var(--al-text-secondary); text-decoration:none; font-size:13.5px;
-}
-.nav-sub a:hover{background:var(--al-bg-hover); color:var(--al-text-primary)}
-.nav-sub a[aria-current]{background:var(--al-bg-brand-subtle); color:var(--al-text-brand); font-weight:500}
-.nav-sub a:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:2px}
-.nav-sub a.soon{opacity:.45; cursor:default}
-.nav-sub a.soon:hover{background:none; color:var(--al-text-secondary)}
-
-/* ── rodapé do trilho: o switch de tema ──
-   É o Switch do AL, não uma imitação: até 25/09/2026 era um <button
-   role="switch"> desenhado à mão, com sol e lua na bolinha, e o portão de
-   marcação do Switch reprovou o próprio site. Agora o rótulo "Tema escuro" é
-   visível (regra 23) e o ícone saiu (ícone na bolinha está fora do escopo). */
-.rail-foot{margin-top:auto; border-top:1px solid var(--al-border-subtle); padding:18px 18px 14px}
-@media (prefers-reduced-motion: reduce){
-  .nav-chev svg{transition:none}
+/* ── navegação: a .al-sidebar do AL ──
+   Até a 1.0.1 era um trilho desenhado à mão (pílulas com ícone, dois grupos em
+   acordeão). Agora é o componente, sem nenhuma regra por cima dele: o que está
+   aqui é só o que o produto põe em volta da Sidebar (pular para o conteúdo e o topo com o botão Menu). */
+.skip{position:absolute; left:8px; top:8px; z-index:20; padding:8px 16px; border-radius:var(--al-radius-md);
+  background:var(--al-bg-brand); color:var(--al-text-on-brand); font-weight:600; text-decoration:none;
+  translate:0 -200%}
+.skip:focus{translate:none; outline:none; box-shadow:var(--al-focus-ring-default)}
+.sr-only{position:absolute; width:1px; height:1px; margin:-1px; padding:0; overflow:hidden;
+  clip-path:inset(50%); white-space:nowrap; border:0}
+/* topo do produto: só abaixo de 1024px, onde a Sidebar vira painel modal */
+.topbar{display:none}
+@media (width < 1024px){
+  .topbar{position:sticky; top:0; z-index:10; display:flex; align-items:center; gap:var(--al-space-8);
+    padding:var(--al-space-12) var(--al-space-16); background:var(--al-bg-canvas);
+    border-bottom:var(--al-border-width-1) solid var(--al-border-default)}
+  .topbar-name{font-weight:600; font-size:var(--al-font-size-md); line-height:var(--al-line-height-md)}
 }
 
 /* ── cards das páginas-índice ── */
@@ -1061,8 +1029,6 @@ footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--al-border-s
 footer code{background:none; padding:0}
 
 @media (max-width:900px){
-  .shell{grid-template-columns:1fr}
-  .rail{position:static; height:auto; padding-bottom:14px}
   .inner{padding:0 20px 72px}
   h1{font-size:34px}
   .ctl{grid-template-columns:1fr; gap:8px}
@@ -1154,18 +1120,6 @@ TH_AVATAR = ('<div class="th-icons">'
              + '</div>')
 TH_SOON = '<div class="th-soon"></div>'
 
-ICO_FUNDACAO = ('<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">'
-                '<path d="M12 3 3 7.5 12 12l9-4.5L12 3Z" stroke="currentColor" stroke-width="1.6" '
-                'stroke-linejoin="round"/><path d="m3 12.5 9 4.5 9-4.5" stroke="currentColor" '
-                'stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'
-                '<path d="m3 17.5 9 4.5 9-4.5" stroke="currentColor" stroke-width="1.6" '
-                'stroke-linecap="round" stroke-linejoin="round"/></svg>')
-ICO_COMPONENTES = ('<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">'
-                   '<rect x="3" y="3" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.6"/>'
-                   '<rect x="13.5" y="3" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.6"/>'
-                   '<rect x="3" y="13.5" width="7.5" height="7.5" rx="2" stroke="currentColor" stroke-width="1.6"/>'
-                   '<rect x="13.5" y="13.5" width="7.5" height="7.5" rx="3.75" stroke="currentColor" '
-                   'stroke-width="1.6" stroke-dasharray="2.6 2.4"/></svg>')
 CARET = ('<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">'
          '<path d="m4 6 4 4 4-4" stroke="currentColor" stroke-width="1.6" '
          'stroke-linecap="round" stroke-linejoin="round"/></svg>')
@@ -12839,63 +12793,79 @@ PAGES = [
          ('guide', 'Diretrizes', ALERT_GUIDE), ('a11y', 'Acessibilidade', ALERT_A11Y_TAB)])),
 ]
 
-RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
-  <div class="brand">
-    <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v{VERSION} · {META['license']}</small></span>
-  </div>
-  <div class="rail-nav">
-    <div class="nav-group is-open" id="g-fundacao">
-      <a class="nav-primary" href="#/fundacao" data-page="fundacao" aria-current="page"
-         aria-expanded="true" aria-controls="sub-fundacao">
-        <span class="nav-ico">{ICO_FUNDACAO}</span><span class="nav-label">Fundação</span>
-        <span class="nav-chev" aria-hidden="true">{CARET}</span></a>
-      <div class="nav-sub" id="sub-fundacao">
-        <a href="#/principios" data-page="principios">Princípios</a>
-        <a href="#/prova" data-page="prova">A prova</a>
-        <a href="#/cor" data-page="cor">Cor</a>
-        <a href="#/tipografia" data-page="tipografia">Tipografia</a>
-        <a href="#/espacamento" data-page="espacamento">Espaçamento</a>
-        <a href="#/motion" data-page="motion">Motion</a>
-        <a href="#/icon" data-page="icon">Ícones</a>
-      </div>
-    </div>
-    <div class="nav-group" id="g-componentes">
-      <a class="nav-primary" href="#/componentes" data-page="componentes"
-         aria-expanded="false" aria-controls="sub-componentes">
-        <span class="nav-ico">{ICO_COMPONENTES}</span><span class="nav-label">Componentes</span>
-        <span class="nav-chev" aria-hidden="true">{CARET}</span></a>
-      <div class="nav-sub" id="sub-componentes" hidden>
-        <a href="#/button" data-page="button">Button</a>
-        <a href="#/icon-button" data-page="icon-button">Icon Button</a>
-        <a href="#/tag" data-page="tag">Tag</a>
-        <a href="#/avatar" data-page="avatar">Avatar</a>
-        <a href="#/select" data-page="select">Select</a>
-        <a href="#/checkbox" data-page="checkbox">Checkbox</a>
-        <a href="#/radio" data-page="radio">Radio</a>
-        <a href="#/switch" data-page="switch">Switch</a>
-        <a href="#/input" data-page="input">Input</a>
-        <a href="#/textarea" data-page="textarea">Textarea</a>
-        <a href="#/password" data-page="password">Password</a>
-        <a href="#/divider" data-page="divider">Divider</a>
-        <a href="#/card" data-page="card">Card</a>
-        <a href="#/tab" data-page="tab">Tab</a>
-        <a href="#/accordion" data-page="accordion">Accordion</a>
-        <a href="#/modal" data-page="modal">Modal</a>
-        <a href="#/drawer" data-page="drawer">Drawer</a>
-        <a href="#/sidebar" data-page="sidebar">Sidebar</a>
-        <a href="#/breadcrumb" data-page="breadcrumb">Breadcrumb</a>
-        <a href="#/tooltip" data-page="tooltip">Tooltip</a>
-        <a href="#/toast" data-page="toast">Toast</a>
-        <a href="#/alert" data-page="alert">Alert</a>
-      </div>
-    </div>
-  </div>
+# ── Sidebar do site: o componente do AL, não uma casca ──
+# A navegação do site é a própria .al-sidebar, com o mesmo contrato que o
+# src/components/sidebar/a11y.py cobra no HTML emitido: perfil + nav, grupos
+# com rótulo e aria-labelledby, itens Tab Square com aria-current. Um nível só
+# (regra 8): "Componentes" é um grupo com a Visão geral dos componentes, e os
+# cinco tipos vêm depois como grupos irmãos.
+# As duas "Visão geral" levam um complemento só para o leitor de tela (.sr-only):
+# a regra 16 proíbe dois links com o mesmo nome, e o rótulo do grupo, que
+# desambigua para quem vê, o leitor só anuncia ao entrar na lista. O Divider e o switch de tema ficam no fim do
+# miolo, que é onde o contrato deixa (o aside tem só perfil e nav).
+SITE_NAV = [
+    ('Foundation', [('fundacao', 'Visão geral', ' da Foundation'), ('principios', 'Princípios'), ('cor', 'Cor'),
+                    ('tipografia', 'Tipografia'), ('espacamento', 'Espaçamento'),
+                    ('motion', 'Motion'), ('icon', 'Ícones')]),
+    ('Componentes', [('componentes', 'Visão geral', ' dos componentes')]),
+    ('Actions', [('button', 'Button'), ('icon-button', 'Icon button')]),
+    ('Forms and inputs', [('input', 'Input'), ('password', 'Password'), ('select', 'Select'),
+                          ('checkbox', 'Checkbox'), ('radio', 'Radio'), ('textarea', 'Textarea'),
+                          ('switch', 'Switch')]),
+    ('Content', [('card', 'Card'), ('modal', 'Modal'), ('drawer', 'Drawer'), ('avatar', 'Avatar'),
+                 ('divider', 'Divider'), ('accordion', 'Accordion')]),
+    ('Navigation', [('sidebar', 'Sidebar'), ('breadcrumb', 'Breadcrumb'), ('tab', 'Tab')]),
+    ('Feedback and status', [('alert', 'Alert'), ('toast', 'Toast'), ('tooltip', 'Tooltip'),
+                             ('tag', 'Tag')]),
+]
+REPO_URL = 'https://github.com/guilhermedworakowski/al-design-system'
 
-  <div class="rail-foot">
-    {sw('themeswitch', 'Tema escuro')}
-  </div>
-</nav>'''
+
+def site_nav_group(rotulo, itens):
+    gid = 'nav-g-' + sb_slug(rotulo)
+    def li(pid, rot, sr=''):
+        cur = ' aria-current="page"' if pid == 'fundacao' else ''
+        extra = f'<span class="sr-only">{sr}</span>' if sr else ''
+        return (f'<li><a class="al-tab" href="#/{pid}" data-page="{pid}"{cur}>'
+                f'<span class="al-tab__label">{rot}{extra}</span></a></li>')
+    lis = ''.join(li(*it) for it in itens)
+    return (f'<div class="al-sidebar__group"><p class="al-sidebar__group-label" id="{gid}">{rotulo}</p>'
+            f'<ul class="al-tabs al-tabs--square" aria-labelledby="{gid}">{lis}</ul></div>')
+
+
+RAIL = (
+    '<a class="skip" href="#conteudo">Pular para o conteúdo</a>\n'
+    '<aside class="al-sidebar" id="site-sidebar" aria-label="Barra lateral">\n'
+    '  <div class="al-sidebar__profile">\n'
+    '    <span class="al-avatar al-avatar--md" aria-hidden="true"><span class="al-avatar__initials">AL</span></span>\n'
+    '    <div class="al-sidebar__details">\n'
+    '      <div class="al-sidebar__user">\n'
+    '        <p class="al-sidebar__name">AL DS</p>\n'
+    f'        <p class="al-sidebar__email">v{VERSION} - {META["license"]}</p>\n'
+    '      </div>\n'
+    f'      <a class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" href="{REPO_URL}" target="_blank"'
+    ' rel="noopener" aria-label="Abrir o repositório no GitHub (abre em nova aba)">'
+    f'{al_icon("external-link")}</a>\n'
+    '    </div>\n'
+    '  </div>\n'
+    '  <nav class="al-sidebar__nav" aria-label="Navegação do design system">\n'
+    '    <div class="al-sidebar__content">\n'
+    + '\n'.join('      ' + site_nav_group(r, i) for r, i in SITE_NAV) + '\n'
+    '      <hr class="al-divider">\n'
+    f'      {sw("themeswitch", "Tema escuro")}\n'
+    '    </div>\n'
+    '  </nav>\n'
+    '</aside>')
+
+# O botão Menu é do produto (regra 24 da Sidebar): só existe abaixo de 1024px,
+# quando a Sidebar vira painel modal pela esquerda (sidebar.js).
+TOPBAR = (
+    '<header class="topbar">'
+    '<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md" aria-label="Menu"'
+    ' aria-controls="site-sidebar" aria-expanded="false" data-al-sidebar-open="site-sidebar">'
+    f'{al_icon("menu")}</button>'
+    '<span class="topbar-name">AL Design System</span></header>')
+
 
 FOOTER = f'''<footer>
   <span><b>AL Design System</b> · v{VERSION}</span>
@@ -12907,27 +12877,14 @@ FOOTER = f'''<footer>
 
 JS = r"""
 (function () {
-  // ── trilho: uma página por vez, endereçável pelo hash ──
+  // ── navegação: uma página por vez, endereçável pelo hash ──
+  // Os itens são os Tab Square da .al-sidebar do site. O atual leva
+  // aria-current="page"; página sem item (A prova)
+  // fica sem nenhum marcado (regra 12 da Sidebar).
   var pages = [].slice.call(document.querySelectorAll('.page'));
-  var links = [].slice.call(document.querySelectorAll('.rail a[data-page]'));
-  // os cards das páginas-índice navegam pelo mesmo roteador que o trilho
+  var links = [].slice.call(document.querySelectorAll('#site-sidebar a[data-page]'));
+  // os cards das páginas-índice navegam pelo mesmo roteador que a Sidebar
   var cards = [].slice.call(document.querySelectorAll('a.card[data-page]'));
-
-  var groups = [].slice.call(document.querySelectorAll('.nav-group'));
-
-  function setOpen(group, on) {
-    if (!group) return;
-    group.classList.toggle('is-open', on);
-    var primary = group.querySelector('.nav-primary');
-    var sub = group.querySelector('.nav-sub');
-    if (primary) primary.setAttribute('aria-expanded', on ? 'true' : 'false');
-    if (sub) sub.hidden = !on;
-  }
-
-  // Acordeão: um aberto por vez. Abrir um fecha o outro, sempre.
-  function openOnly(group) {
-    groups.forEach(function (g) { setOpen(g, g === group); });
-  }
 
   function show(id) {
     var found = false;
@@ -12937,17 +12894,10 @@ JS = r"""
       if (on) found = true;
     });
     if (!found) return false;
-    var owner = null;
     links.forEach(function (a) {
-      if (a.getAttribute('data-page') === id) {
-        a.setAttribute('aria-current', 'page');
-        owner = a.closest('.nav-group');
-      } else {
-        a.removeAttribute('aria-current');
-      }
+      if (a.getAttribute('data-page') === id) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
     });
-    // abre o grupo dono da página e fecha o outro
-    if (owner && owner.classList.contains('nav-group')) openOnly(owner);
     return true;
   }
 
@@ -12959,22 +12909,13 @@ JS = r"""
 
   // O clique troca a página direto, sem depender do hashchange: em contexto
   // com o hash bloqueado (preview, sandbox, arquivo aberto local) o evento não
-  // dispara, e o trilho ficaria morto. O hash continua sendo escrito para o
-  // endereço permanecer copiável.
+  // dispara, e a navegação ficaria morta. O hash continua sendo escrito para o
+  // endereço permanecer copiável. Abaixo de 1024px o sidebar.js fecha o painel
+  // no mesmo clique.
   links.concat(cards).forEach(function (a) {
     a.addEventListener('click', function (e) {
       e.preventDefault();
       var id = a.getAttribute('data-page');
-      var group = a.closest('.nav-group');
-      // Clicar de novo no item primário que já está aberto recolhe a lista, sem
-      // sair da página. É o único jeito de fechar os dois grupos agora que o
-      // chevron não é mais um alvo separado.
-      if (group && a.classList.contains('nav-primary') &&
-          group.classList.contains('is-open') &&
-          !document.getElementById('pg-' + id).hidden) {
-        setOpen(group, false);
-        return;
-      }
       if (!show(id)) return;
       window.scrollTo(0, 0);
       try { history.replaceState(null, '', '#/' + id); } catch (err) { /* sandbox */ }
@@ -15024,7 +14965,7 @@ HTML = (
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
     + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
-    '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
+    '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n' + TS_REGION + '\n\n<script>'
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
@@ -15035,7 +14976,7 @@ HTML = (
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
     + DRW_JS.replace('</', '<\\/') + JS_DRAWER_DATA + JS_DRAWER
-    + JS_SIDEBAR_DATA + JS_SIDEBAR
+    + SBR_JS.replace('</', '<\\/') + JS_SIDEBAR_DATA + JS_SIDEBAR
     + BCR_JS.replace('</', '<\\/') + JS_BREADCRUMB_DATA + JS_BREADCRUMB
     + TTP_JS.replace('</', '<\\/') + JS_TOOLTIP_DATA + JS_TOOLTIP
     + TST_JS.replace('</', '<\\/') + JS_TOAST_DATA + JS_TOAST
