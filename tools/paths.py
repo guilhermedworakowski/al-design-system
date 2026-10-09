@@ -16,6 +16,15 @@ SRC = os.path.join(ROOT, 'src')
 BUILD = os.path.join(ROOT, 'build')
 DIST = os.path.join(ROOT, 'dist')
 
+# Ordem de criacao dos componentes. Componente novo entra no fim. E tambem a
+# ordem do CSS no al.css e no site, entao mexer nela muda a cascata.
+COMPONENTS = [
+    'button', 'icon', 'icon-button', 'tag', 'avatar', 'select', 'checkbox',
+    'radio', 'switch', 'input', 'textarea', 'password', 'divider', 'card',
+    'tab', 'accordion', 'modal', 'drawer', 'sidebar', 'breadcrumb', 'tooltip',
+    'toast', 'alert',
+]
+
 FOUNDATION_SRC = os.path.join(SRC, 'foundation')
 TOKENS_JSON = os.path.join(BUILD, 'tokens.json')
 FOUNDATION_CSS = os.path.join(BUILD, 'foundation', 'al-foundation.css')

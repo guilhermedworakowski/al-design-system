@@ -2,8 +2,9 @@
 Build completo do AL Design System, num comando so.
 
 Roda, na ordem certa, todos os geradores e portoes: Foundation, tokens e CSS de
-cada componente, o site e o QA de acessibilidade de cada componente. Para no
-primeiro passo que falhar, e mostra a saida dele.
+cada componente, o site e o QA de acessibilidade de cada componente. Por
+ultimo, monta o pacote em dist/ - so chega la se todos os portoes passaram.
+Para no primeiro passo que falhar, e mostra a saida dele.
 
 Rodar (da raiz do repo):
     python3 build.py            build completo
@@ -31,14 +32,8 @@ So usa a biblioteca padrao do Python (3.9 ou mais novo).
 import os, subprocess, sys, time
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-
-# Ordem de criacao dos componentes. Componente novo entra no fim.
-COMPONENTS = [
-    'button', 'icon', 'icon-button', 'tag', 'avatar', 'select', 'checkbox',
-    'radio', 'switch', 'input', 'textarea', 'password', 'divider', 'card',
-    'tab', 'accordion', 'modal', 'drawer', 'sidebar', 'breadcrumb', 'tooltip',
-    'toast', 'alert',
-]
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+from paths import COMPONENTS  # noqa: E402  - a lista mora em tools/paths.py
 
 # Passos extras que rodam antes do site, logo depois do check.py do componente.
 BEFORE_SITE = {
@@ -66,6 +61,7 @@ def steps():
     for c in depois:
         out.append((f'src/components/{c}', 'a11y.py', False))
     out.append(('site', 'site.py', False))
+    out.append(('tools', 'dist.py', False))
     return out
 
 
