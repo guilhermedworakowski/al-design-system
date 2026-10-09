@@ -1,7 +1,7 @@
 {
   "name": "al-design-system",
-  "version": "1.0.0",
-  "description": "AL Design System: Foundation e componentes em CSS, do Figma ao código.",
+  "version": "1.0.1",
+  "description": "AL Design System: Foundation and components in plain CSS, from Figma to code.",
   "license": "MIT",
   "author": "Guilherme Domingues",
   "homepage": "https://github.com/guilhermedworakowski/al-design-system#readme",

@@ -2,7 +2,7 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
-## [1.0.1] - Unreleased
+## [1.0.1] - 2026-10-09
 
 Preparation for the open-source launch. No class, token or gate changed meaning.
 
@@ -145,7 +145,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
-[1.0.1]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.0.0...dev
+[1.0.1]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v0.23.0...v1.0.0
 [0.23.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v0.22.0...v0.23.0
 [0.22.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v0.21.0...v0.22.0

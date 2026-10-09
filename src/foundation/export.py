@@ -79,7 +79,8 @@ TOKENS = {
     # 1024px sidebar.js moves the same <aside> into a <dialog> from the left.
     # Reuses bg-scrim, elevation-5 and motion.duration.panel; no Foundation
     # token changes.
-    "name": "AL Design System", "version": "1.0.0", "license": "MIT",
+    # From 1.0.0 on, the history of every release lives in CHANGELOG.md.
+    "name": "AL Design System", "version": "1.0.1", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
