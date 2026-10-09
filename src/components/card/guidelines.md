@@ -14,6 +14,10 @@ A card groups **one subject** that can be read or acted on by itself.
 | Filled on `bg-surface`: the gray page draws the card's edge. | Filled straight on the canvas: white on white leaves loose text. Use Border, or change the page. |
 | A clickable card with one action: one target, one announced name (the title). | A clickable card with buttons inside: the button competes with the whole card for the click. Remove the card's click or remove the buttons. |
 
+### A card is recognized by its content
+
+Border's line falls below the 3:1 of criterion 1.4.11, and the Filled and Elevated backgrounds barely separate from the page. Both are declared exceptions, and they only hold because a card always has content that identifies it.
+
 ## Rules
 
 ### When to use each type
