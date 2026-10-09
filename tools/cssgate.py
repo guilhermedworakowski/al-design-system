@@ -13,7 +13,7 @@ JS do componente consomem:
     so parece existir). A que o proprio CSS do componente declara e um ponto
     de ajuste publico, nao token (ex.: --al-icon-box do Icon), e passa.
 
-Cada components/<c>/check.py so diz o que e proprio do componente: o que o
+Cada src/components/<c>/check.py so diz o que e proprio do componente: o que o
 portao nao alcanca (contratos de marcacao, cobrados pelo a11y.py no HTML do
 site), excecoes declaradas e conferencias extras. Exemplo:
 
@@ -26,7 +26,7 @@ passam: o portao so procura hex, funcao de cor, numero com unidade e peso.
 import os
 import re
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from paths import comp_src, comp_out
 
 HEX = re.compile(r'#[0-9a-fA-F]{3,8}\b')
 FUNC_COLOR = re.compile(r'\b(rgba?|hsla?|oklch|lab|color)\s*\(')
@@ -57,8 +57,7 @@ def gate(c, fora_do_css=(), excecoes=(), extra=None):
     extra        funcao(body) -> (ok, linhas) para uma conferencia propria
     Devolve 0 (passa) ou 1 (reprova).
     """
-    here = os.path.join(ROOT, 'components', c)
-    target = os.path.join(here, f'{c}.css')
+    target = comp_src(c, f'{c}.css')
     nome = title(c)
     if not os.path.exists(target):
         print(f'{c}.css nao encontrado em {target}')
@@ -84,11 +83,11 @@ def gate(c, fora_do_css=(), excecoes=(), extra=None):
 
     n_vars = len(set(re.findall(r'var\(\s*(--al-[\w-]+)', body)))
     usados = set(re.findall(rf'var\(\s*(--al-{c}-[\w-]+)', body))
-    js = os.path.join(here, f'{c}.js')
+    js = comp_src(c, f'{c}.js')
     if os.path.exists(js):
         usados |= {f'--al-{c}-{n}' for n in JS_TOKEN.findall(open(js).read())}
 
-    tokens_css = os.path.join(here, f'al-{c}-tokens.css')
+    tokens_css = comp_out(c, f'al-{c}-tokens.css')
     declarados = set()
     if os.path.exists(tokens_css):
         declarados = set(re.findall(rf'^\s*(--al-{c}-[\w-]+)\s*:',
