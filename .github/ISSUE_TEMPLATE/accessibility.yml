@@ -1,0 +1,71 @@
+name: Accessibility issue
+description: Contrast, keyboard, focus, screen reader or any WCAG problem.
+labels: [accessibility]
+body:
+  - type: markdown
+    attributes:
+      value: Accessibility is checked by the build, so a report here usually means a gate is missing something. Thanks for helping close it.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Foundation (tokens, theme, typography...)
+        - Button
+        - Icon
+        - Icon Button
+        - Tag
+        - Avatar
+        - Select
+        - Checkbox
+        - Radio
+        - Switch
+        - Input
+        - Textarea
+        - Password
+        - Divider
+        - Card
+        - Tab
+        - Accordion
+        - Modal
+        - Drawer
+        - Sidebar
+        - Breadcrumb
+        - Tooltip
+        - Toast
+        - Alert
+        - Documentation site
+        - Package / build
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: AL version
+      placeholder: "1.0.1"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong
+      description: What you saw or heard, and how to reproduce it.
+    validations:
+      required: true
+  - type: input
+    id: combination
+    attributes:
+      label: Combination
+      description: Variant, state and theme where it happens.
+      placeholder: "Secondary, hover, dark"
+  - type: input
+    id: wcag
+    attributes:
+      label: WCAG criterion
+      description: If you know it.
+      placeholder: "1.4.11 Non-text Contrast"
+  - type: input
+    id: at
+    attributes:
+      label: Browser and assistive technology
+      placeholder: "Chrome 140 + NVDA 2026.1, Windows 11"
