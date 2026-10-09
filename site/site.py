@@ -137,6 +137,11 @@ TTP_TOKENS = open(os.path.join(ROOT, 'components', 'tooltip', 'al-tooltip-tokens
 TTP_CSS = open(os.path.join(ROOT, 'components', 'tooltip', 'tooltip.css')).read()
 TTP_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tooltip', 'a11y.json')))
 TTP_JS = open(os.path.join(ROOT, 'components', 'tooltip', 'tooltip.js')).read()
+TST = json.load(open(os.path.join(ROOT, 'components', 'toast', 'tokens.json')))
+TST_TOKENS = open(os.path.join(ROOT, 'components', 'toast', 'al-toast-tokens.css')).read()
+TST_CSS = open(os.path.join(ROOT, 'components', 'toast', 'toast.css')).read()
+TST_A11Y = json.load(open(os.path.join(ROOT, 'components', 'toast', 'a11y.json')))
+TST_JS = open(os.path.join(ROOT, 'components', 'toast', 'toast.js')).read()
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -172,6 +177,7 @@ N_DRW_TOKENS = len(DRW['alias'])
 N_SBR_TOKENS = len(SBR['alias'])
 N_BCR_TOKENS = len(BCR['alias'])
 N_TTP_TOKENS = len(TTP['alias'])
+N_TST_TOKENS = len(TST['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -217,7 +223,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
-                         TTP_TOKENS)
+                         TTP_TOKENS, TST_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -238,7 +244,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + DRW_TOKENS + '\n' + DRW_CSS
             + '\n' + SBR_TOKENS + '\n' + SBR_CSS
             + '\n' + BCR_TOKENS + '\n' + BCR_CSS
-            + '\n' + TTP_TOKENS + '\n' + TTP_CSS)
+            + '\n' + TTP_TOKENS + '\n' + TTP_CSS
+            + '\n' + TST_TOKENS + '\n' + TST_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1538,7 +1545,9 @@ MO_DEMOS = [
      '<div class="mo-box mo-box--tooltip mo-move"><i class="mo-l mo-l--90"></i></div>'),
     ('toast', 'Toast', 'popup',
      '<span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span>'
-     '<div class="mo-box mo-box--toast mo-move"><b class="mo-dot"></b><i class="mo-l mo-l--60"></i></div>'),
+     '<div class="mo-box mo-box--toast mo-move"><b class="mo-dot"></b>'
+     '<span class="mo-ts-text"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i></span>'
+     '<u class="mo-ts-x"></u></div>'),
     ('control', 'Controle', 'feedback',
      '<div class="mo-ctl-track"><i class="mo-ctl-thumb"></i></div>'),
     ('spinner', 'Spinner', 'spinner',
@@ -1632,8 +1641,8 @@ TAB_MOTION_MOVIMENTOS = f'''
       <span class="al-btn__label">Reproduzir todos</span></button>
   </div>
   <div class="dd">{mo_cells()}</div>
-  <p class="mo-fine">Ilustração do movimento, não dos componentes: o Toast ainda não existe
-  no AL, os palcos do Tooltip, do Modal e do Drawer são miniaturas, e o do controle também não é o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
+  <p class="mo-fine">Ilustração do movimento, não dos componentes: os palcos do Tooltip, do
+  Toast, do Modal e do Drawer são miniaturas, e o do controle também não é o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
   a Foundation fixa só a duração e a curva.</p>
   <p class="mo-fine" id="mo-reduced" hidden>Seu sistema pede movimento reduzido. Os palcos trocam de estado
   sem animar, que é exatamente o que um componente do AL faz nessa preferência.</p>
@@ -5211,12 +5220,11 @@ SWITCH_OVERVIEW = f'''
           {sw('ov-sw-contador', 'Enviar notas ao contador')}
         </div>
       </fieldset>
-      <p class="sw-status" id="ov-sw-status" role="status" aria-live="polite"></p>
     </div>
     <p class="cap">Não há botão “Salvar”: cada switch vale na hora. Desligue as notificações por
     e-mail e o resumo semanal fica desabilitado, porque depende delas. Ligue o envio ao contador: a
     bolinha troca no clique e, quando o servidor simulado recusa, volta ao estado real e a aplicação
-    avisa em texto. <i>Primer, Polaris e Material: o switch aplica na hora e mostra o estado real.</i></p>
+    avisa com um <a href="#/toast">Toast</a> de Erro. <i>Primer, Polaris e Material: o switch aplica na hora e mostra o estado real.</i></p>
   </div>
 </section>
 
@@ -5304,7 +5312,7 @@ SWITCH_SPECS = f'''
 <section>
   <h2>Sem erro, sem carregamento</h2>
   <p>O switch tem efeito imediato, então não valida e não tem estado de erro. Quando a ação falha,
-  quem age é a aplicação: ela desmarca o input de volta e avisa em texto. O componente não tem
+  quem age é a aplicação: ela desmarca o input de volta e avisa com um <a href="#/toast">Toast</a> de Erro. O componente não tem
   estado de carregamento — a bolinha troca no clique e só volta se o sistema recusar.</p>
 </section>'''
 
@@ -5367,7 +5375,7 @@ SWITCH_GUIDE = f'''
   <h2>Quando a ação falha</h2>
   <div class="anat">
     <div><b>Sem erro e nunca obrigatório</b><span>Se uma configuração precisa estar ligada para a pessoa seguir, é um aceite — e aceite é Checkbox. <i>Spectrum, Polaris.</i></span></div>
-    <div><b>Troca na hora, e volta se falhar</b><span>A bolinha muda no clique. Se o sistema recusar, ela volta ao estado real e a aplicação avisa em texto o que falhou. O switch nunca mostra um estado que o sistema não tem.</span></div>
+    <div><b>Troca na hora, e volta se falhar</b><span>A bolinha muda no clique. Se o sistema recusar, ela volta ao estado real e a aplicação avisa com um <a href="#/toast">Toast</a> de Erro. O switch nunca mostra um estado que o sistema não tem.</span></div>
   </div>
   <div class="note" style="margin-top:16px">
     <b>Divergência consciente</b>
@@ -11565,6 +11573,461 @@ JS_TOOLTIP = r"""
 """
 
 
+
+# ══════════════════════════════════════════════════════════════ Toast · abas
+# Segundo componente do Tier 5 e do piloto em duas sessoes: a pagina nasce na
+# etapa 5. Todo toast VIVO sai do toast.css e do toast.js reais: o botao do
+# Playground clona um <template> da pagina para a .al-toast-region, que mora no
+# fim do <body> (fora das paginas, que ficam display:none - um popover dentro de
+# um ancestral escondido nao renderiza). As amostras desta documentacao sao a
+# mesma .al-toast posta no fluxo por uma casca do site (ts-frozen), sob
+# `aria-hidden` + `inert`: um toast parado para sempre nao existe no componente.
+TS_STATUSES = [('success', 'Sucesso'), ('warning', 'Aviso'), ('error', 'Erro'), ('info', 'Informação')]
+TS_ICONS = {'success': 'circle-check', 'warning': 'triangle-alert', 'error': 'circle-alert', 'info': 'info'}
+TS_TEXT = {
+    'success': ('Produto salvo', 'Já aparece na loja.'),
+    'warning': ('Salvo sem a imagem', 'O arquivo passou de 5 MB. Envie outro pela edição.'),
+    'error':   ('Não foi possível enviar', 'Verifique a conexão e tente de novo.'),
+    'info':    ('Exportação iniciada', 'Avisamos quando o arquivo estiver pronto.'),
+}
+TS_DESCS = [('1', 'Com descrição'), ('0', 'Só título')]
+TS_MAX_W = TST['resolved']['toast-max-width']
+TS_TIMEOUT = TST['resolved']['toast-timeout']
+TS_OFFSET = TST['resolved']['toast-offset']
+N_TS_LITERALS = sum(1 for v in TST['alias'].values() if v.endswith(('px', 'ms')))
+TS_CLOSE_X = al_icon('x')
+
+
+def ts_icon(status):
+    label = dict(TS_STATUSES)[status]
+    return al_icon(TS_ICONS[status], 'al-icon al-icon--20 al-toast__icon').replace(
+        'aria-hidden="true" focusable="false"', f'role="img" aria-label="{label}" focusable="false"', 1)
+
+
+def ts_toast(status, desc=True, title=None, text=None):
+    t, d = TS_TEXT[status]
+    t, d = title or t, text or d
+    body = f'<p class="al-toast__title">{t}</p>' + (f'<p class="al-toast__description">{d}</p>' if desc else '')
+    return (f'<div class="al-toast al-toast--{status}">{ts_icon(status)}'
+            f'<div class="al-toast__text">{body}</div>'
+            f'<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" '
+            f'aria-label="Fechar notificação">{TS_CLOSE_X}</button></div>')
+
+
+def ts_frozen(status, desc=True, title=None, text=None):
+    return f'<div class="ts-frozen" aria-hidden="true" inert>{ts_toast(status, desc, title, text)}</div>'
+
+
+def ts_fake(text, cls=''):
+    """O "a evitar": nunca uma .al-toast errada, so a casca."""
+    return f'<div class="ts-fake {cls}" aria-hidden="true">{text}</div>'
+
+
+def ts_code(status, desc):
+    t, d = TS_TEXT[status]
+    lines = ['<!-- uma vez por página, no fim do <body> -->',
+             '<section class="al-toast-region" aria-label="Notificações" popover="manual">',
+             '  <div class="al-toast-region__live" role="status"></div>',
+             '  <div class="al-toast-region__live" role="alert"></div>',
+             '</section>', '',
+             f'<template id="toast-{status}">',
+             f'  <div class="al-toast al-toast--{status}">',
+             f'    <svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="{dict(TS_STATUSES)[status]}" focusable="false">…{TS_ICONS[status]}…</svg>',
+             '    <div class="al-toast__text">',
+             f'      <p class="al-toast__title">{t}</p>']
+    if desc:
+        lines.append(f'      <p class="al-toast__description">{d}</p>')
+    lines += ['    </div>',
+              '    <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close"',
+              '            aria-label="Fechar notificação">',
+              '      <svg class="al-icon" aria-hidden="true" focusable="false">…x…</svg>',
+              '    </button>', '  </div>', '</template>', '',
+              f"<script>alToast.show('toast-{status}');</script>"]
+    return '\n'.join(lines)
+
+
+# Os 8 toasts do Playground: o <template> real que o botao clona, e a mesma
+# marcacao congelada no palco para ver antes de disparar.
+TS_DEMOS = {f'{s}-{d}': {'frozen': ts_frozen(s, d == '1'), 'code': ts_code(s, d == '1')}
+            for s, _ in TS_STATUSES for d, _ in TS_DESCS}
+TS_TEMPLATES = ''.join(f'<template id="ts-pg-{s}-{d}">{ts_toast(s, d == "1")}</template>'
+                       for s, _ in TS_STATUSES for d, _ in TS_DESCS)
+
+# A regiao viva: uma so, no fim do <body>.
+TS_REGION = ('<section class="al-toast-region" id="ts-region" aria-label="Notificações" popover="manual">'
+             '<div class="al-toast-region__live" role="status"></div>'
+             '<div class="al-toast-region__live" role="alert"></div></section>')
+
+
+def toast_token_rows():
+    rows = []
+    for name in TST['alias']:
+        res = TST['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, dict):
+            light = dark = '<span class="dim">sombra composta</span>'
+        elif isinstance(res, list) and len(res) == 4 and all(isinstance(n, (int, float)) for n in res):
+            light = dark = 'cubic-bezier(' + ', '.join(str(n) for n in res) + ')'
+        elif isinstance(res, list):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        elif name.startswith(('toast-timeout', 'toast-duration')):
+            light = dark = f'{res}ms'
+        else:
+            light = dark = f'{res}px'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{TST["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+TOAST_OVERVIEW = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage ts-stage" id="toast-stage">{TS_DEMOS["success-1"]["frozen"]}</div>
+    <div class="controls" id="toast-controls">
+      <div class="ctl"><span class="ctl-name">Status</span>{seg('tsstatus', TS_STATUSES, 'success')}</div>
+      <div class="ctl"><span class="ctl-name">Conteúdo</span>{seg('tsdesc', TS_DESCS, '1')}</div>
+      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tstheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+      <div class="ctl"><span class="ctl-name">Disparar</span><div><button type="button" class="al-btn al-btn--primary al-btn--sm" id="toast-fire">
+        <span class="al-btn__label">Mostrar toast</span></button></div></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="toast-copy">Copiar</button></div>
+      <pre><code id="toast-code"></code></pre>
+    </div>
+  </div>
+  {TS_TEMPLATES}
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O palco mostra o toast parado. <b>Mostrar toast</b> dispara o de verdade, no canto inferior direito da
+    janela. Sucesso e Informação saem sozinhos em {TS_TIMEOUT // 1000}s — pare o mouse em cima e o relógio
+    pausa. Aviso e Erro ficam até o X. Clique várias vezes: eles entram em fila, um por vez.
+  </p>
+</section>
+
+<section>
+  <h2>Os quatro status</h2>
+  <p>O ícone diz o status sem depender da cor; a borda acompanha. Não existe toast neutro.</p>
+  <div class="dd ts-grid" style="margin-top:16px">
+    {''.join(f'<div class="cell"><span class="lab" style="color:var(--al-text-secondary)">{lab}</span>'
+             f'<div class="stage2 ts-stage2">{ts_frozen(s)}</div></div>' for s, lab in TS_STATUSES)}
+  </div>
+</section>'''
+
+
+TOAST_SPECS = f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-toast</code>: <code>toast-bg</code>, borda de 1px na cor do status, raio lg, Elevation/3, padding 12.</span></div>
+    <div><b>Ícone</b><span>20px, alinhado ao topo, fixo por status. É o único ícone de componente do AL com <code>role="img"</code>: ele carrega o status.</span></div>
+    <div><b>Título</b><span>Label/md 14/20 em <code>toast-title</code>. Obrigatório.</span></div>
+    <div><b>Descrição</b><span>Body/sm 14/20 em <code>toast-description</code>, a 4 do título. Opcional.</span></div>
+    <div><b>Fechar</b><span>Icon Button Ghost sm com <code>aria-label="Fechar notificação"</code>. Sempre presente.</span></div>
+    <div><b>Região</b><span>Uma <code>.al-toast-region</code> por página, no canto inferior direito, a {TS_OFFSET}px das bordas.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Com e sem descrição</h2>
+  <p>Com descrição a caixa mede 68px; só com o título, 60 — quem manda é o X de 36.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Com descrição</span>
+      <div class="stage2 ts-stage2">{ts_frozen('info')}</div></div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Só título</span>
+      <div class="stage2 ts-stage2">{ts_frozen('info', False)}</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Toast</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody>{toast_token_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Dois valores declarados</b>
+    Todo token aponta para a Foundation, menos <code>toast-max-width</code> ({TS_MAX_W}px) — a Foundation não
+    tem escala de largura, a mesma exceção do Modal e do Tooltip — e <code>toast-timeout</code>
+    ({TS_TIMEOUT}ms), o tempo na tela de Sucesso e Informação, que fica no componente como os atrasos do Tooltip.
+  </div>
+  <div class="note">
+    <b>Largura máxima, não fixa</b>
+    {TS_MAX_W}px, ou a janela menos {TS_OFFSET}px de cada lado — o que for menor. No celular o toast ocupa a
+    largura toda sem media query.
+  </div>
+  <div class="note">
+    <b>O status <code>error</code> usa o semântico <code>danger</code></b>
+    O mesmo mapeamento do Tag: o nome é o do produto, a cor é a da Foundation.
+  </div>
+  <div class="note">
+    <b>Mora na top layer</b>
+    A região é um <code>popover="manual"</code> que o <code>toast.js</code> abre ao carregar e nunca fecha:
+    fica acima de tudo sem z-index, e as duas regiões vivas já existem antes da primeira mensagem. Vazia, não
+    ocupa espaço nem pega clique.
+  </div>
+  <div class="note">
+    <b>Entra em {TST['resolved']['toast-duration']}ms</b>
+    Sobe {TS_OFFSET}px — vem da borda da janela até o lugar — com fade, na curva de entrada. Sai só com fade,
+    na curva de saída. Sem movimento com movimento reduzido.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>toast.js</code></b>
+    Fila, tempo na tela, pausa, X, Esc e foco. O tempo e a duração da saída são lidos dos tokens no CSS,
+    nunca escritos no script.
+  </div>
+</section>'''
+
+
+TS_RULES = [
+    ('Quando usar cada status', [
+        ('Sucesso confirma o que a pessoa acabou de fazer', '“Produto salvo”. Precedentes: Spectrum, Polaris.'),
+        ('Informação avisa de um processo que segue sem ela', '“Exportação iniciada”. Precedente: Spectrum.'),
+        ('Aviso: feito, com uma ressalva', '“Salvo sem a imagem”. Precedente: Carbon.'),
+        ('Erro só para falha não crítica, numa frase', 'Se a pessoa precisa decidir algo, é Modal. Precedentes: Polaris, Carbon.'),
+        ('Responde a algo que acabou de acontecer', 'Nunca aparece sozinho ao carregar a página. Precedente: Carbon.'),
+    ]),
+    ('Quando não usar', [
+        ('Erro de formulário fica no campo', 'Na mensagem do próprio campo, nunca em toast. Precedentes: Carbon, Polaris.'),
+        ('O que é essencial não pode sumir', 'Ou também está na página, ou é Aviso ou Erro, que ficam. Precedente: W3C, exemplo do WCAG 2.2.1.'),
+        ('Não repita o que a tela já mostra', 'A não ser que a pessoa possa ter perdido a mudança. Precedente: Polaris.'),
+    ]),
+    ('Conteúdo', [
+        ('Título curto: a coisa e o que aconteceu', '“Pedido enviado”, até umas quatro palavras. Precedente: Polaris (três; em português o artigo pesa).'),
+        ('Só a primeira maiúscula, título sem ponto', 'Precedentes: Nord, Polaris.'),
+        ('Descrição opcional, uma frase, com ponto', 'Precisou de mais, não é toast. Precedente: Primer.'),
+        ('Erro diz o que falhou e o que fazer', 'Sem “Ops!” e sem código de erro. Precedentes: Polaris, Carbon.'),
+    ]),
+    ('Ícone', [
+        ('Obrigatório e fixo por status', 'Círculo com check, triângulo, círculo com exclamação e “i”: a pista que não depende de cor. Precedente: Spectrum.'),
+        ('Anunciado com o nome do status', '<code>role="img"</code> e <code>aria-label</code> — “Erro”. Contrato do Icon do AL.'),
+    ]),
+    ('Comportamento', [
+        ('Um por vez, em fila', 'O que chega com outro na tela espera ele sair. Precedente: Material.'),
+        ('Canto inferior direito', f'A {TS_OFFSET}px das bordas; no celular, a largura da tela menos {TS_OFFSET}px de cada lado. Decisão 8 da etapa 1.'),
+        (f'Sucesso e Informação saem em {TS_TIMEOUT // 1000}s', 'Pausa com o ponteiro em cima ou o foco dentro, e retoma de onde parou. Precedente: Spectrum.'),
+        ('Aviso e Erro ficam até fechar', 'E seguram a fila. Decisão 7 da etapa 1.'),
+        ('O X fecha sempre; Esc também', 'Esc com o foco dentro do toast. Precedente: Carbon.'),
+        ('Sobe com fade, sai com fade', f'Em {TST["resolved"]["toast-duration"]}ms; sem movimento com movimento reduzido. Motion da Foundation.'),
+    ]),
+    ('Acessibilidade', [
+        ('Nunca rouba o foco', 'É anunciado, não focado. Precedente: Carbon.'),
+        ('Erro interrompe, o resto espera', 'Erro em <code>role="alert"</code>; Sucesso, Informação e Aviso em <code>role="status"</code>. Precedente: Carbon.'),
+        ('A região existe antes da mensagem', 'Um live region criado junto com o texto não é anunciado.'),
+        ('O X é um botão de verdade', '“Fechar notificação”, alcançável pelo Tab. Precedente: Carbon.'),
+    ]),
+    ('Fora de escopo', [
+        ('Sem botão de ação', '“Desfazer” e afins vão num Modal ou na própria tela. Precedentes: Carbon e a crítica do Primer.'),
+        ('Sem status neutro', 'Informação cobre.'),
+        ('Sem pilha de toasts', 'Um por vez.'),
+    ]),
+]
+
+
+def ts_rules_html():
+    out, n = [], 0
+    for grupo, regras in TS_RULES:
+        out.append(f'<h3 class="tb-rgroup">{grupo}</h3>')
+        for titulo, texto in regras:
+            n += 1
+            out.append(f'<div class="rule"><div class="rn">{n:02d}</div><div>'
+                       f'<h3>{titulo}</h3><p>{texto}</p></div></div>')
+    assert n == 27, f'as regras aprovadas sao 27, o site tem {n}'
+    return '\n'.join(out)
+
+
+TOAST_GUIDE = f'''
+<section>
+  <h2>A coisa e o que aconteceu</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Curto e concreto</span>
+      <div class="stage2 ts-stage2">{ts_frozen('success', False)}</div>
+      <p class="cap">Dá para ler de relance, antes de sumir.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Uma celebração</span>
+      <div class="stage2 ts-stage2">{ts_fake('Oba! Tudo certo por aqui, suas alterações foram salvas com sucesso!')}</div>
+      <p class="cap">Longo, e não diz o que foi salvo.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Erro com saída</span>
+      <div class="stage2 ts-stage2">{ts_frozen('error')}</div>
+      <p class="cap">O que falhou e o que fazer. Fica até a pessoa fechar.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Erro de formulário</span>
+      <div class="stage2 ts-stage2">{ts_fake('O campo E-mail é obrigatório.')}</div>
+      <p class="cap">Isso é a mensagem do campo, ao lado do campo.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  {ts_rules_html()}
+</section>'''
+
+
+def toast_a11y_rows():
+    out = []
+    for r in TST_A11Y['rows']:
+        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
+                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
+        v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
+        out.append(
+            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
+            f'<td class="name">{r["what"]}</td>'
+            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
+            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
+            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
+    return '\n'.join(out)
+
+
+N_TS_MEDIDAS = len(TST_A11Y['rows'])
+N_TS_PASS = sum(1 for r in TST_A11Y['rows'] if r['pass'])
+
+
+TOAST_A11Y_TAB = f'''
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O toast mora na camada mais alta do navegador, com fundo opaco: título, descrição, ícone e o X só
+  encostam no fundo do próprio toast. Quem encosta na página é a borda — e a página pode ser a tela, a
+  superfície ou um Modal aberto, onde o fundo do toast e o da página são a mesma cor. A borda é decorativa
+  (quem diz o status é o ícone), mas é ela que separa a caixa da página, então passa no 3:1 igual.</p>
+  <div class="stats">
+    <div class="stat hl"><b>{N_TS_MEDIDAS}</b><span>combinações medidas</span></div>
+    <div class="stat"><b>{N_TS_PASS}</b><span>passam</span></div>
+    <div class="stat"><b>0</b><span>exceções</span></div>
+    <div class="stat"><b>{N_TS_MEDIDAS - N_TS_PASS}</b><span>reprovas</span></div>
+  </div>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody>{toast_a11y_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra nove regras lendo o HTML que este site emite: a região e os
+  <b>{TST_A11Y['markupChecked'] or 0} toasts</b> do Playground, nenhum fora do contrato. As
+  {TST_A11Y['markupFrozen']} amostras congeladas desta documentação seguem a mesma marcação e ficam fora do
+  teclado e do leitor de tela.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Região</b><span>Uma só por página: <code>&lt;section popover="manual"&gt;</code> com <code>aria-label</code>.</span></div>
+    <div><b>b · Regiões vivas</b><span>Uma <code>role="status"</code> e uma <code>role="alert"</code>, vazias desde o carregamento.</span></div>
+    <div><b>c · Template</b><span>Cada toast nasce de um <code>&lt;template&gt;</code> com a <code>.al-toast</code> como único filho.</span></div>
+    <div><b>d · Status</b><span>Um só: <code>--success</code>, <code>--warning</code>, <code>--error</code> ou <code>--info</code>.</span></div>
+    <div><b>e · Ícone</b><span>O do status, com <code>role="img"</code> e o nome do status no <code>aria-label</code>.</span></div>
+    <div><b>f · Texto</b><span>Título obrigatório; descrição opcional. Nada mais.</span></div>
+    <div><b>g · X</b><span>Icon Button Ghost sm, <code>aria-label="Fechar notificação"</code>.</span></div>
+    <div><b>h · Nada interativo</b><span>Além do X, sem link, botão, campo ou <code>tabindex</code>.</span></div>
+    <div><b>i · Amostras</b><span>Toast fora de <code>&lt;template&gt;</code> só sob <code>inert</code> e <code>aria-hidden</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela</h2>
+  <div class="anat">
+    <div><b>Foco</b><span>O toast nunca recebe o foco sozinho. O X entra na ordem do Tab; se o toast sai com o foco dentro, o foco volta para onde estava.</span></div>
+    <div><b>Esc</b><span>Com o foco dentro, fecha o toast. Sobre um Modal, o primeiro Esc fecha só o toast.</span></div>
+    <div><b>Anúncio</b><span>Sucesso, Informação e Aviso esperam a pessoa terminar (<code>role="status"</code>). Erro interrompe (<code>role="alert"</code>).</span></div>
+    <div><b>Tempo</b><span>{TS_TIMEOUT // 1000}s para Sucesso e Informação, pausado com o ponteiro em cima ou o foco dentro. Aviso e Erro não somem.</span></div>
+    <div><b>Movimento reduzido</b><span>Aparece e some sem transição.</span></div>
+  </div>
+</section>'''
+
+
+# Miniatura do card: casca (o card inteiro ja e um link).
+TH_TOAST = ('<div class="th-ts" aria-hidden="true"><div class="th-ts-box"><i></i>'
+            '<span><b></b><b></b></span><u></u></div></div>')
+
+
+CHROME_TOAST = """
+/* ── páginas do Toast ──
+   Casca do site. O toast vivo é sempre a .al-toast do toast.css real, na
+   .al-toast-region do fim do <body>. .ts-frozen põe a amostra no fluxo, sem
+   transição; .ts-fake é o "a evitar", nunca uma .al-toast errada. */
+.ts-stage{min-height:200px; display:flex; align-items:center; justify-content:center; padding:32px 16px}
+.dd .stage2.ts-stage2{justify-content:center; padding:24px 16px; min-height:120px}
+.dd.ts-grid{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.ts-frozen{inline-size:min(var(--al-toast-max-width), 100%)}
+.ts-frozen .al-toast{transition:none}
+.ts-fake{max-width:380px; padding:12px 16px; border-radius:8px; border:1px solid var(--al-border-default);
+  background:var(--al-bg-surface-raised); color:var(--al-text-primary); font-size:14px; line-height:20px}
+.th-ts{display:flex; align-items:flex-end; justify-content:flex-end; width:100%; height:100%; padding:14px; box-sizing:border-box}
+.th-ts-box{display:flex; align-items:flex-start; gap:7px; width:150px; padding:9px 10px; border-radius:7px;
+  background:var(--al-toast-bg); border:1px solid var(--al-toast-success-border); box-shadow:var(--al-toast-shadow)}
+.th-ts-box i{flex:none; width:11px; height:11px; border-radius:50%; border:1.5px solid var(--al-toast-success-icon)}
+.th-ts-box span{flex:1; display:flex; flex-direction:column; gap:5px; padding-top:2px}
+.th-ts-box b{height:5px; border-radius:3px; background:var(--al-toast-title); width:70%}
+.th-ts-box b + b{background:var(--al-toast-description); width:95%; opacity:.6}
+.th-ts-box u{flex:none; width:9px; height:9px; margin-top:2px; background:
+  linear-gradient(45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%),
+  linear-gradient(-45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%)}
+"""
+
+
+JS_TOAST_DATA = ('var TS_DEMOS = ' + json.dumps(TS_DEMOS, ensure_ascii=False).replace('</', '<\\/') + ';\n')
+
+JS_TOAST = r"""
+(function () {
+  // ── playground do Toast ──
+  var stage = document.getElementById('toast-stage');
+  if (!stage) return;
+  var code = document.getElementById('toast-code');
+  var region = document.getElementById('ts-region');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function key() { return pick('tsstatus') + '-' + pick('tsdesc'); }
+
+  // O palco mostra a amostra congelada; o tema vale para ela e para a regiao
+  // viva, que mora fora do palco, no fim do <body>.
+  function render() {
+    var theme = pick('tstheme');
+    [stage, region].forEach(function (el) {
+      if (!el) return;
+      if (theme === 'auto') el.removeAttribute('data-theme');
+      else el.setAttribute('data-theme', theme);
+    });
+    var demo = TS_DEMOS[key()];
+    stage.innerHTML = demo.frozen;
+    code.innerHTML = esc(demo.code);
+  }
+
+  document.getElementById('toast-fire').addEventListener('click', function () {
+    if (window.alToast) window.alToast.show('ts-pg-' + key());
+  });
+  document.querySelectorAll('#toast-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('toast-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+"""
+
+
 LANDING_COMPONENTES = f'''
 <section>
   <h2>Publicados</h2>
@@ -11589,6 +12052,7 @@ LANDING_COMPONENTES = f'''
     {card('sidebar', 'Sidebar', 'A navegação principal, presa à esquerda na altura da tela. Os itens são o Tab, e abaixo de 1024px ela vira painel modal pela esquerda — a mesma &lt;aside&gt;, nunca uma cópia.', TH_SIDEBAR)}
     {card('breadcrumb', 'Breadcrumb', 'Onde a pessoa está na hierarquia, com um link para cada nível acima. Com 5 níveis ou mais, os do meio vão para o menu do “…”.', TH_BREADCRUMB)}
     {card('tooltip', 'Tooltip', 'O nome de um botão só com ícone, ou um complemento curto. Abre no hover e no foco, fecha no Esc, e nunca carrega o que a pessoa precisa para seguir.', TH_TOOLTIP)}
+    {card('toast', 'Toast', 'A confirmação de algo que acabou de acontecer, no canto da tela. Um por vez, em fila; Sucesso e Informação saem sozinhos, Aviso e Erro esperam o X.', TH_TOAST)}
   </div>
 </section>
 
@@ -11857,6 +12321,15 @@ PAGES = [
          (f'{N_TTP_TOKENS} tokens', False), (f'{N_TT_LITERALS} valores declarados', False)],
         [('overview', 'Visão geral', TOOLTIP_OVERVIEW), ('specs', 'Especificações', TOOLTIP_SPECS),
          ('guide', 'Diretrizes', TOOLTIP_GUIDE), ('a11y', 'Acessibilidade', TOOLTIP_A11Y_TAB)])),
+    ('toast', 'Componentes', page(
+        'toast', 'Componentes', 'Toast',
+        'Uma mensagem curta no canto da tela sobre algo que acabou de acontecer: um sucesso, um aviso, um erro '
+        'ou uma informação. Nunca rouba o foco, entra em fila, um por vez, e só some sozinho quando não é '
+        'aviso nem erro.',
+        [('Em revisão', False), ('4 variantes no Figma', False),
+         (f'{N_TST_TOKENS} tokens', False), (f'{N_TS_LITERALS} valores declarados', False)],
+        [('overview', 'Visão geral', TOAST_OVERVIEW), ('specs', 'Especificações', TOAST_SPECS),
+         ('guide', 'Diretrizes', TOAST_GUIDE), ('a11y', 'Acessibilidade', TOAST_A11Y_TAB)])),
 ]
 
 RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
@@ -11906,6 +12379,7 @@ RAIL = f'''<nav class="rail" aria-label="Navegação do design system">
         <a href="#/sidebar" data-page="sidebar">Sidebar</a>
         <a href="#/breadcrumb" data-page="breadcrumb">Breadcrumb</a>
         <a href="#/tooltip" data-page="tooltip">Tooltip</a>
+        <a href="#/toast" data-page="toast">Toast</a>
       </div>
     </div>
   </div>
@@ -13035,11 +13509,6 @@ CHROME_SWITCH = """
 .sw-group{margin:0; padding:0; border:0; min-width:0}
 .sw-group legend{padding:0; margin-bottom:12px; font-weight:600}
 .sw-opts{display:flex; flex-direction:column; gap:16px}
-.sw-status{margin:0; font-size:13.5px; line-height:20px}
-.sw-status:empty{display:none}
-.sw-status.is-erro{padding:12px 16px; border-radius:var(--al-radius-md);
-  background:var(--al-bg-danger-subtle); color:var(--al-text-danger)}
-.sw-status.is-ok{color:var(--al-text-success)}
 """
 
 JS_SWITCH = r"""
@@ -13050,23 +13519,17 @@ JS_SWITCH = r"""
   if (email) {
     var resumo = document.getElementById('ov-sw-resumo');
     var contador = document.getElementById('ov-sw-contador');
-    var status = document.getElementById('ov-sw-status');
     var dep = function () { resumo.disabled = !email.checked; };
     email.addEventListener('change', dep);
     dep();
     contador.addEventListener('change', function () {
-      var pedido = contador.checked;
-      status.className = 'sw-status';
-      status.textContent = '';
+      if (!contador.checked) return;
+      // o servidor simulado recusa: a bolinha volta e a aplicacao avisa com um Toast de Erro
       setTimeout(function () {
-        if (pedido) {
-          contador.checked = false;
-          status.className = 'sw-status is-erro';
-          status.textContent = 'Não foi possível ativar o envio ao contador: nenhum contador cadastrado.';
-        } else {
-          status.className = 'sw-status is-ok';
-          status.textContent = 'Envio ao contador desativado.';
-        }
+        contador.checked = false;
+        if (window.alToast) window.alToast.show('ts-pg-error-1', {
+          title: 'Não foi possível ativar o envio ao contador',
+          description: 'Nenhum contador cadastrado. Cadastre um e tente de novo.' });
       }, 700);
     });
   }
@@ -13922,9 +14385,20 @@ CHROME_MOTION = """
 .mo-box--tooltip{left:50%; top:46px; width:104px; margin-left:-52px; padding:10px 12px;
   border-radius:var(--al-radius-lg); background:var(--al-bg-inverse); border-color:transparent;
   --mo-from:translateY(var(--al-space-4))}
-.mo-box--toast{left:14px; right:14px; bottom:14px; flex-direction:row; align-items:center; gap:10px;
-  padding:12px 14px; border-radius:var(--al-radius-xl); background:var(--al-bg-inverse);
-  border-color:transparent; --mo-from:translateY(var(--al-space-16))}
+.mo-box--toast{left:auto; right:14px; bottom:14px; width:min(72%, 220px); flex-direction:row;
+  align-items:flex-start; gap:8px; padding:11px 12px; border-radius:var(--al-toast-radius);
+  background:var(--al-toast-bg); border-color:var(--al-toast-success-border); box-shadow:var(--al-toast-shadow);
+  --mo-from:translateY(var(--al-toast-offset))}
+/* o Toast sai só com fade (regra 20): a posição volta depois que a opacidade chega a 0 */
+.mo-stage:not([data-open="true"]) .mo-box--toast{
+  transition:opacity calc(var(--mo-dur) * var(--mo-speed)) var(--al-motion-easing-exit),
+    transform 0s linear calc(var(--mo-dur) * var(--mo-speed))}
+.mo-ts-text{flex:1; display:flex; flex-direction:column; gap:6px; padding-top:2px}
+.mo-ts-text .mo-l{background:var(--al-toast-title)}
+.mo-ts-text .mo-l + .mo-l{background:var(--al-toast-description); opacity:.6}
+.mo-ts-x{flex:none; width:10px; height:10px; margin-top:2px; background:
+  linear-gradient(45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%),
+  linear-gradient(-45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%)}
 .mo-ctl-track{
   position:absolute; left:50%; top:50%; width:72px; height:40px; margin:-20px 0 0 -36px;
   border-radius:var(--al-radius-full); background:var(--al-border-strong);
@@ -13937,10 +14411,11 @@ CHROME_MOTION = """
 .mo-stage[data-open="true"] .mo-ctl-thumb{transform:translateX(32px); transition-timing-function:var(--al-motion-easing-enter)}
 .mo-l{display:block; height:7px; border-radius:4px; background:var(--al-border-default)}
 .mo-l--40{width:40%} .mo-l--60{width:60%} .mo-l--90{width:90%}
-.mo-box--tooltip .mo-l, .mo-box--toast .mo-l{background:var(--al-text-inverse); opacity:.7}
+.mo-box--tooltip .mo-l{background:var(--al-text-inverse); opacity:.7}
 .mo-pill{align-self:flex-end; width:44px; height:16px; margin-top:4px;
   border-radius:var(--al-radius-full); background:var(--al-bg-brand)}
-.mo-dot{width:10px; height:10px; flex:none; border-radius:50%; background:var(--al-bg-success)}
+.mo-dot{width:12px; height:12px; flex:none; box-sizing:border-box; border-radius:50%;
+  border:2px solid var(--al-toast-success-icon)}
 .mo-cell .al-btn{align-self:flex-start}
 .mo-fine{font-size:13px; color:var(--al-text-secondary); margin-top:14px; max-width:74ch}
 
@@ -14038,11 +14513,11 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main"><div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
-    '\n</div></main>\n</div>\n\n<script>'
+    '\n</div></main>\n</div>\n' + TS_REGION + '\n\n<script>'
     + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
@@ -14054,6 +14529,7 @@ HTML = (
     + JS_SIDEBAR_DATA + JS_SIDEBAR
     + BCR_JS.replace('</', '<\\/') + JS_BREADCRUMB_DATA + JS_BREADCRUMB
     + TTP_JS.replace('</', '<\\/') + JS_TOOLTIP_DATA + JS_TOOLTIP
+    + TST_JS.replace('</', '<\\/') + JS_TOAST_DATA + JS_TOAST
     + JS_MOTION + '</script>\n'
 )
 
@@ -14124,6 +14600,8 @@ print(f'  tokens do Breadcrumb: {N_BCR_TOKENS}  '
       f'{sum(1 for r in BCR_A11Y["rows"] if r["exception"])} medicoes em excecao declarada)')
 print(f'  tokens do Tooltip : {N_TTP_TOKENS}  '
       f'({len(TTP_A11Y["rows"])} combinacoes medidas, {TTP_A11Y["markupChecked"]} tooltips no contrato de marcacao)')
+print(f'  tokens do Toast   : {N_TST_TOKENS}  '
+      f'({N_TS_MEDIDAS} combinacoes medidas, {TST_A11Y["markupChecked"]} toasts no contrato de marcacao)')
 print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
 print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')
