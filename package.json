@@ -9,23 +9,29 @@
     "type": "git",
     "url": "git+https://github.com/guilhermedworakowski/al-design-system.git"
   },
-  "private": true,
+  "bugs": {
+    "url": "https://github.com/guilhermedworakowski/al-design-system/issues"
+  },
   "files": [
-    "foundation/al-foundation.css",
-    "components/*/*.css",
-    "components/*/*.js",
-    "components/icon/icons/",
-    "components/icon/icons.json",
-    "components/icon/NOTICE",
-    "/tokens.json"
+    "dist"
   ],
+  "style": "dist/al.css",
+  "jsdelivr": "dist/al.css",
+  "unpkg": "dist/al.css",
   "exports": {
-    "./foundation.css": "./foundation/al-foundation.css",
-    "./tokens.json": "./tokens.json",
-    "./components/*": "./components/*",
+    ".": "./dist/al.css",
+    "./al.css": "./dist/al.css",
+    "./foundation.css": "./dist/foundation.css",
+    "./tokens.json": "./dist/tokens.json",
+    "./components/*": "./dist/components/*",
+    "./icons/*": "./dist/icons/*",
     "./package.json": "./package.json"
   },
   "sideEffects": [
-    "*.css"
-  ]
+    "*.css",
+    "*.js"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }

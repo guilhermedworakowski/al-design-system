@@ -9,7 +9,7 @@ fundo nao era visual:
     envelheceram (a pagina antiga anunciava 72 pares e 46 semanticos quando o
     tokens.json ja estava em 80 e 49). Aqui TODA contagem sai do tokens.json,
     e ha uma trava que aborta se um semantico novo nao couber em nenhum grupo.
-  - o CSS entra inline e real: foundation/al-foundation.css, os tokens do
+  - o CSS entra inline e real: build/foundation/al-foundation.css, os tokens do
     Button e o proprio button.css. A pagina nao reimplementa nada. Se um
     componente quebrar, a pagina quebra junto - que e o que se quer.
 
@@ -24,129 +24,127 @@ trilho, as abas e o switch de tema. As paginas da Foundation sao estaticas.
 
 Os icones do trilho sao casca do site. O switch de tema NAO e: desde a etapa 7
 do Switch (25/09/2026) ele e o componente do AL, com rotulo visivel - o portao
-de marcacao do components/switch/a11y.py cobra isso no HTML emitido.
+de marcacao do src/components/switch/a11y.py cobra isso no HTML emitido.
 
-Rodar: python3 site/site.py     (escreve site/index.html)
+Rodar: python3 site/site.py     (escreve build/site/index.html)
 """
 import base64, glob, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HERE = os.path.join(ROOT, 'site')
-sys.path.insert(0, os.path.join(ROOT, 'foundation'))
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+from paths import BUILD, FOUNDATION_SRC, TOKENS_JSON, FOUNDATION_CSS, SITE_HTML, comp_src, comp_out, out  # noqa: E402
+sys.path.insert(0, FOUNDATION_SRC)
 
 from color import cr  # noqa: E402  - contraste medido, nunca escrito a mao
 
-T = json.load(open(os.path.join(ROOT, 'tokens.json')))
-BTN = json.load(open(os.path.join(ROOT, 'components', 'button', 'tokens.json')))
+T = json.load(open(TOKENS_JSON))
+BTN = json.load(open(comp_out('button', 'tokens.json')))
 
-FOUND_CSS = open(os.path.join(ROOT, 'foundation', 'al-foundation.css')).read()
-BTN_TOKENS = open(os.path.join(ROOT, 'components', 'button', 'al-button-tokens.css')).read()
-BTN_CSS = open(os.path.join(ROOT, 'components', 'button', 'button.css')).read()
-ICON_TOKENS = open(os.path.join(ROOT, 'components', 'icon', 'al-icon-tokens.css')).read()
-ICON_CSS = open(os.path.join(ROOT, 'components', 'icon', 'icon.css')).read()
-ICON_MANIFEST = json.load(open(os.path.join(ROOT, 'components', 'icon', 'icons.json')))
-ICON_TOK = json.load(open(os.path.join(ROOT, 'components', 'icon', 'tokens.json')))
-ICON_A11Y = json.load(open(os.path.join(ROOT, 'components', 'icon', 'a11y.json')))
-IB = json.load(open(os.path.join(ROOT, 'components', 'icon-button', 'tokens.json')))
-IB_TOKENS = open(os.path.join(ROOT, 'components', 'icon-button',
-                              'al-icon-button-tokens.css')).read()
-IB_CSS = open(os.path.join(ROOT, 'components', 'icon-button', 'icon-button.css')).read()
-IB_A11Y = json.load(open(os.path.join(ROOT, 'components', 'icon-button', 'a11y.json')))
+FOUND_CSS = open(FOUNDATION_CSS).read()
+BTN_TOKENS = open(comp_out('button', 'al-button-tokens.css')).read()
+BTN_CSS = open(comp_src('button', 'button.css')).read()
+ICON_TOKENS = open(comp_out('icon', 'al-icon-tokens.css')).read()
+ICON_CSS = open(comp_src('icon', 'icon.css')).read()
+ICON_MANIFEST = json.load(open(comp_out('icon', 'icons.json')))
+ICON_TOK = json.load(open(comp_out('icon', 'tokens.json')))
+ICON_A11Y = json.load(open(comp_out('icon', 'a11y.json')))
+IB = json.load(open(comp_out('icon-button', 'tokens.json')))
+IB_TOKENS = open(comp_out('icon-button', 'al-icon-button-tokens.css')).read()
+IB_CSS = open(comp_src('icon-button', 'icon-button.css')).read()
+IB_A11Y = json.load(open(comp_out('icon-button', 'a11y.json')))
 
-TAG = json.load(open(os.path.join(ROOT, 'components', 'tag', 'tokens.json')))
-TAG_TOKENS = open(os.path.join(ROOT, 'components', 'tag', 'al-tag-tokens.css')).read()
-TAG_CSS = open(os.path.join(ROOT, 'components', 'tag', 'tag.css')).read()
-TAG_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tag', 'a11y.json')))
+TAG = json.load(open(comp_out('tag', 'tokens.json')))
+TAG_TOKENS = open(comp_out('tag', 'al-tag-tokens.css')).read()
+TAG_CSS = open(comp_src('tag', 'tag.css')).read()
+TAG_A11Y = json.load(open(comp_out('tag', 'a11y.json')))
 
-AVATAR = json.load(open(os.path.join(ROOT, 'components', 'avatar', 'tokens.json')))
-AVATAR_TOKENS = open(os.path.join(ROOT, 'components', 'avatar', 'al-avatar-tokens.css')).read()
-AVATAR_CSS = open(os.path.join(ROOT, 'components', 'avatar', 'avatar.css')).read()
-AVATAR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'avatar', 'a11y.json')))
+AVATAR = json.load(open(comp_out('avatar', 'tokens.json')))
+AVATAR_TOKENS = open(comp_out('avatar', 'al-avatar-tokens.css')).read()
+AVATAR_CSS = open(comp_src('avatar', 'avatar.css')).read()
+AVATAR_A11Y = json.load(open(comp_out('avatar', 'a11y.json')))
 
-SELECT = json.load(open(os.path.join(ROOT, 'components', 'select', 'tokens.json')))
-SELECT_TOKENS = open(os.path.join(ROOT, 'components', 'select',
-                                  'al-select-tokens.css')).read()
-SELECT_CSS = open(os.path.join(ROOT, 'components', 'select', 'select.css')).read()
-SELECT_A11Y = json.load(open(os.path.join(ROOT, 'components', 'select', 'a11y.json')))
+SELECT = json.load(open(comp_out('select', 'tokens.json')))
+SELECT_TOKENS = open(comp_out('select', 'al-select-tokens.css')).read()
+SELECT_CSS = open(comp_src('select', 'select.css')).read()
+SELECT_A11Y = json.load(open(comp_out('select', 'a11y.json')))
 
-CHECKBOX = json.load(open(os.path.join(ROOT, 'components', 'checkbox', 'tokens.json')))
-CHECKBOX_TOKENS = open(os.path.join(ROOT, 'components', 'checkbox',
-                                    'al-checkbox-tokens.css')).read()
-CHECKBOX_CSS = open(os.path.join(ROOT, 'components', 'checkbox', 'checkbox.css')).read()
-CHECKBOX_A11Y = json.load(open(os.path.join(ROOT, 'components', 'checkbox', 'a11y.json')))
-RADIO = json.load(open(os.path.join(ROOT, 'components', 'radio', 'tokens.json')))
-RADIO_TOKENS = open(os.path.join(ROOT, 'components', 'radio', 'al-radio-tokens.css')).read()
-RADIO_CSS = open(os.path.join(ROOT, 'components', 'radio', 'radio.css')).read()
-RADIO_A11Y = json.load(open(os.path.join(ROOT, 'components', 'radio', 'a11y.json')))
-SWITCH = json.load(open(os.path.join(ROOT, 'components', 'switch', 'tokens.json')))
-SWITCH_TOKENS = open(os.path.join(ROOT, 'components', 'switch', 'al-switch-tokens.css')).read()
-SWITCH_CSS = open(os.path.join(ROOT, 'components', 'switch', 'switch.css')).read()
-SWITCH_A11Y = json.load(open(os.path.join(ROOT, 'components', 'switch', 'a11y.json')))
-INPUT = json.load(open(os.path.join(ROOT, 'components', 'input', 'tokens.json')))
-INPUT_TOKENS = open(os.path.join(ROOT, 'components', 'input', 'al-input-tokens.css')).read()
-INPUT_CSS = open(os.path.join(ROOT, 'components', 'input', 'input.css')).read()
-INPUT_A11Y = json.load(open(os.path.join(ROOT, 'components', 'input', 'a11y.json')))
-TEXTAREA = json.load(open(os.path.join(ROOT, 'components', 'textarea', 'tokens.json')))
-TEXTAREA_TOKENS = open(os.path.join(ROOT, 'components', 'textarea', 'al-textarea-tokens.css')).read()
-TEXTAREA_CSS = open(os.path.join(ROOT, 'components', 'textarea', 'textarea.css')).read()
-TEXTAREA_A11Y = json.load(open(os.path.join(ROOT, 'components', 'textarea', 'a11y.json')))
-PASSWORD = json.load(open(os.path.join(ROOT, 'components', 'password', 'tokens.json')))
-PASSWORD_TOKENS = open(os.path.join(ROOT, 'components', 'password', 'al-password-tokens.css')).read()
-PASSWORD_CSS = open(os.path.join(ROOT, 'components', 'password', 'password.css')).read()
-PASSWORD_JS = open(os.path.join(ROOT, 'components', 'password', 'password.js')).read()
-PASSWORD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'password', 'a11y.json')))
-DIVIDER = json.load(open(os.path.join(ROOT, 'components', 'divider', 'tokens.json')))
-DIVIDER_TOKENS = open(os.path.join(ROOT, 'components', 'divider', 'al-divider-tokens.css')).read()
-DIVIDER_CSS = open(os.path.join(ROOT, 'components', 'divider', 'divider.css')).read()
-DIVIDER_A11Y = json.load(open(os.path.join(ROOT, 'components', 'divider', 'a11y.json')))
-CARD = json.load(open(os.path.join(ROOT, 'components', 'card', 'tokens.json')))
-CARD_TOKENS = open(os.path.join(ROOT, 'components', 'card', 'al-card-tokens.css')).read()
-CARD_CSS = open(os.path.join(ROOT, 'components', 'card', 'card.css')).read()
-CARD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'card', 'a11y.json')))
-TAB = json.load(open(os.path.join(ROOT, 'components', 'tab', 'tokens.json')))
-TAB_TOKENS = open(os.path.join(ROOT, 'components', 'tab', 'al-tab-tokens.css')).read()
-TAB_CSS = open(os.path.join(ROOT, 'components', 'tab', 'tab.css')).read()
-TAB_JS = open(os.path.join(ROOT, 'components', 'tab', 'tab.js')).read()
-TAB_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tab', 'a11y.json')))
-ACC = json.load(open(os.path.join(ROOT, 'components', 'accordion', 'tokens.json')))
-ACC_TOKENS = open(os.path.join(ROOT, 'components', 'accordion', 'al-accordion-tokens.css')).read()
-ACC_CSS = open(os.path.join(ROOT, 'components', 'accordion', 'accordion.css')).read()
-ACC_A11Y = json.load(open(os.path.join(ROOT, 'components', 'accordion', 'a11y.json')))
-MOD = json.load(open(os.path.join(ROOT, 'components', 'modal', 'tokens.json')))
-MOD_TOKENS = open(os.path.join(ROOT, 'components', 'modal', 'al-modal-tokens.css')).read()
-MOD_CSS = open(os.path.join(ROOT, 'components', 'modal', 'modal.css')).read()
-MOD_JS = open(os.path.join(ROOT, 'components', 'modal', 'modal.js')).read()
-MOD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'modal', 'a11y.json')))
-DRW = json.load(open(os.path.join(ROOT, 'components', 'drawer', 'tokens.json')))
-DRW_TOKENS = open(os.path.join(ROOT, 'components', 'drawer', 'al-drawer-tokens.css')).read()
-DRW_CSS = open(os.path.join(ROOT, 'components', 'drawer', 'drawer.css')).read()
-DRW_JS = open(os.path.join(ROOT, 'components', 'drawer', 'drawer.js')).read()
-DRW_A11Y = json.load(open(os.path.join(ROOT, 'components', 'drawer', 'a11y.json')))
-SBR = json.load(open(os.path.join(ROOT, 'components', 'sidebar', 'tokens.json')))
-SBR_TOKENS = open(os.path.join(ROOT, 'components', 'sidebar', 'al-sidebar-tokens.css')).read()
-SBR_CSS = open(os.path.join(ROOT, 'components', 'sidebar', 'sidebar.css')).read()
-SBR_JS = open(os.path.join(ROOT, 'components', 'sidebar', 'sidebar.js')).read()
-SBR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'sidebar', 'a11y.json')))
-BCR = json.load(open(os.path.join(ROOT, 'components', 'breadcrumb', 'tokens.json')))
-BCR_TOKENS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'al-breadcrumb-tokens.css')).read()
-BCR_CSS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'breadcrumb.css')).read()
-BCR_JS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'breadcrumb.js')).read()
-BCR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'breadcrumb', 'a11y.json')))
-TTP = json.load(open(os.path.join(ROOT, 'components', 'tooltip', 'tokens.json')))
-TTP_TOKENS = open(os.path.join(ROOT, 'components', 'tooltip', 'al-tooltip-tokens.css')).read()
-TTP_CSS = open(os.path.join(ROOT, 'components', 'tooltip', 'tooltip.css')).read()
-TTP_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tooltip', 'a11y.json')))
-TTP_JS = open(os.path.join(ROOT, 'components', 'tooltip', 'tooltip.js')).read()
-TST = json.load(open(os.path.join(ROOT, 'components', 'toast', 'tokens.json')))
-TST_TOKENS = open(os.path.join(ROOT, 'components', 'toast', 'al-toast-tokens.css')).read()
-TST_CSS = open(os.path.join(ROOT, 'components', 'toast', 'toast.css')).read()
-TST_A11Y = json.load(open(os.path.join(ROOT, 'components', 'toast', 'a11y.json')))
-TST_JS = open(os.path.join(ROOT, 'components', 'toast', 'toast.js')).read()
-ALR = json.load(open(os.path.join(ROOT, 'components', 'alert', 'tokens.json')))
-ALR_TOKENS = open(os.path.join(ROOT, 'components', 'alert', 'al-alert-tokens.css')).read()
-ALR_CSS = open(os.path.join(ROOT, 'components', 'alert', 'alert.css')).read()
-ALR_JS = open(os.path.join(ROOT, 'components', 'alert', 'alert.js')).read()
-ALR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'alert', 'a11y.json')))
+CHECKBOX = json.load(open(comp_out('checkbox', 'tokens.json')))
+CHECKBOX_TOKENS = open(comp_out('checkbox', 'al-checkbox-tokens.css')).read()
+CHECKBOX_CSS = open(comp_src('checkbox', 'checkbox.css')).read()
+CHECKBOX_A11Y = json.load(open(comp_out('checkbox', 'a11y.json')))
+RADIO = json.load(open(comp_out('radio', 'tokens.json')))
+RADIO_TOKENS = open(comp_out('radio', 'al-radio-tokens.css')).read()
+RADIO_CSS = open(comp_src('radio', 'radio.css')).read()
+RADIO_A11Y = json.load(open(comp_out('radio', 'a11y.json')))
+SWITCH = json.load(open(comp_out('switch', 'tokens.json')))
+SWITCH_TOKENS = open(comp_out('switch', 'al-switch-tokens.css')).read()
+SWITCH_CSS = open(comp_src('switch', 'switch.css')).read()
+SWITCH_A11Y = json.load(open(comp_out('switch', 'a11y.json')))
+INPUT = json.load(open(comp_out('input', 'tokens.json')))
+INPUT_TOKENS = open(comp_out('input', 'al-input-tokens.css')).read()
+INPUT_CSS = open(comp_src('input', 'input.css')).read()
+INPUT_A11Y = json.load(open(comp_out('input', 'a11y.json')))
+TEXTAREA = json.load(open(comp_out('textarea', 'tokens.json')))
+TEXTAREA_TOKENS = open(comp_out('textarea', 'al-textarea-tokens.css')).read()
+TEXTAREA_CSS = open(comp_src('textarea', 'textarea.css')).read()
+TEXTAREA_A11Y = json.load(open(comp_out('textarea', 'a11y.json')))
+PASSWORD = json.load(open(comp_out('password', 'tokens.json')))
+PASSWORD_TOKENS = open(comp_out('password', 'al-password-tokens.css')).read()
+PASSWORD_CSS = open(comp_src('password', 'password.css')).read()
+PASSWORD_JS = open(comp_src('password', 'password.js')).read()
+PASSWORD_A11Y = json.load(open(comp_out('password', 'a11y.json')))
+DIVIDER = json.load(open(comp_out('divider', 'tokens.json')))
+DIVIDER_TOKENS = open(comp_out('divider', 'al-divider-tokens.css')).read()
+DIVIDER_CSS = open(comp_src('divider', 'divider.css')).read()
+DIVIDER_A11Y = json.load(open(comp_out('divider', 'a11y.json')))
+CARD = json.load(open(comp_out('card', 'tokens.json')))
+CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
+CARD_CSS = open(comp_src('card', 'card.css')).read()
+CARD_A11Y = json.load(open(comp_out('card', 'a11y.json')))
+TAB = json.load(open(comp_out('tab', 'tokens.json')))
+TAB_TOKENS = open(comp_out('tab', 'al-tab-tokens.css')).read()
+TAB_CSS = open(comp_src('tab', 'tab.css')).read()
+TAB_JS = open(comp_src('tab', 'tab.js')).read()
+TAB_A11Y = json.load(open(comp_out('tab', 'a11y.json')))
+ACC = json.load(open(comp_out('accordion', 'tokens.json')))
+ACC_TOKENS = open(comp_out('accordion', 'al-accordion-tokens.css')).read()
+ACC_CSS = open(comp_src('accordion', 'accordion.css')).read()
+ACC_A11Y = json.load(open(comp_out('accordion', 'a11y.json')))
+MOD = json.load(open(comp_out('modal', 'tokens.json')))
+MOD_TOKENS = open(comp_out('modal', 'al-modal-tokens.css')).read()
+MOD_CSS = open(comp_src('modal', 'modal.css')).read()
+MOD_JS = open(comp_src('modal', 'modal.js')).read()
+MOD_A11Y = json.load(open(comp_out('modal', 'a11y.json')))
+DRW = json.load(open(comp_out('drawer', 'tokens.json')))
+DRW_TOKENS = open(comp_out('drawer', 'al-drawer-tokens.css')).read()
+DRW_CSS = open(comp_src('drawer', 'drawer.css')).read()
+DRW_JS = open(comp_src('drawer', 'drawer.js')).read()
+DRW_A11Y = json.load(open(comp_out('drawer', 'a11y.json')))
+SBR = json.load(open(comp_out('sidebar', 'tokens.json')))
+SBR_TOKENS = open(comp_out('sidebar', 'al-sidebar-tokens.css')).read()
+SBR_CSS = open(comp_src('sidebar', 'sidebar.css')).read()
+SBR_JS = open(comp_src('sidebar', 'sidebar.js')).read()
+SBR_A11Y = json.load(open(comp_out('sidebar', 'a11y.json')))
+BCR = json.load(open(comp_out('breadcrumb', 'tokens.json')))
+BCR_TOKENS = open(comp_out('breadcrumb', 'al-breadcrumb-tokens.css')).read()
+BCR_CSS = open(comp_src('breadcrumb', 'breadcrumb.css')).read()
+BCR_JS = open(comp_src('breadcrumb', 'breadcrumb.js')).read()
+BCR_A11Y = json.load(open(comp_out('breadcrumb', 'a11y.json')))
+TTP = json.load(open(comp_out('tooltip', 'tokens.json')))
+TTP_TOKENS = open(comp_out('tooltip', 'al-tooltip-tokens.css')).read()
+TTP_CSS = open(comp_src('tooltip', 'tooltip.css')).read()
+TTP_A11Y = json.load(open(comp_out('tooltip', 'a11y.json')))
+TTP_JS = open(comp_src('tooltip', 'tooltip.js')).read()
+TST = json.load(open(comp_out('toast', 'tokens.json')))
+TST_TOKENS = open(comp_out('toast', 'al-toast-tokens.css')).read()
+TST_CSS = open(comp_src('toast', 'toast.css')).read()
+TST_A11Y = json.load(open(comp_out('toast', 'a11y.json')))
+TST_JS = open(comp_src('toast', 'toast.js')).read()
+ALR = json.load(open(comp_out('alert', 'tokens.json')))
+ALR_TOKENS = open(comp_out('alert', 'al-alert-tokens.css')).read()
+ALR_CSS = open(comp_src('alert', 'alert.css')).read()
+ALR_JS = open(comp_src('alert', 'alert.js')).read()
+ALR_A11Y = json.load(open(comp_out('alert', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -256,14 +254,14 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
-ICON_DIR = os.path.join(ROOT, 'components', 'icon', 'icons')
+ICON_DIR = comp_src('icon', 'icons')
 ICON_NAMES = ICON_MANIFEST['icons']
 
 
 def al_icon(name, cls='al-icon', extra=''):
     """Devolve o SVG real do repositorio, com a classe e o contrato decorativo.
 
-    A pagina nunca redesenha um icone: ela le components/icon/icons/<nome>.svg.
+    A pagina nunca redesenha um icone: ela le src/components/icon/icons/<nome>.svg.
     """
     raw = open(os.path.join(ICON_DIR, name + '.svg')).read()
     body = raw[raw.find('<svg'):].strip()
@@ -608,7 +606,7 @@ ICONS = [('none', 'Sem ícone'), ('leading', 'À esquerda'), ('trailing', 'À di
 
 # Ate a versao 0.1.1 estes dois eram svg de 16 desenhados na unha aqui dentro -
 # a ultima sobra dos icones antigos no codigo. Agora saem da biblioteca, lidos
-# de components/icon/icons/, e o Button deixa de inventar desenho.
+# de src/components/icon/icons/, e o Button deixa de inventar desenho.
 BTN_ICON_LEADING = 'download'
 BTN_ICON_TRAILING = 'chevron-right'
 ICON_SVG = al_icon(BTN_ICON_LEADING)
@@ -1248,13 +1246,13 @@ TAB_PRINCIPIOS = f'''
   <div class="scroller" style="margin-top:18px"><table>
     <thead><tr><th>Portão</th><th>Script</th><th>O que ele recusa</th></tr></thead>
     <tbody>
-      <tr><td class="name">Contraste</td><td class="tok">foundation/export.py</td>
+      <tr><td class="name">Contraste</td><td class="tok">src/foundation/export.py</td>
         <td>Qualquer par abaixo do mínimo WCAG que não esteja nomeado como exceção.</td></tr>
-      <tr><td class="name">Alias</td><td class="tok">components/&lt;c&gt;/tokens.py</td>
+      <tr><td class="name">Alias</td><td class="tok">src/components/&lt;c&gt;/tokens.py</td>
         <td>Token de componente que aponte para primitiva em vez de semântico.</td></tr>
-      <tr><td class="name">Literal no CSS</td><td class="tok">components/&lt;c&gt;/check.py</td>
+      <tr><td class="name">Literal no CSS</td><td class="tok">src/components/&lt;c&gt;/check.py</td>
         <td>Cor, espaço, raio ou tipografia escrita direto no arquivo do componente.</td></tr>
-      <tr><td class="name">Acessibilidade</td><td class="tok">components/&lt;c&gt;/a11y.py</td>
+      <tr><td class="name">Acessibilidade</td><td class="tok">src/components/&lt;c&gt;/a11y.py</td>
         <td>Combinação renderizada que reprove — não par de token solto.</td></tr>
     </tbody>
   </table></div>
@@ -1496,7 +1494,7 @@ MO_USO = MO['uso']
 N_MO_TOKENS = len(MO_DUR) + len(MO_EASE)
 # quem de fato consome: o CSS real, nao uma lista escrita a mao
 N_MO_CONSUMERS = sum(
-    1 for f in glob.glob(os.path.join(ROOT, 'components', '*', '*.css'))
+    1 for f in glob.glob(comp_src('*', '*.css')) + glob.glob(os.path.join(BUILD, 'components', '*', 'al-*-tokens.css'))
     if 'var(--al-motion-duration-feedback)' in open(f, encoding='utf-8').read())
 
 
@@ -4034,7 +4032,7 @@ SELECT_A11Y_TAB = f'''
   <h2>O contrato de marcação</h2>
   <p>Num campo de formulário quase tudo que dá errado é <b>marcação</b>, não estilo — e
   marcação só existe na saída renderizada. Por isso estas seis regras não estão escritas numa
-  página: elas são medidas por <code>components/select/a11y.py</code> no HTML que este site
+  página: elas são medidas por <code>src/components/select/a11y.py</code> no HTML que este site
   emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code>, e existe um <code>&lt;label for&gt;</code> apontando para ele.</span></div>
@@ -4524,7 +4522,7 @@ CHECKBOX_A11Y_TAB = f'''
 <section>
   <h2>O contrato de marcação</h2>
   <p>Estas cinco regras não estão escritas numa página: elas são medidas por
-  <code>components/checkbox/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <code>src/components/checkbox/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="checkbox"&gt;</code> dentro de <code>&lt;label class="al-checkbox"&gt;</code>. Nenhum <code>role="checkbox"</code> na página.</span></div>
     <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-checkbox__label</code>, e nada de <code>aria-label</code>.</span></div>
@@ -4543,7 +4541,7 @@ CHECKBOX_A11Y_TAB = f'''
 # ═══════════════════════════════════════════════════════════════ Radio · abas
 # 6 estados no Figma, num eixo so. Radio sozinho nao existe (regra 3): todo
 # exemplo desta pagina e uma PERGUNTA - <fieldset> + <legend> + duas opcoes ou
-# mais com o mesmo `name`. E o que o components/radio/a11y.py cobra no HTML.
+# mais com o mesmo `name`. E o que o src/components/radio/a11y.py cobra no HTML.
 # O erro e da pergunta: `aria-invalid` vai no fieldset, nunca no radio (regra 26).
 def rd(rid, nome, valor, rotulo, *, checked=False, disabled=False, sim=None, extra=''):
     """Um Radio real. `sim` escreve nas MESMAS variaveis privadas que o radio.css
@@ -5031,7 +5029,7 @@ RADIO_A11Y_TAB = f'''
 <section>
   <h2>O contrato de marcação</h2>
   <p>Estas seis regras não estão escritas numa página: elas são medidas por
-  <code>components/radio/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <code>src/components/radio/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="radio"&gt;</code> dentro de <code>&lt;label class="al-radio"&gt;</code>. Nenhum <code>role="radio"</code> na página.</span></div>
     <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-radio__label</code>, e nada de <code>aria-label</code>.</span></div>
@@ -5051,7 +5049,7 @@ RADIO_A11Y_TAB = f'''
 # ═══════════════════════════════════════════════════════════════ Switch · abas
 # 5 estados no Figma, num eixo so. Efeito imediato: nao ha formulario com
 # "Enviar" nesta pagina (regra 1) - a demonstracao e uma tela de configuracoes.
-# O components/switch/a11y.py cobra o contrato de marcacao no HTML emitido.
+# O src/components/switch/a11y.py cobra o contrato de marcacao no HTML emitido.
 def sw(sid, rotulo, *, checked=False, disabled=False, sim=None, extra=''):
     """Um Switch real. `sim='hover'` escreve na MESMA variavel privada que o
     switch.css usa - o hover so vive sob o ponteiro."""
@@ -5476,7 +5474,7 @@ SWITCH_A11Y_TAB = f'''
 <section>
   <h2>O contrato de marcação</h2>
   <p>Estas cinco regras não estão escritas numa página: elas são medidas por
-  <code>components/switch/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <code>src/components/switch/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="checkbox" role="switch"&gt;</code> dentro de <code>&lt;label class="al-switch"&gt;</code>. Nenhum outro elemento com <code>role="switch"</code>, nada de <code>aria-pressed</code>.</span></div>
     <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-switch__label</code>, e nada de <code>aria-label</code>.</span></div>
@@ -5990,7 +5988,7 @@ INPUT_A11Y_TAB = f'''
 
 <section>
   <h2>O contrato de marcação</h2>
-  <p>Oito regras, medidas por <code>components/input/a11y.py</code> no HTML que este site emite.
+  <p>Oito regras, medidas por <code>src/components/input/a11y.py</code> no HTML que este site emite.
   Quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> de rótulo apontando para ele.</span></div>
@@ -6501,7 +6499,7 @@ TEXTAREA_A11Y_TAB = f'''
 
 <section>
   <h2>O contrato de marcação</h2>
-  <p>Oito regras, medidas por <code>components/textarea/a11y.py</code> no HTML que este site
+  <p>Oito regras, medidas por <code>src/components/textarea/a11y.py</code> no HTML que este site
   emite. Quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> de rótulo apontando para ele.</span></div>
@@ -6973,7 +6971,7 @@ PASSWORD_A11Y_TAB = f'''
 
 <section>
   <h2>O contrato de marcação</h2>
-  <p>Dez regras, medidas por <code>components/password/a11y.py</code> no HTML que este site
+  <p>Dez regras, medidas por <code>src/components/password/a11y.py</code> no HTML que este site
   emite. Quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> apontando para ele, sem <code>aria-label</code> redundante.</span></div>
@@ -13187,7 +13185,7 @@ JS_ICON = r"""
     var attrs = ' class="' + cls + '"';
     if (style) attrs += ' style="' + style + '"';
     code.textContent = '<svg' + attrs + ' aria-hidden="true" focusable="false">\n'
-      + '  <!-- ' + name + ' \u00b7 components/icon/icons/' + name + '.svg -->\n'
+      + '  <!-- ' + name + ' \u00b7 src/components/icon/icons/' + name + '.svg -->\n'
       + '</svg>';
   }
 
@@ -15019,9 +15017,9 @@ HTML = (
     + JS_MOTION + '</script>\n'
 )
 
-open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
+open(out(SITE_HTML), 'w', encoding='utf-8').write(HTML)
 
-print(f'site/index.html escrito ({len(HTML):,} bytes)')
+print(f'build/site/index.html escrito ({len(HTML):,} bytes)')
 print(f'  páginas no trilho : {len(PAGES)} — ' + ', '.join(p[0] for p in PAGES))
 print(f'  primitivas        : {N_PRIM}')
 print(f'  semânticos        : {N_SEM} × 2 temas')
@@ -15091,5 +15089,5 @@ print(f'  tokens do Toast   : {N_TST_TOKENS}  '
 print(f'  tokens do Alert   : {N_ALR_TOKENS}  '
       f'({N_ALR_MEDIDAS} combinacoes medidas, {ALR_A11Y["markupChecked"]} alerts no contrato de marcacao)')
 print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
-print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
+print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de src/components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

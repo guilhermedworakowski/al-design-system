@@ -1,0 +1,63 @@
+# Publica um release quando uma tag vX.Y.Z chega ao GitHub.
+#
+# Roda o build completo (todos os portoes), confere que a tag bate com a versao
+# do package.json, anexa o dist/ em zip ao Release do GitHub e publica no npm.
+#
+# A publicacao no npm usa Trusted Publisher (OIDC): nenhum token fica guardado
+# no repo, e o npm gera o selo de proveniencia sozinho. Enquanto o Trusted
+# Publisher nao estiver configurado no npmjs.com, o passo do npm falha - o
+# Release do GitHub sai do mesmo jeito. Se a versao ja estiver no npm (a
+# primeira, publicada a mao), o passo e pulado.
+name: release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write   # criar o Release e anexar o zip
+  id-token: write   # OIDC do Trusted Publisher no npm
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: python3 build.py --check
+
+      - name: Tag e versao batem
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "A tag $GITHUB_REF_NAME nao bate com a versao $VERSION do package.json."
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Zip do dist/ no Release do GitHub
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ZIP="al-design-system-$VERSION.zip"
+          (cd dist && zip -qr "../$ZIP" .)
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$ZIP" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$ZIP" --title "$GITHUB_REF_NAME" --generate-notes
+          fi
+
+      - name: Publica no npm
+        run: |
+          if npm view "al-design-system@$VERSION" version >/dev/null 2>&1; then
+            echo "al-design-system@$VERSION ja esta no npm; nada a publicar."
+          else
+            npm publish
+          fi
