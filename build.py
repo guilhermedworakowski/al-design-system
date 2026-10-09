@@ -48,7 +48,8 @@ BEFORE_SITE = {
 
 def steps():
     """Lista de (pasta, script, preparo). Passo de preparo pode falhar."""
-    out = [('src/foundation', 'export.py', False), ('src/foundation', 'css.py', False)]
+    out = [('tools', 'guidegate.py', False),
+           ('src/foundation', 'export.py', False), ('src/foundation', 'css.py', False)]
     for c in COMPONENTS:
         d = f'src/components/{c}'
         out += [(d, 'tokens.py', False), (d, 'check.py', False)]
