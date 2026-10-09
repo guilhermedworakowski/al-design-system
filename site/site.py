@@ -1490,7 +1490,7 @@ TAB_FOCO = f'''
 MO = T['motion']
 MO_DUR = MO['duration']
 MO_EASE = MO['easing']
-MO_USO = MO['uso']
+MO_USO = MO['usage']
 N_MO_TOKENS = len(MO_DUR) + len(MO_EASE)
 # quem de fato consome: o CSS real, nao uma lista escrita a mao
 N_MO_CONSUMERS = sum(

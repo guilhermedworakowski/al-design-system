@@ -2,80 +2,83 @@ from color import *
 from palette import SEM, PAIRS, EXCEPTIONS, HARD_FLOOR
 import json, os, sys
 
-# Caminho ancorado no proprio arquivo, nunca no diretorio de onde se roda:
-# tokens.json e a fonte unica da verdade que os componentes leem, e mora em
-# build/ (ver tools/paths.py). Antes daqui o destino dependia do cwd, e rodar
-# de dentro de foundation/ criava uma segunda copia que os portoes liam sem
-# ninguem perceber.
+# Path anchored on the file itself, never on the folder it runs from:
+# tokens.json is the single source of truth the components read, and it lives
+# in build/ (see tools/paths.py). Before this, the destination depended on the
+# cwd, and running from inside foundation/ created a second copy the gates read
+# without anyone noticing.
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, out  # noqa: E402
 TOKENS_PATH = out(TOKENS_JSON)
 
 P = build()
-SHADOW_RGB = "24, 24, 24"   # neutral-950 acromatico -> sombra cinza, sem tingimento de hue
+SHADOW_RGB = "24, 24, 24"   # achromatic neutral-950 -> gray shadow, no hue tint
 
 TOKENS = {
   "meta": {
-    # Terceira casa = release. Atualizacao numa fundacao ou num componente que
-    # ja existe entra aqui; casa do meio fica para camada nova. 0.3.1: o Button
-    # subiu o icone para a entrelinha do rotulo (0.1.1 -> 0.2.0).
-    # 0.4.0: o Icon Button entrou inteiro - componente novo e camada nova, entao
-    # casa do meio. Trouxe collection propria no Figma, 42 tokens, CSS, dois
-    # portoes e pagina no site.
-    # 0.5.0: o Tag - primeiro componente do AL a fechar em zero excecoes
-    # carregando texto (piso 4.5:1, nao os 3:1 do Icon Button).
-    # 0.6.0: o Avatar - componente novo, casa do meio. Fecha o Tier 1. Nao
-    # cria par de contraste novo (zero excecoes), e o menor portao de a11y do
-    # sistema ate agora: o fundo nunca varia por tipo, so por tema.
-    # 0.10.0: o Switch - componente novo, casa do meio. Primeiro componente a
-    # criar semantico na Foundation (bg-thumb, bg-thumb-disabled), e o primeiro
-    # que o proprio site consome: o switch de tema do trilho.
-    # 0.11.0: o Input - componente novo, casa do meio. Primeiro com read-only
-    # (que NAO e isento de contraste como o disabled) e com afixos dentro da
-    # borda: a caixa e um invólucro, e o estado chega a ela por :has().
-    # 0.11.1: package.json — distribuição; nenhum token muda
-    # 0.13.0: o Password - componente novo, casa do meio. Primeiro componente
-    # com JavaScript proprio (password.js), que passa a ir no pacote.
-    # 0.14.0: o Divider - componente novo, casa do meio. Primeiro do Tier 3
-    # (estrutura); nenhum token da Foundation muda.
-    # 0.15.0: o Card - componente novo, casa do meio. Segundo do Tier 3;
-    # nenhum token da Foundation muda.
-    # 0.16.0: o Tab - componente novo, casa do meio. Terceiro do Tier 3 e o
-    # primeiro com script proprio (tab.js); nenhum token da Foundation muda.
-    # 0.17.0: o Accordion - componente novo, casa do meio. Quarto do Tier 3,
-    # <details>/<summary> nativo, sem script. A Foundation ganha dois
-    # semanticos, bg-hover-raised e bg-active-raised: no escuro o bg-hover era
-    # a mesma cor da superficie elevada e o hover sumia.
-    # 0.17.1: Motion - atualizacao da Foundation, terceira casa. Quatro tokens
-    # (duration-panel/popup, easing-enter/exit) para o que entra e sai da tela;
-    # nenhum componente consome ainda, e os 120ms literais seguem pendentes.
-    # 0.17.2: Motion completo - atualizacao da Foundation, terceira casa. Mais
-    # quatro tokens (duration-feedback, duration-spinner, duration-spinner-reduced,
-    # easing-spinner) e os 12 componentes com transicao passam a consumir
-    # motion: nenhuma duracao nem curva literal. Valor renderizado igual, exceto
-    # a curva dos controles, que agora e ease-out ao entrar e ease-in ao sair.
-    # 0.18.0: Modal, quinto componente do Tier 3 - casa do meio, componente novo.
-    # A Foundation ganha bg-scrim, o primeiro semantico com transparencia
-    # (#RRGGBBAA): o fundo escurecido atras de uma camada modal. Fora de PAIRS,
-    # porque o contraste dele so existe composto sobre a pagina; o portao do
-    # Modal mede. Nenhum valor de token existente muda.
-    # 0.18.1: ajuste no Modal, terceira casa. No escuro o fundo do Modal
-    # (surface-raised) era igual ao bg-hover, e o hover do ghost e do secondary
-    # sumia no rodape. O modal.css passa a usar bg-hover-raised e
-    # bg-active-raised nesses botoes. Nenhum token novo.
-    # 0.18.2: ajuste no Card e no Modal, terceira casa. Botoes Ghost e Secondary
-    # (Button e Icon Button) dentro do Card, e Icon Button em qualquer parte do
-    # Modal, usam bg-hover-raised e bg-active-raised: o fundo e surface-raised e,
-    # no escuro, igual ao bg-hover. Nenhum token novo.
-    # 0.19.0: Drawer, sexto e ultimo componente do Tier 3 - casa do meio,
-    # componente novo. <dialog> nativo colado na direita, com drawer.js proprio
-    # (abrir por atributo, clique no fundo so sem campos, foco inicial). Reusa
-    # bg-scrim e motion.duration.panel; nenhum token da Foundation muda.
-    # 0.20.0: Sidebar, primeiro componente do Tier 4 - casa do meio,
-    # componente novo. <aside> com <nav> dentro, itens = Tab Square; abaixo de
-    # 1024px o sidebar.js move a mesma <aside> para um <dialog> pela esquerda.
-    # Reusa bg-scrim, elevation-5 e motion.duration.panel; nenhum token da
-    # Foundation muda.
+    # Third digit = release. An update to the foundation or to an existing
+    # component goes here; the middle digit is for a new layer. 0.3.1: the
+    # Button moved the icon up to the label's line height (0.1.1 -> 0.2.0).
+    # 0.4.0: the Icon Button came in whole - a new component and a new layer,
+    # so the middle digit. It brought its own Figma collection, 42 tokens, CSS,
+    # two gates and a page on the site.
+    # 0.5.0: the Tag - the first AL component to close with zero exceptions
+    # while carrying text (4.5:1 floor, not the Icon Button's 3:1).
+    # 0.6.0: the Avatar - a new component, middle digit. It closes Tier 1. It
+    # creates no new contrast pair (zero exceptions), and it is the smallest
+    # a11y gate in the system so far: the background never varies by type,
+    # only by theme.
+    # 0.10.0: the Switch - a new component, middle digit. The first component
+    # to create a semantic in the Foundation (bg-thumb, bg-thumb-disabled), and
+    # the first the site itself consumes: the theme switch in the rail.
+    # 0.11.0: the Input - a new component, middle digit. The first with
+    # read-only (which is NOT exempt from contrast like disabled) and with
+    # affixes inside the border: the box is a wrapper, and the state reaches it
+    # through :has().
+    # 0.11.1: package.json - distribution; no token changes.
+    # 0.13.0: the Password - a new component, middle digit. The first component
+    # with its own JavaScript (password.js), which now ships in the package.
+    # 0.14.0: the Divider - a new component, middle digit. The first of Tier 3
+    # (structure); no Foundation token changes.
+    # 0.15.0: the Card - a new component, middle digit. Second of Tier 3; no
+    # Foundation token changes.
+    # 0.16.0: the Tab - a new component, middle digit. Third of Tier 3 and the
+    # first with its own script (tab.js); no Foundation token changes.
+    # 0.17.0: the Accordion - a new component, middle digit. Fourth of Tier 3,
+    # native <details>/<summary>, no script. The Foundation gains two
+    # semantics, bg-hover-raised and bg-active-raised: in dark, bg-hover was the
+    # same color as the raised surface and the hover disappeared.
+    # 0.17.1: Motion - a Foundation update, third digit. Four tokens
+    # (duration-panel/popup, easing-enter/exit) for what enters and leaves the
+    # screen; no component consumes them yet, and the literal 120ms remain.
+    # 0.17.2: Motion complete - a Foundation update, third digit. Four more
+    # tokens (duration-feedback, duration-spinner, duration-spinner-reduced,
+    # easing-spinner) and the 12 components with transitions now consume
+    # motion: no literal duration or curve. The rendered value is the same,
+    # except the controls' curve, which is now ease-out on enter and ease-in on
+    # exit.
+    # 0.18.0: Modal, fifth component of Tier 3 - middle digit, new component.
+    # The Foundation gains bg-scrim, the first semantic with transparency
+    # (#RRGGBBAA): the dimmed background behind a modal layer. Out of PAIRS,
+    # because its contrast only exists composited over the page; the Modal's
+    # gate measures it. No existing token value changes.
+    # 0.18.1: a Modal fix, third digit. In dark the Modal background
+    # (surface-raised) was the same as bg-hover, and the ghost and secondary
+    # hover disappeared in the footer. modal.css now uses bg-hover-raised and
+    # bg-active-raised on those buttons. No new token.
+    # 0.18.2: a Card and Modal fix, third digit. Ghost and Secondary buttons
+    # (Button and Icon Button) inside the Card, and an Icon Button anywhere in
+    # the Modal, use bg-hover-raised and bg-active-raised: the background is
+    # surface-raised and, in dark, the same as bg-hover. No new token.
+    # 0.19.0: Drawer, sixth and last component of Tier 3 - middle digit, new
+    # component. A native <dialog> docked on the right, with its own drawer.js
+    # (open by attribute, backdrop click only without fields, initial focus).
+    # Reuses bg-scrim and motion.duration.panel; no Foundation token changes.
+    # 0.20.0: Sidebar, first component of Tier 4 - middle digit, new
+    # component. An <aside> with a <nav> inside, items = Tab Square; below
+    # 1024px sidebar.js moves the same <aside> into a <dialog> from the left.
+    # Reuses bg-scrim, elevation-5 and motion.duration.panel; no Foundation
+    # token changes.
     "name": "AL Design System", "version": "1.0.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
@@ -92,81 +95,82 @@ TOKENS = {
     "tracking": {"xs":"0.01em","sm":"0em","md":"0em","lg":"0em","xl":"-0.01em","2xl":"-0.01em",
                  "3xl":"-0.015em","4xl":"-0.02em","5xl":"-0.02em","6xl":"-0.025em"},
     "styles": [
-      # nome,          size, leading, weight, tracking,   uso
-      ("display-2xl",   60, 68, 700, "-0.025em", "hero / numero de destaque"),
-      ("display-xl",    48, 56, 700, "-0.02em",  "titulo de pagina de marketing"),
-      ("heading-lg",    36, 44, 600, "-0.02em",  "H1 de produto"),
+      # name,          size, leading, weight, tracking,   use
+      ("display-2xl",   60, 68, 700, "-0.025em", "hero / highlight number"),
+      ("display-xl",    48, 56, 700, "-0.02em",  "marketing page title"),
+      ("heading-lg",    36, 44, 600, "-0.02em",  "product H1"),
       ("heading-md",    30, 36, 600, "-0.015em", "H2"),
-      ("heading-sm",    24, 32, 600, "-0.01em",  "H3 / titulo de card"),
-      ("heading-xs",    20, 28, 600, "-0.01em",  "H4 / titulo de secao"),
+      ("heading-sm",    24, 32, 600, "-0.01em",  "H3 / card title"),
+      ("heading-xs",    20, 28, 600, "-0.01em",  "H4 / section title"),
       ("body-lg",       18, 28, 400, "0em",      "lead / intro"),
-      ("body-md",       16, 24, 400, "0em",      "corpo padrao do sistema"),
-      ("body-sm",       14, 20, 400, "0em",      "texto de apoio / tabela"),
-      ("label-lg",      16, 24, 500, "0em",      "label de botao grande"),
-      ("label-md",      14, 20, 500, "0em",      "label de campo / botao"),
+      ("body-md",       16, 24, 400, "0em",      "the system's default body"),
+      ("body-sm",       14, 20, 400, "0em",      "supporting text / table"),
+      ("label-lg",      16, 24, 500, "0em",      "large button label"),
+      ("label-md",      14, 20, 500, "0em",      "field / button label"),
       ("label-sm",      12, 16, 500, "0.01em",   "badge / tag / overline"),
-      ("caption",       12, 16, 400, "0.01em",   "legenda / helper text"),
-      ("code-md",       14, 20, 400, "0em",      "codigo inline e bloco"),
+      ("caption",       12, 16, 400, "0.01em",   "caption / helper text"),
+      ("code-md",       14, 20, 400, "0em",      "inline and block code"),
     ],
   },
   "space": {str(v): v for v in [0,2,4,8,12,16,20,24,32,40,48,64,80,96]},
   "radius": {"none":0,"xs":2,"sm":4,"md":6,"lg":8,"xl":12,"2xl":16,"3xl":24,"full":9999},
-  # Escala de tamanho de icone. Os degraus sao nomeados pelo proprio valor,
-  # como o espacamento - e de proposito: nome de camiseta (sm/md/lg) obriga a
-  # renomear quando um degrau entra no meio, e esta e a escala que mais cresce.
-  # Assim um degrau novo custa uma linha e nada existente muda de nome.
+  # Icon size scale. The steps are named by their own value, like spacing -
+  # on purpose: t-shirt names (sm/md/lg) force a rename when a step comes in
+  # between, and this is the scale that grows the most. This way a new step
+  # costs one line and nothing existing changes name.
   #
-  # A escala NAO prende o componente Icon. O desenho e de 24 com o traco
-  # vetorizado em preenchimento, entao a instancia vale em qualquer tamanho.
-  # Isto aqui nomeia os tamanhos recorrentes para que a decisao seja tomada
-  # uma vez e mudavel num lugar so - e para que o portao de CSS literal tenha
-  # contra o que validar.
+  # The scale does NOT lock the Icon component. The drawing is 24 with the
+  # stroke outlined into a fill, so the instance works at any size. This names
+  # the recurring sizes so the decision is made once and can change in one
+  # place - and so the literal CSS gate has something to validate against.
   "iconSize": {"16":16, "20":20, "24":24, "32":32},
   "border": {"width": {"0":0,"1":1,"2":2,"focus":2}, "focusOffset": 2},
-  # Motion. Dois eixos, e o segundo e escolha de quem consome:
-  #   easing   -> o TIPO DA ACAO (entrada ou saida). Entrada desacelera
-  #               (ease-out): o elemento chega e assenta. Saida acelera
-  #               (ease-in): o elemento parte e some.
-  #   duration -> o PORTE de quem se move, nao o nome do componente. Nome de
-  #               componente obrigaria um token novo a cada componente novo;
-  #               porte nao. `panel` cobre o que ocupa a tela (Modal, Drawer),
-  #               `popup` o que aparece pequeno por cima dela (Tooltip, Toast).
-  #   `feedback` e o terceiro degrau e e de PAPEL, nao de porte: e a resposta
-  #               do controle ao ponteiro, ao foco e a selecao. Entrou em
-  #               08/10/2026 para absorver os 120ms que 12 componentes escreviam
-  #               a mao. Usa o mesmo par enter/exit dos overlays: entrar num
-  #               estado (hover, foco, marcado) e ease-out, sair e ease-in.
-  #   `spinner` e `spinner-reduced` sao duracoes de LOOP (uma volta), com a
-  #               curva `easing-spinner` (linear, escrita como 0,0,1,1 - o
-  #               mesmo movimento). Entraram em 08/10/2026 para tirar os
-  #               700ms/2400ms literais do Button e do Icon Button.
-  # Entrada e saida tem a mesma duracao por decisao de Gui (08/10/2026); se
-  # um dia divergirem, o token novo e `duration-panel-exit`, sem renomear.
-  # As curvas sao as palavras-chave do CSS escritas por extenso: o Figma, o
-  # JS e o grafico do site precisam dos quatro numeros, nao do apelido.
+  # Motion. Two axes, and the second is the consumer's choice:
+  #   easing   -> the TYPE OF ACTION (enter or exit). Enter decelerates
+  #               (ease-out): the element arrives and settles. Exit accelerates
+  #               (ease-in): the element leaves and disappears.
+  #   duration -> the SIZE of what moves, not the component's name. A
+  #               component name would force a new token for every new
+  #               component; size doesn't. `panel` covers what takes over the
+  #               screen (Modal, Drawer), `popup` what appears small on top of
+  #               it (Tooltip, Toast).
+  #   `feedback` is the third step and it is about ROLE, not size: it is the
+  #               control's response to the pointer, focus and selection. It
+  #               came in on 2026-10-08 to absorb the 120ms that 12 components
+  #               wrote by hand. It uses the same enter/exit pair as the
+  #               overlays: entering a state (hover, focus, checked) is
+  #               ease-out, leaving is ease-in.
+  #   `spinner` and `spinner-reduced` are LOOP durations (one turn), with the
+  #               `easing-spinner` curve (linear, written as 0,0,1,1 - the same
+  #               motion). They came in on 2026-10-08 to remove the literal
+  #               700ms/2400ms from the Button and the Icon Button.
+  # Enter and exit have the same duration by design (2026-10-08); if they ever
+  # diverge, the new token is `duration-panel-exit`, with no rename.
+  # The curves are the CSS keywords written out in full: Figma, the JS and the
+  # site's chart need the four numbers, not the nickname.
   "motion": {
     "duration": {"feedback": 120, "popup": 200, "panel": 300, "spinner": 700, "spinner-reduced": 2400},
     "easing": {"enter": [0, 0, 0.58, 1], "exit": [0.42, 0, 1, 1], "spinner": [0, 0, 1, 1]},
-    "uso": {
-      "duration-feedback": "Hover, pressed, foco e selecao em todo controle (Button, Input, Switch, Tab...). Entrar no estado usa easing-enter, sair usa easing-exit.",
-      "duration-spinner": "Uma volta do spinner (Button, Icon Button). Loop continuo: nao e entrada nem saida.",
-      "duration-spinner-reduced": "Uma volta do spinner sob prefers-reduced-motion. O spinner nao para, porque e a unica pista de que algo acontece; so desacelera.",
-      "duration-panel": "Modal e Drawer: o que cobre a tela ou entra por uma borda dela. Entrada e saida.",
-      "duration-popup": "Tooltip e Toast: o que aparece pequeno por cima da tela. Entrada e saida.",
-      "easing-enter": "Tudo que entra (ease-out): chega rapido e assenta devagar.",
-      "easing-exit": "Tudo que sai (ease-in): parte devagar e acelera ate sumir.",
-      "easing-spinner": "Loop continuo (linear): velocidade constante, sem aceleracao nem freio. Spinner e, no futuro, skeleton.",
+    "usage": {
+      "duration-feedback": "Hover, pressed, focus and selection on every control (Button, Input, Switch, Tab...). Entering the state uses easing-enter, leaving uses easing-exit.",
+      "duration-spinner": "One turn of the spinner (Button, Icon Button). A continuous loop: neither enter nor exit.",
+      "duration-spinner-reduced": "One turn of the spinner under prefers-reduced-motion. The spinner doesn't stop, because it is the only clue that something is happening; it only slows down.",
+      "duration-panel": "Modal and Drawer: what covers the screen or comes in from one of its edges. Enter and exit.",
+      "duration-popup": "Tooltip and Toast: what appears small on top of the screen. Enter and exit.",
+      "easing-enter": "Everything that enters (ease-out): arrives fast and settles slowly.",
+      "easing-exit": "Everything that exits (ease-in): leaves slowly and speeds up until it disappears.",
+      "easing-spinner": "A continuous loop (linear): constant speed, no acceleration or braking. Spinner and, in the future, skeleton.",
     },
-    "_note": "Sob prefers-reduced-motion o componente zera a transicao (transition: none). "
-             "Nao existe token de duracao zero: ausencia de movimento nao e um valor de escala.",
+    "_note": "Under prefers-reduced-motion the component removes the transition (transition: none). "
+             "There is no zero-duration token: the absence of motion is not a scale value.",
   },
   "focusRing": {
-    # Duas camadas na mesma sombra, sem offset:
-    #   interna  -> spread 2, na cor do fundo. E o respiro. Impede o anel de
-    #               encostar no preenchimento do componente.
-    #   externa  -> spread 4 (2 do respiro + 2 do anel), na cor do foco.
-    # Assim o anel so precisa contrastar com o fundo da tela - e o preenchimento
-    # do botao, seja laranja ou vermelho, deixa de ser um problema.
+    # Two layers in the same shadow, no offset:
+    #   inner  -> spread 2, in the background color. It is the gap. It keeps
+    #             the ring from touching the component's fill.
+    #   outer  -> spread 4 (2 for the gap + 2 for the ring), in the focus color.
+    # This way the ring only has to contrast with the screen background - and
+    # the button's fill, orange or red, stops being a problem.
     "default": {
       "light": f"0 0 0 2px {SEM['bg-canvas'][0]}, 0 0 0 4px {SEM['shadow-focus-default'][0]}",
       "dark":  f"0 0 0 2px {SEM['bg-canvas'][1]}, 0 0 0 4px {SEM['shadow-focus-default'][1]}",
@@ -175,8 +179,8 @@ TOKENS = {
       "light": f"0 0 0 2px {SEM['bg-canvas'][0]}, 0 0 0 4px {SEM['shadow-focus-error'][0]}",
       "dark":  f"0 0 0 2px {SEM['bg-canvas'][1]}, 0 0 0 4px {SEM['shadow-focus-error'][1]}",
     },
-    "_note": "Nao e elevacao. Elevacao comunica altura; isto comunica foco de teclado "
-             "e passa pelo portao de contraste. Nunca some, nunca anima.",
+    "_note": "It is not elevation. Elevation communicates height; this communicates keyboard "
+             "focus and goes through the contrast gate. It never disappears, never animates.",
   },
   "elevation": {
     "0":  {"light":"none", "dark":"none"},
@@ -190,11 +194,11 @@ TOKENS = {
            "dark": f"0 8px 16px -4px rgba(0,0,0,0.36), 0 16px 32px -8px rgba(0,0,0,0.52)"},
     "5":  {"light":f"0 16px 32px -8px rgba({SHADOW_RGB},0.10), 0 32px 64px -16px rgba({SHADOW_RGB},0.18)",
            "dark": f"0 16px 32px -8px rgba(0,0,0,0.40), 0 32px 64px -16px rgba(0,0,0,0.56)"},
-    "_note": "No escuro a sombra e cue secundario: o cue primario e a superficie clarear (950 -> 900 -> 800).",
+    "_note": "In dark the shadow is a secondary cue: the primary cue is the surface getting lighter (950 -> 900 -> 800).",
   },
 }
 
-# relatorio de contraste embutido (o portao vira dado, nao so log)
+# embedded contrast report (the gate becomes data, not just a log)
 report = []
 for i, theme in enumerate(('light','dark')):
     for fg, bg, mn, label in PAIRS:
@@ -207,15 +211,15 @@ for i, theme in enumerate(('light','dark')):
 
 fails = [r for r in report if not r["pass"]]
 if fails:
-    raise SystemExit(f"{len(fails)} par(es) reprovam o gate de contraste — export abortado: {fails}")
+    raise SystemExit(f"{len(fails)} pair(s) fail the contrast gate - export aborted: {fails}")
 
 TOKENS["contrastReport"] = report
 
 json.dump(TOKENS, open(TOKENS_PATH,'w'), indent=2, ensure_ascii=False)
 
-# A versao tem uma fonte so: meta.version, acima. O package.json repete o
-# numero para o npm, e quem o regrava e este script - nunca a mao. Fica depois
-# do portao de contraste: export abortado nao sobe versao de pacote.
+# The version has a single source: meta.version, above. package.json repeats
+# the number for npm, and this script rewrites it - never by hand. It comes
+# after the contrast gate: an aborted export doesn't bump the package version.
 PACKAGE_PATH = os.path.join(ROOT, 'package.json')
 pkg = json.load(open(PACKAGE_PATH, encoding='utf-8'))
 pkg['version'] = TOKENS['meta']['version']
@@ -223,14 +227,14 @@ with open(PACKAGE_PATH, 'w', encoding='utf-8') as f:
     json.dump(pkg, f, indent=2, ensure_ascii=False)
     f.write('\n')
 n_prim = sum(len(v) for v in P.values()) + 1
-print(f"build/tokens.json escrito")
-print(f"package.json na versao {pkg['version']}")
-print(f"  primitivas de cor : {n_prim}  ({len(P)} familias x 11 steps + orange-550)")
-print(f"  semanticos de cor : {len(SEM)} x 2 temas = {len(SEM)*2}")
-print(f"  estilos de texto  : {len(TOKENS['type']['styles'])}")
-print(f"  espacamento       : {len(TOKENS['space'])}   radius: {len(TOKENS['radius'])}   icon-size: {len(TOKENS['iconSize'])}   elevacao: 6")
+print(f"build/tokens.json written")
+print(f"package.json at version {pkg['version']}")
+print(f"  color primitives  : {n_prim}  ({len(P)} families x 11 steps + orange-550)")
+print(f"  color semantics   : {len(SEM)} x 2 themes = {len(SEM)*2}")
+print(f"  text styles       : {len(TOKENS['type']['styles'])}")
+print(f"  spacing           : {len(TOKENS['space'])}   radius: {len(TOKENS['radius'])}   icon-size: {len(TOKENS['iconSize'])}   elevation: 6")
 n_exc = sum(1 for r in report if r['exception'])
-print(f"  pares validados   : {len(report)}  |  AA pleno: {len(report)-n_exc}  |  excecoes de marca: {n_exc}  |  reprovas: {sum(1 for r in report if not r['pass'])}")
+print(f"  validated pairs   : {len(report)}  |  full AA: {len(report)-n_exc}  |  brand exceptions: {n_exc}  |  fail: {sum(1 for r in report if not r['pass'])}")
 TOKENS['meta']['brandLabel'] = 'light'
 TOKENS['meta']['exceptions'] = [{'theme':r['theme'],'label':r['label'],'ratio':r['ratio']} for r in report if r['exception']]
 total = n_prim + len(SEM)*2 + len(TOKENS['type']['styles']) + len(TOKENS['space']) + len(TOKENS['radius']) + len(TOKENS['iconSize']) + 6 + 4
