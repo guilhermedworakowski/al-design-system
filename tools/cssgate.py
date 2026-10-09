@@ -26,7 +26,7 @@ passam: o portao so procura hex, funcao de cor, numero com unidade e peso.
 import os
 import re
 
-from paths import comp_src, comp_out
+from paths import comp_src, comp_out, rel
 
 HEX = re.compile(r'#[0-9a-fA-F]{3,8}\b')
 FUNC_COLOR = re.compile(r'\b(rgba?|hsla?|oklch|lab|color)\s*\(')
@@ -94,12 +94,12 @@ def gate(c, fora_do_css=(), excecoes=(), extra=None):
                                     open(tokens_css).read(), flags=re.M))
     locais = set(re.findall(rf'(--al-{c}-[\w-]+)\s*:', body))
     orfaos = sorted(declarados - usados)
-    inventados = sorted(usados - declarados - locais) if declarados else []
+    inventados = sorted(usados - declarados - locais)
 
     print('=' * 70)
     print(f'PORTAO DO CSS DO {nome.upper()}')
     print('=' * 70)
-    print(f'  arquivo                  : components/{c}/{c}.css')
+    print(f'  arquivo                  : src/components/{c}/{c}.css')
     print(f'  custom properties usadas : {n_vars}  (sendo {len(usados)} da camada do {nome})')
     print(f'  tokens declarados        : {len(declarados)}')
     if locais:
@@ -119,6 +119,15 @@ def gate(c, fora_do_css=(), excecoes=(), extra=None):
         for t in extra_lines:
             print(t)
         ok = ok and extra_ok
+
+    # Sem nenhum token declarado, as duas contas abaixo nao medem nada: o
+    # orfao da vazio e o inventado acusaria tudo. Arquivo de tokens ausente ou
+    # vazio e falha do tokens.py, e o portao reprova antes de contar.
+    if not declarados:
+        print(f'NENHUM TOKEN DO {nome.upper()} DECLARADO EM {rel(tokens_css)} - PORTAO REPROVA:')
+        print(f'   o arquivo nao existe ou nao declara nenhuma --al-{c}-*.')
+        print(f'   Rode o tokens.py do componente e confira a saida.')
+        return 1
 
     if inventados:
         print(f'{len(inventados)} CUSTOM PROPERTY DO {nome.upper()} QUE NAO EXISTE NA CAMADA DE TOKENS:')
