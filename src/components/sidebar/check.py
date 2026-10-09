@@ -31,4 +31,4 @@ FORA_DO_CSS = [
 
 
 if __name__ == '__main__':
-    sys.exit(gate('sidebar', fora_do_css=FORA_DO_CSS, excecoes=[('ponto-de-quebra', '1024px', '@media')]))
+    sys.exit(gate('sidebar', outside_css=FORA_DO_CSS, exceptions=[('ponto-de-quebra', '1024px', '@media')]))

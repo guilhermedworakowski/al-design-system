@@ -45,4 +45,4 @@ def piso_de_linhas(body):
 
 
 if __name__ == '__main__':
-    sys.exit(gate('textarea', fora_do_css=FORA_DO_CSS, extra=piso_de_linhas))
+    sys.exit(gate('textarea', outside_css=FORA_DO_CSS, extra=piso_de_linhas))

@@ -27,4 +27,4 @@ FORA_DO_CSS = [
 
 
 if __name__ == '__main__':
-    sys.exit(gate('modal', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('modal', outside_css=FORA_DO_CSS))

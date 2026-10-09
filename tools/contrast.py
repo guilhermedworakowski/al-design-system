@@ -1,27 +1,28 @@
 """
-Contraste WCAG, num lugar so.
+WCAG contrast, in one place.
 
-Antes desta pasta, a mesma conta estava copiada no foundation/color.py e nos 23
-a11y.py. Agora todos importam daqui. A formula e a do WCAG 2.x: luminancia
-relativa do sRGB e (L1 + 0.05) / (L2 + 0.05), com L1 a mais clara.
+Before this folder, the same math was copied into foundation/color.py and the
+23 a11y.py files. Now they all import from here. The formula is WCAG 2.x:
+relative sRGB luminance and (L1 + 0.05) / (L2 + 0.05), with L1 the lighter.
 
-    cr(a, b)          razao sem arredondar (o que os portoes comparam)
-    cr2(a, b)         a mesma razao arredondada em 2 casas (como o relatorio mostra)
-    composite(c, bg)  cor com transparencia (#RRGGBBAA) pintada sobre um fundo opaco
+    cr(a, b)          unrounded ratio (what the gates compare)
+    cr2(a, b)         the same ratio rounded to 2 places (as the report shows)
+    composite(c, bg)  a color with transparency (#RRGGBBAA) painted on an opaque
+                      background
 
-Hex com 8 digitos (#RRGGBBAA) tem a transparencia ignorada em lum() e cr():
-quem precisa dela compoe antes, com composite().
+An 8-digit hex (#RRGGBBAA) has its transparency ignored in lum() and cr():
+whoever needs it composites first, with composite().
 """
 
 
 def lin(c):
-    """Canal de 0 a 255 -> linear."""
+    """Channel from 0 to 255 -> linear."""
     c = c / 255
     return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
 
 
 def lum(h):
-    """Luminancia relativa de um hex (#RRGGBB ou #RRGGBBAA)."""
+    """Relative luminance of a hex (#RRGGBB or #RRGGBBAA)."""
     h = h.lstrip('#')[:6]
     r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
     return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)

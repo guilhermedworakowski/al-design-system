@@ -25,4 +25,4 @@ FORA_DO_CSS = [
 
 
 if __name__ == '__main__':
-    sys.exit(gate('tooltip', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('tooltip', outside_css=FORA_DO_CSS))

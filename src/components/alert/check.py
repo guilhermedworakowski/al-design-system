@@ -26,4 +26,4 @@ FORA_DO_CSS = [
 
 
 if __name__ == '__main__':
-    sys.exit(gate('alert', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('alert', outside_css=FORA_DO_CSS))

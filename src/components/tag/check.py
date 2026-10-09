@@ -23,4 +23,4 @@ FORA_DO_CSS = [
 
 
 if __name__ == '__main__':
-    sys.exit(gate('tag', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('tag', outside_css=FORA_DO_CSS))

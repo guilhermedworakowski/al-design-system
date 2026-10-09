@@ -1,13 +1,13 @@
 """
-Onde cada coisa mora no repo. Todo script le e escreve por aqui.
+Where everything lives in the repo. Every script reads and writes through here.
 
-  src/    o que se escreve a mao: Foundation, CSS, JS, icones, portoes
-  build/  o que o build gera para uso interno (tokens, a11y.json, o site);
-          fora do git
-  dist/   o pacote publicado no npm, montado por tools/dist.py; fora do git
+  src/    what is written by hand: Foundation, CSS, JS, icons, gates
+  build/  what the build generates for internal use (tokens, a11y.json, the
+          site); out of git
+  dist/   the package published to npm, assembled by tools/dist.py; out of git
 
-Antes desta divisao, fonte e gerado ficavam lado a lado na mesma pasta, e o
-git guardava os dois.
+Before this split, source and generated files sat side by side in the same
+folder, and git kept both.
 """
 import os
 
@@ -16,8 +16,9 @@ SRC = os.path.join(ROOT, 'src')
 BUILD = os.path.join(ROOT, 'build')
 DIST = os.path.join(ROOT, 'dist')
 
-# Ordem de criacao dos componentes. Componente novo entra no fim. E tambem a
-# ordem do CSS no al.css e no site, entao mexer nela muda a cascata.
+# Order in which the components were created. A new component goes at the end.
+# It is also the CSS order in al.css and on the site, so changing it changes
+# the cascade.
 COMPONENTS = [
     'button', 'icon', 'icon-button', 'tag', 'avatar', 'select', 'checkbox',
     'radio', 'switch', 'input', 'textarea', 'password', 'divider', 'card',
@@ -32,21 +33,21 @@ SITE_HTML = os.path.join(BUILD, 'site', 'index.html')
 
 
 def out(path):
-    """Garante a pasta de um arquivo gerado e devolve o mesmo caminho."""
+    """Makes sure a generated file's folder exists and returns the same path."""
     os.makedirs(os.path.dirname(path), exist_ok=True)
     return path
 
 
 def comp_src(c, *p):
-    """Arquivo escrito a mao de um componente: src/components/<c>/..."""
+    """A component's handwritten file: src/components/<c>/..."""
     return os.path.join(SRC, 'components', c, *p)
 
 
 def comp_out(c, *p):
-    """Arquivo gerado de um componente: build/components/<c>/..."""
+    """A component's generated file: build/components/<c>/..."""
     return out(os.path.join(BUILD, 'components', c, *p))
 
 
 def rel(path):
-    """Caminho relativo a raiz, para mensagens e relatorios."""
+    """Path relative to the root, for messages and reports."""
     return os.path.relpath(path, ROOT)

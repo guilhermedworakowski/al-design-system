@@ -27,4 +27,4 @@ FORA_DO_CSS = [
 
 
 if __name__ == '__main__':
-    sys.exit(gate('breadcrumb', fora_do_css=FORA_DO_CSS))
+    sys.exit(gate('breadcrumb', outside_css=FORA_DO_CSS))

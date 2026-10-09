@@ -1,13 +1,13 @@
 """
-O que a camada de tokens de todo componente faz igual.
+What every component's token layer does the same way.
 
-Cada src/components/<c>/tokens.py diz quais tokens o componente tem e para qual
-token da Foundation cada um aponta. As contas abaixo - achar um token pelo
-caminho, escrever a referencia CSS, gravar o arquivo - eram copiadas nos 23
-arquivos, com pequenas variacoes. Agora moram aqui.
+Each src/components/<c>/tokens.py says which tokens the component has and which
+Foundation token each one points to. The helpers below - finding a token by
+path, writing the CSS reference, saving the file - used to be copied into the
+23 files, with small variations. Now they live here.
 
-O nome nao e tokens.py de proposito: cada componente ja tem um tokens.py, e o
-import acharia o do componente antes deste.
+The name is not tokens.py on purpose: every component already has a tokens.py,
+and the import would find the component's one before this.
 """
 import json
 import os
@@ -16,10 +16,10 @@ from paths import TOKENS_JSON, comp_out, rel
 
 FOUND = json.load(open(TOKENS_JSON))
 
-TRANSPARENT = 'transparent'   # ausencia de cor, nao uma escolha de cor
+TRANSPARENT = 'transparent'   # absence of color, not a color choice
 
-# Caminho na Foundation -> nome da custom property. O primeiro prefixo que
-# casa vence; o que sobrar do caminho vira o fim do nome.
+# Foundation path -> custom property name. The first matching prefix wins;
+# whatever is left of the path becomes the end of the name.
 _PREFIXES = [
     ('focusRing.', '--al-focus-ring-'),
     ('elevation.', '--al-elevation-'),
@@ -34,9 +34,9 @@ _PREFIXES = [
 
 
 def resolve_foundation(path):
-    """Segue um caminho pontuado dentro de tokens.json. Levanta se nao existir.
+    """Follows a dotted path inside tokens.json. Raises if it doesn't exist.
 
-    Estilo de texto e lista ([nome, tamanho, ...]): o passo procura pelo nome.
+    A text style is a list ([name, size, ...]): the step looks it up by name.
     """
     node = FOUND
     for part in path.split('.'):
@@ -53,11 +53,11 @@ def resolve_foundation(path):
 
 
 def css_ref(ref):
-    """Caminho da Foundation (ou nome de semantico) -> valor CSS.
+    """Foundation path (or semantic name) -> CSS value.
 
     'space.8' -> var(--al-space-8); 'bg-brand' -> var(--al-bg-brand).
-    Estilo de texto ('type.styles.body') devolve so o nome: quem chama monta as
-    quatro vars do estilo.
+    A text style ('type.styles.body') returns only the name: the caller builds
+    the style's four vars.
     """
     if ref == TRANSPARENT:
         return TRANSPARENT
@@ -73,15 +73,15 @@ def css_ref(ref):
 
 
 def size_key(font_size):
-    """Valor de font-size -> chave da escala (16 -> 'md')."""
+    """font-size value -> scale key (16 -> 'md')."""
     for key, v in FOUND['type']['size'].items():
         if v == font_size:
             return key
-    raise KeyError(f'type.size com valor {font_size} nao existe na Foundation')
+    raise KeyError(f'type.size with value {font_size} does not exist in the Foundation')
 
 
-def save_css(c, texto):
-    """Grava build/components/<c>/al-<c>-tokens.css."""
+def save_css(c, text):
+    """Writes build/components/<c>/al-<c>-tokens.css."""
     path = comp_out(c, f'al-{c}-tokens.css')
-    open(path, 'w').write(texto)
-    print(f'{rel(path)} escrito ({os.path.getsize(path)} bytes)')
+    open(path, 'w').write(text)
+    print(f'{rel(path)} written ({os.path.getsize(path)} bytes)')
