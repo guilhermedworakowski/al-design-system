@@ -762,16 +762,21 @@ body{
 /* ── conteúdo ── */
 .main{min-width:0}
 .inner{max-width:1000px; padding:0 40px 100px}
-.phead{padding:44px 0 0}
-.eyebrow{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--al-text-secondary); margin-bottom:12px}
-h1{font-size:46px; line-height:1.03; letter-spacing:-.033em; font-weight:700; margin:0 0 12px}
-h1 em{font-style:normal; color:var(--al-bg-brand)}
-.lede{font-size:17px; color:var(--al-text-secondary); margin:0 0 8px; max-width:62ch}
-.meta{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
-.badge{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.06em;
-  padding:4px 10px; border-radius:9999px; background:var(--al-bg-subtle); color:var(--al-text-secondary)}
-.badge.on{background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+/* ── hero: o mesmo modelo em todas as páginas ──
+   Seção (rótulo do grupo da Sidebar) em Caption, Breadcrumb do AL fora das
+   "Visão geral", título em Display/xl, descrição em Body/md e o resumo em Tag
+   Neutral sm Filled. Os estilos de texto vêm da escala da Foundation. */
+.hero{padding:var(--al-space-48) 0 0}
+.hero__section{margin:0 0 var(--al-space-8); font-size:var(--al-font-size-xs);
+  line-height:var(--al-line-height-xs); font-weight:var(--al-font-weight-regular); letter-spacing:.01em;
+  color:var(--al-text-secondary)}
+.hero__breadcrumb{margin-bottom:var(--al-space-16)}
+.hero__title{margin:0 0 var(--al-space-12); font-size:var(--al-font-size-5xl);
+  line-height:var(--al-line-height-5xl); font-weight:var(--al-font-weight-bold); letter-spacing:-.02em;
+  color:var(--al-text-primary)}
+.hero__desc{margin:0; max-width:62ch; font-size:var(--al-font-size-md); line-height:var(--al-line-height-md);
+  font-weight:var(--al-font-weight-regular); color:var(--al-text-secondary)}
+.hero__tags{display:flex; flex-wrap:wrap; gap:var(--al-space-8); margin-top:var(--al-space-24)}
 
 /* ── abas ── */
 .tabs{display:flex; gap:2px; border-bottom:1px solid var(--al-border-subtle);
@@ -1030,7 +1035,8 @@ footer code{background:none; padding:0}
 
 @media (max-width:900px){
   .inner{padding:0 20px 72px}
-  h1{font-size:34px}
+  .hero{padding-top:var(--al-space-32)}
+  .hero__title{font-size:var(--al-font-size-4xl); line-height:var(--al-line-height-4xl)}
   .ctl{grid-template-columns:1fr; gap:8px}
   .spec-row{grid-template-columns:1fr}
   .spec-name{padding-top:0}
@@ -1051,15 +1057,40 @@ CHROME += """
 
 
 # ══════════════════════════════════════════════════════════ montagem da página
-def simple_page(pid, eyebrow, title, lede, badges, body, first=False):
-    """Pagina sem abas - para assunto que nao tem mais de um recorte."""
-    meta = ''
+def hero(pid, lede, badges):
+    """O Hero de toda página: seção, breadcrumb, título, descrição e tags.
+
+    Seção e título saem da Sidebar (SITE_NAV): o rótulo do grupo e o rótulo do
+    item. As duas "Visão geral" não têm breadcrumb; as outras páginas levam
+    "Visão geral > página", com o link para a Visão geral do próprio grupo.
+    Divergência declarada das regras 1 e 3 do Breadcrumb (guidelines.md): a
+    trilha tem 2 níveis e repete a Sidebar, em troca de um Hero só no site.
+    """
+    section, title, sr = NAV_INFO[pid]
+    crumb = ''
+    if pid not in OVERVIEWS:
+        up = OVERVIEWS[0] if section == 'Foundation' else OVERVIEWS[1]
+        crumb = ('<nav class="al-breadcrumb hero__breadcrumb" aria-label="Trilha de navegação">'
+                 '<ol class="al-breadcrumb__list">'
+                 f'<li class="al-breadcrumb__item"><a class="al-breadcrumb__link" href="#/{up}"'
+                 f' data-page="{up}">Visão geral</a>{BC_SEP}</li>'
+                 f'<li class="al-breadcrumb__item"><span class="al-breadcrumb__current"'
+                 f' aria-current="page">{title}</span></li></ol></nav>')
+    tags = ''
     if badges:
-        meta = ('<div class="meta">' + ''.join(
-            f'<span class="badge{" on" if on else ""}">{b}</span>' for b, on in badges) + '</div>')
+        tags = ('<div class="hero__tags">' + ''.join(
+            f'<span class="al-tag al-tag--filled al-tag--neutral al-tag--sm">{b}</span>'
+            for b, _ in badges) + '</div>')
+    extra = f'<span class="sr-only">{sr}</span>' if sr else ''
+    return (f'<header class="hero"><p class="hero__section">{section}</p>{crumb}'
+            f'<h1 class="hero__title">{title}{extra}</h1>'
+            f'<p class="hero__desc">{lede}</p>{tags}</header>')
+
+
+def simple_page(pid, lede, badges, body, first=False):
+    """Pagina sem abas - para assunto que nao tem mais de um recorte."""
     return (f'<div class="page" id="pg-{pid}"{"" if first else " hidden"}>'
-            f'<header class="phead"><div class="eyebrow">{eyebrow}</div><h1>{title}</h1>'
-            f'<p class="lede">{lede}</p>{meta}</header>'
+            + hero(pid, lede, badges) +
             f'<div class="panel">{body}</div></div>')
 
 
@@ -1125,8 +1156,9 @@ CARET = ('<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">'
          'stroke-linecap="round" stroke-linejoin="round"/></svg>')
 
 
-def page(pid, eyebrow, title, lede, badges, tabs, extra_head='', first=False):
+def page(pid, lede, badges, tabs, first=False):
     """Uma entrada do trilho. `tabs` = [(slug, rótulo, html)]."""
+    title = NAV_INFO[pid][1]
     bar = [f'<div class="tabs" role="tablist" aria-label="Seções de {title}">']
     panels = []
     for i, (slug, label, html) in enumerate(tabs):
@@ -1138,11 +1170,8 @@ def page(pid, eyebrow, title, lede, badges, tabs, extra_head='', first=False):
         panels.append(f'<div class="panel" id="{panid}" role="tabpanel" aria-labelledby="{tid}" '
                       f'tabindex="0"{"" if on else " hidden"}>{html}</div>')
     bar.append('</div>')
-    badge_html = ''.join(f'<span class="badge{" on" if on else ""}">{b}</span>' for b, on in badges)
     return (f'<div class="page" id="pg-{pid}"{"" if first else " hidden"}>'
-            f'<header class="phead"><div class="eyebrow">{eyebrow}</div><h1>{title}</h1>'
-            f'<p class="lede">{lede}</p><div class="meta">{badge_html}</div>{extra_head}</header>'
-            + ''.join(bar) + ''.join(panels) + '</div>')
+            + hero(pid, lede, badges) + ''.join(bar) + ''.join(panels) + '</div>')
 
 
 # ─────────────────────────────────────────────────────── Fundação · princípios
@@ -10712,7 +10741,7 @@ BREADCRUMB_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
-    <div class="stage bc-stage" id="breadcrumb-stage"><div class="bc-page" data-bcpage="canvas">{BC_DEMOS["6"]["html"]}</div></div>
+    <div class="stage bc-stage" id="breadcrumb-stage" data-al-demo><div class="bc-page" data-bcpage="canvas">{BC_DEMOS["6"]["html"]}</div></div>
     <div class="controls" id="breadcrumb-controls">
       <div class="ctl"><span class="ctl-name">Profundidade</span>{seg('bcdepth', BC_DEPTHS, '6')}</div>
       <div class="ctl"><span class="ctl-name">Página</span>{seg('bcpage', BC_PAGES, 'canvas')}</div>
@@ -12521,278 +12550,6 @@ LANDING_COMPONENTES = f'''
 # numero escrito a mao e envelheceu (dizia 6 com 15 publicados).
 N_PUBLICADOS = LANDING_COMPONENTES.count('<a class="card"')
 
-PAGES = [
-    ('fundacao', 'Fundação', simple_page(
-        'fundacao', 'Fundação', 'Fundação',
-        'A camada que decide antes de qualquer componente existir: a cor, a tipografia, a medida, o movimento e '
-        'a prova de que tudo isso atravessa o portão. Nenhum componente inventa valor — todos '
-        'consomem daqui, e é por isso que trocar o tema não é retrabalho.',
-        [], STATS + LANDING_FUNDACAO, first=True)),
-
-    ('principios', 'Fundação', simple_page(
-        'principios', 'Fundação', 'Princípios',
-        'O que está decidido antes dos valores: as cinco escolhas que sustentam o sistema, as oito '
-        'etapas que um componente percorre e os quatro portões que recusam o que não passa.',
-        [('5 decisões', True), ('8 etapas', False), ('4 portões', False)],
-        TAB_PRINCIPIOS)),
-
-    ('prova', 'Fundação', simple_page(
-        'prova', 'Fundação', 'A prova',
-        'A mesma interface montada com os mesmos tokens, nos dois temas, lado a lado. Se a camada '
-        'semântica estiver certa, nada aqui precisou ser escrito duas vezes.',
-        [('Dois temas', True), (f'{N_SEM} semânticos', False), ('0 valores literais', False)],
-        TAB_PROVA)),
-
-    ('cor', 'Fundação', page(
-        'cor', 'Fundação', 'Cor',
-        f'{N_PRIM} primitivas geradas em OKLCH a partir de {META["brandAnchor"]}, {N_SEM} semânticos '
-        f'com dois temas cada, e {N_PAIRS} pares medidos antes de qualquer um virar token.',
-        [(f'{N_PRIM} primitivas', False), (f'{N_SEM} semânticos', True), ('OKLCH', False),
-         ('WCAG 2.1 AA', False)],
-        [('escala', 'Escala', TAB_ESCALA), ('semanticos', 'Semânticos', TAB_SEMANTICOS),
-         ('contraste', 'Contraste', TAB_CONTRASTE)])),
-
-    ('tipografia', 'Fundação', page(
-        'tipografia', 'Fundação', 'Tipografia',
-        f'Inter variável e JetBrains Mono. {len(T["type"]["styles"])} estilos fechados — o produto '
-        'escolhe um estilo, não quatro valores soltos.',
-        [(f'{len(T["type"]["styles"])} estilos', True), ('4 pesos', False),
-         (f'{len(T["type"]["size"])} tamanhos', False)],
-        [('escala', 'Escala', TAB_TIPO_ESCALA), ('tokens', 'Tokens', TAB_TIPO_TOKENS)])),
-
-    ('espacamento', 'Fundação', page(
-        'espacamento', 'Fundação', 'Espaçamento e medidas',
-        'Base 4 com ritmo de 8, nove raios, seis degraus de elevação e um anel de foco que passa '
-        'pelo mesmo portão de contraste que as cores.',
-        [(f'{len(T["space"])} degraus de espaço', True), (f'{len(T["radius"])} raios', False),
-         ('6 elevações', False)],
-         [('espaco', 'Espaçamento', TAB_ESPACO), ('radius', 'Radius e borda', TAB_RADIUS),
-         ('elevacao', 'Elevação', TAB_ELEVACAO), ('foco', 'Foco', TAB_FOCO)])),
-
-    ('motion', 'Fundação', page(
-        'motion', 'Fundação', 'Motion',
-        'O que entra e sai da tela, e o que gira. A curva depende do tipo da ação — entrada desacelera, saída '
-        'acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo à mão.',
-        [(f'{N_MO_TOKENS} tokens', True), ('2 tipos de ação', False), ('1 loop', False),
-         (f'{len(MO_DUR)} durações', False), (f'{N_MO_CONSUMERS} componentes consomem', False)],
-        [('movimentos', 'Movimentos', TAB_MOTION_MOVIMENTOS), ('tokens', 'Tokens', TAB_MOTION_TOKENS)])),
-
-    ('icon', 'Fundação', page(
-        'icon', 'Fundação', 'Ícones',
-        f'{N_ICONS} ícones no grid de 24, com o traço vetorizado. Não há escala fixa: o mesmo '
-        'componente serve em 16 ou em 96, e o peso da linha acompanha em vez de ficar para trás.',
-        [(f'{N_ICONS} ícones', True), ('Grid 24 · traço 2', False),
-         (f'{len(ICON_TOK["alias"])} tokens', False), ('0 valores soltos', False)],
-        [('overview', 'Visão geral', ICON_OVERVIEW), ('specs', 'Especificações', ICON_SPECS),
-         ('a11y', 'Acessibilidade', ICON_A11Y_TAB)])),
-
-    ('componentes', 'Componentes', simple_page(
-        'componentes', 'Componentes', 'Componentes',
-        'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
-        'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
-        'cresce devagar, um de cada vez.',
-        [(f'{N_PUBLICADOS} publicados', True), ('V1 completa', False), ('8 etapas por componente', False)],
-        LANDING_COMPONENTES)),
-
-    ('button', 'Componentes', page(
-        'button', 'Componentes', 'Button',
-        'Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, '
-        'dois tamanhos, cinco estados.',
-        [('Estável', True), ('40 variantes no Figma', False), (f'{N_BTN_TOKENS} tokens', False),
-         ('0 valores soltos', False)],
-        [('overview', 'Visão geral', BTN_OVERVIEW), ('specs', 'Especificações', BTN_SPECS),
-         ('guide', 'Diretrizes', BTN_GUIDE), ('a11y', 'Acessibilidade', BTN_A11Y)])),
-
-    ('icon-button', 'Componentes', page(
-        'icon-button', 'Componentes', 'Icon Button',
-        'A mesma ação do Button, sem rótulo visível. O ícone passa a ser o único portador do '
-        'sentido — e é daí que vêm o nome acessível obrigatório e o piso de contraste de 3:1.',
-        [('Estável', True), ('40 variantes no Figma', False), (f'{N_IB_TOKENS} tokens', False),
-         ('0 exceções de marca', False)],
-        [('overview', 'Visão geral', IB_OVERVIEW), ('specs', 'Especificações', IB_SPECS),
-         ('guide', 'Diretrizes', IB_GUIDE), ('a11y', 'Acessibilidade', IB_A11Y)])),
-
-    ('tag', 'Componentes', page(
-        'tag', 'Componentes', 'Tag',
-        'Rótulo curto de estado ou categoria. Não dispara nada: é conteúdo, fica fora da ordem '
-        'de tabulação, e quem carrega o sentido é o texto — a cor apenas reforça.',
-        [('Estável', True), ('20 variantes no Figma', False), (f'{N_TAG_TOKENS} tokens', False),
-         ('0 exceções', False)],
-        [('overview', 'Visão geral', TAG_OVERVIEW), ('specs', 'Especificações', TAG_SPECS),
-         ('guide', 'Diretrizes', TAG_GUIDE), ('a11y', 'Acessibilidade', TAG_A11Y_TAB)])),
-
-    ('avatar', 'Componentes', page(
-        'avatar', 'Componentes', 'Avatar',
-        'Diz quem é a pessoa. Os três tipos não são um menu: são uma cadeia — foto, iniciais, '
-        'ícone — e o tipo é o primeiro da fila que tem material para existir.',
-        [('Estável', True), ('9 variantes no Figma', False),
-         (f'{N_AVATAR_TOKENS} tokens', False), ('0 exceções', False)],
-        [('overview', 'Visão geral', AVATAR_OVERVIEW), ('specs', 'Especificações', AVATAR_SPECS),
-         ('guide', 'Diretrizes', AVATAR_GUIDE), ('a11y', 'Acessibilidade', AVATAR_A11Y_TAB)])),
-    ('select', 'Componentes', page(
-        'select', 'Componentes', 'Select',
-        'Escolha única dentro de um formulário. É o <code>&lt;select&gt;</code> nativo: a lista '
-        'aberta é desenhada pelo navegador, e o componente entrega o gatilho fechado — que é o '
-        'que compra teclado, leitor de tela e comportamento mobile sem uma linha de JavaScript.',
-        [('Estável', True), ('7 estados no Figma', False),
-         (f'{N_SELECT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', SELECT_OVERVIEW), ('specs', 'Especificações', SELECT_SPECS),
-         ('guide', 'Diretrizes', SELECT_GUIDE), ('a11y', 'Acessibilidade', SELECT_A11Y_TAB)])),
-    ('checkbox', 'Componentes', page(
-        'checkbox', 'Componentes', 'Checkbox',
-        'Várias opções de uma lista, ou uma opção isolada que só vale depois de confirmar. É o '
-        '<code>&lt;input type="checkbox"&gt;</code> nativo com a caixa do AL pintada por cima — '
-        'Espaço, leitor de tela e o estado misto vêm do navegador.',
-        [('Estável', True), ('7 estados no Figma', False),
-         (f'{N_CHECKBOX_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', CHECKBOX_OVERVIEW), ('specs', 'Especificações', CHECKBOX_SPECS),
-         ('guide', 'Diretrizes', CHECKBOX_GUIDE), ('a11y', 'Acessibilidade', CHECKBOX_A11Y_TAB)])),
-    ('radio', 'Componentes', page(
-        'radio', 'Componentes', 'Radio',
-        'Uma única opção de uma lista curta, com todas à vista para comparar. É o '
-        '<code>&lt;input type="radio"&gt;</code> nativo com o círculo do AL pintado por cima — '
-        'setas, Tab e “marcar um desmarca o outro” vêm do navegador. A pergunta em volta é da aplicação.',
-        [('Estável', True), ('6 estados no Figma', False),
-         (f'{N_RADIO_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', RADIO_OVERVIEW), ('specs', 'Especificações', RADIO_SPECS),
-         ('guide', 'Diretrizes', RADIO_GUIDE), ('a11y', 'Acessibilidade', RADIO_A11Y_TAB)])),
-    ('switch', 'Componentes', page(
-        'switch', 'Componentes', 'Switch',
-        'Liga ou desliga uma configuração que vale na hora, sem botão “Salvar”. É o '
-        '<code>&lt;input type="checkbox" role="switch"&gt;</code> nativo com o trilho do AL pintado por '
-        'cima — Espaço, clique no rótulo e o anúncio “chave, ligada” vêm do navegador.',
-        [('Estável', True), ('5 estados no Figma', False),
-         (f'{N_SWITCH_TOKENS} tokens', False), ('3 exceções declaradas', False)],
-        [('overview', 'Visão geral', SWITCH_OVERVIEW), ('specs', 'Especificações', SWITCH_SPECS),
-         ('guide', 'Diretrizes', SWITCH_GUIDE), ('a11y', 'Acessibilidade', SWITCH_A11Y_TAB)])),
-    ('input', 'Componentes', page(
-        'input', 'Componentes', 'Input',
-        'Resposta livre de uma linha: nome, e-mail, URL, telefone. É o <code>&lt;input&gt;</code> '
-        'nativo dentro de uma caixa do AL — que é o que deixa prefixo e sufixo morarem dentro da '
-        'borda, sem que nenhum dos dois vá junto no envio.',
-        [('Estável', True), ('7 estados no Figma', False),
-         (f'{N_INPUT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', INPUT_OVERVIEW), ('specs', 'Especificações', INPUT_SPECS),
-         ('guide', 'Diretrizes', INPUT_GUIDE), ('a11y', 'Acessibilidade', INPUT_A11Y_TAB)])),
-    ('textarea', 'Componentes', page(
-        'textarea', 'Componentes', 'Textarea',
-        'Resposta livre de várias linhas: descrição, comentário, justificativa. É a '
-        '<code>&lt;textarea&gt;</code> nativa, e ela mesma é a caixa — rola quando o texto passa, '
-        'redimensiona só na vertical e nunca envia o formulário no Enter.',
-        [('Estável', True), ('7 estados no Figma', False),
-         (f'{N_TEXTAREA_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', TEXTAREA_OVERVIEW), ('specs', 'Especificações', TEXTAREA_SPECS),
-         ('guide', 'Diretrizes', TEXTAREA_GUIDE), ('a11y', 'Acessibilidade', TEXTAREA_A11Y_TAB)])),
-    ('password', 'Componentes', page(
-        'password', 'Componentes', 'Password',
-        'Campo de senha com o botão de mostrar e ocultar. É o <code>&lt;input type="password"&gt;</code> '
-        'nativo numa caixa que guarda o olho — um botão de verdade, com foco próprio — e o primeiro '
-        'componente do AL que traz o próprio JavaScript.',
-        [('Estável', True), ('17 variantes no Figma', False),
-         (f'{N_PASSWORD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', PASSWORD_OVERVIEW), ('specs', 'Especificações', PASSWORD_SPECS),
-         ('guide', 'Diretrizes', PASSWORD_GUIDE), ('a11y', 'Acessibilidade', PASSWORD_A11Y_TAB)])),
-    ('divider', 'Componentes', page(
-        'divider', 'Componentes', 'Divider',
-        'A linha que separa dois grupos de conteúdo quando o espaço sozinho não basta. É o '
-        '<code>&lt;hr&gt;</code> nativo, horizontal ou vertical: anunciado como “separador” por '
-        'padrão, e decorativo quando a estrutura já separa.',
-        [('Estável', True), ('2 variantes no Figma', False),
-         (f'{N_DIVIDER_TOKENS} tokens', False), ('1 exceção declarada', False)],
-        [('overview', 'Visão geral', DIVIDER_OVERVIEW), ('specs', 'Especificações', DIVIDER_SPECS),
-         ('guide', 'Diretrizes', DIVIDER_GUIDE), ('a11y', 'Acessibilidade', DIVIDER_A11Y_TAB)])),
-    ('card', 'Componentes', page(
-        'card', 'Componentes', 'Card',
-        'Um contêiner para um assunto que se lê ou se resolve sozinho. Três tipos, três paddings, '
-        'estático ou clicável — e o clicável é um link de verdade no título, esticado sobre o '
-        'card inteiro.',
-        [('Estável', True), ('36 variantes no Figma', False),
-         (f'{N_CARD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', CARD_OVERVIEW), ('specs', 'Especificações', CARD_SPECS),
-         ('guide', 'Diretrizes', CARD_GUIDE), ('a11y', 'Acessibilidade', CARD_A11Y_TAB)])),
-    ('tab', 'Componentes', page(
-        'tab', 'Componentes', 'Tab',
-        'Troca o conteúdo na mesma tela sem sair dela, ou leva a outra página com o mesmo visual. '
-        'Line marca a selecionada com a linha; Square, com o bloco tonal. É o primeiro componente '
-        'do AL com script próprio, que liga o teclado do padrão de abas.',
-        [('Estável', True), ('16 variantes no Figma', False),
-         (f'{N_TAB_TOKENS} tokens', False), (f'{N_TB_EXC_KEYS} exceções declaradas', False)],
-        [('overview', 'Visão geral', TAB_OVERVIEW), ('specs', 'Especificações', TAB_SPECS),
-         ('guide', 'Diretrizes', TAB_GUIDE), ('a11y', 'Acessibilidade', TAB_A11Y_TAB)])),
-    ('accordion', 'Componentes', page(
-        'accordion', 'Componentes', 'Accordion',
-        'Esconde conteúdo secundário atrás de um título que abre e fecha no lugar. É o '
-        '&lt;details&gt; nativo: o navegador abre, fecha e anuncia, sem script — vários abertos por '
-        'padrão, um por vez quando os itens são alternativas.',
-        [('Estável', True), ('8 variantes no Figma', False),
-         (f'{N_ACC_TOKENS} tokens', False), (f'{N_AC_EXC_KEYS} exceções declaradas', False)],
-        [('overview', 'Visão geral', ACCORDION_OVERVIEW), ('specs', 'Especificações', ACCORDION_SPECS),
-         ('guide', 'Diretrizes', ACCORDION_GUIDE), ('a11y', 'Acessibilidade', ACCORDION_A11Y_TAB)])),
-    ('modal', 'Componentes', page(
-        'modal', 'Componentes', 'Modal',
-        'Uma tarefa curta que pede resposta antes de a pessoa seguir. É o &lt;dialog&gt; nativo aberto por '
-        'showModal(): o card sobe sobre a página, o fundo escurece, o foco fica preso e Esc fecha. Nunca tem '
-        'botão X: o rodapé sempre traz uma saída.',
-        [('Estável', True), ('3 variantes no Figma', False),
-         (f'{N_MOD_TOKENS} tokens', False), (f'{N_MD_EXC_KEYS} exceção declarada', False)],
-        [('overview', 'Visão geral', MODAL_OVERVIEW), ('specs', 'Especificações', MODAL_SPECS),
-         ('guide', 'Diretrizes', MODAL_GUIDE), ('a11y', 'Acessibilidade', MODAL_A11Y_TAB)])),
-    ('drawer', 'Componentes', page(
-        'drawer', 'Componentes', 'Drawer',
-        'Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo aberto por showModal() e '
-        'colado na direita: o painel entra pela lateral, o fundo escurece, o foco fica preso e Esc fecha. '
-        'Sempre tem uma saída visível: o X ou o rodapé.',
-        [('Estável', True), ('3 variantes no Figma', False),
-         (f'{N_DRW_TOKENS} tokens', False), (f'{N_DW_EXC_KEYS} exceção declarada', False)],
-        [('overview', 'Visão geral', DRAWER_OVERVIEW), ('specs', 'Especificações', DRAWER_SPECS),
-         ('guide', 'Diretrizes', DRAWER_GUIDE), ('a11y', 'Acessibilidade', DRAWER_A11Y_TAB)])),
-    ('sidebar', 'Componentes', page(
-        'sidebar', 'Componentes', 'Sidebar',
-        'A navegação principal do produto, presa à esquerda na altura da tela. É um &lt;aside&gt; com o '
-        '&lt;nav&gt; dentro, e os itens são o Tab Square de navegação. Abaixo de 1024px ela sai da página e '
-        'o botão Menu a abre como painel modal pela esquerda.',
-        [('Estável', True), ('1 variante no Figma', False),
-         (f'{N_SBR_TOKENS} tokens', False), (f'{N_SB_EXC_KEYS} exceções declaradas', False)],
-        [('overview', 'Visão geral', SIDEBAR_OVERVIEW), ('specs', 'Especificações', SIDEBAR_SPECS),
-         ('guide', 'Diretrizes', SIDEBAR_GUIDE), ('a11y', 'Acessibilidade', SIDEBAR_A11Y_TAB)])),
-    ('breadcrumb', 'Componentes', page(
-        'breadcrumb', 'Componentes', 'Breadcrumb',
-        'Mostra onde a pessoa está na hierarquia e leva a qualquer nível acima com um clique. É um '
-        '&lt;nav&gt; com uma lista ordenada; a página atual é texto, não link. Com 5 níveis ou mais, '
-        'os do meio vão para o menu do “…” — o _breadcrumb-more do Figma, documentado aqui junto.',
-        [('Estável', True), ('3 + 2 variantes no Figma', False),
-         (f'{N_BCR_TOKENS} tokens', False), (f'{N_BC_EXC_KEYS} exceção declarada', False)],
-        [('overview', 'Visão geral', BREADCRUMB_OVERVIEW), ('specs', 'Especificações', BREADCRUMB_SPECS),
-         ('guide', 'Diretrizes', BREADCRUMB_GUIDE), ('a11y', 'Acessibilidade', BREADCRUMB_A11Y_TAB)])),
-    ('tooltip', 'Componentes', page(
-        'tooltip', 'Componentes', 'Tooltip',
-        'Um texto curto que aparece sobre um elemento no hover e no foco do teclado: o nome de um botão só '
-        'com ícone, ou um complemento de um que já tem nome. É um popover nativo, ligado ao gatilho pelo '
-        'próprio ARIA; some no Esc e nunca tem nada clicável dentro.',
-        [('Estável', True), ('1 componente no Figma', False),
-         (f'{N_TTP_TOKENS} tokens', False), (f'{N_TT_LITERALS} valores declarados', False)],
-        [('overview', 'Visão geral', TOOLTIP_OVERVIEW), ('specs', 'Especificações', TOOLTIP_SPECS),
-         ('guide', 'Diretrizes', TOOLTIP_GUIDE), ('a11y', 'Acessibilidade', TOOLTIP_A11Y_TAB)])),
-    ('toast', 'Componentes', page(
-        'toast', 'Componentes', 'Toast',
-        'Uma mensagem curta no canto da tela sobre algo que acabou de acontecer: um sucesso, um aviso, um erro '
-        'ou uma informação. Nunca rouba o foco, entra em fila, um por vez, e só some sozinho quando não é '
-        'aviso nem erro.',
-        [('Estável', True), ('4 variantes no Figma', False),
-         (f'{N_TST_TOKENS} tokens', False), (f'{N_TS_LITERALS} valores declarados', False)],
-        [('overview', 'Visão geral', TOAST_OVERVIEW), ('specs', 'Especificações', TOAST_SPECS),
-         ('guide', 'Diretrizes', TOAST_GUIDE), ('a11y', 'Acessibilidade', TOAST_A11Y_TAB)])),
-    ('alert', 'Componentes', page(
-        'alert', 'Componentes', 'Alert',
-        'Um bloco no topo da página, abaixo do header, sobre um assunto que pede atenção: um sucesso que '
-        'continua valendo, uma informação, um aviso ou um perigo. Um por página, com até duas ações e um X '
-        'opcional — e só é anunciado quando chega depois do carregamento.',
-        [('Estável', True), ('4 variantes no Figma', False),
-         (f'{N_ALR_TOKENS} tokens', False), ('0 valores declarados', False)],
-        [('overview', 'Visão geral', ALERT_OVERVIEW), ('specs', 'Especificações', ALERT_SPECS),
-         ('guide', 'Diretrizes', ALERT_GUIDE), ('a11y', 'Acessibilidade', ALERT_A11Y_TAB)])),
-]
-
 # ── Sidebar do site: o componente do AL, não uma casca ──
 # A navegação do site é a própria .al-sidebar, com o mesmo contrato que o
 # src/components/sidebar/a11y.py cobra no HTML emitido: perfil + nav, grupos
@@ -12818,6 +12575,286 @@ SITE_NAV = [
     ('Feedback and status', [('alert', 'Alert'), ('toast', 'Toast'), ('tooltip', 'Tooltip'),
                              ('tag', 'Tag')]),
 ]
+# O Hero lê daqui a seção (rótulo do grupo) e o título (rótulo do item). As
+# duas "Visão geral" são a raiz do breadcrumb: a da Foundation para o grupo
+# Foundation, a dos componentes para os outros. A prova não está na Sidebar
+# (só se chega pelo card), então entra à mão na Foundation.
+OVERVIEWS = ('fundacao', 'componentes')
+NAV_INFO = {it[0]: (grupo, it[1], it[2] if len(it) > 2 else '') for grupo, itens in SITE_NAV for it in itens}
+NAV_INFO['prova'] = ('Foundation', 'A prova', '')
+
+PAGES = [
+    ('fundacao', 'Fundação', simple_page(
+        'fundacao',
+        'A camada que decide antes de qualquer componente existir: a cor, a tipografia, a medida, o movimento e '
+        'a prova de que tudo isso atravessa o portão. Nenhum componente inventa valor — todos '
+        'consomem daqui, e é por isso que trocar o tema não é retrabalho.',
+        [], STATS + LANDING_FUNDACAO, first=True)),
+
+    ('principios', 'Fundação', simple_page(
+        'principios',
+        'O que está decidido antes dos valores: as cinco escolhas que sustentam o sistema, as oito '
+        'etapas que um componente percorre e os quatro portões que recusam o que não passa.',
+        [('5 decisões', True), ('8 etapas', False), ('4 portões', False)],
+        TAB_PRINCIPIOS)),
+
+    ('prova', 'Fundação', simple_page(
+        'prova',
+        'A mesma interface montada com os mesmos tokens, nos dois temas, lado a lado. Se a camada '
+        'semântica estiver certa, nada aqui precisou ser escrito duas vezes.',
+        [('Dois temas', True), (f'{N_SEM} semânticos', False), ('0 valores literais', False)],
+        TAB_PROVA)),
+
+    ('cor', 'Fundação', page(
+        'cor',
+        f'{N_PRIM} primitivas geradas em OKLCH a partir de {META["brandAnchor"]}, {N_SEM} semânticos '
+        f'com dois temas cada, e {N_PAIRS} pares medidos antes de qualquer um virar token.',
+        [(f'{N_PRIM} primitivas', False), (f'{N_SEM} semânticos', True), ('OKLCH', False),
+         ('WCAG 2.1 AA', False)],
+        [('escala', 'Escala', TAB_ESCALA), ('semanticos', 'Semânticos', TAB_SEMANTICOS),
+         ('contraste', 'Contraste', TAB_CONTRASTE)])),
+
+    ('tipografia', 'Fundação', page(
+        'tipografia',
+        f'Inter variável e JetBrains Mono. {len(T["type"]["styles"])} estilos fechados — o produto '
+        'escolhe um estilo, não quatro valores soltos.',
+        [(f'{len(T["type"]["styles"])} estilos', True), ('4 pesos', False),
+         (f'{len(T["type"]["size"])} tamanhos', False)],
+        [('escala', 'Escala', TAB_TIPO_ESCALA), ('tokens', 'Tokens', TAB_TIPO_TOKENS)])),
+
+    ('espacamento', 'Fundação', page(
+        'espacamento',
+        'Base 4 com ritmo de 8, nove raios, seis degraus de elevação e um anel de foco que passa '
+        'pelo mesmo portão de contraste que as cores.',
+        [(f'{len(T["space"])} degraus de espaço', True), (f'{len(T["radius"])} raios', False),
+         ('6 elevações', False)],
+         [('espaco', 'Espaçamento', TAB_ESPACO), ('radius', 'Radius e borda', TAB_RADIUS),
+         ('elevacao', 'Elevação', TAB_ELEVACAO), ('foco', 'Foco', TAB_FOCO)])),
+
+    ('motion', 'Fundação', page(
+        'motion',
+        'O que entra e sai da tela, e o que gira. A curva depende do tipo da ação — entrada desacelera, saída '
+        'acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo à mão.',
+        [(f'{N_MO_TOKENS} tokens', True), ('2 tipos de ação', False), ('1 loop', False),
+         (f'{len(MO_DUR)} durações', False), (f'{N_MO_CONSUMERS} componentes consomem', False)],
+        [('movimentos', 'Movimentos', TAB_MOTION_MOVIMENTOS), ('tokens', 'Tokens', TAB_MOTION_TOKENS)])),
+
+    ('icon', 'Fundação', page(
+        'icon',
+        f'{N_ICONS} ícones no grid de 24, com o traço vetorizado. Não há escala fixa: o mesmo '
+        'componente serve em 16 ou em 96, e o peso da linha acompanha em vez de ficar para trás.',
+        [(f'{N_ICONS} ícones', True), ('Grid 24 · traço 2', False),
+         (f'{len(ICON_TOK["alias"])} tokens', False), ('0 valores soltos', False)],
+        [('overview', 'Visão geral', ICON_OVERVIEW), ('specs', 'Especificações', ICON_SPECS),
+         ('a11y', 'Acessibilidade', ICON_A11Y_TAB)])),
+
+    ('componentes', 'Componentes', simple_page(
+        'componentes',
+        'Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só '
+        'aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e '
+        'cresce devagar, um de cada vez.',
+        [(f'{N_PUBLICADOS} publicados', True), ('V1 completa', False), ('8 etapas por componente', False)],
+        LANDING_COMPONENTES)),
+
+    ('button', 'Componentes', page(
+        'button',
+        'Dispara a ação de uma tela. Quatro variantes que carregam pesos diferentes na hierarquia, '
+        'dois tamanhos, cinco estados.',
+        [('Estável', True), ('40 variantes no Figma', False), (f'{N_BTN_TOKENS} tokens', False),
+         ('0 valores soltos', False)],
+        [('overview', 'Visão geral', BTN_OVERVIEW), ('specs', 'Especificações', BTN_SPECS),
+         ('guide', 'Diretrizes', BTN_GUIDE), ('a11y', 'Acessibilidade', BTN_A11Y)])),
+
+    ('icon-button', 'Componentes', page(
+        'icon-button',
+        'A mesma ação do Button, sem rótulo visível. O ícone passa a ser o único portador do '
+        'sentido — e é daí que vêm o nome acessível obrigatório e o piso de contraste de 3:1.',
+        [('Estável', True), ('40 variantes no Figma', False), (f'{N_IB_TOKENS} tokens', False),
+         ('0 exceções de marca', False)],
+        [('overview', 'Visão geral', IB_OVERVIEW), ('specs', 'Especificações', IB_SPECS),
+         ('guide', 'Diretrizes', IB_GUIDE), ('a11y', 'Acessibilidade', IB_A11Y)])),
+
+    ('tag', 'Componentes', page(
+        'tag',
+        'Rótulo curto de estado ou categoria. Não dispara nada: é conteúdo, fica fora da ordem '
+        'de tabulação, e quem carrega o sentido é o texto — a cor apenas reforça.',
+        [('Estável', True), ('20 variantes no Figma', False), (f'{N_TAG_TOKENS} tokens', False),
+         ('0 exceções', False)],
+        [('overview', 'Visão geral', TAG_OVERVIEW), ('specs', 'Especificações', TAG_SPECS),
+         ('guide', 'Diretrizes', TAG_GUIDE), ('a11y', 'Acessibilidade', TAG_A11Y_TAB)])),
+
+    ('avatar', 'Componentes', page(
+        'avatar',
+        'Diz quem é a pessoa. Os três tipos não são um menu: são uma cadeia — foto, iniciais, '
+        'ícone — e o tipo é o primeiro da fila que tem material para existir.',
+        [('Estável', True), ('9 variantes no Figma', False),
+         (f'{N_AVATAR_TOKENS} tokens', False), ('0 exceções', False)],
+        [('overview', 'Visão geral', AVATAR_OVERVIEW), ('specs', 'Especificações', AVATAR_SPECS),
+         ('guide', 'Diretrizes', AVATAR_GUIDE), ('a11y', 'Acessibilidade', AVATAR_A11Y_TAB)])),
+    ('select', 'Componentes', page(
+        'select',
+        'Escolha única dentro de um formulário. É o <code>&lt;select&gt;</code> nativo: a lista '
+        'aberta é desenhada pelo navegador, e o componente entrega o gatilho fechado — que é o '
+        'que compra teclado, leitor de tela e comportamento mobile sem uma linha de JavaScript.',
+        [('Estável', True), ('7 estados no Figma', False),
+         (f'{N_SELECT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', SELECT_OVERVIEW), ('specs', 'Especificações', SELECT_SPECS),
+         ('guide', 'Diretrizes', SELECT_GUIDE), ('a11y', 'Acessibilidade', SELECT_A11Y_TAB)])),
+    ('checkbox', 'Componentes', page(
+        'checkbox',
+        'Várias opções de uma lista, ou uma opção isolada que só vale depois de confirmar. É o '
+        '<code>&lt;input type="checkbox"&gt;</code> nativo com a caixa do AL pintada por cima — '
+        'Espaço, leitor de tela e o estado misto vêm do navegador.',
+        [('Estável', True), ('7 estados no Figma', False),
+         (f'{N_CHECKBOX_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', CHECKBOX_OVERVIEW), ('specs', 'Especificações', CHECKBOX_SPECS),
+         ('guide', 'Diretrizes', CHECKBOX_GUIDE), ('a11y', 'Acessibilidade', CHECKBOX_A11Y_TAB)])),
+    ('radio', 'Componentes', page(
+        'radio',
+        'Uma única opção de uma lista curta, com todas à vista para comparar. É o '
+        '<code>&lt;input type="radio"&gt;</code> nativo com o círculo do AL pintado por cima — '
+        'setas, Tab e “marcar um desmarca o outro” vêm do navegador. A pergunta em volta é da aplicação.',
+        [('Estável', True), ('6 estados no Figma', False),
+         (f'{N_RADIO_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', RADIO_OVERVIEW), ('specs', 'Especificações', RADIO_SPECS),
+         ('guide', 'Diretrizes', RADIO_GUIDE), ('a11y', 'Acessibilidade', RADIO_A11Y_TAB)])),
+    ('switch', 'Componentes', page(
+        'switch',
+        'Liga ou desliga uma configuração que vale na hora, sem botão “Salvar”. É o '
+        '<code>&lt;input type="checkbox" role="switch"&gt;</code> nativo com o trilho do AL pintado por '
+        'cima — Espaço, clique no rótulo e o anúncio “chave, ligada” vêm do navegador.',
+        [('Estável', True), ('5 estados no Figma', False),
+         (f'{N_SWITCH_TOKENS} tokens', False), ('3 exceções declaradas', False)],
+        [('overview', 'Visão geral', SWITCH_OVERVIEW), ('specs', 'Especificações', SWITCH_SPECS),
+         ('guide', 'Diretrizes', SWITCH_GUIDE), ('a11y', 'Acessibilidade', SWITCH_A11Y_TAB)])),
+    ('input', 'Componentes', page(
+        'input',
+        'Resposta livre de uma linha: nome, e-mail, URL, telefone. É o <code>&lt;input&gt;</code> '
+        'nativo dentro de uma caixa do AL — que é o que deixa prefixo e sufixo morarem dentro da '
+        'borda, sem que nenhum dos dois vá junto no envio.',
+        [('Estável', True), ('7 estados no Figma', False),
+         (f'{N_INPUT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', INPUT_OVERVIEW), ('specs', 'Especificações', INPUT_SPECS),
+         ('guide', 'Diretrizes', INPUT_GUIDE), ('a11y', 'Acessibilidade', INPUT_A11Y_TAB)])),
+    ('textarea', 'Componentes', page(
+        'textarea',
+        'Resposta livre de várias linhas: descrição, comentário, justificativa. É a '
+        '<code>&lt;textarea&gt;</code> nativa, e ela mesma é a caixa — rola quando o texto passa, '
+        'redimensiona só na vertical e nunca envia o formulário no Enter.',
+        [('Estável', True), ('7 estados no Figma', False),
+         (f'{N_TEXTAREA_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', TEXTAREA_OVERVIEW), ('specs', 'Especificações', TEXTAREA_SPECS),
+         ('guide', 'Diretrizes', TEXTAREA_GUIDE), ('a11y', 'Acessibilidade', TEXTAREA_A11Y_TAB)])),
+    ('password', 'Componentes', page(
+        'password',
+        'Campo de senha com o botão de mostrar e ocultar. É o <code>&lt;input type="password"&gt;</code> '
+        'nativo numa caixa que guarda o olho — um botão de verdade, com foco próprio — e o primeiro '
+        'componente do AL que traz o próprio JavaScript.',
+        [('Estável', True), ('17 variantes no Figma', False),
+         (f'{N_PASSWORD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', PASSWORD_OVERVIEW), ('specs', 'Especificações', PASSWORD_SPECS),
+         ('guide', 'Diretrizes', PASSWORD_GUIDE), ('a11y', 'Acessibilidade', PASSWORD_A11Y_TAB)])),
+    ('divider', 'Componentes', page(
+        'divider',
+        'A linha que separa dois grupos de conteúdo quando o espaço sozinho não basta. É o '
+        '<code>&lt;hr&gt;</code> nativo, horizontal ou vertical: anunciado como “separador” por '
+        'padrão, e decorativo quando a estrutura já separa.',
+        [('Estável', True), ('2 variantes no Figma', False),
+         (f'{N_DIVIDER_TOKENS} tokens', False), ('1 exceção declarada', False)],
+        [('overview', 'Visão geral', DIVIDER_OVERVIEW), ('specs', 'Especificações', DIVIDER_SPECS),
+         ('guide', 'Diretrizes', DIVIDER_GUIDE), ('a11y', 'Acessibilidade', DIVIDER_A11Y_TAB)])),
+    ('card', 'Componentes', page(
+        'card',
+        'Um contêiner para um assunto que se lê ou se resolve sozinho. Três tipos, três paddings, '
+        'estático ou clicável — e o clicável é um link de verdade no título, esticado sobre o '
+        'card inteiro.',
+        [('Estável', True), ('36 variantes no Figma', False),
+         (f'{N_CARD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
+        [('overview', 'Visão geral', CARD_OVERVIEW), ('specs', 'Especificações', CARD_SPECS),
+         ('guide', 'Diretrizes', CARD_GUIDE), ('a11y', 'Acessibilidade', CARD_A11Y_TAB)])),
+    ('tab', 'Componentes', page(
+        'tab',
+        'Troca o conteúdo na mesma tela sem sair dela, ou leva a outra página com o mesmo visual. '
+        'Line marca a selecionada com a linha; Square, com o bloco tonal. É o primeiro componente '
+        'do AL com script próprio, que liga o teclado do padrão de abas.',
+        [('Estável', True), ('16 variantes no Figma', False),
+         (f'{N_TAB_TOKENS} tokens', False), (f'{N_TB_EXC_KEYS} exceções declaradas', False)],
+        [('overview', 'Visão geral', TAB_OVERVIEW), ('specs', 'Especificações', TAB_SPECS),
+         ('guide', 'Diretrizes', TAB_GUIDE), ('a11y', 'Acessibilidade', TAB_A11Y_TAB)])),
+    ('accordion', 'Componentes', page(
+        'accordion',
+        'Esconde conteúdo secundário atrás de um título que abre e fecha no lugar. É o '
+        '&lt;details&gt; nativo: o navegador abre, fecha e anuncia, sem script — vários abertos por '
+        'padrão, um por vez quando os itens são alternativas.',
+        [('Estável', True), ('8 variantes no Figma', False),
+         (f'{N_ACC_TOKENS} tokens', False), (f'{N_AC_EXC_KEYS} exceções declaradas', False)],
+        [('overview', 'Visão geral', ACCORDION_OVERVIEW), ('specs', 'Especificações', ACCORDION_SPECS),
+         ('guide', 'Diretrizes', ACCORDION_GUIDE), ('a11y', 'Acessibilidade', ACCORDION_A11Y_TAB)])),
+    ('modal', 'Componentes', page(
+        'modal',
+        'Uma tarefa curta que pede resposta antes de a pessoa seguir. É o &lt;dialog&gt; nativo aberto por '
+        'showModal(): o card sobe sobre a página, o fundo escurece, o foco fica preso e Esc fecha. Nunca tem '
+        'botão X: o rodapé sempre traz uma saída.',
+        [('Estável', True), ('3 variantes no Figma', False),
+         (f'{N_MOD_TOKENS} tokens', False), (f'{N_MD_EXC_KEYS} exceção declarada', False)],
+        [('overview', 'Visão geral', MODAL_OVERVIEW), ('specs', 'Especificações', MODAL_SPECS),
+         ('guide', 'Diretrizes', MODAL_GUIDE), ('a11y', 'Acessibilidade', MODAL_A11Y_TAB)])),
+    ('drawer', 'Componentes', page(
+        'drawer',
+        'Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo aberto por showModal() e '
+        'colado na direita: o painel entra pela lateral, o fundo escurece, o foco fica preso e Esc fecha. '
+        'Sempre tem uma saída visível: o X ou o rodapé.',
+        [('Estável', True), ('3 variantes no Figma', False),
+         (f'{N_DRW_TOKENS} tokens', False), (f'{N_DW_EXC_KEYS} exceção declarada', False)],
+        [('overview', 'Visão geral', DRAWER_OVERVIEW), ('specs', 'Especificações', DRAWER_SPECS),
+         ('guide', 'Diretrizes', DRAWER_GUIDE), ('a11y', 'Acessibilidade', DRAWER_A11Y_TAB)])),
+    ('sidebar', 'Componentes', page(
+        'sidebar',
+        'A navegação principal do produto, presa à esquerda na altura da tela. É um &lt;aside&gt; com o '
+        '&lt;nav&gt; dentro, e os itens são o Tab Square de navegação. Abaixo de 1024px ela sai da página e '
+        'o botão Menu a abre como painel modal pela esquerda.',
+        [('Estável', True), ('1 variante no Figma', False),
+         (f'{N_SBR_TOKENS} tokens', False), (f'{N_SB_EXC_KEYS} exceções declaradas', False)],
+        [('overview', 'Visão geral', SIDEBAR_OVERVIEW), ('specs', 'Especificações', SIDEBAR_SPECS),
+         ('guide', 'Diretrizes', SIDEBAR_GUIDE), ('a11y', 'Acessibilidade', SIDEBAR_A11Y_TAB)])),
+    ('breadcrumb', 'Componentes', page(
+        'breadcrumb',
+        'Mostra onde a pessoa está na hierarquia e leva a qualquer nível acima com um clique. É um '
+        '&lt;nav&gt; com uma lista ordenada; a página atual é texto, não link. Com 5 níveis ou mais, '
+        'os do meio vão para o menu do “…” — o _breadcrumb-more do Figma, documentado aqui junto.',
+        [('Estável', True), ('3 + 2 variantes no Figma', False),
+         (f'{N_BCR_TOKENS} tokens', False), (f'{N_BC_EXC_KEYS} exceção declarada', False)],
+        [('overview', 'Visão geral', BREADCRUMB_OVERVIEW), ('specs', 'Especificações', BREADCRUMB_SPECS),
+         ('guide', 'Diretrizes', BREADCRUMB_GUIDE), ('a11y', 'Acessibilidade', BREADCRUMB_A11Y_TAB)])),
+    ('tooltip', 'Componentes', page(
+        'tooltip',
+        'Um texto curto que aparece sobre um elemento no hover e no foco do teclado: o nome de um botão só '
+        'com ícone, ou um complemento de um que já tem nome. É um popover nativo, ligado ao gatilho pelo '
+        'próprio ARIA; some no Esc e nunca tem nada clicável dentro.',
+        [('Estável', True), ('1 componente no Figma', False),
+         (f'{N_TTP_TOKENS} tokens', False), (f'{N_TT_LITERALS} valores declarados', False)],
+        [('overview', 'Visão geral', TOOLTIP_OVERVIEW), ('specs', 'Especificações', TOOLTIP_SPECS),
+         ('guide', 'Diretrizes', TOOLTIP_GUIDE), ('a11y', 'Acessibilidade', TOOLTIP_A11Y_TAB)])),
+    ('toast', 'Componentes', page(
+        'toast',
+        'Uma mensagem curta no canto da tela sobre algo que acabou de acontecer: um sucesso, um aviso, um erro '
+        'ou uma informação. Nunca rouba o foco, entra em fila, um por vez, e só some sozinho quando não é '
+        'aviso nem erro.',
+        [('Estável', True), ('4 variantes no Figma', False),
+         (f'{N_TST_TOKENS} tokens', False), (f'{N_TS_LITERALS} valores declarados', False)],
+        [('overview', 'Visão geral', TOAST_OVERVIEW), ('specs', 'Especificações', TOAST_SPECS),
+         ('guide', 'Diretrizes', TOAST_GUIDE), ('a11y', 'Acessibilidade', TOAST_A11Y_TAB)])),
+    ('alert', 'Componentes', page(
+        'alert',
+        'Um bloco no topo da página, abaixo do header, sobre um assunto que pede atenção: um sucesso que '
+        'continua valendo, uma informação, um aviso ou um perigo. Um por página, com até duas ações e um X '
+        'opcional — e só é anunciado quando chega depois do carregamento.',
+        [('Estável', True), ('4 variantes no Figma', False),
+         (f'{N_ALR_TOKENS} tokens', False), ('0 valores declarados', False)],
+        [('overview', 'Visão geral', ALERT_OVERVIEW), ('specs', 'Especificações', ALERT_SPECS),
+         ('guide', 'Diretrizes', ALERT_GUIDE), ('a11y', 'Acessibilidade', ALERT_A11Y_TAB)])),
+]
+
 REPO_URL = 'https://github.com/guilhermedworakowski/al-design-system'
 
 
@@ -12885,6 +12922,8 @@ JS = r"""
   var links = [].slice.call(document.querySelectorAll('#site-sidebar a[data-page]'));
   // os cards das páginas-índice navegam pelo mesmo roteador que a Sidebar
   var cards = [].slice.call(document.querySelectorAll('a.card[data-page]'));
+  // e o link "Visão geral" do breadcrumb de cada Hero
+  var crumbs = [].slice.call(document.querySelectorAll('.hero a[data-page]'));
 
   function show(id) {
     var found = false;
@@ -12912,7 +12951,7 @@ JS = r"""
   // dispara, e a navegação ficaria morta. O hash continua sendo escrito para o
   // endereço permanecer copiável. Abaixo de 1024px o sidebar.js fecha o painel
   // no mesmo clique.
-  links.concat(cards).forEach(function (a) {
+  links.concat(cards, crumbs).forEach(function (a) {
     a.addEventListener('click', function (e) {
       e.preventDefault();
       var id = a.getAttribute('data-page');

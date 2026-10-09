@@ -4,7 +4,7 @@ Every release of AL Design System, newest first. The format follows [Keep a Chan
 
 ## [1.0.1] - 2026-10-09
 
-Preparation for the open-source launch. No class or token changed meaning; one Sidebar style and one Tab gate rule changed (see Changed).
+Preparation for the open-source launch. No class or token changed meaning; one Sidebar style and two gate rules (Tab and Breadcrumb) changed (see Changed).
 
 ### Added
 - Published on npm as `al-design-system`, with a `dist/` folder: `al.css` (everything), `foundation.css`, one `components/<name>.css` per component (tokens + CSS), the 9 scripts, the icons and `tokens.json`.
@@ -20,7 +20,8 @@ Preparation for the open-source launch. No class or token changed meaning; one S
 - The literal-CSS gate is stricter: a literal duration now fails the build, and Button, Icon, Icon Button, Tag and Avatar gained the orphan-token check the other components already had. No component CSS had to change.
 - **Sidebar:** the group label is now all caps, applied by CSS (`text-transform`); the text stays in sentence case in the HTML, so screen readers read the word instead of spelling it. Rule 17 changed to match.
 - **Tab gate:** the 2-to-6-tabs limit (rule 8) no longer applies inside a `.al-sidebar`. The rule itself sends more than six destinations to side navigation, and the Sidebar gate owns those lists.
-- The documentation site's navigation is now the AL Sidebar itself, grouped by Foundation and by component type, instead of a handmade rail.
+- **Breadcrumb gate:** "one per page" (rule 7) now counts per page in a single-file site, where each page is a subtree that toggles `hidden`, and a live demo that can't be `inert` is marked with `data-al-demo` and counts as a sample. The guidelines declare the documentation site's divergence from rules 1 and 3: its 2-level trail repeats the Sidebar.
+- The documentation site's navigation is now the AL Sidebar itself, grouped by Foundation and by component type, instead of a handmade rail. Every page opens with the same hero: the Sidebar group, a Breadcrumb outside the two overview pages, the title, the description and the summary as Tags.
 
 ### Removed
 - The per-component QA pages; every gate now measures the documentation site itself.
