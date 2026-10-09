@@ -7,7 +7,7 @@
 <style id="al-real">
 /* ═══ Foundation + tokens do Button + o componente, inline e reais ═══ */
 /* AL Design System - Foundation
- * v0.22.0 - MIT
+ * v0.23.0 - MIT
  * GERADO por foundation/css.py. Nao editar a mao: rode o script.
  */
 
@@ -1308,6 +1308,54 @@
   --al-tooltip-line-height: var(--al-line-height-sm);
   --al-tooltip-font-weight: 400;
   --al-tooltip-tracking: 0em;
+
+
+  /* cor - caixa e texto */
+  --al-toast-bg: var(--al-bg-surface-raised);
+  --al-toast-title: var(--al-text-primary);
+  --al-toast-description: var(--al-text-secondary);
+
+  /* cor - status: icone e borda */
+  --al-toast-success-icon: var(--al-text-success);
+  --al-toast-success-border: var(--al-border-success);
+  --al-toast-warning-icon: var(--al-text-warning);
+  --al-toast-warning-border: var(--al-border-warning);
+  --al-toast-error-icon: var(--al-text-danger);
+  --al-toast-error-border: var(--al-border-danger);
+  --al-toast-info-icon: var(--al-text-info);
+  --al-toast-info-border: var(--al-border-info);
+
+  /* elevacao - altura, nao estado */
+  --al-toast-shadow: var(--al-elevation-3);
+
+  /* geometria */
+  --al-toast-padding: var(--al-space-12);
+  --al-toast-gap: var(--al-space-8);
+  --al-toast-text-gap: var(--al-space-4);
+  --al-toast-radius: var(--al-radius-lg);
+  --al-toast-border-width: var(--al-border-width-1);
+  --al-toast-offset: var(--al-space-16);
+
+  /* largura maxima - valor declarado, sem escala na Foundation */
+  --al-toast-max-width: 380px;
+
+  /* movimento */
+  --al-toast-duration: var(--al-motion-duration-popup);
+  --al-toast-easing-enter: var(--al-motion-easing-enter);
+  --al-toast-easing-exit: var(--al-motion-easing-exit);
+
+  /* tempo na tela de Success e Info - valor declarado (decisao 7). Lido pelo toast.js */
+  --al-toast-timeout: 6000ms;
+
+  /* tipografia - cada estilo vira quatro vars */
+  --al-toast-title-font-size: var(--al-font-size-sm);
+  --al-toast-title-line-height: var(--al-line-height-sm);
+  --al-toast-title-font-weight: 500;
+  --al-toast-title-tracking: 0em;
+  --al-toast-description-font-size: var(--al-font-size-sm);
+  --al-toast-description-line-height: var(--al-line-height-sm);
+  --al-toast-description-font-weight: 400;
+  --al-toast-description-tracking: 0em;
 }
 
 /* AL Design System - tokens do Button
@@ -7206,6 +7254,245 @@
   }
 }
 
+/* AL Design System - tokens do Toast
+ * GERADO por components/toast/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* cor - caixa e texto */
+  --al-toast-bg: var(--al-bg-surface-raised);
+  --al-toast-title: var(--al-text-primary);
+  --al-toast-description: var(--al-text-secondary);
+
+  /* cor - status: icone e borda */
+  --al-toast-success-icon: var(--al-text-success);
+  --al-toast-success-border: var(--al-border-success);
+  --al-toast-warning-icon: var(--al-text-warning);
+  --al-toast-warning-border: var(--al-border-warning);
+  --al-toast-error-icon: var(--al-text-danger);
+  --al-toast-error-border: var(--al-border-danger);
+  --al-toast-info-icon: var(--al-text-info);
+  --al-toast-info-border: var(--al-border-info);
+
+  /* elevacao - altura, nao estado */
+  --al-toast-shadow: var(--al-elevation-3);
+
+  /* geometria */
+  --al-toast-padding: var(--al-space-12);
+  --al-toast-gap: var(--al-space-8);
+  --al-toast-text-gap: var(--al-space-4);
+  --al-toast-radius: var(--al-radius-lg);
+  --al-toast-border-width: var(--al-border-width-1);
+  --al-toast-offset: var(--al-space-16);
+
+  /* largura maxima - valor declarado, sem escala na Foundation */
+  --al-toast-max-width: 380px;
+
+  /* movimento */
+  --al-toast-duration: var(--al-motion-duration-popup);
+  --al-toast-easing-enter: var(--al-motion-easing-enter);
+  --al-toast-easing-exit: var(--al-motion-easing-exit);
+
+  /* tempo na tela de Success e Info - valor declarado (decisao 7). Lido pelo toast.js */
+  --al-toast-timeout: 6000ms;
+
+  /* tipografia - cada estilo vira quatro vars */
+  --al-toast-title-font-size: var(--al-font-size-sm);
+  --al-toast-title-line-height: var(--al-line-height-sm);
+  --al-toast-title-font-weight: 500;
+  --al-toast-title-tracking: 0em;
+  --al-toast-description-font-size: var(--al-font-size-sm);
+  --al-toast-description-line-height: var(--al-line-height-sm);
+  --al-toast-description-font-weight: 400;
+  --al-toast-description-tracking: 0em;
+}
+
+/* AL Design System - Toast
+ *
+ * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css + icon.css,
+ * os tokens e o CSS do Icon Button (o X) e al-toast-tokens.css, nesta ordem.
+ * Comportamento: toast.js.
+ *
+ * Nenhum valor aqui e literal: cor, espaco, raio, sombra, largura, movimento e
+ * tipografia entram por var(--al-toast-*). O check.py ao lado recusa o arquivo
+ * se algum escapar.
+ *
+ * CONTRATO DE MARCACAO (regras 13, 14, 21 a 24)
+ *
+ *   Uma regiao por pagina, presente desde o carregamento (regra 23):
+ *
+ *   <section class="al-toast-region" aria-label="Notificações" popover="manual">
+ *     <div class="al-toast-region__live" role="status"></div>
+ *     <div class="al-toast-region__live" role="alert"></div>
+ *   </section>
+ *
+ *   Cada toast e um <template> da pagina, clonado pelo toast.js para dentro
+ *   da regiao certa - status para Success, Info e Warning, alert para Error
+ *   (regra 22):
+ *
+ *   <template id="toast-salvo">
+ *     <div class="al-toast al-toast--success">
+ *       <svg class="al-icon al-icon--20 al-toast__icon" role="img"
+ *            aria-label="Sucesso">…circle-check…</svg>
+ *       <div class="al-toast__text">
+ *         <p class="al-toast__title">Produto salvo</p>
+ *         <p class="al-toast__description">Já aparece na loja.</p>   (opcional)
+ *       </div>
+ *       <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close"
+ *               aria-label="Fechar notificação">
+ *         <svg class="al-icon" aria-hidden="true" focusable="false">…x…</svg>
+ *       </button>
+ *     </div>
+ *   </template>
+ *
+ *   - Status por modificador: --success, --warning, --error, --info. Sem
+ *     Neutral (regra 26). Icone fixo por status: circle-check, triangle-alert,
+ *     circle-alert, info (regra 13).
+ *   - O icone CARREGA o status: role="img" + aria-label com o nome do status
+ *     ("Sucesso", "Aviso", "Erro", "Informação") - regra 14. E o unico icone
+ *     de componente do AL que nao e decorativo.
+ *   - Nada interativo alem do X (regra 25). O X e o Icon Button Ghost sm, com
+ *     nome "Fechar notificação" (regra 24).
+ *
+ * POPOVER
+ *   A regiao e um popover="manual" que o toast.js abre no carregamento e nunca
+ *   fecha: fica na top layer, acima de tudo sem z-index, e as duas regioes vivas
+ *   estao renderizadas antes da primeira mensagem - um live region que nasce
+ *   junto com a mensagem nao e anunciado. Vazia, ela nao ocupa espaco nem pega
+ *   clique. O display so e declarado no estado aberto (licao do Tooltip).
+ *   Com um Modal ou Drawer aberto, o toast.js muda a regiao para dentro dele:
+ *   fora, ela seria inerte - visivel, mas sem clique, foco nem anuncio.
+ *
+ * POSICAO E LARGURA (regra 16)
+ *   Canto inferior direito, a `toast-offset` (16) das bordas. Largura de
+ *   `toast-max-width` (380), ou a tela menos o offset dos dois lados, o que for
+ *   menor - no celular a caixa ocupa a largura toda sem media query.
+ *
+ * BORDA E ALTURA
+ *   Borda inside, como no Figma: o padding desconta a borda e a caixa fecha em
+ *   68 (com descricao) ou 60 (sem; o X de 36 manda). Sem height.
+ *
+ * MOTION (regra 20)
+ *   Entra subindo `toast-offset` - vem da borda da tela ate o lugar - com fade,
+ *   curva de entrada; sai so com fade, curva de saida, em `toast-duration`
+ *   (popup, 200ms). @starting-style da o ponto de partida; a saida e o
+ *   [data-leaving] que o toast.js poe antes de remover. Sem transicao com
+ *   prefers-reduced-motion.
+ */
+
+/* ------------------------------------------------------------------ regiao */
+.al-toast-region {
+  /* zera o que a folha do navegador da a todo [popover] */
+  position: fixed;
+  inset: auto var(--al-toast-offset) var(--al-toast-offset) auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+
+  box-sizing: border-box;
+  inline-size: min(var(--al-toast-max-width), calc(100% - 2 * var(--al-toast-offset)));
+  pointer-events: none;
+}
+
+.al-toast-region:popover-open {
+  display: block;
+}
+
+/* ------------------------------------------------------------------- caixa */
+.al-toast {
+  --_icon: var(--al-toast-info-icon);
+  --_border: var(--al-toast-info-border);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--al-toast-gap);
+  box-sizing: border-box;
+  padding: calc(var(--al-toast-padding) - var(--al-toast-border-width));
+  border: var(--al-toast-border-width) solid var(--_border);
+  border-radius: var(--al-toast-radius);
+  background-color: var(--al-toast-bg);
+  box-shadow: var(--al-toast-shadow);
+  pointer-events: auto;
+
+  font-family: var(--al-font-sans);
+
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity var(--al-toast-duration) var(--al-toast-easing-enter),
+    translate var(--al-toast-duration) var(--al-toast-easing-enter);
+}
+
+@starting-style {
+  .al-toast {
+    opacity: 0;
+    translate: 0 var(--al-toast-offset);
+  }
+}
+
+.al-toast[data-leaving] {
+  opacity: 0;
+  transition: opacity var(--al-toast-duration) var(--al-toast-easing-exit);
+}
+
+.al-toast--success { --_icon: var(--al-toast-success-icon); --_border: var(--al-toast-success-border); }
+.al-toast--warning { --_icon: var(--al-toast-warning-icon); --_border: var(--al-toast-warning-border); }
+.al-toast--error   { --_icon: var(--al-toast-error-icon);   --_border: var(--al-toast-error-border); }
+.al-toast--info    { --_icon: var(--al-toast-info-icon);    --_border: var(--al-toast-info-border); }
+
+.al-toast__icon {
+  flex: none;
+  color: var(--_icon);
+}
+
+/* --------------------------------------------------------------------- texto */
+.al-toast__text {
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-toast-text-gap);
+  overflow-wrap: break-word;
+}
+
+.al-toast__title {
+  margin: 0;
+  color: var(--al-toast-title);
+  font-size: var(--al-toast-title-font-size);
+  line-height: var(--al-toast-title-line-height);
+  font-weight: var(--al-toast-title-font-weight);
+  letter-spacing: var(--al-toast-title-tracking);
+}
+
+.al-toast__description {
+  margin: 0;
+  color: var(--al-toast-description);
+  font-size: var(--al-toast-description-font-size);
+  line-height: var(--al-toast-description-line-height);
+  font-weight: var(--al-toast-description-font-weight);
+  letter-spacing: var(--al-toast-description-tracking);
+}
+
+/* ------------------------------------------------------------------------ X */
+/* O Icon Button le bg-hover/bg-active, feitos para bg-surface. O fundo do
+   toast e surface-raised, que no escuro e igual ao bg-hover: o hover sumia.
+   Mesma correcao do Modal (0.18.1) e do Card (0.18.2); sem token novo. */
+.al-toast__close {
+  flex: none;
+  --_bg-hover: var(--al-bg-hover-raised);
+  --_bg-active: var(--al-bg-active-raised);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-toast,
+  .al-toast[data-leaving] {
+    transition: none;
+  }
+}
+
 </style>
 <style>
 /* ═══ Chrome do site ═══ */
@@ -7744,11 +8031,6 @@ footer code{background:none; padding:0}
 .sw-group{margin:0; padding:0; border:0; min-width:0}
 .sw-group legend{padding:0; margin-bottom:12px; font-weight:600}
 .sw-opts{display:flex; flex-direction:column; gap:16px}
-.sw-status{margin:0; font-size:13.5px; line-height:20px}
-.sw-status:empty{display:none}
-.sw-status.is-erro{padding:12px 16px; border-radius:var(--al-radius-md);
-  background:var(--al-bg-danger-subtle); color:var(--al-text-danger)}
-.sw-status.is-ok{color:var(--al-text-success)}
 
 /* ── miniatura do card do Input ── */
 .th-input{display:flex; flex-direction:column; gap:6px; width:100%; max-width:200px; margin-inline:auto}
@@ -8110,6 +8392,28 @@ footer code{background:none; padding:0}
 .th-tt-tip span{width:52px; height:6px; border-radius:3px; background:var(--al-tooltip-text)}
 .th-tt-btn{width:26px; height:26px; border-radius:50%; background:var(--al-border-default)}
 
+/* ── páginas do Toast ──
+   Casca do site. O toast vivo é sempre a .al-toast do toast.css real, na
+   .al-toast-region do fim do <body>. .ts-frozen põe a amostra no fluxo, sem
+   transição; .ts-fake é o "a evitar", nunca uma .al-toast errada. */
+.ts-stage{min-height:200px; display:flex; align-items:center; justify-content:center; padding:32px 16px}
+.dd .stage2.ts-stage2{justify-content:center; padding:24px 16px; min-height:120px}
+.dd.ts-grid{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.ts-frozen{inline-size:min(var(--al-toast-max-width), 100%)}
+.ts-frozen .al-toast{transition:none}
+.ts-fake{max-width:380px; padding:12px 16px; border-radius:8px; border:1px solid var(--al-border-default);
+  background:var(--al-bg-surface-raised); color:var(--al-text-primary); font-size:14px; line-height:20px}
+.th-ts{display:flex; align-items:flex-end; justify-content:flex-end; width:100%; height:100%; padding:14px; box-sizing:border-box}
+.th-ts-box{display:flex; align-items:flex-start; gap:7px; width:150px; padding:9px 10px; border-radius:7px;
+  background:var(--al-toast-bg); border:1px solid var(--al-toast-success-border); box-shadow:var(--al-toast-shadow)}
+.th-ts-box i{flex:none; width:11px; height:11px; border-radius:50%; border:1.5px solid var(--al-toast-success-icon)}
+.th-ts-box span{flex:1; display:flex; flex-direction:column; gap:5px; padding-top:2px}
+.th-ts-box b{height:5px; border-radius:3px; background:var(--al-toast-title); width:70%}
+.th-ts-box b + b{background:var(--al-toast-description); width:95%; opacity:.6}
+.th-ts-box u{flex:none; width:9px; height:9px; margin-top:2px; background:
+  linear-gradient(45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%),
+  linear-gradient(-45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%)}
+
 /* ── Motion ──
    O palco lê os tokens reais da Foundation. A velocidade (1× ou ¼×) só
    multiplica a duração, para dar tempo de ver a curva; ela não é um token. */
@@ -8151,9 +8455,20 @@ footer code{background:none; padding:0}
 .mo-box--tooltip{left:50%; top:46px; width:104px; margin-left:-52px; padding:10px 12px;
   border-radius:var(--al-radius-lg); background:var(--al-bg-inverse); border-color:transparent;
   --mo-from:translateY(var(--al-space-4))}
-.mo-box--toast{left:14px; right:14px; bottom:14px; flex-direction:row; align-items:center; gap:10px;
-  padding:12px 14px; border-radius:var(--al-radius-xl); background:var(--al-bg-inverse);
-  border-color:transparent; --mo-from:translateY(var(--al-space-16))}
+.mo-box--toast{left:auto; right:14px; bottom:14px; width:min(72%, 220px); flex-direction:row;
+  align-items:flex-start; gap:8px; padding:11px 12px; border-radius:var(--al-toast-radius);
+  background:var(--al-toast-bg); border-color:var(--al-toast-success-border); box-shadow:var(--al-toast-shadow);
+  --mo-from:translateY(var(--al-toast-offset))}
+/* o Toast sai só com fade (regra 20): a posição volta depois que a opacidade chega a 0 */
+.mo-stage:not([data-open="true"]) .mo-box--toast{
+  transition:opacity calc(var(--mo-dur) * var(--mo-speed)) var(--al-motion-easing-exit),
+    transform 0s linear calc(var(--mo-dur) * var(--mo-speed))}
+.mo-ts-text{flex:1; display:flex; flex-direction:column; gap:6px; padding-top:2px}
+.mo-ts-text .mo-l{background:var(--al-toast-title)}
+.mo-ts-text .mo-l + .mo-l{background:var(--al-toast-description); opacity:.6}
+.mo-ts-x{flex:none; width:10px; height:10px; margin-top:2px; background:
+  linear-gradient(45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%),
+  linear-gradient(-45deg,transparent 45%,var(--al-text-primary) 45% 55%,transparent 55%)}
 .mo-ctl-track{
   position:absolute; left:50%; top:50%; width:72px; height:40px; margin:-20px 0 0 -36px;
   border-radius:var(--al-radius-full); background:var(--al-border-strong);
@@ -8166,10 +8481,11 @@ footer code{background:none; padding:0}
 .mo-stage[data-open="true"] .mo-ctl-thumb{transform:translateX(32px); transition-timing-function:var(--al-motion-easing-enter)}
 .mo-l{display:block; height:7px; border-radius:4px; background:var(--al-border-default)}
 .mo-l--40{width:40%} .mo-l--60{width:60%} .mo-l--90{width:90%}
-.mo-box--tooltip .mo-l, .mo-box--toast .mo-l{background:var(--al-text-inverse); opacity:.7}
+.mo-box--tooltip .mo-l{background:var(--al-text-inverse); opacity:.7}
 .mo-pill{align-self:flex-end; width:44px; height:16px; margin-top:4px;
   border-radius:var(--al-radius-full); background:var(--al-bg-brand)}
-.mo-dot{width:10px; height:10px; flex:none; border-radius:50%; background:var(--al-bg-success)}
+.mo-dot{width:12px; height:12px; flex:none; box-sizing:border-box; border-radius:50%;
+  border:2px solid var(--al-toast-success-icon)}
 .mo-cell .al-btn{align-self:flex-start}
 .mo-fine{font-size:13px; color:var(--al-text-secondary); margin-top:14px; max-width:74ch}
 
@@ -8200,7 +8516,7 @@ footer code{background:none; padding:0}
 <nav class="rail" aria-label="Navegação do design system">
   <div class="brand">
     <span class="brand-mark">AL</span>
-    <span class="brand-name">AL Design System<small>v0.22.0 · MIT</small></span>
+    <span class="brand-name">AL Design System<small>v0.23.0 · MIT</small></span>
   </div>
   <div class="rail-nav">
     <div class="nav-group is-open" id="g-fundacao">
@@ -8244,6 +8560,7 @@ footer code{background:none; padding:0}
         <a href="#/sidebar" data-page="sidebar">Sidebar</a>
         <a href="#/breadcrumb" data-page="breadcrumb">Breadcrumb</a>
         <a href="#/tooltip" data-page="tooltip">Tooltip</a>
+        <a href="#/toast" data-page="toast">Toast</a>
       </div>
     </div>
   </div>
@@ -8359,7 +8676,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#A00E27">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.22.0 está disponível.</div>
+      <div class="bn" style="background:#DEF6E4;border-color:#008A2A;color:#006911"><b>Publicado.</b> A versão 0.23.0 está disponível.</div>
       <div class="bn" style="background:#F7EED5;border-color:#916A00;color:#704F00"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#FFE8E9;border-color:#CA293F;color:#A00E27"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#E2F1FF;border-color:#0071D0;color:#0055A3"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -8389,7 +8706,7 @@ footer code{background:none; padding:0}
       <span class="help" style="color:#FF8D91">Falta o domínio depois do @.</span>
     </div>
     <div class="banners">
-      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.22.0 está disponível.</div>
+      <div class="bn" style="background:#001F00;border-color:#1BB14B;color:#6ACD7C"><b>Publicado.</b> A versão 0.23.0 está disponível.</div>
       <div class="bn" style="background:#221500;border-color:#DCAC2E;color:#EBCA7E"><b>Token sem uso.</b> 3 tokens não são referenciados.</div>
       <div class="bn" style="background:#360001;border-color:#F84F5D;color:#FF8D91"><b>Contraste reprovado.</b> 1 par abaixo de 4,5:1.</div>
       <div class="bn" style="background:#001639;border-color:#2696FF;color:#76B8FF"><b>Sincronizado.</b> Figma atualizado há 2 minutos.</div>
@@ -8623,9 +8940,9 @@ footer code{background:none; padding:0}
     <button type="button" class="al-btn al-btn--primary al-btn--sm" id="mo-all">
       <span class="al-btn__label">Reproduzir todos</span></button>
   </div>
-  <div class="dd"><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Modal</span><div class="mo-stage" data-mo="modal" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--modal mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i><b class="mo-pill"></b></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="modal" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Drawer</span><div class="mo-stage" data-mo="drawer" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--drawer mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="drawer" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Tooltip</span><div class="mo-stage" data-mo="tooltip" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><b class="mo-anchor"></b><div class="mo-box mo-box--tooltip mo-move"><i class="mo-l mo-l--90"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="tooltip" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Toast</span><div class="mo-stage" data-mo="toast" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-box mo-box--toast mo-move"><b class="mo-dot"></b><i class="mo-l mo-l--60"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="toast" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Controle</span><div class="mo-stage" data-mo="control" data-size="feedback" data-open="false"><div class="mo-scene" aria-hidden="true"><div class="mo-ctl-track"><i class="mo-ctl-thumb"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="control" data-off="Ativar" data-on="Desativar"><span class="al-btn__label">Ativar</span></button><p class="cap"><b>Entrada</b> · ease-out · 120ms<br><b>Saída</b> · ease-in · 120ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Spinner</span><div class="mo-stage" data-mo="spinner" data-size="spinner" data-open="false"><div class="mo-scene" aria-hidden="true"><button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1" data-mo-busy><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Salvando</span></button></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="spinner" data-off="Girar" data-on="Parar"><span class="al-btn__label">Girar</span></button><p class="cap"><b>Volta</b> · linear · 700ms<br><b>Movimento reduzido</b> · linear · 2400ms</p></div></div>
-  <p class="mo-fine">Ilustração do movimento, não dos componentes: o Toast ainda não existe
-  no AL, os palcos do Tooltip, do Modal e do Drawer são miniaturas, e o do controle também não é o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
+  <div class="dd"><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Modal</span><div class="mo-stage" data-mo="modal" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--modal mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i><b class="mo-pill"></b></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="modal" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Drawer</span><div class="mo-stage" data-mo="drawer" data-size="panel" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-scrim mo-move"></div><div class="mo-box mo-box--drawer mo-move"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i><i class="mo-l mo-l--40"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="drawer" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 300ms<br><b>Saída</b> · ease-in · 300ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Tooltip</span><div class="mo-stage" data-mo="tooltip" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><b class="mo-anchor"></b><div class="mo-box mo-box--tooltip mo-move"><i class="mo-l mo-l--90"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="tooltip" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Toast</span><div class="mo-stage" data-mo="toast" data-size="popup" data-open="false"><div class="mo-scene" aria-hidden="true"><span class="mo-sk mo-sk--a"></span><span class="mo-sk mo-sk--b"></span><div class="mo-box mo-box--toast mo-move"><b class="mo-dot"></b><span class="mo-ts-text"><i class="mo-l mo-l--60"></i><i class="mo-l mo-l--90"></i></span><u class="mo-ts-x"></u></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="toast" data-off="Abrir" data-on="Fechar"><span class="al-btn__label">Abrir</span></button><p class="cap"><b>Entrada</b> · ease-out · 200ms<br><b>Saída</b> · ease-in · 200ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Controle</span><div class="mo-stage" data-mo="control" data-size="feedback" data-open="false"><div class="mo-scene" aria-hidden="true"><div class="mo-ctl-track"><i class="mo-ctl-thumb"></i></div></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="control" data-off="Ativar" data-on="Desativar"><span class="al-btn__label">Ativar</span></button><p class="cap"><b>Entrada</b> · ease-out · 120ms<br><b>Saída</b> · ease-in · 120ms</p></div><div class="cell mo-cell"><span class="lab" style="color:var(--al-text-secondary)">Spinner</span><div class="mo-stage" data-mo="spinner" data-size="spinner" data-open="false"><div class="mo-scene" aria-hidden="true"><button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1" data-mo-busy><span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">Salvando</span></button></div></div><button type="button" class="al-btn al-btn--secondary al-btn--sm" data-mo-toggle="spinner" data-off="Girar" data-on="Parar"><span class="al-btn__label">Girar</span></button><p class="cap"><b>Volta</b> · linear · 700ms<br><b>Movimento reduzido</b> · linear · 2400ms</p></div></div>
+  <p class="mo-fine">Ilustração do movimento, não dos componentes: os palcos do Tooltip, do
+  Toast, do Modal e do Drawer são miniaturas, e o do controle também não é o Switch. O do spinner é o Button de verdade. A propriedade que anima — opacidade, deslocamento — é decisão de cada componente;
   a Foundation fixa só a duração e a curva.</p>
   <p class="mo-fine" id="mo-reduced" hidden>Seu sistema pede movimento reduzido. Os palcos trocam de estado
   sem animar, que é exatamente o que um componente do AL faz nessa preferência.</p>
@@ -9021,9 +9338,9 @@ footer code{background:none; padding:0}
   consequência prática que aparece logo abaixo: branco sobre a marca <b>reprova</b> como texto
   normal e <b>passa</b> como ícone. Não é uma exceção aberta aqui; é aprovação com folga.</p>
   <div class="stats">
-    <div class="stat hl"><b>383</b><span>verificações</span></div>
+    <div class="stat hl"><b>417</b><span>verificações</span></div>
     <div class="stat"><b>0</b><span>reprovas</span></div>
-    <div class="stat"><b>341</b><span>elementos com contrato conferido</span></div>
+    <div class="stat"><b>375</b><span>elementos com contrato conferido</span></div>
     <div class="stat"><b>3.0:1</b><span>piso não-textual</span></div>
   </div>
 </section>
@@ -9098,7 +9415,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>A regra de ícone decorativo versus ícone com sentido não virou documento — virou portão.
   O <code>a11y.py</code> lê o HTML que este site emite e cobra o contrato de cada
-  <code>.al-icon</code>: 341 elementos nesta página, nenhum fora.
+  <code>.al-icon</code>: 375 elementos nesta página, nenhum fora.
   Ele reprova três coisas: ícone sem contrato nenhum, <code>role="img"</code> sem
   <code>aria-label</code>, e <code>aria-hidden</code> junto de um rótulo — que é contradição,
   porque o rótulo nunca seria lido.</p>
@@ -9109,7 +9426,7 @@ footer code{background:none; padding:0}
     renderizada. Regra escrita numa página envelhece; regra medida quebra o build.</p>
   </div>
 </section></div></div>
-<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">20 publicados</span><span class="badge">Tier 5 em andamento</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
+<div class="page" id="pg-componentes" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Componentes</h1><p class="lede">Peça pronta para usar, com desenho, tokens, código e QA já fechados. Um componente só aparece aqui depois de atravessar as oito etapas do pipeline — por isso a lista é curta e cresce devagar, um de cada vez.</p><div class="meta"><span class="badge on">21 publicados</span><span class="badge">Tier 5 em andamento</span><span class="badge">8 etapas por componente</span></div></header><div class="panel">
 <section>
   <h2>Publicados</h2>
   <div class="cards">
@@ -9133,6 +9450,7 @@ footer code{background:none; padding:0}
     <a class="card" href="#/sidebar" data-page="sidebar"><div class="card-thumb"><div class="th-sidebar" aria-hidden="true"><div class="th-sb-side"><span class="th-sb-who"><i></i><b></b></span><span class="th-sb-i th-sb-i--on"></span><span class="th-sb-i"></span><span class="th-sb-i"></span><span class="th-sb-i th-sb-i--s"></span></div><div class="th-sb-page"><i></i><i></i></div></div></div><div class="card-body"><span class="card-title">Sidebar</span><span class="card-desc">A navegação principal, presa à esquerda na altura da tela. Os itens são o Tab, e abaixo de 1024px ela vira painel modal pela esquerda — a mesma &lt;aside&gt;, nunca uma cópia.</span></div></a>
     <a class="card" href="#/breadcrumb" data-page="breadcrumb"><div class="card-thumb"><div class="th-bc" aria-hidden="true"><div class="bc-fake"><span class="">Início</span><i aria-hidden="true">›</i><span class="">Vendas</span><i aria-hidden="true">›</i><span class="">…</span><i aria-hidden="true">›</i><span class="on">Pedido 1042</span></div><div class="th-bc-menu"><span></span><span></span><span></span></div></div></div><div class="card-body"><span class="card-title">Breadcrumb</span><span class="card-desc">Onde a pessoa está na hierarquia, com um link para cada nível acima. Com 5 níveis ou mais, os do meio vão para o menu do “…”.</span></div></a>
     <a class="card" href="#/tooltip" data-page="tooltip"><div class="card-thumb"><div class="th-tt" aria-hidden="true"><div class="th-tt-tip"><i></i><span></span></div><div class="th-tt-btn"></div></div></div><div class="card-body"><span class="card-title">Tooltip</span><span class="card-desc">O nome de um botão só com ícone, ou um complemento curto. Abre no hover e no foco, fecha no Esc, e nunca carrega o que a pessoa precisa para seguir.</span></div></a>
+    <a class="card" href="#/toast" data-page="toast"><div class="card-thumb"><div class="th-ts" aria-hidden="true"><div class="th-ts-box"><i></i><span><b></b><b></b></span><u></u></div></div></div><div class="card-body"><span class="card-title">Toast</span><span class="card-desc">A confirmação de algo que acabou de acontecer, no canto da tela. Um por vez, em fila; Sucesso e Informação saem sozinhos, Aviso e Erro esperam o X.</span></div></a>
   </div>
 </section>
 
@@ -9990,7 +10308,7 @@ footer code{background:none; padding:0}
   <h2>Contrato de marcação, medido</h2>
   <p>O <code>aria-label</code> não vive no CSS, então o portão de literal não alcança. Ele vive na
   marcação — e é aqui que o <code>a11y.py</code> o cobra, lendo o HTML que este site emite:
-  <b>71 elementos</b> <code>.al-icon-btn</code> nesta página, nenhum
+  <b>88 elementos</b> <code>.al-icon-btn</code> nesta página, nenhum
   fora do contrato. Ele reprova quatro coisas: botão sem <code>aria-label</code>,
   <code>aria-hidden</code> no próprio botão, <code>aria-busy</code> sem
   <code>aria-disabled</code>, e o atributo <code>disabled</code> no lugar de
@@ -12167,12 +12485,11 @@ footer code{background:none; padding:0}
           <label class="al-switch"><span class="al-switch__control"><input id="ov-sw-contador" class="al-switch__input" type="checkbox" role="switch"><span class="al-switch__thumb" aria-hidden="true"></span></span><span class="al-switch__label">Enviar notas ao contador</span></label>
         </div>
       </fieldset>
-      <p class="sw-status" id="ov-sw-status" role="status" aria-live="polite"></p>
     </div>
     <p class="cap">Não há botão “Salvar”: cada switch vale na hora. Desligue as notificações por
     e-mail e o resumo semanal fica desabilitado, porque depende delas. Ligue o envio ao contador: a
     bolinha troca no clique e, quando o servidor simulado recusa, volta ao estado real e a aplicação
-    avisa em texto. <i>Primer, Polaris e Material: o switch aplica na hora e mostra o estado real.</i></p>
+    avisa com um <a href="#/toast">Toast</a> de Erro. <i>Primer, Polaris e Material: o switch aplica na hora e mostra o estado real.</i></p>
   </div>
 </section>
 
@@ -12276,7 +12593,7 @@ footer code{background:none; padding:0}
 <section>
   <h2>Sem erro, sem carregamento</h2>
   <p>O switch tem efeito imediato, então não valida e não tem estado de erro. Quando a ação falha,
-  quem age é a aplicação: ela desmarca o input de volta e avisa em texto. O componente não tem
+  quem age é a aplicação: ela desmarca o input de volta e avisa com um <a href="#/toast">Toast</a> de Erro. O componente não tem
   estado de carregamento — a bolinha troca no clique e só volta se o sistema recusar.</p>
 </section></div><div class="panel" id="p-switch-guide" role="tabpanel" aria-labelledby="t-switch-guide" tabindex="0" hidden>
 <section>
@@ -12337,7 +12654,7 @@ footer code{background:none; padding:0}
   <h2>Quando a ação falha</h2>
   <div class="anat">
     <div><b>Sem erro e nunca obrigatório</b><span>Se uma configuração precisa estar ligada para a pessoa seguir, é um aceite — e aceite é Checkbox. <i>Spectrum, Polaris.</i></span></div>
-    <div><b>Troca na hora, e volta se falhar</b><span>A bolinha muda no clique. Se o sistema recusar, ela volta ao estado real e a aplicação avisa em texto o que falhou. O switch nunca mostra um estado que o sistema não tem.</span></div>
+    <div><b>Troca na hora, e volta se falhar</b><span>A bolinha muda no clique. Se o sistema recusar, ela volta ao estado real e a aplicação avisa com um <a href="#/toast">Toast</a> de Erro. O switch nunca mostra um estado que o sistema não tem.</span></div>
   </div>
   <div class="note" style="margin-top:16px">
     <b>Divergência consciente</b>
@@ -16767,8 +17084,296 @@ footer code{background:none; padding:0}
     <div><b>Movimento reduzido</b><span>Aparece e some sem fade.</span></div>
   </div>
 </section></div></div>
+<div class="page" id="pg-toast" hidden><header class="phead"><div class="eyebrow">Componentes</div><h1>Toast</h1><p class="lede">Uma mensagem curta no canto da tela sobre algo que acabou de acontecer: um sucesso, um aviso, um erro ou uma informação. Nunca rouba o foco, entra em fila, um por vez, e só some sozinho quando não é aviso nem erro.</p><div class="meta"><span class="badge">Em revisão</span><span class="badge">4 variantes no Figma</span><span class="badge">25 tokens</span><span class="badge">2 valores declarados</span></div></header><div class="tabs" role="tablist" aria-label="Seções de Toast"><button role="tab" id="t-toast-overview" aria-controls="p-toast-overview" aria-selected="true">Visão geral</button><button role="tab" id="t-toast-specs" aria-controls="p-toast-specs" aria-selected="false" tabindex=-1>Especificações</button><button role="tab" id="t-toast-guide" aria-controls="p-toast-guide" aria-selected="false" tabindex=-1>Diretrizes</button><button role="tab" id="t-toast-a11y" aria-controls="p-toast-a11y" aria-selected="false" tabindex=-1>Acessibilidade</button></div><div class="panel" id="p-toast-overview" role="tabpanel" aria-labelledby="t-toast-overview" tabindex="0">
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage ts-stage" id="toast-stage"><div class="ts-frozen" aria-hidden="true" inert><div class="al-toast al-toast--success"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-toast__text"><p class="al-toast__title">Produto salvo</p><p class="al-toast__description">Já aparece na loja.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div>
+    <div class="controls" id="toast-controls">
+      <div class="ctl"><span class="ctl-name">Status</span><div class="seg" role="radiogroup" aria-label="tsstatus">
+<input type="radio" id="tsstatus-success" name="tsstatus" value="success" checked><label for="tsstatus-success">Sucesso</label>
+<input type="radio" id="tsstatus-warning" name="tsstatus" value="warning"><label for="tsstatus-warning">Aviso</label>
+<input type="radio" id="tsstatus-error" name="tsstatus" value="error"><label for="tsstatus-error">Erro</label>
+<input type="radio" id="tsstatus-info" name="tsstatus" value="info"><label for="tsstatus-info">Informação</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Conteúdo</span><div class="seg" role="radiogroup" aria-label="tsdesc">
+<input type="radio" id="tsdesc-1" name="tsdesc" value="1" checked><label for="tsdesc-1">Com descrição</label>
+<input type="radio" id="tsdesc-0" name="tsdesc" value="0"><label for="tsdesc-0">Só título</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Tema</span><div class="seg" role="radiogroup" aria-label="tstheme">
+<input type="radio" id="tstheme-auto" name="tstheme" value="auto" checked><label for="tstheme-auto">Do sistema</label>
+<input type="radio" id="tstheme-light" name="tstheme" value="light"><label for="tstheme-light">Claro</label>
+<input type="radio" id="tstheme-dark" name="tstheme" value="dark"><label for="tstheme-dark">Escuro</label>
+</div></div>
+      <div class="ctl"><span class="ctl-name">Disparar</span><div><button type="button" class="al-btn al-btn--primary al-btn--sm" id="toast-fire">
+        <span class="al-btn__label">Mostrar toast</span></button></div></div>
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="toast-copy">Copiar</button></div>
+      <pre><code id="toast-code"></code></pre>
+    </div>
+  </div>
+  <template id="ts-pg-success-1"><div class="al-toast al-toast--success"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-toast__text"><p class="al-toast__title">Produto salvo</p><p class="al-toast__description">Já aparece na loja.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></template><template id="ts-pg-success-0"><div class="al-toast al-toast--success"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-toast__text"><p class="al-toast__title">Produto salvo</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></template><template id="ts-pg-warning-1"><div class="al-toast al-toast--warning"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-toast__text"><p class="al-toast__title">Salvo sem a imagem</p><p class="al-toast__description">O arquivo passou de 5 MB. Envie outro pela edição.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></template><template id="ts-pg-warning-0"><div class="al-toast al-toast--warning"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-toast__text"><p class="al-toast__title">Salvo sem a imagem</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></template><template id="ts-pg-error-1"><div class="al-toast al-toast--error"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Erro" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-toast__text"><p class="al-toast__title">Não foi possível enviar</p><p class="al-toast__description">Verifique a conexão e tente de novo.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></template><template id="ts-pg-error-0"><div class="al-toast al-toast--error"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Erro" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-toast__text"><p class="al-toast__title">Não foi possível enviar</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></template><template id="ts-pg-info-1"><div class="al-toast al-toast--info"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-toast__text"><p class="al-toast__title">Exportação iniciada</p><p class="al-toast__description">Avisamos quando o arquivo estiver pronto.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></template><template id="ts-pg-info-0"><div class="al-toast al-toast--info"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-toast__text"><p class="al-toast__title">Exportação iniciada</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></template>
+  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+    O palco mostra o toast parado. <b>Mostrar toast</b> dispara o de verdade, no canto inferior direito da
+    janela. Sucesso e Informação saem sozinhos em 6s — pare o mouse em cima e o relógio
+    pausa. Aviso e Erro ficam até o X. Clique várias vezes: eles entram em fila, um por vez.
+  </p>
+</section>
+
+<section>
+  <h2>Os quatro status</h2>
+  <p>O ícone diz o status sem depender da cor; a borda acompanha. Não existe toast neutro.</p>
+  <div class="dd ts-grid" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Sucesso</span><div class="stage2 ts-stage2"><div class="ts-frozen" aria-hidden="true" inert><div class="al-toast al-toast--success"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-toast__text"><p class="al-toast__title">Produto salvo</p><p class="al-toast__description">Já aparece na loja.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Aviso</span><div class="stage2 ts-stage2"><div class="ts-frozen" aria-hidden="true" inert><div class="al-toast al-toast--warning"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Aviso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div class="al-toast__text"><p class="al-toast__title">Salvo sem a imagem</p><p class="al-toast__description">O arquivo passou de 5 MB. Envie outro pela edição.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Erro</span><div class="stage2 ts-stage2"><div class="ts-frozen" aria-hidden="true" inert><div class="al-toast al-toast--error"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Erro" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-toast__text"><p class="al-toast__title">Não foi possível enviar</p><p class="al-toast__description">Verifique a conexão e tente de novo.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div></div><div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Informação</span><div class="stage2 ts-stage2"><div class="ts-frozen" aria-hidden="true" inert><div class="al-toast al-toast--info"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-toast__text"><p class="al-toast__title">Exportação iniciada</p><p class="al-toast__description">Avisamos quando o arquivo estiver pronto.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div></div>
+  </div>
+</section></div><div class="panel" id="p-toast-specs" role="tabpanel" aria-labelledby="t-toast-specs" tabindex="0" hidden>
+<section>
+  <h2>Anatomia</h2>
+  <div class="anat">
+    <div><b>Caixa</b><span><code>.al-toast</code>: <code>toast-bg</code>, borda de 1px na cor do status, raio lg, Elevation/3, padding 12.</span></div>
+    <div><b>Ícone</b><span>20px, alinhado ao topo, fixo por status. É o único ícone de componente do AL com <code>role="img"</code>: ele carrega o status.</span></div>
+    <div><b>Título</b><span>Label/md 14/20 em <code>toast-title</code>. Obrigatório.</span></div>
+    <div><b>Descrição</b><span>Body/sm 14/20 em <code>toast-description</code>, a 4 do título. Opcional.</span></div>
+    <div><b>Fechar</b><span>Icon Button Ghost sm com <code>aria-label="Fechar notificação"</code>. Sempre presente.</span></div>
+    <div><b>Região</b><span>Uma <code>.al-toast-region</code> por página, no canto inferior direito, a 16px das bordas.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Com e sem descrição</h2>
+  <p>Com descrição a caixa mede 68px; só com o título, 60 — quem manda é o X de 36.</p>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Com descrição</span>
+      <div class="stage2 ts-stage2"><div class="ts-frozen" aria-hidden="true" inert><div class="al-toast al-toast--info"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-toast__text"><p class="al-toast__title">Exportação iniciada</p><p class="al-toast__description">Avisamos quando o arquivo estiver pronto.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div></div>
+    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Só título</span>
+      <div class="stage2 ts-stage2"><div class="ts-frozen" aria-hidden="true" inert><div class="al-toast al-toast--info"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Informação" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg><div class="al-toast__text"><p class="al-toast__title">Exportação iniciada</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div></div>
+  </div>
+</section>
+
+<section>
+  <h2>Tokens</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Token do Toast</th><th>Aponta para</th><th>Claro</th><th>Escuro</th></tr></thead>
+      <tbody><tr><td class="tok">--al-toast-bg</td><td class="tok dim">bg-surface-raised</td><td class="tok dim"><span class="chip sm" style="background:#FFFFFF"></span>#FFFFFF</td><td class="tok dim"><span class="chip sm" style="background:#3E3E3E"></span>#3E3E3E</td></tr>
+<tr><td class="tok">--al-toast-title</td><td class="tok dim">text-primary</td><td class="tok dim"><span class="chip sm" style="background:#292929"></span>#292929</td><td class="tok dim"><span class="chip sm" style="background:#F7F7F7"></span>#F7F7F7</td></tr>
+<tr><td class="tok">--al-toast-description</td><td class="tok dim">text-secondary</td><td class="tok dim"><span class="chip sm" style="background:#717171"></span>#717171</td><td class="tok dim"><span class="chip sm" style="background:#B3B3B3"></span>#B3B3B3</td></tr>
+<tr><td class="tok">--al-toast-success-icon</td><td class="tok dim">text-success</td><td class="tok dim"><span class="chip sm" style="background:#006911"></span>#006911</td><td class="tok dim"><span class="chip sm" style="background:#6ACD7C"></span>#6ACD7C</td></tr>
+<tr><td class="tok">--al-toast-success-border</td><td class="tok dim">border-success</td><td class="tok dim"><span class="chip sm" style="background:#008A2A"></span>#008A2A</td><td class="tok dim"><span class="chip sm" style="background:#1BB14B"></span>#1BB14B</td></tr>
+<tr><td class="tok">--al-toast-warning-icon</td><td class="tok dim">text-warning</td><td class="tok dim"><span class="chip sm" style="background:#704F00"></span>#704F00</td><td class="tok dim"><span class="chip sm" style="background:#EBCA7E"></span>#EBCA7E</td></tr>
+<tr><td class="tok">--al-toast-warning-border</td><td class="tok dim">border-warning</td><td class="tok dim"><span class="chip sm" style="background:#916A00"></span>#916A00</td><td class="tok dim"><span class="chip sm" style="background:#DCAC2E"></span>#DCAC2E</td></tr>
+<tr><td class="tok">--al-toast-error-icon</td><td class="tok dim">text-danger</td><td class="tok dim"><span class="chip sm" style="background:#A00E27"></span>#A00E27</td><td class="tok dim"><span class="chip sm" style="background:#FF8D91"></span>#FF8D91</td></tr>
+<tr><td class="tok">--al-toast-error-border</td><td class="tok dim">border-danger</td><td class="tok dim"><span class="chip sm" style="background:#CA293F"></span>#CA293F</td><td class="tok dim"><span class="chip sm" style="background:#F84F5D"></span>#F84F5D</td></tr>
+<tr><td class="tok">--al-toast-info-icon</td><td class="tok dim">text-info</td><td class="tok dim"><span class="chip sm" style="background:#0055A3"></span>#0055A3</td><td class="tok dim"><span class="chip sm" style="background:#76B8FF"></span>#76B8FF</td></tr>
+<tr><td class="tok">--al-toast-info-border</td><td class="tok dim">border-info</td><td class="tok dim"><span class="chip sm" style="background:#0071D0"></span>#0071D0</td><td class="tok dim"><span class="chip sm" style="background:#2696FF"></span>#2696FF</td></tr>
+<tr><td class="tok">--al-toast-shadow</td><td class="tok dim">elevation.3</td><td class="tok dim"><span class="dim">sombra composta</span></td><td class="tok dim"><span class="dim">sombra composta</span></td></tr>
+<tr><td class="tok">--al-toast-padding</td><td class="tok dim">space.12</td><td class="tok dim">12px</td><td class="tok dim">12px</td></tr>
+<tr><td class="tok">--al-toast-gap</td><td class="tok dim">space.8</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-toast-text-gap</td><td class="tok dim">space.4</td><td class="tok dim">4px</td><td class="tok dim">4px</td></tr>
+<tr><td class="tok">--al-toast-radius</td><td class="tok dim">radius.lg</td><td class="tok dim">8px</td><td class="tok dim">8px</td></tr>
+<tr><td class="tok">--al-toast-border-width</td><td class="tok dim">border.width.1</td><td class="tok dim">1px</td><td class="tok dim">1px</td></tr>
+<tr><td class="tok">--al-toast-offset</td><td class="tok dim">space.16</td><td class="tok dim">16px</td><td class="tok dim">16px</td></tr>
+<tr><td class="tok">--al-toast-title-font</td><td class="tok dim">type.styles.label-md</td><td class="tok dim">14/20 · 500</td><td class="tok dim">14/20 · 500</td></tr>
+<tr><td class="tok">--al-toast-description-font</td><td class="tok dim">type.styles.body-sm</td><td class="tok dim">14/20 · 400</td><td class="tok dim">14/20 · 400</td></tr>
+<tr><td class="tok">--al-toast-duration</td><td class="tok dim">motion.duration.popup</td><td class="tok dim">200ms</td><td class="tok dim">200ms</td></tr>
+<tr><td class="tok">--al-toast-easing-enter</td><td class="tok dim">motion.easing.enter</td><td class="tok dim">cubic-bezier(0, 0, 0.58, 1)</td><td class="tok dim">cubic-bezier(0, 0, 0.58, 1)</td></tr>
+<tr><td class="tok">--al-toast-easing-exit</td><td class="tok dim">motion.easing.exit</td><td class="tok dim">cubic-bezier(0.42, 0, 1, 1)</td><td class="tok dim">cubic-bezier(0.42, 0, 1, 1)</td></tr>
+<tr><td class="tok">--al-toast-max-width</td><td class="tok dim">380px</td><td class="tok dim">380px</td><td class="tok dim">380px</td></tr>
+<tr><td class="tok">--al-toast-timeout</td><td class="tok dim">6000ms</td><td class="tok dim">6000ms</td><td class="tok dim">6000ms</td></tr></tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Dois valores declarados</b>
+    Todo token aponta para a Foundation, menos <code>toast-max-width</code> (380px) — a Foundation não
+    tem escala de largura, a mesma exceção do Modal e do Tooltip — e <code>toast-timeout</code>
+    (6000ms), o tempo na tela de Sucesso e Informação, que fica no componente como os atrasos do Tooltip.
+  </div>
+  <div class="note">
+    <b>Largura máxima, não fixa</b>
+    380px, ou a janela menos 16px de cada lado — o que for menor. No celular o toast ocupa a
+    largura toda sem media query.
+  </div>
+  <div class="note">
+    <b>O status <code>error</code> usa o semântico <code>danger</code></b>
+    O mesmo mapeamento do Tag: o nome é o do produto, a cor é a da Foundation.
+  </div>
+  <div class="note">
+    <b>Mora na top layer</b>
+    A região é um <code>popover="manual"</code> que o <code>toast.js</code> abre ao carregar e nunca fecha:
+    fica acima de tudo sem z-index, e as duas regiões vivas já existem antes da primeira mensagem. Vazia, não
+    ocupa espaço nem pega clique.
+  </div>
+  <div class="note">
+    <b>Entra em 200ms</b>
+    Sobe 16px — vem da borda da janela até o lugar — com fade, na curva de entrada. Sai só com fade,
+    na curva de saída. Sem movimento com movimento reduzido.
+  </div>
+  <div class="note">
+    <b>O comportamento vem no <code>toast.js</code></b>
+    Fila, tempo na tela, pausa, X, Esc e foco. O tempo e a duração da saída são lidos dos tokens no CSS,
+    nunca escritos no script.
+  </div>
+</section></div><div class="panel" id="p-toast-guide" role="tabpanel" aria-labelledby="t-toast-guide" tabindex="0" hidden>
+<section>
+  <h2>A coisa e o que aconteceu</h2>
+  <div class="dd" style="margin-top:16px">
+    <div class="cell do">
+      <span class="lab">Curto e concreto</span>
+      <div class="stage2 ts-stage2"><div class="ts-frozen" aria-hidden="true" inert><div class="al-toast al-toast--success"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Sucesso" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><path d="m16 9-5.5 5.5L8 12" /></svg><div class="al-toast__text"><p class="al-toast__title">Produto salvo</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div>
+      <p class="cap">Dá para ler de relance, antes de sumir.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Uma celebração</span>
+      <div class="stage2 ts-stage2"><div class="ts-fake " aria-hidden="true">Oba! Tudo certo por aqui, suas alterações foram salvas com sucesso!</div></div>
+      <p class="cap">Longo, e não diz o que foi salvo.</p>
+    </div>
+  </div>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Erro com saída</span>
+      <div class="stage2 ts-stage2"><div class="ts-frozen" aria-hidden="true" inert><div class="al-toast al-toast--error"><svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Erro" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg><div class="al-toast__text"><p class="al-toast__title">Não foi possível enviar</p><p class="al-toast__description">Verifique a conexão e tente de novo.</p></div><button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Fechar notificação"><svg class="al-icon" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button></div></div></div>
+      <p class="cap">O que falhou e o que fazer. Fica até a pessoa fechar.</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Erro de formulário</span>
+      <div class="stage2 ts-stage2"><div class="ts-fake " aria-hidden="true">O campo E-mail é obrigatório.</div></div>
+      <p class="cap">Isso é a mensagem do campo, ao lado do campo.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>As regras</h2>
+  <h3 class="tb-rgroup">Quando usar cada status</h3>
+<div class="rule"><div class="rn">01</div><div><h3>Sucesso confirma o que a pessoa acabou de fazer</h3><p>“Produto salvo”. Precedentes: Spectrum, Polaris.</p></div></div>
+<div class="rule"><div class="rn">02</div><div><h3>Informação avisa de um processo que segue sem ela</h3><p>“Exportação iniciada”. Precedente: Spectrum.</p></div></div>
+<div class="rule"><div class="rn">03</div><div><h3>Aviso: feito, com uma ressalva</h3><p>“Salvo sem a imagem”. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">04</div><div><h3>Erro só para falha não crítica, numa frase</h3><p>Se a pessoa precisa decidir algo, é Modal. Precedentes: Polaris, Carbon.</p></div></div>
+<div class="rule"><div class="rn">05</div><div><h3>Responde a algo que acabou de acontecer</h3><p>Nunca aparece sozinho ao carregar a página. Precedente: Carbon.</p></div></div>
+<h3 class="tb-rgroup">Quando não usar</h3>
+<div class="rule"><div class="rn">06</div><div><h3>Erro de formulário fica no campo</h3><p>Na mensagem do próprio campo, nunca em toast. Precedentes: Carbon, Polaris.</p></div></div>
+<div class="rule"><div class="rn">07</div><div><h3>O que é essencial não pode sumir</h3><p>Ou também está na página, ou é Aviso ou Erro, que ficam. Precedente: W3C, exemplo do WCAG 2.2.1.</p></div></div>
+<div class="rule"><div class="rn">08</div><div><h3>Não repita o que a tela já mostra</h3><p>A não ser que a pessoa possa ter perdido a mudança. Precedente: Polaris.</p></div></div>
+<h3 class="tb-rgroup">Conteúdo</h3>
+<div class="rule"><div class="rn">09</div><div><h3>Título curto: a coisa e o que aconteceu</h3><p>“Pedido enviado”, até umas quatro palavras. Precedente: Polaris (três; em português o artigo pesa).</p></div></div>
+<div class="rule"><div class="rn">10</div><div><h3>Só a primeira maiúscula, título sem ponto</h3><p>Precedentes: Nord, Polaris.</p></div></div>
+<div class="rule"><div class="rn">11</div><div><h3>Descrição opcional, uma frase, com ponto</h3><p>Precisou de mais, não é toast. Precedente: Primer.</p></div></div>
+<div class="rule"><div class="rn">12</div><div><h3>Erro diz o que falhou e o que fazer</h3><p>Sem “Ops!” e sem código de erro. Precedentes: Polaris, Carbon.</p></div></div>
+<h3 class="tb-rgroup">Ícone</h3>
+<div class="rule"><div class="rn">13</div><div><h3>Obrigatório e fixo por status</h3><p>Círculo com check, triângulo, círculo com exclamação e “i”: a pista que não depende de cor. Precedente: Spectrum.</p></div></div>
+<div class="rule"><div class="rn">14</div><div><h3>Anunciado com o nome do status</h3><p><code>role="img"</code> e <code>aria-label</code> — “Erro”. Contrato do Icon do AL.</p></div></div>
+<h3 class="tb-rgroup">Comportamento</h3>
+<div class="rule"><div class="rn">15</div><div><h3>Um por vez, em fila</h3><p>O que chega com outro na tela espera ele sair. Precedente: Material.</p></div></div>
+<div class="rule"><div class="rn">16</div><div><h3>Canto inferior direito</h3><p>A 16px das bordas; no celular, a largura da tela menos 16px de cada lado. Decisão 8 da etapa 1.</p></div></div>
+<div class="rule"><div class="rn">17</div><div><h3>Sucesso e Informação saem em 6s</h3><p>Pausa com o ponteiro em cima ou o foco dentro, e retoma de onde parou. Precedente: Spectrum.</p></div></div>
+<div class="rule"><div class="rn">18</div><div><h3>Aviso e Erro ficam até fechar</h3><p>E seguram a fila. Decisão 7 da etapa 1.</p></div></div>
+<div class="rule"><div class="rn">19</div><div><h3>O X fecha sempre; Esc também</h3><p>Esc com o foco dentro do toast. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">20</div><div><h3>Sobe com fade, sai com fade</h3><p>Em 200ms; sem movimento com movimento reduzido. Motion da Foundation.</p></div></div>
+<h3 class="tb-rgroup">Acessibilidade</h3>
+<div class="rule"><div class="rn">21</div><div><h3>Nunca rouba o foco</h3><p>É anunciado, não focado. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">22</div><div><h3>Erro interrompe, o resto espera</h3><p>Erro em <code>role="alert"</code>; Sucesso, Informação e Aviso em <code>role="status"</code>. Precedente: Carbon.</p></div></div>
+<div class="rule"><div class="rn">23</div><div><h3>A região existe antes da mensagem</h3><p>Um live region criado junto com o texto não é anunciado.</p></div></div>
+<div class="rule"><div class="rn">24</div><div><h3>O X é um botão de verdade</h3><p>“Fechar notificação”, alcançável pelo Tab. Precedente: Carbon.</p></div></div>
+<h3 class="tb-rgroup">Fora de escopo</h3>
+<div class="rule"><div class="rn">25</div><div><h3>Sem botão de ação</h3><p>“Desfazer” e afins vão num Modal ou na própria tela. Precedentes: Carbon e a crítica do Primer.</p></div></div>
+<div class="rule"><div class="rn">26</div><div><h3>Sem status neutro</h3><p>Informação cobre.</p></div></div>
+<div class="rule"><div class="rn">27</div><div><h3>Sem pilha de toasts</h3><p>Um por vez.</p></div></div>
+</section></div><div class="panel" id="p-toast-a11y" role="tabpanel" aria-labelledby="t-toast-a11y" tabindex="0" hidden>
+<section>
+  <h2>Combinações renderizadas</h2>
+  <p>O toast mora na camada mais alta do navegador, com fundo opaco: título, descrição, ícone e o X só
+  encostam no fundo do próprio toast. Quem encosta na página é a borda — e a página pode ser a tela, a
+  superfície ou um Modal aberto, onde o fundo do toast e o da página são a mesma cor. A borda é decorativa
+  (quem diz o status é o ícone), mas é ela que separa a caixa da página, então passa no 3:1 igual.</p>
+  <div class="stats">
+    <div class="stat hl"><b>44</b><span>combinações medidas</span></div>
+    <div class="stat"><b>44</b><span>passam</span></div>
+    <div class="stat"><b>0</b><span>exceções</span></div>
+    <div class="stat"><b>0</b><span>reprovas</span></div>
+  </div>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
+    <tbody><tr><td class="tok dim">claro</td><td class="name">titulo</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">14.55:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">descricao</td><td class="chipcell"><span class="chip sm" style="background:#717171"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.88:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">success / icone</td><td class="chipcell"><span class="chip sm" style="background:#006911"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">6.93:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">warning / icone</td><td class="chipcell"><span class="chip sm" style="background:#704F00"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">7.48:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error / icone</td><td class="chipcell"><span class="chip sm" style="background:#A00E27"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">8.12:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">info / icone</td><td class="chipcell"><span class="chip sm" style="background:#0055A3"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">7.43:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#008A2A"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.50:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#008A2A"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.20:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#008A2A"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.50:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#916A00"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.92:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#916A00"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.60:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#916A00"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.92:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error / borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">5.38:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error / borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">5.03:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">error / borda</td><td class="chipcell"><span class="chip sm" style="background:#CA293F"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.38:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#0071D0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">4.91:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#0071D0"></span><span class="chip sm" style="background:#F7F7F7"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.59:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#0071D0"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.91:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">X / repouso</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">14.55:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">X / hover</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#EEEEEE"></span></td><td class="tok dim">bg-hover-raised</td><td class="num strong">12.54:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">X / pressionado</td><td class="chipcell"><span class="chip sm" style="background:#292929"></span><span class="chip sm" style="background:#E0E0E0"></span></td><td class="tok dim">bg-active-raised</td><td class="num strong">11.02:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">claro</td><td class="name">X / anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FC5000"></span><span class="chip sm" style="background:#FFFFFF"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">titulo</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">9.98:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">descricao</td><td class="chipcell"><span class="chip sm" style="background:#B3B3B3"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.10:1</td><td class="tok dim">4.5:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">success / icone</td><td class="chipcell"><span class="chip sm" style="background:#6ACD7C"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.42:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">warning / icone</td><td class="chipcell"><span class="chip sm" style="background:#EBCA7E"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">6.76:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error / icone</td><td class="chipcell"><span class="chip sm" style="background:#FF8D91"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.82:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">info / icone</td><td class="chipcell"><span class="chip sm" style="background:#76B8FF"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.13:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">6.29:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">5.15:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">success / borda</td><td class="chipcell"><span class="chip sm" style="background:#1BB14B"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.79:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">8.44:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">6.92:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">warning / borda</td><td class="chipcell"><span class="chip sm" style="background:#DCAC2E"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">5.08:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error / borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">5.30:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error / borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.34:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">error / borda</td><td class="chipcell"><span class="chip sm" style="background:#F84F5D"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.19:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#181818"></span></td><td class="tok dim">bg-canvas</td><td class="num strong">5.82:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#292929"></span></td><td class="tok dim">bg-surface</td><td class="num strong">4.77:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">info / borda</td><td class="chipcell"><span class="chip sm" style="background:#2696FF"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">3.51:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">X / repouso</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">9.98:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">X / hover</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#565656"></span></td><td class="tok dim">bg-hover-raised</td><td class="num strong">6.85:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">X / pressionado</td><td class="chipcell"><span class="chip sm" style="background:#F7F7F7"></span><span class="chip sm" style="background:#717171"></span></td><td class="tok dim">bg-active-raised</td><td class="num strong">4.56:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr>
+<tr><td class="tok dim">escuro</td><td class="name">X / anel de foco</td><td class="chipcell"><span class="chip sm" style="background:#FF9267"></span><span class="chip sm" style="background:#3E3E3E"></span></td><td class="tok dim">bg-surface-raised</td><td class="num strong">4.87:1</td><td class="tok dim">3.0:1</td><td><span class="pass">passa</span></td></tr></tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>O <code>a11y.py</code> cobra nove regras lendo o HTML que este site emite: a região e os
+  <b>8 toasts</b> do Playground, nenhum fora do contrato. As
+  9 amostras congeladas desta documentação seguem a mesma marcação e ficam fora do
+  teclado e do leitor de tela.</p>
+  <div class="anat" style="margin-top:16px">
+    <div><b>a · Região</b><span>Uma só por página: <code>&lt;section popover="manual"&gt;</code> com <code>aria-label</code>.</span></div>
+    <div><b>b · Regiões vivas</b><span>Uma <code>role="status"</code> e uma <code>role="alert"</code>, vazias desde o carregamento.</span></div>
+    <div><b>c · Template</b><span>Cada toast nasce de um <code>&lt;template&gt;</code> com a <code>.al-toast</code> como único filho.</span></div>
+    <div><b>d · Status</b><span>Um só: <code>--success</code>, <code>--warning</code>, <code>--error</code> ou <code>--info</code>.</span></div>
+    <div><b>e · Ícone</b><span>O do status, com <code>role="img"</code> e o nome do status no <code>aria-label</code>.</span></div>
+    <div><b>f · Texto</b><span>Título obrigatório; descrição opcional. Nada mais.</span></div>
+    <div><b>g · X</b><span>Icon Button Ghost sm, <code>aria-label="Fechar notificação"</code>.</span></div>
+    <div><b>h · Nada interativo</b><span>Além do X, sem link, botão, campo ou <code>tabindex</code>.</span></div>
+    <div><b>i · Amostras</b><span>Toast fora de <code>&lt;template&gt;</code> só sob <code>inert</code> e <code>aria-hidden</code>.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela</h2>
+  <div class="anat">
+    <div><b>Foco</b><span>O toast nunca recebe o foco sozinho. O X entra na ordem do Tab; se o toast sai com o foco dentro, o foco volta para onde estava.</span></div>
+    <div><b>Esc</b><span>Com o foco dentro, fecha o toast. Sobre um Modal, o primeiro Esc fecha só o toast.</span></div>
+    <div><b>Anúncio</b><span>Sucesso, Informação e Aviso esperam a pessoa terminar (<code>role="status"</code>). Erro interrompe (<code>role="alert"</code>).</span></div>
+    <div><b>Tempo</b><span>6s para Sucesso e Informação, pausado com o ponteiro em cima ou o foco dentro. Aviso e Erro não somem.</span></div>
+    <div><b>Movimento reduzido</b><span>Aparece e some sem transição.</span></div>
+  </div>
+</section></div></div>
 <footer>
-  <span><b>AL Design System</b> · v0.22.0</span>
+  <span><b>AL Design System</b> · v0.23.0</span>
   <span>Licença MIT</span>
   <span>OKLCH · WCAG 2.1 AA</span>
   <span>Âncora <code>#FC5000</code></span>
@@ -16776,6 +17381,7 @@ footer code{background:none; padding:0}
 </footer>
 </div></main>
 </div>
+<section class="al-toast-region" id="ts-region" aria-label="Notificações" popover="manual"><div class="al-toast-region__live" role="status"></div><div class="al-toast-region__live" role="alert"></div></section>
 
 <script>
 (function () {
@@ -17719,23 +18325,17 @@ var CBX_DASH = "<svg class=\"al-icon al-checkbox__dash\" aria-hidden=\"true\" fo
   if (email) {
     var resumo = document.getElementById('ov-sw-resumo');
     var contador = document.getElementById('ov-sw-contador');
-    var status = document.getElementById('ov-sw-status');
     var dep = function () { resumo.disabled = !email.checked; };
     email.addEventListener('change', dep);
     dep();
     contador.addEventListener('change', function () {
-      var pedido = contador.checked;
-      status.className = 'sw-status';
-      status.textContent = '';
+      if (!contador.checked) return;
+      // o servidor simulado recusa: a bolinha volta e a aplicacao avisa com um Toast de Erro
       setTimeout(function () {
-        if (pedido) {
-          contador.checked = false;
-          status.className = 'sw-status is-erro';
-          status.textContent = 'Não foi possível ativar o envio ao contador: nenhum contador cadastrado.';
-        } else {
-          status.className = 'sw-status is-ok';
-          status.textContent = 'Envio ao contador desativado.';
-        }
+        contador.checked = false;
+        if (window.alToast) window.alToast.show('ts-pg-error-1', {
+          title: 'Não foi possível ativar o envio ao contador',
+          description: 'Nenhum contador cadastrado. Cadastre um e tente de novo.' });
       }, 700);
     });
   }
@@ -19223,6 +19823,255 @@ var TT_DEMOS = {"name-top": {"html": "<div class=\"tt-row\"><button type=\"butto
     inp.addEventListener('input', render);
   });
   document.getElementById('tooltip-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = 'Copiado';
+      setTimeout(function () { btn.textContent = 'Copiar'; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = 'Não deu'; });
+    }
+  });
+  render();
+})();
+/* AL Design System - Toast (regras 15 a 24)
+ *
+ * A marcacao do toast mora na pagina, num <template>; este arquivo so cuida
+ * de MOSTRAR, CRONOMETRAR e TIRAR. Ver o contrato no cabecalho do toast.css.
+ *
+ *   - um por vez: quem chega com outro na tela espera na fila (regra 15);
+ *   - Success e Info saem depois de `toast-timeout` (6000ms); o relogio pausa
+ *     com o ponteiro em cima ou o foco dentro, e retoma de onde parou
+ *     (regra 17);
+ *   - Warning e Error so saem pelo X ou pelo Esc - e seguram a fila (regra 18);
+ *   - o X fecha sempre; Esc fecha com o foco dentro do toast, e o Esc para ai:
+ *     sobre um Modal, o primeiro Esc fecha so o toast (regra 19);
+ *   - nunca move o foco para o toast (regra 21). Se a pessoa tabulou ate o X
+ *     e o toast saiu, o foco volta para onde ela estava antes de entrar;
+ *   - Error entra na regiao role="alert", os outros na role="status"
+ *     (regra 22). As duas regioes ja existem na pagina (regra 23).
+ * O tempo na tela e a duracao da saida sao lidos dos tokens no CSS, nunca
+ * escritos aqui.
+ *
+ * Uso:
+ *   <script src="toast.js"><\/script>
+ *   alToast.show('toast-salvo')                        -> clona o <template id>
+ *   alToast.show(tpl, { title: '…', description: '…' }) -> troca os textos
+ *   alToast.dismiss()                                  -> tira o da tela
+ *   alToast.clear()                                    -> esvazia a fila e tira o da tela
+ * Navegador sem popover: a regiao fica no fluxo, no fim da pagina, e o anuncio
+ * continua chegando ao leitor de tela.
+ */
+(function () {
+  'use strict';
+
+  var queue = [];
+  var current = null;   // { el, timer, remaining, started, hover, focus, returnTo }
+
+  function token(el, name) {
+    return parseFloat(getComputedStyle(el).getPropertyValue('--al-toast-' + name)) || 0;
+  }
+
+  function region() {
+    return document.querySelector('.al-toast-region');
+  }
+
+  // A regiao fica aberta para sempre. Um Modal ou Drawer aberto (dialog:modal)
+  // torna INERTE tudo que esta fora dele - inclusive a regiao, mesmo desenhada
+  // por cima: o X nao recebe clique nem foco e o leitor de tela deixa de ver o
+  // toast. Entao, enquanto houver um aberto, a regiao mora DENTRO dele, e volta
+  // para o <body> quando ele fecha. Mover tira o popover da top layer; abrir de
+  // novo a poe no topo, acima do proprio dialog.
+  function host() {
+    var open = document.querySelectorAll('dialog:modal');
+    return open.length ? open[open.length - 1] : document.body;
+  }
+
+  function home(r) {
+    document.body.appendChild(r);
+    if (!r.matches(':popover-open')) r.showPopover();
+  }
+
+  function raise(r) {
+    if (typeof r.showPopover !== 'function') return;
+    var h = host();
+    if (r.parentNode !== h) {
+      h.appendChild(r);
+      // Observa o atributo `open` em vez do evento `close`: o observer roda
+      // logo depois do close(), o evento espera uma tarefa da fila.
+      if (h !== document.body) {
+        var watch = new MutationObserver(function () {
+          if (h.open) return;
+          watch.disconnect();
+          home(r);
+        });
+        watch.observe(h, { attributes: true, attributeFilter: ['open'] });
+      }
+    }
+    if (!r.matches(':popover-open')) r.showPopover();
+  }
+
+  function persistent(el) {
+    return el.classList.contains('al-toast--warning') || el.classList.contains('al-toast--error');
+  }
+
+  // ---------------------------------------------------------------- relogio
+  function stopClock() {
+    if (!current || !current.timer) return;
+    clearTimeout(current.timer);
+    current.timer = 0;
+    current.remaining -= Date.now() - current.started;
+  }
+
+  function startClock() {
+    if (!current || current.timer || persistent(current.el)) return;
+    if (current.hover || current.focus) return;
+    var el = current.el;
+    current.started = Date.now();
+    current.timer = setTimeout(function () { dismiss(el); }, Math.max(current.remaining, 0));
+  }
+
+  // --------------------------------------------------------------- entra/sai
+  function build(source, text) {
+    var tpl = typeof source === 'string' ? document.getElementById(source) : source;
+    if (!tpl) return null;
+    var root = tpl.content ? tpl.content.firstElementChild : tpl;
+    if (!root || !root.classList.contains('al-toast')) return null;
+    var el = root.cloneNode(true);
+    if (text && text.title != null) el.querySelector('.al-toast__title').textContent = text.title;
+    if (text && text.description != null) {
+      var d = el.querySelector('.al-toast__description');
+      if (text.description === '') { if (d) d.remove(); }
+      else if (d) d.textContent = text.description;
+    }
+    return el;
+  }
+
+  function bind(el) {
+    el.addEventListener('pointerenter', function () {
+      if (!current || current.el !== el) return;
+      current.hover = true; stopClock();
+    });
+    el.addEventListener('pointerleave', function () {
+      if (!current || current.el !== el) return;
+      current.hover = false; startClock();
+    });
+    el.addEventListener('focusin', function (e) {
+      if (!current || current.el !== el) return;
+      if (e.relatedTarget && !el.contains(e.relatedTarget)) current.returnTo = e.relatedTarget;
+      current.focus = true; stopClock();
+    });
+    el.addEventListener('focusout', function (e) {
+      if (!current || current.el !== el || el.contains(e.relatedTarget)) return;
+      current.focus = false; startClock();
+    });
+    el.addEventListener('click', function (e) {
+      if (e.target.closest('.al-toast__close')) dismiss(el);
+    });
+    el.addEventListener('keydown', function (e) {
+      if (e.key !== 'Escape') return;
+      e.preventDefault();
+      e.stopPropagation();
+      dismiss(el);
+    });
+  }
+
+  function next() {
+    if (current || !queue.length) return;
+    var r = region();
+    if (!r) return;
+    var el = queue.shift();
+    raise(r);
+    var live = r.querySelector(el.classList.contains('al-toast--error') ? '[role="alert"]' : '[role="status"]');
+    if (!live) return;
+    bind(el);
+    live.appendChild(el);
+    current = { el: el, timer: 0, remaining: token(el, 'timeout'), started: 0,
+                hover: false, focus: false, returnTo: null };
+    startClock();
+  }
+
+  function show(source, text) {
+    var el = build(source, text);
+    if (!el) return null;
+    queue.push(el);
+    next();
+    return el;
+  }
+
+  function dismiss(el) {
+    if (!current || (el && current.el !== el) || current.el.hasAttribute('data-leaving')) return;
+    var gone = current;
+    clearTimeout(gone.timer);
+    if (gone.el.contains(document.activeElement)) {
+      if (gone.returnTo && gone.returnTo.isConnected) gone.returnTo.focus();
+      else document.activeElement.blur();
+    }
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var wait = reduce ? 0 : token(gone.el, 'duration');
+    gone.el.setAttribute('data-leaving', '');
+    setTimeout(function () {
+      gone.el.remove();
+      if (current === gone) current = null;
+      next();
+    }, wait);
+  }
+
+  function clear() {
+    queue.length = 0;
+    dismiss();
+  }
+
+  function init() {
+    var r = region();
+    if (r && typeof r.showPopover === 'function' && !r.matches(':popover-open')) r.showPopover();
+  }
+
+  window.alToast = { show: show, dismiss: dismiss, clear: clear };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+var TS_DEMOS = {"success-1": {"frozen": "<div class=\"ts-frozen\" aria-hidden=\"true\" inert><div class=\"al-toast al-toast--success\"><svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"m16 9-5.5 5.5L8 12\" /><\/svg><div class=\"al-toast__text\"><p class=\"al-toast__title\">Produto salvo<\/p><p class=\"al-toast__description\">Já aparece na loja.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\" aria-label=\"Fechar notificação\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- uma vez por página, no fim do <body> -->\n<section class=\"al-toast-region\" aria-label=\"Notificações\" popover=\"manual\">\n  <div class=\"al-toast-region__live\" role=\"status\"><\/div>\n  <div class=\"al-toast-region__live\" role=\"alert\"><\/div>\n<\/section>\n\n<template id=\"toast-success\">\n  <div class=\"al-toast al-toast--success\">\n    <svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\">…circle-check…<\/svg>\n    <div class=\"al-toast__text\">\n      <p class=\"al-toast__title\">Produto salvo<\/p>\n      <p class=\"al-toast__description\">Já aparece na loja.<\/p>\n    <\/div>\n    <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\"\n            aria-label=\"Fechar notificação\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n    <\/button>\n  <\/div>\n<\/template>\n\n<script>alToast.show('toast-success');<\/script>"}, "success-0": {"frozen": "<div class=\"ts-frozen\" aria-hidden=\"true\" inert><div class=\"al-toast al-toast--success\"><svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"m16 9-5.5 5.5L8 12\" /><\/svg><div class=\"al-toast__text\"><p class=\"al-toast__title\">Produto salvo<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\" aria-label=\"Fechar notificação\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- uma vez por página, no fim do <body> -->\n<section class=\"al-toast-region\" aria-label=\"Notificações\" popover=\"manual\">\n  <div class=\"al-toast-region__live\" role=\"status\"><\/div>\n  <div class=\"al-toast-region__live\" role=\"alert\"><\/div>\n<\/section>\n\n<template id=\"toast-success\">\n  <div class=\"al-toast al-toast--success\">\n    <svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Sucesso\" focusable=\"false\">…circle-check…<\/svg>\n    <div class=\"al-toast__text\">\n      <p class=\"al-toast__title\">Produto salvo<\/p>\n    <\/div>\n    <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\"\n            aria-label=\"Fechar notificação\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n    <\/button>\n  <\/div>\n<\/template>\n\n<script>alToast.show('toast-success');<\/script>"}, "warning-1": {"frozen": "<div class=\"ts-frozen\" aria-hidden=\"true\" inert><div class=\"al-toast al-toast--warning\"><svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /><path d=\"M12 9v4\" /><path d=\"M12 17h.01\" /><\/svg><div class=\"al-toast__text\"><p class=\"al-toast__title\">Salvo sem a imagem<\/p><p class=\"al-toast__description\">O arquivo passou de 5 MB. Envie outro pela edição.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\" aria-label=\"Fechar notificação\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- uma vez por página, no fim do <body> -->\n<section class=\"al-toast-region\" aria-label=\"Notificações\" popover=\"manual\">\n  <div class=\"al-toast-region__live\" role=\"status\"><\/div>\n  <div class=\"al-toast-region__live\" role=\"alert\"><\/div>\n<\/section>\n\n<template id=\"toast-warning\">\n  <div class=\"al-toast al-toast--warning\">\n    <svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\">…triangle-alert…<\/svg>\n    <div class=\"al-toast__text\">\n      <p class=\"al-toast__title\">Salvo sem a imagem<\/p>\n      <p class=\"al-toast__description\">O arquivo passou de 5 MB. Envie outro pela edição.<\/p>\n    <\/div>\n    <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\"\n            aria-label=\"Fechar notificação\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n    <\/button>\n  <\/div>\n<\/template>\n\n<script>alToast.show('toast-warning');<\/script>"}, "warning-0": {"frozen": "<div class=\"ts-frozen\" aria-hidden=\"true\" inert><div class=\"al-toast al-toast--warning\"><svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3\" /><path d=\"M12 9v4\" /><path d=\"M12 17h.01\" /><\/svg><div class=\"al-toast__text\"><p class=\"al-toast__title\">Salvo sem a imagem<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\" aria-label=\"Fechar notificação\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- uma vez por página, no fim do <body> -->\n<section class=\"al-toast-region\" aria-label=\"Notificações\" popover=\"manual\">\n  <div class=\"al-toast-region__live\" role=\"status\"><\/div>\n  <div class=\"al-toast-region__live\" role=\"alert\"><\/div>\n<\/section>\n\n<template id=\"toast-warning\">\n  <div class=\"al-toast al-toast--warning\">\n    <svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Aviso\" focusable=\"false\">…triangle-alert…<\/svg>\n    <div class=\"al-toast__text\">\n      <p class=\"al-toast__title\">Salvo sem a imagem<\/p>\n    <\/div>\n    <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\"\n            aria-label=\"Fechar notificação\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n    <\/button>\n  <\/div>\n<\/template>\n\n<script>alToast.show('toast-warning');<\/script>"}, "error-1": {"frozen": "<div class=\"ts-frozen\" aria-hidden=\"true\" inert><div class=\"al-toast al-toast--error\"><svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Erro\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\" /><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\" /><\/svg><div class=\"al-toast__text\"><p class=\"al-toast__title\">Não foi possível enviar<\/p><p class=\"al-toast__description\">Verifique a conexão e tente de novo.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\" aria-label=\"Fechar notificação\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- uma vez por página, no fim do <body> -->\n<section class=\"al-toast-region\" aria-label=\"Notificações\" popover=\"manual\">\n  <div class=\"al-toast-region__live\" role=\"status\"><\/div>\n  <div class=\"al-toast-region__live\" role=\"alert\"><\/div>\n<\/section>\n\n<template id=\"toast-error\">\n  <div class=\"al-toast al-toast--error\">\n    <svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Erro\" focusable=\"false\">…circle-alert…<\/svg>\n    <div class=\"al-toast__text\">\n      <p class=\"al-toast__title\">Não foi possível enviar<\/p>\n      <p class=\"al-toast__description\">Verifique a conexão e tente de novo.<\/p>\n    <\/div>\n    <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\"\n            aria-label=\"Fechar notificação\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n    <\/button>\n  <\/div>\n<\/template>\n\n<script>alToast.show('toast-error');<\/script>"}, "error-0": {"frozen": "<div class=\"ts-frozen\" aria-hidden=\"true\" inert><div class=\"al-toast al-toast--error\"><svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Erro\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><line x1=\"12\" x2=\"12\" y1=\"8\" y2=\"12\" /><line x1=\"12\" x2=\"12.01\" y1=\"16\" y2=\"16\" /><\/svg><div class=\"al-toast__text\"><p class=\"al-toast__title\">Não foi possível enviar<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\" aria-label=\"Fechar notificação\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- uma vez por página, no fim do <body> -->\n<section class=\"al-toast-region\" aria-label=\"Notificações\" popover=\"manual\">\n  <div class=\"al-toast-region__live\" role=\"status\"><\/div>\n  <div class=\"al-toast-region__live\" role=\"alert\"><\/div>\n<\/section>\n\n<template id=\"toast-error\">\n  <div class=\"al-toast al-toast--error\">\n    <svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Erro\" focusable=\"false\">…circle-alert…<\/svg>\n    <div class=\"al-toast__text\">\n      <p class=\"al-toast__title\">Não foi possível enviar<\/p>\n    <\/div>\n    <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\"\n            aria-label=\"Fechar notificação\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n    <\/button>\n  <\/div>\n<\/template>\n\n<script>alToast.show('toast-error');<\/script>"}, "info-1": {"frozen": "<div class=\"ts-frozen\" aria-hidden=\"true\" inert><div class=\"al-toast al-toast--info\"><svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" /><\/svg><div class=\"al-toast__text\"><p class=\"al-toast__title\">Exportação iniciada<\/p><p class=\"al-toast__description\">Avisamos quando o arquivo estiver pronto.<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\" aria-label=\"Fechar notificação\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- uma vez por página, no fim do <body> -->\n<section class=\"al-toast-region\" aria-label=\"Notificações\" popover=\"manual\">\n  <div class=\"al-toast-region__live\" role=\"status\"><\/div>\n  <div class=\"al-toast-region__live\" role=\"alert\"><\/div>\n<\/section>\n\n<template id=\"toast-info\">\n  <div class=\"al-toast al-toast--info\">\n    <svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\">…info…<\/svg>\n    <div class=\"al-toast__text\">\n      <p class=\"al-toast__title\">Exportação iniciada<\/p>\n      <p class=\"al-toast__description\">Avisamos quando o arquivo estiver pronto.<\/p>\n    <\/div>\n    <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\"\n            aria-label=\"Fechar notificação\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n    <\/button>\n  <\/div>\n<\/template>\n\n<script>alToast.show('toast-info');<\/script>"}, "info-0": {"frozen": "<div class=\"ts-frozen\" aria-hidden=\"true\" inert><div class=\"al-toast al-toast--info\"><svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><circle cx=\"12\" cy=\"12\" r=\"10\" /><path d=\"M12 16v-4\" /><path d=\"M12 8h.01\" /><\/svg><div class=\"al-toast__text\"><p class=\"al-toast__title\">Exportação iniciada<\/p><\/div><button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\" aria-label=\"Fechar notificação\"><svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" ><path d=\"M18 6 6 18\" /><path d=\"m6 6 12 12\" /><\/svg><\/button><\/div><\/div>", "code": "<!-- uma vez por página, no fim do <body> -->\n<section class=\"al-toast-region\" aria-label=\"Notificações\" popover=\"manual\">\n  <div class=\"al-toast-region__live\" role=\"status\"><\/div>\n  <div class=\"al-toast-region__live\" role=\"alert\"><\/div>\n<\/section>\n\n<template id=\"toast-info\">\n  <div class=\"al-toast al-toast--info\">\n    <svg class=\"al-icon al-icon--20 al-toast__icon\" role=\"img\" aria-label=\"Informação\" focusable=\"false\">…info…<\/svg>\n    <div class=\"al-toast__text\">\n      <p class=\"al-toast__title\">Exportação iniciada<\/p>\n    <\/div>\n    <button type=\"button\" class=\"al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close\"\n            aria-label=\"Fechar notificação\">\n      <svg class=\"al-icon\" aria-hidden=\"true\" focusable=\"false\">…x…<\/svg>\n    <\/button>\n  <\/div>\n<\/template>\n\n<script>alToast.show('toast-info');<\/script>"}};
+
+(function () {
+  // ── playground do Toast ──
+  var stage = document.getElementById('toast-stage');
+  if (!stage) return;
+  var code = document.getElementById('toast-code');
+  var region = document.getElementById('ts-region');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+  function key() { return pick('tsstatus') + '-' + pick('tsdesc'); }
+
+  // O palco mostra a amostra congelada; o tema vale para ela e para a regiao
+  // viva, que mora fora do palco, no fim do <body>.
+  function render() {
+    var theme = pick('tstheme');
+    [stage, region].forEach(function (el) {
+      if (!el) return;
+      if (theme === 'auto') el.removeAttribute('data-theme');
+      else el.setAttribute('data-theme', theme);
+    });
+    var demo = TS_DEMOS[key()];
+    stage.innerHTML = demo.frozen;
+    code.innerHTML = esc(demo.code);
+  }
+
+  document.getElementById('toast-fire').addEventListener('click', function () {
+    if (window.alToast) window.alToast.show('ts-pg-' + key());
+  });
+  document.querySelectorAll('#toast-controls input').forEach(function (inp) {
+    inp.addEventListener('input', render);
+  });
+  document.getElementById('toast-copy').addEventListener('click', function () {
     var btn = this;
     var done = function () {
       btn.textContent = 'Copiado';

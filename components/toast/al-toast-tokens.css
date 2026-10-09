@@ -1,0 +1,53 @@
+/* AL Design System - tokens do Toast
+ * GERADO por components/toast/tokens.py. Nao editar a mao.
+ */
+
+:root {
+
+  /* cor - caixa e texto */
+  --al-toast-bg: var(--al-bg-surface-raised);
+  --al-toast-title: var(--al-text-primary);
+  --al-toast-description: var(--al-text-secondary);
+
+  /* cor - status: icone e borda */
+  --al-toast-success-icon: var(--al-text-success);
+  --al-toast-success-border: var(--al-border-success);
+  --al-toast-warning-icon: var(--al-text-warning);
+  --al-toast-warning-border: var(--al-border-warning);
+  --al-toast-error-icon: var(--al-text-danger);
+  --al-toast-error-border: var(--al-border-danger);
+  --al-toast-info-icon: var(--al-text-info);
+  --al-toast-info-border: var(--al-border-info);
+
+  /* elevacao - altura, nao estado */
+  --al-toast-shadow: var(--al-elevation-3);
+
+  /* geometria */
+  --al-toast-padding: var(--al-space-12);
+  --al-toast-gap: var(--al-space-8);
+  --al-toast-text-gap: var(--al-space-4);
+  --al-toast-radius: var(--al-radius-lg);
+  --al-toast-border-width: var(--al-border-width-1);
+  --al-toast-offset: var(--al-space-16);
+
+  /* largura maxima - valor declarado, sem escala na Foundation */
+  --al-toast-max-width: 380px;
+
+  /* movimento */
+  --al-toast-duration: var(--al-motion-duration-popup);
+  --al-toast-easing-enter: var(--al-motion-easing-enter);
+  --al-toast-easing-exit: var(--al-motion-easing-exit);
+
+  /* tempo na tela de Success e Info - valor declarado (decisao 7). Lido pelo toast.js */
+  --al-toast-timeout: 6000ms;
+
+  /* tipografia - cada estilo vira quatro vars */
+  --al-toast-title-font-size: var(--al-font-size-sm);
+  --al-toast-title-line-height: var(--al-line-height-sm);
+  --al-toast-title-font-weight: 500;
+  --al-toast-title-tracking: 0em;
+  --al-toast-description-font-size: var(--al-font-size-sm);
+  --al-toast-description-line-height: var(--al-line-height-sm);
+  --al-toast-description-font-weight: 400;
+  --al-toast-description-tracking: 0em;
+}
