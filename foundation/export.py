@@ -74,7 +74,7 @@ TOKENS = {
     # 1024px o sidebar.js move a mesma <aside> para um <dialog> pela esquerda.
     # Reusa bg-scrim, elevation-5 e motion.duration.panel; nenhum token da
     # Foundation muda.
-    "name": "AL Design System", "version": "0.24.0", "license": "MIT",
+    "name": "AL Design System", "version": "1.0.0", "license": "MIT",
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
