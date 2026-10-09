@@ -50,6 +50,8 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+from contrast import cr  # noqa: E402
 FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))
 AVATAR = json.load(open(os.path.join(HERE, 'tokens.json')))
 
@@ -61,22 +63,6 @@ TEXT_FLOOR = 4.5          # 1.4.3 - as iniciais sao texto
 NON_TEXT_FLOOR = 3.0      # 1.4.11 - o icone e elemento grafico
 
 SITE = os.path.join(ROOT, 'site', 'index.html')
-
-
-def lin(c):
-    c = c / 255
-    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
-
-
-def lum(h):
-    h = h.lstrip('#')
-    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
-    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
-
-
-def cr(a, b):
-    l1, l2 = sorted((lum(a), lum(b)), reverse=True)
-    return (l1 + 0.05) / (l2 + 0.05)
 
 
 def tok(name, theme):

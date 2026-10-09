@@ -66,10 +66,12 @@ Rodar: python3 a11y.py [caminho.html]
 import json
 import os
 import sys
-from html.parser import HTMLParser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+from contrast import cr, composite  # noqa: E402
+from htmltree import Tree, walk, has, ancestors, text_flat  # noqa: E402
 FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))
 SBR = json.load(open(os.path.join(HERE, 'tokens.json')))
 TAB = json.load(open(os.path.join(ROOT, 'components', 'tab', 'tokens.json')))
@@ -89,33 +91,6 @@ EXC_SCRIM = 'sidebar-nao-se-separa-do-scrim-no-escuro'
 
 DEFAULT_HTML = os.path.join(ROOT, 'site', 'index.html')
 OUT_JSON = os.path.join(HERE, 'a11y.json')
-
-VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
-        'meta', 'source', 'track', 'wbr'}
-
-
-def lin(c):
-    c = c / 255
-    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
-
-
-def lum(h):
-    h = h.lstrip('#')[:6]
-    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
-    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
-
-
-def cr(a, b):
-    l1, l2 = sorted((lum(a), lum(b)), reverse=True)
-    return (l1 + 0.05) / (l2 + 0.05)
-
-
-def composite(hex8, base):
-    h = hex8.lstrip('#')
-    a = int(h[6:8], 16) / 255
-    f = [int(h[i:i + 2], 16) for i in (0, 2, 4)]
-    b = [int(base.lstrip('#')[i:i + 2], 16) for i in (0, 2, 4)]
-    return '#%02X%02X%02X' % tuple(round(f[i] * a + b[i] * (1 - a)) for i in range(3))
 
 
 def sem(name, theme):
@@ -203,71 +178,6 @@ def contrast_rows():
 
 
 # ─────────────────────────────────────────────── marcacao
-class Tree(HTMLParser):
-    def __init__(self):
-        super().__init__(convert_charrefs=True)
-        self.root = {'tag': '#root', 'attrs': {}, 'kids': [], 'text': '', 'line': 0}
-        self.stack = [self.root]
-        self.skip = 0
-
-    def handle_starttag(self, tag, attrs):
-        if tag in ('style', 'script'):
-            self.skip += 1
-            return
-        if self.skip:
-            return
-        node = {'tag': tag, 'attrs': dict((k, v or '') for k, v in attrs),
-                'kids': [], 'text': '', 'line': self.getpos()[0], 'parent': self.stack[-1]}
-        self.stack[-1]['kids'].append(node)
-        if tag not in VOID:
-            self.stack.append(node)
-
-    def handle_startendtag(self, tag, attrs):
-        self.handle_starttag(tag, attrs)
-        if tag not in VOID and not self.skip and self.stack[-1]['tag'] == tag:
-            self.stack.pop()
-
-    def handle_endtag(self, tag):
-        if tag in ('style', 'script'):
-            self.skip = max(0, self.skip - 1)
-            return
-        if self.skip:
-            return
-        for i in range(len(self.stack) - 1, 0, -1):
-            if self.stack[i]['tag'] == tag:
-                del self.stack[i:]
-                break
-
-    def handle_data(self, data):
-        if not self.skip:
-            self.stack[-1]['text'] += data
-
-
-def walk(node):
-    for k in node['kids']:
-        yield k
-        yield from walk(k)
-
-
-def classes(node):
-    return node['attrs'].get('class', '').split()
-
-
-def has(node, cls):
-    return cls in classes(node)
-
-
-def ancestors(node):
-    p = node.get('parent')
-    while p is not None and p['tag'] != '#root':
-        yield p
-        p = p.get('parent')
-
-
-def text_of(node):
-    return ' '.join((node['text'] + ' ' + ' '.join(text_of(k) for k in node['kids'])).split())
-
-
 def check_sidebar(n, ids, problems):
     a, ln = n['attrs'], n['line']
     # (a)
@@ -307,7 +217,7 @@ def check_sidebar(n, ids, problems):
                 if img['attrs'].get('alt', None) != '':
                     problems.append(f'linha {img["line"]}: foto do perfil com alt="" (regra 18)')
         nome = [d for d in walk(prof) if has(d, 'al-sidebar__name')]
-        if len(nome) != 1 or not text_of(nome[0]):
+        if len(nome) != 1 or not text_flat(nome[0]):
             problems.append(f'linha {prof["line"]}: o perfil tem um .al-sidebar__name com texto (regra 18)')
         for b in (d for d in walk(prof) if d['tag'] in ('a', 'button')):
             if not has(b, 'al-icon-btn'):
@@ -324,7 +234,7 @@ def check_sidebar(n, ids, problems):
     for g in (d for d in walk(nav) if has(d, 'al-sidebar__group')):
         labels = [k for k in g['kids'] if has(k, 'al-sidebar__group-label')]
         lists = [k for k in g['kids'] if k['tag'] == 'ul']
-        if len(labels) != 1 or not text_of(labels[0]) or not labels[0]['attrs'].get('id'):
+        if len(labels) != 1 or not text_flat(labels[0]) or not labels[0]['attrs'].get('id'):
             problems.append(f'linha {g["line"]}: grupo sem um rotulo com texto e id (regra 27)')
             continue
         if len(lists) != 1 or lists[0]['attrs'].get('aria-labelledby') != labels[0]['attrs']['id']:
@@ -353,7 +263,7 @@ def check_sidebar(n, ids, problems):
         if ia.get('role') == 'tab' or 'aria-selected' in ia:
             problems.append(f'linha {it["line"]}: item de navegacao nunca e role="tab"/aria-selected (regra 28)')
         lab = [d for d in walk(it) if has(d, 'al-tab__label')]
-        txt = text_of(lab[0]) if lab else ''
+        txt = text_flat(lab[0]) if lab else ''
         if not txt:
             problems.append(f'linha {it["line"]}: item sem .al-tab__label com texto')
         elif txt.lower() in rotulos:

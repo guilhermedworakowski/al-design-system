@@ -1,5 +1,6 @@
 """AL Design System - gerador de escalas de cor em OKLCH com gamut mapping sRGB."""
-import math, json
+import math, json, os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'tools'))
 
 # ---------- conversao ----------
 def _lin(c): return c/12.92 if c <= 0.04045 else ((c+0.055)/1.055)**2.4
@@ -46,15 +47,8 @@ def hex_to_oklch(h):
     B = 0.0259040371*l + 0.7827717662*m - 0.8086757660*s
     return L, math.hypot(A,B), math.degrees(math.atan2(B,A)) % 360
 
-def lum(h):
-    h = h.lstrip('#')
-    r, g, b = [_lin(int(h[i:i+2],16)/255) for i in (0,2,4)]
-    return 0.2126*r + 0.7152*g + 0.0722*b
-
-def cr(a, b):
-    l1, l2 = lum(a), lum(b)
-    if l1 < l2: l1, l2 = l2, l1
-    return (l1+0.05)/(l2+0.05)
+# Contraste WCAG: a conta mora em tools/contrast.py, para todos usarem a mesma.
+from contrast import lum, cr  # noqa: E402,F401
 
 def dE_ok(h1, h2):
     """Distancia OKLab entre duas cores (perceptual)."""

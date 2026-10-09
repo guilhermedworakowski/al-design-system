@@ -47,6 +47,7 @@ sys.path.insert(0, os.path.join(ROOT, 'foundation'))
 
 from build import SEM                     # noqa: E402
 from color import cr                      # noqa: E402
+from contrast import composite            # noqa: E402
 
 FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))   # noqa: E402
 
@@ -130,19 +131,6 @@ def resolve_foundation(path):
             raise KeyError(path)
         node = node[part]
     return node
-
-
-def _rgb(h):
-    h = h.lstrip('#')
-    return [int(h[i:i + 2], 16) for i in (0, 2, 4)]
-
-
-def composite(hex8, base):
-    """#RRGGBBAA sobre #RRGGBB -> #RRGGBB."""
-    h = hex8.lstrip('#')
-    a = int(h[6:8], 16) / 255
-    f, b = _rgb(h[:6]), _rgb(base)
-    return '#%02X%02X%02X' % tuple(round(f[i] * a + b[i] * (1 - a)) for i in range(3))
 
 
 def color_of(role, i):

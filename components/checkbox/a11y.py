@@ -62,6 +62,9 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+# este portao compara a razao ja arredondada em 2 casas, como sempre fez
+from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))
 CHECKBOX = json.load(open(os.path.join(HERE, 'tokens.json')))
 
@@ -97,23 +100,6 @@ STATES = {
 
 # estados sem variante no Figma - pintados so pelo codigo (etapa 3)
 SO_NO_CODIGO = ('checked-focus', 'error-focus', 'error-checked', 'disabled-checked')
-
-
-def lin(c):
-    c = c / 255
-    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
-
-
-def lum(h):
-    h = h.lstrip('#')
-    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
-    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
-
-
-def cr(a, b):
-    la, lb = lum(a), lum(b)
-    hi, lo = max(la, lb), min(la, lb)
-    return round((hi + 0.05) / (lo + 0.05), 2)
 
 
 def tok(name, theme):
