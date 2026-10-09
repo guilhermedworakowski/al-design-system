@@ -32,6 +32,7 @@ A multi-step sign-up needs a progress indicator.
 **3. With the Sidebar, only the two levels below it.**
 If the Sidebar already shows where the person is, the trail repeats it.
 *Precedent: GOV.UK.*
+> **Conscious divergence** on the AL DS site, from rules 1 and 3: every page hero outside the two "Overview" pages carries a 2-level trail ("Overview > page") that repeats the Sidebar. One model of hero across the whole site was chosen over the rule.
 
 **4. Hierarchy, not history.**
 The path is the same no matter how the person got there, and it's a single model across the product.

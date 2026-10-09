@@ -34,8 +34,11 @@ THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
   Usage rules from guidelines.md, measured on the emitted HTML:
 
     a) `.al-breadcrumb` is a <nav> with aria-label (rule 19);
-    b) one live breadcrumb per document; the sample ones sit under `inert`
-       (on it or on an ancestor) and are exempt (rule 7);
+    b) one live breadcrumb per page; the sample ones sit under `inert`
+       (on it or on an ancestor) and are exempt, and so does an interactive
+       demo that can't be inert, marked by `data-al-demo` on an ancestor. A
+       single-file site keeps each page in a subtree that toggles `hidden`:
+       the nearest `hidden` ancestor marks the page, so one per subtree (rule 7);
     c) the only child is <ol class="al-breadcrumb__list"> and each of its
        children is <li class="al-breadcrumb__item"> (rule 19);
     d) the LAST item is only <span class="al-breadcrumb__current"
@@ -249,17 +252,19 @@ def markup_contract(path):
     t.feed(open(path, encoding='utf-8').read())
     ids = {n['attrs']['id']: n for n in walk(t.root) if n['attrs'].get('id')}
 
-    found, problems, live = 0, [], 0
+    found, problems, live = 0, [], {}
     for n in walk(t.root):
         if not has(n, 'al-breadcrumb'):
             continue
         found += 1
-        if 'inert' not in n['attrs'] and not any('inert' in a['attrs'] for a in ancestors(n)):
-            live += 1
+        if not any(x in a['attrs'] for a in [n, *ancestors(n)] for x in ('inert', 'data-al-demo')):
+            page = next((a for a in ancestors(n) if 'hidden' in a['attrs']), t.root)
+            live[id(page)] = live.get(id(page), 0) + 1
         check_breadcrumb(n, ids, problems)
     # (b)
-    if live > 1:
-        problems.append(f'{live} live breadcrumbs in the document - one per page; samples sit under inert (rule 7)')
+    for count in live.values():
+        if count > 1:
+            problems.append(f'{count} live breadcrumbs on one page - one per page; samples sit under inert (rule 7)')
     if found == 0:
         return None, ['no .al-breadcrumb in the HTML - run site/site.py first']
     return found, problems
