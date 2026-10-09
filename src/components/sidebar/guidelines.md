@@ -51,7 +51,7 @@ Between groups and within each group.
 
 **8. One level only.**
 Sub-pages become a Tab Line inside the page.
-*Precedents: Carbon (no third level; tabs on the page); Tab decision I.*
+*Precedents: Carbon (no third level; tabs on the page); the Tab's "Tabs inside tabs".*
 
 **9. A group label isn't clickable.**
 It doesn't lead anywhere.
@@ -64,7 +64,7 @@ It doesn't lead anywhere.
 
 **11. Always the full-width Tab Square.**
 Never the Line: the line only makes sense horizontally.
-*Precedent: Tab rule 4 and decision J.*
+*Precedent: Tab rule 4.*
 
 **12. At most one current item.**
 The destination of the area where the person is, including its sub-pages. A page outside the destinations, like the account page, marks none.
@@ -160,7 +160,7 @@ It pays for the tonal selection inherited from the Tab (the current item's backg
 ### Out of scope
 
 **33. What's left out, on purpose.**
-Icon, counter, sub-levels, a collapsed icon-only mode, drag to resize, a Sidebar on the right, a second size, its own theme. A new need goes back to step 1.
+Icon, counter, sub-levels, a collapsed icon-only mode, drag to resize, a Sidebar on the right, a second size, its own theme. A new need reopens the component's scope.
 
 ## Out of scope, on purpose
 

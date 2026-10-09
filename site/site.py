@@ -10104,19 +10104,19 @@ def sidebar_token_rows():
 
 
 SB_OQUE = {
-    'nome': 'nome', 'email': 'e-mail', 'rotulo-grupo': 'rótulo de grupo',
-    'item-repouso': 'item em repouso', 'item-hover': 'item em hover', 'item-pressed': 'item pressionado',
-    'item-atual': 'item atual', 'item-atual-hover': 'item atual em hover',
-    'item-atual-pressed': 'item atual pressionado', 'anel-de-foco': 'anel de foco',
-    'icone-do-botao-perfil': 'ícone do botão do perfil', 'item-atual-fundo': 'fundo do item atual',
-    'item-atual-pressed-fundo': 'fundo do item atual pressionado',
-    'item-hover-distinto': 'hover do item × Sidebar', 'item-pressed-distinto': 'pressionado do item × Sidebar',
-    'botao-hover-distinto': 'hover do botão × Sidebar', 'botao-pressed-distinto': 'pressionado do botão × Sidebar',
-    'borda-x-bg-canvas': 'borda × tela', 'borda-x-bg-surface': 'borda × superfície',
-    'painel-x-bg-canvas-escurecida': 'painel modal × tela escurecida',
-    'painel-x-bg-surface-escurecida': 'painel modal × superfície escurecida',
-    'borda-do-painel-x-bg-canvas-escurecida': 'borda do painel × tela escurecida',
-    'borda-do-painel-x-bg-surface-escurecida': 'borda do painel × superfície escurecida',
+    'name': 'nome', 'email': 'e-mail', 'group-label': 'rótulo de grupo',
+    'item-rest': 'item em repouso', 'item-hover': 'item em hover', 'item-pressed': 'item pressionado',
+    'item-current': 'item atual', 'item-current-hover': 'item atual em hover',
+    'item-current-pressed': 'item atual pressionado', 'focus-ring': 'anel de foco',
+    'profile-button-icon': 'ícone do botão do perfil', 'item-current-bg': 'fundo do item atual',
+    'item-current-pressed-bg': 'fundo do item atual pressionado',
+    'item-hover-distinct': 'hover do item × Sidebar', 'item-pressed-distinct': 'pressionado do item × Sidebar',
+    'button-hover-distinct': 'hover do botão × Sidebar', 'button-pressed-distinct': 'pressionado do botão × Sidebar',
+    'border-x-bg-canvas': 'borda × tela', 'border-x-bg-surface': 'borda × superfície',
+    'panel-x-bg-canvas-dimmed': 'painel modal × tela escurecida',
+    'panel-x-bg-surface-dimmed': 'painel modal × superfície escurecida',
+    'panel-border-x-bg-canvas-dimmed': 'borda do painel × tela escurecida',
+    'panel-border-x-bg-surface-dimmed': 'borda do painel × superfície escurecida',
 }
 
 
@@ -10394,8 +10394,8 @@ SIDEBAR_A11Y_TAB = f'''
   </div>
   <div class="note">
     <b>Herdadas</b>
-    <code>borda-de-regiao</code> (a borda é de região, não de controle), <code>tonal-selection</code> (paga pelo
-    título da página igual ao rótulo do item atual) e <code>marca-no-hover-escuro</code> (a exceção de marca da
+    <code>region-border</code> (a borda é de região, não de controle), <code>tonal-selection</code> (paga pelo
+    título da página igual ao rótulo do item atual) e <code>brand-on-dark-hover</code> (a exceção de marca da
     Foundation, 3,85:1 no hover do item atual).
   </div>
 </section>
@@ -10723,6 +10723,14 @@ def breadcrumb_token_rows():
     return '\n'.join(rows)
 
 
+BC_OQUE = {
+    'link': 'link', '…': '…', 'current page': 'pagina atual', 'ring on trail': 'anel na trilha',
+    'menu border': 'borda do menu', 'menu item': 'item do menu', 'menu item (hover)': 'item do menu (hover)',
+    'menu item (pressed)': 'item do menu (pressed)', 'ring in menu': 'anel no menu',
+    'item hover vs menu': 'hover do item vs menu', 'item pressed vs menu': 'pressed do item vs menu',
+}
+
+
 def breadcrumb_a11y_rows():
     out = []
     for r in BCR_A11Y['rows']:
@@ -10739,7 +10747,7 @@ def breadcrumb_a11y_rows():
             v = '<span class="fail">reprova</span>'
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["what"]}</td>'
+            f'<td class="name">{BC_OQUE[r["what"]]}</td>'
             f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
             f'<td class="num strong">{"—" if diff else format(r["ratio"], ".2f") + ":1"}</td>'
             f'<td class="tok dim">{"diferente" if diff else str(r["floor"]) + ":1"}</td><td>{v}</td></tr>')
@@ -10906,7 +10914,7 @@ BC_RULES = [
         ('Anel de foco em links e no “…”', 'O padrão, com canto de 4. Os itens do menu usam o do Tab Square.'),
     ]),
     ('Exceções e o que as paga', [
-        ('A borda do menu fica abaixo de 3:1', '<code>borda-de-regiao</code>: o menu é caixa de conteúdo, não controle, e se separa pela sombra. Não escureça. Mesmo caso da Sidebar e do Card.'),
+        ('A borda do menu fica abaixo de 3:1', '<code>region-border</code>: o menu é caixa de conteúdo, não controle, e se separa pela sombra. Não escureça. Mesmo caso da Sidebar e do Card.'),
         ('O fundo do menu é sempre <code>bg-surface-raised</code>', 'Com hover e pressed <code>-raised</code>. Trocar o fundo faz o hover sumir no escuro (Modal 0.18.1).'),
     ]),
     ('Fora de escopo', [

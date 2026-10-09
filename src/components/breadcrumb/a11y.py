@@ -1,60 +1,62 @@
 """
-QA de acessibilidade do Breadcrumb (com o _breadcrumb-more).
+Accessibility QA for the Breadcrumb (with _breadcrumb-more).
 
-Como nos outros componentes, a validacao e por COMBINACAO RENDERIZADA - papel
-x tema - contra o fundo EFETIVO, nao par de token solto.
+As with the other components, validation is by RENDERED COMBINATION - role x
+theme - against the EFFECTIVE background, not a loose token pair.
 
-O QUE O FUNDO EFETIVO MUDA AQUI
+WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
-  A trilha mora na pagina (`bg-canvas` ou `bg-surface`, regra 7). O menu do
-  `…` e uma camada `bg-surface-raised` por cima dela, e dentro dele os itens
-  sao Tab Square com o hover e o pressed TROCADOS para os `-raised` (regra
-  26). A etapa 3 mediu os pares; aqui entra o que so existe renderizado:
+  The trail lives on the page (`bg-canvas` or `bg-surface`, rule 7). The `…`
+  menu is a `bg-surface-raised` layer on top of it, and inside it the items
+  are Tab Square with hover and pressed SWAPPED for the `-raised` ones
+  (rule 26). The token layer measures the pairs; here comes what only exists
+  rendered:
 
-  - o rotulo do item do menu em repouso, hover e pressed contra o fundo QUE O
-    ITEM REALMENTE TEM (o `-raised` que o menu injeta no Tab);
-  - o hover e o pressed do item contra o fundo do menu: iguais = item que nao
-    reage, reprova (o defeito do Modal 0.18.1 que o `-raised` evita);
-  - o anel de foco do item, dentro do menu.
+  - the menu item label at rest, hover and pressed against the background
+    THE ITEM ACTUALLY HAS (the `-raised` the menu injects into the Tab);
+  - the item hover and pressed against the menu background: equal = an item
+    that doesn't react, fail (the Modal 0.18.1 defect that `-raised` avoids);
+  - the item focus ring, inside the menu.
 
-QUATRO JULGAMENTOS
+FOUR JUDGMENTS
 
-  1. Texto (link, `…`, pagina atual, item do menu em cada estado): 4,5:1 do
-     1.4.3. Tem que passar.
-  2. Anel de foco na trilha e dentro do menu: 3:1 do 1.4.11. Tem que passar.
-  3. Hover e pressed do item DIFERENTES do fundo do menu. Igual = reprova.
-  4. Borda do menu: `borda-de-regiao` (etapa 3). Borda IGUAL a pagina
-     reprova: a excecao cobre separacao discreta, nao ausencia.
-  O separador e decorativo (aria-hidden, regra 21): fora do 1.4.11.
+  1. Text (link, `…`, current page, menu item in each state): 4.5:1 from
+     1.4.3. It must pass.
+  2. Focus ring on the trail and inside the menu: 3:1 from 1.4.11. It must
+     pass.
+  3. Item hover and pressed DIFFERENT from the menu background. Equal = fail.
+  4. Menu border: `region-border` (see tokens.py). A border EQUAL to the page
+     fails: the exception covers a subtle separation, not its absence.
+  The separator is decorative (aria-hidden, rule 21): outside 1.4.11.
 
-O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
+THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Regras de uso da etapa 4, medidas no HTML emitido:
+  Usage rules from guidelines.md, measured on the emitted HTML:
 
-    a) `.al-breadcrumb` e <nav> com aria-label (regra 19);
-    b) um breadcrumb vivo por documento; os de exemplo ficam sob `inert` (nele
-       ou num ancestral) e sao isentos (regra 7);
-    c) o unico filho e <ol class="al-breadcrumb__list"> e todo filho dele e
-       <li class="al-breadcrumb__item"> (regra 19);
-    d) o ULTIMO item e so <span class="al-breadcrumb__current"
-       aria-current="page"> com texto - sem <a>, sem separador (regras 15 e 20);
-    e) todo item que nao e o ultimo termina num <svg class="al-breadcrumb__separator">
-       com aria-hidden="true" e focusable="false" (regra 21);
-    f) todo link e <a href> com texto e sem aria-current; aria-current so na
-       atual (regras 15 e 20);
-    g) o `…` so existe com 5 niveis ou mais, e sempre no TERCEIRO item; e
-       <button type="button"> com aria-label, aria-expanded e aria-controls
-       apontando para o menu do mesmo item (regras 5, 6 e 22);
-    h) o menu e <ul class="al-tabs al-tabs--square al-breadcrumb__menu"> sem
-       role; cada item e <a href class="al-tab"> com .al-tab__label de texto,
-       sem role nem aria-selected/aria-current (regra 17);
-    i) nenhum breadcrumb dentro de Card, Modal ou Drawer (regra 7);
-    j) nenhum rotulo vazio em lugar nenhum da trilha (regra 10).
+    a) `.al-breadcrumb` is a <nav> with aria-label (rule 19);
+    b) one live breadcrumb per document; the sample ones sit under `inert`
+       (on it or on an ancestor) and are exempt (rule 7);
+    c) the only child is <ol class="al-breadcrumb__list"> and each of its
+       children is <li class="al-breadcrumb__item"> (rule 19);
+    d) the LAST item is only <span class="al-breadcrumb__current"
+       aria-current="page"> with text - no <a>, no separator (rules 15 and 20);
+    e) every item but the last ends in an <svg class="al-breadcrumb__separator">
+       with aria-hidden="true" and focusable="false" (rule 21);
+    f) every link is an <a href> with text and without aria-current;
+       aria-current only on the current one (rules 15 and 20);
+    g) the `…` only exists with 5 levels or more, and always as the THIRD
+       item; it is a <button type="button"> with aria-label, aria-expanded and
+       aria-controls pointing to the menu in the same item (rules 5, 6 and 22);
+    h) the menu is <ul class="al-tabs al-tabs--square al-breadcrumb__menu">
+       with no role; each item is <a href class="al-tab"> with a text
+       .al-tab__label, no role nor aria-selected/aria-current (rule 17);
+    i) no breadcrumb inside a Card, Modal or Drawer (rule 7);
+    j) no empty label anywhere in the trail (rule 10).
 
-ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
+RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -76,12 +78,12 @@ THEMES = ('light', 'dark')
 
 TEXT_FLOOR = 4.5         # 1.4.3
 NON_TEXT_FLOOR = 3.0     # 1.4.11
-EXC_BORDA = 'borda-de-regiao'
+EXC_BORDER = 'region-border'
 
 DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('breadcrumb', 'a11y.json')
 
-PAGINAS = ('bg-canvas', 'bg-surface')
+PAGES = ('bg-canvas', 'bg-surface')
 
 
 def sem(name, theme):
@@ -113,136 +115,136 @@ def contrast_rows():
         menu = bc('menu-bg', t)
         hover = bc('menu-item-bg-hover', t)
         active = bc('menu-item-bg-active', t)
-        for p in PAGINAS:
+        for p in PAGES:
             pg = sem(p, t)
             rows.append(row(t, 'link', ALIAS['breadcrumb-link'], bc('link', t), p, pg, TEXT_FLOOR))
             rows.append(row(t, '…', ALIAS['breadcrumb-more'], bc('more', t), p, pg, TEXT_FLOOR))
-            rows.append(row(t, 'pagina atual', ALIAS['breadcrumb-current'], bc('current', t), p, pg, TEXT_FLOOR))
-            rows.append(row(t, 'anel na trilha', 'shadow-focus-default', ring, p, pg, NON_TEXT_FLOOR))
+            rows.append(row(t, 'current page', ALIAS['breadcrumb-current'], bc('current', t), p, pg, TEXT_FLOOR))
+            rows.append(row(t, 'ring on trail', 'shadow-focus-default', ring, p, pg, NON_TEXT_FLOOR))
             b = bc('menu-border', t)
-            rows.append(row(t, 'borda do menu', ALIAS['breadcrumb-menu-border'], b, p, pg,
-                            NON_TEXT_FLOOR, EXC_BORDA, invisible=b.lower() == pg.lower()))
-        # dentro do menu: o fundo efetivo de cada estado do item
-        rows.append(row(t, 'item do menu', TA['tab-label'], tab('label', t),
+            rows.append(row(t, 'menu border', ALIAS['breadcrumb-menu-border'], b, p, pg,
+                            NON_TEXT_FLOOR, EXC_BORDER, invisible=b.lower() == pg.lower()))
+        # inside the menu: the effective background of each item state
+        rows.append(row(t, 'menu item', TA['tab-label'], tab('label', t),
                         'menu-bg', menu, TEXT_FLOOR))
-        rows.append(row(t, 'item do menu (hover)', TA['tab-label-hover'], tab('label-hover', t),
+        rows.append(row(t, 'menu item (hover)', TA['tab-label-hover'], tab('label-hover', t),
                         'menu-item-bg-hover', hover, TEXT_FLOOR))
-        rows.append(row(t, 'item do menu (pressed)', TA['tab-label-active'], tab('label-active', t),
+        rows.append(row(t, 'menu item (pressed)', TA['tab-label-active'], tab('label-active', t),
                         'menu-item-bg-active', active, TEXT_FLOOR))
-        rows.append(row(t, 'anel no menu', 'shadow-focus-default', ring, 'menu-bg', menu, NON_TEXT_FLOOR))
-        # julgamento 3: o estado tem que existir na tela (sem piso, so igualdade)
-        for nome, cor in (('hover', hover), ('pressed', active)):
-            r = row(t, f'{nome} do item vs menu', ALIAS[f'breadcrumb-menu-item-bg-{"hover" if nome == "hover" else "active"}'],
-                    cor, 'menu-bg', menu, 1.0, invisible=cor.lower() == menu.lower())
+        rows.append(row(t, 'ring in menu', 'shadow-focus-default', ring, 'menu-bg', menu, NON_TEXT_FLOOR))
+        # judgment 3: the state must exist on screen (no floor, only equality)
+        for state, color in (('hover', hover), ('pressed', active)):
+            r = row(t, f'item {state} vs menu', ALIAS[f'breadcrumb-menu-item-bg-{"hover" if state == "hover" else "active"}'],
+                    color, 'menu-bg', menu, 1.0, invisible=color.lower() == menu.lower())
             r['pass'] = not r['invisible']
             rows.append(r)
     return rows
 
 
-# ─────────────────────────────────────────────── marcacao
+# ─────────────────────────────────────────────── markup
 def check_breadcrumb(n, ids, problems):
     ln = n['line']
 
     def bad(msg):
-        problems.append(f'linha {ln}: {msg}')
+        problems.append(f'line {ln}: {msg}')
 
     # (a)
     if n['tag'] != 'nav' or not n['attrs'].get('aria-label', '').strip():
-        bad('.al-breadcrumb tem que ser <nav aria-label="…"> (regra 19)')
+        bad('.al-breadcrumb must be <nav aria-label="…"> (rule 19)')
     # (i)
     for a in ancestors(n):
         if any(has(a, c) for c in ('al-card', 'al-modal', 'al-drawer')):
-            bad('breadcrumb dentro de Card, Modal ou Drawer (regra 7)')
+            bad('breadcrumb inside a Card, Modal or Drawer (rule 7)')
             break
     # (c)
     lists = n['kids']
     if len(lists) != 1 or lists[0]['tag'] != 'ol' or not has(lists[0], 'al-breadcrumb__list'):
-        bad('o unico filho tem que ser <ol class="al-breadcrumb__list"> (regra 19)')
+        bad('the only child must be <ol class="al-breadcrumb__list"> (rule 19)')
         return
     items = lists[0]['kids']
     if any(i['tag'] != 'li' or not has(i, 'al-breadcrumb__item') for i in items):
-        bad('todo filho da lista e <li class="al-breadcrumb__item"> (regra 19)')
+        bad('every child of the list is <li class="al-breadcrumb__item"> (rule 19)')
         return
     if len(items) < 2:
-        bad('trilha com menos de 2 niveis - sem pai nao ha breadcrumb (regras 1 e 18)')
+        bad('trail with fewer than 2 levels - with no parent there is no breadcrumb (rules 1 and 18)')
         return
 
-    # (d) ultimo item
+    # (d) last item
     last = items[-1]
     cur = [k for k in walk(last) if has(k, 'al-breadcrumb__current')]
     if (len(cur) != 1 or cur[0]['tag'] != 'span' or cur[0]['attrs'].get('aria-current') != 'page'
             or not text_of(cur[0])):
-        bad('ultimo item = <span class="al-breadcrumb__current" aria-current="page"> com texto (regras 15 e 20)')
+        bad('last item = <span class="al-breadcrumb__current" aria-current="page"> with text (rules 15 and 20)')
     if any(k['tag'] in ('a', 'button') for k in walk(last)):
-        bad('a pagina atual nao e link nem botao (regra 15)')
+        bad('the current page is neither a link nor a button (rule 15)')
     if any(has(k, 'al-breadcrumb__separator') for k in walk(last)):
-        bad('o ultimo item nao leva separador (regra 21)')
+        bad('the last item takes no separator (rule 21)')
 
-    # (e) separadores
+    # (e) separators
     for it in items[:-1]:
         if not it['kids'] or not has(it['kids'][-1], 'al-breadcrumb__separator'):
-            bad(f'item "{text_of(it)[:20]}" sem separador no fim (regra 21)')
+            bad(f'item "{text_of(it)[:20]}" without a separator at the end (rule 21)')
             continue
         s = it['kids'][-1]
         if s['tag'] != 'svg' or s['attrs'].get('aria-hidden') != 'true' or s['attrs'].get('focusable') != 'false':
-            bad('separador e <svg> com aria-hidden="true" focusable="false" (regra 21)')
+            bad('the separator is an <svg> with aria-hidden="true" focusable="false" (rule 21)')
 
     # (f) links
     for k in walk(n):
         if has(k, 'al-breadcrumb__link'):
             if k['tag'] != 'a' or not k['attrs'].get('href'):
-                bad('.al-breadcrumb__link tem que ser <a href> (regra 15)')
+                bad('.al-breadcrumb__link must be <a href> (rule 15)')
             if not text_of(k):
-                bad('link sem texto (regra 10)')
+                bad('link without text (rule 10)')
         if 'aria-current' in k['attrs'] and not has(k, 'al-breadcrumb__current'):
-            bad('aria-current fora da pagina atual (regras 15 e 20)')
+            bad('aria-current outside the current page (rules 15 and 20)')
 
-    # (g) `…` e (h) menu
+    # (g) `…` and (h) menu
     mores = [i for i in items if has(i, 'al-breadcrumb__more')]
     menu_items = 0
     for m in mores:
         btn = [k for k in m['kids'] if has(k, 'al-breadcrumb__more-button')]
         if len(btn) != 1:
-            bad('item do `…` sem .al-breadcrumb__more-button')
+            bad('`…` item without .al-breadcrumb__more-button')
             continue
         b = btn[0]['attrs']
         if (btn[0]['tag'] != 'button' or b.get('type') != 'button' or not b.get('aria-label', '').strip()
                 or b.get('aria-expanded') not in ('true', 'false') or not b.get('aria-controls')):
-            bad('`…` = <button type="button"> com aria-label, aria-expanded e aria-controls (regra 22)')
+            bad('`…` = <button type="button"> with aria-label, aria-expanded and aria-controls (rule 22)')
         menu = ids.get(b.get('aria-controls'))
         if menu is None or menu.get('parent') is not m:
-            bad('aria-controls do `…` nao aponta para um menu no mesmo item (regra 22)')
+            bad('the `…` aria-controls does not point to a menu in the same item (rule 22)')
             continue
         mc = classes(menu)
         if menu['tag'] != 'ul' or not {'al-tabs', 'al-tabs--square', 'al-breadcrumb__menu'} <= set(mc):
-            bad('menu = <ul class="al-tabs al-tabs--square al-breadcrumb__menu"> (regra 17)')
+            bad('menu = <ul class="al-tabs al-tabs--square al-breadcrumb__menu"> (rule 17)')
         if 'role' in menu['attrs']:
-            bad(f'menu com role="{menu["attrs"]["role"]}" - sao links, nunca menu de acoes (regra 17)')
+            bad(f'menu with role="{menu["attrs"]["role"]}" - they are links, never an actions menu (rule 17)')
         for li in menu['kids']:
             links = [k for k in li['kids'] if k['tag'] == 'a']
             if li['tag'] != 'li' or len(links) != 1:
-                bad('cada item do menu e <li> com um <a> (regra 17)')
+                bad('each menu item is an <li> with one <a> (rule 17)')
                 continue
             a = links[0]
             lab = [k for k in a['kids'] if has(k, 'al-tab__label')]
             if (not a['attrs'].get('href') or not has(a, 'al-tab') or not lab or not text_of(lab[0])
                     or any(x in a['attrs'] for x in ('role', 'aria-selected', 'aria-current'))):
-                bad('item do menu = <a href class="al-tab"> com .al-tab__label, sem role/aria-selected/aria-current (regra 17)')
+                bad('menu item = <a href class="al-tab"> with .al-tab__label, no role/aria-selected/aria-current (rule 17)')
             menu_items += 1
     if len(mores) > 1:
-        bad('mais de um `…` na trilha (regra 6)')
+        bad('more than one `…` in the trail (rule 6)')
     if mores:
         if items.index(mores[0]) != 2 or len(items) != 4:
-            bad('a Large e primeiro, segundo, `…` e atual - o `…` e o terceiro de quatro itens (regra 6)')
+            bad('the Large is first, second, `…` and current - the `…` is the third of four items (rule 6)')
         if len(items) - 1 + menu_items < 5:
-            bad(f'`…` com {len(items) - 1 + menu_items} niveis - so colapsa com 5 ou mais (regra 5)')
+            bad(f'`…` with {len(items) - 1 + menu_items} levels - it only collapses at 5 or more (rule 5)')
     elif len(items) > 4:
-        bad(f'{len(items)} niveis sem `…` - com 5 ou mais a trilha colapsa (regra 5)')
+        bad(f'{len(items)} levels without `…` - at 5 or more the trail collapses (rule 5)')
 
 
 def markup_contract(path):
     if not os.path.exists(path):
-        return None, [f'{path} nao existe']
+        return None, [f'{path} does not exist']
     t = Tree(skip=SKIP_TEMPLATE)
     t.feed(open(path, encoding='utf-8').read())
     ids = {n['attrs']['id']: n for n in walk(t.root) if n['attrs'].get('id')}
@@ -257,9 +259,9 @@ def markup_contract(path):
         check_breadcrumb(n, ids, problems)
     # (b)
     if live > 1:
-        problems.append(f'{live} breadcrumbs vivos no documento - um por pagina; exemplos ficam sob inert (regra 7)')
+        problems.append(f'{live} live breadcrumbs in the document - one per page; samples sit under inert (rule 7)')
     if found == 0:
-        return None, ['nenhum .al-breadcrumb no HTML - rode site/site.py antes']
+        return None, ['no .al-breadcrumb in the HTML - run site/site.py first']
     return found, problems
 
 
@@ -269,56 +271,56 @@ def run():
     invis = [r for r in rows if r['invisible']]
     fails = [r for r in rows if not r['pass'] and not r['exception'] and not r['invisible']]
     excs = [r for r in rows if r['exception']]
-    passa = [r for r in rows if r['pass']]
+    passing = [r for r in rows if r['pass']]
 
     checked, mk = markup_contract(path)
 
     print('=' * 74)
-    print('QA DE ACESSIBILIDADE DO BREADCRUMB')
+    print('BREADCRUMB ACCESSIBILITY QA')
     print('=' * 74)
     for r in rows:
         if r['invisible']:
-            mark, nota = 'XX', 'INVISIVEL - igual ao fundo'
+            mark, note = 'XX', 'INVISIBLE - equal to the background'
         elif r['pass']:
-            mark, nota = 'ok', 'passa'
+            mark, note = 'ok', 'pass'
         elif r['exception']:
-            mark, nota = '~~', f'excecao "{r["exception"]}"'
+            mark, note = '~~', f'exception "{r["exception"]}"'
         else:
-            mark, nota = 'XX', 'REPROVA'
-        print(f'  {mark} {r["theme"]:<5} {r["what"]:<26} sobre {r["bg"]:<20} '
-              f'{r["fgHex"]} x {r["bgHex"]}  {r["ratio"]:5.2f}  {nota}')
+            mark, note = 'XX', 'FAIL'
+        print(f'  {mark} {r["theme"]:<5} {r["what"]:<26} on {r["bg"]:<20} '
+              f'{r["fgHex"]} x {r["bgHex"]}  {r["ratio"]:5.2f}  {note}')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path, ROOT)}')
     if checked is None:
         for p in mk:
-            print(f'     PENDENTE: {p}')
+            print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} breadcrumb(s) conferido(s), 10 regras (a-j)')
+        print(f'     {checked} breadcrumb(s) checked, 10 rules (a-j)')
         for p in mk:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
     print('-' * 74)
-    print(f'{len(rows)} medicoes  |  passam: {len(passa)}  |  excecoes: {len(excs)}  |  '
-          f'reprovas: {len(fails) + len(invis)}')
+    print(f'{len(rows)} measurements  |  pass: {len(passing)}  |  exceptions: {len(excs)}  |  '
+          f'fail: {len(fails) + len(invis)}')
 
     json.dump({
         'component': 'breadcrumb',
-        'criterion': 'WCAG 1.4.3 texto + 1.4.11 nao-textual + estado visivel',
+        'criterion': 'WCAG 1.4.3 text + 1.4.11 non-text + visible state',
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': checked,
         'markupPending': checked is None,
         'markupProblems': mk if checked is not None else [],
         'rows': rows,
     }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
-    print(f'{os.path.relpath(OUT_JSON, ROOT)} escrito')
+    print(f'{os.path.relpath(OUT_JSON, ROOT)} written')
 
-    falhou = bool(fails or invis)
+    failed = bool(fails or invis)
     if checked is None or mk:
         print('-' * 74)
-        print(f'{len(mk)} PROBLEMA(S) DE MARCACAO - portao reprova')
-        falhou = True
-    return 1 if falhou else 0
+        print(f'{len(mk)} MARKUP PROBLEM(S) - gate fails')
+        failed = True
+    return 1 if failed else 0
 
 
 if __name__ == '__main__':

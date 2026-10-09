@@ -1,67 +1,71 @@
 """
-QA de acessibilidade do Sidebar.
+Accessibility QA for the Sidebar.
 
-Como nos outros componentes, a validacao e por COMBINACAO RENDERIZADA - papel
-x tema - contra o fundo EFETIVO, nao par de token solto.
+As with the other components, validation is by RENDERED COMBINATION - role x
+theme - against the EFFECTIVE background, not a loose token pair.
 
-O QUE O FUNDO EFETIVO MUDA AQUI
+WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
-  Na tela larga a Sidebar mora na pagina: fundo `bg-canvas`, e e sobre ele que
-  os itens (Tab Square) e o botao do perfil (Icon Button Ghost) aparecem. A
-  etapa 3 mediu os textos da propria Sidebar; aqui entram tambem os estados do
-  item e do botao SOBRE O FUNDO DA SIDEBAR - que e o motivo da decisao A (com
-  surface-raised o hover sumia no escuro, 1,00:1).
+  On a wide screen the Sidebar lives on the page: background `bg-canvas`, and
+  that is where the items (Tab Square) and the profile button (Ghost Icon
+  Button) appear. The token layer measures the Sidebar's own texts; here the
+  item and button states ON THE SIDEBAR BACKGROUND come in too - which is the
+  reason for the `bg-canvas` background (with surface-raised the hover
+  disappeared in dark, 1.00:1).
 
-  Na tela estreita a Sidebar vira camada: o que fica atras e a pagina
-  ESCURECIDA pelo scrim. Esse par a etapa 3 nao media.
+  On a narrow screen the Sidebar becomes a layer: what sits behind it is the
+  page DIMMED by the scrim. The token layer doesn't measure that pair.
 
-QUATRO JULGAMENTOS
+FOUR JUDGMENTS
 
-  1. Texto (nome, e-mail, rotulo de grupo, rotulo do item em cada estado):
-     piso 4,5:1 do 1.4.3. Tem que passar - salvo `marca-no-hover-escuro`,
-     excecao da Foundation herdada do Tab.
-  2. Anel de foco, icone do botao e fundo do item selecionado/pressionado
-     contra a Sidebar: 3:1 do 1.4.11 - salvo `tonal-selection`, herdada do Tab.
-  3. Hover e pressed do item e do botao tem que ser DIFERENTES do fundo da
-     Sidebar (o defeito que a decisao A evitou). Igual = reprova.
-  4. Borda da Sidebar: `borda-de-regiao` (etapa 3), contra a pagina ao lado e,
-     no modo modal, contra a pagina escurecida. O PAINEL modal contra a pagina
-     escurecida passa no claro (4,1) e no escuro fica em ~1,1:1: excecao
-     `sidebar-nao-se-separa-do-scrim-no-escuro` (etapa 6, opcao a de Gui, 08/10/2026) - a
-     separacao vem da borda (~2,7) e da sombra. Painel IGUAL a pagina
-     escurecida reprova: a excecao cobre separacao discreta, nao ausencia.
+  1. Text (name, e-mail, group label, item label in each state): 4.5:1 floor
+     from 1.4.3. It must pass - except `brand-on-dark-hover`, the Foundation
+     exception inherited from the Tab.
+  2. Focus ring, button icon and selected/pressed item background against the
+     Sidebar: 3:1 from 1.4.11 - except `tonal-selection`, inherited from the
+     Tab.
+  3. Item and button hover and pressed must be DIFFERENT from the Sidebar
+     background (the defect the `bg-canvas` background avoided). Equal = fail.
+  4. Sidebar border: `region-border` (see tokens.py), against the page next to
+     it and, in modal mode, against the dimmed page. The modal PANEL against
+     the dimmed page passes in light (4.1) and in dark sits at ~1.1:1:
+     exception `sidebar-not-separated-from-scrim-in-dark` (approved on
+     2026-10-08) - the separation comes from the border (~2.7) and the
+     shadow. A panel EQUAL to the dimmed page fails: the exception covers a
+     subtle separation, not its absence.
 
-O CONTRATO DE MARCACAO E A OUTRA METADE DESTA ETAPA
+THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Regras de uso da etapa 4, medidas no HTML emitido:
+  Usage rules from guidelines.md, measured on the emitted HTML:
 
-    a) `.al-sidebar` e um <aside> com aria-label (regra 26);
-    b) uma Sidebar viva por documento; as congeladas ficam sob `inert` e sao
-       isentas (regra 4);
-    c) exatamente um `.al-sidebar__nav`, que e <nav> com aria-label (regra 26);
-    d) filhos na ordem perfil (opcional), nav; dentro do nav, miolo e Ajuda
-       (opcional), nessa ordem (regra 5);
-    e) o perfil fica FORA do nav; Avatar com aria-hidden e <img alt="">
-       (regras 18 e 26);
-    f) o botao do perfil e um Icon Button com nome (aria-label) e svg
-       aria-hidden (regra 19);
-    g) todo grupo tem rotulo com texto e id, e a lista dele tem
-       aria-labelledby apontando para esse rotulo (regra 27);
-    h) toda lista e `.al-tabs.al-tabs--square` (regra 11);
-    i) todo item e <a href> `.al-tab` com `.al-tab__label` de texto, sem
-       role="tab" nem aria-selected (regra 28);
-    j) no maximo um aria-current="page" na Sidebar (regra 12);
-    k) nenhum rotulo de item repetido (regra 16);
-    l) Ajuda: e um grupo, com no maximo 3 itens (regra 21);
-    m) todo data-al-sidebar-open aponta para uma `.al-sidebar` que existe e o
-       botao tem aria-label, aria-controls igual ao id e aria-expanded
-       (regras 24 e 25);
-    n) existe um link "pular" (href="#...") ANTES da Sidebar (regra 29).
+    a) `.al-sidebar` is an <aside> with aria-label (rule 26);
+    b) one live Sidebar per document; frozen ones sit under `inert` and are
+       exempt (rule 4);
+    c) exactly one `.al-sidebar__nav`, which is a <nav> with aria-label
+       (rule 26);
+    d) children in the order profile (optional), nav; inside the nav, body
+       and Help (optional), in that order (rule 5);
+    e) the profile stays OUTSIDE the nav; Avatar with aria-hidden and
+       <img alt=""> (rules 18 and 26);
+    f) the profile button is an Icon Button with a name (aria-label) and an
+       aria-hidden svg (rule 19);
+    g) every group has a label with text and an id, and its list has
+       aria-labelledby pointing to that label (rule 27);
+    h) every list is `.al-tabs.al-tabs--square` (rule 11);
+    i) every item is an <a href> `.al-tab` with a text `.al-tab__label`, no
+       role="tab" nor aria-selected (rule 28);
+    j) at most one aria-current="page" in the Sidebar (rule 12);
+    k) no repeated item label (rule 16);
+    l) Help: it is a group, with at most 3 items (rule 21);
+    m) every data-al-sidebar-open points to a `.al-sidebar` that exists and
+       the button has aria-label, aria-controls equal to the id and
+       aria-expanded (rules 24 and 25);
+    n) there is a "skip" link (href="#...") BEFORE the Sidebar (rule 29).
 
-ORDEM DE EXECUCAO - mesma dos outros: roda DEPOIS do HTML que ele mede.
+RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
-Rodar: python3 a11y.py [caminho.html]
-       sem argumento, mede build/site/index.html
+Run: python3 a11y.py [path.html]
+     with no argument, measures build/site/index.html
 """
 import json
 import os
@@ -84,10 +88,10 @@ THEMES = ('light', 'dark')
 
 TEXT_FLOOR = 4.5
 NON_TEXT_FLOOR = 3.0
-EXC_BORDA = 'borda-de-regiao'
+EXC_BORDER = 'region-border'
 EXC_TONAL = 'tonal-selection'
-EXC_MARCA = 'marca-no-hover-escuro'
-EXC_SCRIM = 'sidebar-nao-se-separa-do-scrim-no-escuro'
+EXC_BRAND = 'brand-on-dark-hover'
+EXC_SCRIM = 'sidebar-not-separated-from-scrim-in-dark'
 
 DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('sidebar', 'a11y.json')
@@ -106,7 +110,7 @@ def tab(role, theme):
     return sem(TA[f'tab-{role}'], theme)
 
 
-# ─────────────────────────────────────────────── contraste
+# ─────────────────────────────────────────────── contrast
 def row(theme, what, fg_name, fg, bg_name, bg, floor, exc=None, invisible=False):
     ratio = round(cr(fg, bg), 2)
     ok = ratio >= floor and not invisible
@@ -125,210 +129,210 @@ def contrast_rows():
         bg = sbr('bg', theme)
         bgn = ALIAS['sidebar-bg']
 
-        # 1. textos proprios
-        for what, role in (('nome', 'name'), ('email', 'email'), ('rotulo-grupo', 'group-label')):
+        # 1. the Sidebar's own texts
+        for what, role in (('name', 'name'), ('email', 'email'), ('group-label', 'group-label')):
             rows.append(row(theme, what, ALIAS[f'sidebar-{role}'], sbr(role, theme), bgn, bg, TEXT_FLOOR))
 
-        # 1. rotulo do item em cada estado, sobre o fundo efetivo
-        rows.append(row(theme, 'item-repouso', TA['tab-label'], tab('label', theme), bgn, bg, TEXT_FLOOR))
+        # 1. item label in each state, on the effective background
+        rows.append(row(theme, 'item-rest', TA['tab-label'], tab('label', theme), bgn, bg, TEXT_FLOOR))
         rows.append(row(theme, 'item-hover', TA['tab-label-hover'], tab('label-hover', theme),
                         TA['tab-bg-hover'], tab('bg-hover', theme), TEXT_FLOOR))
         rows.append(row(theme, 'item-pressed', TA['tab-label-active'], tab('label-active', theme),
                         TA['tab-bg-active'], tab('bg-active', theme), TEXT_FLOOR))
-        rows.append(row(theme, 'item-atual', TA['tab-square-label-selected'], tab('square-label-selected', theme),
+        rows.append(row(theme, 'item-current', TA['tab-square-label-selected'], tab('square-label-selected', theme),
                         TA['tab-square-bg-selected'], tab('square-bg-selected', theme), TEXT_FLOOR))
-        rows.append(row(theme, 'item-atual-hover', TA['tab-square-label-selected-hover'],
+        rows.append(row(theme, 'item-current-hover', TA['tab-square-label-selected-hover'],
                         tab('square-label-selected-hover', theme), TA['tab-square-bg-selected-hover'],
-                        tab('square-bg-selected-hover', theme), TEXT_FLOOR, EXC_MARCA))
-        rows.append(row(theme, 'item-atual-pressed', TA['tab-square-label-selected-active'],
+                        tab('square-bg-selected-hover', theme), TEXT_FLOOR, EXC_BRAND))
+        rows.append(row(theme, 'item-current-pressed', TA['tab-square-label-selected-active'],
                         tab('square-label-selected-active', theme), TA['tab-square-bg-selected-active'],
                         tab('square-bg-selected-active', theme), TEXT_FLOOR))
 
-        # 2. nao-textual contra a Sidebar
-        rows.append(row(theme, 'anel-de-foco', 'shadow-focus-default', sem('shadow-focus-default', theme),
+        # 2. non-text against the Sidebar
+        rows.append(row(theme, 'focus-ring', 'shadow-focus-default', sem('shadow-focus-default', theme),
                         bgn, bg, NON_TEXT_FLOOR))
-        rows.append(row(theme, 'icone-do-botao-perfil', 'text-primary', sem('text-primary', theme),
+        rows.append(row(theme, 'profile-button-icon', 'text-primary', sem('text-primary', theme),
                         bgn, bg, NON_TEXT_FLOOR))
-        rows.append(row(theme, 'item-atual-fundo', TA['tab-square-bg-selected'],
+        rows.append(row(theme, 'item-current-bg', TA['tab-square-bg-selected'],
                         tab('square-bg-selected', theme), bgn, bg, NON_TEXT_FLOOR, EXC_TONAL))
-        rows.append(row(theme, 'item-atual-pressed-fundo', TA['tab-square-bg-selected-active'],
+        rows.append(row(theme, 'item-current-pressed-bg', TA['tab-square-bg-selected-active'],
                         tab('square-bg-selected-active', theme), bgn, bg, NON_TEXT_FLOOR))
 
-        # 3. hover e pressed tem que EXISTIR sobre a Sidebar
-        for what, name in (('item-hover-distinto', TA['tab-bg-hover']),
-                           ('item-pressed-distinto', TA['tab-bg-active']),
-                           ('botao-hover-distinto', 'bg-hover'),
-                           ('botao-pressed-distinto', 'bg-active')):
+        # 3. hover and pressed must EXIST on the Sidebar
+        for what, name in (('item-hover-distinct', TA['tab-bg-hover']),
+                           ('item-pressed-distinct', TA['tab-bg-active']),
+                           ('button-hover-distinct', 'bg-hover'),
+                           ('button-pressed-distinct', 'bg-active')):
             f = sem(name, theme)
             rows.append(row(theme, what, name, f, bgn, bg, 1.0, invisible=f.lower() == bg.lower()))
 
-        # 4. borda da regiao, contra a Sidebar e contra a pagina ao lado
+        # 4. region border, against the Sidebar and against the page next to it
         for page in ('bg-canvas', 'bg-surface'):
-            rows.append(row(theme, f'borda-x-{page}', ALIAS['sidebar-border'], sbr('border', theme),
-                            page, sem(page, theme), NON_TEXT_FLOOR, EXC_BORDA))
+            rows.append(row(theme, f'border-x-{page}', ALIAS['sidebar-border'], sbr('border', theme),
+                            page, sem(page, theme), NON_TEXT_FLOOR, EXC_BORDER))
 
-        # 4. modo modal: painel e borda contra a pagina escurecida
+        # 4. modal mode: panel and border against the dimmed page
         for page in ('bg-canvas', 'bg-surface'):
-            atras = composite(sem('bg-scrim', theme), sem(page, theme))
-            rows.append(row(theme, f'painel-x-{page}-escurecida', bgn, bg, f'{page}+scrim', atras,
-                            NON_TEXT_FLOOR, EXC_SCRIM, invisible=bg.lower() == atras.lower()))
-            rows.append(row(theme, f'borda-do-painel-x-{page}-escurecida', ALIAS['sidebar-border'],
-                            sbr('border', theme), f'{page}+scrim', atras, NON_TEXT_FLOOR, EXC_BORDA))
+            behind = composite(sem('bg-scrim', theme), sem(page, theme))
+            rows.append(row(theme, f'panel-x-{page}-dimmed', bgn, bg, f'{page}+scrim', behind,
+                            NON_TEXT_FLOOR, EXC_SCRIM, invisible=bg.lower() == behind.lower()))
+            rows.append(row(theme, f'panel-border-x-{page}-dimmed', ALIAS['sidebar-border'],
+                            sbr('border', theme), f'{page}+scrim', behind, NON_TEXT_FLOOR, EXC_BORDER))
     return rows
 
 
-# ─────────────────────────────────────────────── marcacao
+# ─────────────────────────────────────────────── markup
 def check_sidebar(n, ids, problems):
     a, ln = n['attrs'], n['line']
     # (a)
     if n['tag'] != 'aside':
-        problems.append(f'linha {ln}: .al-sidebar em <{n["tag"]}> - a Sidebar e um <aside> (regra 26)')
+        problems.append(f'line {ln}: .al-sidebar on <{n["tag"]}> - the Sidebar is an <aside> (rule 26)')
     if not a.get('aria-label', '').strip() and not a.get('aria-labelledby'):
-        problems.append(f'linha {ln}: <aside> sem nome (aria-label) (regra 26)')
+        problems.append(f'line {ln}: <aside> without a name (aria-label) (rule 26)')
 
     kids = n['kids']
     navs = [d for d in walk(n) if has(d, 'al-sidebar__nav')]
     # (c)
     if len(navs) != 1:
-        problems.append(f'linha {ln}: {len(navs)} .al-sidebar__nav - e exatamente um (regra 26)')
+        problems.append(f'line {ln}: {len(navs)} .al-sidebar__nav - it is exactly one (rule 26)')
         return
     nav = navs[0]
     if nav['tag'] != 'nav' or not nav['attrs'].get('aria-label', '').strip():
-        problems.append(f'linha {nav["line"]}: .al-sidebar__nav tem que ser <nav aria-label> (regra 26)')
+        problems.append(f'line {nav["line"]}: .al-sidebar__nav must be <nav aria-label> (rule 26)')
 
-    # (d) ordem
-    ordem = [('profile' if has(k, 'al-sidebar__profile') else 'nav' if k is nav else None) for k in kids]
-    if None in ordem or ordem not in (['profile', 'nav'], ['nav']):
-        problems.append(f'linha {ln}: filhos da Sidebar fora da ordem perfil, nav (regra 5)')
+    # (d) order
+    order = [('profile' if has(k, 'al-sidebar__profile') else 'nav' if k is nav else None) for k in kids]
+    if None in order or order not in (['profile', 'nav'], ['nav']):
+        problems.append(f'line {ln}: Sidebar children out of the order profile, nav (rule 5)')
     nk = nav['kids']
-    nordem = [('content' if has(k, 'al-sidebar__content') else
+    norder = [('content' if has(k, 'al-sidebar__content') else
                'support' if has(k, 'al-sidebar__support') else None) for k in nk]
-    if nordem not in (['content'], ['content', 'support']):
-        problems.append(f'linha {nav["line"]}: dentro do nav a ordem e miolo e Ajuda (opcional) (regra 5)')
+    if norder not in (['content'], ['content', 'support']):
+        problems.append(f'line {nav["line"]}: inside the nav the order is body and Help (optional) (rule 5)')
 
-    # (e) (f) perfil
+    # (e) (f) profile
     for prof in (d for d in walk(n) if has(d, 'al-sidebar__profile')):
         if any(p is nav for p in ancestors(prof)):
-            problems.append(f'linha {prof["line"]}: o perfil fica FORA do <nav> (regra 26)')
+            problems.append(f'line {prof["line"]}: the profile stays OUTSIDE the <nav> (rule 26)')
         for av in (d for d in walk(prof) if has(d, 'al-avatar')):
             if av['attrs'].get('aria-hidden') != 'true':
-                problems.append(f'linha {av["line"]}: Avatar do perfil e decorativo - aria-hidden="true" (regra 18)')
+                problems.append(f'line {av["line"]}: the profile Avatar is decorative - aria-hidden="true" (rule 18)')
             for img in (d for d in walk(av) if d['tag'] == 'img'):
                 if img['attrs'].get('alt', None) != '':
-                    problems.append(f'linha {img["line"]}: foto do perfil com alt="" (regra 18)')
-        nome = [d for d in walk(prof) if has(d, 'al-sidebar__name')]
-        if len(nome) != 1 or not text_flat(nome[0]):
-            problems.append(f'linha {prof["line"]}: o perfil tem um .al-sidebar__name com texto (regra 18)')
+                    problems.append(f'line {img["line"]}: profile photo with alt="" (rule 18)')
+        name = [d for d in walk(prof) if has(d, 'al-sidebar__name')]
+        if len(name) != 1 or not text_flat(name[0]):
+            problems.append(f'line {prof["line"]}: the profile has one .al-sidebar__name with text (rule 18)')
         for b in (d for d in walk(prof) if d['tag'] in ('a', 'button')):
             if not has(b, 'al-icon-btn'):
-                problems.append(f'linha {b["line"]}: a acao do perfil e um Icon Button (regra 19)')
+                problems.append(f'line {b["line"]}: the profile action is an Icon Button (rule 19)')
             if not b['attrs'].get('aria-label', '').strip():
-                problems.append(f'linha {b["line"]}: botao do perfil sem nome (aria-label) (regra 19)')
+                problems.append(f'line {b["line"]}: profile button without a name (aria-label) (rule 19)')
             if b['tag'] == 'a' and 'href' not in b['attrs']:
-                problems.append(f'linha {b["line"]}: link do perfil sem href (regra 19)')
+                problems.append(f'line {b["line"]}: profile link without href (rule 19)')
             for s in walk(b):
                 if s['tag'] == 'svg' and s['attrs'].get('aria-hidden') != 'true':
-                    problems.append(f'linha {s["line"]}: svg do botao do perfil sem aria-hidden="true"')
+                    problems.append(f'line {s["line"]}: profile button svg without aria-hidden="true"')
 
-    # (g) grupos
+    # (g) groups
     for g in (d for d in walk(nav) if has(d, 'al-sidebar__group')):
         labels = [k for k in g['kids'] if has(k, 'al-sidebar__group-label')]
         lists = [k for k in g['kids'] if k['tag'] == 'ul']
         if len(labels) != 1 or not text_flat(labels[0]) or not labels[0]['attrs'].get('id'):
-            problems.append(f'linha {g["line"]}: grupo sem um rotulo com texto e id (regra 27)')
+            problems.append(f'line {g["line"]}: group without one label with text and id (rule 27)')
             continue
         if len(lists) != 1 or lists[0]['attrs'].get('aria-labelledby') != labels[0]['attrs']['id']:
-            problems.append(f'linha {g["line"]}: a lista do grupo tem aria-labelledby apontando para o '
-                            f'proprio rotulo (regra 27)')
+            problems.append(f'line {g["line"]}: the group list has aria-labelledby pointing to its '
+                            f'own label (rule 27)')
         # (l)
         if has(g, 'al-sidebar__support'):
-            itens = [d for d in walk(g) if has(d, 'al-tab')]
-            if len(itens) > 3:
-                problems.append(f'linha {g["line"]}: Ajuda com {len(itens)} itens - no maximo 3 (regra 21)')
+            items = [d for d in walk(g) if has(d, 'al-tab')]
+            if len(items) > 3:
+                problems.append(f'line {g["line"]}: Help with {len(items)} items - at most 3 (rule 21)')
     for s in (d for d in walk(nav) if has(d, 'al-sidebar__support')):
         if not has(s, 'al-sidebar__group'):
-            problems.append(f'linha {s["line"]}: a Ajuda e um .al-sidebar__group (regra 21)')
+            problems.append(f'line {s["line"]}: Help is a .al-sidebar__group (rule 21)')
 
-    # (h) listas
+    # (h) lists
     for ul in (d for d in walk(nav) if d['tag'] == 'ul'):
         if not (has(ul, 'al-tabs') and has(ul, 'al-tabs--square')):
-            problems.append(f'linha {ul["line"]}: lista da Sidebar e .al-tabs.al-tabs--square (regra 11)')
+            problems.append(f'line {ul["line"]}: a Sidebar list is .al-tabs.al-tabs--square (rule 11)')
 
-    # (i) (j) (k) itens
-    atuais, rotulos = 0, {}
+    # (i) (j) (k) items
+    current, labels_seen = 0, {}
     for it in (d for d in walk(nav) if has(d, 'al-tab')):
         ia = it['attrs']
         if it['tag'] != 'a' or 'href' not in ia:
-            problems.append(f'linha {it["line"]}: item da Sidebar e <a href> (regra 28)')
+            problems.append(f'line {it["line"]}: a Sidebar item is <a href> (rule 28)')
         if ia.get('role') == 'tab' or 'aria-selected' in ia:
-            problems.append(f'linha {it["line"]}: item de navegacao nunca e role="tab"/aria-selected (regra 28)')
+            problems.append(f'line {it["line"]}: a navigation item is never role="tab"/aria-selected (rule 28)')
         lab = [d for d in walk(it) if has(d, 'al-tab__label')]
         txt = text_flat(lab[0]) if lab else ''
         if not txt:
-            problems.append(f'linha {it["line"]}: item sem .al-tab__label com texto')
-        elif txt.lower() in rotulos:
-            problems.append(f'linha {it["line"]}: rotulo "{txt}" repetido (linha {rotulos[txt.lower()]}) (regra 16)')
+            problems.append(f'line {it["line"]}: item without a .al-tab__label with text')
+        elif txt.lower() in labels_seen:
+            problems.append(f'line {it["line"]}: label "{txt}" repeated (line {labels_seen[txt.lower()]}) (rule 16)')
         else:
-            rotulos[txt.lower()] = it['line']
+            labels_seen[txt.lower()] = it['line']
         cur = ia.get('aria-current')
         if cur is not None and cur != 'false':
-            atuais += 1
+            current += 1
             if cur != 'page':
-                problems.append(f'linha {it["line"]}: aria-current="{cur}" - na Sidebar e "page" (regra 28)')
-    if atuais > 1:
-        problems.append(f'linha {ln}: {atuais} itens atuais - no maximo um (regra 12)')
+                problems.append(f'line {it["line"]}: aria-current="{cur}" - in the Sidebar it is "page" (rule 28)')
+    if current > 1:
+        problems.append(f'line {ln}: {current} current items - at most one (rule 12)')
 
 
 def markup_contract(path):
     if not os.path.exists(path):
-        return None, [f'{path} nao existe']
+        return None, [f'{path} does not exist']
     t = Tree()
     t.feed(open(path, encoding='utf-8').read())
     nodes = list(walk(t.root))
     ids = {n['attrs']['id']: n for n in nodes if 'id' in n['attrs']}
     order = {id(n): i for i, n in enumerate(nodes)}
 
-    checked, problems, vivas = 0, [], []
+    checked, problems, live = 0, [], []
     for n in nodes:
         if not has(n, 'al-sidebar'):
             continue
         checked += 1
-        congelada = any('inert' in p['attrs'] for p in ancestors(n))
-        if not congelada:
-            vivas.append(n)
+        frozen = any('inert' in p['attrs'] for p in ancestors(n))
+        if not frozen:
+            live.append(n)
         if any(has(p, 'al-sidebar') for p in ancestors(n)):
-            problems.append(f'linha {n["line"]}: Sidebar dentro de Sidebar (regra 4)')
+            problems.append(f'line {n["line"]}: Sidebar inside a Sidebar (rule 4)')
         check_sidebar(n, ids, problems)
 
     # (b)
-    if len(vivas) > 1:
-        problems.append(f'{len(vivas)} Sidebars vivas no documento - uma por tela (regra 4)')
+    if len(live) > 1:
+        problems.append(f'{len(live)} live Sidebars in the document - one per screen (rule 4)')
 
     # (m)
     for n in nodes:
-        alvo = n['attrs'].get('data-al-sidebar-open')
-        if alvo is None:
+        target = n['attrs'].get('data-al-sidebar-open')
+        if target is None:
             continue
-        d = ids.get(alvo)
+        d = ids.get(target)
         if d is None or not has(d, 'al-sidebar'):
-            problems.append(f'linha {n["line"]}: data-al-sidebar-open="{alvo}" nao aponta para uma .al-sidebar')
+            problems.append(f'line {n["line"]}: data-al-sidebar-open="{target}" does not point to a .al-sidebar')
         if not n['attrs'].get('aria-label', '').strip():
-            problems.append(f'linha {n["line"]}: botao Menu sem aria-label (regra 24)')
-        if n['attrs'].get('aria-controls') != alvo:
-            problems.append(f'linha {n["line"]}: botao Menu com aria-controls diferente do id da Sidebar')
+            problems.append(f'line {n["line"]}: Menu button without aria-label (rule 24)')
+        if n['attrs'].get('aria-controls') != target:
+            problems.append(f'line {n["line"]}: Menu button with aria-controls different from the Sidebar id')
         if n['attrs'].get('aria-expanded') not in ('true', 'false'):
-            problems.append(f'linha {n["line"]}: botao Menu sem aria-expanded (regra 25)')
+            problems.append(f'line {n["line"]}: Menu button without aria-expanded (rule 25)')
 
-    # (n) pular para o conteudo, antes da Sidebar viva
-    for s in vivas:
-        pulos = [n for n in nodes if n['tag'] == 'a' and n['attrs'].get('href', '').startswith('#')
+    # (n) skip to content, before the live Sidebar
+    for s in live:
+        skips = [n for n in nodes if n['tag'] == 'a' and n['attrs'].get('href', '').startswith('#')
                  and len(n['attrs']['href']) > 1 and order[id(n)] < order[id(s)]
                  and n['attrs']['href'][1:] in ids]
-        if not pulos:
-            problems.append(f'linha {s["line"]}: sem link "pular para o conteudo" antes da Sidebar (regra 29)')
+        if not skips:
+            problems.append(f'line {s["line"]}: no "skip to content" link before the Sidebar (rule 29)')
 
     if checked == 0:
-        return None, ['nenhuma .al-sidebar no HTML']
+        return None, ['no .al-sidebar in the HTML']
     return checked, problems
 
 
@@ -338,43 +342,43 @@ def run():
     invis = [r for r in rows if r['invisible']]
     fails = [r for r in rows if not r['pass'] and not r['exception'] and not r['invisible']]
     excs = [r for r in rows if r['exception']]
-    passa = [r for r in rows if r['pass']]
+    passing = [r for r in rows if r['pass']]
 
     checked, mk = markup_contract(path)
 
     print('=' * 78)
-    print('QA DE ACESSIBILIDADE DO SIDEBAR')
+    print('SIDEBAR ACCESSIBILITY QA')
     print('=' * 78)
-    print('\nCOMBINACOES RENDERIZADAS (tema x papel)')
+    print('\nRENDERED COMBINATIONS (theme x role)')
     for r in rows:
         if r['invisible']:
-            mark, nota = 'XX', 'INVISIVEL - nada separa os dois fundos'
+            mark, note = 'XX', 'INVISIBLE - nothing separates the two backgrounds'
         elif r['pass']:
-            mark, nota = 'ok', 'passa'
+            mark, note = 'ok', 'pass'
         elif r['exception']:
-            mark, nota = '~~', f'excecao "{r["exception"]}"'
+            mark, note = '~~', f'exception "{r["exception"]}"'
         else:
-            mark, nota = 'XX', 'REPROVA'
+            mark, note = 'XX', 'FAIL'
         print(f'  {mark} {r["theme"]:<5} {r["what"]:<38} x {r["bg"]:<22} '
-              f'{r["ratio"]:5.2f} (piso {r["floor"]})  {nota}')
+              f'{r["ratio"]:5.2f} (floor {r["floor"]})  {note}')
 
-    print('\nCONTRATO DE MARCACAO')
-    print(f'     fonte: {os.path.relpath(path, ROOT)}')
+    print('\nMARKUP CONTRACT')
+    print(f'     source: {os.path.relpath(path, ROOT)}')
     if checked is None:
         for p in mk:
-            print(f'     PENDENTE: {p}')
+            print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} sidebar(s) conferida(s), 14 regras (a-n)')
+        print(f'     {checked} sidebar(s) checked, 14 rules (a-n)')
         for p in mk:
-            print(f'     PROBLEMA: {p}')
+            print(f'     PROBLEM: {p}')
 
     print('-' * 78)
-    print(f'{len(rows)} medicoes  |  passam: {len(passa)}  |  excecoes: {len(excs)}  |  '
-          f'reprovas: {len(fails) + len(invis)}')
+    print(f'{len(rows)} measurements  |  pass: {len(passing)}  |  exceptions: {len(excs)}  |  '
+          f'fail: {len(fails) + len(invis)}')
 
     json.dump({
         'component': 'sidebar',
-        'criterion': 'WCAG 1.4.3 texto + 1.4.11 nao-textual + estados visiveis sobre a Sidebar',
+        'criterion': 'WCAG 1.4.3 text + 1.4.11 non-text + visible states on the Sidebar',
         'floors': {'text': TEXT_FLOOR, 'nonText': NON_TEXT_FLOOR},
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': checked,
@@ -382,22 +386,22 @@ def run():
         'markupProblems': mk if checked is not None else [],
         'rows': rows,
     }, open(OUT_JSON, 'w'), indent=2, ensure_ascii=False)
-    print(f'{os.path.relpath(OUT_JSON, ROOT)} escrito')
+    print(f'{os.path.relpath(OUT_JSON, ROOT)} written')
 
-    falhou = False
+    failed = False
     if invis or fails:
         print('-' * 78)
-        print(f'{len(invis) + len(fails)} COMBINACAO(OES) REPROVAM:')
+        print(f'{len(invis) + len(fails)} COMBINATION(S) FAIL:')
         for r in invis + fails:
             print(f'   {r["theme"]} {r["what"]} x {r["bg"]}: {r["ratio"]}:1')
-        falhou = True
+        failed = True
     if checked is not None and mk:
         print('-' * 78)
-        print(f'{len(mk)} PROBLEMA(S) DE MARCACAO - portao reprova')
-        falhou = True
+        print(f'{len(mk)} MARKUP PROBLEM(S) - gate fails')
+        failed = True
     if checked is None:
-        falhou = True
-    return 1 if falhou else 0
+        failed = True
+    return 1 if failed else 0
 
 
 if __name__ == '__main__':
