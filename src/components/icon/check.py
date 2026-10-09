@@ -1,14 +1,14 @@
 """
-Portao do CSS do Icon.
+CSS gate for the Icon.
 
-A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
-de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
-nenhum token inventado. Aqui fica so o que e proprio do Icon.
+The rule is the same for every component and lives in tools/cssgate.py: no
+literal values (color, length, weight, duration), no orphan tokens and no
+invented tokens. Only what is specific to the Icon stays here.
 
---al-icon-box e o ponto de ajuste publico do Icon (tamanho fora da escala,
-no style do <svg>). O proprio icon.css declara, entao nao conta como inventado.
+--al-icon-box is the Icon's public adjustment point (a size off the scale, in
+the <svg> style). icon.css itself declares it, so it doesn't count as invented.
 
-Rodar: python3 check.py (ou o build completo: python3 build.py)
+Run: python3 check.py (or the full build: python3 build.py)
 """
 import os
 import sys

@@ -1,23 +1,23 @@
 """
-Portao do desenho do Icon, e gerador do manifesto.
+Drawing gate for the Icon, and manifest generator.
 
-Os outros portoes do AL olham para token e para CSS. Este olha para o ARQUIVO
-DO ICONE, e existe por um motivo especifico: o risco desta pasta nao e alguem
-escrever um valor errado, e alguem colar aqui um icone de outra familia. Um
-Material ou um Font Awesome no meio de 70 Lucide passa despercebido no diff e
-so aparece na tela, torto, meses depois.
+The other AL gates look at tokens and CSS. This one looks at the ICON FILE,
+and it exists for a specific reason: the risk in this folder is not someone
+writing a wrong value, it is someone pasting in an icon from another family. A
+Material or Font Awesome icon among 70 Lucide ones slips past the diff and only
+shows up on screen, crooked, months later.
 
-O que ele exige de cada arquivo, e o porque de cada exigencia:
+What it requires of each file, and why:
 
-  viewBox 0 0 24 24    o grid. Sem ele o icone nao escala junto com os outros.
-  stroke-width 2       a espessura da familia no grid de 24.
-  stroke currentColor  o mecanismo de cor do componente. Um `stroke="#000"`
-                       aqui ignora o tema e nao ha CSS que salve.
-  fill none            desenho de traco, nao de massa.
-  linecap/linejoin     round nos dois. E o que separa Lucide de Feather.
-  sem atributo class   a classe e do consumidor (`al-icon`), nao do arquivo.
+  viewBox 0 0 24 24    the grid. Without it the icon doesn't scale with the others.
+  stroke-width 2       the family's stroke weight on the 24 grid.
+  stroke currentColor  the component's color mechanism. A `stroke="#000"` here
+                       ignores the theme and no CSS can save it.
+  fill none            a stroke drawing, not a filled shape.
+  linecap/linejoin     round on both. It is what separates Lucide from Feather.
+  no class attribute   the class belongs to the consumer (`al-icon`), not the file.
 
-Rodar: python3 icons.py     (escreve icons.json, nao redirecionar stdout)
+Run: python3 icons.py     (writes icons.json, don't redirect stdout)
 """
 import json
 import os
@@ -48,7 +48,7 @@ def attrs(svg):
 
 def run():
     if not os.path.isdir(ICONS):
-        print(f'pasta nao encontrada: {ICONS}')
+        print(f'folder not found: {ICONS}')
         return 1
 
     files = sorted(f for f in os.listdir(ICONS) if f.endswith('.svg'))
@@ -64,32 +64,32 @@ def run():
         for key, want in EXPECTED.items():
             got = a.get(key)
             if got != want:
-                problems.append(f'{name}: {key} e "{got}", esperado "{want}"')
+                problems.append(f'{name}: {key} is "{got}", expected "{want}"')
 
         if 'class' in a:
-            problems.append(f'{name}: tem atributo class="{a["class"]}" - a classe e do consumidor')
+            problems.append(f'{name}: has a class="{a["class"]}" attribute - the class belongs to the consumer')
 
-        # cor cravada em qualquer lugar do desenho, nao so no <svg>
+        # a hard-coded color anywhere in the drawing, not only on the <svg>
         inner = body[body.find('>', body.find('<svg')) + 1:]
         for m in HEX.finditer(inner):
-            problems.append(f'{name}: cor literal {m.group(0)} dentro do desenho')
+            problems.append(f'{name}: literal color {m.group(0)} inside the drawing')
 
     print('=' * 70)
-    print('PORTAO DO DESENHO DO ICON')
+    print('ICON DRAWING GATE')
     print('=' * 70)
-    print(f'  pasta      : src/components/icon/icons/')
-    print(f'  arquivos   : {len(files)}')
-    print(f'  familia    : Lucide - grid 24, traco 2, cap e join redondos')
-    print(f'  licenca    : ISC (ver src/components/icon/NOTICE) - o resto do AL e MIT')
+    print(f'  folder     : src/components/icon/icons/')
+    print(f'  files      : {len(files)}')
+    print(f'  family     : Lucide - grid 24, stroke 2, round cap and join')
+    print(f'  license    : ISC (see src/components/icon/NOTICE) - the rest of AL is MIT')
     print('-' * 70)
 
     if problems:
-        print(f'{len(problems)} ICONE(S) FORA DA FAMILIA - PORTAO REPROVA:')
+        print(f'{len(problems)} ICON(S) OUTSIDE THE FAMILY - GATE FAILS:')
         for p in problems:
             print('   ', p)
         return 1
 
-    print(f'{len(files)} icones, todos no mesmo grid e na mesma espessura.')
+    print(f'{len(files)} icons, all on the same grid and with the same stroke weight.')
 
     manifest = {
         'component': 'icon',
@@ -103,7 +103,7 @@ def run():
     }
     path = comp_out('icon', 'icons.json')
     json.dump(manifest, open(path, 'w'), indent=2, ensure_ascii=False)
-    print(f'build/components/icon/icons.json escrito ({len(names)} nomes)')
+    print(f'build/components/icon/icons.json written ({len(names)} names)')
     return 0
 
 

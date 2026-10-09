@@ -1,73 +1,77 @@
 /* AL Design System - Icon Button
- * Escrito a mao. Depende de al-foundation.css, al-icon-tokens.css, icon.css e
- * al-icon-button-tokens.css, nesta ordem.
+ * Handwritten. Depends on al-foundation.css, al-icon-tokens.css, icon.css and
+ * al-icon-button-tokens.css, in that order.
  *
- * Nenhum valor aqui e literal: toda cor, espaco e raio entra por
- * var(--al-icon-button-*) ou por um token da Foundation. O check.py ao lado
- * recusa o arquivo se algum escapar - com uma excecao nomeada, no fim.
+ * No value here is literal: every color, space and radius comes in through
+ * var(--al-icon-button-*) or a Foundation token. The check.py next to it
+ * rejects the file if any slips through.
  *
- * CONTRATO DE MARCACAO
+ * MARKUP CONTRACT
  *
  *   <button type="button"
  *           class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"
- *           aria-label="Buscar">
+ *           aria-label="Search">
  *     <span class="al-icon-btn__spinner" aria-hidden="true"></span>
  *     <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
  *   </button>
  *
- *   variante : --primary | --secondary | --ghost | --danger
- *   tamanho  : --sm | --md
+ *   variant : --primary | --secondary | --ghost | --danger
+ *   size    : --sm | --md
  *
- *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *   type="button" is not optional: inside a <form>, the HTML default is submit.
  *
- * O NOME ACESSIVEL
- *   O nome e OBRIGATORIO. Nao existe Icon Button sem ele - e o unico
- *   contrato deste componente que nao tem alternativa. Ele descreve a ACAO,
- *   nao o desenho: "Buscar", nunca "Lupa". Vem de UM lugar so:
- *     aria-label="Buscar"            sem tooltip
- *     aria-labelledby="<id>"         com Tooltip - o texto do tooltip E o
- *                                    nome (regra 24 do Tooltip, 08/10/2026)
- *   Os dois juntos reprovam no a11y.py: o labelledby venceria e o aria-label
- *   envelheceria sem ninguem ler.
- *   O nome vai no BOTAO, nunca no svg. O svg e decorativo aqui pelo mesmo
- *   motivo de sempre - aria-hidden tira do leitor de tela, focusable="false"
- *   tira da ordem de tabulacao - e anunciar os dois seria ruido duplicado.
+ * THE ACCESSIBLE NAME
+ *   The name is REQUIRED. There is no Icon Button without it - it is the only
+ *   contract of this component that has no alternative. It describes the
+ *   ACTION, not the drawing: "Search", never "Magnifier". It comes from ONE
+ *   place only:
+ *     aria-label="Search"            without a tooltip
+ *     aria-labelledby="<id>"         with a Tooltip - the tooltip text IS the
+ *                                    name (Tooltip rule 24, 2026-10-08)
+ *   Both together fail in a11y.py: labelledby would win and the aria-label
+ *   would go stale with nobody reading it.
+ *   The name goes on the BUTTON, never on the svg. The svg is decorative here
+ *   for the usual reason - aria-hidden removes it from the screen reader,
+ *   focusable="false" removes it from the tab order - and announcing both
+ *   would be duplicate noise.
  *
- * O ICONE
- *   O desenho vem do componente Icon da Fundacao. O tamanho nao e escolha de
- *   quem consome: o botao impoe a caixa por --al-icon-box, e o .al-icon
- *   obedece. Nao ponha .al-icon--20 aqui.
+ * THE ICON
+ *   The drawing comes from the Foundation's Icon component. The size is not
+ *   the consumer's choice: the button imposes the box through --al-icon-box,
+ *   and .al-icon obeys. Don't put .al-icon--20 here.
  *
- * A CAIXA
- *   Nao ha width nem height. O botao e quadrado por consequencia: padding x2
- *   mais a caixa do icone. sm = 8+20+8 = 36. md = 12+24+12 = 48 - as mesmas
- *   alturas do Button, que e o que faz os dois conviverem numa toolbar.
- *   Fixar a medida aqui seria cravar em dois lugares a mesma decisao.
+ * THE BOX
+ *   There is no width or height. The button is square as a consequence:
+ *   padding x2 plus the icon box. sm = 8+20+8 = 36. md = 12+24+12 = 48 - the
+ *   same heights as the Button, which is what lets the two live together in a
+ *   toolbar. Pinning the measurement here would fix the same decision in two
+ *   places.
  *
- * CARREGANDO
- *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
- *   o handler no JS. Nao use o atributo disabled: ele tira o botao da ordem de
- *   foco no meio da interacao e nada e anunciado.
+ * LOADING
+ *   Set aria-busy="true" and aria-disabled="true" on the <button> itself, and
+ *   lock the handler in JS. Don't use the disabled attribute: it takes the
+ *   button out of the focus order in the middle of the interaction and nothing
+ *   is announced.
  *
- *   Diferenca em relacao ao Button, e ela importa: la o spinner toma o lugar do
- *   icone da esquerda e a largura pode pular, por isso a orientacao e trocar o
- *   rotulo junto ("Publicar" -> "Publicando…"). AQUI NAO EXISTE ROTULO PARA
- *   TROCAR. O spinner ocupa exatamente a caixa do icone, entao a geometria nao
- *   se mexe - mas em compensacao a regiao viva deixa de ser complemento e passa
- *   a ser o UNICO canal que informa que algo comecou:
+ *   A difference from the Button, and it matters: there the spinner takes the
+ *   place of the leading icon and the width can jump, so the guidance is to
+ *   swap the label too ("Publish" -> "Publishing…"). HERE THERE IS NO LABEL TO
+ *   SWAP. The spinner takes exactly the icon box, so the geometry doesn't move
+ *   - but in exchange the live region stops being a complement and becomes the
+ *   ONLY channel that says something started:
  *
- *     <p role="status" aria-live="polite" class="visually-hidden">Buscando…</p>
+ *     <p role="status" aria-live="polite" class="visually-hidden">Searching…</p>
  *
- * DESABILITADO
- *   Prefira aria-disabled="true" ao atributo disabled: o botao continua focavel
- *   e um tooltip pode dizer o motivo. Com aria-disabled o clique AINDA dispara -
- *   a trava e no JS.
+ * DISABLED
+ *   Prefer aria-disabled="true" over the disabled attribute: the button stays
+ *   focusable and a tooltip can say why. With aria-disabled the click STILL
+ *   fires - the lock is in JS.
  *
- * ALVO DE TOQUE
- *   O sm tem 36x36. Passa o WCAG 2.5.8 (minimo 24) e fica abaixo dos 44
- *   recomendados pelo Carbon. Decisao consciente: nao ha expansao de area por
- *   pseudo-elemento. A regra de uso que decorre disso e nao usar sm em
- *   interface primariamente de toque.
+ * TOUCH TARGET
+ *   The sm is 36x36. It passes WCAG 2.5.8 (minimum 24) and falls below the 44
+ *   Carbon recommends. A conscious decision: there is no area expansion through
+ *   a pseudo-element. The usage rule that follows is not to use sm in a
+ *   primarily touch interface.
  */
 
 /* ---------------------------------------------------------------- base */
@@ -78,9 +82,9 @@
 
   box-sizing: border-box;
   margin: 0;
-  /* A borda entra no calculo da caixa: toda variante tem 1px, transparente ou
-     nao, entao descontar aqui mantem 36 e 48 exatos e impede o botao de pular
-     1px quando o disabled acrescenta borda visivel. */
+  /* The border counts toward the box: every variant has 1px, transparent or
+     not, so subtracting it here keeps 36 and 48 exact and stops the button
+     from jumping 1px when disabled adds a visible border. */
   padding: calc(var(--_pad) - var(--al-icon-button-border-width));
   border: var(--al-icon-button-border-width) solid var(--_border);
   border-radius: var(--al-icon-button-radius);
@@ -88,9 +92,9 @@
   background-color: var(--_bg);
   color: var(--_ink);
 
-  /* quem manda no tamanho do icone e o botao. O .al-icon la dentro le esta
-     propriedade herdada; sem ela cairia no degrau padrao dele (24) e brigaria
-     com a caixa no sm. */
+  /* the button decides the icon's size. The .al-icon inside reads this
+     inherited property; without it, it would fall back to its default step
+     (24) and fight the box in sm. */
   --al-icon-box: var(--_icon-size);
 
   cursor: pointer;
@@ -103,7 +107,7 @@
     box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
-/* ---------------------------------------------------------------- variantes */
+/* ---------------------------------------------------------------- variants */
 .al-icon-btn--primary {
   --_bg: var(--al-icon-button-primary-bg);
   --_bg-hover: var(--al-icon-button-primary-bg-hover);
@@ -152,9 +156,9 @@
   --_ring: var(--al-icon-button-danger-ring);
 }
 
-/* ---------------------------------------------------------------- tamanhos */
-/* Um padding so por tamanho, nos quatro lados - o botao e quadrado. E por isso
-   que aqui nao ha padding-x e padding-y como no Button. */
+/* ---------------------------------------------------------------- sizes */
+/* A single padding per size, on all four sides - the button is square. That is
+   why there is no padding-x and padding-y here as in the Button. */
 .al-icon-btn--sm {
   --_pad: var(--al-icon-button-sm-padding);
   --_icon-size: var(--al-icon-button-sm-icon-size);
@@ -165,8 +169,8 @@
   --_icon-size: var(--al-icon-button-md-icon-size);
 }
 
-/* ---------------------------------------------------------------- estados */
-/* hover e pressed nunca valem quando o botao esta fora de acao */
+/* ---------------------------------------------------------------- states */
+/* hover and pressed never apply when the button is out of action */
 .al-icon-btn:hover:not(:disabled):not([aria-disabled="true"]) {
   background-color: var(--_bg-hover);
 }
@@ -175,8 +179,9 @@
   background-color: var(--_bg-active);
 }
 
-/* :focus-visible, nao :focus - o anel aparece no teclado, nao no clique.
-   O anel e sombra, entao nao empurra layout e acompanha o raio do circulo. */
+/* :focus-visible, not :focus - the ring shows from the keyboard, not on click.
+   The ring is a shadow, so it doesn't push the layout and follows the circle's
+   radius. */
 .al-icon-btn:focus-visible {
   outline: none;
   box-shadow: var(--_ring);
@@ -190,14 +195,14 @@
   cursor: not-allowed;
 }
 
-/* o anel continua valendo em cima do desabilitado: aria-disabled permanece
-   focavel de proposito, e quem chega nele de teclado precisa ver onde esta */
+/* the ring still applies on top of disabled: aria-disabled stays focusable on
+   purpose, and whoever reaches it from the keyboard needs to see where they are */
 .al-icon-btn[aria-disabled="true"]:focus-visible {
   box-shadow: var(--_ring);
 }
 
-/* ---------------------------------------------------------------- conteudo */
-/* rede de seguranca para svg que nao seja do componente Icon */
+/* ---------------------------------------------------------------- content */
+/* safety net for an svg that isn't from the Icon component */
 .al-icon-btn > svg {
   display: block;
   flex: none;
@@ -205,11 +210,11 @@
   height: var(--_icon-size);
 }
 
-/* ---------------------------------------------------------------- carregando */
-/* Mesma caixa do icone que ele substitui. Aqui isso e mais do que higiene de
-   layout: como nao ha rotulo, o spinner e a unica coisa visivel no botao
-   durante o carregamento - se ele fosse menor, o desenho encolheria no
-   instante em que a acao comeca. */
+/* ---------------------------------------------------------------- loading */
+/* The same box as the icon it replaces. Here that is more than layout hygiene:
+   since there is no label, the spinner is the only visible thing on the button
+   while loading - if it were smaller, the drawing would shrink the moment the
+   action starts. */
 .al-icon-btn__spinner {
   display: none;
   flex: none;
@@ -226,7 +231,7 @@
   display: block;
 }
 
-/* o spinner ocupa o lugar do unico icone - a caixa e a mesma, nada se move */
+/* the spinner takes the place of the only icon - the box is the same, nothing moves */
 .al-icon-btn[aria-busy="true"] > svg {
   display: none;
 }
@@ -237,29 +242,31 @@
   }
 }
 
-/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
-   declara a de saida (ease-in); estes estados de destino declaram a de
-   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
 .al-icon-btn:hover,
 .al-icon-btn:active,
 .al-icon-btn:focus-visible {
   transition-timing-function: var(--al-motion-easing-enter);
 }
 
-/* ---------------------------------------------------------------- ambiente */
+/* ---------------------------------------------------------------- environment */
 @media (prefers-reduced-motion: reduce) {
   .al-icon-btn {
     transition: none;
   }
-  /* o spinner nao para: sem rotulo, ele e a unica pista visual de que algo
-     esta acontecendo. Desacelera ate deixar de ser movimento agressivo. */
+  /* the spinner doesn't stop: with no label, it is the only visual clue that
+     something is happening. It slows down until it is no longer aggressive
+     motion. */
   .al-icon-btn__spinner {
     animation-duration: var(--al-motion-duration-spinner-reduced);
   }
 }
 
-/* No alto contraste do sistema a sombra e descartada - o anel some junto.
-   Aqui o foco volta como outline nativo, que o modo respeita. */
+/* In the system's high contrast mode the shadow is discarded - the ring goes
+   with it. Here focus comes back as a native outline, which the mode respects. */
 @media (forced-colors: active) {
   .al-icon-btn {
     border-color: currentColor;

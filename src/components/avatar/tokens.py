@@ -1,63 +1,62 @@
 """
-Camada de tokens do Avatar.
+Token layer for the Avatar.
 
-Regra unica desta camada: nada aqui inventa valor. Todo token aponta para um
-token da Foundation pelo NOME. O portao no fim do arquivo recusa qualquer
-coisa que seja um valor solto - hex, px, numero.
+The one rule of this layer: nothing here invents a value. Every token points
+to a Foundation token by NAME. The gate at the end of the file rejects
+anything that is a loose value - hex, px, number.
 
-Nomenclatura:
-  codigo -> avatar-md-icon-size      (hifen)
-  Figma  -> avatar/md/icon-size      (pasta)
-Sao camadas diferentes. Nunca colapsar uma na outra.
+Naming:
+  code  -> avatar-md-icon-size      (hyphen)
+  Figma -> avatar/md/icon-size      (folder)
+They are different layers. Never collapse one into the other.
 
-POR QUE A COR NAO REPETE POR TAMANHO
+WHY THE COLOR DOESN'T REPEAT PER SIZE
 
-  O Tag e o Button tem cor por variante porque a variante MUDA a cor (primary
-  e laranja, danger e vermelho). O Avatar so tem uma dimensao de variante de
-  verdade - o tamanho - e o tamanho nao muda cor nenhuma: os tres tamanhos
-  usam o mesmo fundo e a mesma tinta. Por isso `avatar-bg`, `avatar-label` e
-  `avatar-icon` sao tres tokens no total, nao nove. Nove tokens repetindo o
-  mesmo valor tres vezes seriam tres lugares para o mesmo valor divergir por
-  engano.
+  The Tag and the Button have color per variant because the variant CHANGES
+  the color (primary is orange, danger is red). The Avatar has only one real
+  variant dimension - size - and size changes no color at all: the three sizes
+  use the same background and the same ink. That is why `avatar-bg`,
+  `avatar-label` and `avatar-icon` are three tokens in total, not nine. Nine
+  tokens repeating the same value three times would be three places for the
+  same value to drift by mistake.
 
-`avatar-label` E `avatar-icon` SAO TOKENS SEPARADOS MESMO APONTANDO PRO MESMO ALIAS
+`avatar-label` AND `avatar-icon` ARE SEPARATE TOKENS EVEN POINTING TO THE SAME ALIAS
 
-  Hoje os dois resolvem em `text-primary` e por isso ficam pixel-identicos.
-  Mas sao papeis diferentes - um e texto (iniciais), o outro e tinta de icone
-  vetorial - e o achado 1 da auditoria foi justamente a tinta do icone tendo
-  ficado presa num token de FUNDO (`bg-inverse`) que so coincidia em valor.
-  Separar os nomes agora e o que impede a mesma armadilha de voltar: se um dia
-  a tinta do icone precisar divergir da tinta do texto, o rebind e local, e
-  ninguem tem que caçar todo lugar que usava `avatar-label` para saber se
-  aquele uso era texto ou era icone.
+  Today both resolve to `text-primary` and so they are pixel-identical. But
+  they are different roles - one is text (initials), the other is vector icon
+  ink - and the audit's first finding was precisely the icon ink stuck on a
+  BACKGROUND token (`bg-inverse`) that only matched in value. Separating the
+  names now is what stops the same trap from coming back: if the icon ink ever
+  needs to diverge from the text ink, the rebind is local, and nobody has to
+  hunt down every place that used `avatar-label` to know whether that use was
+  text or icon.
 
-NAO HA TOKEN DE BORDA
+THERE IS NO BORDER TOKEN
 
-  Diferente do Tag, o Avatar nao tem traco em variante nenhuma. Nao e uma
-  omissao documentada por engano - e a forma nao usar contorno.
+  Unlike the Tag, the Avatar has no stroke in any variant. It is not an
+  omission documented by mistake - it is the shape not using an outline.
 
-DOIS PISOS DE CONTRASTE, NO MESMO PAR DE COR
+TWO CONTRAST FLOORS, ON THE SAME COLOR PAIR
 
-  `avatar-label` (iniciais) e texto: piso 4.5:1 do 1.4.3. `avatar-icon`
-  (glifo vetorial) e nao-textual: piso 3:1 do 1.4.11, regra ja fixada com o
-  Icon e o Icon Button. Os dois resolvem no mesmo hex hoje porque os dois
-  apontam pra `text-primary`, entao os dois passam os dois pisos com folga -
-  mas o portao mede cada um contra o piso que e dele, nao contra o mais
-  facil.
+  `avatar-label` (initials) is text: 4.5:1 floor from 1.4.3. `avatar-icon`
+  (vector glyph) is non-text: 3:1 floor from 1.4.11, a rule already set with
+  the Icon and the Icon Button. Both resolve to the same hex today because both
+  point to `text-primary`, so both pass both floors with room to spare - but
+  the gate measures each one against its own floor, not against the easier one.
 
-ZERO EXCECAO DE CONTRASTE
+ZERO CONTRAST EXCEPTIONS
 
-  Terceiro componente do AL a fechar em zero excecoes, depois do Tag. Nao
-  cria par novo nenhum: `text-primary` sobre `bg-subtle` ja e um dos 80 pares
-  medidos pela Foundation (12.54:1 claro, 9.98:1 escuro).
+  The third AL component to close with zero exceptions, after the Tag. It
+  creates no new pair at all: `text-primary` on `bg-subtle` is already one of
+  the 80 pairs the Foundation measures (12.54:1 light, 9.98:1 dark).
 
-DIAMETRO NAO E TOKEN
+THE DIAMETER IS NOT A TOKEN
 
-  32 / 48 / 64 nascem de `padding x2 + icon-size` do mesmo tamanho (8x2+16,
-  12x2+24, 16x2+32) - e essa conta bate nos tres tipos (Initials, Icon,
-  Photo) porque os tres ocupam a mesma caixa quadrada. Tokenizar o diametro
-  seria guardar duas vezes a mesma informacao com duas chances de divergir,
-  igual a altura do Button e do Tag.
+  32 / 48 / 64 come from `padding x2 + icon-size` of the same size (8x2+16,
+  12x2+24, 16x2+32) - and that math works for all three types (Initials, Icon,
+  Photo) because the three take the same square box. Tokenizing the diameter
+  would store the same information twice with two chances to diverge, like the
+  height of the Button and the Tag.
 """
 import json, os, sys
 
@@ -72,15 +71,15 @@ from color import cr                      # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))   # noqa: E402
 
-# --------------------------------------------------------------- cor
-# Compartilhada pelos tres tamanhos - ver nota no cabecalho.
+# ----------------------------------------------------------------- color
+# Shared by the three sizes - see the note in the header.
 COLOR = {
     'bg':    'bg-subtle',
-    'label': 'text-primary',   # iniciais - piso de texto, 4.5:1
-    'icon':  'text-primary',   # glifo vetorial - piso nao-textual, 3:1
+    'label': 'text-primary',   # initials - text floor, 4.5:1
+    'icon':  'text-primary',   # vector glyph - non-text floor, 3:1
 }
 
-# ------------------------------------------------------------ geometria
+# ------------------------------------------------------------- geometry
 SIZE = {
     'sm': {'padding': 'space.8',  'icon-size': 'iconSize.16', 'font': 'type.styles.label-sm'},
     'md': {'padding': 'space.12', 'icon-size': 'iconSize.24', 'font': 'type.styles.heading-xs'},
@@ -91,30 +90,30 @@ SHARED = {
     'radius': 'radius.full',
 }
 
-PENDING = {}   # nenhuma pendencia nesta versao - ver docstring
+PENDING = {}   # nothing pending in this version - see the docstring
 
 
-# ---------------------------------------------------------------- portao
+# ------------------------------------------------------------------ gate
 def bind_color(name, ref, alias, resolved, problems):
-    """Um token de cor: registra o alias e resolve nos dois temas, ou reprova."""
+    """One color token: records the alias and resolves it in both themes, or fails."""
     alias[name] = ref
     if ref.startswith('#'):
-        problems.append(f'{name}: hex solto ({ref}) - todo valor de cor nasce alias do semantico')
+        problems.append(f'{name}: loose hex ({ref}) - every color value is born as an alias of a semantic')
         return
     if ref not in SEM:
-        problems.append(f'{name}: aponta para {ref}, que nao existe na camada semantica')
+        problems.append(f'{name}: points to {ref}, which does not exist in the semantic layer')
         return
     light, dark = SEM[ref]
     resolved[name] = {'light': light, 'dark': dark}
 
 
 def contrast_rows():
-    """As duas combinacoes renderizadas do componente - rotulo e icone contra
-    o fundo - medidas com o motor da Foundation, cada uma contra o piso que e
-    dela (texto 4.5:1, nao-textual 3:1)."""
+    """The component's two rendered combinations - label and icon against the
+    background - measured with the Foundation's engine, each against its own
+    floor (text 4.5:1, non-text 3:1)."""
     rows = []
-    pisos = {'label': 4.5, 'icon': 3.0}
-    for role, min_ratio in pisos.items():
+    floors = {'label': 4.5, 'icon': 3.0}
+    for role, min_ratio in floors.items():
         fg_ref = COLOR[role]
         bg_ref = COLOR['bg']
         for theme, i in (('light', 0), ('dark', 1)):
@@ -142,7 +141,7 @@ def run():
             try:
                 resolved[name] = resolve_foundation(ref)
             except KeyError:
-                problems.append(f'{name}: {ref} nao existe na Foundation')
+                problems.append(f'{name}: {ref} does not exist in the Foundation')
 
     for role, ref in SHARED.items():
         name = f'avatar-{role}'
@@ -150,9 +149,9 @@ def run():
         try:
             resolved[name] = resolve_foundation(ref)
         except KeyError:
-            problems.append(f'{name}: {ref} nao existe na Foundation')
+            problems.append(f'{name}: {ref} does not exist in the Foundation')
 
-    # Diametro derivado - NAO vira token. Ver nota no cabecalho.
+    # Derived diameter - it does NOT become a token. See the note in the header.
     diameters = {}
     for size in SIZE:
         pad = resolve_foundation(SIZE[size]['padding'])
@@ -163,36 +162,36 @@ def run():
     fails = [r for r in rows if not r['pass']]
 
     print('=' * 74)
-    print('CAMADA DE TOKENS DO AVATAR')
+    print('AVATAR TOKEN LAYER')
     print('=' * 74)
     for name in sorted(alias):
         print(f'  {name:<28} -> {alias[name]}')
     print('-' * 74)
     for size in SIZE:
-        print(f'diametro derivado {size}: {diameters[size]}px  '
-              f'(padding x2 + icon-size; mesma caixa nos tres tipos)')
+        print(f'derived diameter {size}: {diameters[size]}px  '
+              f'(padding x2 + icon-size; same box in all three types)')
     print('-' * 74)
-    print(f'contraste: {len(rows)} medicoes  |  passam: {len(rows) - len(fails)}  |  '
-          f'reprovam: {len(fails)}  |  excecoes: 0')
-    pior = min(rows, key=lambda r: r['ratio'] / r['min'])
-    print(f'pior margem: {pior["what"]} ({pior["theme"]}) = {pior["ratio"]}:1 '
-          f'contra piso {pior["min"]}')
+    print(f'contrast: {len(rows)} measurements  |  pass: {len(rows) - len(fails)}  |  '
+          f'fail: {len(fails)}  |  exceptions: 0')
+    worst = min(rows, key=lambda r: r['ratio'] / r['min'])
+    print(f'worst margin: {worst["what"]} ({worst["theme"]}) = {worst["ratio"]}:1 '
+          f'against floor {worst["min"]}')
     if not PENDING:
-        print('pendencias: nenhuma')
+        print('pending: none')
     print('-' * 74)
 
     if problems:
-        print(f'{len(problems)} TOKEN(S) REPROVAM O PORTAO DE ALIAS:')
+        print(f'{len(problems)} TOKEN(S) FAIL THE ALIAS GATE:')
         for p in problems:
             print('   ', p)
         return 1
     if fails:
-        print(f'{len(fails)} COMBINACAO(OES) REPROVAM O PORTAO DE CONTRASTE:')
+        print(f'{len(fails)} COMBINATION(S) FAIL THE CONTRAST GATE:')
         for f in fails:
             print(f'    {f["what"]} ({f["theme"]}): {f["ratio"]}:1 < {f["min"]}')
         return 1
 
-    print(f'{len(alias)} tokens, todos alias da Foundation. 0 valores soltos.')
+    print(f'{len(alias)} tokens, all aliases of the Foundation. 0 loose values.')
 
     out = {
         'meta': {
@@ -203,13 +202,13 @@ def run():
             'types': ['initials', 'icon', 'photo'],
             'sizes': list(SIZE),
             'states': ['default'],
-            'nota': (
-                'Avatar estatico por padrao: fora da ordem de tabulacao, sem hover, '
-                'sem foco proprio. Quem precisar de avatar clicavel embrulha num '
-                'acionavel que ja tem anel (Icon Button, link) - o Avatar em si nunca '
-                'ganha estado. Cor compartilhada pelos tres tamanhos; forma so circulo '
-                'nesta versao (quadrado/organizacao fica fora, sem conceito de '
-                'organizacao no AL ainda). Zero excecao de contraste.'
+            'note': (
+                'A static avatar by default: out of the tab order, no hover, no focus of '
+                'its own. Whoever needs a clickable avatar wraps it in an actionable '
+                'element that already has a ring (Icon Button, link) - the Avatar itself '
+                'never gets a state. Color shared by the three sizes; circle shape only in '
+                'this version (square/organization is left out, AL has no concept of '
+                'organization yet). Zero contrast exceptions.'
             ),
         },
         'alias': alias,
@@ -219,35 +218,35 @@ def run():
         'pending': PENDING,
     }
     json.dump(out, open(comp_out('avatar', 'tokens.json'), 'w'), indent=2, ensure_ascii=False)
-    print('\nbuild/components/avatar/tokens.json escrito')
+    print('\nbuild/components/avatar/tokens.json written')
     write_css(alias, diameters)
     return 0
 
 
-# ---------------------------------------------------------------- css
+# ------------------------------------------------------------------- css
 def write_css(alias, diameters):
     L = []
     w = L.append
-    w('/* AL Design System - tokens do Avatar')
-    w(' * GERADO por src/components/avatar/tokens.py. Nao editar a mao.')
+    w('/* AL Design System - Avatar tokens')
+    w(' * GENERATED by src/components/avatar/tokens.py. Do not edit by hand.')
     w(' *')
-    w(' * Nao ha bloco de tema aqui, e isso e o ponto: cada token aponta para um')
-    w(' * semantico, e o tema troca no :root - o mesmo elemento onde estes alias')
-    w(' * sao declarados. Entao o :root re-substitui todos eles de uma vez.')
+    w(' * There is no theme block here, and that is the point: each token points')
+    w(' * to a semantic, and the theme switches on :root - the same element where')
+    w(' * these aliases are declared. So :root re-substitutes all of them at once.')
     w(' *')
-    w(' * Cor e compartilhada pelos tres tamanhos: o tamanho nao muda fundo nem')
-    w(' * tinta, so geometria.')
+    w(' * Color is shared by the three sizes: size changes neither background nor')
+    w(' * ink, only geometry.')
     w(' */')
     w('')
     w(':root {')
     w('')
-    w('  /* cor - compartilhada pelos tres tamanhos */')
+    w('  /* color - shared by the three sizes */')
     for role, ref in COLOR.items():
         w(f'  --al-avatar-{role}: {css_ref(ref)};')
 
     for size, roles in SIZE.items():
         w('')
-        w(f'  /* tamanho {size} - diametro resultante: {diameters[size]}px */')
+        w(f'  /* size {size} - resulting diameter: {diameters[size]}px */')
         for role, ref in roles.items():
             if ref.startswith('type.styles.'):
                 style = resolve_foundation(ref)
@@ -260,7 +259,7 @@ def write_css(alias, diameters):
             w(f'  --al-avatar-{size}-{role}: {css_ref(ref)};')
 
     w('')
-    w('  /* compartilhado */')
+    w('  /* shared */')
     for role, ref in SHARED.items():
         w(f'  --al-avatar-{role}: {css_ref(ref)};')
     w('}')

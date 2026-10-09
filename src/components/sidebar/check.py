@@ -1,15 +1,15 @@
 """
-Portao do CSS do Sidebar.
+CSS gate for the Sidebar.
 
-A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
-de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
-nenhum token inventado. Aqui fica so o que e proprio do Sidebar.
+The rule is the same for every component and lives in tools/cssgate.py: no
+literal values (color, length, weight, duration), no orphan tokens and no
+invented tokens. Only what is specific to the Sidebar stays here.
 
-Excecao declarada: o ponto de quebra de 1024px nas @media. CSS nao aceita
-var() dentro de media query, entao o valor fica escrito e o portao so o aceita
-nessa forma exata.
+Declared exception: the 1024px breakpoint in the @media rules. CSS doesn't
+accept var() inside a media query, so the value stays written and the gate only
+accepts it in that exact form.
 
-Rodar: python3 check.py (ou o build completo: python3 build.py)
+Run: python3 check.py (or the full build: python3 build.py)
 """
 import os
 import sys
@@ -18,17 +18,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from cssgate import gate  # noqa: E402
 
-# O que este portao NAO alcanca: marcacao so existe na saida renderizada.
-# O a11y.py da etapa 6 cobra estas regras no HTML que o site emite.
-FORA_DO_CSS = [
-    '<aside> com nome; grupos e Ajuda dentro de <nav aria-label>; perfil fora do nav (regra 26)',
-    'cada grupo <ul> nomeada pelo rotulo via aria-labelledby (regra 27)',
-    'itens sao <a> com aria-current="page" no atual, no maximo um, nunca role="tab" (regras 12 e 28)',
-    'Avatar decorativo (aria-hidden, alt="") e Icon Button do perfil com nome (regras 18 e 19)',
-    'nenhum rotulo repetido (regra 16); uma Sidebar por tela (regra 4)',
-    'modo modal: mover para <dialog>, foco no atual, fecha no destino e no scrim, sem X: sidebar.js (regra 25)',
+# What this gate does NOT reach: markup only exists in the rendered output.
+# a11y.py enforces these rules on the HTML the site emits.
+OUTSIDE_CSS = [
+    'a named <aside>; groups and Help inside <nav aria-label>; profile outside the nav (rule 26)',
+    'each group <ul> named by its label through aria-labelledby (rule 27)',
+    'items are <a> with aria-current="page" on the current one, at most one, never role="tab" (rules 12 and 28)',
+    'decorative Avatar (aria-hidden, alt="") and a named profile Icon Button (rules 18 and 19)',
+    'no repeated label (rule 16); one Sidebar per screen (rule 4)',
+    'modal mode: move into a <dialog>, focus on the current item, closes on the destination and on the scrim, no X: sidebar.js (rule 25)',
 ]
 
 
 if __name__ == '__main__':
-    sys.exit(gate('sidebar', outside_css=FORA_DO_CSS, exceptions=[('ponto-de-quebra', '1024px', '@media')]))
+    sys.exit(gate('sidebar', outside_css=OUTSIDE_CSS, exceptions=[('breakpoint', '1024px', '@media')]))

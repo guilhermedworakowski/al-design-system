@@ -1,15 +1,15 @@
 """
-Portao do CSS do Textarea.
+CSS gate for the Textarea.
 
-A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
-de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
-nenhum token inventado. Aqui fica so o que e proprio do Textarea.
+The rule is the same for every component and lives in tools/cssgate.py: no
+literal values (color, length, weight, duration), no orphan tokens and no
+invented tokens. Only what is specific to the Textarea stays here.
 
-Conferencia extra: o piso de linhas do CSS (min-height = line-height x N) e o
-ROWS do tokens.py sao o mesmo numero escrito em dois lugares. Se um mudar sem o
-outro, o min-height deixa de bater com a altura derivada.
+Extra check: the CSS line floor (min-height = line-height x N) and ROWS in
+tokens.py are the same number written in two places. If one changes without
+the other, the min-height stops matching the derived height.
 
-Rodar: python3 check.py (ou o build completo: python3 build.py)
+Run: python3 check.py (or the full build: python3 build.py)
 """
 import json
 import os
@@ -21,28 +21,28 @@ sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import comp_out  # noqa: E402
 from cssgate import gate  # noqa: E402
 
-# O que este portao NAO alcanca: marcacao so existe na saida renderizada.
-# O a11y.py da etapa 6 cobra estas regras no HTML que o site emite.
-FORA_DO_CSS = [
-    '<textarea> nativo, nunca contenteditable (regra 26)',
-    '<label for> ligado ao id da <textarea> - sem aria-label havendo rotulo visivel (regra 27)',
-    'rows >= 3 na marcacao (regras 9 e 10)',
-    'erro: aria-invalid="true" + aria-describedby apontando para o id da mensagem (regra 28)',
-    'erro exige texto de apoio com a mensagem (regra 19)',
-    'contador: aria-live="polite" so com foco; data-over-limit ligado pelo JS (regras 16/28)',
-    'limite nao trava a digitacao: sem maxlength (regra 16)',
-    'read-only vazio mostra "—" como valor (regra 24)',
+# What this gate does NOT reach: markup only exists in the rendered output.
+# a11y.py enforces these rules on the HTML the site emits.
+OUTSIDE_CSS = [
+    'native <textarea>, never contenteditable (rule 26)',
+    '<label for> linked to the <textarea> id - no aria-label when there is a visible label (rule 27)',
+    'rows >= 3 in the markup (rules 9 and 10)',
+    'error: aria-invalid="true" + aria-describedby pointing to the message id (rule 28)',
+    'an error requires help text with the message (rule 19)',
+    'counter: aria-live="polite" only with focus; data-over-limit set by the JS (rules 16/28)',
+    'the limit doesn\'t block typing: no maxlength (rule 16)',
+    'empty read-only shows "—" as the value (rule 24)',
 ]
 
 
-def piso_de_linhas(body):
+def line_floor(body):
     rows_tokens = json.load(open(comp_out('textarea', 'tokens.json')))['derived']['rows']
     m = re.search(r'min-height:\s*calc\(\s*var\(--al-textarea-line-height\)\s*\*\s*(\d+)', body)
     rows_css = int(m.group(1)) if m else None
     if rows_css != rows_tokens:
-        return False, [f'PISO DE LINHAS DESSINCRONIZADO: textarea.css usa {rows_css}, tokens.py usa {rows_tokens}']
-    return True, [f'piso de linhas: {rows_css} no CSS = ROWS {rows_tokens} no tokens.py', '-' * 70]
+        return False, [f'LINE FLOOR OUT OF SYNC: textarea.css uses {rows_css}, tokens.py uses {rows_tokens}']
+    return True, [f'line floor: {rows_css} in the CSS = ROWS {rows_tokens} in tokens.py', '-' * 70]
 
 
 if __name__ == '__main__':
-    sys.exit(gate('textarea', outside_css=FORA_DO_CSS, extra=piso_de_linhas))
+    sys.exit(gate('textarea', outside_css=OUTSIDE_CSS, extra=line_floor))

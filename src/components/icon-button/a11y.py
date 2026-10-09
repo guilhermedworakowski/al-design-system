@@ -1,30 +1,32 @@
 """
-QA de acessibilidade do Icon Button.
+Accessibility QA for the Icon Button.
 
-Como no Button, a validacao e por COMBINACAO RENDERIZADA - cada variante, em
-cada estado, em cada tema, contra o fundo efetivo que o botao realmente tem.
-Variante sem preenchimento encosta na TELA, nao em "transparente".
+As in the Button, validation is by RENDERED COMBINATION - each variant, in
+each state, in each theme, against the effective background the button really
+has. A variant with no fill touches the CANVAS, not "transparent".
 
-Duas coisas mudam em relacao ao Button, e as duas puxam para o mesmo lugar:
+Two things change compared with the Button, and both pull the same way:
 
-1. O CRITERIO E OUTRO. Aqui quem carrega o sentido e um ICONE, nao um rotulo de
-   texto: o piso e o 3:1 do 1.4.11 (nao-textual), nao o 4,5:1 do 1.4.3. Por
-   isso este componente nao tem excecao de marca - branco sobre bg-brand da
-   3,34:1, que reprova como texto e passa como icone. Mesma cor, criterio
-   diferente.
+1. THE CRITERION IS DIFFERENT. Here an ICON carries the meaning, not a text
+   label: the floor is the 3:1 of 1.4.11 (non-text), not the 4.5:1 of 1.4.3.
+   That is why this component has no brand exception - white on bg-brand gives
+   3.34:1, which fails as text and passes as an icon. Same color, different
+   criterion.
 
-2. O GHOST NAO TEM ROTULO PARA SE APOIAR. No Button, a variante sem
-   preenchimento e sem borda nao precisa de limite proprio: ela e texto, e vale
-   como texto. Aqui nao existe texto - o proprio icone e o limite visivel do
-   componente, e ele ja e medido na secao 1 contra a tela. A secao 2 registra
-   isso explicitamente em vez de repetir a frase do Button, que seria falsa.
+2. THE GHOST HAS NO LABEL TO LEAN ON. In the Button, the variant with no fill
+   and no border doesn't need a boundary of its own: it is text, and counts as
+   text. Here there is no text - the icon itself is the component's visible
+   boundary, and it is already measured in section 1 against the canvas.
+   Section 2 records that explicitly instead of repeating the Button's
+   sentence, which would be false.
 
-E ha um contrato que nao e de contraste: o NOME ACESSIVEL. Icon Button sem
-aria-label nao e um botao degradado, e um botao mudo - e essa e a falha numero
-um deste componente em qualquer sistema. Ela nao vive no CSS, entao o check.py
-nao alcanca; vive na marcacao, e e medida aqui, no HTML que o site emite.
+And there is a contract that is not about contrast: the ACCESSIBLE NAME. An
+Icon Button with no aria-label is not a degraded button, it is a mute button -
+and that is this component's number one failure in any system. It doesn't
+live in the CSS, so check.py can't reach it; it lives in the markup, and it is
+measured here, on the HTML the site emits.
 
-Rodar: python3 a11y.py
+Run: python3 a11y.py
 """
 import json
 import os
@@ -43,12 +45,13 @@ RES = IB['resolved']
 THEMES = ('light', 'dark')
 VARIANTS = ('primary', 'secondary', 'ghost', 'danger')
 
-# Piso unico neste componente. Nao ha um segundo piso porque nao ha texto.
+# The only floor in this component. There is no second floor because there is
+# no text.
 NON_TEXT_FLOOR = 3.0
 
-# Pares de marca herdados da Foundation. No Button sao excecao nomeada; aqui
-# passam com folga, porque o criterio e outro. Ficam listados para ninguem
-# "corrigir" o valor achando que escapou.
+# Brand pairs inherited from the Foundation. In the Button they are a named
+# exception; here they pass with room to spare, because the criterion is
+# different. They stay listed so nobody "fixes" the value thinking it slipped.
 BRAND_PAIRS = {
     ('light', 'primary', 'default'),
     ('dark', 'primary', 'default'),
@@ -68,48 +71,50 @@ def canvas(theme):
 
 
 def effective_bg(variant, state, theme):
-    """Fundo que o icone realmente encosta. Transparente = a tela aparece."""
+    """The background the icon actually touches. Transparent = the canvas shows."""
     suffix = {'default': 'bg', 'hover': 'bg-hover',
               'active': 'bg-active', 'disabled': 'bg-disabled'}[state]
     value = tok(f'{variant}-{suffix}', theme)
     return canvas(theme) if value == 'transparent' else value
 
 
-# ─────────────────────────────────────────────── contrato de marcacao
+# ─────────────────────────────────────────────── markup contract
 BTN_TAG = re.compile(r'<button\b[^>]*>')
 
 
 def labelled_text(html, rid):
-    """Texto do elemento com aquele id - ate o primeiro </div>, que e onde o
-    .al-tooltip fecha. Aproximado de proposito: basta provar que nao e vazio."""
+    """Text of the element with that id - up to the first </div>, which is where
+    the .al-tooltip closes. Approximate on purpose: it only needs to prove it
+    is not empty."""
     m = re.search(r'<[^>]*\bid="' + re.escape(rid) + r'"[^>]*>(.*?)</div>', html, re.S)
     return m and re.sub(r'<[^>]+>', '', m.group(1)).strip()
 
 
 def markup_contract():
-    """Cobra o contrato de cada .al-icon-btn no HTML que o site emite.
+    """Enforces the contract of each .al-icon-btn on the HTML the site emits.
 
-    Quatro regras, todas da etapa 4:
-      10  nome no BOTAO, de um jeito so: aria-label nao vazio OU
-          aria-labelledby apontando para um elemento que existe e tem texto
-          (o Tooltip, decisao (a) de 08/10/2026). Os dois juntos reprovam: o
-          labelledby vence e o aria-label vira texto que ninguem le e que
-          envelhece sozinho.
-      14  aria-busy sempre acompanhado de aria-disabled
-      17  o atributo `disabled` nao e usado: ele tira o botao da ordem de foco
-          no meio da interacao e nada e anunciado
-      20  o botao nunca leva aria-hidden - quem e decorativo e o svg, la dentro
+    Four usage rules:
+      10  the name is on the BUTTON, in a single way: a non-empty aria-label OR
+          an aria-labelledby pointing to an element that exists and has text
+          (the Tooltip, decided on 2026-10-08). Both together fail: labelledby
+          wins and the aria-label becomes text nobody reads and that goes stale
+          on its own.
+      14  aria-busy always comes with aria-disabled
+      17  the `disabled` attribute is not used: it takes the button out of the
+          focus order in the middle of the interaction and nothing is announced
+      20  the button never gets aria-hidden - what is decorative is the svg,
+          inside it
 
-    Retorna (checked, problems). checked = None quando o site ainda nao emite o
-    componente - o que e o caso ate a etapa 7 montar o playground. Isso e
-    PENDENTE, nao aprovacao: o portao passa a valer sozinho quando o HTML
-    aparecer, sem precisar lembrar de ligar nada.
+    Returns (checked, problems). checked = None when the site doesn't emit the
+    component yet - which is the case until the playground is built. That is
+    PENDING, not a pass: the gate starts counting by itself when the HTML shows
+    up, without anyone having to remember to switch anything on.
     """
     if not os.path.exists(SITE):
-        return None, ['build/site/index.html nao existe - rode site/site.py']
+        return None, ['build/site/index.html does not exist - run site/site.py']
 
     html = open(SITE).read()
-    # exemplos em comentario, <style> e <script> nao sao elementos renderizados
+    # examples in comments, <style> and <script> are not rendered elements
     for pat in (r'<style\b.*?</style>', r'<script\b.*?</script>', r'<!--.*?-->'):
         html = re.sub(pat, lambda m: '\n' * m.group(0).count('\n'), html, flags=re.S)
 
@@ -124,42 +129,42 @@ def markup_contract():
         label = re.search(r'aria-label="([^"]*)"', tag)
         ref = re.search(r'aria-labelledby="([^"]*)"', tag)
         if label and ref:
-            problems.append(f'linha {line}: aria-label e aria-labelledby juntos - '
-                            f'o nome tem que morar num lugar so')
+            problems.append(f'line {line}: aria-label and aria-labelledby together - '
+                            f'the name has to live in a single place')
         elif ref:
             for rid in ref.group(1).split():
                 if not labelled_text(html, rid):
-                    problems.append(f'linha {line}: aria-labelledby="{rid}" aponta para '
-                                    f'elemento que nao existe ou nao tem texto')
+                    problems.append(f'line {line}: aria-labelledby="{rid}" points to an '
+                                    f'element that does not exist or has no text')
         elif not (label and label.group(1).strip()):
-            problems.append(f'linha {line}: sem aria-label nem aria-labelledby - '
-                            f'botao mudo para leitor de tela')
+            problems.append(f'line {line}: no aria-label and no aria-labelledby - '
+                            f'a mute button for the screen reader')
         if 'aria-hidden="true"' in tag:
-            problems.append(f'linha {line}: aria-hidden no proprio botao - '
-                            f'decorativo e o svg, nao o acionavel')
+            problems.append(f'line {line}: aria-hidden on the button itself - '
+                            f'the svg is decorative, not the actionable element')
         if 'aria-busy="true"' in tag and 'aria-disabled="true"' not in tag:
-            problems.append(f'linha {line}: aria-busy sem aria-disabled - '
-                            f'o botao continua clicavel enquanto carrega')
+            problems.append(f'line {line}: aria-busy without aria-disabled - '
+                            f'the button stays clickable while loading')
         if re.search(r'(?<![\w-])disabled(?![\w-])', tag):
-            problems.append(f'linha {line}: atributo disabled - use aria-disabled, '
-                            f'senao o foco some no meio da interacao')
+            problems.append(f'line {line}: disabled attribute - use aria-disabled, '
+                            f'or focus disappears in the middle of the interaction')
 
     if checked == 0:
-        return None, ['nenhum .al-icon-btn em build/site/index.html - o componente entra '
-                      'no site na etapa 7 (playground); ate la este portao fica pendente']
+        return None, ['no .al-icon-btn in build/site/index.html - the component enters '
+                      'the site with its playground; until then this gate stays pending']
     return checked, problems
 
 
 def write_report(rows, checked, brand, targets):
-    """O relatorio vira dado, nao so log.
+    """The report becomes data, not just a log.
 
-    A pagina de QA e, depois, o playground leem este arquivo em vez de
-    recalcular os mesmos contrastes por conta propria - uma segunda
-    implementacao do mesmo criterio e uma divergencia esperando acontecer.
+    The QA page and the playground read this file instead of recomputing the
+    same contrasts on their own - a second implementation of the same
+    criterion is a divergence waiting to happen.
     """
     out = {
         'component': 'icon-button',
-        'criterion': 'WCAG 1.4.11 nao-textual',
+        'criterion': 'WCAG 1.4.11 non-text',
         'floor': NON_TEXT_FLOOR,
         'markupChecked': checked,
         'markupPending': checked is None,
@@ -180,7 +185,7 @@ def write_report(rows, checked, brand, targets):
 def run():
     rows, failures, brand = [], [], []
 
-    # ---- 1. tinta do icone contra o fundo efetivo (1.4.11, 3:1) ----
+    # ---- 1. icon ink against the effective background (1.4.11, 3:1) ----
     for theme in THEMES:
         for v in VARIANTS:
             for state in ('default', 'hover', 'active'):
@@ -188,20 +193,20 @@ def run():
                 bg = effective_bg(v, state, theme)
                 ratio = cr(fg, bg)
                 ok = ratio >= NON_TEXT_FLOOR
-                rows.append(('tinta', theme, f'{v} · {state}', fg, bg,
+                rows.append(('ink', theme, f'{v} · {state}', fg, bg,
                              ratio, NON_TEXT_FLOOR, ok, False))
                 if not ok:
                     failures.append((theme, v, state, ratio, NON_TEXT_FLOOR))
                 elif (theme, v, state) in BRAND_PAIRS:
                     brand.append((theme, v, state, ratio))
 
-            # disabled: isento pelo 1.4.3, medido e reportado, nunca reprovado
+            # disabled: exempt under 1.4.3, measured and reported, never failed
             fg = tok(f'{v}-ink-disabled', theme)
             bg = effective_bg(v, 'disabled', theme)
-            rows.append(('tinta', theme, f'{v} · disabled', fg, bg,
+            rows.append(('ink', theme, f'{v} · disabled', fg, bg,
                          cr(fg, bg), None, True, False))
 
-    # ---- 2. limite visivel do componente contra a tela (1.4.11, 3:1) ----
+    # ---- 2. the component's visible boundary against the canvas (1.4.11, 3:1) ----
     for theme in THEMES:
         for v in VARIANTS:
             bg = tok(f'{v}-bg', theme)
@@ -210,30 +215,31 @@ def run():
             if bg != 'transparent':
                 ratio = cr(bg, cv)
                 ok = ratio >= NON_TEXT_FLOOR
-                rows.append(('limite', theme, f'{v} · preenchimento', bg, cv,
+                rows.append(('boundary', theme, f'{v} · fill', bg, cv,
                              ratio, 3.0, ok, False))
                 if not ok:
-                    failures.append((theme, v, 'preenchimento', ratio, 3.0))
+                    failures.append((theme, v, 'fill', ratio, 3.0))
             elif border != 'transparent':
                 ratio = cr(border, cv)
                 ok = ratio >= NON_TEXT_FLOOR
-                rows.append(('limite', theme, f'{v} · borda', border, cv,
+                rows.append(('boundary', theme, f'{v} · border', border, cv,
                              ratio, 3.0, ok, False))
                 if not ok:
-                    failures.append((theme, v, 'borda', ratio, 3.0))
+                    failures.append((theme, v, 'border', ratio, 3.0))
             else:
-                # Ghost. Sem preenchimento, sem borda e - diferente do Button -
-                # sem rotulo. O limite do componente E o icone, ja medido na
-                # secao 1 contra a tela. Nao e lacuna: e o mesmo pixel.
+                # Ghost. No fill, no border and - unlike the Button - no label.
+                # The component's boundary IS the icon, already measured in
+                # section 1 against the canvas. It is not a gap: it is the same
+                # pixel.
                 fg = tok(f'{v}-ink', theme)
                 ratio = cr(fg, cv)
                 ok = ratio >= NON_TEXT_FLOOR
-                rows.append(('limite', theme, f'{v} · o ícone é o limite', fg, cv,
+                rows.append(('boundary', theme, f'{v} · the icon is the boundary', fg, cv,
                              ratio, 3.0, ok, False))
                 if not ok:
-                    failures.append((theme, v, 'icone como limite', ratio, 3.0))
+                    failures.append((theme, v, 'icon as boundary', ratio, 3.0))
 
-    # ---- 3. anel de foco contra a tela (2.4.11/2.4.13, 3:1) ----
+    # ---- 3. focus ring against the canvas (2.4.11/2.4.13, 3:1) ----
     for theme in THEMES:
         i = 0 if theme == 'light' else 1
         cv = canvas(theme)
@@ -241,66 +247,66 @@ def run():
             ring = SEM['shadow-focus-error' if v == 'danger' else 'shadow-focus-default'][i]
             ratio = cr(ring, cv)
             ok = ratio >= NON_TEXT_FLOOR
-            rows.append(('foco', theme, f'{v} · anel vs tela', ring, cv,
+            rows.append(('focus', theme, f'{v} · ring vs canvas', ring, cv,
                          ratio, 3.0, ok, False))
             if not ok:
-                failures.append((theme, v, 'anel de foco', ratio, 3.0))
+                failures.append((theme, v, 'focus ring', ratio, 3.0))
 
-    # ---- 4. alvo de toque (2.5.8, minimo 24x24) ----
+    # ---- 4. touch target (2.5.8, minimum 24x24) ----
     targets = [(size, IB['derived']['box'][size]) for size in IB['derived']['box']]
 
-    # ---- 5. contrato de marcacao no HTML renderizado ----
+    # ---- 5. markup contract on the rendered HTML ----
     checked, markup_problems = markup_contract()
 
-    # ---------------- relatorio ----------------
+    # ---------------- report ----------------
     print('=' * 78)
-    print('QA DE ACESSIBILIDADE - ICON BUTTON')
+    print('ACCESSIBILITY QA - ICON BUTTON')
     print('=' * 78)
-    print('O portador do sentido é um ícone, não um rótulo: o piso é 3:1')
-    print('(WCAG 1.4.11 não-textual) em toda a folha, e não 4,5:1.')
+    print('What carries the meaning is an icon, not a label: the floor is 3:1')
+    print('(WCAG 1.4.11 non-text) across the board, not 4.5:1.')
 
     for group, title in (
-        ('tinta',  '1. TINTA DO ÍCONE CONTRA O FUNDO EFETIVO  (WCAG 1.4.11 · min 3:1)'),
-        ('limite', '2. LIMITE DO COMPONENTE CONTRA A TELA     (WCAG 1.4.11 · min 3:1)'),
-        ('foco',   '3. ANEL DE FOCO CONTRA A TELA             (WCAG 2.4.11/2.4.13 · min 3:1)'),
+        ('ink',      '1. ICON INK AGAINST THE EFFECTIVE BACKGROUND  (WCAG 1.4.11 · min 3:1)'),
+        ('boundary', '2. COMPONENT BOUNDARY AGAINST THE CANVAS      (WCAG 1.4.11 · min 3:1)'),
+        ('focus',    '3. FOCUS RING AGAINST THE CANVAS              (WCAG 2.4.11/2.4.13 · min 3:1)'),
     ):
         print(f'\n{title}')
         print('-' * 78)
         for g, theme, label, fg, bg, ratio, floor, ok, _ in rows:
             if g != group:
                 continue
-            tag = 'OK  ' if ok else 'FALHA'
-            floor_s = f'min {floor}' if floor else 'isento 1.4.3'
+            tag = 'OK  ' if ok else 'FAIL'
+            floor_s = f'min {floor}' if floor else 'exempt 1.4.3'
             print(f'  {tag} {theme:<6} {label:<28} {fg} / {bg}  {ratio:6.2f}:1  ({floor_s})')
 
-    print('\n4. ALVO DE TOQUE  (WCAG 2.5.8 · mínimo 24x24)')
+    print('\n4. TOUCH TARGET  (WCAG 2.5.8 · minimum 24x24)')
     print('-' * 78)
     for size, box in targets:
-        note = '' if box >= 44 else '  (passa AA; abaixo dos 44 recomendados — decisão registrada)'
+        note = '' if box >= 44 else '  (passes AA; below the recommended 44 - a recorded decision)'
         print(f'  OK   {size:<6} {box}x{box}px{note}')
 
-    print('\n5. CONTRATO DE MARCAÇÃO  (no HTML que o site emite)')
+    print('\n5. MARKUP CONTRACT  (on the HTML the site emits)')
     print('-' * 78)
-    print('  nome: aria-label OU aria-labelledby (nunca os dois) · aria-busy sempre com aria-disabled')
-    print('  sem atributo disabled · aria-hidden nunca no botão')
+    print('  name: aria-label OR aria-labelledby (never both) · aria-busy always with aria-disabled')
+    print('  no disabled attribute · aria-hidden never on the button')
     if checked is None:
         for p in markup_problems:
-            print(f'  PENDENTE  {p}')
+            print(f'  PENDING  {p}')
     else:
-        print(f'  {checked} elementos .al-icon-btn inspecionados')
+        print(f'  {checked} .al-icon-btn elements inspected')
         if markup_problems:
             for p in markup_problems:
-                print(f'  FALHA {p}')
+                print(f'  FAIL {p}')
         else:
-            print('  0 fora do contrato.')
+            print('  0 outside the contract.')
 
     n_markup_fail = len(markup_problems) if checked is not None else 0
     n_fail = len(failures) + n_markup_fail
-    medidas = len([r for r in rows if r[6] is not None])
+    measured = len([r for r in rows if r[6] is not None])
 
     print('\n' + '=' * 78)
     if n_fail:
-        print(f'{n_fail} REPROVA(S):')
+        print(f'{n_fail} FAILURE(S):')
         for f in failures:
             print('   ', f)
         for p in (markup_problems if checked is not None else []):
@@ -308,18 +314,19 @@ def run():
         return 1
 
     write_report(rows, checked, brand, targets)
-    print(f'{medidas} combinações medidas. 0 reprovas.')
-    print('build/components/icon-button/a11y.json escrito')
+    print(f'{measured} combinations measured. 0 failures.')
+    print('build/components/icon-button/a11y.json written')
     if checked is None:
-        print('Contrato de marcação: PENDENTE até a etapa 7 pôr o componente no site.')
+        print('Markup contract: PENDING until the component is on the site.')
     if brand:
-        print(f'{len(brand)} par(es) de marca, todos acima do piso não-textual:')
+        print(f'{len(brand)} brand pair(s), all above the non-text floor:')
         for theme, v, state, ratio in brand:
             print(f'   {theme:<6} {v} · {state}  {ratio:.2f}:1')
-        print('No Button estes mesmos pares são exceção nomeada, porque lá o portador')
-        print('é texto. Aqui não são exceção: são aprovação. Mesma cor, critério outro.')
-    print('Disabled fica fora do mínimo por decisão: o 1.4.3 isenta componente')
-    print('inativo, e subir esse contraste faria o desabilitado parecer clicável.')
+        print('In the Button these same pairs are a named exception, because there the')
+        print('carrier is text. Here they are not an exception: they pass. Same color,')
+        print('different criterion.')
+    print('Disabled stays out of the minimum by design: 1.4.3 exempts inactive')
+    print('components, and raising that contrast would make disabled look clickable.')
     return 0
 
 

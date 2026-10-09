@@ -1,11 +1,11 @@
 """
-Portao do CSS do Breadcrumb.
+CSS gate for the Breadcrumb.
 
-A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
-de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
-nenhum token inventado. Aqui fica so o que e proprio do Breadcrumb.
+The rule is the same for every component and lives in tools/cssgate.py: no
+literal values (color, length, weight, duration), no orphan tokens and no
+invented tokens. Only what is specific to the Breadcrumb stays here.
 
-Rodar: python3 check.py (ou o build completo: python3 build.py)
+Run: python3 check.py (or the full build: python3 build.py)
 """
 import os
 import sys
@@ -14,17 +14,17 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from cssgate import gate  # noqa: E402
 
-# O que este portao NAO alcanca: marcacao so existe na saida renderizada.
-# O a11y.py da etapa 6 cobra estas regras no HTML que o site emite.
-FORA_DO_CSS = [
-    '<nav aria-label> com <ol>; um breadcrumb por pagina (regras 7 e 19)',
-    'ultimo item = <span aria-current="page">, nunca <a>, sem separador (regras 15 e 20)',
-    'separador <svg> aria-hidden + focusable="false" (regra 21)',
-    '`…` = <button> com nome, aria-expanded e aria-controls; so na Large, 5+ niveis (regras 5 e 22)',
-    'menu = <ul> de links Tab Square, nunca role="menu" (regra 17)',
-    'abrir/fechar, Esc devolve foco, clique fora, foco sai: breadcrumb.js (regra 16, decisao B)',
+# What this gate does NOT reach: markup only exists in the rendered output.
+# a11y.py enforces these rules on the HTML the site emits.
+OUTSIDE_CSS = [
+    '<nav aria-label> with an <ol>; one breadcrumb per page (rules 7 and 19)',
+    'last item = <span aria-current="page">, never <a>, no separator (rules 15 and 20)',
+    'separator <svg> aria-hidden + focusable="false" (rule 21)',
+    '`…` = a named <button> with aria-expanded and aria-controls; only in Large, 5+ levels (rules 5 and 22)',
+    'menu = a <ul> of Tab Square links, never role="menu" (rule 17)',
+    'open/close, Esc returns focus, click outside, focus leaves: breadcrumb.js (rule 16)',
 ]
 
 
 if __name__ == '__main__':
-    sys.exit(gate('breadcrumb', outside_css=FORA_DO_CSS))
+    sys.exit(gate('breadcrumb', outside_css=OUTSIDE_CSS))

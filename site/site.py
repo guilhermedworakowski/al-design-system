@@ -2122,7 +2122,7 @@ ICON_A11Y_TAB = f'''
   dispensa componente inativo, e subir esse contraste faria o desabilitado parecer clicável.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{icon_a11y_rows('tinta')}</tbody>
+    <tbody>{icon_a11y_rows('ink')}</tbody>
   </table></div>
 </section>
 
@@ -2133,7 +2133,7 @@ ICON_A11Y_TAB = f'''
   tela, então Ghost e Secondary são medidos contra a <b>tela</b>, nunca contra "transparente".</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{icon_a11y_rows('herda')}</tbody>
+    <tbody>{icon_a11y_rows('inherited')}</tbody>
   </table></div>
 </section>
 
@@ -2621,7 +2621,7 @@ IB_A11Y = f'''
   parecer clicável.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{ib_a11y_rows('tinta')}</tbody>
+    <tbody>{ib_a11y_rows('ink')}</tbody>
   </table></div>
 </section>
 
@@ -2632,7 +2632,7 @@ IB_A11Y = f'''
   próprio ícone é o limite visível do componente, e é ele que o portão mede contra a tela.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Variante</th><th></th><th>Frente / tela</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{ib_a11y_rows('limite')}</tbody>
+    <tbody>{ib_a11y_rows('boundary')}</tbody>
   </table></div>
 </section>
 
@@ -2657,7 +2657,7 @@ IB_A11Y = f'''
   </div>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Variante</th><th></th><th>Anel / tela</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{ib_a11y_rows('foco')}</tbody>
+    <tbody>{ib_a11y_rows('focus')}</tbody>
   </table></div>
 </section>
 
@@ -3095,7 +3095,7 @@ TAG_A11Y_TAB = f'''
   fundo, e uma medição basta.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Rótulo / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{tag_a11y_rows('rotulo')}</tbody>
+    <tbody>{tag_a11y_rows('label')}</tbody>
   </table></div>
 </section>
 
@@ -3108,7 +3108,7 @@ TAG_A11Y_TAB = f'''
   sem reprovar — e ele fica medido para ninguém “corrigir” achando que escapou.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Limite / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{tag_a11y_rows('limite')}</tbody>
+    <tbody>{tag_a11y_rows('boundary')}</tbody>
   </table></div>
 </section>
 
@@ -3134,7 +3134,7 @@ TAG_A11Y_TAB = f'''
   </div>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Anel / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{tag_a11y_rows('foco')}</tbody>
+    <tbody>{tag_a11y_rows('focus')}</tbody>
   </table></div>
 </section>
 

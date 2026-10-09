@@ -1,29 +1,29 @@
 """
-QA de acessibilidade do Icon.
+Accessibility QA for the Icon.
 
-Como no Button, a validacao e por COMBINACAO RENDERIZADA, nao por par de token
-solto. Mas o Icon tem duas particularidades que mudam o que se mede:
+As in the Button, validation is by RENDERED COMBINATION, not by a loose token
+pair. But the Icon has two particularities that change what is measured:
 
-1. O criterio e outro. Icone nao e texto: o piso e o 3:1 do 1.4.11 (nao-textual),
-   nao o 4,5:1 do 1.4.3. Um par que reprovaria como rotulo pode passar como
-   icone - e o contrario nunca acontece.
+1. The criterion is different. An icon is not text: the floor is the 3:1 of
+   1.4.11 (non-text), not the 4.5:1 of 1.4.3. A pair that would fail as a label
+   can pass as an icon - and the opposite never happens.
 
-2. A cor padrao nao e um token, e `currentColor`. Entao existem DUAS familias de
-   combinacao, e as duas precisam ser medidas:
-     - tinta explicita  -> os quatro `--al-icon-ink-*` contra as superficies
-                           onde cada um faz sentido;
-     - tinta herdada    -> o icone dentro do Button, onde ele veste a cor do
-                           rotulo. Aqui vale a mesma logica da variante sem
-                           preenchimento: Ghost e Secondary nao tem fundo, entao
-                           o icone encosta na TELA, nao em "transparente".
+2. The default color is not a token, it is `currentColor`. So there are TWO
+   families of combinations, and both need to be measured:
+     - explicit ink   -> the four `--al-icon-ink-*` against the surfaces where
+                         each one makes sense;
+     - inherited ink  -> the icon inside the Button, where it wears the label's
+                         color. The same logic as the variant with no fill
+                         applies here: Ghost and Secondary have no background,
+                         so the icon touches the CANVAS, not "transparent".
 
-E ha um terceiro portao que nao e de contraste: o CONTRATO DE MARCACAO. A regra
-de icone decorativo versus icone com sentido nao virou documento por decisao do
-Guilherme - icone do AL vive dentro de acionavel e quem carrega o sentido e o
-rotulo. Entao ela e verificada aqui, no HTML que o site realmente emite, em vez
-de ser lida numa pagina que ninguem abre.
+And there is a third gate that is not about contrast: the MARKUP CONTRACT. The
+rule of decorative icon versus meaningful icon didn't become a document by
+design - an AL icon lives inside an actionable element and the label carries
+the meaning. So it is checked here, in the HTML the site really emits, instead
+of being read on a page nobody opens.
 
-Rodar: python3 a11y.py   (exige site/index.html gerado)
+Run: python3 a11y.py   (requires the generated build/site/index.html)
 """
 import json
 import os
@@ -46,8 +46,8 @@ NON_TEXT_FLOOR = 3.0
 
 SITE = SITE_HTML
 
-# Onde cada tinta explicita faz sentido. Medir `on-brand` contra a tela seria
-# inventar um cenario que o design system nao produz.
+# Where each explicit ink makes sense. Measuring `on-brand` against the canvas
+# would invent a scenario the design system doesn't produce.
 INK_SURFACES = {
     'default':  ['bg-canvas', 'bg-surface', 'bg-subtle'],
     'on-brand': ['bg-brand', 'bg-brand-hover', 'bg-brand-active'],
@@ -55,9 +55,10 @@ INK_SURFACES = {
     'disabled': ['bg-canvas', 'bg-disabled'],
 }
 
-# Excecao de marca herdada da Foundation. Branco sobre a marca da 3,34:1 - abaixo
-# do texto normal, acima do piso nao-textual. Para icone isso NAO e excecao: e
-# aprovacao com folga. Fica nomeado para ninguem "corrigir" o valor.
+# Brand exception inherited from the Foundation. White on the brand gives
+# 3.34:1 - below normal text, above the non-text floor. For an icon this is NOT
+# an exception: it is a pass with room to spare. It stays named so nobody
+# "fixes" the value.
 BRAND_PAIRS = {('light', 'on-brand', 'bg-brand'), ('dark', 'on-brand', 'bg-brand')}
 
 VARIANTS = ('primary', 'secondary', 'ghost', 'danger')
@@ -77,32 +78,32 @@ def btn(name, theme):
 
 
 def effective_bg(variant, state, theme):
-    """O fundo que o icone realmente encosta. Transparente = a tela aparece."""
+    """The background the icon actually touches. Transparent = the canvas shows."""
     suffix = {'default': 'bg', 'hover': 'bg-hover', 'active': 'bg-active'}[state]
     value = btn(f'{variant}-{suffix}', theme)
     return sem('bg-canvas', theme) if value == 'transparent' else value
 
 
-# ─────────────────────────────────────────────── contrato de marcacao
+# ─────────────────────────────────────────────── markup contract
 SVG_TAG = re.compile(r'<svg\b[^>]*>')
 
 
 def markup_contract():
-    """Le o HTML que o site emite e cobra o contrato de cada .al-icon.
+    """Reads the HTML the site emits and enforces the contract of each .al-icon.
 
-    Decorativo  -> aria-hidden="true" E focusable="false"
-    Com sentido -> role="img" E aria-label nao vazio
-    E nunca os dois ao mesmo tempo: um icone escondido do leitor de tela que
-    tambem carrega rotulo e uma contradicao, e o rotulo perde.
+    Decorative -> aria-hidden="true" AND focusable="false"
+    Meaningful -> role="img" AND a non-empty aria-label
+    And never both at the same time: an icon hidden from the screen reader that
+    also carries a label is a contradiction, and the label loses.
     """
     if not os.path.exists(SITE):
-        return None, ['build/site/index.html nao existe - rode site/site.py antes deste portao']
+        return None, ['build/site/index.html does not exist - run site/site.py before this gate']
 
     html = open(SITE).read()
 
-    # Só marcação. <style> e <script> carregam exemplos em comentário - o
-    # cabeçalho do proprio icon.css tem dois - e um exemplo em comentario nao e
-    # um elemento renderizado. Medir ali seria reprovar documentacao.
+    # Markup only. <style> and <script> carry examples in comments - the header
+    # of icon.css itself has two - and an example in a comment is not a
+    # rendered element. Measuring there would fail documentation.
     html = re.sub(r'<style\b.*?</style>', lambda m: '\n' * m.group(0).count('\n'),
                   html, flags=re.S)
     html = re.sub(r'<script\b.*?</script>', lambda m: '\n' * m.group(0).count('\n'),
@@ -124,33 +125,32 @@ def markup_contract():
         label = re.search(r'aria-label="([^"]*)"', tag)
 
         if hidden and (role_img or (label and label.group(1).strip())):
-            problems.append(f'linha {line}: aria-hidden junto de rotulo - o rotulo nunca sera lido')
+            problems.append(f'line {line}: aria-hidden together with a label - the label will never be read')
         elif hidden:
             if not focusable_off:
-                problems.append(f'linha {line}: decorativo sem focusable="false" - '
-                                f'entra na ordem de tabulacao em alguns navegadores')
+                problems.append(f'line {line}: decorative without focusable="false" - '
+                                f'it enters the tab order in some browsers')
         elif role_img:
             if not (label and label.group(1).strip()):
-                problems.append(f'linha {line}: role="img" sem aria-label - '
-                                f'anunciado como imagem sem nome')
+                problems.append(f'line {line}: role="img" without aria-label - '
+                                f'announced as an image with no name')
         else:
-            problems.append(f'linha {line}: sem contrato - nem decorativo '
-                            f'(aria-hidden) nem com sentido (role="img")')
+            problems.append(f'line {line}: no contract - neither decorative '
+                            f'(aria-hidden) nor meaningful (role="img")')
 
     return checked, problems
 
 
 def write_report(rows, checked, failures, notes):
-    """O relatorio vira dado, nao so log.
+    """The report becomes data, not just a log.
 
-    O site le este arquivo para montar a aba de acessibilidade. Sem isso a
-    pagina teria que recalcular os mesmos contrastes por conta propria - e uma
-    segunda implementacao do mesmo criterio e uma divergencia esperando
-    acontecer.
+    The site reads this file to build the accessibility tab. Without it the page
+    would have to recompute the same contrasts on its own - and a second
+    implementation of the same criterion is a divergence waiting to happen.
     """
     out = {
         'component': 'icon',
-        'criterion': 'WCAG 1.4.11 nao-textual',
+        'criterion': 'WCAG 1.4.11 non-text',
         'floor': NON_TEXT_FLOOR,
         'markupChecked': checked,
         'fails': len(failures),
@@ -167,117 +167,118 @@ def write_report(rows, checked, failures, notes):
 def run():
     rows, failures, notes = [], [], []
 
-    # ---- 1. tinta explicita contra a superficie (1.4.11, 3:1) ----
+    # ---- 1. explicit ink against the surface (1.4.11, 3:1) ----
     for theme in THEMES:
         for mode, surfaces in INK_SURFACES.items():
             for surface in surfaces:
                 fg, bg = ink(mode, theme), sem(surface, theme)
                 ratio = cr(fg, bg)
                 if mode == 'disabled':
-                    # 1.4.3 e 1.4.11 isentam componente inativo. Medido e
-                    # reportado, nunca reprovado - subir isso faz o
-                    # desabilitado parecer ativo.
-                    rows.append(('tinta', theme, f'{mode} · {surface}', fg, bg, ratio, None, True))
+                    # 1.4.3 and 1.4.11 exempt inactive components. Measured and
+                    # reported, never failed - raising it makes disabled look
+                    # active.
+                    rows.append(('ink', theme, f'{mode} · {surface}', fg, bg, ratio, None, True))
                     continue
                 ok = ratio >= NON_TEXT_FLOOR
-                rows.append(('tinta', theme, f'{mode} · {surface}', fg, bg,
+                rows.append(('ink', theme, f'{mode} · {surface}', fg, bg,
                              ratio, NON_TEXT_FLOOR, ok))
                 if not ok:
-                    failures.append((theme, f'{mode} sobre {surface}', ratio))
+                    failures.append((theme, f'{mode} on {surface}', ratio))
                 elif (theme, mode, surface) in BRAND_PAIRS:
-                    notes.append((theme, f'{mode} sobre {surface}', ratio))
+                    notes.append((theme, f'{mode} on {surface}', ratio))
 
-    # ---- 2. tinta herdada dentro do Button (currentColor) ----
+    # ---- 2. inherited ink inside the Button (currentColor) ----
     for theme in THEMES:
         for v in VARIANTS:
             for state in ('default', 'hover', 'active'):
-                fg = btn(f'{v}-label', theme)          # o icone veste esta cor
+                fg = btn(f'{v}-label', theme)          # the icon wears this color
                 bg = effective_bg(v, state, theme)
                 ratio = cr(fg, bg)
                 ok = ratio >= NON_TEXT_FLOOR
-                rows.append(('herda', theme, f'{v} · {state}', fg, bg,
+                rows.append(('inherited', theme, f'{v} · {state}', fg, bg,
                              ratio, NON_TEXT_FLOOR, ok))
                 if not ok:
-                    failures.append((theme, f'{v} {state} (herdado)', ratio))
+                    failures.append((theme, f'{v} {state} (inherited)', ratio))
 
-    # ---- 3. contrato de marcacao no HTML renderizado ----
+    # ---- 3. markup contract on the rendered HTML ----
     checked, markup_problems = markup_contract()
 
-    # ---------------- relatorio ----------------
+    # ---------------- report ----------------
     print('=' * 78)
-    print('QA DE ACESSIBILIDADE - ICON')
+    print('ACCESSIBILITY QA - ICON')
     print('=' * 78)
-    print('Icone nao e texto: o piso e 3:1 (WCAG 1.4.11 nao-textual), nao 4,5:1.')
+    print('An icon is not text: the floor is 3:1 (WCAG 1.4.11 non-text), not 4.5:1.')
 
     titles = {
-        'tinta': '1. TINTA EXPLÍCITA CONTRA A SUPERFÍCIE   (WCAG 1.4.11 · min 3:1)',
-        'herda': '2. TINTA HERDADA DENTRO DO BUTTON        (currentColor · min 3:1)',
+        'ink':       '1. EXPLICIT INK AGAINST THE SURFACE    (WCAG 1.4.11 · min 3:1)',
+        'inherited': '2. INHERITED INK INSIDE THE BUTTON     (currentColor · min 3:1)',
     }
-    for group in ('tinta', 'herda'):
+    for group in ('ink', 'inherited'):
         print(f'\n{titles[group]}')
         print('-' * 78)
         for g, theme, label, fg, bg, ratio, floor, ok in rows:
             if g != group:
                 continue
             if floor is None:
-                tag = 'ISENTO'
-                extra = '(componente inativo)'
+                tag = 'EXEMPT'
+                extra = '(inactive component)'
             else:
-                tag = 'OK  ' if ok else 'FALHA'
+                tag = 'OK  ' if ok else 'FAIL'
                 extra = f'(min {floor})'
             print(f'  {tag} {theme:<6} {label:<24} {fg} / {bg}  {ratio:5.2f}:1  {extra}')
 
-    print(f'\n3. CONTRATO DE MARCAÇÃO                  (no HTML que o site emite)')
+    print(f'\n3. MARKUP CONTRACT                     (on the HTML the site emits)')
     print('-' * 78)
     if checked is None:
         for p in markup_problems:
-            print(f'  FALHA {p}')
+            print(f'  FAIL {p}')
     else:
-        print(f'  {checked} elementos .al-icon inspecionados em build/site/index.html')
-        print(f'  decorativo  -> aria-hidden="true" + focusable="false"')
-        print(f'  com sentido -> role="img" + aria-label')
+        print(f'  {checked} .al-icon elements inspected in build/site/index.html')
+        print(f'  decorative -> aria-hidden="true" + focusable="false"')
+        print(f'  meaningful -> role="img" + aria-label')
         if markup_problems:
             for p in markup_problems:
-                print(f'  FALHA {p}')
+                print(f'  FAIL {p}')
         else:
-            print(f'  0 fora do contrato.')
+            print(f'  0 outside the contract.')
 
-    print(f'\n4. FAMÍLIA DO DESENHO')
+    print(f'\n4. DRAWING FAMILY')
     print('-' * 78)
-    print(f'  {MANIFEST["count"]} ícones · grid {MANIFEST["grid"]} · traço {MANIFEST["strokeWidth"]} '
+    print(f'  {MANIFEST["count"]} icons · grid {MANIFEST["grid"]} · stroke {MANIFEST["strokeWidth"]} '
           f'· {MANIFEST["family"]} · {MANIFEST["license"]}')
-    print(f'  Menor caixa em uso: {ICON["resolved"]["icon-box-16"]}px. O WCAG não define tamanho')
-    print(f'  mínimo para ícone; o 2.5.8 mede o ALVO, e alvo é do acionável que o contém.')
+    print(f'  Smallest box in use: {ICON["resolved"]["icon-box-16"]}px. WCAG defines no minimum')
+    print(f'  size for an icon; 2.5.8 measures the TARGET, and the target belongs to the')
+    print(f'  actionable element that contains it.')
 
     n_fail = len(failures) + (len(markup_problems) if markup_problems else 0)
     total = len([r for r in rows if r[6] is not None]) + (checked or 0)
 
     print('\n' + '=' * 78)
-    print(f'{total} verificações. {n_fail} reprovas.')
+    print(f'{total} checks. {n_fail} failures.')
     if notes:
-        print(f'{len(notes)} par(es) de marca, todos acima do piso não-textual:')
+        print(f'{len(notes)} brand pair(s), all above the non-text floor:')
         for theme, label, ratio in notes:
             print(f'   {theme:<6} {label:<28} {ratio:.2f}:1')
-        print('Branco sobre a marca reprova como texto normal e passa como ícone —')
-        print('é a mesma cor, critério diferente. Não é exceção aqui, é aprovação.')
-    print('Disabled fica fora do mínimo por decisão: o WCAG isenta componente')
-    print('inativo, e subir esse contraste faria o desabilitado parecer clicável.')
+        print('White on the brand fails as normal text and passes as an icon -')
+        print('same color, different criterion. It is not an exception here, it is a pass.')
+    print('Disabled stays out of the minimum by design: WCAG exempts inactive')
+    print('components, and raising that contrast would make disabled look clickable.')
 
     if failures:
-        print('\nREPROVAS:')
+        print('\nFAILURES:')
         for theme, label, ratio in failures:
             print(f'   {theme:<6} {label:<28} {ratio:.2f}:1  (min {NON_TEXT_FLOOR})')
     if markup_problems:
-        print('\nCONTRATO DE MARCAÇÃO:')
+        print('\nMARKUP CONTRACT:')
         for p in markup_problems:
             print(f'   {p}')
 
-    # Sem o site ainda (primeira passada do build num clone limpo), grava o
-    # relatorio do mesmo jeito, como os outros portoes: o site precisa dele para
-    # existir. O portao continua reprovando; o build.py tolera so essa passada.
+    # Without the site yet (the build's first pass in a clean clone), it writes
+    # the report anyway, like the other gates: the site needs it to exist. The
+    # gate still fails; build.py tolerates only that pass.
     if not n_fail or checked is None:
         write_report(rows, checked or 0, failures, notes)
-        print('\nbuild/components/icon/a11y.json escrito')
+        print('\nbuild/components/icon/a11y.json written')
 
     return 1 if n_fail else 0
 

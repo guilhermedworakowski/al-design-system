@@ -1,47 +1,51 @@
 /* AL Design System - Button
- * Escrito a mao. Depende de al-foundation.css e al-button-tokens.css, nesta ordem.
+ * Handwritten. Depends on al-foundation.css and al-button-tokens.css, in that order.
  *
- * Nenhum valor aqui e literal: toda cor, espaco, raio e tipografia entra por
- * var(--al-button-*). O check.py ao lado recusa o arquivo se algum escapar.
+ * No value here is literal: every color, space, radius and typography comes in
+ * through var(--al-button-*). The check.py next to it rejects the file if any
+ * slips through.
  *
- * CONTRATO DE MARCACAO
+ * MARKUP CONTRACT
  *
  *   <button type="button" class="al-btn al-btn--primary al-btn--md">
  *     <span class="al-btn__spinner" aria-hidden="true"></span>
  *     <span class="al-btn__icon al-btn__icon--leading">
  *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
  *     </span>
- *     <span class="al-btn__label">Publicar</span>
+ *     <span class="al-btn__label">Publish</span>
  *     <span class="al-btn__icon al-btn__icon--trailing">
  *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
  *     </span>
  *   </button>
  *
- *   variante : --primary | --secondary | --ghost | --danger
- *   tamanho  : --sm | --md
+ *   variant : --primary | --secondary | --ghost | --danger
+ *   size    : --sm | --md
  *
- *   type="button" nao e opcional: dentro de <form>, o padrao do HTML e submit.
+ *   type="button" is not optional: inside a <form>, the HTML default is submit.
  *
- * O ICONE
- *   O desenho vem do componente Icon da Fundacao - o Button nao inventa icone.
- *   O svg entra inline, com a classe .al-icon, e o contrato decorativo
- *   (aria-hidden + focusable="false") vai NO SVG, nao no span: quem carrega o
- *   sentido aqui e o rotulo, e o icone anunciado seria ruido duplicado.
- *   O tamanho nao e escolha de quem consome: o Button impoe a caixa pelo
- *   tamanho do botao, e o .al-icon obedece. Nao ponha .al-icon--20 aqui.
+ * THE ICON
+ *   The drawing comes from the Foundation's Icon component - the Button doesn't
+ *   invent icons. The svg goes inline, with the .al-icon class, and the
+ *   decorative contract (aria-hidden + focusable="false") goes ON THE SVG, not
+ *   on the span: what carries the meaning here is the label, and an announced
+ *   icon would be duplicate noise.
+ *   The size is not the consumer's choice: the Button imposes the box through
+ *   the button's size, and .al-icon obeys. Don't put .al-icon--20 here.
  *
- * CARREGANDO
- *   Marque aria-busy="true" e aria-disabled="true" no proprio <button>, e trave
- *   o handler no JS. Nao use o atributo disabled: ele tira o botao da ordem de
- *   foco no meio da interacao e nada e anunciado. Anuncie o progresso por uma
- *   regiao viva separada (role="status" aria-live="polite").
- *   O spinner ocupa o lugar do icone da esquerda - se nao havia icone, a largura
- *   muda; troque tambem o rotulo ("Publicar" -> "Publicando…") para absorver isso.
+ * LOADING
+ *   Set aria-busy="true" and aria-disabled="true" on the <button> itself, and
+ *   lock the handler in JS. Don't use the disabled attribute: it takes the
+ *   button out of the focus order in the middle of the interaction and nothing
+ *   is announced. Announce progress through a separate live region
+ *   (role="status" aria-live="polite").
+ *   The spinner takes the place of the leading icon - if there was no icon, the
+ *   width changes; also swap the label ("Publish" -> "Publishing…") to absorb
+ *   that.
  *
- * DESABILITADO
- *   Prefira aria-disabled="true" ao atributo disabled: o botao continua focavel
- *   e um tooltip pode dizer o motivo. Com aria-disabled o clique AINDA dispara -
- *   a trava e no JS.
+ * DISABLED
+ *   Prefer aria-disabled="true" over the disabled attribute: the button stays
+ *   focusable and a tooltip can say why. With aria-disabled the click STILL
+ *   fires - the lock is in JS.
  */
 
 /* ---------------------------------------------------------------- base */
@@ -53,9 +57,9 @@
 
   box-sizing: border-box;
   margin: 0;
-  /* A borda entra no calculo da altura: todo variante tem 1px, transparente ou
-     nao, entao descontar aqui mantem 36 e 48 exatos e impede o botao de pular
-     1px quando o disabled acrescenta borda. */
+  /* The border counts toward the height: every variant has 1px, transparent
+     or not, so subtracting it here keeps 36 and 48 exact and stops the button
+     from jumping 1px when disabled adds a border. */
   padding:
     calc(var(--_pad-y) - var(--al-button-border-width))
     calc(var(--_pad-x) - var(--al-button-border-width));
@@ -83,7 +87,7 @@
     box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
 }
 
-/* ---------------------------------------------------------------- variantes */
+/* ---------------------------------------------------------------- variants */
 .al-btn--primary {
   --_bg: var(--al-button-primary-bg);
   --_bg-hover: var(--al-button-primary-bg-hover);
@@ -132,7 +136,7 @@
   --_ring: var(--al-button-danger-ring);
 }
 
-/* ---------------------------------------------------------------- tamanhos */
+/* ---------------------------------------------------------------- sizes */
 .al-btn--sm {
   --_pad-x: var(--al-button-sm-padding-x);
   --_pad-y: var(--al-button-sm-padding-y);
@@ -153,8 +157,8 @@
   --_icon-size: var(--al-button-md-icon-size);
 }
 
-/* ---------------------------------------------------------------- estados */
-/* hover e pressed nunca valem quando o botao esta fora de acao */
+/* ---------------------------------------------------------------- states */
+/* hover and pressed never apply when the button is out of action */
 .al-btn:hover:not(:disabled):not([aria-disabled="true"]) {
   background-color: var(--_bg-hover);
 }
@@ -163,8 +167,9 @@
   background-color: var(--_bg-active);
 }
 
-/* :focus-visible, nao :focus - o anel aparece no teclado, nao no clique.
-   O anel e sombra, entao nao empurra layout e acompanha o raio da pilula. */
+/* :focus-visible, not :focus - the ring shows from the keyboard, not on click.
+   The ring is a shadow, so it doesn't push the layout and follows the pill's
+   radius. */
 .al-btn:focus-visible {
   outline: none;
   box-shadow: var(--_ring);
@@ -178,29 +183,29 @@
   cursor: not-allowed;
 }
 
-/* o anel continua valendo em cima do desabilitado: aria-disabled permanece
-   focavel de proposito, e quem chega nele de teclado precisa ver onde esta */
+/* the ring still applies on top of disabled: aria-disabled stays focusable on
+   purpose, and whoever reaches it from the keyboard needs to see where they are */
 .al-btn[aria-disabled="true"]:focus-visible {
   box-shadow: var(--_ring);
 }
 
-/* ---------------------------------------------------------------- conteudo */
-/* A caixa do icone e a entrelinha do rotulo: 20 no sm, 24 no md. Por isso
-   ligar o icone nao muda a altura do botao - ele ocupa a mesma faixa vertical
-   que a linha de texto ja ocupava. */
+/* ---------------------------------------------------------------- content */
+/* The icon box is the label's line height: 20 in sm, 24 in md. That is why
+   turning the icon on doesn't change the button's height - it takes the same
+   vertical band the line of text already took. */
 .al-btn__icon {
   display: block;
   flex: none;
   width: var(--_icon-size);
   height: var(--_icon-size);
 
-  /* o .al-icon la dentro le a propria caixa desta variavel. Sem isso ele cairia
-     no degrau padrao dele (24) e brigaria com o span no sm. Quem manda no
-     tamanho e o botao, nao o icone. */
+  /* the .al-icon inside reads its own box from this variable. Without it, it
+     would fall back to its default step (24) and fight the span in sm. The
+     button decides the size, not the icon. */
   --al-icon-box: var(--_icon-size);
 }
 
-/* rede de seguranca para svg que nao seja do componente Icon */
+/* safety net for an svg that isn't from the Icon component */
 .al-btn__icon svg {
   display: block;
   width: 100%;
@@ -211,9 +216,9 @@
   display: block;
 }
 
-/* ---------------------------------------------------------------- carregando */
-/* mesma caixa do icone que ele substitui - se fosse menor, a largura do botao
-   pularia no instante em que o carregamento comeca */
+/* ---------------------------------------------------------------- loading */
+/* the same box as the icon it replaces - if it were smaller, the button's
+   width would jump the moment loading starts */
 .al-btn__spinner {
   display: none;
   flex: none;
@@ -230,7 +235,7 @@
   display: block;
 }
 
-/* o spinner toma o lugar do icone da esquerda, para a largura nao pular */
+/* the spinner takes the place of the leading icon, so the width doesn't jump */
 .al-btn[aria-busy="true"] .al-btn__icon--leading {
   display: none;
 }
@@ -241,29 +246,30 @@
   }
 }
 
-/* ENTRADA - o CSS usa a curva do estado para onde a transicao vai. A base
-   declara a de saida (ease-in); estes estados de destino declaram a de
-   entrada (ease-out). So a curva: duracao e propriedades vem da base. */
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
 .al-btn:hover,
 .al-btn:active,
 .al-btn:focus-visible {
   transition-timing-function: var(--al-motion-easing-enter);
 }
 
-/* ---------------------------------------------------------------- ambiente */
+/* ---------------------------------------------------------------- environment */
 @media (prefers-reduced-motion: reduce) {
   .al-btn {
     transition: none;
   }
-  /* o spinner nao para: ele e a unica pista de que algo esta acontecendo.
-     Desacelera ate deixar de ser movimento agressivo. */
+  /* the spinner doesn't stop: it is the only clue that something is happening.
+     It slows down until it is no longer aggressive motion. */
   .al-btn__spinner {
     animation-duration: var(--al-motion-duration-spinner-reduced);
   }
 }
 
-/* No alto contraste do sistema a sombra e descartada - o anel some junto.
-   Aqui o foco volta como outline nativo, que o modo respeita. */
+/* In the system's high contrast mode the shadow is discarded - the ring goes
+   with it. Here focus comes back as a native outline, which the mode respects. */
 @media (forced-colors: active) {
   .al-btn {
     border-color: currentColor;
