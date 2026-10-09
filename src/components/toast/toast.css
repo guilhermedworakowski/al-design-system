@@ -1,0 +1,190 @@
+/* AL Design System - Toast
+ *
+ * Written by hand. Depends on al-foundation.css, al-icon-tokens.css + icon.css,
+ * the Icon Button tokens and CSS (the X) and al-toast-tokens.css, in that
+ * order. Behavior: toast.js.
+ *
+ * No value here is literal: color, space, radius, shadow, width, motion and
+ * typography come in through var(--al-toast-*). The check.py next to it
+ * rejects the file if any escapes.
+ *
+ * MARKUP CONTRACT (rules 13, 14, 21 to 24)
+ *
+ *   One region per page, present from page load (rule 23):
+ *
+ *   <section class="al-toast-region" aria-label="Notifications" popover="manual">
+ *     <div class="al-toast-region__live" role="status"></div>
+ *     <div class="al-toast-region__live" role="alert"></div>
+ *   </section>
+ *
+ *   Each toast is a <template> on the page, cloned by toast.js into the right
+ *   region - status for Success, Info and Warning, alert for Error (rule 22):
+ *
+ *   <template id="toast-saved">
+ *     <div class="al-toast al-toast--success">
+ *       <svg class="al-icon al-icon--20 al-toast__icon" role="img"
+ *            aria-label="Success">…circle-check…</svg>
+ *       <div class="al-toast__text">
+ *         <p class="al-toast__title">Product saved</p>
+ *         <p class="al-toast__description">It already shows in the store.</p>   (optional)
+ *       </div>
+ *       <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close"
+ *               aria-label="Close notification">
+ *         <svg class="al-icon" aria-hidden="true" focusable="false">…x…</svg>
+ *       </button>
+ *     </div>
+ *   </template>
+ *
+ *   - Status by modifier: --success, --warning, --error, --info. No Neutral
+ *     (rule 26). A fixed icon per status: circle-check, triangle-alert,
+ *     circle-alert, info (rule 13).
+ *   - The icon CARRIES the status: role="img" + aria-label with the status
+ *     name ("Success", "Warning", "Error", "Information") - rule 14. It is
+ *     the only AL component icon that isn't decorative.
+ *   - Nothing interactive besides the X (rule 25). The X is the Ghost sm Icon
+ *     Button, named "Close notification" (rule 24).
+ *   - The site is in Portuguese, so a11y.py checks the Portuguese names it
+ *     renders; the names above are the English equivalents.
+ *
+ * POPOVER
+ *   The region is a popover="manual" that toast.js opens on page load and
+ *   never closes: it stays in the top layer, above everything with no
+ *   z-index, and both live regions are rendered before the first message - a
+ *   live region born together with the message isn't announced. Empty, it
+ *   takes no space and catches no click. display is only declared in the open
+ *   state (lesson from the Tooltip).
+ *   With a Modal or Drawer open, toast.js moves the region inside it:
+ *   outside, it would be inert - visible, but with no click, focus or
+ *   announcement.
+ *
+ * POSITION AND WIDTH (rule 16)
+ *   Bottom right corner, `toast-offset` (16) from the edges. Width of
+ *   `toast-max-width` (380), or the screen minus the offset on both sides,
+ *   whichever is smaller - on a phone the box takes the full width with no
+ *   media query.
+ *
+ * BORDER AND HEIGHT
+ *   Inside border, as in Figma: the padding discounts the border and the box
+ *   closes at 68 (with a description) or 60 (without; the 36 X rules). No
+ *   height.
+ *
+ * MOTION (rule 20)
+ *   Enters rising `toast-offset` - it comes from the screen edge to its place
+ *   - with a fade, enter curve; exits with a fade only, exit curve, in
+ *   `toast-duration` (popup, 200ms). @starting-style gives the starting
+ *   point; the exit is the [data-leaving] toast.js sets before removing. No
+ *   transition with prefers-reduced-motion.
+ */
+
+/* ------------------------------------------------------------------ region */
+.al-toast-region {
+  /* resets what the browser stylesheet gives every [popover] */
+  position: fixed;
+  inset: auto var(--al-toast-offset) var(--al-toast-offset) auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  overflow: visible;
+
+  box-sizing: border-box;
+  inline-size: min(var(--al-toast-max-width), calc(100% - 2 * var(--al-toast-offset)));
+  pointer-events: none;
+}
+
+.al-toast-region:popover-open {
+  display: block;
+}
+
+/* --------------------------------------------------------------------- box */
+.al-toast {
+  --_icon: var(--al-toast-info-icon);
+  --_border: var(--al-toast-info-border);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--al-toast-gap);
+  box-sizing: border-box;
+  padding: calc(var(--al-toast-padding) - var(--al-toast-border-width));
+  border: var(--al-toast-border-width) solid var(--_border);
+  border-radius: var(--al-toast-radius);
+  background-color: var(--al-toast-bg);
+  box-shadow: var(--al-toast-shadow);
+  pointer-events: auto;
+
+  font-family: var(--al-font-sans);
+
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity var(--al-toast-duration) var(--al-toast-easing-enter),
+    translate var(--al-toast-duration) var(--al-toast-easing-enter);
+}
+
+@starting-style {
+  .al-toast {
+    opacity: 0;
+    translate: 0 var(--al-toast-offset);
+  }
+}
+
+.al-toast[data-leaving] {
+  opacity: 0;
+  transition: opacity var(--al-toast-duration) var(--al-toast-easing-exit);
+}
+
+.al-toast--success { --_icon: var(--al-toast-success-icon); --_border: var(--al-toast-success-border); }
+.al-toast--warning { --_icon: var(--al-toast-warning-icon); --_border: var(--al-toast-warning-border); }
+.al-toast--error   { --_icon: var(--al-toast-error-icon);   --_border: var(--al-toast-error-border); }
+.al-toast--info    { --_icon: var(--al-toast-info-icon);    --_border: var(--al-toast-info-border); }
+
+.al-toast__icon {
+  flex: none;
+  color: var(--_icon);
+}
+
+/* ---------------------------------------------------------------------- text */
+.al-toast__text {
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-toast-text-gap);
+  overflow-wrap: break-word;
+}
+
+.al-toast__title {
+  margin: 0;
+  color: var(--al-toast-title);
+  font-size: var(--al-toast-title-font-size);
+  line-height: var(--al-toast-title-line-height);
+  font-weight: var(--al-toast-title-font-weight);
+  letter-spacing: var(--al-toast-title-tracking);
+}
+
+.al-toast__description {
+  margin: 0;
+  color: var(--al-toast-description);
+  font-size: var(--al-toast-description-font-size);
+  line-height: var(--al-toast-description-line-height);
+  font-weight: var(--al-toast-description-font-weight);
+  letter-spacing: var(--al-toast-description-tracking);
+}
+
+/* ------------------------------------------------------------------------ X */
+/* The Icon Button reads bg-hover/bg-active, made for bg-surface. The toast
+   background is surface-raised, which in dark equals bg-hover: the hover
+   disappeared. The same fix as the Modal (0.18.1) and the Card (0.18.2); no
+   new token. */
+.al-toast__close {
+  flex: none;
+  --_bg-hover: var(--al-bg-hover-raised);
+  --_bg-active: var(--al-bg-active-raised);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-toast,
+  .al-toast[data-leaving] {
+    transition: none;
+  }
+}

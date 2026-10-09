@@ -1,0 +1,129 @@
+/* AL Design System - Tooltip
+ *
+ * Written by hand. Depends on al-foundation.css, al-icon-tokens.css + icon.css
+ * and al-tooltip-tokens.css, in that order. Behavior: tooltip.js.
+ *
+ * No value here is literal: color, space, radius, shadow, width, motion and
+ * typography come in through var(--al-tooltip-*). The check.py next to it
+ * rejects the file if any escapes.
+ *
+ * MARKUP CONTRACT (rules 22 to 25)
+ *
+ *   <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"
+ *           aria-labelledby="tt-delete">
+ *     <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *   </button>
+ *   <div class="al-tooltip" id="tt-delete" role="tooltip" popover="manual">
+ *     <svg class="al-icon al-icon--20 al-tooltip__icon" aria-hidden="true"
+ *          focusable="false">…info…</svg>
+ *     <span class="al-tooltip__text">Delete</span>
+ *   </div>
+ *
+ *   - The tooltip comes RIGHT AFTER the trigger in the HTML (rule 25).
+ *   - What links the two is the trigger's own ARIA attribute, not a class:
+ *     aria-labelledby when the tooltip is the NAME (icon-only button),
+ *     aria-describedby when it COMPLEMENTS an element that already has a name
+ *     (rule 24). tooltip.js finds the trigger through these two attributes.
+ *   - The trigger is always focusable and never `disabled` (rules 22 and 23).
+ *   - An Icon Button with a tooltip does NOT take aria-label: the name comes
+ *     only from the tooltip. The Icon Button gate rejects the two together.
+ *   - Nothing interactive inside (rule 10). The icon is decorative (rule 11).
+ *   - Preferred side: data-placement="top | bottom | left | right" on the
+ *     .al-tooltip; without it, top (rule 13).
+ *
+ * POPOVER
+ *   popover="manual" puts the tooltip in the browser's top layer: it stays
+ *   above everything with no z-index, and hidden when closed by the browser's
+ *   own stylesheet. "manual" because tooltip.js is what opens and closes it
+ *   (hover, focus, Esc) - "auto" would close on click and steal the Esc from
+ *   the Modal and the Drawer.
+ *   display is only declared in the open state: declared on the base, it
+ *   would beat the browser's display:none and the tooltip would always show.
+ *
+ * POSITION
+ *   `position: fixed` with top/left written by tooltip.js from the trigger's
+ *   box, `tooltip-offset` away, no arrow (rule 14). If the preferred side
+ *   doesn't fit on screen, it flips to the opposite; it never covers the
+ *   trigger (rule 15).
+ *
+ * HEIGHT
+ *   No height: comes from padding-y x 2 + the Body/sm line height (36 on one
+ *   line). Icon aligned to the top: on a single line it is the same as
+ *   Figma's center; on two, the icon stays with the first line instead of
+ *   floating in the middle.
+ *
+ * MOTION (rule 21)
+ *   Opacity fade in `tooltip-duration` (popup, 200ms): enter curve on
+ *   opening, exit curve on closing. @starting-style gives the starting point,
+ *   and `allow-discrete` holds display and overlay until the exit fade ends -
+ *   the same mechanism as the Modal and the Drawer. No offset. No transition
+ *   with prefers-reduced-motion.
+ */
+
+.al-tooltip {
+  /* resets what the browser stylesheet gives every [popover] */
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  border: 0;
+
+  box-sizing: border-box;
+  inline-size: max-content;
+  max-inline-size: var(--al-tooltip-max-width);
+  padding: var(--al-tooltip-padding-y) var(--al-tooltip-padding-x);
+  border-radius: var(--al-tooltip-radius);
+  background-color: var(--al-tooltip-bg);
+  color: var(--al-tooltip-text);
+  box-shadow: var(--al-tooltip-shadow);
+  overflow-wrap: break-word;
+
+  font-family: var(--al-font-sans);
+  font-size: var(--al-tooltip-font-size);
+  line-height: var(--al-tooltip-line-height);
+  font-weight: var(--al-tooltip-font-weight);
+  letter-spacing: var(--al-tooltip-tracking);
+
+  opacity: 0;
+  transition:
+    opacity var(--al-tooltip-duration) var(--al-tooltip-easing-exit),
+    display var(--al-tooltip-duration) var(--al-tooltip-easing-exit) allow-discrete,
+    overlay var(--al-tooltip-duration) var(--al-tooltip-easing-exit) allow-discrete;
+}
+
+.al-tooltip:popover-open {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--al-tooltip-gap);
+  opacity: 1;
+  transition-timing-function: var(--al-tooltip-easing-enter);
+}
+
+@starting-style {
+  .al-tooltip:popover-open {
+    opacity: 0;
+  }
+}
+
+/* the icon inherits the text color (currentColor, rule 12) */
+.al-tooltip__icon {
+  color: inherit;
+}
+
+.al-tooltip__text {
+  min-inline-size: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-tooltip {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------- high contrast */
+/* With no shadow and the background swapped for the system's, the box would
+   disappear: the outline gives the edge back. */
+@media (forced-colors: active) {
+  .al-tooltip {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+}

@@ -1,0 +1,333 @@
+/* AL Design System - Sidebar
+ * Written by hand. Depends on al-foundation.css, tab.css, avatar.css,
+ * icon-button.css, icon.css and al-sidebar-tokens.css. The narrow screen modal
+ * mode (opening, closing, focus) lives in sidebar.js.
+ *
+ * No value here is literal: color, space, typography, border and width come
+ * in through var(--al-sidebar-*). The check.py next to it rejects the file if
+ * any escapes - with ONE named exception: the 1024px breakpoint (see NARROW
+ * SCREEN), because @media doesn't accept var().
+ *
+ * MARKUP CONTRACT
+ *
+ *   <aside class="al-sidebar" id="sb" aria-label="Sidebar">
+ *     <div class="al-sidebar__profile">
+ *       <span class="al-avatar al-avatar--md" aria-hidden="true">
+ *         <img class="al-avatar__photo" src="…" alt=""></span>     rule 18
+ *       <div class="al-sidebar__details">
+ *         <div class="al-sidebar__user">
+ *           <p class="al-sidebar__name">Jane Doe</p>
+ *           <p class="al-sidebar__email">jane.doe@gmail.com</p>
+ *         </div>
+ *         <a class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm"
+ *            href="/account" aria-label="Open my account">            rule 19
+ *           <svg class="al-icon" aria-hidden="true" focusable="false">…</svg></a>
+ *       </div>
+ *     </div>
+ *     <nav class="al-sidebar__nav" aria-label="Main">                 rule 26
+ *       <div class="al-sidebar__content">
+ *         <ul class="al-tabs al-tabs--square">                         loose items, no label (rule 6)
+ *           <li><a class="al-tab" href="/" aria-current="page">
+ *             <span class="al-tab__label">Home</span></a></li>
+ *         </ul>
+ *         <div class="al-sidebar__group">
+ *           <p class="al-sidebar__group-label" id="g-sales">Sales</p>
+ *           <ul class="al-tabs al-tabs--square" aria-labelledby="g-sales">  rule 27
+ *             <li><a class="al-tab" href="/orders">
+ *               <span class="al-tab__label">Orders</span></a></li>
+ *           </ul>
+ *         </div>
+ *       </div>
+ *       <div class="al-sidebar__group al-sidebar__support">             optional (rule 21)
+ *         <p class="al-sidebar__group-label" id="g-help">Help</p>
+ *         <ul class="al-tabs al-tabs--square" aria-labelledby="g-help">…</ul>
+ *       </div>
+ *     </nav>
+ *   </aside>
+ *
+ *   - Item = navigation Tab Square (rule 11): <a>, aria-current="page" on the
+ *     current one (rules 12 and 28), never role="tab". The look comes from
+ *     tab.css; here the item only stretches to the width.
+ *   - The profile stays OUTSIDE the <nav> (rule 26). The Avatar is decorative
+ *     (rule 18).
+ *   - Without ".al-sidebar__support" the Help section simply doesn't exist.
+ *   - "Skip to content" before the Sidebar belongs to the product (rule 29).
+ *   - The button that opens it on a narrow screen, the product's, at the top
+ *     of the page:
+ *       <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md"
+ *               aria-label="Menu" aria-controls="sb" aria-expanded="false"
+ *               data-al-sidebar-open="sb">…menu…</button>
+ *     It only appears below 1024px.
+ *
+ * HEIGHT AND SCROLLING (RULES 5 AND 23)
+ *   Screen height (100dvh) and stuck to the top while the page scrolls
+ *   (sticky). Profile and Help stay fixed; only __content scrolls. The
+ *   __content gets a gap the size of the focus ring and discounts it with a
+ *   negative margin, as in the Drawer: the overflow would clip the ring of the
+ *   first and last items.
+ *
+ * PROFILE TEXT (RULE 20)
+ *   Name and e-mail on one line, with an ellipsis - the only exception to
+ *   rule 15, because the text comes from the user's account. The full text
+ *   stays in the DOM, so the screen reader reads all of it. An item label
+ *   does NOT get an ellipsis.
+ *
+ * NARROW SCREEN - NAMED EXCEPTION `breakpoint` (RULES 24 AND 25)
+ *   Below 1024px the Sidebar leaves the page and becomes a modal panel from
+ *   the left. The Foundation has no breakpoint scale and @media doesn't read
+ *   custom properties: the 1024 is written here, once per media query, and
+ *   check.py accepts ONLY that value ONLY inside @media.
+ *   sidebar.js moves the same <aside> into a <dialog class="al-sidebar-modal">
+ *   and calls showModal(): no duplicated markup. Scrim, shadow, duration and
+ *   gap are the semantics the Drawer also uses (bg-scrim, elevation-5,
+ *   motion.duration.panel, space-16), read straight from the Foundation so
+ *   the Sidebar doesn't depend on the Drawer's CSS. No X: the Menu button,
+ *   Esc and the scrim close it. No radius: the Sidebar's design has none.
+ *
+ * HIGH CONTRAST
+ *   The right border is already a border: forced-colors paints it with the
+ *   text color. In modal mode the panel gets an outline, like the Drawer.
+ */
+
+/* ------------------------------------------------------------------ box */
+.al-sidebar {
+  box-sizing: border-box;
+  position: sticky;
+  inset-block-start: 0;
+  /* In a flex or grid row (the common layout: Sidebar + content) the default
+     is to stretch to the row's height - and a stretched item has nowhere to
+     "stick", so sticky doesn't happen. Found in QA. */
+  align-self: flex-start;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-gap);
+  inline-size: var(--al-sidebar-width);
+  block-size: 100dvh;
+  margin: 0;
+  padding: var(--al-sidebar-padding);
+  border-inline-end: var(--al-sidebar-border-width) solid var(--al-sidebar-border);
+  background-color: var(--al-sidebar-bg);
+  color: var(--al-sidebar-name);
+  font-family: var(--al-font-sans);
+}
+
+/* -------------------------------------------------------------- profile */
+.al-sidebar__profile {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--al-sidebar-profile-gap);
+}
+
+.al-sidebar__profile > .al-avatar {
+  flex: none;
+}
+
+.al-sidebar__details {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--al-sidebar-profile-text-gap);
+}
+
+.al-sidebar__details > .al-icon-btn {
+  flex: none;
+}
+
+.al-sidebar__user {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-profile-text-gap);
+}
+
+/* Component resets: the user may have a global <p> style. */
+.al-sidebar__name,
+.al-sidebar__email {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;          /* rule 20 */
+}
+
+.al-sidebar__name {
+  color: var(--al-sidebar-name);
+  font-size: var(--al-sidebar-name-font-size);
+  line-height: var(--al-sidebar-name-line-height);
+  font-weight: var(--al-sidebar-name-font-weight);
+  letter-spacing: var(--al-sidebar-name-tracking);
+}
+
+.al-sidebar__email {
+  color: var(--al-sidebar-email);
+  font-size: var(--al-sidebar-email-font-size);
+  line-height: var(--al-sidebar-email-line-height);
+  font-weight: var(--al-sidebar-email-font-weight);
+  letter-spacing: var(--al-sidebar-email-tracking);
+}
+
+/* ------------------------------------------------------ navigation and body */
+.al-sidebar__nav {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-gap);
+}
+
+.al-sidebar__content {
+  --_ring-room: calc(var(--al-border-focus-offset) + var(--al-border-width-focus));
+  flex: 1 1 auto;
+  min-block-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-gap);       /* between groups, no Divider (rule 10) */
+  margin: calc(-1 * var(--_ring-room));
+  padding: var(--_ring-room);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.al-sidebar__support {
+  flex: none;
+}
+
+/* ---------------------------------------------------------------- group */
+.al-sidebar__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-sidebar-group-gap);
+}
+
+.al-sidebar__group-label {
+  margin: 0;
+  color: var(--al-sidebar-group-label);
+  font-family: var(--al-sidebar-group-label-font-family);
+  font-size: var(--al-sidebar-group-label-font-size);
+  line-height: var(--al-sidebar-group-label-line-height);
+  font-weight: var(--al-sidebar-group-label-font-weight);
+  letter-spacing: var(--al-sidebar-group-label-tracking);
+  text-transform: none;             /* rule 17: never uppercase */
+}
+
+/* ----------------------------------------------------------------- item */
+/* The Tab Square, stacked and full width (rule 11, Tab rule 4).
+   Color, background, radius, padding, ring and states stay with tab.css. */
+.al-sidebar .al-tabs {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--al-sidebar-item-gap);
+}
+
+.al-sidebar .al-tabs > li,
+.al-sidebar .al-tab {
+  flex: 1 1 auto;
+}
+
+.al-sidebar .al-tab__label {
+  flex: 1 1 auto;
+}
+
+/* --------------------------------------------------------- narrow screen */
+/* Menu button: only exists below the breakpoint. */
+@media (width >= 1024px) {
+  [data-al-sidebar-open] {
+    display: none;
+  }
+}
+
+@media (width < 1024px) {
+  .al-sidebar {
+    display: none;
+  }
+
+  .al-sidebar-modal .al-sidebar {
+    display: flex;
+    position: static;
+    inline-size: auto;
+    block-size: 100%;
+  }
+}
+
+.al-sidebar-modal {
+  box-sizing: border-box;
+  inline-size: var(--al-sidebar-width);
+  max-inline-size: calc(100% - var(--al-space-16));   /* rule 24, like the Drawer */
+  inset: 0 auto 0 0;
+  block-size: auto;
+  max-block-size: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: var(--al-sidebar-bg);
+  box-shadow: var(--al-elevation-5);
+  overflow: clip;
+}
+
+:root:has(.al-sidebar-modal:modal) {
+  overflow: hidden;
+}
+
+/* Enters from left to right and exits on the same side, with a fade (the
+   shadow would leak with the panel parked off screen). The same mechanics as
+   the Drawer, mirrored. */
+.al-sidebar-modal {
+  opacity: 0;
+  translate: -100% 0;
+  transition:
+    opacity var(--al-motion-duration-panel) var(--al-motion-easing-exit),
+    translate var(--al-motion-duration-panel) var(--al-motion-easing-exit),
+    overlay var(--al-motion-duration-panel) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-motion-duration-panel) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-sidebar-modal[open] {
+  opacity: 1;
+  translate: 0 0;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+.al-sidebar-modal::backdrop {
+  background-color: var(--al-bg-scrim);
+  opacity: 0;
+  transition:
+    opacity var(--al-motion-duration-panel) var(--al-motion-easing-exit),
+    overlay var(--al-motion-duration-panel) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-motion-duration-panel) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-sidebar-modal[open]::backdrop {
+  opacity: 1;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-sidebar-modal[open] {
+    opacity: 0;
+    translate: -100% 0;
+  }
+
+  .al-sidebar-modal[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-sidebar-modal,
+  .al-sidebar-modal::backdrop {
+    transition: none;
+  }
+
+  .al-sidebar-modal {
+    translate: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-sidebar-modal {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+}

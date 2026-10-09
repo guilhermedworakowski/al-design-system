@@ -1,0 +1,255 @@
+/* AL Design System - Radio
+ *
+ * Depends on: foundation/al-foundation.css
+ *           + components/radio/al-radio-tokens.css
+ *
+ * IT IS THE NATIVE <input type="radio">
+ *   The control belongs to the browser: the arrows move between the options
+ *   and check them, Tab enters the question only once, checking one unchecks
+ *   the other, the screen reader announces "2 of 3", the form submits the
+ *   value. All of that depends on a single requirement: the radios of the same
+ *   question share the same `name`. This file only removes the circle the
+ *   browser draws (`appearance: none`) and paints AL's in its place. No
+ *   <div role="radio"> - the first rule of ARIA.
+ *
+ * ANATOMY - ONE RADIO
+ *   <label class="al-radio">
+ *     <span class="al-radio__control">
+ *       <input class="al-radio__input" type="radio" name="plan" value="monthly">
+ *       <span class="al-radio__dot" aria-hidden="true"></span>
+ *     </span>
+ *     <span class="al-radio__label">Monthly</span>
+ *   </label>
+ *
+ *   The <label> wraps everything: clicking the text checks it, and the
+ *   clickable area becomes the whole row (WCAG 2.5.8). There is no `for`/`id`
+ *   to keep in sync.
+ *
+ *   `__control` exists for the same reason as in the Checkbox: <input> has no
+ *   children, so the dot can't live inside it. It is a sibling, positioned on
+ *   top, and `pointer-events: none` hands the click back to the input. It is a
+ *   <span>, not a pseudo-element of the input: `::before` on <input> is not
+ *   guaranteed in every browser.
+ *
+ * THE QUESTION BELONGS TO THE APPLICATION - THERE IS NO GROUP COMPONENT
+ *   Decided in the audit. Whoever builds the form writes:
+ *
+ *   <fieldset>
+ *     <legend>Billing</legend>
+ *     <label class="al-radio">…Monthly…</label>
+ *     <label class="al-radio">…Yearly…</label>
+ *   </fieldset>
+ *
+ *   Without a `legend`, the reader announces "Monthly, radio button" without
+ *   the question (rule 6). The error belongs to the question too - see ERROR
+ *   below.
+ *
+ * THE STATE IS DRIVEN BY THE MARKUP, NOT BY A CLASS
+ *   Checked reads `:checked`; error reads `aria-invalid="true"` on the
+ *   question (see ERROR below); disabled reads `:disabled`. There is no
+ *   `.al-radio--error`: color and announcement come from the same source and
+ *   don't diverge.
+ *
+ * PRECEDENCE BY VARIABLE, NOT BY SPECIFICITY - same technique as the Checkbox
+ *   Hover and focus write to `--_*-state`; checked, error and disabled write to
+ *   `--_*-force`, which always wins because it is another property. The
+ *   consequences, all decided with the tokens:
+ *     checked + hover     -> nothing changes: checked forces `bg` and
+ *                            `border-checked`, and hover loses. A checked radio
+ *                            doesn't uncheck on click - the hover would promise
+ *                            an action (rule 15)
+ *     checked + focus     -> ring on top of the orange ring
+ *     error + focus       -> default ring (there is no drawn error ring)
+ *     error + checked     -> orange border and dot, red label: the error force
+ *                            only applies to the EMPTY circle, which is where
+ *                            the error lives
+ *     checked + disabled  -> gray circle, dot in `dot-disabled`
+ *   Disabled comes last in the file and wins over everything.
+ *
+ * CHECKED DOESN'T PAINT THE BACKGROUND - THE DIFFERENCE FROM THE CHECKBOX
+ *   Checked forces the background back to `bg`: the white ring between the
+ *   orange border and the dot IS the background. Without that force, hover
+ *   would paint the ring gray on a checked radio.
+ *
+ * FIGMA HAS A SINGLE STATE AXIS
+ *   Six variants; the combinations above have no variant and are covered by
+ *   the same tokens. `dot-disabled` is the only token with no variant in Figma.
+ *
+ * DERIVED GEOMETRY
+ *   Circle 24 = `box-size`. The dot has no token: 14 = circle - 2 x border - 2 x
+ *   padding, and the math is written below instead of a number.
+ *   `box-sizing: border-box` puts the border INSIDE the 24, so the circle never
+ *   "jumps" when the state changes its color.
+ *
+ * TOP ALIGNMENT
+ *   `align-items: flex-start`, not `center`: a long label wraps and the circle
+ *   stays at the height of the first line (Carbon, rule 13). It works without
+ *   adjustment because the circle (24) and the label's line height (24) are the
+ *   same number.
+ *
+ * ERROR - IT BELONGS TO THE QUESTION, AND THERE IS NO MESSAGE IN THE COMPONENT
+ *   The error is read from an ANCESTOR with `aria-invalid="true"` - in practice
+ *   the question's `fieldset` -, never from the radio: ARIA doesn't provide for
+ *   `aria-invalid` on a single radio (Carbon, Spectrum, Polaris; rule 26). A
+ *   good consequence: marking the fieldset once lights up ALL the radios of
+ *   the question (rule 21), and there is no way to forget one. Whoever builds
+ *   the form writes the error in text next to the question and links the
+ *   `fieldset` to it with `aria-describedby` (rules 22 and 26, WCAG 3.3.1 /
+ *   1.4.1). A QA finding: the first version read the error on the radio
+ *   itself, copying the Checkbox.
+ *
+ * TRANSITION DURATION
+ *   Duration and curve are Foundation tokens. The base declares the EXIT
+ *   curve (--al-motion-easing-exit, ease-in); the ENTER block at the end of
+ *   the file declares the enter one (ease-out) on the destination states,
+ *   because CSS uses the curve of the state the transition goes to.
+ *
+ * HANDWRITTEN. The tokens it consumes are generated by tokens.py.
+ */
+
+/* ---------------------------------------------------------------- root */
+.al-radio {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--al-radio-gap);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ------------------------------------------------------------- circle */
+.al-radio__control {
+  position: relative;
+  display: block;
+  flex: none;
+  inline-size: var(--al-radio-box-size);
+  block-size: var(--al-radio-box-size);
+}
+
+.al-radio__input {
+  --_bg-state: var(--al-radio-bg);
+  --_border-state: var(--al-radio-border);
+
+  -webkit-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  display: block;
+  margin: 0;
+  inline-size: var(--al-radio-box-size);
+  block-size: var(--al-radio-box-size);
+
+  border: var(--al-radio-border-width) solid
+          var(--_border-force, var(--_border-state));
+  border-radius: var(--al-radio-radius);
+  background-color: var(--_bg-force, var(--_bg-state));
+  cursor: inherit;
+
+  transition:
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* nothing here is `outline`: the ring is a shadow, to respect the circle */
+.al-radio__input:focus {
+  outline: none;
+}
+
+/* ----------------------------------------------------------------- dot */
+/* It sits inside the border and the padding: 24 - 2x1 - 2x4 = 14, as in Figma. */
+.al-radio__dot {
+  position: absolute;
+  inset-block-start: calc(var(--al-radio-border-width) + var(--al-radio-padding));
+  inset-inline-start: calc(var(--al-radio-border-width) + var(--al-radio-padding));
+  inline-size: calc(var(--al-radio-box-size)
+                    - 2 * var(--al-radio-border-width)
+                    - 2 * var(--al-radio-padding));
+  block-size: calc(var(--al-radio-box-size)
+                   - 2 * var(--al-radio-border-width)
+                   - 2 * var(--al-radio-padding));
+  border-radius: var(--al-radio-radius);
+  background-color: var(--al-radio-dot);
+  /* hands the click back to the input underneath */
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.al-radio__input:checked ~ .al-radio__dot {
+  visibility: visible;
+}
+
+/* ------------------------------------------------------------- label */
+.al-radio__label {
+  color: var(--al-radio-label);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-radio-label-font-size);
+  line-height: var(--al-radio-label-line-height);
+  font-weight: var(--al-radio-label-font-weight);
+  letter-spacing: var(--al-radio-label-tracking);
+}
+
+/* -------------------------------------------------------------- states */
+/* hover on the whole row, not only the circle: clicking the label also checks
+   it, so the label also needs to show it is clickable. When checked the force
+   wins, and the hover doesn't show. */
+.al-radio:hover .al-radio__input:not(:disabled) {
+  --_bg-state: var(--al-radio-bg-hover);
+  --_border-state: var(--al-radio-border-hover);
+}
+
+.al-radio__input:focus-visible {
+  --_border-state: var(--al-radio-border-focus);
+  box-shadow: var(--al-radio-ring);
+}
+
+/* checked: orange border, and the background forced back to `bg` - the white ring */
+.al-radio__input:checked {
+  --_bg-force: var(--al-radio-bg);
+  --_border-force: var(--al-radio-border-checked);
+}
+
+/* error: read from the QUESTION (the fieldset), never from the radio - see ERROR
+   in the header. Only on the EMPTY circle; checked, it stays orange and only
+   the label warns. */
+[aria-invalid="true"] .al-radio__input:not(:checked) {
+  --_border-force: var(--al-radio-border-error);
+}
+
+[aria-invalid="true"] .al-radio__label {
+  color: var(--al-radio-label-error);
+}
+
+/* disabled - last, because it wins over all */
+.al-radio__input:disabled {
+  --_bg-force: var(--al-radio-bg-disabled);
+  --_border-force: var(--al-radio-border-disabled);
+}
+
+.al-radio__input:disabled ~ .al-radio__dot {
+  background-color: var(--al-radio-dot-disabled);
+}
+
+.al-radio:has(.al-radio__input:disabled) {
+  cursor: not-allowed;
+}
+
+.al-radio:has(.al-radio__input:disabled) .al-radio__label {
+  color: var(--al-radio-label-disabled);
+}
+
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
+.al-radio:hover .al-radio__input,
+.al-radio__input:focus-visible,
+.al-radio__input:checked,
+[aria-invalid="true"] .al-radio__input {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* --------------------------------------------------------- environment */
+@media (prefers-reduced-motion: reduce) {
+  .al-radio__input {
+    transition: none;
+  }
+}

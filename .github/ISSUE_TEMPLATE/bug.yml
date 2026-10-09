@@ -1,0 +1,72 @@
+name: Bug report
+description: Something renders or behaves differently from what the docs describe.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: For contrast, keyboard or screen reader problems, use the accessibility template instead.
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      options:
+        - Foundation (tokens, theme, typography...)
+        - Button
+        - Icon
+        - Icon Button
+        - Tag
+        - Avatar
+        - Select
+        - Checkbox
+        - Radio
+        - Switch
+        - Input
+        - Textarea
+        - Password
+        - Divider
+        - Card
+        - Tab
+        - Accordion
+        - Modal
+        - Drawer
+        - Sidebar
+        - Breadcrumb
+        - Tooltip
+        - Toast
+        - Alert
+        - Documentation site
+        - Package / build
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: AL version
+      placeholder: "1.0.1"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: Steps to reproduce, and the markup you used if you can share it.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme
+      options: [Light, Dark, Both]
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and operating system
+      placeholder: "Safari 19, macOS"

@@ -1,0 +1,22 @@
+# Runs the full build on every PR and on every push to dev and main.
+# Fails if any gate fails or if the build writes anything outside build/ and
+# dist/ (python3 build.py --check).
+name: build
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - run: python3 build.py --check

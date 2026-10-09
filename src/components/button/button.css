@@ -1,0 +1,286 @@
+/* AL Design System - Button
+ * Handwritten. Depends on al-foundation.css and al-button-tokens.css, in that order.
+ *
+ * No value here is literal: every color, space, radius and typography comes in
+ * through var(--al-button-*). The check.py next to it rejects the file if any
+ * slips through.
+ *
+ * MARKUP CONTRACT
+ *
+ *   <button type="button" class="al-btn al-btn--primary al-btn--md">
+ *     <span class="al-btn__spinner" aria-hidden="true"></span>
+ *     <span class="al-btn__icon al-btn__icon--leading">
+ *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *     </span>
+ *     <span class="al-btn__label">Publish</span>
+ *     <span class="al-btn__icon al-btn__icon--trailing">
+ *       <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *     </span>
+ *   </button>
+ *
+ *   variant : --primary | --secondary | --ghost | --danger
+ *   size    : --sm | --md
+ *
+ *   type="button" is not optional: inside a <form>, the HTML default is submit.
+ *
+ * THE ICON
+ *   The drawing comes from the Foundation's Icon component - the Button doesn't
+ *   invent icons. The svg goes inline, with the .al-icon class, and the
+ *   decorative contract (aria-hidden + focusable="false") goes ON THE SVG, not
+ *   on the span: what carries the meaning here is the label, and an announced
+ *   icon would be duplicate noise.
+ *   The size is not the consumer's choice: the Button imposes the box through
+ *   the button's size, and .al-icon obeys. Don't put .al-icon--20 here.
+ *
+ * LOADING
+ *   Set aria-busy="true" and aria-disabled="true" on the <button> itself, and
+ *   lock the handler in JS. Don't use the disabled attribute: it takes the
+ *   button out of the focus order in the middle of the interaction and nothing
+ *   is announced. Announce progress through a separate live region
+ *   (role="status" aria-live="polite").
+ *   The spinner takes the place of the leading icon - if there was no icon, the
+ *   width changes; also swap the label ("Publish" -> "Publishing…") to absorb
+ *   that.
+ *
+ * DISABLED
+ *   Prefer aria-disabled="true" over the disabled attribute: the button stays
+ *   focusable and a tooltip can say why. With aria-disabled the click STILL
+ *   fires - the lock is in JS.
+ */
+
+/* ---------------------------------------------------------------- base */
+.al-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  margin: 0;
+  /* The border counts toward the height: every variant has 1px, transparent
+     or not, so subtracting it here keeps 36 and 48 exact and stops the button
+     from jumping 1px when disabled adds a border. */
+  padding:
+    calc(var(--_pad-y) - var(--al-button-border-width))
+    calc(var(--_pad-x) - var(--al-button-border-width));
+  border: var(--al-button-border-width) solid var(--_border);
+  border-radius: var(--al-button-radius);
+
+  background-color: var(--_bg);
+  color: var(--_label);
+
+  font-family: var(--al-font-sans);
+  font-size: var(--_font-size);
+  line-height: var(--_line-height);
+  font-weight: var(--_font-weight);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    border-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* ---------------------------------------------------------------- variants */
+.al-btn--primary {
+  --_bg: var(--al-button-primary-bg);
+  --_bg-hover: var(--al-button-primary-bg-hover);
+  --_bg-active: var(--al-button-primary-bg-active);
+  --_bg-disabled: var(--al-button-primary-bg-disabled);
+  --_label: var(--al-button-primary-label);
+  --_label-disabled: var(--al-button-primary-label-disabled);
+  --_border: var(--al-button-primary-border);
+  --_border-disabled: var(--al-button-primary-border-disabled);
+  --_ring: var(--al-button-primary-ring);
+}
+
+.al-btn--secondary {
+  --_bg: var(--al-button-secondary-bg);
+  --_bg-hover: var(--al-button-secondary-bg-hover);
+  --_bg-active: var(--al-button-secondary-bg-active);
+  --_bg-disabled: var(--al-button-secondary-bg-disabled);
+  --_label: var(--al-button-secondary-label);
+  --_label-disabled: var(--al-button-secondary-label-disabled);
+  --_border: var(--al-button-secondary-border);
+  --_border-disabled: var(--al-button-secondary-border-disabled);
+  --_ring: var(--al-button-secondary-ring);
+}
+
+.al-btn--ghost {
+  --_bg: var(--al-button-ghost-bg);
+  --_bg-hover: var(--al-button-ghost-bg-hover);
+  --_bg-active: var(--al-button-ghost-bg-active);
+  --_bg-disabled: var(--al-button-ghost-bg-disabled);
+  --_label: var(--al-button-ghost-label);
+  --_label-disabled: var(--al-button-ghost-label-disabled);
+  --_border: var(--al-button-ghost-border);
+  --_border-disabled: var(--al-button-ghost-border-disabled);
+  --_ring: var(--al-button-ghost-ring);
+}
+
+.al-btn--danger {
+  --_bg: var(--al-button-danger-bg);
+  --_bg-hover: var(--al-button-danger-bg-hover);
+  --_bg-active: var(--al-button-danger-bg-active);
+  --_bg-disabled: var(--al-button-danger-bg-disabled);
+  --_label: var(--al-button-danger-label);
+  --_label-disabled: var(--al-button-danger-label-disabled);
+  --_border: var(--al-button-danger-border);
+  --_border-disabled: var(--al-button-danger-border-disabled);
+  --_ring: var(--al-button-danger-ring);
+}
+
+/* ---------------------------------------------------------------- sizes */
+.al-btn--sm {
+  --_pad-x: var(--al-button-sm-padding-x);
+  --_pad-y: var(--al-button-sm-padding-y);
+  --_gap: var(--al-button-sm-gap);
+  --_font-size: var(--al-button-sm-font-size);
+  --_line-height: var(--al-button-sm-line-height);
+  --_font-weight: var(--al-button-sm-font-weight);
+  --_icon-size: var(--al-button-sm-icon-size);
+}
+
+.al-btn--md {
+  --_pad-x: var(--al-button-md-padding-x);
+  --_pad-y: var(--al-button-md-padding-y);
+  --_gap: var(--al-button-md-gap);
+  --_font-size: var(--al-button-md-font-size);
+  --_line-height: var(--al-button-md-line-height);
+  --_font-weight: var(--al-button-md-font-weight);
+  --_icon-size: var(--al-button-md-icon-size);
+}
+
+/* ---------------------------------------------------------------- states */
+/* hover and pressed never apply when the button is out of action */
+.al-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-hover);
+}
+
+.al-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  background-color: var(--_bg-active);
+}
+
+/* :focus-visible, not :focus - the ring shows from the keyboard, not on click.
+   The ring is a shadow, so it doesn't push the layout and follows the pill's
+   radius. */
+.al-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--_ring);
+}
+
+.al-btn:disabled,
+.al-btn[aria-disabled="true"] {
+  background-color: var(--_bg-disabled);
+  color: var(--_label-disabled);
+  border-color: var(--_border-disabled);
+  cursor: not-allowed;
+}
+
+/* the ring still applies on top of disabled: aria-disabled stays focusable on
+   purpose, and whoever reaches it from the keyboard needs to see where they are */
+.al-btn[aria-disabled="true"]:focus-visible {
+  box-shadow: var(--_ring);
+}
+
+/* ---------------------------------------------------------------- content */
+/* The icon box is the label's line height: 20 in sm, 24 in md. That is why
+   turning the icon on doesn't change the button's height - it takes the same
+   vertical band the line of text already took. */
+.al-btn__icon {
+  display: block;
+  flex: none;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+
+  /* the .al-icon inside reads its own box from this variable. Without it, it
+     would fall back to its default step (24) and fight the span in sm. The
+     button decides the size, not the icon. */
+  --al-icon-box: var(--_icon-size);
+}
+
+/* safety net for an svg that isn't from the Icon component */
+.al-btn__icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.al-btn__label {
+  display: block;
+}
+
+/* ---------------------------------------------------------------- loading */
+/* the same box as the icon it replaces - if it were smaller, the button's
+   width would jump the moment loading starts */
+.al-btn__spinner {
+  display: none;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  border: var(--al-border-width-2) solid currentColor;
+  border-top-color: transparent;
+  border-radius: var(--al-radius-full);
+  animation: al-btn-spin var(--al-motion-duration-spinner) var(--al-motion-easing-spinner) infinite;
+}
+
+.al-btn[aria-busy="true"] .al-btn__spinner {
+  display: block;
+}
+
+/* the spinner takes the place of the leading icon, so the width doesn't jump */
+.al-btn[aria-busy="true"] .al-btn__icon--leading {
+  display: none;
+}
+
+@keyframes al-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
+.al-btn:hover,
+.al-btn:active,
+.al-btn:focus-visible {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* ---------------------------------------------------------------- environment */
+@media (prefers-reduced-motion: reduce) {
+  .al-btn {
+    transition: none;
+  }
+  /* the spinner doesn't stop: it is the only clue that something is happening.
+     It slows down until it is no longer aggressive motion. */
+  .al-btn__spinner {
+    animation-duration: var(--al-motion-duration-spinner-reduced);
+  }
+}
+
+/* In the system's high contrast mode the shadow is discarded - the ring goes
+   with it. Here focus comes back as a native outline, which the mode respects. */
+@media (forced-colors: active) {
+  .al-btn {
+    border-color: currentColor;
+  }
+  .al-btn:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+  .al-btn:disabled,
+  .al-btn[aria-disabled="true"] {
+    color: GrayText;
+    border-color: GrayText;
+  }
+}

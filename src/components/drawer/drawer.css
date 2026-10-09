@@ -1,0 +1,263 @@
+/* AL Design System - Drawer
+ * Written by hand. Depends on al-foundation.css, button.css, icon-button.css,
+ * icon.css and al-drawer-tokens.css. The behavior (opening, closing on the
+ * scrim, initial focus) lives in drawer.js.
+ *
+ * No value here is literal: color, space, radius, shadow, typography, width
+ * and duration come in through var(--al-drawer-*). The check.py next to it
+ * rejects the file if any escapes.
+ *
+ * MARKUP CONTRACT - NATIVE <dialog> (RULE 24)
+ *
+ *   <dialog class="al-drawer al-drawer--md" aria-labelledby="d1">
+ *     <header class="al-drawer__header">
+ *       <h2 class="al-drawer__title" id="d1">Edit customer</h2>
+ *       <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm"
+ *               aria-label="Close" data-al-drawer-close>
+ *         <svg class="al-icon" aria-hidden="true" focusable="false">…x…</svg></button>
+ *     </header>
+ *     <div class="al-drawer__content">…any content…</div>
+ *     <div class="al-drawer__actions">
+ *       <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-drawer-close>
+ *         <span class="al-btn__label">Cancel</span></button>
+ *       <button type="submit" class="al-btn al-btn--primary al-btn--md">
+ *         <span class="al-btn__label">Save customer</span></button>
+ *     </div>
+ *   </dialog>
+ *
+ *   - Size: --sm | --md | --lg. No modifier = md.
+ *   - Right side only: there is no side property.
+ *   - Open: `data-al-drawer-open="<dialog id>"` on the button, or showModal().
+ *     Always showModal(), never `open` in the markup nor show() (rule 24).
+ *   - Close: `data-al-drawer-close`, or <form method="dialog">. Esc always
+ *     closes (rule 15); the <dialog> already does it.
+ *   - Always at least one visible way out (rule 14): the X, or the footer
+ *     with a secondary that closes. The X is the Ghost sm Icon Button, with
+ *     aria-label "Close" (rule 26). No divider (rule 9): space separates.
+ *   - Accessible name: aria-labelledby pointing to the title (rule 25).
+ *   - Actions: the secondary comes first, the main one last (rule 20). The
+ *     buttons stretch and split the width in equal parts, in all three sizes
+ *     (rule 21). A destructive action is not the Drawer's main one (rule 22).
+ *
+ * HEIGHT AND SCROLLING (RULES 13 AND 29)
+ *   The height is always the screen's: the panel is fixed at top and bottom.
+ *   Only the body scrolls; header and actions stay fixed. The body gets a gap
+ *   the size of the focus ring and discounts it with a negative margin: the
+ *   overflow would clip the ring of a field touching the body's edge.
+ *   Derived from the Foundation's focus tokens, no new value.
+ *
+ * WIDTH ON A PHONE (RULE 12)
+ *   The size's width, capped at 100% minus drawer-margin: the gap on the left
+ *   shows the page behind and lets the user tap it to close. In a modal
+ *   <dialog> the 100% is the viewport.
+ *
+ * RADIUS
+ *   Only on the two left corners, the inner ones. The side against the screen
+ *   edge is straight.
+ *
+ * ENTER AND EXIT (RULE 30)
+ *   The panel ENTERS from the right (right to left) and EXITS to the right
+ *   (left to right), with a fade, in 300ms (drawer-duration). It slides its
+ *   own width (translate 100%), so there is no offset token. The fade is
+ *   there because of the shadow: with the panel parked just off screen, it
+ *   would leak inside. The curve is the destination state's: ease-out on
+ *   enter, ease-in on exit. The scrim only appears and disappears. Uses
+ *   @starting-style and transition-behavior: allow-discrete; in a browser
+ *   without them the Drawer opens and closes without animation and keeps
+ *   working.
+ *   The column layout stays on the base, not on [open]: on closing, display
+ *   stays `flex` for the exit duration, and a layout only on [open] made the
+ *   body get squeezed in front of the user (same finding as the Modal).
+ *
+ * SCRIM (RULE 28)
+ *   ::backdrop inherits the <dialog>'s custom properties. Decoration: it
+ *   doesn't receive focus. Closing by clicking it (only with no fields,
+ *   rule 16) belongs to the JS.
+ *
+ * BODY TEXT COLOR
+ *   The <dialog> gets the title color (text-primary) and the body inherits
+ *   it. Without it the UA paints CanvasText.
+ *
+ * HIGH CONTRAST
+ *   Without the background and the shadow the Drawer would get lost: it gets
+ *   a CanvasText outline.
+ */
+
+/* ------------------------------------------------------------------ box */
+.al-drawer {
+  box-sizing: border-box;
+  inline-size: var(--al-drawer-width-md);
+  max-inline-size: calc(100% - var(--al-drawer-margin));
+  /* fixed at top, right and bottom; the UA centers the dialog with
+     margin: auto, here the margin goes and the left side is what is left */
+  inset: 0 0 0 auto;
+  block-size: auto;
+  max-block-size: none;
+  margin: 0;
+  padding: var(--al-drawer-padding);
+  border: 0;
+  border-start-start-radius: var(--al-drawer-radius);
+  border-end-start-radius: var(--al-drawer-radius);
+  background-color: var(--al-drawer-bg);
+  box-shadow: var(--al-drawer-shadow);
+  color: var(--al-drawer-title);
+  font-family: var(--al-font-sans);
+  overflow: clip;
+}
+
+.al-drawer--sm { inline-size: var(--al-drawer-width-sm); }
+.al-drawer--md { inline-size: var(--al-drawer-width-md); }
+.al-drawer--lg { inline-size: var(--al-drawer-width-lg); }
+
+/* The layout (column, gap) stays on the base and only display depends on
+   [open]: a closed dialog must stay display: none. */
+.al-drawer {
+  flex-direction: column;
+  gap: var(--al-drawer-gap);
+}
+
+.al-drawer[open] {
+  display: flex;
+}
+
+/* ---------------------------------------------------------------- header */
+.al-drawer__header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--al-drawer-gap);
+}
+
+/* The title is usually an <h2>, and the user may have a global h2 style
+   (mono, uppercase, color, underline). These resets belong to the
+   component: the Drawer title is what drawer.css says, on any page. */
+.al-drawer__title {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font-family: inherit;
+  text-transform: none;
+  overflow-wrap: anywhere;
+  font-size: var(--al-drawer-title-font-size);
+  line-height: var(--al-drawer-title-line-height);
+  font-weight: var(--al-drawer-title-font-weight);
+  letter-spacing: var(--al-drawer-title-tracking);
+}
+
+.al-drawer__header .al-icon-btn {
+  flex: none;
+}
+
+/* ----------------------------------------------------------------- body */
+.al-drawer__content {
+  --_ring-room: calc(var(--al-border-focus-offset) + var(--al-border-width-focus));
+  flex: 1 1 auto;
+  min-block-size: 0;
+  margin: calc(-1 * var(--_ring-room));
+  padding: var(--_ring-room);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* -------------------------------------------------------------- actions */
+.al-drawer__actions {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--al-drawer-gap);
+}
+
+/* rule 21: the buttons stretch and split the width in equal parts */
+.al-drawer__actions > * {
+  flex: 1 1 0;
+  min-inline-size: 0;
+}
+
+/* Ghost and secondary buttons on the raised background: the Button and the
+   Icon Button read bg-hover/bg-active, made for bg-surface. In dark the
+   Drawer background (surface-raised) equals bg-hover, and the hover
+   disappeared. Here the state comes from the -raised semantics, the same as
+   the Modal, the Card and the Accordion. Only the hover/pressed background
+   changes; the rest belongs to the button. */
+.al-drawer .al-btn--ghost,
+.al-drawer .al-btn--secondary,
+.al-drawer .al-icon-btn--ghost,
+.al-drawer .al-icon-btn--secondary {
+  --_bg-hover: var(--al-bg-hover-raised);
+  --_bg-active: var(--al-bg-active-raised);
+}
+
+/* ------------------------------------------------------- page behind */
+/* rule 29: the page doesn't scroll with the Drawer open. `:modal` is only the
+   one opened by showModal(): a loose <dialog open>, like the frozen ones on
+   the QA page, doesn't lock scrolling */
+:root:has(.al-drawer:modal) {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------- enter and exit */
+/* The base state is the OUTSIDE one: transparent and pushed one width to the
+   right. Open, it enters and appears; on closing it goes back to the base
+   state and exits on the same side. The same rule serves both directions. */
+.al-drawer {
+  opacity: 0;
+  translate: 100% 0;
+  transition:
+    opacity var(--al-drawer-duration) var(--al-motion-easing-exit),
+    translate var(--al-drawer-duration) var(--al-motion-easing-exit),
+    overlay var(--al-drawer-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-drawer-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-drawer[open] {
+  opacity: 1;
+  translate: 0 0;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* the scrim only appears and disappears; the panel is what enters and exits */
+.al-drawer::backdrop {
+  background-color: var(--al-drawer-scrim);
+  opacity: 0;
+  transition:
+    opacity var(--al-drawer-duration) var(--al-motion-easing-exit),
+    overlay var(--al-drawer-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-drawer-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-drawer[open]::backdrop {
+  opacity: 1;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-drawer[open] {
+    opacity: 0;
+    translate: 100% 0;
+  }
+
+  .al-drawer[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-drawer,
+  .al-drawer::backdrop {
+    transition: none;
+  }
+
+  .al-drawer {
+    translate: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-drawer {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+}

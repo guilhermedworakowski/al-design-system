@@ -1,0 +1,215 @@
+/* AL Design System - Tab
+ * Handwritten. Depends on al-foundation.css and al-tab-tokens.css, in that
+ * order.
+ *
+ * No value here is literal: color, space, radius, ring and typography come in
+ * through var(--al-tab-*). The check.py next to it rejects the file if any
+ * slips through. Transition duration and curve are motion tokens; the ENTER
+ * block, near the end, swaps the curve on the destination states.
+ *
+ * MARKUP CONTRACT
+ *
+ *   The type belongs to the GROUP, not the tab: a group never mixes Line and
+ *   Square (rule 6). (none) = Line | .al-tabs--square = Square.
+ *
+ *   panel on the same screen (rule 21) - APG tabs pattern:
+ *     <div class="al-tabs" role="tablist" aria-label="Order">
+ *       <button class="al-tab" role="tab" type="button" id="t-summary"
+ *               aria-selected="true" aria-controls="p-summary">
+ *         <span class="al-tab__label">Summary</span>
+ *       </button>
+ *       <button class="al-tab" role="tab" type="button" id="t-history"
+ *               aria-selected="false" aria-controls="p-history" tabindex="-1">
+ *         <span class="al-tab__label">History</span>
+ *       </button>
+ *     </div>
+ *     <div role="tabpanel" id="p-summary" aria-labelledby="t-summary" tabindex="0">
+ *       ...starts with a heading equal to the tab's label (rule 25)
+ *     </div>
+ *     Only the selected tab sits at tabindex 0; arrows, Home and End move focus
+ *     and activate the tab (automatic) - or only move it, and Enter/Space
+ *     activate when the panel loads from the network. That is behavior: it
+ *     lives in tab.js.
+ *
+ *   navigation between pages (rule 22) - links, never role="tab":
+ *     <nav aria-label="Settings">
+ *       <ul class="al-tabs al-tabs--square">
+ *         <li><a class="al-tab" href="/account" aria-current="page">
+ *           <span class="al-tab__label">Account</span></a></li>
+ *         <li><a class="al-tab" href="/team">
+ *           <span class="al-tab__label">Team</span></a></li>
+ *       </ul>
+ *     </nav>
+ *
+ * WHY THE LOOK LIVES ON __label
+ *   In Figma the Line is a label box (background, radius, ring) with the line
+ *   8px below it. The hover background paints only the box, never the space
+ *   down to the line. So background, radius, padding, color and ring sit on
+ *   __label; the tab (.al-tab) is only the click target and, in the Line,
+ *   carries the space and the line.
+ *   Heights: Square 32 = 4 + 24 + 4; Line 42 = 32 + 8 + 2 - derived, no fixed
+ *   height.
+ *
+ * SELECTED = aria-selected="true" (panel) OR aria-current (navigation)
+ *   The state comes from the markup the screen reader already reads - never
+ *   from a class, which could disagree with what is announced.
+ *
+ * FOCUS IS REST + RING
+ *   The background doesn't change on focus; the ring is drawn on the label box,
+ *   as in Figma. It only shows from the keyboard (:focus-visible). The
+ *   bg/canvas Figma uses in the focus variants is only so Figma projects the
+ *   ring.
+ *
+ * HIGH CONTRAST (rule 24)
+ *   `forced-colors` wipes backgrounds and paints every border in the text
+ *   color - the Line would lose the difference between gray and orange line,
+ *   and the selected Square would lose its background. There the plain line
+ *   disappears (background color), the selected one becomes `Highlight`, the
+ *   selected Square gets an outline and focus gets the `Highlight` outline -
+ *   same pattern as the Button and the Card.
+ *
+ * NO DISABLED, BY DESIGN (rule 18).
+ */
+
+/* ----------------------------------------------------------------- group */
+.al-tabs {
+  display: flex;
+  align-items: flex-end;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.al-tabs > li {
+  display: flex;
+}
+
+/* ------------------------------------------------------------------- tab */
+.al-tab {
+  box-sizing: border-box;
+  display: flex;
+  margin: 0;
+  padding: 0 0 var(--al-tab-line-gap);
+  border: 0;
+  border-bottom: var(--al-tab-line-indicator-width) solid var(--al-tab-line-indicator);
+  background: none;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.al-tab:focus-visible {
+  outline: none;
+}
+
+.al-tab__label {
+  display: block;
+  padding: var(--al-tab-padding-y) var(--al-tab-padding-x);
+  border-radius: var(--al-tab-radius);
+  background-color: transparent;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-tab-label-font-size);
+  line-height: var(--al-tab-label-line-height);
+  font-weight: var(--al-tab-label-font-weight);
+  letter-spacing: var(--al-tab-label-tracking);
+  white-space: nowrap;
+  color: var(--al-tab-label);
+  transition: background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit), color var(--al-motion-duration-feedback) var(--al-motion-easing-exit), box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* not selected - hover and pressed darken the label */
+.al-tab:hover .al-tab__label {
+  background-color: var(--al-tab-bg-hover);
+  color: var(--al-tab-label-hover);
+}
+
+.al-tab:active .al-tab__label {
+  background-color: var(--al-tab-bg-active);
+  color: var(--al-tab-label-active);
+}
+
+.al-tab:focus-visible .al-tab__label {
+  box-shadow: var(--al-tab-ring);
+}
+
+/* ----------------------------------------------------------- selected Line */
+/* The orange line marks it; the label is text-primary in every state.
+   Hover and pressed keep the neutral backgrounds from above. */
+.al-tab[aria-selected="true"],
+.al-tab[aria-current]:not([aria-current="false"]) {
+  border-bottom-color: var(--al-tab-line-indicator-selected);
+}
+
+.al-tab[aria-selected="true"] .al-tab__label,
+.al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  color: var(--al-tab-line-label-selected);
+}
+
+/* ------------------------------------------------------------------ Square */
+.al-tabs--square .al-tab {
+  padding: 0;
+  border-bottom: 0;
+}
+
+/* selected: tonal at rest and focus, brand on hover and pressed.
+   The selected pressed state only applies to the tab that was ALREADY open:
+   the one the click just opened carries data-al-just-selected (tab.js) and
+   stays on hover. Without it, in Safari, a pressed unselected tab went from
+   bg-active to brand-active - Figma asks for bg-active until release. */
+.al-tabs--square .al-tab[aria-selected="true"] .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected);
+  color: var(--al-tab-square-label-selected);
+}
+
+.al-tabs--square .al-tab[aria-selected="true"]:hover .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):hover .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected-hover);
+  color: var(--al-tab-square-label-selected-hover);
+}
+
+.al-tabs--square .al-tab[aria-selected="true"]:active:not([data-al-just-selected]) .al-tab__label,
+.al-tabs--square .al-tab[aria-current]:not([aria-current="false"]):active .al-tab__label {
+  background-color: var(--al-tab-square-bg-selected-active);
+  color: var(--al-tab-square-label-selected-active);
+}
+
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
+.al-tab:hover .al-tab__label,
+.al-tab:active .al-tab__label,
+.al-tab:focus-visible .al-tab__label,
+.al-tab[aria-selected="true"] .al-tab__label,
+.al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-tab__label {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-tab {
+    border-bottom-color: Canvas;
+  }
+
+  .al-tab[aria-selected="true"],
+  .al-tab[aria-current]:not([aria-current="false"]) {
+    border-bottom-color: Highlight;
+  }
+
+  .al-tabs--square .al-tab[aria-selected="true"] .al-tab__label,
+  .al-tabs--square .al-tab[aria-current]:not([aria-current="false"]) .al-tab__label {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+
+  .al-tab:focus-visible .al-tab__label {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}

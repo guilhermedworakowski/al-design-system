@@ -9,7 +9,7 @@ fundo nao era visual:
     envelheceram (a pagina antiga anunciava 72 pares e 46 semanticos quando o
     tokens.json ja estava em 80 e 49). Aqui TODA contagem sai do tokens.json,
     e ha uma trava que aborta se um semantico novo nao couber em nenhum grupo.
-  - o CSS entra inline e real: foundation/al-foundation.css, os tokens do
+  - o CSS entra inline e real: build/foundation/al-foundation.css, os tokens do
     Button e o proprio button.css. A pagina nao reimplementa nada. Se um
     componente quebrar, a pagina quebra junto - que e o que se quer.
 
@@ -24,129 +24,127 @@ trilho, as abas e o switch de tema. As paginas da Foundation sao estaticas.
 
 Os icones do trilho sao casca do site. O switch de tema NAO e: desde a etapa 7
 do Switch (25/09/2026) ele e o componente do AL, com rotulo visivel - o portao
-de marcacao do components/switch/a11y.py cobra isso no HTML emitido.
+de marcacao do src/components/switch/a11y.py cobra isso no HTML emitido.
 
-Rodar: python3 site/site.py     (escreve site/index.html)
+Rodar: python3 site/site.py     (escreve build/site/index.html)
 """
 import base64, glob, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-HERE = os.path.join(ROOT, 'site')
-sys.path.insert(0, os.path.join(ROOT, 'foundation'))
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+from paths import BUILD, FOUNDATION_SRC, TOKENS_JSON, FOUNDATION_CSS, SITE_HTML, comp_src, comp_out, out  # noqa: E402
+sys.path.insert(0, FOUNDATION_SRC)
 
 from color import cr  # noqa: E402  - contraste medido, nunca escrito a mao
 
-T = json.load(open(os.path.join(ROOT, 'tokens.json')))
-BTN = json.load(open(os.path.join(ROOT, 'components', 'button', 'tokens.json')))
+T = json.load(open(TOKENS_JSON))
+BTN = json.load(open(comp_out('button', 'tokens.json')))
 
-FOUND_CSS = open(os.path.join(ROOT, 'foundation', 'al-foundation.css')).read()
-BTN_TOKENS = open(os.path.join(ROOT, 'components', 'button', 'al-button-tokens.css')).read()
-BTN_CSS = open(os.path.join(ROOT, 'components', 'button', 'button.css')).read()
-ICON_TOKENS = open(os.path.join(ROOT, 'components', 'icon', 'al-icon-tokens.css')).read()
-ICON_CSS = open(os.path.join(ROOT, 'components', 'icon', 'icon.css')).read()
-ICON_MANIFEST = json.load(open(os.path.join(ROOT, 'components', 'icon', 'icons.json')))
-ICON_TOK = json.load(open(os.path.join(ROOT, 'components', 'icon', 'tokens.json')))
-ICON_A11Y = json.load(open(os.path.join(ROOT, 'components', 'icon', 'a11y.json')))
-IB = json.load(open(os.path.join(ROOT, 'components', 'icon-button', 'tokens.json')))
-IB_TOKENS = open(os.path.join(ROOT, 'components', 'icon-button',
-                              'al-icon-button-tokens.css')).read()
-IB_CSS = open(os.path.join(ROOT, 'components', 'icon-button', 'icon-button.css')).read()
-IB_A11Y = json.load(open(os.path.join(ROOT, 'components', 'icon-button', 'a11y.json')))
+FOUND_CSS = open(FOUNDATION_CSS).read()
+BTN_TOKENS = open(comp_out('button', 'al-button-tokens.css')).read()
+BTN_CSS = open(comp_src('button', 'button.css')).read()
+ICON_TOKENS = open(comp_out('icon', 'al-icon-tokens.css')).read()
+ICON_CSS = open(comp_src('icon', 'icon.css')).read()
+ICON_MANIFEST = json.load(open(comp_out('icon', 'icons.json')))
+ICON_TOK = json.load(open(comp_out('icon', 'tokens.json')))
+ICON_A11Y = json.load(open(comp_out('icon', 'a11y.json')))
+IB = json.load(open(comp_out('icon-button', 'tokens.json')))
+IB_TOKENS = open(comp_out('icon-button', 'al-icon-button-tokens.css')).read()
+IB_CSS = open(comp_src('icon-button', 'icon-button.css')).read()
+IB_A11Y = json.load(open(comp_out('icon-button', 'a11y.json')))
 
-TAG = json.load(open(os.path.join(ROOT, 'components', 'tag', 'tokens.json')))
-TAG_TOKENS = open(os.path.join(ROOT, 'components', 'tag', 'al-tag-tokens.css')).read()
-TAG_CSS = open(os.path.join(ROOT, 'components', 'tag', 'tag.css')).read()
-TAG_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tag', 'a11y.json')))
+TAG = json.load(open(comp_out('tag', 'tokens.json')))
+TAG_TOKENS = open(comp_out('tag', 'al-tag-tokens.css')).read()
+TAG_CSS = open(comp_src('tag', 'tag.css')).read()
+TAG_A11Y = json.load(open(comp_out('tag', 'a11y.json')))
 
-AVATAR = json.load(open(os.path.join(ROOT, 'components', 'avatar', 'tokens.json')))
-AVATAR_TOKENS = open(os.path.join(ROOT, 'components', 'avatar', 'al-avatar-tokens.css')).read()
-AVATAR_CSS = open(os.path.join(ROOT, 'components', 'avatar', 'avatar.css')).read()
-AVATAR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'avatar', 'a11y.json')))
+AVATAR = json.load(open(comp_out('avatar', 'tokens.json')))
+AVATAR_TOKENS = open(comp_out('avatar', 'al-avatar-tokens.css')).read()
+AVATAR_CSS = open(comp_src('avatar', 'avatar.css')).read()
+AVATAR_A11Y = json.load(open(comp_out('avatar', 'a11y.json')))
 
-SELECT = json.load(open(os.path.join(ROOT, 'components', 'select', 'tokens.json')))
-SELECT_TOKENS = open(os.path.join(ROOT, 'components', 'select',
-                                  'al-select-tokens.css')).read()
-SELECT_CSS = open(os.path.join(ROOT, 'components', 'select', 'select.css')).read()
-SELECT_A11Y = json.load(open(os.path.join(ROOT, 'components', 'select', 'a11y.json')))
+SELECT = json.load(open(comp_out('select', 'tokens.json')))
+SELECT_TOKENS = open(comp_out('select', 'al-select-tokens.css')).read()
+SELECT_CSS = open(comp_src('select', 'select.css')).read()
+SELECT_A11Y = json.load(open(comp_out('select', 'a11y.json')))
 
-CHECKBOX = json.load(open(os.path.join(ROOT, 'components', 'checkbox', 'tokens.json')))
-CHECKBOX_TOKENS = open(os.path.join(ROOT, 'components', 'checkbox',
-                                    'al-checkbox-tokens.css')).read()
-CHECKBOX_CSS = open(os.path.join(ROOT, 'components', 'checkbox', 'checkbox.css')).read()
-CHECKBOX_A11Y = json.load(open(os.path.join(ROOT, 'components', 'checkbox', 'a11y.json')))
-RADIO = json.load(open(os.path.join(ROOT, 'components', 'radio', 'tokens.json')))
-RADIO_TOKENS = open(os.path.join(ROOT, 'components', 'radio', 'al-radio-tokens.css')).read()
-RADIO_CSS = open(os.path.join(ROOT, 'components', 'radio', 'radio.css')).read()
-RADIO_A11Y = json.load(open(os.path.join(ROOT, 'components', 'radio', 'a11y.json')))
-SWITCH = json.load(open(os.path.join(ROOT, 'components', 'switch', 'tokens.json')))
-SWITCH_TOKENS = open(os.path.join(ROOT, 'components', 'switch', 'al-switch-tokens.css')).read()
-SWITCH_CSS = open(os.path.join(ROOT, 'components', 'switch', 'switch.css')).read()
-SWITCH_A11Y = json.load(open(os.path.join(ROOT, 'components', 'switch', 'a11y.json')))
-INPUT = json.load(open(os.path.join(ROOT, 'components', 'input', 'tokens.json')))
-INPUT_TOKENS = open(os.path.join(ROOT, 'components', 'input', 'al-input-tokens.css')).read()
-INPUT_CSS = open(os.path.join(ROOT, 'components', 'input', 'input.css')).read()
-INPUT_A11Y = json.load(open(os.path.join(ROOT, 'components', 'input', 'a11y.json')))
-TEXTAREA = json.load(open(os.path.join(ROOT, 'components', 'textarea', 'tokens.json')))
-TEXTAREA_TOKENS = open(os.path.join(ROOT, 'components', 'textarea', 'al-textarea-tokens.css')).read()
-TEXTAREA_CSS = open(os.path.join(ROOT, 'components', 'textarea', 'textarea.css')).read()
-TEXTAREA_A11Y = json.load(open(os.path.join(ROOT, 'components', 'textarea', 'a11y.json')))
-PASSWORD = json.load(open(os.path.join(ROOT, 'components', 'password', 'tokens.json')))
-PASSWORD_TOKENS = open(os.path.join(ROOT, 'components', 'password', 'al-password-tokens.css')).read()
-PASSWORD_CSS = open(os.path.join(ROOT, 'components', 'password', 'password.css')).read()
-PASSWORD_JS = open(os.path.join(ROOT, 'components', 'password', 'password.js')).read()
-PASSWORD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'password', 'a11y.json')))
-DIVIDER = json.load(open(os.path.join(ROOT, 'components', 'divider', 'tokens.json')))
-DIVIDER_TOKENS = open(os.path.join(ROOT, 'components', 'divider', 'al-divider-tokens.css')).read()
-DIVIDER_CSS = open(os.path.join(ROOT, 'components', 'divider', 'divider.css')).read()
-DIVIDER_A11Y = json.load(open(os.path.join(ROOT, 'components', 'divider', 'a11y.json')))
-CARD = json.load(open(os.path.join(ROOT, 'components', 'card', 'tokens.json')))
-CARD_TOKENS = open(os.path.join(ROOT, 'components', 'card', 'al-card-tokens.css')).read()
-CARD_CSS = open(os.path.join(ROOT, 'components', 'card', 'card.css')).read()
-CARD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'card', 'a11y.json')))
-TAB = json.load(open(os.path.join(ROOT, 'components', 'tab', 'tokens.json')))
-TAB_TOKENS = open(os.path.join(ROOT, 'components', 'tab', 'al-tab-tokens.css')).read()
-TAB_CSS = open(os.path.join(ROOT, 'components', 'tab', 'tab.css')).read()
-TAB_JS = open(os.path.join(ROOT, 'components', 'tab', 'tab.js')).read()
-TAB_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tab', 'a11y.json')))
-ACC = json.load(open(os.path.join(ROOT, 'components', 'accordion', 'tokens.json')))
-ACC_TOKENS = open(os.path.join(ROOT, 'components', 'accordion', 'al-accordion-tokens.css')).read()
-ACC_CSS = open(os.path.join(ROOT, 'components', 'accordion', 'accordion.css')).read()
-ACC_A11Y = json.load(open(os.path.join(ROOT, 'components', 'accordion', 'a11y.json')))
-MOD = json.load(open(os.path.join(ROOT, 'components', 'modal', 'tokens.json')))
-MOD_TOKENS = open(os.path.join(ROOT, 'components', 'modal', 'al-modal-tokens.css')).read()
-MOD_CSS = open(os.path.join(ROOT, 'components', 'modal', 'modal.css')).read()
-MOD_JS = open(os.path.join(ROOT, 'components', 'modal', 'modal.js')).read()
-MOD_A11Y = json.load(open(os.path.join(ROOT, 'components', 'modal', 'a11y.json')))
-DRW = json.load(open(os.path.join(ROOT, 'components', 'drawer', 'tokens.json')))
-DRW_TOKENS = open(os.path.join(ROOT, 'components', 'drawer', 'al-drawer-tokens.css')).read()
-DRW_CSS = open(os.path.join(ROOT, 'components', 'drawer', 'drawer.css')).read()
-DRW_JS = open(os.path.join(ROOT, 'components', 'drawer', 'drawer.js')).read()
-DRW_A11Y = json.load(open(os.path.join(ROOT, 'components', 'drawer', 'a11y.json')))
-SBR = json.load(open(os.path.join(ROOT, 'components', 'sidebar', 'tokens.json')))
-SBR_TOKENS = open(os.path.join(ROOT, 'components', 'sidebar', 'al-sidebar-tokens.css')).read()
-SBR_CSS = open(os.path.join(ROOT, 'components', 'sidebar', 'sidebar.css')).read()
-SBR_JS = open(os.path.join(ROOT, 'components', 'sidebar', 'sidebar.js')).read()
-SBR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'sidebar', 'a11y.json')))
-BCR = json.load(open(os.path.join(ROOT, 'components', 'breadcrumb', 'tokens.json')))
-BCR_TOKENS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'al-breadcrumb-tokens.css')).read()
-BCR_CSS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'breadcrumb.css')).read()
-BCR_JS = open(os.path.join(ROOT, 'components', 'breadcrumb', 'breadcrumb.js')).read()
-BCR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'breadcrumb', 'a11y.json')))
-TTP = json.load(open(os.path.join(ROOT, 'components', 'tooltip', 'tokens.json')))
-TTP_TOKENS = open(os.path.join(ROOT, 'components', 'tooltip', 'al-tooltip-tokens.css')).read()
-TTP_CSS = open(os.path.join(ROOT, 'components', 'tooltip', 'tooltip.css')).read()
-TTP_A11Y = json.load(open(os.path.join(ROOT, 'components', 'tooltip', 'a11y.json')))
-TTP_JS = open(os.path.join(ROOT, 'components', 'tooltip', 'tooltip.js')).read()
-TST = json.load(open(os.path.join(ROOT, 'components', 'toast', 'tokens.json')))
-TST_TOKENS = open(os.path.join(ROOT, 'components', 'toast', 'al-toast-tokens.css')).read()
-TST_CSS = open(os.path.join(ROOT, 'components', 'toast', 'toast.css')).read()
-TST_A11Y = json.load(open(os.path.join(ROOT, 'components', 'toast', 'a11y.json')))
-TST_JS = open(os.path.join(ROOT, 'components', 'toast', 'toast.js')).read()
-ALR = json.load(open(os.path.join(ROOT, 'components', 'alert', 'tokens.json')))
-ALR_TOKENS = open(os.path.join(ROOT, 'components', 'alert', 'al-alert-tokens.css')).read()
-ALR_CSS = open(os.path.join(ROOT, 'components', 'alert', 'alert.css')).read()
-ALR_JS = open(os.path.join(ROOT, 'components', 'alert', 'alert.js')).read()
-ALR_A11Y = json.load(open(os.path.join(ROOT, 'components', 'alert', 'a11y.json')))
+CHECKBOX = json.load(open(comp_out('checkbox', 'tokens.json')))
+CHECKBOX_TOKENS = open(comp_out('checkbox', 'al-checkbox-tokens.css')).read()
+CHECKBOX_CSS = open(comp_src('checkbox', 'checkbox.css')).read()
+CHECKBOX_A11Y = json.load(open(comp_out('checkbox', 'a11y.json')))
+RADIO = json.load(open(comp_out('radio', 'tokens.json')))
+RADIO_TOKENS = open(comp_out('radio', 'al-radio-tokens.css')).read()
+RADIO_CSS = open(comp_src('radio', 'radio.css')).read()
+RADIO_A11Y = json.load(open(comp_out('radio', 'a11y.json')))
+SWITCH = json.load(open(comp_out('switch', 'tokens.json')))
+SWITCH_TOKENS = open(comp_out('switch', 'al-switch-tokens.css')).read()
+SWITCH_CSS = open(comp_src('switch', 'switch.css')).read()
+SWITCH_A11Y = json.load(open(comp_out('switch', 'a11y.json')))
+INPUT = json.load(open(comp_out('input', 'tokens.json')))
+INPUT_TOKENS = open(comp_out('input', 'al-input-tokens.css')).read()
+INPUT_CSS = open(comp_src('input', 'input.css')).read()
+INPUT_A11Y = json.load(open(comp_out('input', 'a11y.json')))
+TEXTAREA = json.load(open(comp_out('textarea', 'tokens.json')))
+TEXTAREA_TOKENS = open(comp_out('textarea', 'al-textarea-tokens.css')).read()
+TEXTAREA_CSS = open(comp_src('textarea', 'textarea.css')).read()
+TEXTAREA_A11Y = json.load(open(comp_out('textarea', 'a11y.json')))
+PASSWORD = json.load(open(comp_out('password', 'tokens.json')))
+PASSWORD_TOKENS = open(comp_out('password', 'al-password-tokens.css')).read()
+PASSWORD_CSS = open(comp_src('password', 'password.css')).read()
+PASSWORD_JS = open(comp_src('password', 'password.js')).read()
+PASSWORD_A11Y = json.load(open(comp_out('password', 'a11y.json')))
+DIVIDER = json.load(open(comp_out('divider', 'tokens.json')))
+DIVIDER_TOKENS = open(comp_out('divider', 'al-divider-tokens.css')).read()
+DIVIDER_CSS = open(comp_src('divider', 'divider.css')).read()
+DIVIDER_A11Y = json.load(open(comp_out('divider', 'a11y.json')))
+CARD = json.load(open(comp_out('card', 'tokens.json')))
+CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
+CARD_CSS = open(comp_src('card', 'card.css')).read()
+CARD_A11Y = json.load(open(comp_out('card', 'a11y.json')))
+TAB = json.load(open(comp_out('tab', 'tokens.json')))
+TAB_TOKENS = open(comp_out('tab', 'al-tab-tokens.css')).read()
+TAB_CSS = open(comp_src('tab', 'tab.css')).read()
+TAB_JS = open(comp_src('tab', 'tab.js')).read()
+TAB_A11Y = json.load(open(comp_out('tab', 'a11y.json')))
+ACC = json.load(open(comp_out('accordion', 'tokens.json')))
+ACC_TOKENS = open(comp_out('accordion', 'al-accordion-tokens.css')).read()
+ACC_CSS = open(comp_src('accordion', 'accordion.css')).read()
+ACC_A11Y = json.load(open(comp_out('accordion', 'a11y.json')))
+MOD = json.load(open(comp_out('modal', 'tokens.json')))
+MOD_TOKENS = open(comp_out('modal', 'al-modal-tokens.css')).read()
+MOD_CSS = open(comp_src('modal', 'modal.css')).read()
+MOD_JS = open(comp_src('modal', 'modal.js')).read()
+MOD_A11Y = json.load(open(comp_out('modal', 'a11y.json')))
+DRW = json.load(open(comp_out('drawer', 'tokens.json')))
+DRW_TOKENS = open(comp_out('drawer', 'al-drawer-tokens.css')).read()
+DRW_CSS = open(comp_src('drawer', 'drawer.css')).read()
+DRW_JS = open(comp_src('drawer', 'drawer.js')).read()
+DRW_A11Y = json.load(open(comp_out('drawer', 'a11y.json')))
+SBR = json.load(open(comp_out('sidebar', 'tokens.json')))
+SBR_TOKENS = open(comp_out('sidebar', 'al-sidebar-tokens.css')).read()
+SBR_CSS = open(comp_src('sidebar', 'sidebar.css')).read()
+SBR_JS = open(comp_src('sidebar', 'sidebar.js')).read()
+SBR_A11Y = json.load(open(comp_out('sidebar', 'a11y.json')))
+BCR = json.load(open(comp_out('breadcrumb', 'tokens.json')))
+BCR_TOKENS = open(comp_out('breadcrumb', 'al-breadcrumb-tokens.css')).read()
+BCR_CSS = open(comp_src('breadcrumb', 'breadcrumb.css')).read()
+BCR_JS = open(comp_src('breadcrumb', 'breadcrumb.js')).read()
+BCR_A11Y = json.load(open(comp_out('breadcrumb', 'a11y.json')))
+TTP = json.load(open(comp_out('tooltip', 'tokens.json')))
+TTP_TOKENS = open(comp_out('tooltip', 'al-tooltip-tokens.css')).read()
+TTP_CSS = open(comp_src('tooltip', 'tooltip.css')).read()
+TTP_A11Y = json.load(open(comp_out('tooltip', 'a11y.json')))
+TTP_JS = open(comp_src('tooltip', 'tooltip.js')).read()
+TST = json.load(open(comp_out('toast', 'tokens.json')))
+TST_TOKENS = open(comp_out('toast', 'al-toast-tokens.css')).read()
+TST_CSS = open(comp_src('toast', 'toast.css')).read()
+TST_A11Y = json.load(open(comp_out('toast', 'a11y.json')))
+TST_JS = open(comp_src('toast', 'toast.js')).read()
+ALR = json.load(open(comp_out('alert', 'tokens.json')))
+ALR_TOKENS = open(comp_out('alert', 'al-alert-tokens.css')).read()
+ALR_CSS = open(comp_src('alert', 'alert.css')).read()
+ALR_JS = open(comp_src('alert', 'alert.js')).read()
+ALR_A11Y = json.load(open(comp_out('alert', 'a11y.json')))
 
 META = T['meta']
 P, SEM = T['color']['primitive'], T['color']['semantic']
@@ -256,14 +254,14 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
-ICON_DIR = os.path.join(ROOT, 'components', 'icon', 'icons')
+ICON_DIR = comp_src('icon', 'icons')
 ICON_NAMES = ICON_MANIFEST['icons']
 
 
 def al_icon(name, cls='al-icon', extra=''):
     """Devolve o SVG real do repositorio, com a classe e o contrato decorativo.
 
-    A pagina nunca redesenha um icone: ela le components/icon/icons/<nome>.svg.
+    A pagina nunca redesenha um icone: ela le src/components/icon/icons/<nome>.svg.
     """
     raw = open(os.path.join(ICON_DIR, name + '.svg')).read()
     body = raw[raw.find('<svg'):].strip()
@@ -608,7 +606,7 @@ ICONS = [('none', 'Sem ícone'), ('leading', 'À esquerda'), ('trailing', 'À di
 
 # Ate a versao 0.1.1 estes dois eram svg de 16 desenhados na unha aqui dentro -
 # a ultima sobra dos icones antigos no codigo. Agora saem da biblioteca, lidos
-# de components/icon/icons/, e o Button deixa de inventar desenho.
+# de src/components/icon/icons/, e o Button deixa de inventar desenho.
 BTN_ICON_LEADING = 'download'
 BTN_ICON_TRAILING = 'chevron-right'
 ICON_SVG = al_icon(BTN_ICON_LEADING)
@@ -1248,13 +1246,13 @@ TAB_PRINCIPIOS = f'''
   <div class="scroller" style="margin-top:18px"><table>
     <thead><tr><th>Portão</th><th>Script</th><th>O que ele recusa</th></tr></thead>
     <tbody>
-      <tr><td class="name">Contraste</td><td class="tok">foundation/export.py</td>
+      <tr><td class="name">Contraste</td><td class="tok">src/foundation/export.py</td>
         <td>Qualquer par abaixo do mínimo WCAG que não esteja nomeado como exceção.</td></tr>
-      <tr><td class="name">Alias</td><td class="tok">components/&lt;c&gt;/tokens.py</td>
+      <tr><td class="name">Alias</td><td class="tok">src/components/&lt;c&gt;/tokens.py</td>
         <td>Token de componente que aponte para primitiva em vez de semântico.</td></tr>
-      <tr><td class="name">Literal no CSS</td><td class="tok">components/&lt;c&gt;/check.py</td>
+      <tr><td class="name">Literal no CSS</td><td class="tok">src/components/&lt;c&gt;/check.py</td>
         <td>Cor, espaço, raio ou tipografia escrita direto no arquivo do componente.</td></tr>
-      <tr><td class="name">Acessibilidade</td><td class="tok">components/&lt;c&gt;/a11y.py</td>
+      <tr><td class="name">Acessibilidade</td><td class="tok">src/components/&lt;c&gt;/a11y.py</td>
         <td>Combinação renderizada que reprove — não par de token solto.</td></tr>
     </tbody>
   </table></div>
@@ -1492,11 +1490,11 @@ TAB_FOCO = f'''
 MO = T['motion']
 MO_DUR = MO['duration']
 MO_EASE = MO['easing']
-MO_USO = MO['uso']
+MO_USO = MO['usage']
 N_MO_TOKENS = len(MO_DUR) + len(MO_EASE)
 # quem de fato consome: o CSS real, nao uma lista escrita a mao
 N_MO_CONSUMERS = sum(
-    1 for f in glob.glob(os.path.join(ROOT, 'components', '*', '*.css'))
+    1 for f in glob.glob(comp_src('*', '*.css')) + glob.glob(os.path.join(BUILD, 'components', '*', 'al-*-tokens.css'))
     if 'var(--al-motion-duration-feedback)' in open(f, encoding='utf-8').read())
 
 
@@ -2124,7 +2122,7 @@ ICON_A11Y_TAB = f'''
   dispensa componente inativo, e subir esse contraste faria o desabilitado parecer clicável.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{icon_a11y_rows('tinta')}</tbody>
+    <tbody>{icon_a11y_rows('ink')}</tbody>
   </table></div>
 </section>
 
@@ -2135,7 +2133,7 @@ ICON_A11Y_TAB = f'''
   tela, então Ghost e Secondary são medidos contra a <b>tela</b>, nunca contra "transparente".</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{icon_a11y_rows('herda')}</tbody>
+    <tbody>{icon_a11y_rows('inherited')}</tbody>
   </table></div>
 </section>
 
@@ -2623,7 +2621,7 @@ IB_A11Y = f'''
   parecer clicável.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{ib_a11y_rows('tinta')}</tbody>
+    <tbody>{ib_a11y_rows('ink')}</tbody>
   </table></div>
 </section>
 
@@ -2634,7 +2632,7 @@ IB_A11Y = f'''
   próprio ícone é o limite visível do componente, e é ele que o portão mede contra a tela.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Variante</th><th></th><th>Frente / tela</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{ib_a11y_rows('limite')}</tbody>
+    <tbody>{ib_a11y_rows('boundary')}</tbody>
   </table></div>
 </section>
 
@@ -2659,7 +2657,7 @@ IB_A11Y = f'''
   </div>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Variante</th><th></th><th>Anel / tela</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{ib_a11y_rows('foco')}</tbody>
+    <tbody>{ib_a11y_rows('focus')}</tbody>
   </table></div>
 </section>
 
@@ -3097,7 +3095,7 @@ TAG_A11Y_TAB = f'''
   fundo, e uma medição basta.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Rótulo / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{tag_a11y_rows('rotulo')}</tbody>
+    <tbody>{tag_a11y_rows('label')}</tbody>
   </table></div>
 </section>
 
@@ -3110,7 +3108,7 @@ TAG_A11Y_TAB = f'''
   sem reprovar — e ele fica medido para ninguém “corrigir” achando que escapou.</p>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Limite / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{tag_a11y_rows('limite')}</tbody>
+    <tbody>{tag_a11y_rows('boundary')}</tbody>
   </table></div>
 </section>
 
@@ -3136,7 +3134,7 @@ TAG_A11Y_TAB = f'''
   </div>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Anel / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{tag_a11y_rows('foco')}</tbody>
+    <tbody>{tag_a11y_rows('focus')}</tbody>
   </table></div>
 </section>
 
@@ -3717,7 +3715,7 @@ def select_a11y_rows(papeis):
     como excecao, nunca como reprova e nunca escondida."""
     out = []
     for r in SELECT_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -3730,9 +3728,9 @@ def select_a11y_rows(papeis):
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -4018,7 +4016,7 @@ SELECT_A11Y_TAB = f'''
   <h2>Borda e anel — o não-textual, piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{select_a11y_rows(['borda', 'anel de foco', 'seta'])}</tbody>
+    <tbody>{select_a11y_rows(['border', 'focus ring', 'chevron'])}</tbody>
   </table></div>
 </section>
 
@@ -4026,7 +4024,7 @@ SELECT_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{select_a11y_rows(['rotulo', 'marca opcional', 'placeholder', 'valor', 'apoio', 'texto'])}</tbody>
+    <tbody>{select_a11y_rows(['label', 'optional mark', 'placeholder', 'value', 'help', 'text'])}</tbody>
   </table></div>
 </section>
 
@@ -4034,7 +4032,7 @@ SELECT_A11Y_TAB = f'''
   <h2>O contrato de marcação</h2>
   <p>Num campo de formulário quase tudo que dá errado é <b>marcação</b>, não estilo — e
   marcação só existe na saída renderizada. Por isso estas seis regras não estão escritas numa
-  página: elas são medidas por <code>components/select/a11y.py</code> no HTML que este site
+  página: elas são medidas por <code>src/components/select/a11y.py</code> no HTML que este site
   emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code>, e existe um <code>&lt;label for&gt;</code> apontando para ele.</span></div>
@@ -4191,7 +4189,7 @@ def checkbox_geo_rows():
 def checkbox_a11y_rows(papeis):
     out = []
     for r in CHECKBOX_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -4201,13 +4199,13 @@ def checkbox_a11y_rows(papeis):
             verdict = '<span class="fail">reprova</span>'
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
                  f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['soNoCodigo'] else '')
+        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['codeOnly'] else '')
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{estado}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -4220,7 +4218,7 @@ N_CBX_PASSA = N_CBX_MEDIDAS - N_CBX_EXC
 
 def _cbx_borda(state, theme):
     return next(r['ratio'] for r in CHECKBOX_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == 'borda')
+                if r['state'] == state and r['theme'] == theme and r['role'] == 'border')
 
 
 CBX_LAYER = {t: {'rest': _cbx_borda('default', t), 'focused': _cbx_borda('focus', t)}
@@ -4509,7 +4507,7 @@ CHECKBOX_A11Y_TAB = f'''
   <h2>Não-textual — piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{checkbox_a11y_rows(['borda', 'caixa marcada', 'anel de foco', 'check', 'traco'])}</tbody>
+    <tbody>{checkbox_a11y_rows(['border', 'checked box', 'focus ring', 'check', 'dash'])}</tbody>
   </table></div>
 </section>
 
@@ -4517,14 +4515,14 @@ CHECKBOX_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{checkbox_a11y_rows(['rotulo'])}</tbody>
+    <tbody>{checkbox_a11y_rows(['label'])}</tbody>
   </table></div>
 </section>
 
 <section>
   <h2>O contrato de marcação</h2>
   <p>Estas cinco regras não estão escritas numa página: elas são medidas por
-  <code>components/checkbox/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <code>src/components/checkbox/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="checkbox"&gt;</code> dentro de <code>&lt;label class="al-checkbox"&gt;</code>. Nenhum <code>role="checkbox"</code> na página.</span></div>
     <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-checkbox__label</code>, e nada de <code>aria-label</code>.</span></div>
@@ -4543,7 +4541,7 @@ CHECKBOX_A11Y_TAB = f'''
 # ═══════════════════════════════════════════════════════════════ Radio · abas
 # 6 estados no Figma, num eixo so. Radio sozinho nao existe (regra 3): todo
 # exemplo desta pagina e uma PERGUNTA - <fieldset> + <legend> + duas opcoes ou
-# mais com o mesmo `name`. E o que o components/radio/a11y.py cobra no HTML.
+# mais com o mesmo `name`. E o que o src/components/radio/a11y.py cobra no HTML.
 # O erro e da pergunta: `aria-invalid` vai no fieldset, nunca no radio (regra 26).
 def rd(rid, nome, valor, rotulo, *, checked=False, disabled=False, sim=None, extra=''):
     """Um Radio real. `sim` escreve nas MESMAS variaveis privadas que o radio.css
@@ -4672,7 +4670,7 @@ def radio_geo_rows():
 def radio_a11y_rows(papeis):
     out = []
     for r in RADIO_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -4682,13 +4680,13 @@ def radio_a11y_rows(papeis):
             verdict = '<span class="fail">reprova</span>'
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
                  f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['soNoCodigo'] else '')
+        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['codeOnly'] else '')
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{estado}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -4701,7 +4699,7 @@ N_RD_PASSA = N_RD_MEDIDAS - N_RD_EXC
 
 def _rd_borda(state, theme):
     return next(r['ratio'] for r in RADIO_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == 'borda')
+                if r['state'] == state and r['theme'] == theme and r['role'] == 'border')
 
 
 RD_LAYER = {t: {'rest': _rd_borda('default', t), 'focused': _rd_borda('focus', t)}
@@ -4968,7 +4966,7 @@ RADIO_A11Y_TAB = f'''
   o anel que o cerca.</p>
   <p style="margin-top:12px">E a página não é uma só: o portão mede contra tela, faixa de seção e
   card, e guarda a pior. A menor margem entre as que passam é
-  <b>{RD_PIOR['papel']}</b> em <code>{RD_PIOR['state']}</code>, {RD_PIOR['ratio']:.2f}:1 contra o
+  <b>{RD_PIOR['role']}</b> em <code>{RD_PIOR['state']}</code>, {RD_PIOR['ratio']:.2f}:1 contra o
   piso de {RD_PIOR['floor']}:1 — na faixa cinza, que a etapa 3 não conseguia ver.</p>
   <div class="stats">
     <div class="stat hl"><b>{N_RD_MEDIDAS}</b><span>combinações medidas</span></div>
@@ -5016,7 +5014,7 @@ RADIO_A11Y_TAB = f'''
   <h2>Não-textual — piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{radio_a11y_rows(['borda', 'anel de foco', 'ponto'])}</tbody>
+    <tbody>{radio_a11y_rows(['border', 'focus ring', 'dot'])}</tbody>
   </table></div>
 </section>
 
@@ -5024,14 +5022,14 @@ RADIO_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{radio_a11y_rows(['rotulo'])}</tbody>
+    <tbody>{radio_a11y_rows(['label'])}</tbody>
   </table></div>
 </section>
 
 <section>
   <h2>O contrato de marcação</h2>
   <p>Estas seis regras não estão escritas numa página: elas são medidas por
-  <code>components/radio/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <code>src/components/radio/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="radio"&gt;</code> dentro de <code>&lt;label class="al-radio"&gt;</code>. Nenhum <code>role="radio"</code> na página.</span></div>
     <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-radio__label</code>, e nada de <code>aria-label</code>.</span></div>
@@ -5051,7 +5049,7 @@ RADIO_A11Y_TAB = f'''
 # ═══════════════════════════════════════════════════════════════ Switch · abas
 # 5 estados no Figma, num eixo so. Efeito imediato: nao ha formulario com
 # "Enviar" nesta pagina (regra 1) - a demonstracao e uma tela de configuracoes.
-# O components/switch/a11y.py cobra o contrato de marcacao no HTML emitido.
+# O src/components/switch/a11y.py cobra o contrato de marcacao no HTML emitido.
 def sw(sid, rotulo, *, checked=False, disabled=False, sim=None, extra=''):
     """Um Switch real. `sim='hover'` escreve na MESMA variavel privada que o
     switch.css usa - o hover so vive sob o ponteiro."""
@@ -5143,7 +5141,7 @@ def switch_geo_rows():
 def switch_a11y_rows(papeis):
     out = []
     for r in SWITCH_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -5153,13 +5151,13 @@ def switch_a11y_rows(papeis):
             verdict = '<span class="fail">reprova</span>'
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
                  f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['soNoCodigo'] else '')
+        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['codeOnly'] else '')
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{estado}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -5174,12 +5172,12 @@ SW_PIOR = min((r for r in SWITCH_A11Y['rows'] if r['pass']), key=lambda r: r['ra
 
 def _sw(state, theme, papel):
     return next(r['ratio'] for r in SWITCH_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+                if r['state'] == state and r['theme'] == theme and r['role'] == papel)
 
 
-SW_THUMB = {t: _sw('default', t, 'bolinha') for t in ('light', 'dark')}
-SW_BORDA = {t: _sw('default', t, 'borda') for t in ('light', 'dark')}
-SW_ON = {t: _sw('checked', t, 'bolinha') for t in ('light', 'dark')}
+SW_THUMB = {t: _sw('default', t, 'thumb') for t in ('light', 'dark')}
+SW_BORDA = {t: _sw('default', t, 'border') for t in ('light', 'dark')}
+SW_ON = {t: _sw('checked', t, 'thumb') for t in ('light', 'dark')}
 
 TH_SWITCH = ('<div class="th-sw" aria-hidden="true">'
              '<span class="th-sw__row"><span class="th-sw__track is-on"><span class="th-sw__thumb"></span></span>E-mail</span>'
@@ -5409,7 +5407,7 @@ SWITCH_A11Y_TAB = f'''
   <p>O portão mede <b>combinação renderizada</b>: a borda contra a página por fora e o trilho por
   dentro, a bolinha contra o trilho, o rótulo contra a página. E a página não é uma só: tela,
   faixa de seção e card, guardando a pior. A menor margem entre as que passam é
-  <b>{SW_PIOR['papel']}</b> em <code>{SW_PIOR['state']}</code>, {SW_PIOR['ratio']:.2f}:1 contra o piso
+  <b>{SW_PIOR['role']}</b> em <code>{SW_PIOR['state']}</code>, {SW_PIOR['ratio']:.2f}:1 contra o piso
   de {SW_PIOR['floor']}:1.</p>
   <div class="stats">
     <div class="stat hl"><b>{N_SW_MEDIDAS}</b><span>combinações medidas</span></div>
@@ -5461,7 +5459,7 @@ SWITCH_A11Y_TAB = f'''
   <h2>Não-textual — piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{switch_a11y_rows(['borda', 'anel de foco', 'bolinha'])}</tbody>
+    <tbody>{switch_a11y_rows(['border', 'focus ring', 'thumb'])}</tbody>
   </table></div>
 </section>
 
@@ -5469,14 +5467,14 @@ SWITCH_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{switch_a11y_rows(['rotulo'])}</tbody>
+    <tbody>{switch_a11y_rows(['label'])}</tbody>
   </table></div>
 </section>
 
 <section>
   <h2>O contrato de marcação</h2>
   <p>Estas cinco regras não estão escritas numa página: elas são medidas por
-  <code>components/switch/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
+  <code>src/components/switch/a11y.py</code> no HTML que este site emite, e quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Nativo, dentro do rótulo</b><span><code>&lt;input type="checkbox" role="switch"&gt;</code> dentro de <code>&lt;label class="al-switch"&gt;</code>. Nenhum outro elemento com <code>role="switch"</code>, nada de <code>aria-pressed</code>.</span></div>
     <div><b>Rótulo visível</b><span>Texto não-vazio em <code>.al-switch__label</code>, e nada de <code>aria-label</code>.</span></div>
@@ -5622,7 +5620,7 @@ def input_a11y_rows(papeis):
     """Uma linha por medicao, filtrada pelo papel. Excecao aparece como excecao."""
     out = []
     for r in INPUT_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -5635,9 +5633,9 @@ def input_a11y_rows(papeis):
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -5651,7 +5649,7 @@ IN_LAYER = {d['theme']: d for d in INPUT_A11Y['layerEffect']}
 
 def _in(state, theme, papel):
     return next(r['ratio'] for r in INPUT_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+                if r['state'] == state and r['theme'] == theme and r['role'] == papel)
 
 
 TH_INPUT = ('<div class="th-input" aria-hidden="true">'
@@ -5954,7 +5952,7 @@ INPUT_A11Y_TAB = f'''
   <div class="note">
     <b>Borda abaixo de 3:1 no repouso e no read-only — decisão consciente</b>
     <code>border-default</code> dá {IN_LAYER['light']['rest']:.2f}:1 no claro; o read-only, em
-    <code>border-subtle</code>, chega a {_in('readonly', 'dark', 'borda'):.2f}:1 no escuro. O 1.4.11
+    <code>border-subtle</code>, chega a {_in('readonly', 'dark', 'border'):.2f}:1 no escuro. O 1.4.11
     não falha quando a borda não é o único meio de perceber o componente — e aqui não é: há rótulo
     visível e texto dentro. <b>Por isso “nunca use o Input sem rótulo visível” é regra de uso, e
     não sugestão:</b> é ela que sustenta esta exceção.
@@ -5966,7 +5964,7 @@ INPUT_A11Y_TAB = f'''
   </div>
   <div class="note" style="margin-top:16px">
     <b>O read-only não tem isenção — e não precisa</b>
-    O texto dele é o mesmo do campo editável: {_in('readonly', 'light', 'valor'):.2f}:1 no claro.
+    O texto dele é o mesmo do campo editável: {_in('readonly', 'light', 'value'):.2f}:1 no claro.
     O único texto que reprovaria ali é o placeholder (4,21:1), e ele não aparece: o CSS o torna
     transparente e o read-only vazio mostra “—”.
   </div>
@@ -5976,7 +5974,7 @@ INPUT_A11Y_TAB = f'''
   <h2>Borda e anel — o não-textual, piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{input_a11y_rows(['borda', 'anel de foco'])}</tbody>
+    <tbody>{input_a11y_rows(['border', 'focus ring'])}</tbody>
   </table></div>
 </section>
 
@@ -5984,13 +5982,13 @@ INPUT_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{input_a11y_rows(['rotulo', 'marca opcional', 'contador', 'contador acima do limite', 'apoio', 'mensagem de erro', 'placeholder', 'valor', 'afixo', 'texto'])}</tbody>
+    <tbody>{input_a11y_rows(['label', 'optional mark', 'counter', 'counter over limit', 'help', 'error message', 'placeholder', 'value', 'affix', 'text'])}</tbody>
   </table></div>
 </section>
 
 <section>
   <h2>O contrato de marcação</h2>
-  <p>Oito regras, medidas por <code>components/input/a11y.py</code> no HTML que este site emite.
+  <p>Oito regras, medidas por <code>src/components/input/a11y.py</code> no HTML que este site emite.
   Quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> de rótulo apontando para ele.</span></div>
@@ -6131,7 +6129,7 @@ def textarea_geo_rows():
 def textarea_a11y_rows(papeis):
     out = []
     for r in TEXTAREA_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -6144,9 +6142,9 @@ def textarea_a11y_rows(papeis):
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -6163,7 +6161,7 @@ TA_PAD = TEXTAREA['resolved']['textarea-padding-y']
 
 def _ta(state, theme, papel):
     return next(r['ratio'] for r in TEXTAREA_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+                if r['state'] == state and r['theme'] == theme and r['role'] == papel)
 
 
 TH_TEXTAREA = ('<div class="th-textarea" aria-hidden="true">'
@@ -6472,7 +6470,7 @@ TEXTAREA_A11Y_TAB = f'''
   <div class="note">
     <b>Borda abaixo de 3:1 no repouso e no read-only — decisão consciente</b>
     <code>border-default</code> dá {TA_LAYER['light']['rest']:.2f}:1 no claro; o read-only, em
-    <code>border-subtle</code>, chega a {_ta('readonly', 'dark', 'borda'):.2f}:1 no escuro. O 1.4.11
+    <code>border-subtle</code>, chega a {_ta('readonly', 'dark', 'border'):.2f}:1 no escuro. O 1.4.11
     não falha quando a borda não é o único meio de perceber o componente — há rótulo visível e
     texto dentro. <b>Por isso “nunca sem rótulo visível” é regra de uso:</b> é ela que sustenta
     esta exceção.
@@ -6487,7 +6485,7 @@ TEXTAREA_A11Y_TAB = f'''
   <h2>Borda e anel — o não-textual, piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{textarea_a11y_rows(['borda', 'anel de foco'])}</tbody>
+    <tbody>{textarea_a11y_rows(['border', 'focus ring'])}</tbody>
   </table></div>
 </section>
 
@@ -6495,13 +6493,13 @@ TEXTAREA_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{textarea_a11y_rows(['rotulo', 'marca opcional', 'contador', 'contador acima do limite', 'apoio', 'mensagem de erro', 'placeholder', 'valor', 'texto'])}</tbody>
+    <tbody>{textarea_a11y_rows(['label', 'optional mark', 'counter', 'counter over limit', 'help', 'error message', 'placeholder', 'value', 'text'])}</tbody>
   </table></div>
 </section>
 
 <section>
   <h2>O contrato de marcação</h2>
-  <p>Oito regras, medidas por <code>components/textarea/a11y.py</code> no HTML que este site
+  <p>Oito regras, medidas por <code>src/components/textarea/a11y.py</code> no HTML que este site
   emite. Quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> de rótulo apontando para ele.</span></div>
@@ -6566,8 +6564,8 @@ def pwd(cid, rotulo='Senha', *, novo=False, erro=None, disabled=False, valor=Non
         a.append('disabled')
     b = ['class="al-password__toggle"', 'type="button"', f'aria-controls="{cid}"',
          'aria-label="Mostrar senha"']
-    if show:
-        b.append(f'data-label-show="{show}" data-label-hide="{hide}"')
+    # o pacote fala ingles; o site ainda e PT, entao os nomes vao sempre explicitos
+    b.append(f'data-label-show="{show or "Mostrar senha"}" data-label-hide="{hide or "Ocultar senha"}"')
     if disabled:
         b.append('disabled')
     b.append('hidden')
@@ -6646,7 +6644,7 @@ def password_geo_rows():
 def password_a11y_rows(papeis):
     out = []
     for r in PASSWORD_A11Y['rows']:
-        if r['papel'] not in papeis:
+        if r['role'] not in papeis:
             continue
         if r['pass']:
             verdict = '<span class="pass">passa</span>'
@@ -6659,9 +6657,9 @@ def password_a11y_rows(papeis):
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
             f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["papel"]}</td><td class="chipcell">{chips}</td>'
+            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
             f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["contra"]}</td>'
+            f'<td class="tok dim">{r["against"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
     return '\n'.join(out)
@@ -6675,7 +6673,7 @@ PW_DER = PASSWORD['derived']
 
 def _pw(state, theme, papel):
     return next(r['ratio'] for r in PASSWORD_A11Y['rows']
-                if r['state'] == state and r['theme'] == theme and r['papel'] == papel)
+                if r['state'] == state and r['theme'] == theme and r['role'] == papel)
 
 
 TH_PASSWORD = ('<div class="th-password" aria-hidden="true">'
@@ -6927,8 +6925,8 @@ PASSWORD_A11Y_TAB = f'''
   <div class="scroller" style="margin-top:16px"><table>
     <thead><tr><th>Tema</th><th>Anel do olho</th><th>Olho</th></tr></thead>
     <tbody>
-      <tr><td class="tok dim">claro</td><td class="num strong">{_pw('default', 'light', 'anel do olho'):.2f}:1</td><td class="num">{_pw('default', 'light', 'olho'):.2f}:1</td></tr>
-      <tr><td class="tok dim">escuro</td><td class="num strong">{_pw('default', 'dark', 'anel do olho'):.2f}:1</td><td class="num">{_pw('default', 'dark', 'olho'):.2f}:1</td></tr>
+      <tr><td class="tok dim">claro</td><td class="num strong">{_pw('default', 'light', 'eye ring'):.2f}:1</td><td class="num">{_pw('default', 'light', 'eye'):.2f}:1</td></tr>
+      <tr><td class="tok dim">escuro</td><td class="num strong">{_pw('default', 'dark', 'eye ring'):.2f}:1</td><td class="num">{_pw('default', 'dark', 'eye'):.2f}:1</td></tr>
     </tbody>
   </table></div>
   <div class="stats">
@@ -6943,8 +6941,8 @@ PASSWORD_A11Y_TAB = f'''
   <h2>As duas exceções, nomeadas</h2>
   <div class="note">
     <b>Borda abaixo de 3:1 no repouso — decisão consciente</b>
-    <code>border-default</code> dá {_pw('default', 'light', 'borda'):.2f}:1 no claro e
-    {_pw('default', 'dark', 'borda'):.2f}:1 no escuro. O 1.4.11 não falha quando a borda não é o
+    <code>border-default</code> dá {_pw('default', 'light', 'border'):.2f}:1 no claro e
+    {_pw('default', 'dark', 'border'):.2f}:1 no escuro. O 1.4.11 não falha quando a borda não é o
     único meio de perceber o componente — há rótulo visível e o olho dentro. <b>Por isso “nunca sem
     rótulo visível” é regra de uso.</b>
   </div>
@@ -6959,7 +6957,7 @@ PASSWORD_A11Y_TAB = f'''
   <h2>Borda, anéis e olho — o não-textual, piso 3:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{password_a11y_rows(['borda', 'anel do campo', 'anel do olho', 'olho'])}</tbody>
+    <tbody>{password_a11y_rows(['border', 'field ring', 'eye ring', 'eye'])}</tbody>
   </table></div>
 </section>
 
@@ -6967,13 +6965,13 @@ PASSWORD_A11Y_TAB = f'''
   <h2>Texto — piso 4,5:1</h2>
   <div class="scroller" style="margin-top:20px"><table>
     <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{password_a11y_rows(['rotulo', 'mensagem de erro', 'placeholder', 'valor', 'texto'])}</tbody>
+    <tbody>{password_a11y_rows(['label', 'error message', 'placeholder', 'value', 'text'])}</tbody>
   </table></div>
 </section>
 
 <section>
   <h2>O contrato de marcação</h2>
-  <p>Dez regras, medidas por <code>components/password/a11y.py</code> no HTML que este site
+  <p>Dez regras, medidas por <code>src/components/password/a11y.py</code> no HTML que este site
   emite. Quebram o build.</p>
   <div class="anat" style="margin-top:16px">
     <div><b>Rótulo ligado</b><span>Todo campo tem <code>id</code> e um <code>&lt;label for&gt;</code> apontando para ele, sem <code>aria-label</code> redundante.</span></div>
@@ -7542,9 +7540,9 @@ def card_token_rows():
 
 
 def card_a11y_rows():
-    nomes = {'filled': 'Filled', 'border': 'Border', 'elevated': 'Elevated', 'todos': 'Todos'}
-    oque = {'titulo': 'título', 'descricao': 'descrição', 'borda': 'borda',
-            'limite-pelo-fundo': 'fundo × página', 'anel': 'anel de foco'}
+    nomes = {'filled': 'Filled', 'border': 'Border', 'elevated': 'Elevated', 'all': 'Todos'}
+    oque = {'title': 'título', 'description': 'descrição', 'border': 'borda',
+            'bg-boundary': 'fundo × página', 'ring': 'anel de foco'}
     out = []
     for r in CARD_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -8003,8 +8001,8 @@ def tab_token_rows():
 
 
 def tab_a11y_rows():
-    oque = {'rotulo': 'rótulo', 'linha': 'linha', 'fundo-selecionado': 'fundo × página',
-            'anel': 'anel de foco', 'selecao': 'seleção'}
+    oque = {'label': 'rótulo', 'line': 'linha', 'selected-bg': 'fundo × página',
+            'ring': 'anel de foco', 'selection': 'seleção'}
     out = []
     for r in TAB_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -8200,8 +8198,8 @@ TB_RULES = [
         ('No alto contraste a seleção continua visível', 'A linha da selecionada fica na cor de destaque do sistema e a Square selecionada ganha contorno. Mesma lição do Divider.'),
     ]),
     ('Exceções de contraste, e o que as paga', [
-        ('O painel começa com um título igual ao rótulo', 'É o que paga a <code>selecao-tonal</code>: no escuro a Square selecionada se distingue só pelo matiz, e o título diz onde a pessoa está. O leitor de tela já ouve “selecionada” ou “página atual”. Precedentes: Material, Carbon.'),
-        ('A linha cinza é só trilho', '<code>trilho-decorativo</code>: ela não comunica estado, então não use a cor para mais nada e não escureça para “corrigir”. <code>marca-no-hover-escuro</code> e <code>pressed-na-superficie-escura</code> são da marca, herdadas da Foundation e do Button.'),
+        ('O painel começa com um título igual ao rótulo', 'É o que paga a <code>tonal-selection</code>: no escuro a Square selecionada se distingue só pelo matiz, e o título diz onde a pessoa está. O leitor de tela já ouve “selecionada” ou “página atual”. Precedentes: Material, Carbon.'),
+        ('A linha cinza é só trilho', '<code>decorative-track</code>: ela não comunica estado, então não use a cor para mais nada e não escureça para “corrigir”. <code>brand-on-dark-hover</code> e <code>pressed-on-dark-surface</code> são da marca, herdadas da Foundation e do Button.'),
     ]),
 ]
 
@@ -8435,8 +8433,8 @@ def accordion_token_rows():
 
 
 def accordion_a11y_rows():
-    oque = {'titulo': 'título', 'chevron': 'chevron', 'divisoria': 'divisória',
-            'limite-pelo-fundo': 'item × página', 'anel': 'anel de foco'}
+    oque = {'title': 'título', 'chevron': 'chevron', 'divider': 'divisória',
+            'bg-boundary': 'item × página', 'ring': 'anel de foco'}
     out = []
     for r in ACC_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -8899,11 +8897,11 @@ def modal_token_rows():
 
 
 def modal_a11y_rows():
-    oque = {'titulo': 'título e texto do miolo', 'anel-no-card': 'anel de foco no card',
-            'botao-principal-no-card': 'botão Primary no card', 'botao-perigo-no-card': 'botão Danger no card',
-            'botao-secundario-borda-no-card': 'borda do Secondary no card',
-            'card-na-canvas-escurecida': 'card × tela escurecida',
-            'card-na-surface-escurecida': 'card × superfície escurecida'}
+    oque = {'title': 'título e texto do miolo', 'ring-on-card': 'anel de foco no card',
+            'primary-button-on-card': 'botão Primary no card', 'danger-button-on-card': 'botão Danger no card',
+            'secondary-border-on-card': 'borda do Secondary no card',
+            'card-on-dimmed-canvas': 'card × tela escurecida',
+            'card-on-dimmed-surface': 'card × superfície escurecida'}
     out = []
     for r in MOD_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -9507,13 +9505,13 @@ def drawer_token_rows():
 
 
 def drawer_a11y_rows():
-    oque = {'titulo': 'título e texto do miolo', 'x-icone-no-painel': 'ícone do X no painel',
-            'anel-no-painel': 'anel de foco no painel', 'botao-principal-no-painel': 'botão Primary no painel',
-            'botao-secundario-borda-no-painel': 'borda do Secondary no painel',
-            'ghost-hover-texto': 'texto do Ghost em hover', 'ghost-hover-distinto-do-painel': 'hover do Ghost × painel',
-            'ghost-active-texto': 'texto do Ghost pressionado', 'ghost-active-distinto-do-painel': 'pressed do Ghost × painel',
-            'painel-na-canvas-escurecida': 'painel × tela escurecida',
-            'painel-na-surface-escurecida': 'painel × superfície escurecida'}
+    oque = {'title': 'título e texto do miolo', 'x-icon-on-panel': 'ícone do X no painel',
+            'ring-on-panel': 'anel de foco no painel', 'primary-button-on-panel': 'botão Primary no painel',
+            'secondary-border-on-panel': 'borda do Secondary no painel',
+            'ghost-hover-text': 'texto do Ghost em hover', 'ghost-hover-distinct-from-panel': 'hover do Ghost × painel',
+            'ghost-active-text': 'texto do Ghost pressionado', 'ghost-active-distinct-from-panel': 'pressed do Ghost × painel',
+            'panel-on-dimmed-canvas': 'painel × tela escurecida',
+            'panel-on-dimmed-surface': 'painel × superfície escurecida'}
     out = []
     for r in DRW_A11Y['rows']:
         chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
@@ -10106,19 +10104,19 @@ def sidebar_token_rows():
 
 
 SB_OQUE = {
-    'nome': 'nome', 'email': 'e-mail', 'rotulo-grupo': 'rótulo de grupo',
-    'item-repouso': 'item em repouso', 'item-hover': 'item em hover', 'item-pressed': 'item pressionado',
-    'item-atual': 'item atual', 'item-atual-hover': 'item atual em hover',
-    'item-atual-pressed': 'item atual pressionado', 'anel-de-foco': 'anel de foco',
-    'icone-do-botao-perfil': 'ícone do botão do perfil', 'item-atual-fundo': 'fundo do item atual',
-    'item-atual-pressed-fundo': 'fundo do item atual pressionado',
-    'item-hover-distinto': 'hover do item × Sidebar', 'item-pressed-distinto': 'pressionado do item × Sidebar',
-    'botao-hover-distinto': 'hover do botão × Sidebar', 'botao-pressed-distinto': 'pressionado do botão × Sidebar',
-    'borda-x-bg-canvas': 'borda × tela', 'borda-x-bg-surface': 'borda × superfície',
-    'painel-x-bg-canvas-escurecida': 'painel modal × tela escurecida',
-    'painel-x-bg-surface-escurecida': 'painel modal × superfície escurecida',
-    'borda-do-painel-x-bg-canvas-escurecida': 'borda do painel × tela escurecida',
-    'borda-do-painel-x-bg-surface-escurecida': 'borda do painel × superfície escurecida',
+    'name': 'nome', 'email': 'e-mail', 'group-label': 'rótulo de grupo',
+    'item-rest': 'item em repouso', 'item-hover': 'item em hover', 'item-pressed': 'item pressionado',
+    'item-current': 'item atual', 'item-current-hover': 'item atual em hover',
+    'item-current-pressed': 'item atual pressionado', 'focus-ring': 'anel de foco',
+    'profile-button-icon': 'ícone do botão do perfil', 'item-current-bg': 'fundo do item atual',
+    'item-current-pressed-bg': 'fundo do item atual pressionado',
+    'item-hover-distinct': 'hover do item × Sidebar', 'item-pressed-distinct': 'pressionado do item × Sidebar',
+    'button-hover-distinct': 'hover do botão × Sidebar', 'button-pressed-distinct': 'pressionado do botão × Sidebar',
+    'border-x-bg-canvas': 'borda × tela', 'border-x-bg-surface': 'borda × superfície',
+    'panel-x-bg-canvas-dimmed': 'painel modal × tela escurecida',
+    'panel-x-bg-surface-dimmed': 'painel modal × superfície escurecida',
+    'panel-border-x-bg-canvas-dimmed': 'borda do painel × tela escurecida',
+    'panel-border-x-bg-surface-dimmed': 'borda do painel × superfície escurecida',
 }
 
 
@@ -10396,8 +10394,8 @@ SIDEBAR_A11Y_TAB = f'''
   </div>
   <div class="note">
     <b>Herdadas</b>
-    <code>borda-de-regiao</code> (a borda é de região, não de controle), <code>selecao-tonal</code> (paga pelo
-    título da página igual ao rótulo do item atual) e <code>marca-no-hover-escuro</code> (a exceção de marca da
+    <code>region-border</code> (a borda é de região, não de controle), <code>tonal-selection</code> (paga pelo
+    título da página igual ao rótulo do item atual) e <code>brand-on-dark-hover</code> (a exceção de marca da
     Foundation, 3,85:1 no hover do item atual).
   </div>
 </section>
@@ -10725,6 +10723,14 @@ def breadcrumb_token_rows():
     return '\n'.join(rows)
 
 
+BC_OQUE = {
+    'link': 'link', '…': '…', 'current page': 'pagina atual', 'ring on trail': 'anel na trilha',
+    'menu border': 'borda do menu', 'menu item': 'item do menu', 'menu item (hover)': 'item do menu (hover)',
+    'menu item (pressed)': 'item do menu (pressed)', 'ring in menu': 'anel no menu',
+    'item hover vs menu': 'hover do item vs menu', 'item pressed vs menu': 'pressed do item vs menu',
+}
+
+
 def breadcrumb_a11y_rows():
     out = []
     for r in BCR_A11Y['rows']:
@@ -10741,7 +10747,7 @@ def breadcrumb_a11y_rows():
             v = '<span class="fail">reprova</span>'
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["what"]}</td>'
+            f'<td class="name">{BC_OQUE[r["what"]]}</td>'
             f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
             f'<td class="num strong">{"—" if diff else format(r["ratio"], ".2f") + ":1"}</td>'
             f'<td class="tok dim">{"diferente" if diff else str(r["floor"]) + ":1"}</td><td>{v}</td></tr>')
@@ -10908,7 +10914,7 @@ BC_RULES = [
         ('Anel de foco em links e no “…”', 'O padrão, com canto de 4. Os itens do menu usam o do Tab Square.'),
     ]),
     ('Exceções e o que as paga', [
-        ('A borda do menu fica abaixo de 3:1', '<code>borda-de-regiao</code>: o menu é caixa de conteúdo, não controle, e se separa pela sombra. Não escureça. Mesmo caso da Sidebar e do Card.'),
+        ('A borda do menu fica abaixo de 3:1', '<code>region-border</code>: o menu é caixa de conteúdo, não controle, e se separa pela sombra. Não escureça. Mesmo caso da Sidebar e do Card.'),
         ('O fundo do menu é sempre <code>bg-surface-raised</code>', 'Com hover e pressed <code>-raised</code>. Trocar o fundo faz o hover sumir no escuro (Modal 0.18.1).'),
     ]),
     ('Fora de escopo', [
@@ -11428,6 +11434,10 @@ TOOLTIP_GUIDE = f'''
 </section>'''
 
 
+TT_OQUE = {'text': 'texto', 'icon (currentColor)': 'icone (currentColor)',
+           'box on the page': 'caixa sobre a pagina'}
+
+
 def tooltip_a11y_rows():
     out = []
     for r in TTP_A11Y['rows']:
@@ -11436,7 +11446,7 @@ def tooltip_a11y_rows():
         v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["what"]}</td>'
+            f'<td class="name">{TT_OQUE[r["what"]]}</td>'
             f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
@@ -11884,6 +11894,12 @@ TOAST_GUIDE = f'''
 </section>'''
 
 
+TS_OQUE = {'title': 'titulo', 'description': 'descricao', 'X / rest': 'X / repouso',
+           'X / hover': 'X / hover', 'X / pressed': 'X / pressionado', 'X / focus ring': 'X / anel de foco'}
+TS_OQUE.update({f'{s} / {en}': f'{s} / {pt}' for s in ('success', 'warning', 'error', 'info')
+                for en, pt in (('icon', 'icone'), ('border', 'borda'))})
+
+
 def toast_a11y_rows():
     out = []
     for r in TST_A11Y['rows']:
@@ -11892,7 +11908,7 @@ def toast_a11y_rows():
         v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["what"]}</td>'
+            f'<td class="name">{TS_OQUE[r["what"]]}</td>'
             f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
@@ -12343,6 +12359,13 @@ ALERT_GUIDE = f'''
 </section>'''
 
 
+AL_OQUE = {'title': 'titulo', 'description': 'descricao', 'focus ring': 'anel de foco'}
+AL_OQUE.update({f'{s} / {en}': f'{s} / {pt}' for s in ('success', 'warning', 'danger', 'info')
+                for en, pt in (('icon', 'icone'), ('border', 'borda'))})
+AL_OQUE.update({f'{w} / {en}': f'{w} / {pt}' for w in ('X', 'Ghost')
+                for en, pt in (('rest', 'repouso'), ('hover', 'hover'), ('pressed', 'pressionado'))})
+
+
 def alert_a11y_rows():
     out = []
     for r in ALR_A11Y['rows']:
@@ -12351,7 +12374,7 @@ def alert_a11y_rows():
         v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
         out.append(
             f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["what"]}</td>'
+            f'<td class="name">{AL_OQUE[r["what"]]}</td>'
             f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
             f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
             f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
@@ -13187,7 +13210,7 @@ JS_ICON = r"""
     var attrs = ' class="' + cls + '"';
     if (style) attrs += ' style="' + style + '"';
     code.textContent = '<svg' + attrs + ' aria-hidden="true" focusable="false">\n'
-      + '  <!-- ' + name + ' \u00b7 components/icon/icons/' + name + '.svg -->\n'
+      + '  <!-- ' + name + ' \u00b7 src/components/icon/icons/' + name + '.svg -->\n'
       + '</svg>';
   }
 
@@ -14434,7 +14457,8 @@ JS_PASSWORD = r"""
       if (erro) a.push('aria-invalid="true"');
       if (off) a.push('disabled');
       var b = ['class="al-password__toggle"', 'type="button"', 'aria-controls="' + id + '"',
-               'aria-label="Mostrar senha"'];
+               'aria-label="Mostrar senha"',
+               'data-label-show="Mostrar senha"', 'data-label-hide="Ocultar senha"'];
       if (off) b.push('disabled');
       b.push('hidden');
       var out = '';
@@ -15019,9 +15043,9 @@ HTML = (
     + JS_MOTION + '</script>\n'
 )
 
-open(os.path.join(HERE, 'index.html'), 'w', encoding='utf-8').write(HTML)
+open(out(SITE_HTML), 'w', encoding='utf-8').write(HTML)
 
-print(f'site/index.html escrito ({len(HTML):,} bytes)')
+print(f'build/site/index.html escrito ({len(HTML):,} bytes)')
 print(f'  páginas no trilho : {len(PAGES)} — ' + ', '.join(p[0] for p in PAGES))
 print(f'  primitivas        : {N_PRIM}')
 print(f'  semânticos        : {N_SEM} × 2 temas')
@@ -15091,5 +15115,5 @@ print(f'  tokens do Toast   : {N_TST_TOKENS}  '
 print(f'  tokens do Alert   : {N_ALR_TOKENS}  '
       f'({N_ALR_MEDIDAS} combinacoes medidas, {ALR_A11Y["markupChecked"]} alerts no contrato de marcacao)')
 print(f'  tokens de motion  : {N_MO_TOKENS}  ({len(MO_DUR)} duracoes, {len(MO_EASE)} curvas, {N_MO_CONSUMERS} componentes consomem)')
-print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de components/icon/icons/)')
+print(f'  ícones            : {N_ICONS} (Lucide · ISC · lidos de src/components/icon/icons/)')
 print(f'  CSS inline        : foundation + Button + Icon (tokens e componentes, os reais)')

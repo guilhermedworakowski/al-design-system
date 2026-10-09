@@ -1,0 +1,25 @@
+name: Feature or component request
+description: Propose a new component, variant or token.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: New components and variants are designed in Figma first and decided by the maintainer, so please don't start on a pull request before the issue is accepted.
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to build, and why doesn't AL cover it today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you propose
+    validations:
+      required: true
+  - type: textarea
+    id: precedents
+    attributes:
+      label: Precedents
+      description: How other design systems solve it (Material, Carbon, GOV.UK, Polaris...), with links.

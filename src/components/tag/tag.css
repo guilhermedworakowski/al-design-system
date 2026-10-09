@@ -1,0 +1,254 @@
+/* AL Design System - Tag
+ * Handwritten. Depends on al-foundation.css, al-icon-tokens.css, icon.css and
+ * al-tag-tokens.css, in that order.
+ *
+ * No value here is literal: every color, space, radius and text measurement
+ * comes in through var(--al-tag-*) or a Foundation token. The check.py next to
+ * it rejects the file if any slips through.
+ *
+ * MARKUP CONTRACT
+ *
+ *   read-only (the default):
+ *     <span class="al-tag al-tag--filled al-tag--success al-tag--md">Paid</span>
+ *
+ *   dismissible:
+ *     <span class="al-tag al-tag--outlined al-tag--info al-tag--md">
+ *       Books
+ *       <button type="button" class="al-tag__dismiss" aria-label="Remove Books">
+ *         <svg class="al-icon" aria-hidden="true" focusable="false">…</svg>
+ *       </button>
+ *     </span>
+ *
+ *   type   : --filled | --outlined
+ *   status : --success | --warning | --error | --info | --neutral
+ *   size   : --sm | --md
+ *
+ * WHY <span> AND NOT <div> OR <button>
+ *   The tag is content, not a control. It doesn't enter the tab order and
+ *   doesn't get focus - only the X does. It is the same rule Carbon has for
+ *   the read-only tag, and it is why the whole tag is not clickable: clicking
+ *   the label does nothing. <span> is also what lets the tag live inside a
+ *   sentence without breaking the flow of the text.
+ *
+ * THE LABEL CARRIES THE MEANING, THE COLOR DOESN'T
+ *   This is the component's accessibility contract, and it doesn't live in the
+ *   CSS - it lives in the text the consumer writes. A red tag saying "Payment"
+ *   communicates nothing to someone who can't tell the colors apart or uses a
+ *   screen reader. Write "Payment declined". No gate can measure this; it is a
+ *   usage rule, and it is written here so it isn't lost.
+ *
+ * THE X'S ACCESSIBLE NAME
+ *   aria-label is REQUIRED, and it has to include the tag's label: "Remove
+ *   Books", never just "Remove". In a list of six filters, six buttons called
+ *   "Remove" are indistinguishable to a screen reader. It inherits the Icon
+ *   Button's contract. The name goes on the BUTTON, never on the svg, which is
+ *   decorative.
+ *
+ * AFTER REMOVING, FOCUS
+ *   When removing a tag from a group, move focus to the previous tag. Without
+ *   that focus falls on <body> and keyboard users get lost in the middle of the
+ *   list. That is JS - CSS can't reach it. Precedent: Primer, in the Token's
+ *   accessibility guidance.
+ *
+ * THE BOX
+ *   There is no width or height. The height is a consequence: padding-y x2
+ *   plus the line height. sm = 2+16+2 = 20. md = 4+20+4 = 28.
+ *   The 1px border exists in BOTH types - transparent in filled - and the
+ *   padding subtracts its thickness. That is what makes filled and outlined
+ *   take exactly the same box: switching a tag's type never moves what is
+ *   around it.
+ *
+ * THE X'S TOUCH TARGET
+ *   16px in sm, 20px in md - below the 24 of WCAG 2.5.8. A conscious decision,
+ *   with no area expansion through a pseudo-element, like the Button's sm. The
+ *   usage rule that follows: a dismissible sm only in pointer interfaces.
+ *
+ * NO HOVER, BY DESIGN
+ *   Carbon changes the close icon's background on hover. Not here: the only
+ *   feedback is the cursor. A conscious divergence, not forgetfulness - and
+ *   that is why this file has no transition, no animation and, as a result,
+ *   no duration at all.
+ */
+
+/* ---------------------------------------------------------------- base */
+.al-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--_gap);
+
+  box-sizing: border-box;
+  /* The border counts toward the box in both types, so subtracting it here
+     keeps 20 and 28 exact and stops filled and outlined from drifting 1px apart. */
+  padding:
+    calc(var(--_pad-y) - var(--al-tag-border-width))
+    calc(var(--_pad-x) - var(--al-tag-border-width));
+  border: var(--al-tag-border-width) solid var(--_border);
+  border-radius: var(--al-tag-radius);
+
+  background-color: var(--_bg);
+  color: var(--_label);
+
+  font-family: var(--al-font-sans);
+  font-size: var(--_font-size);
+  line-height: var(--_line-height);
+  font-weight: var(--_font-weight);
+  letter-spacing: var(--_tracking);
+
+  /* Don't wrap onto two lines: that distorts the pill and misaligns the group.
+     There is no truncation - the tag grows, and a long label is fixed at the
+     source. Precedent: Carbon. */
+  white-space: nowrap;
+  /* a tag usually lives inside a sentence or a table cell */
+  vertical-align: middle;
+
+  /* the tag decides the X's size. The .al-icon inside reads this inherited
+     property; without it, it would fall back to its default step (24). */
+  --al-icon-box: var(--_icon-size);
+}
+
+/* ---------------------------------------------------------------- types x statuses */
+/* The type decides WHICH roles exist, the status decides WHICH COLOR goes into
+   each one. That is why the selector is compound: both dimensions must be
+   present. */
+
+.al-tag--filled.al-tag--success {
+  --_bg: var(--al-tag-filled-success-bg);
+  --_label: var(--al-tag-filled-success-label);
+  --_border: var(--al-tag-filled-success-border);
+}
+
+.al-tag--filled.al-tag--warning {
+  --_bg: var(--al-tag-filled-warning-bg);
+  --_label: var(--al-tag-filled-warning-label);
+  --_border: var(--al-tag-filled-warning-border);
+}
+
+.al-tag--filled.al-tag--error {
+  --_bg: var(--al-tag-filled-error-bg);
+  --_label: var(--al-tag-filled-error-label);
+  --_border: var(--al-tag-filled-error-border);
+}
+
+.al-tag--filled.al-tag--info {
+  --_bg: var(--al-tag-filled-info-bg);
+  --_label: var(--al-tag-filled-info-label);
+  --_border: var(--al-tag-filled-info-border);
+}
+
+.al-tag--filled.al-tag--neutral {
+  --_bg: var(--al-tag-filled-neutral-bg);
+  --_label: var(--al-tag-filled-neutral-label);
+  --_border: var(--al-tag-filled-neutral-border);
+}
+
+/* the outlined background doesn't vary by status - a single token, on the type */
+.al-tag--outlined {
+  --_bg: var(--al-tag-outlined-bg);
+}
+
+.al-tag--outlined.al-tag--success {
+  --_label: var(--al-tag-outlined-success-label);
+  --_border: var(--al-tag-outlined-success-border);
+}
+
+.al-tag--outlined.al-tag--warning {
+  --_label: var(--al-tag-outlined-warning-label);
+  --_border: var(--al-tag-outlined-warning-border);
+}
+
+.al-tag--outlined.al-tag--error {
+  --_label: var(--al-tag-outlined-error-label);
+  --_border: var(--al-tag-outlined-error-border);
+}
+
+.al-tag--outlined.al-tag--info {
+  --_label: var(--al-tag-outlined-info-label);
+  --_border: var(--al-tag-outlined-info-border);
+}
+
+.al-tag--outlined.al-tag--neutral {
+  --_label: var(--al-tag-outlined-neutral-label);
+  --_border: var(--al-tag-outlined-neutral-border);
+}
+
+/* ---------------------------------------------------------------- sizes */
+.al-tag--sm {
+  --_pad-x: var(--al-tag-sm-padding-x);
+  --_pad-y: var(--al-tag-sm-padding-y);
+  --_gap: var(--al-tag-sm-gap);
+  --_font-size: var(--al-tag-sm-font-size);
+  --_line-height: var(--al-tag-sm-line-height);
+  --_font-weight: var(--al-tag-sm-font-weight);
+  --_tracking: var(--al-tag-sm-tracking);
+  --_icon-size: var(--al-tag-sm-icon-size);
+}
+
+.al-tag--md {
+  --_pad-x: var(--al-tag-md-padding-x);
+  --_pad-y: var(--al-tag-md-padding-y);
+  --_gap: var(--al-tag-md-gap);
+  --_font-size: var(--al-tag-md-font-size);
+  --_line-height: var(--al-tag-md-line-height);
+  --_font-weight: var(--al-tag-md-font-weight);
+  --_tracking: var(--al-tag-md-tracking);
+  --_icon-size: var(--al-tag-md-icon-size);
+}
+
+/* ---------------------------------------------------------------- the X */
+/* No ink of its own: currentColor resolves to the --_label of the tag's type
+   and status. Ten tokens to reproduce ten values the CSS already inherits by
+   itself would be noise - same decision as the Icon Button's spinner. */
+.al-tag__dismiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+
+  box-sizing: border-box;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--al-radius-full);
+
+  background: none;
+  color: currentColor;
+
+  /* the only hover feedback this component has, by design */
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* :focus-visible, not :focus - the ring shows from the keyboard, not on click.
+   The ring is a shadow: it doesn't push the layout and follows the circle's
+   radius. No transition, on purpose - a focus ring never animates. */
+.al-tag__dismiss:focus-visible {
+  outline: none;
+  box-shadow: var(--al-tag-dismiss-ring);
+}
+
+/* safety net for an svg that isn't from the Icon component */
+.al-tag__dismiss > svg {
+  display: block;
+  flex: none;
+  width: var(--_icon-size);
+  height: var(--_icon-size);
+}
+
+/* ---------------------------------------------------------------- environment */
+/* In the system's high contrast mode the shadow is discarded - the ring goes
+   with it. Here focus comes back as a native outline, which the mode respects.
+   And the filled border, which is transparent, has to reappear: with no
+   painted background, it becomes the tag's only visible boundary. */
+@media (forced-colors: active) {
+  .al-tag {
+    border-color: currentColor;
+  }
+  .al-tag__dismiss:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}

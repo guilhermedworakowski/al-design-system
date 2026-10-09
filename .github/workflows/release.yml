@@ -1,0 +1,64 @@
+# Publishes a release when a vX.Y.Z tag reaches GitHub.
+#
+# Runs the full build (every gate), checks that the tag matches the version in
+# package.json, attaches dist/ as a zip to the GitHub Release and publishes to
+# npm.
+#
+# Publishing to npm uses Trusted Publisher (OIDC): no token is stored in the
+# repo, and npm generates the provenance badge by itself. Until Trusted
+# Publisher is configured on npmjs.com, the npm step fails - the GitHub Release
+# goes out anyway. If the version is already on npm (the first one, published
+# by hand), the step is skipped.
+name: release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write   # create the Release and attach the zip
+  id-token: write   # OIDC for the npm Trusted Publisher
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: python3 build.py --check
+
+      - name: Tag and version match
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "The tag $GITHUB_REF_NAME does not match version $VERSION in package.json."
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Zip of dist/ on the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          ZIP="al-design-system-$VERSION.zip"
+          (cd dist && zip -qr "../$ZIP" .)
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" "$ZIP" --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" "$ZIP" --title "$GITHUB_REF_NAME" --generate-notes
+          fi
+
+      - name: Publish to npm
+        run: |
+          if npm view "al-design-system@$VERSION" version >/dev/null 2>&1; then
+            echo "al-design-system@$VERSION is already on npm; nothing to publish."
+          else
+            npm publish
+          fi

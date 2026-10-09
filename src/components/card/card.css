@@ -1,0 +1,235 @@
+/* AL Design System - Card
+ * Written by hand. Depends on al-foundation.css and al-card-tokens.css, in
+ * that order.
+ *
+ * No value here is literal: color, space, radius, shadow and typography come
+ * in through var(--al-card-*). The check.py next to it rejects the file if any
+ * escapes. Transition duration and curve are motion tokens; the ENTER block,
+ * near the end, swaps the curve on the destination states.
+ *
+ * MARKUP CONTRACT
+ *
+ *   static (Filled, Default):
+ *     <div class="al-card">
+ *       <div class="al-card__header">
+ *         <h3 class="al-card__title">Order #1042</h3>
+ *         <p class="al-card__description">Delivered on October 3.</p>
+ *       </div>
+ *       ...any content, including buttons at the end (rule 12)
+ *     </div>
+ *
+ *   clickable (rules 13 to 17) - a real link IN THE TITLE, stretched over the card:
+ *     <div class="al-card al-card--border al-card--clickable">
+ *       <div class="al-card__header">
+ *         <h3 class="al-card__title">
+ *           <a class="al-card__link" href="/orders/1042">Order #1042</a>
+ *         </h3>
+ *         <p class="al-card__description">Delivered on October 3.</p>
+ *       </div>
+ *     </div>
+ *     Nothing clickable besides the link (rule 15). An action that doesn't
+ *     navigate swaps the <a> for <button class="al-card__link" type="button">
+ *     (rule 16).
+ *
+ *   list of cards (rule 22): <ul> with <li class="al-card">.
+ *
+ *   modifiers - type:    (none) = Filled | --border | --elevated
+ *               padding: --spaced (24) | (none) = Default (16) | --tight (8)
+ *
+ * TITLE AND DESCRIPTION ARE OPTIONAL
+ *   `__header`, `__title` and `__description` are guidance: the card accepts
+ *   any content in their place. The title level (h2, h3...) belongs to the
+ *   page, never to the component (rule 11) - that is why the class doesn't
+ *   pin a tag.
+ *
+ * THE BORDER IS OUTSIDE
+ *   In Figma the Border's stroke is OUTSIDE: it doesn't enter the layout. Here
+ *   the border is a 1px shadow with no blur, drawn OUTSIDE the box - the three
+ *   types measure the same and the padding discounts nothing. That is why
+ *   there is no `border` nor `calc(padding - border-width)`, unlike the Button
+ *   and the Input.
+ *
+ * ONE PROPERTY, THREE LAYERS
+ *   Border, focus ring and elevation are all box-shadow. So that no state
+ *   erases another, each one lives in an internal variable and box-shadow
+ *   stacks them in a fixed order: border on top, ring in the middle,
+ *   elevation at the bottom. With the border above the ring's gap, the
+ *   Border's focus matches Figma (1px of brand, 1px of gap, 2px of ring). And
+ *   that is how the focused Elevated keeps its shadow: focus only swaps the
+ *   ring.
+ *
+ * FOCUS BELONGS TO THE LINK, THE RING TO THE CARD
+ *   The title link is what receives Tab. `:has()` takes the ring to the whole
+ *   card (rule 17) and only then removes the link's native outline - a
+ *   browser without `:has()` keeps its own outline, it is never left without
+ *   focus.
+ *
+ * HIGH CONTRAST
+ *   In `forced-colors` the system removes background and shadow: Filled and
+ *   Elevated would disappear entirely, and the Border's border (which is a
+ *   shadow) with them. There the three types get an outline in the system's
+ *   text color, and focus gets the `Highlight` outline - same pattern as the
+ *   Button.
+ *
+ * NO DISABLED OR PRESSED, BY DECISION (rules 19 and 20).
+ */
+
+.al-card {
+  /* shadow layers - see "One property, three layers" */
+  --_edge: 0 0 0 0 transparent;
+  --_ring: 0 0 0 0 transparent;
+  --_lift: 0 0 0 0 transparent;
+
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-card-gap);
+  margin: 0;
+  padding: var(--al-card-padding-default);
+  border-radius: var(--al-card-radius);
+  background-color: var(--al-card-bg);
+  box-shadow: var(--_edge), var(--_ring), var(--_lift);
+  list-style: none;
+  transition: box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* ------------------------------------------------------------------ type */
+.al-card--border {
+  --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border);
+}
+
+.al-card--elevated {
+  --_lift: var(--al-card-elevated-shadow);
+}
+
+/* --------------------------------------------------------------- padding */
+.al-card--spaced {
+  padding: var(--al-card-padding-spaced);
+}
+
+.al-card--tight {
+  padding: var(--al-card-padding-tight);
+}
+
+/* ---------------------------------------------- title and description */
+.al-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-card-text-gap);
+}
+
+.al-card__title {
+  margin: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-card-title-font-size);
+  line-height: var(--al-card-title-line-height);
+  font-weight: var(--al-card-title-font-weight);
+  letter-spacing: var(--al-card-title-tracking);
+  color: var(--al-card-title);
+}
+
+.al-card__description {
+  margin: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-card-description-font-size);
+  line-height: var(--al-card-description-line-height);
+  font-weight: var(--al-card-description-font-weight);
+  letter-spacing: var(--al-card-description-tracking);
+  color: var(--al-card-description);
+}
+
+/* ------------------------------------------------- buttons inside the card */
+/* Ghost and secondary (Button and Icon Button) read bg-hover/bg-active, made
+   for bg-surface. The Card background is surface-raised, which in dark equals
+   bg-hover: the hover disappeared. Here the state comes from the -raised
+   semantics, the same as the Modal and the Accordion. Only the hover/pressed
+   background changes. */
+.al-card .al-btn--ghost,
+.al-card .al-btn--secondary,
+.al-card .al-icon-btn--ghost,
+.al-card .al-icon-btn--secondary {
+  --_bg-hover: var(--al-bg-hover-raised);
+  --_bg-active: var(--al-bg-active-raised);
+}
+
+/* -------------------------------------------------------------- clickable */
+/* The link inherits the title's look: what says it is clickable is the
+   destination written in the title, the recommended arrow (rule 14) and the
+   hover. */
+.al-card__link {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* The pseudo-element covers the whole card: the whole card is the click
+   target, but the announced name is still only the title (rule 16). */
+.al-card__link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* hover - the type decides what changes */
+.al-card--clickable:hover {
+  --_lift: var(--al-card-filled-shadow-hover);
+}
+
+.al-card--clickable.al-card--elevated:hover {
+  --_lift: var(--al-card-elevated-shadow-hover);
+}
+
+.al-card--clickable.al-card--border:hover {
+  --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-hover);
+  --_lift: 0 0 0 0 transparent;
+}
+
+/* focus - only with :has(); without it, the link's native outline stays */
+@supports selector(:has(*)) {
+  .al-card__link:focus {
+    outline: none;
+  }
+
+  .al-card--clickable:has(.al-card__link:focus-visible) {
+    --_ring: var(--al-card-ring);
+  }
+
+  .al-card--clickable.al-card--border:has(.al-card__link:focus-visible) {
+    --_edge: 0 0 0 var(--al-card-border-width) var(--al-card-border-focus);
+  }
+}
+
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
+.al-card--clickable:hover,
+.al-card--clickable:has(.al-card__link:focus-visible) {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-card {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-card {
+    outline: var(--al-card-border-width) solid CanvasText;
+  }
+
+  .al-card--clickable:has(.al-card__link:focus-visible) {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}

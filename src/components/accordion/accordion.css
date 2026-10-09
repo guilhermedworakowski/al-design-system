@@ -1,0 +1,180 @@
+/* AL Design System - Accordion
+ * Written by hand. Depends on al-foundation.css, icon.css and
+ * al-accordion-tokens.css, in that order.
+ *
+ * No value here is literal: color, space, radius, ring and typography come in
+ * through var(--al-accordion-*). The check.py next to it rejects the file if
+ * any escapes. Transition duration and curve are motion tokens; the ENTER
+ * block, near the end, swaps the curve on the destination states.
+ *
+ * MARKUP CONTRACT - NATIVE, NO JS (RULE 24)
+ *
+ *   <details class="al-accordion">
+ *     <summary class="al-accordion__header">
+ *       <svg class="al-icon al-accordion__icon" aria-hidden="true" focusable="false">…</svg>
+ *       <span class="al-accordion__title">How do refunds work?</span>
+ *       <svg class="al-icon al-accordion__chevron" aria-hidden="true" focusable="false">…chevron-down…</svg>
+ *     </summary>
+ *     <div class="al-accordion__content">
+ *       …any content, except another Accordion (rule 5)
+ *     </div>
+ *   </details>
+ *
+ *   - The left icon is optional and decorative (rule 18). The chevron is
+ *     always `chevron-down`: when open, the CSS flips it (rule 19).
+ *   - No <h2>/<h3> inside the <summary> (rule 25), nothing clickable inside
+ *     it (rule 17). The announced name is the title text.
+ *   - Starts open: the `open` attribute (rule 9).
+ *   - Exclusive, one open at a time: the same `name="…"` on each <details> in
+ *     the stack (rule 8). The default has no `name`: several open.
+ *   - Stack: sibling items, the space between them belongs to the layout
+ *     (rule 7). There is no group class.
+ *
+ * ONLY THE HEADER REACTS (RULE 21)
+ *   Hover and pressed paint the <summary>, never the content. `-raised`
+ *   background because the item lives on bg-surface-raised.
+ *
+ * THE DIVIDER BELONGS TO THE CONTENT, NOT THE HEADER
+ *   In Figma the line is the bottom stroke of the open header. Here it is the
+ *   content's top border: the drawing is the same pixel by pixel, and the
+ *   header measures 76 open or closed - nothing jumps on opening.
+ *
+ * THE RING SITS ABOVE THE CONTENT (RULE 22)
+ *   The ring is the <summary>'s box-shadow, and the sibling below (the
+ *   content) paints over the shadow of what comes before it. `position` +
+ *   `z-index` on the <summary> lift the ring. In Figma it was the same
+ *   problem, solved with `itemReverseZIndex` on the Focus/Opened variant.
+ *
+ * CHEVRON ON THE FIRST LINE (RULE 12)
+ *   A long title wraps into several lines; the icons stay at the top,
+ *   centered on the first line: (line height - icon) / 2 of margin, derived,
+ *   no token.
+ *
+ * HIGH CONTRAST (RULE 27)
+ *   In `forced-colors` the background disappears and the item would get
+ *   lost: it gets an outline in the system's text color; focus gets the
+ *   `Highlight` outline. The divider is already a border and stays.
+ *
+ * NO DISABLED (RULE 20). NO HEIGHT ANIMATION: the content appears at once;
+ * only the chevron turns.
+ */
+
+.al-accordion {
+  box-sizing: border-box;
+  margin: 0;
+  border-radius: var(--al-accordion-radius);
+  background-color: var(--al-accordion-bg);
+  font-family: var(--al-font-sans);
+}
+
+/* --------------------------------------------------------------- header */
+.al-accordion__header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--al-accordion-gap);
+  padding: var(--al-accordion-padding);
+  border-radius: var(--al-accordion-radius);
+  background-color: var(--al-accordion-bg);
+  color: var(--al-accordion-title);
+  list-style: none;
+  cursor: pointer;
+  transition: background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* the native triangle: `list-style` removes it in Chrome and Firefox,
+   Safari still needs its own pseudo-element */
+.al-accordion__header::-webkit-details-marker {
+  display: none;
+}
+
+.al-accordion[open] > .al-accordion__header {
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+}
+
+.al-accordion__header:hover {
+  background-color: var(--al-accordion-bg-hover);
+}
+
+.al-accordion__header:active {
+  background-color: var(--al-accordion-bg-active);
+}
+
+/* focus = rest + ring, keyboard only. The background goes back to rest
+   even with the mouse over it: the ring is what speaks. */
+.al-accordion__header:focus {
+  outline: none;
+}
+
+.al-accordion__header:focus-visible {
+  z-index: 1;
+  background-color: var(--al-accordion-bg);
+  box-shadow: var(--al-accordion-ring);
+}
+
+/* ----------------------------------------------------------------- title */
+.al-accordion__title {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--al-accordion-title-font-size);
+  line-height: var(--al-accordion-title-line-height);
+  font-weight: var(--al-accordion-title-font-weight);
+  letter-spacing: var(--al-accordion-title-tracking);
+}
+
+/* ----------------------------------------------------------------- icons */
+/* color through currentColor (comes from the <summary>); size from the token */
+.al-accordion__icon,
+.al-accordion__chevron {
+  --al-icon-box: var(--al-accordion-icon-size);
+  margin-block: calc((var(--al-accordion-title-line-height) - var(--al-accordion-icon-size)) / 2);
+}
+
+.al-accordion__chevron {
+  transition: scale var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+.al-accordion[open] > .al-accordion__header .al-accordion__chevron {
+  scale: 1 -1;
+}
+
+/* --------------------------------------------------------------- content */
+.al-accordion__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-accordion-content-gap);
+  padding: var(--al-accordion-padding);
+  border-block-start: var(--al-accordion-divider-width) solid var(--al-accordion-divider);
+}
+
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in); these destination states declare the
+   enter one (ease-out). Only the curve: duration and properties come from
+   the base. */
+.al-accordion__header:hover,
+.al-accordion__header:active,
+.al-accordion__header:focus-visible,
+.al-accordion[open] > .al-accordion__header,
+.al-accordion[open] > .al-accordion__header .al-accordion__chevron {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-accordion__header,
+  .al-accordion__chevron {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-accordion {
+    outline: var(--al-accordion-divider-width) solid CanvasText;
+  }
+
+  .al-accordion__header:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}

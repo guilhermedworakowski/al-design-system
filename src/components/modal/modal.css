@@ -1,0 +1,228 @@
+/* AL Design System - Modal
+ * Written by hand. Depends on al-foundation.css, button.css and
+ * al-modal-tokens.css, in that order. The behavior (opening, closing on the
+ * scrim, initial focus) lives in modal.js.
+ *
+ * No value here is literal: color, space, radius, shadow, typography, width
+ * and duration come in through var(--al-modal-*). The check.py next to it
+ * rejects the file if any escapes.
+ *
+ * MARKUP CONTRACT - NATIVE <dialog> (RULE 24)
+ *
+ *   <dialog class="al-modal al-modal--md" aria-labelledby="t1">
+ *     <h2 class="al-modal__title" id="t1">Delete customer?</h2>
+ *     <div class="al-modal__content">…any content…</div>
+ *     <div class="al-modal__actions">
+ *       <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
+ *         <span class="al-btn__label">Cancel</span></button>
+ *       <button type="button" class="al-btn al-btn--danger al-btn--md">
+ *         <span class="al-btn__label">Delete customer</span></button>
+ *     </div>
+ *   </dialog>
+ *
+ *   - Size: --sm | --md | --lg. No modifier = md.
+ *   - Open: `data-al-modal-open="<dialog id>"` on the button, or showModal().
+ *     Always showModal(), never `open` in the markup nor show() (rule 24).
+ *   - Close: `data-al-modal-close` on the button, or <form method="dialog">.
+ *     Esc always closes (rule 15); the <dialog> already does it.
+ *   - No X button (rule 16): the footer's secondary is the way out. No
+ *     divider (rule 10): space is what separates the parts.
+ *   - Accessible name: aria-labelledby pointing to the title (rule 25).
+ *   - Actions: the secondary comes first, the main one last (rule 19).
+ *
+ * HEIGHT AND SCROLLING (RULE 28)
+ *   The height is the content's (hug). Past the screen, only the body
+ *   scrolls; title and actions stay fixed. The body gets a gap the size of
+ *   the focus ring and discounts it with a negative margin: the overflow
+ *   would clip the ring of a field touching the body's edge, and the gap
+ *   gives the space back without moving the layout. Derived from the
+ *   Foundation's focus tokens, no new value.
+ *
+ * WIDTH ON A PHONE (RULE 13)
+ *   The size's width, capped at 100% minus the margin on both sides. In a
+ *   modal <dialog> the 100% is the viewport.
+ *
+ * ENTER AND EXIT (RULE 17)
+ *   The card RISES on opening and SINKS on closing, with a fade, in 300ms
+ *   (modal-duration). The offset is `modal-offset` (space.96): the card is
+ *   born 96 below its place and goes back there. The curve is the
+ *   destination state's: ease-out on enter, ease-in on exit. The scrim only
+ *   appears and disappears. Uses @starting-style and transition-behavior:
+ *   allow-discrete to animate display and the top layer; in a browser
+ *   without them the Modal opens and closes without animation and keeps
+ *   working.
+ *   The column layout stays on the base, not on [open]: on closing, display
+ *   stays `flex` for the exit duration, and a layout only on [open] made the
+ *   body get squeezed in front of the user.
+ *
+ * SCRIM (RULE 27)
+ *   ::backdrop inherits the <dialog>'s custom properties. Decoration: it
+ *   doesn't receive focus. Closing by clicking it (only with no fields,
+ *   rule 14) belongs to the JS.
+ *
+ * BODY TEXT COLOR
+ *   The <dialog> gets the title color (text-primary) and the body inherits
+ *   it. Without it the UA paints CanvasText.
+ *
+ * HIGH CONTRAST
+ *   Without the background and the shadow the Modal would get lost: it gets
+ *   a CanvasText outline.
+ */
+
+/* ------------------------------------------------------------------ box */
+.al-modal {
+  box-sizing: border-box;
+  inline-size: var(--al-modal-width-md);
+  max-inline-size: calc(100% - 2 * var(--al-modal-margin));
+  max-block-size: calc(100% - 2 * var(--al-modal-margin));
+  margin: auto;
+  padding: var(--al-modal-padding);
+  border: 0;
+  border-radius: var(--al-modal-radius);
+  background-color: var(--al-modal-bg);
+  box-shadow: var(--al-modal-shadow);
+  color: var(--al-modal-title);
+  font-family: var(--al-font-sans);
+  overflow: clip;
+}
+
+.al-modal--sm { inline-size: var(--al-modal-width-sm); }
+.al-modal--md { inline-size: var(--al-modal-width-md); }
+.al-modal--lg { inline-size: var(--al-modal-width-lg); }
+
+/* The layout (column, gap) stays on the base and only display depends on
+   [open]: a closed dialog must stay display: none. If gap and direction
+   lived on [open], on closing the Modal would go back to block during the
+   exit and the body would get squeezed in front of the user. */
+.al-modal {
+  flex-direction: column;
+  gap: var(--al-modal-gap);
+}
+
+.al-modal[open] {
+  display: flex;
+}
+
+/* ---------------------------------------------------------------- title */
+/* The title is usually an <h2>, and the user may have a global h2 style
+   (mono, uppercase, color, underline). These resets belong to the
+   component: the Modal title is what modal.css says, on any page. */
+.al-modal__title {
+  flex: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  font-family: inherit;
+  text-transform: none;
+  overflow-wrap: anywhere;
+  font-size: var(--al-modal-title-font-size);
+  line-height: var(--al-modal-title-line-height);
+  font-weight: var(--al-modal-title-font-weight);
+  letter-spacing: var(--al-modal-title-tracking);
+}
+
+/* ----------------------------------------------------------------- body */
+.al-modal__content {
+  --_ring-room: calc(var(--al-border-focus-offset) + var(--al-border-width-focus));
+  flex: 1 1 auto;
+  min-block-size: 0;
+  margin: calc(-1 * var(--_ring-room));
+  padding: var(--_ring-room);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* -------------------------------------------------------------- actions */
+.al-modal__actions {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--al-modal-gap);
+}
+
+/* Ghost and secondary buttons on the raised background: the Button reads
+   bg-hover/bg-active, made for bg-surface. In dark the Modal background
+   (surface-raised) equals bg-hover, and the hover disappeared. Here the state
+   comes from the -raised semantics, the same the Accordion already uses. Only
+   the hover/pressed background changes; the rest belongs to the Button. */
+.al-modal .al-btn--ghost,
+.al-modal .al-btn--secondary,
+.al-modal .al-icon-btn--ghost,
+.al-modal .al-icon-btn--secondary {
+  --_bg-hover: var(--al-bg-hover-raised);
+  --_bg-active: var(--al-bg-active-raised);
+}
+
+/* ------------------------------------------------------- page behind */
+/* rule 28: the page doesn't scroll with the Modal open. `:modal` is only the
+   one opened by showModal(): a loose <dialog open>, like the frozen ones on
+   the QA page, doesn't lock scrolling */
+:root:has(.al-modal:modal) {
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------- enter and exit */
+/* The base state is the OUTSIDE one: transparent and shifted down. Open, it
+   rises and appears; on closing it goes back to the base state and sinks.
+   The same rule serves both directions. */
+.al-modal {
+  opacity: 0;
+  translate: 0 var(--al-modal-offset);
+  transition:
+    opacity var(--al-modal-duration) var(--al-motion-easing-exit),
+    translate var(--al-modal-duration) var(--al-motion-easing-exit),
+    overlay var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-modal[open] {
+  opacity: 1;
+  translate: 0 0;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* the scrim only appears and disappears; the card is what rises and sinks */
+.al-modal::backdrop {
+  background-color: var(--al-modal-scrim);
+  opacity: 0;
+  transition:
+    opacity var(--al-modal-duration) var(--al-motion-easing-exit),
+    overlay var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete,
+    display var(--al-modal-duration) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-modal[open]::backdrop {
+  opacity: 1;
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-modal[open] {
+    opacity: 0;
+    translate: 0 var(--al-modal-offset);
+  }
+
+  .al-modal[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-modal,
+  .al-modal::backdrop {
+    transition: none;
+  }
+
+  .al-modal {
+    translate: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-modal {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+}

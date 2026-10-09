@@ -1,0 +1,224 @@
+/* AL Design System - Breadcrumb (with _breadcrumb-more)
+ *
+ * Written by hand. Depends on al-foundation.css, al-icon-tokens.css + icon.css,
+ * al-tab-tokens.css + tab.css (menu items) and al-breadcrumb-tokens.css, in
+ * that order. Menu behavior: breadcrumb.js.
+ *
+ * No value here is literal: color, space, radius, border, shadow, ring and
+ * typography come in through var(--al-breadcrumb-*). The check.py next to it
+ * rejects the file if any escapes.
+ *
+ * MARKUP CONTRACT (rules 19 to 22)
+ *
+ *   <nav class="al-breadcrumb" aria-label="Breadcrumb">
+ *     <ol class="al-breadcrumb__list">
+ *       <li class="al-breadcrumb__item">
+ *         <a class="al-breadcrumb__link" href="/">Home</a>
+ *         <svg class="al-icon al-icon--16 al-breadcrumb__separator" viewBox="0 0 24 24"
+ *              aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg>
+ *       </li>
+ *       <li class="al-breadcrumb__item">
+ *         <a class="al-breadcrumb__link" href="/sales">Sales</a>
+ *         <svg class="al-icon al-icon--16 al-breadcrumb__separator" …></svg>
+ *       </li>
+ *       <li class="al-breadcrumb__item al-breadcrumb__more">            Large only (rule 5)
+ *         <button class="al-breadcrumb__more-button" type="button"
+ *                 aria-label="Show more pages"
+ *                 aria-expanded="false" aria-controls="bc-more">…</button>
+ *         <ul class="al-tabs al-tabs--square al-breadcrumb__menu" id="bc-more" hidden>
+ *           <li><a class="al-tab" href="/sales/orders">
+ *             <span class="al-tab__label">Orders</span></a></li>
+ *         </ul>
+ *         <svg class="al-icon al-icon--16 al-breadcrumb__separator" …></svg>
+ *       </li>
+ *       <li class="al-breadcrumb__item">
+ *         <span class="al-breadcrumb__current" aria-current="page">Order 1042</span>
+ *       </li>
+ *     </ol>
+ *   </nav>
+ *
+ *   - <ol>: the order has meaning (rule 19).
+ *   - The separator sits INSIDE the item it closes, after the link, and is
+ *     aria-hidden: the screen reader doesn't read "arrow" at every level
+ *     (rule 21). The last item has no separator.
+ *   - Current page: <span aria-current="page">, never <a> - it doesn't click
+ *     and doesn't receive focus (rules 15 and 20).
+ *   - The menu items are links (navigation Tab Square), never role="menu"
+ *     (rule 17). Hierarchy order, from highest to lowest (rule 6).
+ *
+ * WHEN THE LARGE APPEARS (rule 5)
+ *   Up to 4 levels: all items, no `…`. 5 or more: first, second, `…` and the
+ *   current one. Whoever builds the page decides - the component doesn't
+ *   measure.
+ *
+ * NO VISUAL HOVER ON THE TRAIL (rule 14)
+ *   Link and `…` only change the cursor. No :hover/:active color rule here,
+ *   on purpose. The MENU items have hover and pressed - they are Tab Square.
+ *
+ * -raised HOVER IN THE MENU (rule 26)
+ *   The menu lives on surface-raised, where the Tab's bg-hover disappears in
+ *   dark. Instead of rewriting tab.css, the menu redefines the Tab's two
+ *   custom properties inside it - tab.css is still the only one that paints
+ *   the item.
+ *
+ * LINE WRAPPING (rule 12)
+ *   The list wraps to the next line on a narrow screen; the label is never
+ *   cut. The item doesn't wrap inside: link and separator go together.
+ *
+ * MOTION
+ *   The menu enters and exits with a `motion-duration-feedback` fade (120ms,
+ *   the Button's): ease-out on opening, ease-in on closing. No motion with
+ *   prefers-reduced-motion. The trail animates nothing (rule 14).
+ *
+ * FOCUS
+ *   Default keyboard ring (:focus-visible) on link and `…`, with the corner in
+ *   ring-radius. The menu items use the Tab Square's own ring (rule 24).
+ */
+
+/* ------------------------------------------------------------------ trail */
+.al-breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--al-breadcrumb-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-breadcrumb-label-font-size);
+  line-height: var(--al-breadcrumb-label-line-height);
+  font-weight: var(--al-breadcrumb-label-font-weight);
+  letter-spacing: var(--al-breadcrumb-label-tracking);
+}
+
+.al-breadcrumb__item {
+  display: flex;
+  align-items: center;
+  gap: var(--al-breadcrumb-gap);
+}
+
+.al-breadcrumb__link {
+  color: var(--al-breadcrumb-link);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.al-breadcrumb__current {
+  color: var(--al-breadcrumb-current);
+}
+
+.al-breadcrumb__separator {
+  color: var(--al-breadcrumb-separator);
+}
+
+.al-breadcrumb__link:focus-visible,
+.al-breadcrumb__more-button:focus-visible {
+  outline: none;
+  box-shadow: var(--al-breadcrumb-ring);
+}
+
+/* The corner always applies, not only on focus: that way the ring doesn't
+   change shape when it appears. Link and `…` have no background, so the
+   radius only shows on the ring. */
+.al-breadcrumb__link,
+.al-breadcrumb__more-button {
+  border-radius: var(--al-breadcrumb-ring-radius);
+}
+
+/* ------------------------------------------------------------------- `…` */
+/* Grid, not flex: the menu (absolute) positions itself by the `…` COLUMN, not
+   by the whole item - the item also carries the separator, and centering on
+   it shifted the menu half a separator to the right. An absolute grid child
+   with grid-column uses the column area as its containing block - as long as
+   the column is EXPLICIT (an implicit column counts as `auto` and the menu
+   went back to centering on the whole item; measured in QA). */
+.al-breadcrumb__more {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+.al-breadcrumb__more-button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--al-breadcrumb-more);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ------------------------------------------------------------------- menu */
+/* Centered under the `…`, `menu-offset` below it - as in Figma. Grows with
+   the label from the minimum width. */
+.al-breadcrumb__menu {
+  --al-tab-bg-hover: var(--al-breadcrumb-menu-item-bg-hover);
+  --al-tab-bg-active: var(--al-breadcrumb-menu-item-bg-active);
+
+  position: absolute;
+  grid-column: 1 / 2;   /* both lines: when absolute, an `auto` end becomes the item's edge */
+  grid-row: 1 / 2;
+  top: calc(100% + var(--al-breadcrumb-menu-offset));
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  inline-size: max-content;
+  min-inline-size: var(--al-breadcrumb-menu-min-width);
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--al-breadcrumb-menu-gap);
+  padding: var(--al-breadcrumb-menu-padding);
+  border: var(--al-breadcrumb-menu-border-width) solid var(--al-breadcrumb-menu-border);
+  border-radius: var(--al-breadcrumb-menu-radius);
+  background-color: var(--al-breadcrumb-menu-bg);
+  box-shadow: var(--al-breadcrumb-menu-shadow);
+  transition:
+    opacity var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    display var(--al-motion-duration-feedback) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-breadcrumb__menu[hidden] {
+  display: none;
+  opacity: 0;
+}
+
+.al-breadcrumb__menu > li,
+.al-breadcrumb__menu .al-tab,
+.al-breadcrumb__menu .al-tab__label {
+  flex: 1 1 auto;
+}
+
+/* ENTER - CSS uses the curve of the state the transition goes to. The base
+   declares the exit one (ease-in, on closing); the open menu declares the
+   enter one (ease-out). @starting-style gives the starting point of the fade
+   on opening, and `allow-discrete` holds the [hidden] display:none until the
+   exit fade ends - the same mechanism as the Modal, at the feedback duration
+   (120ms, the Button's), because the menu is small and answers a click. No
+   offset: only opacity, the position is Figma's from start to end. */
+.al-breadcrumb__menu:not([hidden]) {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-breadcrumb__menu:not([hidden]) {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-breadcrumb__menu {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------- high contrast */
+@media (forced-colors: active) {
+  .al-breadcrumb__link:focus-visible,
+  .al-breadcrumb__more-button:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}

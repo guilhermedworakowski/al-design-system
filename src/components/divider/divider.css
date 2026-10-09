@@ -1,0 +1,67 @@
+/* AL Design System - Divider
+ * Written by hand. Depends on al-foundation.css and al-divider-tokens.css, in
+ * that order.
+ *
+ * No value here is literal: color and thickness come in through
+ * var(--al-divider-*). The check.py next to it rejects the file if any escapes.
+ *
+ * MARKUP CONTRACT
+ *
+ *   announced, horizontal (the default):
+ *     <hr class="al-divider">
+ *
+ *   announced, vertical (rule 14 - the separator is horizontal by default):
+ *     <hr class="al-divider al-divider--vertical" aria-orientation="vertical">
+ *
+ *   decorative (rule 13 - the structure already separates):
+ *     <hr class="al-divider" aria-hidden="true">
+ *
+ *   inside a list or menu (rule 15 - <ul> only accepts <li>):
+ *     <li class="al-divider" role="separator"></li>
+ *
+ * WHY `<hr>` IN BOTH ORIENTATIONS
+ *   `<hr>` already has the `separator` role with no attribute, and ARIA
+ *   accepts `aria-orientation` on it. One element for both cases means one
+ *   contract for the markup gate (a11y.py) to measure.
+ *
+ * THE LINE IS A BORDER, NOT A BACKGROUND
+ *   In Figma the line is a filled 1px rectangle. Here it is the border of a
+ *   zero-thickness box, for two reasons: the browser's `<hr>` is already drawn
+ *   this way (we only swap style and color), and in the system's high contrast
+ *   mode the border is repainted with the text color - a background would
+ *   disappear. The visual result is the same: 1px in border-default.
+ *
+ * LENGTH AND MARGIN BELONG TO THE LAYOUT
+ *   The horizontal one takes the container's width (block behavior). The
+ *   vertical one stretches to the row's height (`align-self: stretch`), so it
+ *   NEEDS a parent in row flex or grid - outside that it has no height, and
+ *   that is correct: vertical only exists between side-by-side items (rule 5).
+ *   The margin is zeroed because the browser's `<hr>` brings its own; the
+ *   space around it is decided by whoever builds the screen (rule 9).
+ *
+ * NO STATE, BY DECISION
+ *   No hover, focus, transition or disabled. The divider is never focusable
+ *   or clickable (rule 16): a focusable separator in ARIA is the Window
+ *   Splitter, another component. That is why this file has no literal
+ *   duration at all.
+ */
+
+.al-divider {
+  display: block;
+  flex-shrink: 0;
+  box-sizing: content-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  block-size: 0;
+  list-style: none;
+  border-block-start: var(--al-divider-thickness) solid var(--al-divider-color);
+}
+
+.al-divider--vertical {
+  align-self: stretch;
+  block-size: auto;
+  inline-size: 0;
+  border-block-start: 0;
+  border-inline-start: var(--al-divider-thickness) solid var(--al-divider-color);
+}
