@@ -173,8 +173,13 @@ O arquivo `.svg` traz só o desenho: a classe `.al-icon` e o contrato de acessib
 build.py         # o build completo num comando: todos os geradores e portões, na ordem
 .github/workflows/build.yml  # roda python3 build.py --check em cada PR
 
+tools/           # código que todos os componentes usam, num lugar só
+  contrast.py    # contraste WCAG (luminância, razão, cor com transparência sobre fundo)
+  htmltree.py    # lê o HTML do site como árvore, para os a11y.py medirem a marcação
+  cssgate.py     # o portão do CSS: o check.py de cada componente só diz o que é dele
+
 foundation/
-  color.py       # motor OKLCH -> sRGB, gamut mapping, contraste
+  color.py       # motor OKLCH -> sRGB, gamut mapping (o contraste vem de tools/)
   build.py       # camada semântica + portão de contraste (WCAG 2.1 AA)
   export.py      # gera tokens.json a partir de color.py + build.py e grava a versão no package.json
   css.py         # gera al-foundation.css a partir de tokens.json
@@ -183,33 +188,33 @@ foundation/
 components/button/
   tokens.py      # camada de alias do Button + portão de alias, gera tokens.json e o CSS
   button.css     # o componente, escrito à mão
-  check.py       # portão do CSS: recusa valor literal em button.css
+  check.py       # portão do CSS: recusa valor literal e token órfão em button.css
   a11y.py        # QA de acessibilidade por combinação renderizada
 
 components/icon/
   icons/*.svg    # os 70 desenhos — Lucide, ISC (ver NOTICE); o resto do repo é MIT
   tokens.py      # camada de alias do Icon + portão de alias, gera tokens.json e o CSS
   icon.css       # o componente, escrito à mão — só caixa e tinta
-  check.py       # portão do CSS: recusa valor literal em icon.css
+  check.py       # portão do CSS: recusa valor literal e token órfão em icon.css
   icons.py       # portão do desenho: recusa SVG fora da família, gera icons.json
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
 
 components/icon-button/
   tokens.py      # camada de alias do Icon Button + portão de alias, gera tokens.json e o CSS
   icon-button.css # o componente, escrito à mão
-  check.py       # portão do CSS: recusa valor literal em icon-button.css
+  check.py       # portão do CSS: recusa valor literal e token órfão em icon-button.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
 
 components/tag/
   tokens.py      # camada de alias do Tag + portão de alias + portão de contraste, gera tokens.json e o CSS
   tag.css        # o componente, escrito à mão
-  check.py       # portão do CSS: recusa valor literal em tag.css
+  check.py       # portão do CSS: recusa valor literal e token órfão em tag.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
 
 components/avatar/
   tokens.py      # camada de alias do Avatar + portão de alias + portão de contraste, gera tokens.json e o CSS
   avatar.css     # o componente, escrito à mão
-  check.py       # portão do CSS: recusa valor literal em avatar.css
+  check.py       # portão do CSS: recusa valor literal e token órfão em avatar.css
   a11y.py        # QA de acessibilidade + contrato de marcação, gera a11y.json
 
 components/select/
