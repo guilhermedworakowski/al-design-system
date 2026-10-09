@@ -1,38 +1,22 @@
 """
 Portao do CSS do Drawer.
 
-Mesma ideia do portao de alias em tokens.py, uma camada acima: o componente nao
-pode conter valor literal. Toda cor e comprimento tem que entrar por var(--al-*).
-Se um hex ou um px aparecer no drawer.css, o build para.
+A regra e a mesma para todos os componentes e mora em tools/cssgate.py: nada
+de valor literal (cor, comprimento, peso, duracao), nenhum token orfao e
+nenhum token inventado. Aqui fica so o que e proprio do Drawer.
 
-Como o Modal, e diferente do Button, do Card, do Tab e do Accordion, o Drawer nao tem pendencia
-de motion: a duracao e `drawer-duration` (motion.duration.panel) e a curva vem
-da Foundation. Qualquer duracao literal que aparecer aqui e erro, nao
-pendencia - o relatorio ainda a lista, mas o esperado e zero.
-
-Herdado do Select: tambem reprova token declarado e nunca consumido (orfao) e
-custom property do Drawer que nao existe na camada de tokens (inventada).
-
-Rodar: python3 check.py
+Rodar: python3 check.py (ou o build completo: python3 build.py)
 """
 import os
-import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TARGET = os.path.join(HERE, 'drawer.css')
-
-HEX = re.compile(r'#[0-9a-fA-F]{3,8}\b')
-FUNC_COLOR = re.compile(r'\b(rgba?|hsla?|oklch|lab|color)\s*\(')
-# comprimento literal fora de var(): 12px, 1.5rem, 2em...
-LENGTH = re.compile(r'(?<![\w-])\d*\.?\d+(px|rem|em|ch|vh|vw)\b')
-DURATION = re.compile(r'(?<![\w-])\d*\.?\d+m?s\b')
-# peso de fonte cravado: font-weight: 500
-WEIGHT = re.compile(r'font-weight\s*:\s*\d+')
+sys.path.insert(0, os.path.join(HERE, '..', '..', 'tools'))
+from cssgate import gate  # noqa: E402
 
 # O que este portao NAO alcanca: marcacao so existe na saida renderizada.
 # O a11y.py da etapa 6 cobra estas regras no HTML que o site emite.
-CONTRATOS_FORA_DO_CSS = [
+FORA_DO_CSS = [
     '<dialog> nativo aberto por showModal(), nunca `open` na marcacao nem show() (regra 24)',
     'aria-labelledby apontando para o titulo (regra 25)',
     'sempre uma saida visivel: o X (Icon Button Ghost sm com aria-label) ou o rodape com secundario que fecha (regras 14 e 26)',
@@ -42,91 +26,5 @@ CONTRATOS_FORA_DO_CSS = [
 ]
 
 
-def strip_comments(text):
-    return re.sub(r'/\*.*?\*/', '', text, flags=re.S)
-
-
-def run():
-    if not os.path.exists(TARGET):
-        print(f'drawer.css nao encontrado em {TARGET}')
-        return 1
-
-    raw = open(TARGET).read()
-    body = strip_comments(raw)
-    lines = body.split('\n')
-
-    failures, pending = [], []
-
-    for i, line in enumerate(lines, 1):
-        for m in HEX.finditer(line):
-            failures.append((i, 'hex literal', m.group(0), line.strip()))
-        for m in FUNC_COLOR.finditer(line):
-            failures.append((i, 'cor por funcao', m.group(0) + '…)', line.strip()))
-        for m in LENGTH.finditer(line):
-            failures.append((i, 'comprimento literal', m.group(0), line.strip()))
-        for m in WEIGHT.finditer(line):
-            failures.append((i, 'peso literal', m.group(0), line.strip()))
-        for m in DURATION.finditer(line):
-            pending.append((i, m.group(0), line.strip()))
-
-    n_vars = len(set(re.findall(r'var\(\s*(--al-[\w-]+)', body)))
-    usados = set(re.findall(r'var\(\s*(--al-drawer-[\w-]+)', body))
-
-    # Segundo portao, herdado do Select: token declarado e nunca usado e token
-    # que so parece existir. Compara o que o tokens.py emitiu com o que o CSS
-    # consome, pelo arquivo de tokens gerado ao lado.
-    tokens_css = os.path.join(HERE, 'al-drawer-tokens.css')
-    declarados = set()
-    if os.path.exists(tokens_css):
-        declarados = set(re.findall(r'^\s*(--al-drawer-[\w-]+)\s*:',
-                                    open(tokens_css).read(), flags=re.M))
-    orfaos = sorted(declarados - usados)
-    inventados = sorted(usados - declarados) if declarados else []
-
-    print('=' * 70)
-    print('PORTAO DO CSS DO DRAWER')
-    print('=' * 70)
-    print(f'  arquivo                  : components/drawer/drawer.css')
-    print(f'  custom properties usadas : {n_vars}  (sendo {len(usados)} da camada do Drawer)')
-    print(f'  tokens declarados        : {len(declarados)}')
-    print(f'  linhas                   : {len(lines)}')
-    print('-' * 70)
-    for c in CONTRATOS_FORA_DO_CSS:
-        print(f'fora do alcance deste portao: {c}')
-    print('-' * 70)
-
-    if pending:
-        print(f'DURACAO LITERAL - o Drawer usa drawer-duration, nao deveria haver nenhuma:')
-        for ln, val, src in pending:
-            print(f'   linha {ln:>3}  {val:<8} {src[:52]}')
-    else:
-        print('pendencias: nenhuma')
-    print('-' * 70)
-
-    if inventados:
-        print(f'{len(inventados)} CUSTOM PROPERTY DO DRAWER QUE NAO EXISTE NA CAMADA DE TOKENS:')
-        for t in inventados:
-            print('   ', t)
-        return 1
-
-    if orfaos:
-        print(f'{len(orfaos)} TOKEN(S) DECLARADO(S) E NUNCA USADO(S) - PORTAO REPROVA:')
-        for t in orfaos:
-            print('   ', t)
-        print('   token que ninguem consome e token que so parece existir: ou o CSS')
-        print('   esqueceu de aplicar, ou o token nao devia ter nascido.')
-        return 1
-
-    if failures:
-        print(f'{len(failures)} VALOR(ES) LITERAL(IS) - PORTAO REPROVA:')
-        for ln, kind, val, src in failures:
-            print(f'   linha {ln:>3}  {kind:<20} {val:<12} {src[:44]}')
-        return 1
-
-    print('0 valores literais de cor, comprimento ou peso.')
-    print(f'{len(declarados)} tokens declarados, {len(usados)} consumidos, 0 orfaos.')
-    return 0
-
-
 if __name__ == '__main__':
-    sys.exit(run())
+    sys.exit(gate('drawer', fora_do_css=FORA_DO_CSS))

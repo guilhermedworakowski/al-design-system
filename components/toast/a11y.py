@@ -70,10 +70,12 @@ Rodar: python3 a11y.py [caminho.html]
 import json
 import os
 import sys
-from html.parser import HTMLParser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+from contrast import cr  # noqa: E402
+from htmltree import Tree, walk, classes, has, ancestors, text_of  # noqa: E402
 FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))
 TS = json.load(open(os.path.join(HERE, 'tokens.json')))
 IB = json.load(open(os.path.join(ROOT, 'components', 'icon-button', 'tokens.json')))
@@ -99,26 +101,6 @@ STATUS = {
 CLOSE_CLASSES = {'al-icon-btn', 'al-icon-btn--ghost', 'al-icon-btn--sm', 'al-toast__close'}
 CLOSE_LABEL = 'Fechar notificação'
 INTERATIVOS = ('a', 'button', 'input', 'select', 'textarea', 'details', 'summary')
-
-VOID = {'area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link',
-        'meta', 'source', 'track', 'wbr', 'path', 'circle', 'line', 'rect',
-        'polyline', 'polygon', 'ellipse'}
-
-
-def lin(c):
-    c = c / 255
-    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
-
-
-def lum(h):
-    h = h.lstrip('#')
-    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
-    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
-
-
-def cr(a, b):
-    l1, l2 = sorted((lum(a), lum(b)), reverse=True)
-    return (l1 + 0.05) / (l2 + 0.05)
 
 
 def sem(name, theme):
@@ -168,74 +150,6 @@ def contrast_rows():
 
 
 # ─────────────────────────────────────────────── marcacao
-class Tree(HTMLParser):
-    """Arvore simples. Diferente dos outros portoes, ENTRA no <template>:
-    e la que mora a marcacao viva do toast."""
-
-    def __init__(self):
-        super().__init__(convert_charrefs=True)
-        self.root = {'tag': '#root', 'attrs': {}, 'kids': [], 'text': '', 'line': 0}
-        self.stack = [self.root]
-        self.skip = 0
-
-    def handle_starttag(self, tag, attrs):
-        if tag in ('style', 'script'):
-            self.skip += 1
-            return
-        if self.skip:
-            return
-        node = {'tag': tag, 'attrs': dict((k, v or '') for k, v in attrs),
-                'kids': [], 'text': '', 'line': self.getpos()[0], 'parent': self.stack[-1]}
-        self.stack[-1]['kids'].append(node)
-        if tag not in VOID:
-            self.stack.append(node)
-
-    def handle_startendtag(self, tag, attrs):
-        self.handle_starttag(tag, attrs)
-        if tag not in VOID and not self.skip and self.stack[-1]['tag'] == tag:
-            self.stack.pop()
-
-    def handle_endtag(self, tag):
-        if tag in ('style', 'script'):
-            self.skip = max(0, self.skip - 1)
-            return
-        if self.skip or tag in VOID:
-            return
-        for i in range(len(self.stack) - 1, 0, -1):
-            if self.stack[i]['tag'] == tag:
-                del self.stack[i:]
-                break
-
-    def handle_data(self, data):
-        if not self.skip:
-            self.stack[-1]['text'] += data
-
-
-def walk(node):
-    for k in node['kids']:
-        yield k
-        yield from walk(k)
-
-
-def classes(node):
-    return node['attrs'].get('class', '').split()
-
-
-def has(node, cls):
-    return cls in classes(node)
-
-
-def ancestors(node):
-    p = node.get('parent')
-    while p is not None:
-        yield p
-        p = p.get('parent')
-
-
-def text_of(node):
-    return (node['text'] + ''.join(text_of(k) for k in node['kids'])).strip()
-
-
 def shape(svg_kids):
     """Assinatura do desenho: tag + atributos geometricos de cada filho."""
     return [(k['tag'], tuple(sorted((a, v) for a, v in k['attrs'].items()

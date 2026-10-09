@@ -53,6 +53,9 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+# este portao compara a razao ja arredondada em 2 casas, como sempre fez
+from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(os.path.join(ROOT, 'tokens.json')))
 PW = json.load(open(os.path.join(HERE, 'tokens.json')))
 
@@ -81,22 +84,6 @@ STATES = {
     'focus-error': dict(border='password-border-error',    surface='password-bg',          ring='password-ring-error', kind='erro',   exc=None,  toggle_ring=False),
     'disabled':    dict(border='password-border-disabled', surface='password-bg-disabled', ring=None,                  kind='off',    exc=OFF,   toggle_ring=False),
 }
-
-
-def lin(c):
-    c = c / 255
-    return c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4
-
-
-def lum(h):
-    h = h.lstrip('#')
-    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
-    return 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
-
-
-def cr(a, b):
-    la, lb = lum(a), lum(b)
-    return round((max(la, lb) + 0.05) / (min(la, lb) + 0.05), 2)
 
 
 def tok(name, theme):
