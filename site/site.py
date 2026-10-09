@@ -761,7 +761,7 @@ body{
 
 /* ── conteúdo ── */
 .main{min-width:0}
-.inner{max-width:1000px; padding:0 40px 100px}
+.inner{max-width:1000px; padding:0 40px}
 /* ── hero: o mesmo modelo em todas as páginas ──
    Seção (rótulo do grupo da Sidebar) em Caption, Breadcrumb do AL fora das
    "Visão geral", título em Display/xl, descrição em Body/md e o resumo em Tag
@@ -1029,12 +1029,32 @@ th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
 .tagrow{display:flex; flex-wrap:wrap; gap:9px; align-items:center}
 .tagrow + .tagrow{margin-top:11px}
 
-footer{margin-top:64px; padding-top:24px; border-top:1px solid var(--al-border-subtle);
-  color:var(--al-text-secondary); font-size:12.5px; display:flex; flex-wrap:wrap; gap:8px 20px}
-footer code{background:none; padding:0}
+/* ── rodapé: o mesmo modelo do portfólio ──
+   Ocupa a largura do conteúdo, como as tabelas, com a linha em border-subtle e
+   o texto em Body/sm text-secondary. Estreito, os três textos empilham
+   centrados (32 em cima e embaixo). Largo, viram três colunas 1fr auto 1fr numa
+   faixa de 96: as laterais dividem a sobra por igual, então o texto do meio fica
+   no centro exato. O corte é pela largura do próprio rodapé, não da tela, porque
+   acima de 1024 a Sidebar divide a largura com o conteúdo. A 48em o meio (352px)
+   ainda cabe em uma linha com 184px de cada lado, mais que os 167px do nome. */
+.site-footer{container-type:inline-size; margin-top:var(--al-space-80);
+  border-top:var(--al-border-width-1) solid var(--al-border-subtle)}
+.site-footer__inner{display:grid; justify-items:center; gap:var(--al-space-16); padding-block:var(--al-space-32);
+  font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm); color:var(--al-text-secondary);
+  text-align:center}
+.site-footer p{margin:0}
+.site-footer b{font-weight:var(--al-font-weight-bold)}
+.site-footer__credit{text-wrap:balance}
+@container (width >= 48em){
+  .site-footer__inner{grid-template-columns:1fr auto 1fr; align-items:center; gap:var(--al-space-24);
+    min-height:var(--al-space-96); padding-block:0}
+  .site-footer__name, .site-footer__license{white-space:nowrap}
+  .site-footer__name{justify-self:start; text-align:start}
+  .site-footer__license{justify-self:end; text-align:end}
+}
 
 @media (max-width:900px){
-  .inner{padding:0 20px 72px}
+  .inner{padding:0 20px}
   .hero{padding-top:var(--al-space-32)}
   .hero__title{font-size:var(--al-font-size-4xl); line-height:var(--al-line-height-4xl)}
   .ctl{grid-template-columns:1fr; gap:8px}
@@ -12904,13 +12924,11 @@ TOPBAR = (
     '<span class="topbar-name">AL Design System</span></header>')
 
 
-FOOTER = f'''<footer>
-  <span><b>AL Design System</b> · v{VERSION}</span>
-  <span>Licença {META['license']}</span>
-  <span>{META['colorSpace']} · WCAG {META['wcag']}</span>
-  <span>Âncora <code>{META['brandAnchor']}</code></span>
-  <span>Gerado por <code>site/site.py</code></span>
-</footer>'''
+FOOTER = f'''<footer class="site-footer"><div class="site-footer__inner">
+  <p class="site-footer__name">AL Design System · <b>v{VERSION}</b></p>
+  <p class="site-footer__credit">Design System open-source, da estratégia ao código</p>
+  <p class="site-footer__license">Licença <b>{META['license']}</b></p>
+</div></footer>'''
 
 JS = r"""
 (function () {

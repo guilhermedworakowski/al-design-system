@@ -21,7 +21,7 @@ Preparation for the open-source launch. No class or token changed meaning; one S
 - **Sidebar:** the group label is now all caps, applied by CSS (`text-transform`); the text stays in sentence case in the HTML, so screen readers read the word instead of spelling it. Rule 17 changed to match.
 - **Tab gate:** the 2-to-6-tabs limit (rule 8) no longer applies inside a `.al-sidebar`. The rule itself sends more than six destinations to side navigation, and the Sidebar gate owns those lists.
 - **Breadcrumb gate:** "one per page" (rule 7) now counts per page in a single-file site, where each page is a subtree that toggles `hidden`, and a live demo that can't be `inert` is marked with `data-al-demo` and counts as a sample. The guidelines declare the documentation site's divergence from rules 1 and 3: its 2-level trail repeats the Sidebar.
-- The documentation site's navigation is now the AL Sidebar itself, grouped by Foundation and by component type, instead of a handmade rail. Every page opens with the same hero: the Sidebar group, a Breadcrumb outside the two overview pages, the title, the description and the summary as Tags.
+- The documentation site's navigation is now the AL Sidebar itself, grouped by Foundation and by component type, instead of a handmade rail. Every page opens with the same hero: the Sidebar group, a Breadcrumb outside the two overview pages, the title, the description and the summary as Tags. The footer, modeled on the author's portfolio, holds the name and version, a one-line description centered between them and the license.
 
 ### Removed
 - The per-component QA pages; every gate now measures the documentation site itself.
