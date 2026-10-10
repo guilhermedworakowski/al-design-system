@@ -8,8 +8,13 @@ the Foundation has no container width scale.
 
 Naming:
   code  -> sidebar-profile-gap     (hyphen)
-  Figma -> profile/gap             (collection `21. Sidebar`)
-They are different layers. Never collapse one into the other.
+  Figma -> space/8                 (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to. The exception is a value the
+Foundation lacks, which lives in the `4. Components` collection
+(sidebar-width -> sidebar/width).
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 FIRST COMPONENT OF TIER 4 (2026-10-08)
 
@@ -197,7 +202,7 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '339:2916',
-            'figmaCollection': '21. Sidebar',
+            'figmaCollection': '4. Components',
             'note': (
                 'Fixed side navigation, 296 wide, bg-canvas background with a right border in '
                 'border-default. Profile, group slot and Help section; items are full-width Tab '

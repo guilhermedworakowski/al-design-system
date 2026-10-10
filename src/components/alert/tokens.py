@@ -7,8 +7,11 @@ takes the content width and has no time on screen.
 
 Naming:
   code  -> alert-danger-border   (hyphen)
-  Figma -> danger/border         (collection `25. Alert`)
-They are different layers. Never collapse one into the other.
+  Figma -> border/danger         (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 THIRD COMPONENT OF TIER 5 AND LAST OF V1 (2026-10-09)
 
@@ -199,7 +202,6 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '373:5186',
-            'figmaCollection': '25. Alert',
             'note': (
                 'Background bg-surface-raised, 1px border and icon 24 in the status color, 16/24 '
                 'bold title built from the scale, Body/md description always visible, padding 16, '

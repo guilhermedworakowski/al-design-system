@@ -7,8 +7,11 @@ anything that is a loose value - hex, px, number.
 
 Naming:
   code  -> card-border-hover       (hyphen)
-  Figma -> border/hover            (collection `16. Card`)
-They are different layers. Never collapse one into the other.
+  Figma -> border/strong           (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 SECOND COMPONENT OF TIER 3 (2026-10-07)
 
@@ -273,7 +276,6 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '302:870',
-            'figmaCollection': '16. Card',
             'variants': ['filled', 'border', 'elevated'],
             'sizes': ['spaced', 'default', 'tight'],
             'states': ['default', 'hover', 'focus'],

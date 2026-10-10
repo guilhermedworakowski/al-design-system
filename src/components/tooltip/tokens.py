@@ -8,8 +8,13 @@ Foundation has no container width scale nor a delay scale.
 
 Naming:
   code  -> tooltip-padding-y      (hyphen)
-  Figma -> padding/y              (collection `23. Tooltip`)
-They are different layers. Never collapse one into the other.
+  Figma -> space/8                (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to. The exception is a value the
+Foundation lacks, which lives in the `4. Components` collection
+(tooltip-max-width -> tooltip/max-width).
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 FIRST COMPONENT OF TIER 5 (2026-10-08)
 
@@ -198,7 +203,7 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '373:5340',
-            'figmaCollection': '23. Tooltip',
+            'figmaCollection': '4. Components',
             'note': (
                 'Inverted background (bg-inverse / text-inverse), icon 20 always present '
                 'following the text, Body/sm, padding 8 x 12, gap 8, lg radius, Elevation/3, no '
