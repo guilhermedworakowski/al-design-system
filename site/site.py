@@ -778,18 +778,22 @@ body{
   font-weight:var(--al-font-weight-regular); color:var(--al-text-secondary)}
 .hero__tags{display:flex; flex-wrap:wrap; gap:var(--al-space-8); margin-top:var(--al-space-24)}
 
-/* ── abas ── */
-.tabs{display:flex; gap:2px; border-bottom:1px solid var(--al-border-subtle);
-  margin:32px 0 0; position:sticky; top:0; background:var(--al-bg-canvas); z-index:5;
-  overflow-x:auto}
-.tabs button{
-  appearance:none; background:none; border:0; border-bottom:2px solid transparent;
-  padding:13px 16px; font-family:inherit; font-size:14px; font-weight:500;
-  color:var(--al-text-secondary); cursor:pointer; white-space:nowrap; margin-bottom:-1px;
+/* ── abas: o Tab Line do AL ──
+   Mesma navegação em toda página com abas, fora do corpo: a faixa fica entre o
+   Hero e os painéis e gruda no topo ao rolar. As abas vêm do tab.css sem regra
+   por cima e ficam juntas (o grupo não tem gap; o respiro é o padding da
+   própria aba). A faixa estende a linha de ponta a ponta do corpo, na mesma
+   cor e espessura da linha da aba não selecionada (border-subtle, 2px): a
+   aba desce sobre ela e a da selecionada cobre o trecho dela em laranja. */
+.page-tabs{position:sticky; top:0; z-index:5; margin:var(--al-space-32) 0 0;
+  background:var(--al-bg-canvas); overflow-x:auto;
+  box-shadow:inset 0 calc(-1 * var(--al-tab-line-indicator-width)) 0 var(--al-border-subtle)}
+/* abaixo de 1024 a topbar também gruda: a faixa para logo embaixo dela
+   (padding 12 + Icon Button md 48 + padding 12 + borda 1 = 73) */
+@media (width < 1024px){
+  .page-tabs{top:calc(2 * var(--al-space-12) + var(--al-icon-button-md-icon-size)
+    + 2 * var(--al-icon-button-md-padding) + var(--al-border-width-1))}
 }
-.tabs button:hover{color:var(--al-text-primary)}
-.tabs button[aria-selected="true"]{color:var(--al-bg-brand); border-bottom-color:var(--al-bg-brand)}
-.tabs button:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:-2px}
 .panel{padding-top:36px}
 
 section{margin-bottom:52px}
@@ -1177,19 +1181,25 @@ CARET = ('<svg viewBox="0 0 16 16" fill="none" aria-hidden="true">'
 
 
 def page(pid, lede, badges, tabs, first=False):
-    """Uma entrada do trilho. `tabs` = [(slug, rótulo, html)]."""
+    """Uma página com abas. `tabs` = [(slug, rótulo, html)].
+
+    A barra é o Tab Line do AL (tab.css + tab.js), numa faixa própria entre o
+    Hero e os painéis. Cada painel começa com um <h2> igual ao rótulo, só para
+    leitor de tela (regra 25 do Tab): o visual já diz qual aba está aberta.
+    """
     title = NAV_INFO[pid][1]
-    bar = [f'<div class="tabs" role="tablist" aria-label="Seções de {title}">']
+    bar = [f'<div class="page-tabs"><div class="al-tabs" role="tablist" aria-label="Seções de {title}">']
     panels = []
     for i, (slug, label, html) in enumerate(tabs):
         tid, panid = f't-{pid}-{slug}', f'p-{pid}-{slug}'
         on = i == 0
-        bar.append(f'<button role="tab" id="{tid}" aria-controls="{panid}" '
+        roving = '' if on else ' tabindex="-1"'
+        bar.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" aria-controls="{panid}" '
                    f'aria-selected="{"true" if on else "false"}"'
-                   f'{"" if on else " tabindex=-1"}>{label}</button>')
+                   f'{roving}><span class="al-tab__label">{label}</span></button>')
         panels.append(f'<div class="panel" id="{panid}" role="tabpanel" aria-labelledby="{tid}" '
-                      f'tabindex="0"{"" if on else " hidden"}>{html}</div>')
-    bar.append('</div>')
+                      f'tabindex="0"{"" if on else " hidden"}><h2 class="sr-only">{label}</h2>{html}</div>')
+    bar.append('</div></div>')
     return (f'<div class="page" id="pg-{pid}"{"" if first else " hidden"}>'
             + hero(pid, lede, badges) + ''.join(bar) + ''.join(panels) + '</div>')
 
@@ -8043,7 +8053,7 @@ TAB_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
-    <div class="stage" id="tab-stage"><div class="tb-page" data-tbpage="canvas">{TB_DEMOS["line|panel"]["html"]}</div></div>
+    <div class="stage" id="tab-stage" data-al-demo><div class="tb-page" data-tbpage="canvas">{TB_DEMOS["line|panel"]["html"]}</div></div>
     <div class="controls" id="tab-controls">
       <div class="ctl"><span class="ctl-name">Tipo</span>{seg('tbtype', TB_TYPES, 'line')}</div>
       <div class="ctl"><span class="ctl-name">Uso</span>{seg('tbuse', TB_USES, 'panel')}</div>
@@ -8090,13 +8100,13 @@ TAB_OVERVIEW = f'''
   <div class="dd" style="margin-top:16px">
     <div class="cell do">
       <span class="lab">Painel · ao vivo</span>
-      <div class="stage2 tb-stage tb-live" data-tbpage="canvas">{TB_LIVE_PEDIDO}</div>
+      <div class="stage2 tb-stage tb-live" data-al-demo data-tbpage="canvas">{TB_LIVE_PEDIDO}</div>
       <p class="cap"><code>role="tablist"</code>, uma parada de Tab, setas para trocar. O painel
       começa com o mesmo nome da aba. <i>APG, Primer.</i></p>
     </div>
     <div class="cell do">
       <span class="lab">Navegação · ao vivo</span>
-      <div class="stage2 tb-stage tb-live" data-tbpage="surface">{TB_LIVE_SIDEBAR}</div>
+      <div class="stage2 tb-stage tb-live" data-al-demo data-tbpage="surface">{TB_LIVE_SIDEBAR}</div>
       <p class="cap"><code>&lt;nav&gt;</code> com links e <code>aria-current="page"</code> no
       atual. Sidebar sempre em Square. <i>Primer NavList.</i></p>
     </div>
@@ -13034,29 +13044,7 @@ JS = r"""
     }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
   }
 
-  // ── abas, com navegação por seta como manda o padrão ──
-  [].slice.call(document.querySelectorAll('.tabs')).forEach(function (bar) {
-    var tabs = [].slice.call(bar.querySelectorAll('[role="tab"]'));
-    function select(tab) {
-      tabs.forEach(function (t) {
-        var on = t === tab;
-        t.setAttribute('aria-selected', on ? 'true' : 'false');
-        t.tabIndex = on ? 0 : -1;
-        document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-      });
-    }
-    tabs.forEach(function (tab, i) {
-      tab.addEventListener('click', function () { select(tab); });
-      tab.addEventListener('keydown', function (e) {
-        var next = null;
-        if (e.key === 'ArrowRight') next = tabs[(i + 1) % tabs.length];
-        if (e.key === 'ArrowLeft') next = tabs[(i - 1 + tabs.length) % tabs.length];
-        if (e.key === 'Home') next = tabs[0];
-        if (e.key === 'End') next = tabs[tabs.length - 1];
-        if (next) { e.preventDefault(); select(next); next.focus(); }
-      });
-    });
-  });
+  // As abas das páginas são ligadas pelo tab.js do AL (setas, Home, End e painel).
 
   // ── playground do Button ──
   var demo = document.getElementById('demo');
