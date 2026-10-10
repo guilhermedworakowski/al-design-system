@@ -8,8 +8,13 @@ Sidebar, the Modal and the Drawer: the Foundation has no container width scale.
 
 Naming:
   code  -> breadcrumb-menu-bg      (hyphen)
-  Figma -> menu/bg                 (collection `22. Breadcrumb`)
-They are different layers. Never collapse one into the other.
+  Figma -> bg/surface-raised       (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to. The exception is a value the
+Foundation lacks, which lives in the `4. Components` collection
+(breadcrumb-menu-min-width -> breadcrumb/menu/min-width).
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 LAST COMPONENT OF TIER 4 (2026-10-08)
 
@@ -238,7 +243,7 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '339:3785 + 339:4046',
-            'figmaCollection': '22. Breadcrumb',
+            'figmaCollection': '4. Components',
             'note': (
                 'Navigation trail: links in text-secondary, current page in text-brand (text, not '
                 'a link), chevron 16 separator in text-secondary, Label/md, gap 8. With 5 levels '

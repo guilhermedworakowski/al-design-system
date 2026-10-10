@@ -7,8 +7,11 @@ anything that is a loose value - hex, px, number.
 
 Naming:
   code  -> switch-thumb-checked      (hyphen)
-  Figma -> thumb/checked             (folder, collection `11. Switch`)
-They are different layers. Never collapse one into the other.
+  Figma -> text/on-brand             (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 IT IS THE NATIVE `<input type="checkbox" role="switch">`
 
@@ -288,7 +291,6 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '259:262',
-            'figmaCollection': '11. Switch',
             'variants': [],
             'sizes': ['md'],
             'states': ['default', 'hover', 'checked', 'disabled', 'focus'],

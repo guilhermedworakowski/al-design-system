@@ -8,8 +8,13 @@ Foundation has no container width scale nor a wait time scale.
 
 Naming:
   code  -> toast-success-border   (hyphen)
-  Figma -> success/border         (collection `24. Toast`)
-They are different layers. Never collapse one into the other.
+  Figma -> border/success         (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to. The exception is a value the
+Foundation lacks, which lives in the `4. Components` collection
+(toast-max-width -> toast/max-width).
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 SECOND COMPONENT OF TIER 5 (2026-10-08)
 
@@ -229,7 +234,7 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '373:5287',
-            'figmaCollection': '24. Toast',
+            'figmaCollection': '4. Components',
             'note': (
                 'Background bg-surface-raised, 1px border and icon 20 in the status color (error '
                 'uses the danger semantic), Label/md title, optional Body/sm description, padding '

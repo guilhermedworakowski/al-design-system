@@ -7,8 +7,11 @@ anything that is a loose value - hex, px, number.
 
 Naming:
   code  -> tag-filled-success-bg       (hyphen)
-  Figma -> tag/filled/success/bg       (folder)
-They are different layers. Never collapse one into the other.
+  Figma -> bg/success                  (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 WHY THE TYPE COMES BEFORE THE STATUS
 

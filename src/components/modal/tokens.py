@@ -7,8 +7,13 @@ below), and it is declared, named and locked by the gate.
 
 Naming:
   code  -> modal-bg                (hyphen)
-  Figma -> bg                      (collection `19. Modal`)
-They are different layers. Never collapse one into the other.
+  Figma -> bg/surface-raised       (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to. The exception is a value the
+Foundation lacks, which lives in the `4. Components` collection
+(modal-width-md -> modal/width/md).
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 FIFTH COMPONENT OF TIER 3 (2026-10-07)
 
@@ -198,7 +203,7 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '305:1703',
-            'figmaCollection': '19. Modal',
+            'figmaCollection': '4. Components',
             'sizes': ['sm', 'md', 'lg'],
             'note': (
                 'Native <dialog> with showModal(). Background bg-surface-raised, shadow '
