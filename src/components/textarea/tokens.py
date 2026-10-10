@@ -7,8 +7,11 @@ anything that is a loose value - hex, px, number.
 
 Naming:
   code  -> textarea-border-hover      (hyphen)
-  Figma -> textarea/border/hover      (folder)
-They are different layers. Never collapse one into the other.
+  Figma -> border/strong              (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 MULTI-LINE TEXT FIELD
 

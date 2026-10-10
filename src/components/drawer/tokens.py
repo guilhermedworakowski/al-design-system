@@ -9,8 +9,13 @@ Foundation gains a container width scale, the six tokens become aliases at once.
 
 Naming:
   code  -> drawer-bg               (hyphen)
-  Figma -> bg                      (collection `20. Drawer`)
-They are different layers. Never collapse one into the other.
+  Figma -> bg/surface-raised       (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to. The exception is a value the
+Foundation lacks, which lives in the `4. Components` collection
+(drawer-width-md -> drawer/width/md).
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 SIXTH AND LAST COMPONENT OF TIER 3 (2026-10-07)
 
@@ -202,7 +207,7 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '306:2264',
-            'figmaCollection': '20. Drawer',
+            'figmaCollection': '4. Components',
             'sizes': ['sm', 'md', 'lg'],
             'note': (
                 'Native <dialog> with showModal(), right side only. Background bg-surface-raised, '

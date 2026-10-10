@@ -7,8 +7,11 @@ anything that is a loose value - hex, px, number.
 
 Naming:
   code  -> accordion-bg-hover      (hyphen)
-  Figma -> bg/hover                (collection `18. Accordion`)
-They are different layers. Never collapse one into the other.
+  Figma -> bg/hover-raised         (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 FOURTH COMPONENT OF TIER 3 (2026-10-07)
 
@@ -276,7 +279,6 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '306:2643',
-            'figmaCollection': '18. Accordion',
             'variants': ['closed', 'opened'],
             'sizes': ['default'],
             'states': ['default', 'hover', 'pressed', 'focus'],

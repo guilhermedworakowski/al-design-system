@@ -7,8 +7,11 @@ anything that is a loose value - hex, px, number.
 
 Naming:
   code  -> divider-color             (hyphen)
-  Figma -> color                     (collection `15. Divider`)
-They are different layers. Never collapse one into the other.
+  Figma -> border/default            (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 FIRST COMPONENT OF TIER 3 (2026-10-07)
 
@@ -178,7 +181,6 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '304:1076',
-            'figmaCollection': '15. Divider',
             'variants': ['horizontal', 'vertical'],
             'sizes': [],
             'states': [],

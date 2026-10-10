@@ -6,9 +6,12 @@ to a Foundation token by NAME. The gate at the end of the file rejects
 anything that is a loose value - hex, px, number.
 
 Naming:
-  code  -> password-toggle-ring       (hyphen)
-  Figma -> password/toggle/ring       (folder)
-They are different layers. Never collapse one into the other.
+  code  -> password-border-hover      (hyphen)
+  Figma -> border/strong              (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 PASSWORD FIELD, IN PLACE OF THE DATE PICKER
 

@@ -7,8 +7,11 @@ anything that is a loose value - hex, px, number.
 
 Naming:
   code  -> tab-line-indicator-selected   (hyphen)
-  Figma -> line/indicator/selected       (collection `17. Tab`)
-They are different layers. Never collapse one into the other.
+  Figma -> border/brand                  (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 THIRD COMPONENT OF TIER 3 (2026-10-07)
 
@@ -271,7 +274,6 @@ def run():
             'version': '0.1.0',
             'foundation': FOUND['meta']['version'],
             'figmaNode': '306:2532',
-            'figmaCollection': '17. Tab',
             'variants': ['line', 'square'],
             'sizes': [],
             'states': ['default', 'hover', 'pressed', 'focus'],

@@ -7,8 +7,11 @@ anything that is a loose value - hex, px, number.
 
 Naming:
   code  -> avatar-md-icon-size      (hyphen)
-  Figma -> avatar/md/icon-size      (folder)
-They are different layers. Never collapse one into the other.
+  Figma -> icon-size/24             (folder)
+Figma has no variable per component: the node binds the semantic or
+Foundation variable the token points to.
+Hyphen in code, folder in Figma: they are different layers. Never
+collapse one into the other.
 
 WHY THE COLOR DOESN'T REPEAT PER SIZE
 
