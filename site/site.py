@@ -626,6 +626,496 @@ def seg(name, options, checked):
     return '\n'.join(out)
 
 
+# ═══════════════════════════════════════ páginas de componente · peças comuns
+# O modelo do Button (Visão geral, Playground, Diretrizes, Acessibilidade) vale
+# para todos os componentes. Estas peças são definidas cedo porque cada
+# componente monta as próprias abas na sua seção.
+
+SELECT_CHEVRON = al_icon('chevron-down', cls='al-icon al-select__chevron')
+
+
+def pg_select(cid, rotulo, opcoes, valor, name=None):
+    """Select do AL como controle de playground: valor pré-selecionado, sem
+    placeholder (regra 10 do Select). Vale também com 2 ou 3 opções: divergência
+    consciente da regra 1 do Select (decisão do Gui, 11/10), porque o Radio lado a
+    lado quebrava linha e os seis controles ficam com a mesma forma."""
+    nm = f' name="{name}"' if name else ''
+    ops = ''.join(f'<option value="{v}"{" selected" if v == valor else ""}>{t}</option>'
+                  for v, t in opcoes)
+    return (f'<div class="al-select"><div class="al-select__labelrow">'
+            f'<label class="al-select__label" for="{cid}">{rotulo}</label></div>'
+            f'<div class="al-select__control"><select id="{cid}"{nm} class="al-select__field">{ops}</select>'
+            f'{SELECT_CHEVRON}</div></div>')
+
+
+def tok_tabs(pref, comp, rows_fn, abas=None):
+    """Tokens de cor em Tab Square: uma aba por variante, cada painel com a
+    própria tabela (segundo nível dentro do Tab Line da página). `rows_fn(v)`
+    devolve as linhas de uma variante, ou de todas com None."""
+    abas = abas or [('all', 'Todas')] + VARIANTS
+    bt, pn = [], []
+    for i, (v, rot) in enumerate(abas):
+        tid, pid = f'{pref}-t-{v}', f'{pref}-p-{v}'
+        on = i == 0
+        roving = '' if on else ' tabindex="-1"'
+        bt.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
+                  f'aria-selected="{"true" if on else "false"}" aria-controls="{pid}"{roving}>'
+                  f'<span class="al-tab__label">{rot}</span></button>')
+        pn.append(f'<div class="tok-panel" role="tabpanel" id="{pid}" aria-labelledby="{tid}" '
+                  f'tabindex="0"{"" if on else " hidden"}><h3 class="sr-only">{rot}</h3>'
+                  f'<div class="scroller"><table><thead><tr><th>Token do {comp}</th><th>Aponta para</th>'
+                  f'<th>Resolve em (claro)</th></tr></thead>'
+                  f'<tbody>{rows_fn(None if v == "all" else v)}</tbody></table></div></div>')
+    return ('<div class="al-tabs al-tabs--square tok-tabs" role="tablist" '
+            'aria-label="Tokens de cor por variante">'
+            + ''.join(bt) + '</div>' + ''.join(pn))
+
+
+def pg_field(name, rotulo, opcoes, valor):
+    """Controle de playground: Select do AL com `name`, lido pelo pick() do JS."""
+    return pg_select(f'ctl-{name}', rotulo, opcoes, valor, name=name)
+
+
+def inp(cid, rotulo='E-mail', *, tipo='text', opcional=False, apoio=None, erro=None,
+        disabled=False, readonly=False, valor=None, placeholder=None, prefixo=None,
+        sufixo=None, limite=None, autocomplete=None, sim=None):
+    """Um Input real. `sim` escreve na MESMA variavel privada que o input.css usa
+    para o hover - nao e estilo paralelo. Read-only nunca sai sem valor: vazio
+    vira "—" (regra 22), e o portao de marcacao cobra isso."""
+    if readonly and not (valor or '').strip():
+        valor = '—'
+    attrs = ['class="al-input__field"', f'id="{cid}"', f'type="{tipo}"']
+    if autocomplete:
+        attrs.append(f'autocomplete="{autocomplete}"')
+    if valor is not None:
+        attrs.append(f'value="{valor}"')
+    if placeholder and not readonly:
+        attrs.append(f'placeholder="{placeholder}"')
+    if prefixo or sufixo:
+        nomes = [f'{cid}-label'] + ([f'{cid}-prefix'] if prefixo else []) \
+                + ([f'{cid}-suffix'] if sufixo else [])
+        attrs.append(f'aria-labelledby="{" ".join(nomes)}"')
+    msg = erro or apoio
+    if msg:
+        attrs.append(f'aria-describedby="{cid}-help"')
+    if erro:
+        attrs.append('aria-invalid="true"')
+    if limite:
+        attrs.append(f'data-limit="{limite}" data-counter="{cid}-count"')
+    if readonly:
+        attrs.append('readonly')
+    if disabled:
+        attrs.append('disabled')
+
+    linha = [f'<label class="al-input__label" id="{cid}-label" for="{cid}">{rotulo}</label>']
+    if opcional:
+        linha.append('<span class="al-input__optional">(Opcional)</span>')
+    if limite:
+        n = len(valor or '')
+        acima = ' data-over-limit' if n > limite else ''
+        linha.append(f'<span class="al-input__counter" id="{cid}-count" '
+                     f'aria-live="off"{acima}>{n}/{limite}</span>')
+    caixa = []
+    if prefixo:
+        caixa.append(f'<label class="al-input__affix" id="{cid}-prefix" for="{cid}">{prefixo}</label>')
+    caixa.append(f'<input {" ".join(attrs)}>')
+    if sufixo:
+        caixa.append(f'<label class="al-input__affix" id="{cid}-suffix" for="{cid}">{sufixo}</label>')
+    estilo = f' style="--_border-state: var(--al-input-border-{sim})"' if sim else ''
+    help_html = f'<p class="al-input__help" id="{cid}-help">{msg}</p>' if msg else ''
+    return (f'<div class="al-input"><div class="al-input__labelrow">{"".join(linha)}</div>'
+            f'<div class="al-input__control"{estilo}>{"".join(caixa)}</div>{help_html}</div>')
+
+
+def ex_card(gid, title, live, code, desc, preset, page=None, row_attrs=''):
+    """Cartão de exemplo: palco, abas Descrição e Código e o botão que leva o
+    exemplo para o playground da página."""
+    # aspas também: o portão de marcação lê id="..." em qualquer lugar do HTML
+    code = (code.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+            .replace('"', '&quot;'))
+    tabs, panels = [], []
+    for i, (slug, rot) in enumerate((('desc', 'Descrição'), ('code', 'Código'))):
+        tid, pid = f'{gid}-t-{slug}', f'{gid}-p-{slug}'
+        on = i == 0
+        roving = '' if on else ' tabindex="-1"'
+        tabs.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
+                    f'aria-selected="{"true" if on else "false"}" aria-controls="{pid}"'
+                    f'{roving}><span class="al-tab__label">{rot}</span></button>')
+        body = (f'<p>{desc}</p>' if slug == 'desc'
+                else f'<pre><code>{code}</code></pre>')
+        panels.append(f'<div class="ex__panel ex__panel--{slug}" role="tabpanel" id="{pid}" '
+                      f'aria-labelledby="{tid}" tabindex="0"{"" if on else " hidden"}>'
+                      f'<h4 class="sr-only">{rot}</h4>{body}</div>')
+    btn = ''
+    if preset:
+        data = json.dumps(preset).replace('"', '&quot;')
+        pg = f' data-pg-page="{page}"' if page else ''
+        btn = (f'<button type="button" class="al-btn al-btn--ghost al-btn--sm" data-pg-preset="{data}"{pg}>'
+               f'<span class="al-btn__label">Abrir no playground</span></button>')
+    m = re.search(r' data-x-class="([^"]*)"', row_attrs)
+    cls = f' {m.group(1)}' if m else ''
+    row_attrs = re.sub(r' data-x-class="[^"]*"', '', row_attrs)
+    return (f'<div class="ex"><h3 class="ex__title">{title}</h3>'
+            f'<div class="stage ex__stage"><div class="ex__row{cls}"{row_attrs}>{live}</div></div>'
+            f'<div class="ex__bar"><div class="al-tabs al-tabs--square" role="tablist" '
+            f'aria-label="{title}">{"".join(tabs)}</div>{btn}</div>'
+            f'{"".join(panels)}</div>')
+
+
+def do_dont_rows(rows):
+    out = []
+    for kind, text in rows:
+        t = tg('filled', 'success', 'sm', 'Faça') if kind == 'do' else tg('filled', 'error', 'sm', 'Não faça')
+        out.append(f'<tr><td class="ddt-tag">{t}</td><td>{text}</td></tr>')
+    return ''.join(out)
+
+
+_INLINE = {'b', 'i', 'em', 'strong', 'code', 'a', 'small', 'abbr', 'kbd', 'br', 'span', 'svg',
+           'path', 'circle', 'line', 'polyline', 'rect', 'polygon'}
+_VOID = {'input', 'img', 'br', 'hr', 'meta', 'link', 'source', 'col', 'wbr'}
+
+
+def fmt_code(html):
+    """Marcação de um exemplo vivo como código para copiar: sem o que só a
+    vitrine usa (tabindex -1, hover simulado), ícone como comentário e um
+    elemento de bloco por linha."""
+    html = re.sub(r'<svg class="al-icon[^"]*"[^>]*>.*?</svg>',
+                  '<svg class="al-icon" aria-hidden="true" focusable="false"><!-- ícone --></svg>',
+                  html, flags=re.S)
+    html = html.replace(' tabindex="-1"', '').replace(' data-al-demo', '')
+    html = re.sub(r' style="--_[^"]*"', '', html)
+    out, depth = [], 0
+    line, line_tag, line_depth = '', None, 0
+
+    def flush():
+        nonlocal line, line_tag
+        if line.strip():
+            out.append('  ' * line_depth + line.strip())
+        line, line_tag = '', None
+    for t in re.findall(r'<!--.*?-->|<[^>]+>|[^<]+', html, flags=re.S):
+        m = re.match(r'<(/?)([a-zA-Z0-9-]+)', t)
+        tag = m.group(2).lower() if m else None
+        if not m or tag in _INLINE:
+            txt = re.sub(r'\s+', ' ', t) if not m else t
+            if not line:
+                if not txt.strip():
+                    continue
+                line_depth = depth
+            line += txt
+            continue
+        if m.group(1):                      # fecha um bloco
+            depth = max(depth - 1, 0)
+            if line_tag == tag:
+                line += t
+                flush()
+            else:
+                flush()
+                out.append('  ' * depth + t)
+        elif tag in _VOID or t.endswith('/>'):
+            flush()
+            out.append('  ' * depth + t)
+        else:                               # abre um bloco
+            flush()
+            line, line_tag, line_depth = t, tag, depth
+            depth += 1
+    flush()
+    return '\n'.join(out)
+
+
+_CELL = re.compile(
+    r'<div class="cell[^"]*"[^>]*>\s*(?:<span class="lab"[^>]*>(.*?)</span>)?\s*'
+    r'<(div|fieldset|form) class="stage2([^"]*)"([^>]*)>(.*?)</\2>\s*<p class="cap"[^>]*>(.*?)</p>\s*</div>', re.S)
+
+
+def old_examples(html):
+    """Lê as células de demonstração das abas antigas para virarem cartões de
+    exemplo: [título, atributos do palco, exemplo vivo, legenda]. Célula sem
+    título herda o título da seção; um fieldset de palco entra inteiro no
+    exemplo (ele é a marcação do grupo)."""
+    out = []
+    for sec in re.findall(r'<section>(.*?)</section>', html, re.S):
+        h = re.search(r'<h2>(.*?)</h2>', sec, re.S)
+        sec_title = h.group(1).strip() if h else ''
+        for lab, tag, extra, attrs, live, cap in _CELL.findall(sec):
+            title = re.sub(r'\s+', ' ', lab).strip() or sec_title
+            extra = extra.strip()
+            if tag in ('fieldset', 'form'):
+                cls = f' class="{extra}"' if extra else ''
+                live, row = f'<fieldset{cls}{attrs}>{live}</fieldset>', ''
+            else:
+                row = (f' data-x-class="{extra}"' if extra else '') + attrs
+            out.append([title, row, live.strip(), re.sub(r'\s+', ' ', cap).strip()])
+        # célula única sem palco: um formulário ou uma tela inteira de demonstração
+        if not _CELL.search(sec) and sec.count('class="cell') == 1:
+            m = re.search(r'<div class="cell[^"]*"[^>]*>\s*(?:<span class="lab"[^>]*>(.*?)</span>)?\s*'
+                          r'(.*)<p class="cap"[^>]*>(.*?)</p>\s*</div>', sec, re.S)
+            if m:
+                title = re.sub(r'\s+', ' ', m.group(1) or '').strip() or sec_title
+                out.append([title, ' style="display:block; width:100%"', m.group(2).strip(),
+                            re.sub(r'\s+', ' ', m.group(3)).strip()])
+    return out
+
+
+def ex_list(pref, page, items, presets=None):
+    """Cartões de exemplo a partir de [título, atributos do palco, vivo,
+    legenda]. `presets` leva o título (ou o índice) ao preset do playground."""
+    presets = presets or {}
+    cards = []
+    for i, (title, row, live, desc) in enumerate(items):
+        pre = presets.get(i, presets.get(title))
+        cards.append(ex_card(f'{pref}-{i + 1}', title, live, fmt_code(live), desc, pre,
+                             page=page, row_attrs=row))
+    return '<div class="ex-list">' + ''.join(cards) + '</div>'
+
+
+def guide_do_dont(html):
+    """As legendas Faça / Não faça das Diretrizes, na ordem: todos os Faça,
+    depois todos os Não faça. Vale para os dois formatos de célula: classe
+    `do`/`no` com rótulo descritivo (o rótulo vira o começo da linha, em negrito)
+    e rótulo "Faça"/"Não faça" escrito."""
+    out = []
+    for cls, lab, cap in re.findall(
+            r'<div class="cell([^"]*)"[^>]*>\s*<span class="lab"[^>]*>(.*?)</span>.*?'
+            r'<p class="cap"[^>]*>(.*?)</p>', html, re.S):
+        cls, lab = cls.split(), re.sub(r'\s+', ' ', lab).strip()
+        cap = re.sub(r'\s+', ' ', cap).strip()
+        if lab in ('Faça', 'Não faça'):
+            kind = 'do' if lab == 'Faça' else 'dont'
+        elif 'do' in cls or 'no' in cls:
+            kind = 'do' if 'do' in cls else 'dont'
+            cap = f'<b>{lab}.</b> {cap}'
+        else:
+            continue
+        out.append((kind, cap))
+    return [r for r in out if r[0] == 'do'] + [r for r in out if r[0] == 'dont']
+
+
+def do_dont_section(rows):
+    return f'''
+<section>
+  <h2>Faça e não faça</h2>
+  <div class="scroller"><table class="tbl-fit">
+    <thead><tr><th>Orientação</th><th>Prática</th></tr></thead>
+    <tbody>{do_dont_rows(rows)}</tbody>
+  </table></div>
+</section>'''
+
+
+def anat_table(html):
+    """A lista de anatomia (`.anat`) das abas antigas como tabela Elemento | Descrição."""
+    items = re.findall(r'<div><b>(.*?)</b><span>(.*?)</span></div>', html, re.S)
+    trs = ''.join(f'<tr><td class="name">{a}</td><td>{b}</td></tr>' for a, b in items)
+    return ('<div class="scroller"><table class="tbl-fit">'
+            '<thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>'
+            f'<tbody>{trs}</tbody></table></div>')
+
+
+ANAT_RE = re.compile(r'<div class="anat"([^>]*)>((?:\s*<div><b>.*?</b><span>.*?</span></div>)+)\s*</div>', re.S)
+
+
+def anat_to_tables(html):
+    """As grades `.anat` que sobram fora da Anatomia viram tabelas no formato do Button."""
+    def rep(m):
+        st = re.search(r'style="([^"]*)"', m.group(1))
+        t = anat_table(m.group(2)).replace('<th>Elemento</th>', '<th>Item</th>')
+        return t.replace('<div class="scroller">', f'<div class="scroller" style="{st.group(1)}">', 1) if st else t
+    return ANAT_RE.sub(rep, html)
+
+
+def usage_section(text, comp, js=False):
+    imp = f'@import "al-design-system/foundation.css";\n@import "al-design-system/components/{comp}.css";'
+    js_html = (f'\n  <div class="codeblock"><pre><code>&lt;script type="module" '
+               f'src="al-design-system/components/{comp}.js"&gt;&lt;/script&gt;</code></pre></div>') if js else ''
+    return f'''
+<section>
+  <h2>Uso</h2>
+  <p>{text}</p>
+  <div class="codeblock"><pre><code>{imp}</code></pre></div>{js_html}
+</section>'''
+
+
+def preview_section(live, style=''):
+    st = f' style="{style}"' if style else ''
+    return f'''
+<section>
+  <h2 class="sr-only">Prévia</h2>
+  <div class="pg"><div class="stage"><div class="ex__row"{st}>{live}</div></div></div>
+</section>'''
+
+
+def a11y_contrast(rows, linhas, intro):
+    """Tabela de contraste a partir do a11y.json do portão. `linhas` =
+    [(requisito, filtro, mínimo, aplica-se a, orientação, critério)]; o medido
+    sai das linhas que passam no filtro."""
+    out = []
+    for req, sel, minimo, aplica, guia, wcag in linhas:
+        if callable(sel):
+            medido = contrast_range(rows, sel)
+        else:
+            medido = sel
+        out.append((req, minimo, aplica, medido, guia, wcag))
+    return contrast_section(intro, out)
+
+
+def split_sections(html):
+    """[(título do h2, seção inteira)] - as seções do corpo nunca se aninham."""
+    out = []
+    for sec in re.findall(r'<section>.*?</section>', html, re.S):
+        h = re.search(r'<h2[^>]*>(.*?)</h2>', sec, re.S)
+        out.append((re.sub(r'\s+', ' ', h.group(1)).strip() if h else '', sec))
+    return out
+
+
+def retitle(sec, title):
+    return re.sub(r'<h2([^>]*)>.*?</h2>', f'<h2>{title}</h2>', sec, count=1, flags=re.S)
+
+
+def classes_section(rows):
+    trs = ''.join(f'<tr><td class="tok">{a}</td><td class="tok dim">{b}</td><td>{c}</td></tr>'
+                  for a, b, c in rows)
+    return f'''
+<section>
+  <h2>Classes e atributos</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Classe ou atributo</th><th>Valores</th><th>Descrição</th></tr></thead>
+    <tbody>{trs}</tbody>
+  </table></div>
+</section>'''
+
+
+MODEL_REPORT = []
+
+
+def model_tabs(page, *, old_ov, old_specs, guide, old_a11y, preview, usage, classes,
+               contrast, comp=None, js=False, preview_style='', states=(), rename=None,
+               presets=None, ex_drop=(), extra_dd=(), keep_ov=(), ov_rename=None):
+    """Monta Visão geral, Playground e Acessibilidade no modelo do Button a
+    partir das abas antigas do componente:
+      Visão geral   - prévia, uso, anatomia (da aba Especificações), faça e não
+                      faça (das Diretrizes) e exemplos (as demos da Visão geral)
+      Playground    - o playground, classes e atributos, todos os estados,
+                      medidas, tokens de cor e o que mais era Especificação
+      Acessibilidade- abre com a tabela de contraste, antes do que já existia
+    `rename` troca títulos antigos pelos do modelo (Medidas, Tokens de cor)."""
+    rename = rename or {}
+    ov = split_sections(old_ov)
+    sp = split_sections(old_specs)
+    pg = [s for t, s in ov if t == 'Playground']
+    assert len(pg) == 1, page
+    est = [s for t, s in ov + sp if t in states]
+    exs, kept = [], []
+    for t, s in ov:
+        if t == 'Playground' or t in states or t in ex_drop:
+            continue
+        if t in keep_ov or t in (ov_rename or {}):
+            kept.append(retitle(s, ov_rename[t]) if t in (ov_rename or {}) else s)
+            continue
+        items = old_examples(s)
+        if not items:
+            MODEL_REPORT.append(f'{page}: seção "{t}" da Visão geral sem célula de exemplo')
+            kept.append(s)
+        exs += items
+    anat = [s for t, s in sp if t == 'Anatomia']
+    anat_html = ''
+    if anat:
+        a = anat[0]
+        notes = ''.join(re.findall(r'<div class="note".*?</div>\s*(?=<div class="note"|</section>)', a, re.S))
+        rest = re.sub(r'<div class="anat">.*?</div>\s*(?=<div class="note"|</section>|<p)', '', a, count=1, flags=re.S)
+        extra_p = ''.join(re.findall(r'<p[ >].*?</p>', rest.split('<div class="note"')[0], re.S))
+        anat_html = (f'\n<section>\n  <h2>Anatomia</h2>\n  {anat_table(a)}\n'
+                     + (f'  <div style="margin-top:16px">{extra_p}</div>\n' if extra_p else '')
+                     + (f'  <div style="margin-top:16px">{notes}</div>\n' if notes else '') + '</section>')
+    else:
+        MODEL_REPORT.append(f'{page}: sem Anatomia nas Especificações')
+    dd = guide_do_dont(guide) + list(extra_dd)
+    dd = [r for r in dd if r[0] == 'do'] + [r for r in dd if r[0] == 'dont']
+    overview = (preview_section(preview, preview_style) + usage_section(usage, comp or page, js)
+                + anat_html + (do_dont_section(dd) if dd else '')
+                + ''.join(kept)
+                + (f'\n<section>\n  <h2>Exemplos</h2>\n  {ex_list(page + "-ex", page, exs, presets)}\n</section>'
+                   if exs else ''))
+    if not dd:
+        MODEL_REPORT.append(f'{page}: sem Faça e não faça nas Diretrizes')
+    # Playground
+    order_first = ['Medidas', 'Tokens de cor']
+    rest = []
+    for t, s in sp:
+        if t == 'Anatomia' or t in states:
+            continue
+        nt = rename.get(t, t)
+        rest.append((nt, retitle(s, nt) if nt != t else s))
+    rest.sort(key=lambda ts: order_first.index(ts[0]) if ts[0] in order_first else len(order_first))
+    estados = ''
+    if est:
+        inner = ''.join(re.sub(r'^<section>\s*<h2[^>]*>.*?</h2>|</section>$', '', s.strip(), flags=re.S) for s in est)
+        estados = f'\n<section>\n  <h2>Todos os estados</h2>{inner}\n</section>'
+    playground = pg[0] + classes_section(classes) + estados + ''.join(s for _, s in rest)
+    # Acessibilidade
+    head = contrast if isinstance(contrast, str) else a11y_contrast(*contrast)
+    a11y = head + old_a11y
+    return anat_to_tables(overview), anat_to_tables(playground), anat_to_tables(a11y)
+
+
+ESTADO_PT = {
+    'default': 'Default', 'rest': 'Repouso', 'hover': 'Hover', 'focus': 'Focus', 'active': 'Active',
+    'pressed': 'Pressed', 'error': 'Error', 'focus-error': 'Focus + Error', 'error-focus': 'Error + Focus',
+    'disabled': 'Disabled', 'readonly': 'Read-only', 'focus-readonly': 'Read-only com foco',
+    'checked': 'Marcado', 'checked-focus': 'Marcado com foco', 'disabled-checked': 'Marcado desabilitado',
+    'error-checked': 'Erro marcado', 'indeterminate': 'Misto',
+}
+
+
+def _num(x):
+    return f'{x:g}'.replace('.', ',')
+
+
+def role_contrast(rows, spec, intro, key='role'):
+    """Tabela de contraste por papel, para os componentes cujo portão grava
+    papel e estado (os campos de formulário). `spec` = [(requisito, papéis,
+    modo, orientação, critério)]; modo 'ok' pega o que passa, 'exc' a exceção
+    declarada fora do desabilitado e 'dis' o desabilitado. Aplica-se a e Medido
+    saem das linhas medidas."""
+    def is_dis(r):
+        return str(r.get('state', '')).startswith('disabled') or str(r.get('state', '')).endswith('disabled')
+
+    def exc(r):
+        return bool(r.get('exc') or r.get('exception') or r.get('exempt'))
+    linhas = []
+    for item in spec:
+        req, papeis, modo, guia, wcag = item[:5]
+        aplica_fixo = item[5] if len(item) > 5 else None
+        if modo == 'ok':
+            sel = lambda r, p=papeis: r.get(key) in p and not exc(r)
+        elif modo == 'exc':
+            sel = lambda r, p=papeis: r.get(key) in p and exc(r) and not is_dis(r)
+        else:
+            sel = lambda r, p=papeis: r.get(key) in p and is_dis(r)
+        rs = [r for r in rows if sel(r)]
+        assert rs, (req, papeis, modo)
+        estados = []
+        for r in rs:
+            e = ESTADO_PT.get(r.get('state'), r.get('state'))
+            if e and e not in estados:
+                estados.append(e)
+        temas = {r['theme'] for r in rs}
+        aplica = ', '.join(estados) + ('' if len(temas) == 2 else
+                                       (' — só no claro' if 'light' in temas else ' — só no escuro'))
+        if aplica_fixo:
+            aplica = aplica_fixo
+        floors = sorted({r['floor'] for r in rs if r.get('floor')})
+        minimo = ('Não exigido' if modo == 'dis' or not floors else
+                  ' / '.join('distinto do fundo' if f == 1 else f'{_num(f)}:1' for f in floors)
+                  + (' · exceção' if modo == 'exc' else ''))
+        linhas.append((req, minimo, aplica, contrast_range(rows, sel), guia, wcag))
+    return contrast_section(intro, linhas)
+
+
+def forms_intro(n, n_exc):
+    return (f'<p>Cada combinação é medida renderizada: papel, estado e tema, contra o fundo que o '
+            f'papel toca de fato. São {n} medições no portão de build, nenhuma reprova e {n_exc} ficam '
+            f'em exceção declarada.</p>')
+
+
 def token_rows(only=None):
     rows = []
     for v, _ in VARIANTS:
@@ -838,6 +1328,8 @@ code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-su
 .controls--fields{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
   gap:var(--al-space-24); padding:var(--al-space-24)}
 .tok-tabs{margin-bottom:var(--al-space-16)}
+/* botão que dispara a demonstração, alinhado à base dos Selects vizinhos */
+.pg-action{display:flex; align-items:flex-end}
 
 /* ── exemplos: um card por configuração, com Descrição | Código em Tab Square ── */
 .ex-list{display:grid; gap:var(--al-space-24)}
@@ -1053,7 +1545,7 @@ th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
    text-primary e a legenda Body/sm text-secondary, na largura toda */
 .dd .cell{background:var(--al-bg-canvas); padding:var(--al-space-16) var(--al-space-24);
   display:flex; flex-direction:column; gap:var(--al-space-16)}
-.dd .dd-head{display:flex; flex-wrap:wrap; align-items:center; gap:var(--al-space-8)}
+.dd .dd-head{display:flex; flex-direction:column; align-items:flex-start; gap:var(--al-space-8)}
 .dd .lab{font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
   font-weight:var(--al-font-weight-bold); color:var(--al-text-primary)}
 .dd .stage2{display:flex; flex-wrap:wrap; gap:11px; align-items:center; padding:18px 16px;
@@ -3455,9 +3947,6 @@ SELECT_STATES = [
 
 SELECT_UFS = ['Acre', 'Bahia', 'Ceará', 'Minas Gerais', 'Paraná', 'São Paulo']
 
-SELECT_CHEVRON = al_icon('chevron-down', cls='al-icon al-select__chevron')
-
-
 def sel(cid, rotulo='Estado', *, opcional=False, apoio=None, erro=None,
         disabled=False, valor=None, sim=None, placeholder='Selecione o estado'):
     """Um Select real. `sim` escreve na MESMA variavel privada que o select.css
@@ -3550,35 +4039,8 @@ def select_geo_rows():
     return '\n'.join(rows)
 
 
-def select_a11y_rows(papeis):
-    """Uma linha por medicao, filtrada pelo papel. Excecao declarada aparece
-    como excecao, nunca como reprova e nunca escondida."""
-    out = []
-    for r in SELECT_A11Y['rows']:
-        if r['role'] not in papeis:
-            continue
-        if r['pass']:
-            verdict = '<span class="pass">passa</span>'
-        elif r['exc']:
-            verdict = '<span class="exc">exceção</span>'
-        else:
-            verdict = '<span class="fail">reprova</span>'
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["against"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
-    return '\n'.join(out)
-
-
 N_SEL_MEDIDAS = len(SELECT_A11Y['rows'])
 N_SEL_EXC = sum(SELECT_A11Y['exceptions'].values())
-N_SEL_PASSA = N_SEL_MEDIDAS - N_SEL_EXC
 SEL_LAYER = {d['theme']: d for d in SELECT_A11Y['layerEffect']}
 
 TH_SELECT = ('<div class="th-select" aria-hidden="true">'
@@ -3591,14 +4053,13 @@ SELECT_OVERVIEW = f'''
   <div class="pg">
     <div class="stage" id="select-stage">{sel('play-select')}</div>
 
-    <div class="controls" id="select-controls">
-      <div class="ctl"><span class="ctl-name">Estado</span>{seg('selstate', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}</div>
-      <div class="ctl"><span class="ctl-name">Valor</span>{seg('selvalue', [('none', 'Placeholder'), ('picked', 'Escolhido')], 'none')}</div>
-      <div class="ctl"><span class="ctl-name">Obrigatoriedade</span>{seg('selopt', [('req', 'Obrigatório'), ('opt', 'Opcional')], 'req')}</div>
-      <div class="ctl"><span class="ctl-name">Texto de apoio</span>{seg('selhelp', [('off', 'Sem'), ('on', 'Com')], 'off')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('seltheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="select-label" class="ctl-name">Rótulo</label>
-        <input class="txt" id="select-label" type="text" value="Estado" maxlength="28"></div>
+    <div class="controls controls--fields" id="select-controls">
+      {pg_field('selstate', 'Estado', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}
+      {pg_field('selvalue', 'Valor', [('none', 'Placeholder'), ('picked', 'Escolhido')], 'none')}
+      {pg_field('selopt', 'Obrigatoriedade', [('req', 'Obrigatório'), ('opt', 'Opcional')], 'req')}
+      {pg_field('selhelp', 'Texto de apoio', [('off', 'Sem'), ('on', 'Com')], 'off')}
+      {pg_field('seltheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('select-label', 'Rótulo', valor='Estado')}
     </div>
 
     <div class="codewrap">
@@ -3825,12 +4286,6 @@ SELECT_A11Y_TAB = f'''
   <p style="margin-top:12px"><b>A cor do anel sai do próprio <code>box-shadow</code>.</b> O
   portão lê o último hex da sombra composta — a cor que de fato pinta o anel. Não há definição
   paralela para divergir do CSS.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_SEL_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_SEL_PASSA}</b><span>passam</span></div>
-    <div class="stat"><b>{N_SEL_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{SELECT_A11Y['fails']}</b><span>reprovas</span></div>
-  </div>
 </section>
 
 <section>
@@ -3852,21 +4307,6 @@ SELECT_A11Y_TAB = f'''
   </div>
 </section>
 
-<section>
-  <h2>Borda e anel — o não-textual, piso 3:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{select_a11y_rows(['border', 'focus ring', 'chevron'])}</tbody>
-  </table></div>
-</section>
-
-<section>
-  <h2>Texto — piso 4,5:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{select_a11y_rows(['label', 'optional mark', 'placeholder', 'value', 'help', 'text'])}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -3911,6 +4351,55 @@ SELECT_A11Y_TAB = f'''
   É o que Carbon, Material e Polaris já usam, e o que sobrevive em qualquer navegador.</p>
 </section>'''
 
+
+SELECT_OVERVIEW, SELECT_PLAYGROUND, SELECT_A11Y_TAB = model_tabs(
+    'select', old_ov=SELECT_OVERVIEW, old_specs=SELECT_SPECS, guide=SELECT_GUIDE, old_a11y=SELECT_A11Y_TAB,
+    preview=sel('pv-sel', 'Estado', apoio='Onde a nota fiscal é emitida'),
+    preview_style='display:block; width:min(360px,100%)',
+    usage='Use para uma escolha única numa lista de quatro opções ou mais. Até três, prefira Radio; '
+          'para disparar uma ação, nunca Select.',
+    states=['Os sete estados'],
+    rename={'Geometria e tipografia': 'Medidas', 'Cor — um token por papel e estado': 'Tokens de cor'},
+    presets={'Num formulário de verdade': None},
+    extra_dd=[
+        ('do', 'Quatro opções ou mais, de escolha única.'),
+        ('do', 'Havendo um padrão que serve à maioria, ele já vem selecionado.'),
+        ('do', 'No erro, a mensagem diz como corrigir, e aparece depois da tentativa.'),
+        ('dont', 'Select para disparar uma ação: isso é Button ou menu.'),
+        ('dont', 'Mais de ~15 opções sem busca: a lista atrapalha.'),
+        ('dont', 'Placeholder como atributo: ele é uma <code>&lt;option value=""&gt;</code>.'),
+    ],
+    classes=[
+        ('.al-select', '—', 'Invólucro: rótulo, campo e apoio.'),
+        ('.al-select__labelrow', '—', 'A linha do rótulo, com a marca de opcional.'),
+        ('.al-select__label', 'texto', '<code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Obrigatório.'),
+        ('.al-select__optional', '(Opcional)', 'Marca o campo opcional.'),
+        ('.al-select__control', '—', 'A caixa que segura o campo e a seta.'),
+        ('.al-select__field', '&lt;select&gt;', 'O select nativo: a lista aberta é a do sistema.'),
+        ('.al-select__chevron', 'ícone', 'A seta, sempre <code>aria-hidden</code>.'),
+        ('.al-select__help', 'texto', 'Apoio, ou a mensagem de erro no mesmo lugar.'),
+        ('option[value=""]', 'texto', 'O placeholder. Selecionado, pinta o campo como vazio.'),
+        ('aria-invalid', 'true', 'Erro. Sempre com <code>aria-describedby</code> apontando a mensagem.'),
+        ('disabled', '—', 'Atributo nativo.'),
+    ],
+    contrast=role_contrast(SELECT_A11Y['rows'], [
+        ('Valor escolhido', {'value'}, 'ok', 'O texto da opção contra o fundo do campo.', '1.4.3 Contraste (mínimo)'),
+        ('Rótulo e textos de apoio', {'label', 'optional mark', 'help'}, 'ok',
+         'Rótulo, “(Opcional)” e apoio contra a página. No erro, a mensagem ocupa o lugar do apoio.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Placeholder', {'placeholder'}, 'ok', 'A opção vazia, medida como texto.', '1.4.3 Contraste (mínimo)'),
+        ('Seta', {'chevron'}, 'ok', 'O ícone que diz que o campo abre uma lista.', '1.4.11 Contraste não textual'),
+        ('Borda', {'border'}, 'ok', 'A borda contra a página nos estados que a acendem.', '1.4.11 Contraste não textual'),
+        ('Borda em repouso', {'border'}, 'exc',
+         'Exceção declarada: há rótulo visível sempre, e é essa regra de uso que sustenta a exceção.',
+         '1.4.11 Contraste não textual'),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel contra a página. No erro, o anel de erro.',
+         '2.4.13 Aparência do foco'),
+        ('Desabilitado', {'border', 'chevron', 'label', 'optional mark', 'text'}, 'dis',
+         'Componente inativo fica fora do critério. Subir o contraste faria o campo parecer clicável.',
+         '1.4.3 Contraste (mínimo)'),
+    ], forms_intro(N_SEL_MEDIDAS, N_SEL_EXC)),
+)
 
 # ═══════════════════════════════════════════════════════════════ Checkbox · abas
 # 7 estados no Figma, num eixo so. O input nativo produz combinacoes que o Figma
@@ -4026,34 +4515,8 @@ def checkbox_geo_rows():
     return '\n'.join(rows)
 
 
-def checkbox_a11y_rows(papeis):
-    out = []
-    for r in CHECKBOX_A11Y['rows']:
-        if r['role'] not in papeis:
-            continue
-        if r['pass']:
-            verdict = '<span class="pass">passa</span>'
-        elif r['exc']:
-            verdict = '<span class="exc">exceção</span>'
-        else:
-            verdict = '<span class="fail">reprova</span>'
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['codeOnly'] else '')
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{estado}</td>'
-            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["against"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
-    return '\n'.join(out)
-
-
 N_CBX_MEDIDAS = len(CHECKBOX_A11Y['rows'])
 N_CBX_EXC = sum(CHECKBOX_A11Y['exceptions'].values())
-N_CBX_PASSA = N_CBX_MEDIDAS - N_CBX_EXC
 
 
 def _cbx_borda(state, theme):
@@ -4078,12 +4541,11 @@ CHECKBOX_OVERVIEW = f'''
   <div class="pg">
     <div class="stage" id="cbx-stage">{cbx('pg-cbx')}</div>
 
-    <div class="controls" id="cbx-controls">
-      <div class="ctl"><span class="ctl-name">Valor</span>{seg('cbxvalue', [('off', 'Desmarcado'), ('on', 'Marcado'), ('mixed', 'Misto')], 'off')}</div>
-      <div class="ctl"><span class="ctl-name">Estado</span>{seg('cbxstate', [('rest', 'Normal'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('cbxtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="cbx-label" class="ctl-name">Rótulo</label>
-        <input class="txt" id="cbx-label" type="text" value="Receber novidades por e-mail" maxlength="60"></div>
+    <div class="controls controls--fields" id="cbx-controls">
+      {pg_field('cbxvalue', 'Valor', [('off', 'Desmarcado'), ('on', 'Marcado'), ('mixed', 'Misto')], 'off')}
+      {pg_field('cbxstate', 'Estado', [('rest', 'Normal'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}
+      {pg_field('cbxtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('cbx-label', 'Rótulo', valor='Receber novidades por e-mail')}
     </div>
 
     <div class="codewrap">
@@ -4299,12 +4761,6 @@ CHECKBOX_A11Y_TAB = f'''
   <p style="margin-top:12px">E a página não é uma só: o Checkbox vive em listas de
   configuração, que costumam morar em faixa de seção (<code>bg-surface</code>). O portão mede
   contra tela, faixa e card, e guarda a pior.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_CBX_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_CBX_PASSA}</b><span>passam</span></div>
-    <div class="stat"><b>{N_CBX_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{CHECKBOX_A11Y['fails']}</b><span>reprovas</span></div>
-  </div>
 </section>
 
 <section>
@@ -4343,21 +4799,6 @@ CHECKBOX_A11Y_TAB = f'''
   </div>
 </section>
 
-<section>
-  <h2>Não-textual — piso 3:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{checkbox_a11y_rows(['border', 'checked box', 'focus ring', 'check', 'dash'])}</tbody>
-  </table></div>
-</section>
-
-<section>
-  <h2>Texto — piso 4,5:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{checkbox_a11y_rows(['label'])}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -4377,6 +4818,48 @@ CHECKBOX_A11Y_TAB = f'''
   </div>
 </section>'''
 
+
+CHECKBOX_OVERVIEW, CHECKBOX_PLAYGROUND, CHECKBOX_A11Y_TAB = model_tabs(
+    'checkbox', old_ov=CHECKBOX_OVERVIEW, old_specs=CHECKBOX_SPECS, guide=CHECKBOX_GUIDE,
+    old_a11y=CHECKBOX_A11Y_TAB,
+    preview=cbx('pv-cbx-1', 'Receber novidades por e-mail', checked=True) + cbx('pv-cbx-2', 'Aceito os termos de uso'),
+    preview_style='display:grid; gap:12px; justify-items:start',
+    usage='Use para marcar várias opções de uma lista, ou para um aceite. Para escolha única é Radio; '
+          'para ligar algo que vale na hora, Switch.',
+    states=['Os sete estados do Figma', 'O que só existe no código'],
+    rename={'Geometria e tipografia': 'Medidas', 'Cor — um token por papel e estado': 'Tokens de cor'},
+    extra_dd=[
+        ('do', 'Uma opção por linha, na vertical, com o título do grupo em <code>fieldset</code> e <code>legend</code>.'),
+        ('do', 'Misto só no pai, como consequência dos filhos.'),
+        ('do', 'Desabilitado só quando depende de outra escolha na mesma tela.'),
+        ('dont', 'Checkbox para escolha única: isso é Radio.'),
+        ('dont', 'Checkbox para ação imediata: isso é Switch.'),
+        ('dont', 'Checkbox sem rótulo visível.'),
+    ],
+    classes=[
+        ('label.al-checkbox', '—', 'O componente é o próprio <code>&lt;label&gt;</code>: clicar no texto marca.'),
+        ('.al-checkbox__input', '&lt;input type="checkbox"&gt;', 'O checkbox nativo, escondido sob a caixa desenhada.'),
+        ('.al-checkbox__control', '—', 'A caixa: borda, fundo e anel.'),
+        ('.al-checkbox__check', 'ícone', 'O check do marcado.'),
+        ('.al-checkbox__dash', 'ícone', 'O traço do misto.'),
+        ('.al-checkbox__label', 'texto', 'O rótulo. Obrigatório.'),
+        ('checked · disabled', '—', 'Atributos nativos.'),
+        ('data-indeterminate', '—', 'O misto: o JS liga <code>el.indeterminate = true</code>. O atributo HTML não existe.'),
+        ('aria-invalid', 'true', 'Erro, com <code>aria-describedby</code> para a mensagem do formulário.'),
+    ],
+    contrast=role_contrast(CHECKBOX_A11Y['rows'], [
+        ('Rótulo', {'label'}, 'ok', 'O texto contra a página.', '1.4.3 Contraste (mínimo)'),
+        ('Caixa marcada', {'checked box'}, 'ok', 'O preenchimento da caixa contra a página.', '1.4.11 Contraste não textual'),
+        ('Check e traço', {'check', 'dash'}, 'ok', 'O desenho contra o preenchimento da caixa.', '1.4.11 Contraste não textual'),
+        ('Borda', {'border'}, 'ok', 'A borda da caixa vazia nos estados que a acendem.', '1.4.11 Contraste não textual'),
+        ('Borda em repouso', {'border'}, 'exc',
+         'Exceção declarada: o rótulo visível sustenta a percepção do controle.', '1.4.11 Contraste não textual'),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel contra a página.', '2.4.13 Aparência do foco'),
+        ('Desabilitado', {'border', 'label', 'check'}, 'dis',
+         'Componente inativo fica fora do critério. Subir o contraste faria a opção parecer disponível.',
+         '1.4.3 Contraste (mínimo)'),
+    ], forms_intro(N_CBX_MEDIDAS, N_CBX_EXC)),
+)
 
 # ═══════════════════════════════════════════════════════════════ Radio · abas
 # 6 estados no Figma, num eixo so. Radio sozinho nao existe (regra 3): todo
@@ -4507,34 +4990,8 @@ def radio_geo_rows():
     return '\n'.join(rows)
 
 
-def radio_a11y_rows(papeis):
-    out = []
-    for r in RADIO_A11Y['rows']:
-        if r['role'] not in papeis:
-            continue
-        if r['pass']:
-            verdict = '<span class="pass">passa</span>'
-        elif r['exc']:
-            verdict = '<span class="exc">exceção</span>'
-        else:
-            verdict = '<span class="fail">reprova</span>'
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['codeOnly'] else '')
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{estado}</td>'
-            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["against"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
-    return '\n'.join(out)
-
-
 N_RD_MEDIDAS = len(RADIO_A11Y['rows'])
 N_RD_EXC = sum(RADIO_A11Y['exceptions'].values())
-N_RD_PASSA = N_RD_MEDIDAS - N_RD_EXC
 
 
 def _rd_borda(state, theme):
@@ -4558,12 +5015,11 @@ RADIO_OVERVIEW = f'''
   <div class="pg">
     <div class="stage" id="rd-stage">{rq('pg-rd', 'Cobrança', [('mensal', 'Mensal', dict(checked=True)), ('anual', 'Anual', {}), ('empresa', 'Empresarial', {})])}</div>
 
-    <div class="controls" id="rd-controls">
-      <div class="ctl"><span class="ctl-name">Seleção inicial</span>{seg('rdvalue', [('first', 'Primeira marcada'), ('none', 'Nenhuma')], 'first')}</div>
-      <div class="ctl"><span class="ctl-name">Estado</span>{seg('rdstate', [('rest', 'Normal'), ('error', 'Erro'), ('disabled', 'Uma desabilitada')], 'rest')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('rdtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="rd-legend" class="ctl-name">Pergunta</label>
-        <input class="txt" id="rd-legend" type="text" value="Cobrança" maxlength="60"></div>
+    <div class="controls controls--fields" id="rd-controls">
+      {pg_field('rdvalue', 'Seleção inicial', [('first', 'Primeira marcada'), ('none', 'Nenhuma')], 'first')}
+      {pg_field('rdstate', 'Estado', [('rest', 'Normal'), ('error', 'Erro'), ('disabled', 'Uma desabilitada')], 'rest')}
+      {pg_field('rdtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('rd-legend', 'Pergunta', valor='Cobrança')}
     </div>
 
     <div class="codewrap">
@@ -4808,12 +5264,6 @@ RADIO_A11Y_TAB = f'''
   card, e guarda a pior. A menor margem entre as que passam é
   <b>{RD_PIOR['role']}</b> em <code>{RD_PIOR['state']}</code>, {RD_PIOR['ratio']:.2f}:1 contra o
   piso de {RD_PIOR['floor']}:1 — na faixa cinza, que a etapa 3 não conseguia ver.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_RD_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_RD_PASSA}</b><span>passam</span></div>
-    <div class="stat"><b>{N_RD_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{RADIO_A11Y['fails']}</b><span>reprovas</span></div>
-  </div>
 </section>
 
 <section>
@@ -4850,21 +5300,6 @@ RADIO_A11Y_TAB = f'''
   </div>
 </section>
 
-<section>
-  <h2>Não-textual — piso 3:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{radio_a11y_rows(['border', 'focus ring', 'dot'])}</tbody>
-  </table></div>
-</section>
-
-<section>
-  <h2>Texto — piso 4,5:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{radio_a11y_rows(['label'])}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -4885,6 +5320,46 @@ RADIO_A11Y_TAB = f'''
   </div>
 </section>'''
 
+
+RADIO_OVERVIEW, RADIO_PLAYGROUND, RADIO_A11Y_TAB = model_tabs(
+    'radio', old_ov=RADIO_OVERVIEW, old_specs=RADIO_SPECS, guide=RADIO_GUIDE, old_a11y=RADIO_A11Y_TAB,
+    preview=rq('pv-rd', 'Frequência do resumo', [('dia', 'Diário', {}), ('semana', 'Semanal', dict(checked=True)),
+                                                  ('mes', 'Mensal', {})]),
+    preview_style='display:block',
+    usage='Use para uma única opção de uma lista curta, de duas a seis opções, com todas visíveis. '
+          'Para várias escolhas é Checkbox; para quatro ou mais em pouco espaço, Select.',
+    states=['Os seis estados do Figma', 'O que só existe no código'],
+    rename={'Geometria e tipografia': 'Medidas', 'Cor — um token por papel e estado': 'Tokens de cor'},
+    extra_dd=[
+        ('do', 'O mesmo <code>name</code> em todas as opções, dentro de <code>fieldset</code> e <code>legend</code>.'),
+        ('do', 'Uma opção por linha, na vertical, em ordem lógica.'),
+        ('do', 'Seleção inicial só quando há um padrão bom; com custo para a pessoa, nenhuma.'),
+        ('dont', 'Radio sozinho, ou para várias escolhas: isso é Checkbox.'),
+        ('dont', 'Radio para ação imediata: isso é Switch.'),
+        ('dont', 'Mais de seis opções: vira Select.'),
+    ],
+    classes=[
+        ('label.al-radio', '—', 'O componente é o próprio <code>&lt;label&gt;</code>: clicar no texto marca.'),
+        ('.al-radio__input', '&lt;input type="radio"&gt;', 'O radio nativo, com o mesmo <code>name</code> no grupo.'),
+        ('.al-radio__control', '—', 'O círculo: borda, fundo e anel.'),
+        ('.al-radio__dot', '—', 'O ponto do marcado.'),
+        ('.al-radio__label', 'texto', 'O rótulo. Obrigatório.'),
+        ('fieldset + legend', 'a pergunta', 'Montados pela aplicação: o componente de grupo não existe.'),
+        ('checked · disabled', '—', 'Atributos nativos.'),
+        ('aria-invalid', 'true', 'No <code>fieldset</code>: o erro é da pergunta e acende todas as opções.'),
+    ],
+    contrast=role_contrast(RADIO_A11Y['rows'], [
+        ('Rótulo', {'label'}, 'ok', 'O texto contra a página.', '1.4.3 Contraste (mínimo)'),
+        ('Ponto', {'dot'}, 'ok', 'O ponto do marcado contra o fundo do círculo.', '1.4.11 Contraste não textual'),
+        ('Borda', {'border'}, 'ok', 'A borda do círculo nos estados que a acendem.', '1.4.11 Contraste não textual'),
+        ('Borda em repouso', {'border'}, 'exc',
+         'Exceção declarada: o rótulo visível sustenta a percepção do controle.', '1.4.11 Contraste não textual'),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel contra a página.', '2.4.13 Aparência do foco'),
+        ('Desabilitado', {'border', 'label', 'dot'}, 'dis',
+         'Componente inativo fica fora do critério. Subir o contraste faria a opção parecer disponível.',
+         '1.4.3 Contraste (mínimo)'),
+    ], forms_intro(N_RD_MEDIDAS, N_RD_EXC)),
+)
 
 # ═══════════════════════════════════════════════════════════════ Switch · abas
 # 5 estados no Figma, num eixo so. Efeito imediato: nao ha formulario com
@@ -4978,34 +5453,8 @@ def switch_geo_rows():
     return '\n'.join(rows)
 
 
-def switch_a11y_rows(papeis):
-    out = []
-    for r in SWITCH_A11Y['rows']:
-        if r['role'] not in papeis:
-            continue
-        if r['pass']:
-            verdict = '<span class="pass">passa</span>'
-        elif r['exc']:
-            verdict = '<span class="exc">exceção</span>'
-        else:
-            verdict = '<span class="fail">reprova</span>'
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        estado = r['state'] + (' <span class="tok dim">(código)</span>' if r['codeOnly'] else '')
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{estado}</td>'
-            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["against"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
-    return '\n'.join(out)
-
-
 N_SW_MEDIDAS = len(SWITCH_A11Y['rows'])
 N_SW_EXC = sum(SWITCH_A11Y['exceptions'].values())
-N_SW_PASSA = N_SW_MEDIDAS - N_SW_EXC
 SW_DERIVED = SWITCH['derived']
 SW_PIOR = min((r for r in SWITCH_A11Y['rows'] if r['pass']), key=lambda r: r['ratio'] / r['floor'])
 
@@ -5030,12 +5479,11 @@ SWITCH_OVERVIEW = f'''
   <div class="pg">
     <div class="stage" id="sw-stage">{sw('pg-sw', 'Notificações por e-mail', checked=True)}</div>
 
-    <div class="controls" id="sw-controls">
-      <div class="ctl"><span class="ctl-name">Estado inicial</span>{seg('swvalue', [('on', 'Ligado'), ('off', 'Desligado')], 'on')}</div>
-      <div class="ctl"><span class="ctl-name">Disponível</span>{seg('swstate', [('rest', 'Sim'), ('disabled', 'Desabilitado')], 'rest')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('swtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="sw-label" class="ctl-name">Rótulo</label>
-        <input class="txt" id="sw-label" type="text" value="Notificações por e-mail" maxlength="60"></div>
+    <div class="controls controls--fields" id="sw-controls">
+      {pg_field('swvalue', 'Estado inicial', [('on', 'Ligado'), ('off', 'Desligado')], 'on')}
+      {pg_field('swstate', 'Disponível', [('rest', 'Sim'), ('disabled', 'Desabilitado')], 'rest')}
+      {pg_field('swtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('sw-label', 'Rótulo', valor='Notificações por e-mail')}
     </div>
 
     <div class="codewrap">
@@ -5249,12 +5697,6 @@ SWITCH_A11Y_TAB = f'''
   faixa de seção e card, guardando a pior. A menor margem entre as que passam é
   <b>{SW_PIOR['role']}</b> em <code>{SW_PIOR['state']}</code>, {SW_PIOR['ratio']:.2f}:1 contra o piso
   de {SW_PIOR['floor']}:1.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_SW_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_SW_PASSA}</b><span>passam</span></div>
-    <div class="stat"><b>{N_SW_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{SWITCH_A11Y['fails']}</b><span>reprovas</span></div>
-  </div>
 </section>
 
 <section>
@@ -5295,21 +5737,6 @@ SWITCH_A11Y_TAB = f'''
   troca de lado sem deslizar.</p>
 </section>
 
-<section>
-  <h2>Não-textual — piso 3:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{switch_a11y_rows(['border', 'focus ring', 'thumb'])}</tbody>
-  </table></div>
-</section>
-
-<section>
-  <h2>Texto — piso 4,5:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{switch_a11y_rows(['label'])}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -5330,6 +5757,45 @@ SWITCH_A11Y_TAB = f'''
 </section>'''
 
 
+SWITCH_OVERVIEW, SWITCH_PLAYGROUND, SWITCH_A11Y_TAB = model_tabs(
+    'switch', old_ov=SWITCH_OVERVIEW, old_specs=SWITCH_SPECS, guide=SWITCH_GUIDE, old_a11y=SWITCH_A11Y_TAB,
+    preview=sw('pv-sw-1', 'Notificações por e-mail', checked=True) + sw('pv-sw-2', 'Resumo semanal'),
+    preview_style='display:grid; gap:12px; justify-items:start',
+    usage='Use para ligar ou desligar algo que vale na hora, sem botão de salvar. Se só vale depois de '
+          'enviar o formulário, é Checkbox.',
+    states=['Os cinco estados do Figma', 'O que só existe no código'],
+    rename={'Geometria e tipografia': 'Medidas', 'Cor — um token por papel e estado': 'Tokens de cor'},
+    extra_dd=[
+        ('do', 'Aplique no clique, sem confirmação; se falhar, volte a bolinha e avise.'),
+        ('do', 'Rótulo visível à direita; clicar nele alterna.'),
+        ('do', 'O estado inicial é o estado real da configuração.'),
+        ('dont', 'Switch para aceite de termos, ou em formulário com envio: isso é Checkbox.'),
+        ('dont', '“Ligado” e “Desligado” escritos ao lado: o leitor de tela já anuncia o estado.'),
+        ('dont', 'Rótulo que muda com o estado.'),
+    ],
+    classes=[
+        ('label.al-switch', '—', 'O componente é o próprio <code>&lt;label&gt;</code>: clicar no texto alterna.'),
+        ('.al-switch__input', '&lt;input type="checkbox" role="switch"&gt;', 'O controle nativo, anunciado como chave.'),
+        ('.al-switch__control', '—', 'O trilho: borda, fundo e anel.'),
+        ('.al-switch__thumb', '—', 'A bolinha; posição e cor mudam juntas.'),
+        ('.al-switch__label', 'texto', 'O rótulo. Obrigatório, e nunca muda com o estado.'),
+        ('checked · disabled', '—', 'Atributos nativos.'),
+    ],
+    contrast=role_contrast(SWITCH_A11Y['rows'], [
+        ('Rótulo', {'label'}, 'ok', 'O texto contra a página.', '1.4.3 Contraste (mínimo)'),
+        ('Bolinha ligada', {'thumb'}, 'ok', 'A bolinha contra o trilho preenchido.', '1.4.11 Contraste não textual'),
+        ('Bolinha desligada', {'thumb'}, 'exc',
+         'Exceção declarada: neutral-400 é o teto da bolinha sobre o trilho vazio. A posição e o rótulo '
+         'visível carregam o estado.', '1.4.11 Contraste não textual'),
+        ('Borda', {'border'}, 'ok', 'A borda do trilho nos estados que a acendem.', '1.4.11 Contraste não textual'),
+        ('Borda em repouso', {'border'}, 'exc',
+         'Exceção declarada: o rótulo visível sustenta a percepção do controle.', '1.4.11 Contraste não textual'),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel contra a página.', '2.4.13 Aparência do foco'),
+        ('Desabilitado', {'border', 'thumb', 'label'}, 'dis',
+         'Componente inativo fica fora do critério. Subir o contraste faria a chave parecer disponível.',
+         '1.4.3 Contraste (mínimo)'),
+    ], forms_intro(N_SW_MEDIDAS, N_SW_EXC)),
+)
 
 # ═══════════════════════════════════════════════════════════════ Input · abas
 # 7 estados no Figma (sem Active, sem Typed). O codigo pinta mais tres casos que
@@ -5339,57 +5805,6 @@ INPUT_STATES = [
     ('default', 'Default'), ('hover', 'Hover'), ('focus', 'Focus'), ('error', 'Error'),
     ('focus-error', 'Focus + Error'), ('disabled', 'Disabled'), ('readonly', 'Read-only'),
 ]
-
-
-def inp(cid, rotulo='E-mail', *, tipo='text', opcional=False, apoio=None, erro=None,
-        disabled=False, readonly=False, valor=None, placeholder=None, prefixo=None,
-        sufixo=None, limite=None, autocomplete=None, sim=None):
-    """Um Input real. `sim` escreve na MESMA variavel privada que o input.css usa
-    para o hover - nao e estilo paralelo. Read-only nunca sai sem valor: vazio
-    vira "—" (regra 22), e o portao de marcacao cobra isso."""
-    if readonly and not (valor or '').strip():
-        valor = '—'
-    attrs = ['class="al-input__field"', f'id="{cid}"', f'type="{tipo}"']
-    if autocomplete:
-        attrs.append(f'autocomplete="{autocomplete}"')
-    if valor is not None:
-        attrs.append(f'value="{valor}"')
-    if placeholder and not readonly:
-        attrs.append(f'placeholder="{placeholder}"')
-    if prefixo or sufixo:
-        nomes = [f'{cid}-label'] + ([f'{cid}-prefix'] if prefixo else []) \
-                + ([f'{cid}-suffix'] if sufixo else [])
-        attrs.append(f'aria-labelledby="{" ".join(nomes)}"')
-    msg = erro or apoio
-    if msg:
-        attrs.append(f'aria-describedby="{cid}-help"')
-    if erro:
-        attrs.append('aria-invalid="true"')
-    if limite:
-        attrs.append(f'data-limit="{limite}" data-counter="{cid}-count"')
-    if readonly:
-        attrs.append('readonly')
-    if disabled:
-        attrs.append('disabled')
-
-    linha = [f'<label class="al-input__label" id="{cid}-label" for="{cid}">{rotulo}</label>']
-    if opcional:
-        linha.append('<span class="al-input__optional">(Opcional)</span>')
-    if limite:
-        n = len(valor or '')
-        acima = ' data-over-limit' if n > limite else ''
-        linha.append(f'<span class="al-input__counter" id="{cid}-count" '
-                     f'aria-live="off"{acima}>{n}/{limite}</span>')
-    caixa = []
-    if prefixo:
-        caixa.append(f'<label class="al-input__affix" id="{cid}-prefix" for="{cid}">{prefixo}</label>')
-    caixa.append(f'<input {" ".join(attrs)}>')
-    if sufixo:
-        caixa.append(f'<label class="al-input__affix" id="{cid}-suffix" for="{cid}">{sufixo}</label>')
-    estilo = f' style="--_border-state: var(--al-input-border-{sim})"' if sim else ''
-    help_html = f'<p class="al-input__help" id="{cid}-help">{msg}</p>' if msg else ''
-    return (f'<div class="al-input"><div class="al-input__labelrow">{"".join(linha)}</div>'
-            f'<div class="al-input__control"{estilo}>{"".join(caixa)}</div>{help_html}</div>')
 
 
 INPUT_ERRO = 'Use um e-mail no formato nome@empresa.com'
@@ -5456,34 +5871,8 @@ def input_geo_rows():
     return '\n'.join(rows)
 
 
-def input_a11y_rows(papeis):
-    """Uma linha por medicao, filtrada pelo papel. Excecao aparece como excecao."""
-    out = []
-    for r in INPUT_A11Y['rows']:
-        if r['role'] not in papeis:
-            continue
-        if r['pass']:
-            verdict = '<span class="pass">passa</span>'
-        elif r['exc']:
-            verdict = '<span class="exc">exceção</span>'
-        else:
-            verdict = '<span class="fail">reprova</span>'
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["against"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
-    return '\n'.join(out)
-
-
 N_IN_MEDIDAS = len(INPUT_A11Y['rows'])
 N_IN_EXC = sum(INPUT_A11Y['exceptions'].values())
-N_IN_PASSA = N_IN_MEDIDAS - N_IN_EXC
 IN_LAYER = {d['theme']: d for d in INPUT_A11Y['layerEffect']}
 
 
@@ -5502,16 +5891,15 @@ INPUT_OVERVIEW = f'''
   <div class="pg">
     <div class="stage" id="input-stage">{inp('play-input', tipo='email', placeholder='nome@empresa.com')}</div>
 
-    <div class="controls" id="input-controls">
-      <div class="ctl"><span class="ctl-name">Estado</span>{seg('inpstate', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado'), ('readonly', 'Read-only')], 'rest')}</div>
-      <div class="ctl"><span class="ctl-name">Valor</span>{seg('inpvalue', [('none', 'Vazio'), ('filled', 'Preenchido')], 'none')}</div>
-      <div class="ctl"><span class="ctl-name">Obrigatoriedade</span>{seg('inpopt', [('req', 'Obrigatório'), ('opt', 'Opcional')], 'req')}</div>
-      <div class="ctl"><span class="ctl-name">Prefixo e sufixo</span>{seg('inpaffix', [('off', 'Sem'), ('on', 'www. + .com')], 'off')}</div>
-      <div class="ctl"><span class="ctl-name">Contador</span>{seg('inpcount', [('off', 'Sem'), ('on', 'Limite de 40')], 'off')}</div>
-      <div class="ctl"><span class="ctl-name">Texto de apoio</span>{seg('inphelp', [('off', 'Sem'), ('on', 'Com')], 'off')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('inptheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="input-label" class="ctl-name">Rótulo</label>
-        <input class="txt" id="input-label" type="text" value="E-mail" maxlength="28"></div>
+    <div class="controls controls--fields" id="input-controls">
+      {pg_field('inpstate', 'Estado', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado'), ('readonly', 'Read-only')], 'rest')}
+      {pg_field('inpvalue', 'Valor', [('none', 'Vazio'), ('filled', 'Preenchido')], 'none')}
+      {pg_field('inpopt', 'Obrigatoriedade', [('req', 'Obrigatório'), ('opt', 'Opcional')], 'req')}
+      {pg_field('inpaffix', 'Prefixo e sufixo', [('off', 'Sem'), ('on', 'www. + .com')], 'off')}
+      {pg_field('inpcount', 'Contador', [('off', 'Sem'), ('on', 'Limite de 40')], 'off')}
+      {pg_field('inphelp', 'Texto de apoio', [('off', 'Sem'), ('on', 'Com')], 'off')}
+      {pg_field('inptheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('input-label', 'Rótulo', valor='E-mail')}
     </div>
 
     <div class="codewrap">
@@ -5779,12 +6167,6 @@ INPUT_A11Y_TAB = f'''
       <tr><td class="tok dim">escuro</td><td class="num">{IN_LAYER['dark']['rest']:.2f}:1</td><td class="num strong">{IN_LAYER['dark']['focused']:.2f}:1</td></tr>
     </tbody>
   </table></div>
-  <div class="stats">
-    <div class="stat hl"><b>{N_IN_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_IN_PASSA}</b><span>passam</span></div>
-    <div class="stat"><b>{N_IN_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{INPUT_A11Y['fails']}</b><span>reprovas</span></div>
-  </div>
 </section>
 
 <section>
@@ -5810,21 +6192,6 @@ INPUT_A11Y_TAB = f'''
   </div>
 </section>
 
-<section>
-  <h2>Borda e anel — o não-textual, piso 3:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{input_a11y_rows(['border', 'focus ring'])}</tbody>
-  </table></div>
-</section>
-
-<section>
-  <h2>Texto — piso 4,5:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{input_a11y_rows(['label', 'optional mark', 'counter', 'counter over limit', 'help', 'error message', 'placeholder', 'value', 'affix', 'text'])}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -5854,6 +6221,63 @@ INPUT_A11Y_TAB = f'''
   campo liga o anel, e clicar no read-only também. Uma borda laranja de 1px para o clique seria
   coberta pelo anel no mesmo instante — por isso o estado saiu do Figma na etapa 1.</p>
 </section>'''
+
+
+INPUT_OVERVIEW, INPUT_PLAYGROUND, INPUT_A11Y_TAB = model_tabs(
+    'input', old_ov=INPUT_OVERVIEW, old_specs=INPUT_SPECS, guide=INPUT_GUIDE, old_a11y=INPUT_A11Y_TAB,
+    preview=inp('pv-input', 'E-mail', tipo='email', placeholder='nome@empresa.com',
+                apoio='Usado para entrar na conta'),
+    preview_style='display:block; width:min(360px,100%)',
+    usage='Use para uma resposta livre de uma linha: nome, e-mail, URL, telefone. Se a resposta cabe '
+          'numa lista conhecida, é Select ou Radio; se passa de uma linha, é Textarea.',
+    states=['Os sete estados'],
+    rename={'Geometria e tipografia': 'Medidas', 'Cor — um token por papel e estado': 'Tokens de cor'},
+    presets={'Prefixo e sufixo dentro da borda': {'inpaffix': 'on'},
+             'O afixo não vai no envio': {'inpaffix': 'on', 'inpvalue': 'filled'}},
+    extra_dd=[
+        ('do', 'Marque o campo opcional com “(Opcional)”; o obrigatório não leva marca.'),
+        ('do', 'Prefixo e sufixo só para a parte fixa do valor: moeda, unidade, domínio.'),
+        ('do', 'No erro, a mensagem substitui o apoio e diz como corrigir.'),
+        ('do', 'Read-only vazio mostra “—”, nunca o placeholder.'),
+        ('dont', '<code>maxlength</code> para limitar: o contador avisa, o campo não trava.'),
+        ('dont', 'Input para resposta de várias linhas: isso é Textarea.'),
+        ('dont', 'Afixo com explicação: ela vai no texto de apoio.'),
+        ('dont', 'Disabled para dado que precisa ser lido e copiado: isso é read-only.'),
+    ],
+    classes=[
+        ('.al-input', '—', 'Invólucro: rótulo, caixa e apoio.'),
+        ('.al-input__labelrow', '—', 'A linha do rótulo, com a marca de opcional e o contador.'),
+        ('.al-input__label', 'texto', '<code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Obrigatório.'),
+        ('.al-input__optional', '(Opcional)', 'Marca o campo opcional.'),
+        ('.al-input__counter', 'n/limite', 'Só havendo limite. Recebe <code>data-over-limit</code> acima dele.'),
+        ('.al-input__control', '—', 'A caixa: borda, fundo, raio e anel.'),
+        ('.al-input__field', '&lt;input&gt;', 'O campo nativo, transparente dentro da caixa.'),
+        ('.al-input__affix', 'texto curto', 'Prefixo ou sufixo, como <code>&lt;label for&gt;</code>. Não vai no envio.'),
+        ('.al-input__help', 'texto', 'Apoio, ou a mensagem de erro no mesmo lugar.'),
+        ('aria-invalid', 'true', 'Erro. Sempre com <code>aria-describedby</code> apontando a mensagem.'),
+        ('data-limit', 'número', 'O limite do contador, no lugar do <code>maxlength</code>.'),
+        ('readonly · disabled', '—', 'Atributos nativos. O read-only vai no envio; o desabilitado não.'),
+    ],
+    contrast=role_contrast(INPUT_A11Y['rows'], [
+        ('Valor e afixo', {'value', 'affix'}, 'ok',
+         'O texto digitado e o afixo contra o fundo do campo, editável ou read-only.', '1.4.3 Contraste (mínimo)'),
+        ('Rótulo e textos de apoio', {'label', 'optional mark', 'counter', 'help'}, 'ok',
+         'Rótulo, “(Opcional)”, contador e apoio contra a página.', '1.4.3 Contraste (mínimo)'),
+        ('Placeholder', {'placeholder'}, 'ok',
+         'Exemplo de formato, e por isso medido como texto. Some no read-only.', '1.4.3 Contraste (mínimo)'),
+        ('Erro', {'error message', 'counter over limit'}, 'ok',
+         'A mensagem de erro e o contador acima do limite.', '1.4.3 Contraste (mínimo)'),
+        ('Borda', {'border'}, 'ok', 'A borda contra a página nos estados que a acendem.', '1.4.11 Contraste não textual'),
+        ('Borda em repouso', {'border'}, 'exc',
+         'Exceção declarada: a borda não é o único meio de perceber o campo. Há rótulo visível sempre, '
+         'e é essa regra de uso que sustenta a exceção.', '1.4.11 Contraste não textual'),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel contra a página. No erro, o anel de erro.',
+         '2.4.13 Aparência do foco'),
+        ('Desabilitado', {'border', 'label', 'optional mark', 'counter', 'text'}, 'dis',
+         'Componente inativo fica fora do critério. Subir o contraste faria o campo parecer editável.',
+         '1.4.3 Contraste (mínimo)'),
+    ], forms_intro(N_IN_MEDIDAS, N_IN_EXC)),
+)
 
 # ════════════════════════════════════════════════════════════ Textarea · abas
 # Os mesmos 7 estados do Input. O codigo pinta mais tres casos que o Figma nao
@@ -5966,33 +6390,8 @@ def textarea_geo_rows():
     return '\n'.join(rows)
 
 
-def textarea_a11y_rows(papeis):
-    out = []
-    for r in TEXTAREA_A11Y['rows']:
-        if r['role'] not in papeis:
-            continue
-        if r['pass']:
-            verdict = '<span class="pass">passa</span>'
-        elif r['exc']:
-            verdict = '<span class="exc">exceção</span>'
-        else:
-            verdict = '<span class="fail">reprova</span>'
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["against"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
-    return '\n'.join(out)
-
-
 N_TA_MEDIDAS = len(TEXTAREA_A11Y['rows'])
 N_TA_EXC = sum(TEXTAREA_A11Y['exceptions'].values())
-N_TA_PASSA = N_TA_MEDIDAS - N_TA_EXC
 TA_LAYER = {d['theme']: d for d in TEXTAREA_A11Y['layerEffect']}
 TA_DER = TEXTAREA['derived']
 TA_LINE = TEXTAREA['resolved']['textarea-font'][2]
@@ -6014,16 +6413,15 @@ TEXTAREA_OVERVIEW = f'''
   <div class="pg">
     <div class="stage" id="textarea-stage">{ta('play-textarea', placeholder='O que aconteceu e quando')}</div>
 
-    <div class="controls" id="textarea-controls">
-      <div class="ctl"><span class="ctl-name">Estado</span>{seg('tastate', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado'), ('readonly', 'Read-only')], 'rest')}</div>
-      <div class="ctl"><span class="ctl-name">Valor</span>{seg('tavalue', [('none', 'Vazio'), ('short', 'Curto'), ('long', 'Longo')], 'none')}</div>
-      <div class="ctl"><span class="ctl-name">Linhas</span>{seg('tarows', [('3', '3 (padrão)'), ('6', '6')], '3')}</div>
-      <div class="ctl"><span class="ctl-name">Obrigatoriedade</span>{seg('taopt', [('req', 'Obrigatório'), ('opt', 'Opcional')], 'req')}</div>
-      <div class="ctl"><span class="ctl-name">Contador</span>{seg('tacount', [('off', 'Sem'), ('on', 'Limite de 140')], 'off')}</div>
-      <div class="ctl"><span class="ctl-name">Texto de apoio</span>{seg('tahelp', [('off', 'Sem'), ('on', 'Com')], 'off')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tatheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="textarea-label" class="ctl-name">Rótulo</label>
-        <input class="txt" id="textarea-label" type="text" value="Descrição do problema" maxlength="40"></div>
+    <div class="controls controls--fields" id="textarea-controls">
+      {pg_field('tastate', 'Estado', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado'), ('readonly', 'Read-only')], 'rest')}
+      {pg_field('tavalue', 'Valor', [('none', 'Vazio'), ('short', 'Curto'), ('long', 'Longo')], 'none')}
+      {pg_field('tarows', 'Linhas', [('3', '3 (padrão)'), ('6', '6')], '3')}
+      {pg_field('taopt', 'Obrigatoriedade', [('req', 'Obrigatório'), ('opt', 'Opcional')], 'req')}
+      {pg_field('tacount', 'Contador', [('off', 'Sem'), ('on', 'Limite de 140')], 'off')}
+      {pg_field('tahelp', 'Texto de apoio', [('off', 'Sem'), ('on', 'Com')], 'off')}
+      {pg_field('tatheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('textarea-label', 'Rótulo', valor='Descrição do problema')}
     </div>
 
     <div class="codewrap">
@@ -6297,12 +6695,6 @@ TEXTAREA_A11Y_TAB = f'''
       <tr><td class="tok dim">escuro</td><td class="num">{TA_LAYER['dark']['rest']:.2f}:1</td><td class="num strong">{TA_LAYER['dark']['focused']:.2f}:1</td></tr>
     </tbody>
   </table></div>
-  <div class="stats">
-    <div class="stat hl"><b>{N_TA_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_TA_PASSA}</b><span>passam</span></div>
-    <div class="stat"><b>{N_TA_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{TEXTAREA_A11Y['fails']}</b><span>reprovas</span></div>
-  </div>
 </section>
 
 <section>
@@ -6321,21 +6713,6 @@ TEXTAREA_A11Y_TAB = f'''
   </div>
 </section>
 
-<section>
-  <h2>Borda e anel — o não-textual, piso 3:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{textarea_a11y_rows(['border', 'focus ring'])}</tbody>
-  </table></div>
-</section>
-
-<section>
-  <h2>Texto — piso 4,5:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{textarea_a11y_rows(['label', 'optional mark', 'counter', 'counter over limit', 'help', 'error message', 'placeholder', 'value', 'text'])}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -6369,6 +6746,58 @@ TEXTAREA_A11Y_TAB = f'''
 </section>'''
 
 
+TEXTAREA_OVERVIEW, TEXTAREA_PLAYGROUND, TEXTAREA_A11Y_TAB = model_tabs(
+    'textarea', old_ov=TEXTAREA_OVERVIEW, old_specs=TEXTAREA_SPECS, guide=TEXTAREA_GUIDE,
+    old_a11y=TEXTAREA_A11Y_TAB,
+    preview=ta('pv-ta', 'Descrição do problema', placeholder='O que aconteceu e quando',
+               apoio='Quanto mais detalhe, mais rápido o retorno'),
+    preview_style='display:block; width:min(420px,100%)',
+    usage='Use para uma resposta livre que pode passar de uma linha: descrição, comentário, relato. '
+          'Para uma linha só, é Input.',
+    states=['Os sete estados'],
+    rename={'Geometria e tipografia': 'Medidas', 'Cor — um token por papel e estado': 'Tokens de cor'},
+    presets={'Resposta longa esperada': {'tarows': '6', 'tavalue': 'long'},
+             'Texto maior que o campo': {'tavalue': 'long'}},
+    extra_dd=[
+        ('do', 'Três linhas no mínimo; seis quando a resposta esperada é longa.'),
+        ('do', 'Marque o campo opcional com “(Opcional)”; o obrigatório não leva marca.'),
+        ('do', 'O contador avisa o limite sem travar a digitação.'),
+        ('dont', 'Textarea para dado com partes, como endereço: são vários campos.'),
+        ('dont', 'Campo que cresce sozinho, ou que redimensiona na horizontal.'),
+        ('dont', 'Prefixo e sufixo: não existem no Textarea.'),
+    ],
+    classes=[
+        ('.al-textarea', '—', 'Invólucro: rótulo, campo e apoio.'),
+        ('.al-textarea__labelrow', '—', 'A linha do rótulo, com a marca de opcional e o contador.'),
+        ('.al-textarea__label', 'texto', '<code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Obrigatório.'),
+        ('.al-textarea__optional', '(Opcional)', 'Marca o campo opcional.'),
+        ('.al-textarea__counter', 'n/limite', 'Só havendo limite. Recebe <code>data-over-limit</code> acima dele.'),
+        ('.al-textarea__field', '&lt;textarea&gt;', 'A caixa é a própria textarea: só redimensiona na vertical.'),
+        ('.al-textarea__help', 'texto', 'Apoio, ou a mensagem de erro no mesmo lugar.'),
+        ('rows', '3 · 6', 'A altura. Três é o padrão e o mínimo.'),
+        ('aria-invalid', 'true', 'Erro. Sempre com <code>aria-describedby</code> apontando a mensagem.'),
+        ('readonly · disabled', '—', 'Atributos nativos. O read-only continua focável para rolar.'),
+    ],
+    contrast=role_contrast(TEXTAREA_A11Y['rows'], [
+        ('Valor', {'value'}, 'ok', 'O texto digitado contra o fundo do campo, editável ou read-only.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Rótulo e textos de apoio', {'label', 'optional mark', 'counter', 'help'}, 'ok',
+         'Rótulo, “(Opcional)”, contador e apoio contra a página.', '1.4.3 Contraste (mínimo)'),
+        ('Placeholder', {'placeholder'}, 'ok', 'Exemplo do tipo de resposta, medido como texto.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Erro', {'error message', 'counter over limit'}, 'ok',
+         'A mensagem de erro e o contador acima do limite.', '1.4.3 Contraste (mínimo)'),
+        ('Borda', {'border'}, 'ok', 'A borda contra a página nos estados que a acendem.', '1.4.11 Contraste não textual'),
+        ('Borda em repouso', {'border'}, 'exc',
+         'Exceção declarada: há rótulo visível sempre, e é essa regra de uso que sustenta a exceção.',
+         '1.4.11 Contraste não textual'),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel contra a página. No erro, o anel de erro.',
+         '2.4.13 Aparência do foco'),
+        ('Desabilitado', {'border', 'label', 'optional mark', 'counter', 'text'}, 'dis',
+         'Componente inativo fica fora do critério. Subir o contraste faria o campo parecer editável.',
+         '1.4.3 Contraste (mínimo)'),
+    ], forms_intro(N_TA_MEDIDAS, N_TA_EXC)),
+)
 
 # ════════════════════════════════════════════════════════════ Password · abas
 # 17 variantes no Figma = 6 estados x Type (No / Visible / Hidden), menos o
@@ -6481,33 +6910,8 @@ def password_geo_rows():
     return '\n'.join(rows)
 
 
-def password_a11y_rows(papeis):
-    out = []
-    for r in PASSWORD_A11Y['rows']:
-        if r['role'] not in papeis:
-            continue
-        if r['pass']:
-            verdict = '<span class="pass">passa</span>'
-        elif r['exc']:
-            verdict = '<span class="exc">exceção</span>'
-        else:
-            verdict = '<span class="fail">reprova</span>'
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["state"]}</td>'
-            f'<td class="tok dim">{r["role"]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">--al-{r["token"]}</td>'
-            f'<td class="tok dim">{r["against"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="num dim">{r["floor"]}:1</td><td>{verdict}</td></tr>')
-    return '\n'.join(out)
-
-
 N_PW_MEDIDAS = len(PASSWORD_A11Y['rows'])
 N_PW_EXC = sum(PASSWORD_A11Y['exceptions'].values())
-N_PW_PASSA = N_PW_MEDIDAS - N_PW_EXC
 PW_DER = PASSWORD['derived']
 
 
@@ -6527,14 +6931,13 @@ PASSWORD_OVERVIEW = f'''
   <div class="pg">
     <div class="stage" id="password-stage">{pwd('play-password')}</div>
 
-    <div class="controls" id="password-controls">
-      <div class="ctl"><span class="ctl-name">Estado</span>{seg('pwstate', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}</div>
-      <div class="ctl"><span class="ctl-name">Valor</span>{seg('pwvalue', [('none', 'Vazio'), ('filled', 'Preenchido')], 'none')}</div>
-      <div class="ctl"><span class="ctl-name">Uso</span>{seg('pwuse', [('login', 'Login'), ('new', 'Senha nova')], 'login')}</div>
-      <div class="ctl"><span class="ctl-name">Requisitos no formulário</span>{seg('pwreq', [('off', 'Sem'), ('on', 'Com')], 'off')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('pwtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="password-label" class="ctl-name">Rótulo</label>
-        <input class="txt" id="password-label" type="text" value="Senha" maxlength="40"></div>
+    <div class="controls controls--fields" id="password-controls">
+      {pg_field('pwstate', 'Estado', [('rest', 'Repouso'), ('error', 'Erro'), ('disabled', 'Desabilitado')], 'rest')}
+      {pg_field('pwvalue', 'Valor', [('none', 'Vazio'), ('filled', 'Preenchido')], 'none')}
+      {pg_field('pwuse', 'Uso', [('login', 'Login'), ('new', 'Senha nova')], 'login')}
+      {pg_field('pwreq', 'Requisitos no formulário', [('off', 'Sem'), ('on', 'Com')], 'off')}
+      {pg_field('pwtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('password-label', 'Rótulo', valor='Senha')}
     </div>
 
     <div class="codewrap">
@@ -6769,12 +7172,6 @@ PASSWORD_A11Y_TAB = f'''
       <tr><td class="tok dim">escuro</td><td class="num strong">{_pw('default', 'dark', 'eye ring'):.2f}:1</td><td class="num">{_pw('default', 'dark', 'eye'):.2f}:1</td></tr>
     </tbody>
   </table></div>
-  <div class="stats">
-    <div class="stat hl"><b>{N_PW_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_PW_PASSA}</b><span>passam</span></div>
-    <div class="stat"><b>{N_PW_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{PASSWORD_A11Y['fails']}</b><span>reprovas</span></div>
-  </div>
 </section>
 
 <section>
@@ -6793,21 +7190,6 @@ PASSWORD_A11Y_TAB = f'''
   </div>
 </section>
 
-<section>
-  <h2>Borda, anéis e olho — o não-textual, piso 3:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{password_a11y_rows(['border', 'field ring', 'eye ring', 'eye'])}</tbody>
-  </table></div>
-</section>
-
-<section>
-  <h2>Texto — piso 4,5:1</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>Papel</th><th></th><th>Token</th><th>Medido contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{password_a11y_rows(['label', 'error message', 'placeholder', 'value', 'text'])}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -6843,6 +7225,52 @@ PASSWORD_A11Y_TAB = f'''
 </section>'''
 
 
+PASSWORD_OVERVIEW, PASSWORD_PLAYGROUND, PASSWORD_A11Y_TAB = model_tabs(
+    'password', old_ov=PASSWORD_OVERVIEW, old_specs=PASSWORD_SPECS, guide=PASSWORD_GUIDE,
+    old_a11y=PASSWORD_A11Y_TAB, js=True,
+    preview=pwd('pv-pw', 'Senha'),
+    preview_style='display:block; width:min(360px,100%)',
+    usage='Use em toda senha criada ou digitada. Nasce escondida, e o olho dentro do campo mostra e '
+          'esconde. O <code>password.js</code> liga o olho.',
+    states=['Os seis estados'],
+    rename={'Cor — um token por papel e estado': 'Tokens de cor'},
+    presets={'Visível — depois do clique': {'pwvalue': 'filled'}},
+    extra_dd=[
+        ('do', 'O olho volta a esconder a senha no envio.'),
+        ('do', 'No login, a mensagem não diz qual dado errou, e o campo volta vazio.'),
+        ('dont', 'Password para código de uso único: não é senha.'),
+        ('dont', 'Valor em vermelho no erro: a cor fica na borda e na mensagem.'),
+    ],
+    classes=[
+        ('.al-password', '—', 'Invólucro: rótulo, caixa e mensagem.'),
+        ('.al-password__label', 'texto', '<code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Obrigatório.'),
+        ('.al-password__control', '—', 'A caixa: borda, fundo e anel, com o campo e o olho dentro.'),
+        ('.al-password__field', '&lt;input type="password"&gt;', 'O campo nativo. O JS troca para <code>text</code> ao mostrar.'),
+        ('.al-password__toggle', '&lt;button&gt;', 'O olho. Nasce <code>hidden</code>; o JS mostra e liga.'),
+        ('.al-password__show · __hide', 'ícone', 'Os dois desenhos do olho; o CSS mostra um por vez.'),
+        ('.al-password__help', 'texto', 'A mensagem de erro.'),
+        ('data-label-show · data-label-hide', 'texto', 'O nome do olho em cada estado: “Mostrar senha”, “Ocultar senha”.'),
+        ('autocomplete', 'current-password · new-password', 'Diz ao gerenciador de senhas se é login ou senha nova.'),
+        ('aria-invalid', 'true', 'Erro. Sempre com <code>aria-describedby</code> apontando a mensagem.'),
+    ],
+    contrast=role_contrast(PASSWORD_A11Y['rows'], [
+        ('Valor', {'value'}, 'ok', 'A senha digitada, escondida ou visível, contra o fundo do campo.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Rótulo', {'label'}, 'ok', 'O texto contra a página.', '1.4.3 Contraste (mínimo)'),
+        ('Placeholder', {'placeholder'}, 'ok', 'Curto e genérico, medido como texto.', '1.4.3 Contraste (mínimo)'),
+        ('Erro', {'error message'}, 'ok', 'A mensagem de erro contra a página.', '1.4.3 Contraste (mínimo)'),
+        ('Olho', {'eye'}, 'ok', 'O ícone do olho contra o fundo do campo.', '1.4.11 Contraste não textual'),
+        ('Borda', {'border'}, 'ok', 'A borda contra a página nos estados que a acendem.', '1.4.11 Contraste não textual'),
+        ('Borda em repouso', {'border'}, 'exc',
+         'Exceção declarada: há rótulo visível sempre, e é essa regra de uso que sustenta a exceção.',
+         '1.4.11 Contraste não textual'),
+        ('Anéis de foco', {'field ring', 'eye ring'}, 'ok',
+         'O anel do campo contra a página e o anel do olho, dentro do campo.', '2.4.13 Aparência do foco'),
+        ('Desabilitado', {'border', 'label', 'eye', 'text'}, 'dis',
+         'Componente inativo fica fora do critério. Subir o contraste faria o campo parecer editável.',
+         '1.4.3 Contraste (mínimo)'),
+    ], forms_intro(N_PW_MEDIDAS, N_PW_EXC)),
+)
 
 # ═══════════════════════════════════════════════════════════════ Divider · abas
 # Primeiro componente do Tier 3. Sem estado e sem tamanho: o que varia e a
@@ -12450,42 +12878,6 @@ NAV_INFO['prova'] = ('Foundation', 'A prova', '')
 # Fica aqui embaixo, e não junto do resto do Button, porque os controles do
 # playground são o Select e o Input do AL (sel/inp são definidos depois).
 
-def pg_select(cid, rotulo, opcoes, valor):
-    """Select do AL como controle de playground: valor pré-selecionado, sem
-    placeholder (regra 10 do Select). Vale também com 2 ou 3 opções: divergência
-    consciente da regra 1 do Select (decisão do Gui, 11/10), porque o Radio lado a
-    lado quebrava linha e os seis controles ficam com a mesma forma."""
-    ops = ''.join(f'<option value="{v}"{" selected" if v == valor else ""}>{t}</option>'
-                  for v, t in opcoes)
-    return (f'<div class="al-select"><div class="al-select__labelrow">'
-            f'<label class="al-select__label" for="{cid}">{rotulo}</label></div>'
-            f'<div class="al-select__control"><select id="{cid}" class="al-select__field">{ops}</select>'
-            f'{SELECT_CHEVRON}</div></div>')
-
-
-def tok_tabs(pref, comp, rows_fn):
-    """Tokens de cor em Tab Square: uma aba por variante, cada painel com a
-    própria tabela (segundo nível dentro do Tab Line da página). `rows_fn(v)`
-    devolve as linhas de uma variante, ou de todas com None."""
-    abas = [('all', 'Todas')] + VARIANTS
-    bt, pn = [], []
-    for i, (v, rot) in enumerate(abas):
-        tid, pid = f'{pref}-t-{v}', f'{pref}-p-{v}'
-        on = i == 0
-        roving = '' if on else ' tabindex="-1"'
-        bt.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
-                  f'aria-selected="{"true" if on else "false"}" aria-controls="{pid}"{roving}>'
-                  f'<span class="al-tab__label">{rot}</span></button>')
-        pn.append(f'<div class="tok-panel" role="tabpanel" id="{pid}" aria-labelledby="{tid}" '
-                  f'tabindex="0"{"" if on else " hidden"}><h3 class="sr-only">{rot}</h3>'
-                  f'<div class="scroller"><table><thead><tr><th>Token do {comp}</th><th>Aponta para</th>'
-                  f'<th>Resolve em (claro)</th></tr></thead>'
-                  f'<tbody>{rows_fn(None if v == "all" else v)}</tbody></table></div></div>')
-    return ('<div class="al-tabs al-tabs--square tok-tabs" role="tablist" '
-            'aria-label="Tokens de cor por variante">'
-            + ''.join(bt) + '</div>' + ''.join(pn))
-
-
 def btn_markup(variant, label, size='md', icon=None, busy=False, live=False):
     """O mesmo botão em duas formas: `live` para a página (fora da ordem de
     tabulação, como todo exemplo estático) e código para copiar."""
@@ -12542,41 +12934,6 @@ def btn_example(eid, title, buttons, desc, preset):
     live = ''.join(btn_markup(v, l, live=True, **o) for v, l, o in buttons)
     code = '\n'.join(btn_markup(v, l, **o) for v, l, o in buttons)
     return ex_card(f'btnex-{eid}', title, live, code, desc, preset)
-
-
-def ex_card(gid, title, live, code, desc, preset):
-    """Cartão de exemplo: palco, abas Descrição e Código e o botão que leva o
-    exemplo para o playground da página."""
-    code = code.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-    tabs, panels = [], []
-    for i, (slug, rot) in enumerate((('desc', 'Descrição'), ('code', 'Código'))):
-        tid, pid = f'{gid}-t-{slug}', f'{gid}-p-{slug}'
-        on = i == 0
-        roving = '' if on else ' tabindex="-1"'
-        tabs.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
-                    f'aria-selected="{"true" if on else "false"}" aria-controls="{pid}"'
-                    f'{roving}><span class="al-tab__label">{rot}</span></button>')
-        body = (f'<p>{desc}</p>' if slug == 'desc'
-                else f'<pre><code>{code}</code></pre>')
-        panels.append(f'<div class="ex__panel ex__panel--{slug}" role="tabpanel" id="{pid}" '
-                      f'aria-labelledby="{tid}" tabindex="0"{"" if on else " hidden"}>'
-                      f'<h4 class="sr-only">{rot}</h4>{body}</div>')
-    data = json.dumps(preset).replace('"', '&quot;')
-    return (f'<div class="ex"><h3 class="ex__title">{title}</h3>'
-            f'<div class="stage ex__stage"><div class="ex__row">{live}</div></div>'
-            f'<div class="ex__bar"><div class="al-tabs al-tabs--square" role="tablist" '
-            f'aria-label="{title}">{"".join(tabs)}</div>'
-            f'<button type="button" class="al-btn al-btn--ghost al-btn--sm" data-pg-preset="{data}">'
-            f'<span class="al-btn__label">Abrir no playground</span></button></div>'
-            f'{"".join(panels)}</div>')
-
-
-def do_dont_rows(rows):
-    out = []
-    for kind, text in rows:
-        t = tg('filled', 'success', 'sm', 'Faça') if kind == 'do' else tg('filled', 'error', 'sm', 'Não faça')
-        out.append(f'<tr><td class="ddt-tag">{t}</td><td>{text}</td></tr>')
-    return ''.join(out)
 
 
 BTN_DO_DONT = [
@@ -13028,7 +13385,7 @@ PAGES = [
         [('Estável', True), ('40 variantes no Figma', False), (f'{N_BTN_TOKENS} tokens', False),
          ('0 valores soltos', False)],
         [('overview', 'Visão geral', BTN_OVERVIEW), ('playground', 'Playground', BTN_PLAYGROUND),
-         ('guide', 'Diretrizes', BTN_GUIDE), ('a11y', 'Acessibilidade', BTN_A11Y)])),
+         ('guide', 'Diretrizes', anat_to_tables(BTN_GUIDE)), ('a11y', 'Acessibilidade', BTN_A11Y)])),
 
     ('icon-button', 'Componentes', page(
         'icon-button',
@@ -13037,7 +13394,7 @@ PAGES = [
         [('Estável', True), ('40 variantes no Figma', False), (f'{N_IB_TOKENS} tokens', False),
          ('0 exceções de marca', False)],
         [('overview', 'Visão geral', IB_OVERVIEW), ('playground', 'Playground', IB_PLAYGROUND),
-         ('guide', 'Diretrizes', IB_GUIDE), ('a11y', 'Acessibilidade', IB_A11Y)])),
+         ('guide', 'Diretrizes', anat_to_tables(IB_GUIDE)), ('a11y', 'Acessibilidade', IB_A11Y)])),
 
     ('tag', 'Componentes', page(
         'tag',
@@ -13063,8 +13420,8 @@ PAGES = [
         'que compra teclado, leitor de tela e comportamento mobile sem uma linha de JavaScript.',
         [('Estável', True), ('7 estados no Figma', False),
          (f'{N_SELECT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', SELECT_OVERVIEW), ('specs', 'Especificações', SELECT_SPECS),
-         ('guide', 'Diretrizes', SELECT_GUIDE), ('a11y', 'Acessibilidade', SELECT_A11Y_TAB)])),
+        [('overview', 'Visão geral', SELECT_OVERVIEW), ('playground', 'Playground', SELECT_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(SELECT_GUIDE)), ('a11y', 'Acessibilidade', SELECT_A11Y_TAB)])),
     ('checkbox', 'Componentes', page(
         'checkbox',
         'Várias opções de uma lista, ou uma opção isolada que só vale depois de confirmar. É o '
@@ -13072,8 +13429,8 @@ PAGES = [
         'Espaço, leitor de tela e o estado misto vêm do navegador.',
         [('Estável', True), ('7 estados no Figma', False),
          (f'{N_CHECKBOX_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', CHECKBOX_OVERVIEW), ('specs', 'Especificações', CHECKBOX_SPECS),
-         ('guide', 'Diretrizes', CHECKBOX_GUIDE), ('a11y', 'Acessibilidade', CHECKBOX_A11Y_TAB)])),
+        [('overview', 'Visão geral', CHECKBOX_OVERVIEW), ('playground', 'Playground', CHECKBOX_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(CHECKBOX_GUIDE)), ('a11y', 'Acessibilidade', CHECKBOX_A11Y_TAB)])),
     ('radio', 'Componentes', page(
         'radio',
         'Uma única opção de uma lista curta, com todas à vista para comparar. É o '
@@ -13081,8 +13438,8 @@ PAGES = [
         'setas, Tab e “marcar um desmarca o outro” vêm do navegador. A pergunta em volta é da aplicação.',
         [('Estável', True), ('6 estados no Figma', False),
          (f'{N_RADIO_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', RADIO_OVERVIEW), ('specs', 'Especificações', RADIO_SPECS),
-         ('guide', 'Diretrizes', RADIO_GUIDE), ('a11y', 'Acessibilidade', RADIO_A11Y_TAB)])),
+        [('overview', 'Visão geral', RADIO_OVERVIEW), ('playground', 'Playground', RADIO_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(RADIO_GUIDE)), ('a11y', 'Acessibilidade', RADIO_A11Y_TAB)])),
     ('switch', 'Componentes', page(
         'switch',
         'Liga ou desliga uma configuração que vale na hora, sem botão “Salvar”. É o '
@@ -13090,8 +13447,8 @@ PAGES = [
         'cima — Espaço, clique no rótulo e o anúncio “chave, ligada” vêm do navegador.',
         [('Estável', True), ('5 estados no Figma', False),
          (f'{N_SWITCH_TOKENS} tokens', False), ('3 exceções declaradas', False)],
-        [('overview', 'Visão geral', SWITCH_OVERVIEW), ('specs', 'Especificações', SWITCH_SPECS),
-         ('guide', 'Diretrizes', SWITCH_GUIDE), ('a11y', 'Acessibilidade', SWITCH_A11Y_TAB)])),
+        [('overview', 'Visão geral', SWITCH_OVERVIEW), ('playground', 'Playground', SWITCH_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(SWITCH_GUIDE)), ('a11y', 'Acessibilidade', SWITCH_A11Y_TAB)])),
     ('input', 'Componentes', page(
         'input',
         'Resposta livre de uma linha: nome, e-mail, URL, telefone. É o <code>&lt;input&gt;</code> '
@@ -13099,8 +13456,8 @@ PAGES = [
         'borda, sem que nenhum dos dois vá junto no envio.',
         [('Estável', True), ('7 estados no Figma', False),
          (f'{N_INPUT_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', INPUT_OVERVIEW), ('specs', 'Especificações', INPUT_SPECS),
-         ('guide', 'Diretrizes', INPUT_GUIDE), ('a11y', 'Acessibilidade', INPUT_A11Y_TAB)])),
+        [('overview', 'Visão geral', INPUT_OVERVIEW), ('playground', 'Playground', INPUT_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(INPUT_GUIDE)), ('a11y', 'Acessibilidade', INPUT_A11Y_TAB)])),
     ('textarea', 'Componentes', page(
         'textarea',
         'Resposta livre de várias linhas: descrição, comentário, justificativa. É a '
@@ -13108,8 +13465,8 @@ PAGES = [
         'redimensiona só na vertical e nunca envia o formulário no Enter.',
         [('Estável', True), ('7 estados no Figma', False),
          (f'{N_TEXTAREA_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', TEXTAREA_OVERVIEW), ('specs', 'Especificações', TEXTAREA_SPECS),
-         ('guide', 'Diretrizes', TEXTAREA_GUIDE), ('a11y', 'Acessibilidade', TEXTAREA_A11Y_TAB)])),
+        [('overview', 'Visão geral', TEXTAREA_OVERVIEW), ('playground', 'Playground', TEXTAREA_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(TEXTAREA_GUIDE)), ('a11y', 'Acessibilidade', TEXTAREA_A11Y_TAB)])),
     ('password', 'Componentes', page(
         'password',
         'Campo de senha com o botão de mostrar e ocultar. É o <code>&lt;input type="password"&gt;</code> '
@@ -13117,8 +13474,8 @@ PAGES = [
         'componente do AL que traz o próprio JavaScript.',
         [('Estável', True), ('17 variantes no Figma', False),
          (f'{N_PASSWORD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', PASSWORD_OVERVIEW), ('specs', 'Especificações', PASSWORD_SPECS),
-         ('guide', 'Diretrizes', PASSWORD_GUIDE), ('a11y', 'Acessibilidade', PASSWORD_A11Y_TAB)])),
+        [('overview', 'Visão geral', PASSWORD_OVERVIEW), ('playground', 'Playground', PASSWORD_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(PASSWORD_GUIDE)), ('a11y', 'Acessibilidade', PASSWORD_A11Y_TAB)])),
     ('divider', 'Componentes', page(
         'divider',
         'A linha que separa dois grupos de conteúdo quando o espaço sozinho não basta. É o '
@@ -13391,7 +13748,7 @@ JS = r"""
   var input = document.getElementById('btn-label');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
 
@@ -13495,6 +13852,32 @@ JS = r"""
 })();
 """
 
+JS_PRESETS = r"""
+(function () {
+  // ── "Abrir no playground" dos exemplos, para toda página no modelo do
+  // Button: o preset é {nome do controle: valor}; cada Select recebe o valor e
+  // dispara o próprio evento, então quem desenha é o render() da página.
+  document.querySelectorAll('[data-pg-preset][data-pg-page]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var page = b.getAttribute('data-pg-page');
+      var root = document.getElementById('pg-' + page);
+      var preset = JSON.parse(b.getAttribute('data-pg-preset'));
+      Object.keys(preset).forEach(function (k) {
+        var el = root.querySelector('select[name="' + k + '"]');
+        if (!el) return;
+        el.value = preset[k];
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      var tab = document.getElementById('t-' + page + '-playground');
+      tab.click();
+      tab.focus();
+      document.getElementById('p-' + page + '-playground').scrollIntoView({ block: 'start' });
+    });
+  });
+})();
+"""
+
 JS_ICON = r"""
 (function () {
   // ── playground do Icon ──
@@ -13508,7 +13891,7 @@ JS_ICON = r"""
   var copyBtn = document.getElementById('icon-copy');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
 
@@ -13978,7 +14361,7 @@ JS_SELECT = r"""
   var labelInput = document.getElementById('select-label');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
 
@@ -14059,7 +14442,7 @@ JS_SELECT = r"""
     code.innerHTML = lines.join('\n');
   }
 
-  document.querySelectorAll('#select-controls input').forEach(function (i) {
+  document.querySelectorAll('#select-controls input, #select-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
 
@@ -14132,7 +14515,7 @@ JS_CHECKBOX = r"""
   var labelInput = document.getElementById('cbx-label');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) {
@@ -14189,7 +14572,7 @@ JS_CHECKBOX = r"""
     code.innerHTML = lines.join('\n');
   }
 
-  document.querySelectorAll('#cbx-controls input').forEach(function (i) {
+  document.querySelectorAll('#cbx-controls input, #cbx-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
   document.getElementById('cbx-copy').addEventListener('click', function () {
@@ -14272,7 +14655,7 @@ JS_RADIO = r"""
   var OPCOES = [['mensal', 'Mensal'], ['anual', 'Anual'], ['empresa', 'Empresarial']];
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) {
@@ -14328,7 +14711,7 @@ JS_RADIO = r"""
     code.innerHTML = linhas.join('\n');
   }
 
-  document.querySelectorAll('#rd-controls input').forEach(function (i) {
+  document.querySelectorAll('#rd-controls input, #rd-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
   document.getElementById('rd-copy').addEventListener('click', function () {
@@ -14393,7 +14776,7 @@ JS_SWITCH = r"""
   var labelInput = document.getElementById('sw-label');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) {
@@ -14426,7 +14809,7 @@ JS_SWITCH = r"""
     ].join('\n');
   }
 
-  document.querySelectorAll('#sw-controls input').forEach(function (i) {
+  document.querySelectorAll('#sw-controls input, #sw-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
   document.getElementById('sw-copy').addEventListener('click', function () {
@@ -14491,7 +14874,7 @@ JS_INPUT = r"""
   var labelInput = document.getElementById('input-label');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) {
@@ -14567,7 +14950,7 @@ JS_INPUT = r"""
     code.innerHTML = linhas;
   }
 
-  document.querySelectorAll('#input-controls input').forEach(function (i) {
+  document.querySelectorAll('#input-controls input, #input-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
   document.getElementById('input-copy').addEventListener('click', function () {
@@ -14635,7 +15018,7 @@ JS_TEXTAREA = r"""
     + 'fotos, que enviei. Desde então não tive retorno, e o prazo de troca termina na sexta-feira.';
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) {
@@ -14703,7 +15086,7 @@ JS_TEXTAREA = r"""
     code.innerHTML = linhas;
   }
 
-  document.querySelectorAll('#textarea-controls input').forEach(function (i) {
+  document.querySelectorAll('#textarea-controls input, #textarea-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
   document.getElementById('textarea-copy').addEventListener('click', function () {
@@ -14765,7 +15148,7 @@ JS_PASSWORD = r"""
   var ERRO = 'A senha precisa ter pelo menos 8 caracteres';
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) {
@@ -14831,7 +15214,7 @@ JS_PASSWORD = r"""
     code.innerHTML = linhas;
   }
 
-  document.querySelectorAll('#password-controls input').forEach(function (i) {
+  document.querySelectorAll('#password-controls input, #password-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
   document.getElementById('password-copy').addEventListener('click', function () {
@@ -15371,7 +15754,7 @@ HTML = (
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
     '\n</div></main>\n</div>\n' + TS_REGION + '\n\n<script>'
-    + JS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
+    + JS + JS_PRESETS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
     + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER
