@@ -8149,8 +8149,6 @@ TB_STATES = [('repouso', 'Repouso'), ('hover', 'Hover'), ('pressed', 'Pressed'),
 
 N_TB_MEDIDAS = len(TAB_A11Y['rows'])
 N_TB_EXC = sum(1 for r in TAB_A11Y['rows'] if r['exception'])
-N_TB_PASS = sum(1 for r in TAB_A11Y['rows'] if r['pass'])
-N_TB_FAIL = sum(1 for r in TAB_A11Y['rows'] if not r['pass'] and not r['exception'])
 N_TB_EXC_KEYS = len(TAB['pending'])
 
 
@@ -8278,33 +8276,6 @@ def tab_token_rows():
     return '\n'.join(rows)
 
 
-def tab_a11y_rows():
-    oque = {'label': 'rótulo', 'line': 'linha', 'selected-bg': 'fundo × página',
-            'ring': 'anel de foco', 'selection': 'seleção'}
-    out = []
-    for r in TAB_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        if r['indistinct']:
-            v = '<span class="fail">indistinguível</span>'
-        elif r['pass']:
-            v = '<span class="pass">passa</span>'
-        elif r['exception']:
-            v = f'<span class="exc">{r["exception"]}</span>'
-        else:
-            v = '<span class="fail">reprova</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="tok dim">{"tela" if r["page"] == "bg-canvas" else "superfície"}</td>'
-            f'<td class="name">{"Line" if r["type"] == "line" else "Square"}</td>'
-            f'<td class="tok dim">{"sim" if r["selected"] else "não"}</td>'
-            f'<td class="tok dim">{r["state"]}</td><td class="tok dim">{oque[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 TB_LIVE_PEDIDO = tb_panel_group('tbov', 'line', 'Cliente', ['Cadastro', 'Pedidos', 'Notas'], {
     'Cadastro': 'Nome, documento e contatos.',
     'Pedidos': 'Os 12 pedidos dos últimos seis meses.',
@@ -8319,11 +8290,11 @@ TAB_OVERVIEW = f'''
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage" id="tab-stage" data-al-demo><div class="tb-page" data-tbpage="canvas">{TB_DEMOS["line|panel"]["html"]}</div></div>
-    <div class="controls" id="tab-controls">
-      <div class="ctl"><span class="ctl-name">Tipo</span>{seg('tbtype', TB_TYPES, 'line')}</div>
-      <div class="ctl"><span class="ctl-name">Uso</span>{seg('tbuse', TB_USES, 'panel')}</div>
-      <div class="ctl"><span class="ctl-name">Página</span>{seg('tbpage', TB_PAGES, 'canvas')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tbtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    <div class="controls controls--fields" id="tab-controls">
+      {pg_field('tbtype', 'Tipo', TB_TYPES, 'line')}
+      {pg_field('tbuse', 'Uso', TB_USES, 'panel')}
+      {pg_field('tbpage', 'Página', TB_PAGES, 'canvas')}
+      {pg_field('tbtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
     </div>
 
     <div class="codewrap">
@@ -8551,21 +8522,8 @@ TAB_A11Y_TAB = f'''
   da caixa quando ela tem fundo, e contra a página quando não tem. Linha, fundo da selecionada e
   anel têm piso de 3:1. Um terceiro julgamento reprova a seleção <b>indistinguível</b>: a
   selecionada igual à não selecionada no mesmo estado.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_TB_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_TB_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>{N_TB_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{N_TB_FAIL}</b><span>reprovas</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Contraste contra o fundo efetivo</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Página</th><th>Tipo</th><th>Sel.</th><th>Estado</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{tab_a11y_rows()}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -8607,6 +8565,54 @@ TH_TAB = ('<div class="th-tab" aria-hidden="true" inert>'
           + tb_sample('square', ('Dia', 'Semana', 'Mês'), sel=1).replace(' aria-hidden="true" inert', '')
           + '</div>')
 
+
+TAB_OVERVIEW, TAB_PLAYGROUND, TAB_A11Y_TAB = model_tabs(
+    'tab', old_ov=TAB_OVERVIEW, old_specs=TAB_SPECS, guide=TAB_GUIDE, old_a11y=TAB_A11Y_TAB, js=True,
+    preview=tb_sample('line', ('Visão geral', 'Playground', 'Diretrizes'), sel=0),
+    usage='Use para alternar conteúdos relacionados, do mesmo nível, na mesma tela. Line para a página, '
+          'Square para área delimitada e Sidebar. O <code>tab.js</code> liga o teclado.',
+    states=['As 16 variantes'],
+    presets={'Line · seções de uma página': {'tbtype': 'line'},
+             'Square · área delimitada e sidebar': {'tbtype': 'square'},
+             'Painel · ao vivo': {'tbuse': 'panel'}, 'Navegação · ao vivo': {'tbuse': 'nav'}},
+    extra_dd=[
+        ('do', 'Exatamente uma selecionada, de duas a seis abas.'),
+        ('do', 'O painel começa com um título igual ao rótulo.'),
+        ('do', 'Item que leva a outra página é link, com <code>aria-current</code>.'),
+        ('dont', 'Tab para comparar conteúdos, ou para passos em sequência.'),
+        ('dont', 'Aba desabilitada: não existe.'),
+        ('dont', 'Dois tipos no mesmo grupo.'),
+    ],
+    classes=[
+        ('.al-tabs', '—', 'O grupo. Sozinho é Line.'),
+        ('.al-tabs--square', '—', 'O tipo Square.'),
+        ('.al-tab', '&lt;button&gt; ou &lt;a&gt;', 'A aba: botão no painel, link na navegação.'),
+        ('.al-tab__label', 'texto', 'O rótulo, uma ou duas palavras.'),
+        ('role="tablist" · "tab" · "tabpanel"', '—', 'No painel, o padrão de abas da APG.'),
+        ('aria-selected', 'true', 'A aba aberta, no painel.'),
+        ('aria-controls · aria-labelledby', 'id', 'Ligam a aba ao painel e o painel à aba.'),
+        ('aria-current', 'page', 'A página atual, na navegação.'),
+    ],
+    contrast=role_contrast(TAB_A11Y['rows'], [
+        ('Rótulo', {'label'}, 'ok', 'O rótulo contra o fundo da aba em cada estado, selecionada ou não.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Selecionada no hover', {'label'}, 'exc',
+         'Exceção de marca herdada da Foundation: laranja sobre o hover no escuro.', '1.4.3 Contraste (mínimo)',
+         'Square selecionada, só no escuro'),
+        ('Linha da selecionada', {'line'}, 'ok', 'A linha laranja do Line contra a página.',
+         '1.4.11 Contraste não textual', 'Line selecionada'),
+        ('Trilho', {'line'}, 'exc', 'Exceção declarada: a linha cinza é só trilho, não identifica nada.',
+         '1.4.11 Contraste não textual', 'Line, abas não selecionadas'),
+        ('Fundo da selecionada', {'selected-bg'}, 'ok', 'O fundo tonal do Square nos estados em que passa.',
+         '1.4.11 Contraste não textual', 'Square selecionada'),
+        ('Seleção tonal', {'selected-bg'}, 'exc',
+         'Exceção declarada: o fundo tonal do Square fica perto da página. O título do painel paga a seleção.',
+         '1.4.11 Contraste não textual', 'Square selecionada'),
+        ('Anel de foco', {'ring'}, 'ok', 'O anel contra a página. Foco é o repouso mais o anel.',
+         '2.4.13 Aparência do foco'),
+    ], f'<p>São {N_TB_MEDIDAS} medições no portão de build, nenhuma reprova e {N_TB_EXC} ficam em '
+       f'exceção declarada.</p>', key='what'),
+)
 
 # ═══════════════════════════════════════════════════════════ Accordion · abas
 # Quarto componente do Tier 3. Um item, um tamanho, sem desabilitado, nativo
@@ -10247,8 +10253,6 @@ SB_HELP = [('on', 'Com Ajuda'), ('off', 'Sem Ajuda')]
 
 N_SB_MEDIDAS = len(SBR_A11Y['rows'])
 N_SB_EXC = sum(1 for r in SBR_A11Y['rows'] if r['exception'])
-N_SB_PASS = sum(1 for r in SBR_A11Y['rows'] if r['pass'])
-N_SB_FAIL = sum(1 for r in SBR_A11Y['rows'] if not r['pass'] and not r['exception'])
 N_SB_EXC_KEYS = len({r['exception'] for r in SBR_A11Y['rows'] if r['exception']})
 SB_WIDTH = SBR['resolved']['sidebar-width']
 
@@ -10375,43 +10379,6 @@ def sidebar_token_rows():
     return '\n'.join(rows)
 
 
-SB_OQUE = {
-    'name': 'nome', 'email': 'e-mail', 'group-label': 'rótulo de grupo',
-    'item-rest': 'item em repouso', 'item-hover': 'item em hover', 'item-pressed': 'item pressionado',
-    'item-current': 'item atual', 'item-current-hover': 'item atual em hover',
-    'item-current-pressed': 'item atual pressionado', 'focus-ring': 'anel de foco',
-    'profile-button-icon': 'ícone do botão do perfil', 'item-current-bg': 'fundo do item atual',
-    'item-current-pressed-bg': 'fundo do item atual pressionado',
-    'item-hover-distinct': 'hover do item × Sidebar', 'item-pressed-distinct': 'pressionado do item × Sidebar',
-    'button-hover-distinct': 'hover do botão × Sidebar', 'button-pressed-distinct': 'pressionado do botão × Sidebar',
-    'border-x-bg-canvas': 'borda × tela', 'border-x-bg-surface': 'borda × superfície',
-    'panel-x-bg-canvas-dimmed': 'painel modal × tela escurecida',
-    'panel-x-bg-surface-dimmed': 'painel modal × superfície escurecida',
-    'panel-border-x-bg-canvas-dimmed': 'borda do painel × tela escurecida',
-    'panel-border-x-bg-surface-dimmed': 'borda do painel × superfície escurecida',
-}
-
-
-def sidebar_a11y_rows():
-    out = []
-    for r in SBR_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        if r['invisible']:
-            v = '<span class="fail">invisível</span>'
-        elif r['pass']:
-            v = '<span class="pass">passa</span>'
-        else:
-            v = '<span class="exc">exceção declarada</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{SB_OQUE[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 SIDEBAR_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
@@ -10422,11 +10389,11 @@ SIDEBAR_OVERVIEW = f'''
       </div>
     </div>
 
-    <div class="controls" id="sidebar-controls">
-      <div class="ctl"><span class="ctl-name">Largura</span>{seg('sbwidth', SB_WIDTHS, 'wide')}</div>
-      <div class="ctl"><span class="ctl-name">Avatar</span>{seg('sbavatar', SB_AVATARS, 'initials')}</div>
-      <div class="ctl"><span class="ctl-name">Ajuda</span>{seg('sbhelp', SB_HELP, 'on')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('sbtheme', [('auto', 'Do site'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    <div class="controls controls--fields" id="sidebar-controls">
+      {pg_field('sbwidth', 'Largura', SB_WIDTHS, 'wide')}
+      {pg_field('sbavatar', 'Avatar', SB_AVATARS, 'initials')}
+      {pg_field('sbhelp', 'Ajuda', SB_HELP, 'on')}
+      {pg_field('sbtheme', 'Tema', [('auto', 'Do site'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
     </div>
 
     <div class="codewrap">
@@ -10644,33 +10611,8 @@ SIDEBAR_A11Y_TAB = f'''
   Sidebar</b>, além da borda e do painel modal contra a página escurecida. Texto passa 4,5:1; anel, ícone e
   fundo do item atual, 3:1. Um julgamento a mais exige que hover e pressionado sejam <b>diferentes</b> do
   fundo: era o defeito que o fundo elevado causava.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_SB_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_SB_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>{N_SB_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{N_SB_FAIL}</b><span>reprovas</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Contraste contra o fundo efetivo</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{sidebar_a11y_rows()}</tbody>
-  </table></div>
-  <div class="note" style="margin-top:16px">
-    <b>Exceção nova: o painel modal não se separa do fundo escurecido no escuro</b>
-    O painel tem a cor da tela, e no escuro a página escurecida fica quase da mesma cor: 1,08 a 1,12:1. No claro
-    passa (4,1). Quem separa é a borda (2,6 a 2,7:1) e a sombra, e o painel ocupa a altura toda a partir da borda
-    esquerda. Aprovada na etapa 6; o Drawer tem a parecida, em 1,8.
-  </div>
-  <div class="note">
-    <b>Herdadas</b>
-    <code>region-border</code> (a borda é de região, não de controle), <code>tonal-selection</code> (paga pelo
-    título da página igual ao rótulo do item atual) e <code>brand-on-dark-hover</code> (a exceção de marca da
-    Foundation, 3,85:1 no hover do item atual).
-  </div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -10809,7 +10751,7 @@ JS_SIDEBAR = r"""
   var SIZES = { wide: [1200, 720], phone: [375, 667] };
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -10852,7 +10794,7 @@ JS_SIDEBAR = r"""
     } catch (e) {}
   }
 
-  document.querySelectorAll('#sidebar-controls input').forEach(function (inp) {
+  document.querySelectorAll('#sidebar-controls input, #sidebar-controls select').forEach(function (inp) {
     inp.addEventListener('input', function () {
       if (inp.name === 'sbtheme') retheme();
       else if (inp.name === 'sbwidth') fit();
@@ -10880,6 +10822,69 @@ JS_SIDEBAR = r"""
 """
 
 
+SIDEBAR_OVERVIEW, SIDEBAR_PLAYGROUND, SIDEBAR_A11Y_TAB = model_tabs(
+    'sidebar', old_ov=SIDEBAR_OVERVIEW, old_specs=SIDEBAR_SPECS, guide=SIDEBAR_GUIDE, old_a11y=SIDEBAR_A11Y_TAB,
+    js=True, preview=sb_frozen('pv-sb', 'Tela larga'),
+    usage='Use para a navegação principal entre os destinos do produto: uma por tela, sempre à esquerda. '
+          'Abaixo de 1024px vira um painel modal; o <code>sidebar.js</code> cuida da troca.',
+    states=['Congeladas'],
+    extra_dd=[
+        ('do', 'Destinos relacionados sob um rótulo de grupo, os mais usados primeiro.'),
+        ('do', 'Itens são links; o atual leva <code>aria-current="page"</code>.'),
+        ('do', '“Pular para o conteúdo” antes da Sidebar.'),
+        ('dont', 'Mais de um nível de navegação.'),
+        ('dont', 'Ícone ou contador nos itens.'),
+        ('dont', 'Divider entre os grupos: quem separa é o espaço.'),
+    ],
+    classes=[
+        ('aside.al-sidebar', '—', 'A caixa, com <code>aria-label</code>. Fundo <code>bg-canvas</code> e borda de região.'),
+        ('.al-sidebar__profile', '—', 'Quem está logado: Avatar, nome, e-mail e o botão da conta.'),
+        ('.al-sidebar__name · __email', 'texto', 'Nome e e-mail. São os únicos com reticências.'),
+        ('.al-sidebar__nav', '&lt;nav&gt;', 'A navegação, com <code>aria-label</code>.'),
+        ('.al-sidebar__content', '—', 'O miolo que rola.'),
+        ('.al-sidebar__group', '&lt;ul&gt;', 'Um grupo: lista nomeada pelo rótulo.'),
+        ('.al-sidebar__group-label', 'texto', 'O rótulo do grupo; a caixa alta vem do CSS.'),
+        ('.al-tabs--square + .al-tab', '&lt;a&gt;', 'Os itens são Tab Square de largura cheia.'),
+        ('aria-current', 'page', 'O item atual. No máximo um.'),
+        ('.al-sidebar__support', '—', 'O grupo Ajuda, opcional, no fim.'),
+        ('.al-sidebar-modal', '&lt;dialog&gt;', 'Abaixo de 1024px, o painel modal pela esquerda.'),
+        ('data-al-sidebar-open', 'id do painel', 'No botão que abre o painel.'),
+    ],
+    contrast=role_contrast(SBR_A11Y['rows'], [
+        ('Nome, e-mail e rótulos de grupo', {'name', 'email', 'group-label'}, 'ok',
+         'Os textos fixos da Sidebar contra o fundo.', '1.4.3 Contraste (mínimo)', 'Perfil e grupos'),
+        ('Itens', {'item-rest', 'item-hover', 'item-pressed', 'item-current', 'item-current-hover',
+                   'item-current-pressed'}, 'ok',
+         'O rótulo do item em cada estado, contra o fundo que ele tem.', '1.4.3 Contraste (mínimo)',
+         'Repouso, hover, pressed e atual'),
+        ('Item atual no hover', {'item-current-hover'}, 'exc',
+         'Exceção de marca herdada da Foundation: laranja sobre o hover no escuro.', '1.4.3 Contraste (mínimo)',
+         'Só no escuro'),
+        ('Botão da conta', {'profile-button-icon'}, 'ok', 'O ícone do Icon Button contra o fundo.',
+         '1.4.11 Contraste não textual', 'Perfil'),
+        ('Fundo do item atual', {'item-current-bg', 'item-current-pressed-bg'}, 'ok',
+         'O fundo do item atual pressionado contra a Sidebar.', '1.4.11 Contraste não textual', 'Atual pressionado'),
+        ('Seleção tonal', {'item-current-bg'}, 'exc',
+         'Exceção declarada: o fundo do item atual é tonal. O título da página repete o rótulo e paga a seleção.',
+         '1.4.11 Contraste não textual', 'Item atual'),
+        ('Hover e pressed visíveis', {'item-hover-distinct', 'item-pressed-distinct', 'button-hover-distinct',
+                                      'button-pressed-distinct'}, 'ok',
+         'O fundo de hover e pressed não pode sumir na Sidebar.', '1.4.11 Contraste não textual', 'Itens e botão'),
+        ('Anel de foco', {'focus-ring'}, 'ok', 'O anel do Tab, só pelo teclado.', '2.4.13 Aparência do foco',
+         'Itens e botão'),
+        ('Borda de região', {'border-x-bg-canvas', 'border-x-bg-surface', 'panel-border-x-bg-canvas-dimmed',
+                             'panel-border-x-bg-surface-dimmed'}, 'exc',
+         'Exceção declarada: a borda separa regiões e não identifica controle.', '1.4.11 Contraste não textual',
+         'A Sidebar e o painel'),
+        ('Painel sobre o fundo escurecido', {'panel-x-bg-canvas-dimmed', 'panel-x-bg-surface-dimmed'}, 'ok',
+         'O painel modal contra a página escurecida.', '1.4.11 Contraste não textual', 'Tema claro'),
+        ('Painel no escuro', {'panel-x-bg-canvas-dimmed', 'panel-x-bg-surface-dimmed'}, 'exc',
+         'Exceção declarada: no escuro o painel fica perto do fundo escurecido; a borda de região separa.',
+         '1.4.11 Contraste não textual', 'Tema escuro'),
+    ], f'<p>São {N_SB_MEDIDAS} medições no portão de build, nenhuma reprova e {N_SB_EXC} ficam em '
+       f'exceção declarada.</p>', key='what'),
+)
+
 # ═══════════════════════════════════════════════════════════ Breadcrumb · abas
 # Ultimo componente do Tier 4, junto com o _breadcrumb-more (o `…` e o menu),
 # que vivem na mesma pagina porque se complementam. Toda trilha da pagina sai do
@@ -10893,8 +10898,6 @@ BC_LEVELS = ['Início', 'Vendas', 'Pedidos', 'Março de 2026', 'Loja Centro', 'P
 
 N_BC_MEDIDAS = len(BCR_A11Y['rows'])
 N_BC_EXC = sum(1 for r in BCR_A11Y['rows'] if r['exception'])
-N_BC_PASS = sum(1 for r in BCR_A11Y['rows'] if r['pass'])
-N_BC_FAIL = sum(1 for r in BCR_A11Y['rows'] if not r['pass'] and not r['exception'])
 N_BC_EXC_KEYS = len(BCR['pending'])
 BC_MIN_W = BCR['resolved']['breadcrumb-menu-min-width']
 
@@ -10995,46 +10998,15 @@ def breadcrumb_token_rows():
     return '\n'.join(rows)
 
 
-BC_OQUE = {
-    'link': 'link', '…': '…', 'current page': 'pagina atual', 'ring on trail': 'anel na trilha',
-    'menu border': 'borda do menu', 'menu item': 'item do menu', 'menu item (hover)': 'item do menu (hover)',
-    'menu item (pressed)': 'item do menu (pressed)', 'ring in menu': 'anel no menu',
-    'item hover vs menu': 'hover do item vs menu', 'item pressed vs menu': 'pressed do item vs menu',
-}
-
-
-def breadcrumb_a11y_rows():
-    out = []
-    for r in BCR_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        diff = r['floor'] == 1.0
-        if r['invisible']:
-            v = '<span class="fail">invisível</span>'
-        elif r['pass']:
-            v = '<span class="pass">passa</span>'
-        elif r['exception']:
-            v = f'<span class="exc">{r["exception"]}</span>'
-        else:
-            v = '<span class="fail">reprova</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{BC_OQUE[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{"—" if diff else format(r["ratio"], ".2f") + ":1"}</td>'
-            f'<td class="tok dim">{"diferente" if diff else str(r["floor"]) + ":1"}</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 BREADCRUMB_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage bc-stage" id="breadcrumb-stage" data-al-demo><div class="bc-page" data-bcpage="canvas">{BC_DEMOS["6"]["html"]}</div></div>
-    <div class="controls" id="breadcrumb-controls">
-      <div class="ctl"><span class="ctl-name">Profundidade</span>{seg('bcdepth', BC_DEPTHS, '6')}</div>
-      <div class="ctl"><span class="ctl-name">Página</span>{seg('bcpage', BC_PAGES, 'canvas')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('bctheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    <div class="controls controls--fields" id="breadcrumb-controls">
+      {pg_field('bcdepth', 'Profundidade', BC_DEPTHS, '6')}
+      {pg_field('bcpage', 'Página', BC_PAGES, 'canvas')}
+      {pg_field('bctheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
     </div>
 
     <div class="codewrap">
@@ -11259,21 +11231,8 @@ BREADCRUMB_A11Y_TAB = f'''
   <p>O portão mede cada papel contra o fundo que ele tem na tela: a trilha contra a tela e a
   superfície; o item do menu contra o fundo que o menu injeta em cada estado; e o hover e o pressed
   do item contra o fundo do menu — iguais seria um item que não reage.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_BC_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_BC_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>{N_BC_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{N_BC_FAIL}</b><span>reprovas</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Contraste contra o fundo efetivo</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{breadcrumb_a11y_rows()}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -11353,7 +11312,7 @@ JS_BREADCRUMB = r"""
   var code = document.getElementById('breadcrumb-code');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -11375,7 +11334,7 @@ JS_BREADCRUMB = r"""
     if (e.target.closest('a[href]')) e.preventDefault();
   });
 
-  document.querySelectorAll('#breadcrumb-controls input').forEach(function (inp) {
+  document.querySelectorAll('#breadcrumb-controls input, #breadcrumb-controls select').forEach(function (inp) {
     inp.addEventListener('input', render);
   });
   document.getElementById('breadcrumb-copy').addEventListener('click', function () {
@@ -11392,6 +11351,51 @@ JS_BREADCRUMB = r"""
 })();
 """
 
+
+BREADCRUMB_OVERVIEW, BREADCRUMB_PLAYGROUND, BREADCRUMB_A11Y_TAB = model_tabs(
+    'breadcrumb', old_ov=BREADCRUMB_OVERVIEW, old_specs=BREADCRUMB_SPECS, guide=BREADCRUMB_GUIDE,
+    old_a11y=BREADCRUMB_A11Y_TAB, js=True,
+    preview=bc_trail(BC_LEVELS[:3] + BC_LEVELS[-1:], 'pv-bc-menu', sample=True),
+    usage='Use para mostrar onde a página está numa hierarquia de três níveis ou mais, no topo e acima '
+          'do título. Com cinco ou mais, os do meio vão para o menu do “…”, que o <code>breadcrumb.js</code> liga.',
+    presets={'Short · 2 níveis': {'bcdepth': '2'}, 'Medium · 3 níveis': {'bcdepth': '3'},
+             '4 níveis · ainda sem “…”': {'bcdepth': '4'}, 'Large · 5 níveis ou mais': {'bcdepth': '6'}},
+    extra_dd=[
+        ('do', 'Um por página, no topo, acima do título.'),
+        ('do', 'O primeiro item é a raiz real; o último, a página atual, que não é link.'),
+        ('do', 'O rótulo repete o título da página de destino.'),
+        ('dont', 'Breadcrumb para progresso de um fluxo linear, ou como histórico.'),
+        ('dont', 'Outro separador que não o chevron.'),
+        ('dont', 'Ação dentro do menu do “…”: os itens são links.'),
+    ],
+    classes=[
+        ('nav.al-breadcrumb', 'aria-label', '“Trilha de navegação”.'),
+        ('.al-breadcrumb__list', '&lt;ol&gt;', 'A trilha, em ordem.'),
+        ('.al-breadcrumb__item', '&lt;li&gt;', 'Um nível.'),
+        ('.al-breadcrumb__link', '&lt;a&gt;', 'Os níveis acima. Sem hover.'),
+        ('.al-breadcrumb__separator', 'chevron', 'Decorativo, sempre <code>aria-hidden</code>.'),
+        ('.al-breadcrumb__current', 'texto', 'A página atual, com <code>aria-current="page"</code>. Não é link.'),
+        ('.al-breadcrumb__more', '—', 'O item do “…”, no Large.'),
+        ('.al-breadcrumb__more-button', '&lt;button&gt;', 'O “…”, com nome, <code>aria-expanded</code> e <code>aria-controls</code>.'),
+        ('.al-breadcrumb__menu', '&lt;ul&gt;', 'O menu dos níveis do meio, em Tab Square.'),
+    ],
+    contrast=role_contrast(BCR_A11Y['rows'], [
+        ('Links e “…”', {'link', '…'}, 'ok', 'Os níveis acima e o botão contra a página.', '1.4.3 Contraste (mínimo)',
+         'Trilha, na tela e na superfície'),
+        ('Página atual', {'current page'}, 'ok', 'A atual contra a página; o peso também a distingue.',
+         '1.4.3 Contraste (mínimo)', 'Trilha, na tela e na superfície'),
+        ('Itens do menu', {'menu item', 'menu item (hover)', 'menu item (pressed)'}, 'ok',
+         'O rótulo do item contra o fundo do menu em cada estado.', '1.4.3 Contraste (mínimo)', 'Menu do “…”'),
+        ('Hover e pressed visíveis', {'item hover vs menu', 'item pressed vs menu'}, 'ok',
+         'O fundo do item não pode sumir no menu.', '1.4.11 Contraste não textual', 'Menu do “…”'),
+        ('Anel de foco', {'ring on trail', 'ring in menu'}, 'ok', 'O anel nos links, no “…” e nos itens do menu.',
+         '2.4.13 Aparência do foco', 'Trilha e menu'),
+        ('Borda do menu', {'menu border'}, 'exc',
+         'Exceção declarada: o fundo <code>bg-surface-raised</code> e a sombra separam o menu.',
+         '1.4.11 Contraste não textual', 'Menu do “…”'),
+    ], f'<p>São {N_BC_MEDIDAS} medições no portão de build, nenhuma reprova e {N_BC_EXC} ficam em '
+       f'exceção declarada.</p>', key='what'),
+)
 
 # ══════════════════════════════════════════════════════════════ Tooltip · abas
 # Primeiro componente do Tier 5 e primeiro do piloto em duas sessoes: a pagina
@@ -13505,8 +13509,8 @@ PAGES = [
         'do AL com script próprio, que liga o teclado do padrão de abas.',
         [('Estável', True), ('16 variantes no Figma', False),
          (f'{N_TAB_TOKENS} tokens', False), (f'{N_TB_EXC_KEYS} exceções declaradas', False)],
-        [('overview', 'Visão geral', TAB_OVERVIEW), ('specs', 'Especificações', TAB_SPECS),
-         ('guide', 'Diretrizes', TAB_GUIDE), ('a11y', 'Acessibilidade', TAB_A11Y_TAB)])),
+        [('overview', 'Visão geral', TAB_OVERVIEW), ('playground', 'Playground', TAB_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(TAB_GUIDE)), ('a11y', 'Acessibilidade', TAB_A11Y_TAB)])),
     ('accordion', 'Componentes', page(
         'accordion',
         'Esconde conteúdo secundário atrás de um título que abre e fecha no lugar. É o '
@@ -13541,8 +13545,8 @@ PAGES = [
         'o botão Menu a abre como painel modal pela esquerda.',
         [('Estável', True), ('1 variante no Figma', False),
          (f'{N_SBR_TOKENS} tokens', False), (f'{N_SB_EXC_KEYS} exceções declaradas', False)],
-        [('overview', 'Visão geral', SIDEBAR_OVERVIEW), ('specs', 'Especificações', SIDEBAR_SPECS),
-         ('guide', 'Diretrizes', SIDEBAR_GUIDE), ('a11y', 'Acessibilidade', SIDEBAR_A11Y_TAB)])),
+        [('overview', 'Visão geral', SIDEBAR_OVERVIEW), ('playground', 'Playground', SIDEBAR_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(SIDEBAR_GUIDE)), ('a11y', 'Acessibilidade', SIDEBAR_A11Y_TAB)])),
     ('breadcrumb', 'Componentes', page(
         'breadcrumb',
         'Mostra onde a pessoa está na hierarquia e leva a qualquer nível acima com um clique. É um '
@@ -13550,8 +13554,8 @@ PAGES = [
         'os do meio vão para o menu do “…” — o _breadcrumb-more do Figma, documentado aqui junto.',
         [('Estável', True), ('3 + 2 variantes no Figma', False),
          (f'{N_BCR_TOKENS} tokens', False), (f'{N_BC_EXC_KEYS} exceção declarada', False)],
-        [('overview', 'Visão geral', BREADCRUMB_OVERVIEW), ('specs', 'Especificações', BREADCRUMB_SPECS),
-         ('guide', 'Diretrizes', BREADCRUMB_GUIDE), ('a11y', 'Acessibilidade', BREADCRUMB_A11Y_TAB)])),
+        [('overview', 'Visão geral', BREADCRUMB_OVERVIEW), ('playground', 'Playground', BREADCRUMB_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(BREADCRUMB_GUIDE)), ('a11y', 'Acessibilidade', BREADCRUMB_A11Y_TAB)])),
     ('tooltip', 'Componentes', page(
         'tooltip',
         'Um texto curto que aparece sobre um elemento no hover e no foco do teclado: o nome de um botão só '
@@ -15420,7 +15424,7 @@ JS_TAB = r"""
   var code = document.getElementById('tab-code');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -15447,7 +15451,7 @@ JS_TAB = r"""
     });
   });
 
-  document.querySelectorAll('#tab-controls input').forEach(function (inp) {
+  document.querySelectorAll('#tab-controls input, #tab-controls select').forEach(function (inp) {
     inp.addEventListener('input', render);
   });
   document.getElementById('tab-copy').addEventListener('click', function () {
