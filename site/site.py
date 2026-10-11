@@ -811,7 +811,10 @@ h3.sub{font-size:11px; font-family:var(--al-font-mono); font-weight:500; letter-
 h3.sub:first-child{margin-top:0}
 .count{font-family:var(--al-font-mono); font-size:10.5px; letter-spacing:0; text-transform:none;
   color:var(--al-text-secondary); opacity:.8; font-weight:400}
-p{margin:0 0 13px; max-width:68ch}
+p{margin:0 0 13px; max-width:62ch}
+/* o texto corrido da seção, abaixo do h2: Body/sm em text-secondary */
+section > p{font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  color:var(--al-text-secondary)}
 p:last-child{margin-bottom:0}
 code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-subtle);
   padding:2px 5px; border-radius:4px; white-space:nowrap}
@@ -1777,7 +1780,7 @@ BTN_OVERVIEW = f'''
       <pre><code id="code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O botão acima é o componente real: esta página carrega o mesmo <code>button.css</code> que vai
     para produção. Hover, pressed e focus são forçados por classe, porque não dá para simular
     ponteiro — as declarações são as mesmas.
@@ -2058,7 +2061,7 @@ ICON_OVERVIEW = f'''
       <pre><code id="icon-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Escolha <b>Livre</b> na caixa e digite qualquer número: 40, 96, 17. Nada quebra, e o traço
     engrossa junto — é a diferença entre escala fixa e escala nomeada. As tintas
     <code>on-brand</code> e <code>on-solid</code> trocam o fundo do palco, porque elas só existem
@@ -2372,7 +2375,7 @@ IB_OVERVIEW = f'''
       <pre><code id="ib-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O botão acima é o componente real: esta página carrega o mesmo
     <code>icon-button.css</code> que vai para produção. Hover, pressed e focus são forçados por
     classe, porque não dá para simular ponteiro — as declarações são as mesmas. Repare que o
@@ -2859,7 +2862,7 @@ TAG_OVERVIEW = f'''
       <pre><code id="tag-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     A tag acima é o componente real: esta página carrega o mesmo <code>tag.css</code> que vai
     para produção. Repare que o <code>aria-label</code> do X acompanha o rótulo — sem isso,
     numa lista de seis filtros, seis botões chamados “Remover” são indistinguíveis por leitor
@@ -3272,7 +3275,7 @@ AVATAR_OVERVIEW = f'''
       <pre><code id="avatar-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Troque o <b>Contexto</b> e veja a marcação mudar: ao lado de um nome escrito o avatar sai
     da árvore de acessibilidade (<code>aria-hidden</code>); sozinho, ele vira a informação e
     precisa de <code>role="img"</code> com o nome. É o mesmo componente — muda o contrato, não
@@ -3784,7 +3787,7 @@ SELECT_OVERVIEW = f'''
       <pre><code id="select-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O campo acima é o componente real: esta página carrega o mesmo
     <code>select.css</code> que vai para produção. Tabule até ele para ver o anel, e repare que
     o estado de erro nasce de <code>aria-invalid</code> na marcação — não há classe de erro
@@ -4064,7 +4067,7 @@ SELECT_A11Y_TAB = f'''
     <div class="stat"><b>6</b><span>regras por campo</span></div>
     <div class="stat"><b>{'pendente' if SELECT_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
   </div>
-  <p style="margin-top:12px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:12px">
     O portão remove <code>&lt;style&gt;</code> e <code>&lt;script&gt;</code> antes de procurar
     marcação. Sem isso ele media o <code>&lt;select&gt;</code> de exemplo que vive no comentário
     de anatomia do <code>select.css</code> como se fosse um campo de verdade — e
@@ -4269,7 +4272,7 @@ CHECKBOX_OVERVIEW = f'''
       <pre><code id="cbx-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O checkbox acima é o componente real: esta página carrega o mesmo <code>checkbox.css</code>
     que vai para produção. Clique no texto e não só na caixa — também marca. No erro, a mensagem
     em vermelho abaixo dele <b>não faz parte do componente</b>: é o formulário descrevendo o erro
@@ -4749,7 +4752,7 @@ RADIO_OVERVIEW = f'''
       <pre><code id="rd-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Os radios acima são o componente real: esta página carrega o mesmo <code>radio.css</code> que
     vai para produção. Tabule até eles e use as setas — foco e escolha andam juntos. O
     <code>fieldset</code> e o <code>legend</code> <b>não fazem parte do componente</b>: são a
@@ -5221,7 +5224,7 @@ SWITCH_OVERVIEW = f'''
       <pre><code id="sw-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O switch acima é o componente real: esta página carrega o mesmo <code>switch.css</code> que vai
     para produção. Tabule até ele e aperte Espaço. Por baixo é um
     <code>&lt;input type="checkbox"&gt;</code> com <code>role="switch"</code>, e é isso que faz o leitor
@@ -5697,7 +5700,7 @@ INPUT_OVERVIEW = f'''
       <pre><code id="input-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O campo acima é o componente real: esta página carrega o mesmo <code>input.css</code> que vai
     para produção. Ligue o contador e digite além de 40 caracteres — o número fica vermelho e o
     campo <b>não trava</b>. Ligue o prefixo e clique em “www.”: o cursor vai para o campo.
@@ -6209,7 +6212,7 @@ TEXTAREA_OVERVIEW = f'''
       <pre><code id="textarea-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O campo acima é o componente real: esta página carrega o mesmo <code>textarea.css</code> que
     vai para produção. Aperte Enter dentro dele — quebra a linha, nunca envia. Puxe o canto: só
     para baixo, e nunca abaixo de 3 linhas. Ligue o contador, escolha o valor longo e digite além
@@ -6720,7 +6723,7 @@ PASSWORD_OVERVIEW = f'''
       <pre><code id="password-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O campo acima é o componente real: esta página carrega o mesmo <code>password.css</code> e o
     mesmo <code>password.js</code> que vão para produção. Digite, tabule até o olho e aperte
     Espaço — a senha aparece, o ícone vira o olho cortado e o foco fica no botão.
@@ -7144,7 +7147,7 @@ DIVIDER_OVERVIEW = f'''
       <pre><code id="divider-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O <b>Contexto</b> decide a orientação e o elemento: entre seções empilhadas a linha é
     horizontal; numa lista ela vira um item, <code>&lt;li role="separator"&gt;</code>, porque
     <code>&lt;ul&gt;</code> só aceita <code>&lt;li&gt;</code>; entre botões lado a lado ela é
@@ -7601,7 +7604,7 @@ CARD_OVERVIEW = f'''
       <pre><code id="card-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Com <b>Clicável</b>, tabule até o card e passe o ponteiro: o anel envolve o card inteiro, e o
     clique vale em qualquer ponto dele, mas quem recebe o foco é o link do título. Troque a
     <b>Página</b> para tela com o Filled para ver por que a regra 2 existe, e o <b>Tema</b> para
@@ -8071,7 +8074,7 @@ TAB_OVERVIEW = f'''
       <pre><code id="tab-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Em <b>Painel</b>, tabule até o grupo: o Tab para uma vez, na aba aberta, e as setas trocam de
     aba e de painel. Em <b>Navegação</b>, o mesmo visual vira lista de links, e o Tab passa por
     todos. Troque o <b>Tema</b> para escuro com a Square para ver a seleção tonal.
@@ -8497,7 +8500,7 @@ ACCORDION_OVERVIEW = f'''
       <pre><code id="accordion-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Tabule até um cabeçalho e use Enter ou Espaço: o anel envolve só o cabeçalho, e o foco não
     sai dele ao abrir. Com <b>Um por vez</b>, abrir um item fecha o outro. Troque o <b>Tema</b>
     para escuro e passe o ponteiro: o cabeçalho clareia em relação ao item.
@@ -8960,7 +8963,7 @@ MODAL_OVERVIEW = f'''
       <pre><code id="modal-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     A prévia acima é só um desenho do Modal. <b>Abrir de verdade</b> faz o que o componente faz: o card
     sobe, o fundo escurece e o resto da página fica inerte. Tabule: o foco não sai do Modal. No de
     <b>Exclusão</b> ele entra em “Cancelar”; no <b>Formulário</b>, no primeiro campo.
@@ -9570,7 +9573,7 @@ DRAWER_OVERVIEW = f'''
       <pre><code id="drawer-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     A prévia acima é só um desenho do Drawer, com uma altura de exemplo. <b>Abrir de verdade</b> faz o que o
     componente faz: o painel entra pela direita, o fundo escurece e o resto da página fica inerte. Tabule: o foco
     não sai do Drawer. Em <b>Detalhes</b> ele entra no X; em <b>Formulário</b>, no primeiro campo; em
@@ -10180,7 +10183,7 @@ SIDEBAR_OVERVIEW = f'''
       <pre><code id="sidebar-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O palco é uma página pequena de verdade, com o CSS e o <code>sidebar.js</code> reais. Em <b>Tela larga</b>
     ela tem 1200px, reduzida para caber: clique nos itens, passe o mouse, role o miolo da Sidebar. Em
     <b>Celular</b> ela tem 375px: a Sidebar sai da página e o botão Menu a abre como painel pela esquerda.
@@ -10788,7 +10791,7 @@ BREADCRUMB_OVERVIEW = f'''
       <pre><code id="breadcrumb-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Em <b>Large</b>, tabule até o <b>…</b> e aperte Enter: o menu abre e o foco fica no botão; o Tab
     entra nos links, o Esc fecha e devolve o foco. Passe o mouse na trilha — só o cursor muda — e
     nos itens do menu, que têm hover. Troque o <b>Tema</b> para escuro e repita no menu.
@@ -11273,7 +11276,7 @@ TOOLTIP_OVERVIEW = f'''
       <pre><code id="tooltip-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Pare o mouse num botão: o tooltip espera {TT_DELAY_SHOW}ms. Com um aberto, passe para o vizinho — ele
     troca na hora. Leve o mouse até o tooltip: ele fica. Tabule até um botão: abre na hora; clique com o
     mouse: não abre. Esc fecha sem tirar o foco. Troque o <b>Lado</b> e o <b>Tema</b>.
@@ -11736,7 +11739,7 @@ TOAST_OVERVIEW = f'''
     </div>
   </div>
   {TS_TEMPLATES}
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O palco mostra o toast parado. <b>Mostrar toast</b> dispara o de verdade, no canto inferior direito da
     janela. Sucesso e Informação saem sozinhos em {TS_TIMEOUT // 1000}s — pare o mouse em cima e o relógio
     pausa. Aviso e Erro ficam até o X. Clique várias vezes: eles entram em fila, um por vez.
@@ -12207,7 +12210,7 @@ ALERT_OVERVIEW = f'''
     </div>
   </div>
   {ALR_TEMPLATES}
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O alerta do palco é o de verdade: o X fecha com o <code>alert.js</code>. Trocar um controle traz de volta.
     <b>Inserir com anúncio</b> põe o mesmo alerta como se ele chegasse depois do carregamento — é aí que o
     leitor de tela o anuncia. Ao trocar o status, o X segue a regra 20: Aviso e Perigo nascem sem ele.
@@ -14916,7 +14919,7 @@ CHROME_MOTION = """
 .mo-dot{width:12px; height:12px; flex:none; box-sizing:border-box; border-radius:50%;
   border:2px solid var(--al-toast-success-icon)}
 .mo-cell .al-btn{align-self:flex-start}
-.mo-fine{font-size:13px; color:var(--al-text-secondary); margin-top:14px; max-width:74ch}
+.mo-fine{margin-top:14px}
 
 .mo-bars .bar-name{width:196px}
 .mo-track, .mo-track .bar{display:block}
