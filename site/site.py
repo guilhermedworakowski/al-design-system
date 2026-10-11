@@ -1234,6 +1234,30 @@ body{
   .topbar-name{font-weight:600; font-size:var(--al-font-size-md); line-height:var(--al-line-height-md)}
 }
 
+/* ── seletor de idioma: o do portfólio ──
+   Mono em Body/sm, caixa alta. O idioma atual fica em text-brand, o outro em
+   text-secondary, a barra entre os dois em border-default. Cada sigla é um
+   botão com 24px de altura no mínimo (alvo da WCAG 2.5.8); o padding delas sai
+   para fora com a margem negativa, e o texto alinha com a borda da página. */
+.lang{display:flex; align-items:center; gap:var(--al-space-4); margin-inline:calc(-1 * var(--al-space-4));
+  font-family:var(--al-font-mono);
+  font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm); font-weight:var(--al-font-weight-medium)}
+.lang__opt{min-height:24px; padding:0 var(--al-space-4); border:0; border-radius:var(--al-radius-sm);
+  background:none; font:inherit; text-transform:uppercase; color:var(--al-text-secondary); cursor:pointer}
+.lang__opt:hover{color:var(--al-text-primary)}
+.lang__opt[aria-pressed="true"]{color:var(--al-text-brand); cursor:default}
+.lang__opt:focus-visible{outline:none; box-shadow:var(--al-focus-ring-default)}
+.lang__sep{color:var(--al-border-default)}
+/* No topo à direita, como no portfólio. Abaixo de 1024 vai para a ponta da
+   topbar; acima, a topbar aparece só com ele, centrada na linha da seção do
+   Hero (16px a 48px do topo; o seletor tem 24, então sobe 4). */
+.topbar > .lang{margin-left:auto; margin-right:calc(-1 * var(--al-space-4))}
+@media (width >= 1024px){
+  .main{position:relative}
+  .topbar{display:block; position:absolute; top:calc(var(--al-space-48) - var(--al-space-4)); right:var(--al-space-40); z-index:6}
+  .topbar > :not(.lang){display:none}
+}
+
 /* ── cards das páginas-índice ── */
 .cards{display:grid; grid-template-columns:repeat(auto-fill,minmax(236px,1fr)); gap:16px}
 .card{
@@ -13632,6 +13656,13 @@ def site_nav_group(rotulo, itens):
             f'<ul class="al-tabs al-tabs--square" aria-labelledby="{gid}">{lis}</ul></div>')
 
 
+LANG = ('<div class="lang" role="group" aria-label="Idioma">'
+        '<button type="button" class="lang__opt" lang="en" aria-label="English" aria-pressed="false">EN</button>'
+        '<span class="lang__sep" aria-hidden="true">/</span>'
+        '<button type="button" class="lang__opt" lang="pt-BR" aria-label="Português" aria-pressed="true">PT</button>'
+        '</div>')
+
+
 def rail(nav):
     return (
     '<a class="skip" href="#conteudo">Pular para o conteúdo</a>\n'
@@ -13667,7 +13698,7 @@ TOPBAR = (
     '<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--md" aria-label="Menu"'
     ' aria-controls="site-sidebar" aria-expanded="false" data-al-sidebar-open="site-sidebar">'
     f'{al_icon("menu")}</button>'
-    '<span class="topbar-name">AL Design System</span></header>')
+    '<span class="topbar-name">AL Design System</span>' + LANG + '</header>')
 
 
 FOOTER = f'''<footer class="site-footer"><div class="site-footer__inner">
@@ -13732,6 +13763,14 @@ JS = r"""
   // raiz serve: a substituição de custom property acontece no elemento onde o
   // alias é DECLARADO, e toda a camada semântica é declarada no :root.
   var root = document.documentElement;
+  // idioma: por enquanto só troca qual sigla está marcada (a tradução vem depois)
+  document.querySelectorAll('.lang').forEach(function (g) {
+    g.addEventListener('click', function (e) {
+      var b = e.target.closest('.lang__opt');
+      if (!b) return;
+      g.querySelectorAll('.lang__opt').forEach(function (o) { o.setAttribute('aria-pressed', String(o === b)); });
+    });
+  });
   var sw = document.getElementById('themeswitch');
 
   function applyTheme(dark, remember) {
