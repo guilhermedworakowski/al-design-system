@@ -12,6 +12,7 @@ Preparation for the open-source launch. No class or token changed meaning; one S
 - `guidelines.md` for 22 components (all except Icon), with the usage rules readable on GitHub. A new gate checks that every approved rule is there, once.
 - A single `build.py` at the root that runs every step in order, and a GitHub Actions check that runs it on every pull request.
 - README in English and Portuguese, CHANGELOG, CONTRIBUTING and issue templates.
+- A language selector (EN / PT) in the documentation site, modeled on the author's portfolio: Mono, Body/sm, all caps, the current language in `text-brand` and the other in `text-secondary`. It sits at the top right, 40px from the edge and centered on the hero's section line; below 1024px it moves to the right end of the top bar. Each language is a button with `aria-pressed` and at least 24px tall. For now it only marks the chosen language; the translation comes later.
 
 ### Changed
 - **Package paths.** The 1.0.0 package was installed from a Git tag and exposed `foundation/al-foundation.css` and `components/<name>/...`. From 1.0.1, install from npm and import `al-design-system/foundation.css` and `al-design-system/components/<name>.css`; the component tokens and CSS now come in one file.
