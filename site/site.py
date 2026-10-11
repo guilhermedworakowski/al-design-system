@@ -44,6 +44,7 @@ BTN = json.load(open(comp_out('button', 'tokens.json')))
 FOUND_CSS = open(FOUNDATION_CSS).read()
 BTN_TOKENS = open(comp_out('button', 'al-button-tokens.css')).read()
 BTN_CSS = open(comp_src('button', 'button.css')).read()
+BTN_A11Y_DATA = json.load(open(comp_out('button', 'a11y.json')))
 ICON_TOKENS = open(comp_out('icon', 'al-icon-tokens.css')).read()
 ICON_CSS = open(comp_src('icon', 'icon.css')).read()
 ICON_MANIFEST = json.load(open(comp_out('icon', 'icons.json')))
@@ -905,6 +906,11 @@ tbody tr:last-child td{border-bottom:0}
 td.tok{font-family:var(--al-font-mono); font-size:12px; white-space:nowrap}
 td.tok.dim, td.num.dim{color:var(--al-text-secondary)}
 td.name{font-weight:600}
+/* tabela de requisitos de acessibilidade: a referência WCAG embaixo da orientação */
+table.a11y-req{min-width:860px}
+table.a11y-req td{vertical-align:top}
+table.a11y-req .wcag{display:block; margin-top:var(--al-space-4); font-family:var(--al-font-mono);
+  font-size:var(--al-font-size-xs); line-height:var(--al-line-height-xs); color:var(--al-text-secondary)}
 td.num{font-family:var(--al-font-mono); text-align:right; font-variant-numeric:tabular-nums}
 th.num{text-align:right}
 td.num.strong{font-weight:600}
@@ -1854,7 +1860,72 @@ BTN_GUIDE = '''
   </div>
 </section>'''
 
-BTN_A11Y = '''
+def btn_contrast():
+    """Tabela de contraste no modelo do Astryx (Requisito | Mínimo | Aplica-se a
+    | Medido | Orientação). Os números vêm do a11y.json que o portão do Button
+    grava: a página nunca diverge da medição."""
+    rows = BTN_A11Y_DATA['rows']
+
+    def rng(sel):
+        rs = sorted(r['ratio'] for r in rows if r['ratio'] is not None and sel(r))
+        f = lambda x: f'{x:.2f}'.replace('.', ',')
+        return f'{f(rs[0])}:1' if rs[0] == rs[-1] else f'{f(rs[0])} a {f(rs[-1])}:1'
+
+    def is_state(r, *states):
+        return r['label'].split(' · ')[1] in states
+
+    label = rng(lambda r: r['group'] == 'label' and r['floor'] == 4.5)
+    marca = rng(lambda r: r['group'] == 'label' and r['exception'])
+    # exceções agrupadas por estado: "Default nos dois temas, Hover no escuro"
+    por_estado = {}
+    for r in rows:
+        if r['exception']:
+            por_estado.setdefault(r['label'].split(' · ')[1], set()).add(r['theme'])
+    nomes = {'default': 'Default', 'hover': 'Hover', 'active': 'Pressed'}
+    exc_txt = ', '.join(f'{nomes[e]} {"nos dois temas" if len(t) == 2 else "no " + ("claro" if "light" in t else "escuro")}'
+                        for e, t in sorted(por_estado.items(), key=lambda kv: list(nomes).index(kv[0])))
+    borda = rng(lambda r: r['group'] == 'boundary')
+    foco = rng(lambda r: r['group'] == 'focus')
+    off = rng(lambda r: r['group'] == 'label' and is_state(r, 'disabled'))
+    alvo = ' e '.join(f'{t["box"]}px' for t in BTN_A11Y_DATA['targets'])
+    n = sum(1 for r in rows if r['ratio'] is not None)
+
+    linhas = [
+        ('Rótulo', '4,5:1', 'Default, Hover e Pressed das quatro variantes, nos dois temas', label,
+         'O texto contra o fundo que ele toca de fato. Sem preenchimento, o fundo é o canvas, e é contra ele que se mede.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Rótulo do Primary', '3:1', exc_txt, marca,
+         'Exceção de marca herdada da Foundation: branco sobre o laranja da âncora. Fica acima de 3:1, o piso de texto grande e de elemento não-textual.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Contorno do botão', '3:1', 'Preenchimento do Primary e do Danger, borda do Secondary', borda,
+         'O limite visível do botão contra o canvas. O Ghost não tem contorno: o rótulo é que identifica o controle.',
+         '1.4.11 Contraste não textual'),
+        ('Anel de foco', '3:1', 'Focus, nas quatro variantes', foco,
+         'O anel contra o canvas. O Danger usa o anel de erro, para não brigar com o vermelho do preenchimento.',
+         '2.4.13 Aparência do foco'),
+        ('Desabilitado', 'Não exigido', 'Disabled', off,
+         'Componente inativo fica fora do critério. O contraste baixo é sinal: subir faria o desabilitado parecer clicável.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Alvo de toque', '24 × 24px', 'sm e md', alvo,
+         'Os dois tamanhos passam. Só o md alcança os 44px que Apple e Google recomendam para toque.',
+         '2.5.8 Tamanho do alvo (mínimo)'),
+    ]
+    trs = ''.join(f'<tr><td class="name">{a}</td><td class="tok">{b}</td><td>{c}</td>'
+                  f'<td class="tok">{d}</td><td>{e}<span class="wcag">WCAG {w}</span></td></tr>'
+                  for a, b, c, d, e, w in linhas)
+    return f'''
+<section>
+  <h2>Contraste</h2>
+  <p>Cada combinação é medida renderizada: variante, estado e tema, contra o fundo que o botão
+  tem de fato. São {n} medições no portão de build, e nenhuma reprova.</p>
+  <div class="scroller" style="margin-top:16px"><table class="a11y-req">
+    <thead><tr><th>Requisito</th><th>Mínimo</th><th>Aplica-se a</th><th>Medido</th><th>Orientação</th></tr></thead>
+    <tbody>{trs}</tbody>
+  </table></div>
+</section>'''
+
+
+BTN_A11Y = btn_contrast() + '''
 <section>
   <h2>Foco</h2>
   <p>O anel tem duas camadas: 2px de respiro na cor do fundo e 2px na cor do foco. O respiro é o que impede o anel de encostar no preenchimento — sem ele, laranja sobre laranja daria 1,00:1.</p>
