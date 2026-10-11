@@ -30,6 +30,8 @@ FOUNDATION_SRC = os.path.join(SRC, 'foundation')
 TOKENS_JSON = os.path.join(BUILD, 'tokens.json')
 FOUNDATION_CSS = os.path.join(BUILD, 'foundation', 'al-foundation.css')
 SITE_HTML = os.path.join(BUILD, 'site', 'index.html')
+# the full site, with the behind-the-scenes pages, published only as the artifact
+ARTIFACT_HTML = os.path.join(BUILD, 'artifact', 'index.html')
 
 
 def out(path):
