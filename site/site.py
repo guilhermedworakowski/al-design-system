@@ -3549,36 +3549,18 @@ def avatar_token_rows():
     return '\n'.join(rows)
 
 
-def avatar_a11y_rows():
-    out = []
-    papel = {'label': 'Iniciais · texto', 'icon': 'Ícone · não-textual'}
-    for r in AVATAR_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fg"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bg"]}"></span>')
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{papel[r["what"]]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">{r["fg"]} / {r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td>'
-            f'<td><span class="pass">passa</span></td></tr>')
-    return '\n'.join(out)
-
-
-
 AVATAR_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage" id="avatar-stage">{av_person('initials', 'md', 'Maria Silva', 'Comentou há 2 horas')}</div>
 
-    <div class="controls" id="avatar-controls">
-      <div class="ctl"><span class="ctl-name">Tipo</span>{seg('avtype', AVATAR_TYPES, 'initials')}</div>
-      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('avsize', AVATAR_SIZES, 'md')}</div>
-      <div class="ctl"><span class="ctl-name">Contexto</span>{seg('avctx', [('deco', 'Ao lado do nome'), ('solo', 'Sozinho')], 'deco')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('avtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="avatar-name" class="ctl-name">Nome</label>
-        <input class="txt" id="avatar-name" type="text" value="Maria Silva" maxlength="40"></div>
+    <div class="controls controls--fields" id="avatar-controls">
+      {pg_field('avtype', 'Tipo', AVATAR_TYPES, 'initials')}
+      {pg_field('avsize', 'Tamanho', AVATAR_SIZES, 'md')}
+      {pg_field('avctx', 'Contexto', [('deco', 'Ao lado do nome'), ('solo', 'Sozinho')], 'deco')}
+      {pg_field('avtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('avatar-name', 'Nome', valor='Maria Silva')}
     </div>
 
     <div class="codewrap">
@@ -3871,21 +3853,8 @@ AVATAR_A11Y_TAB = f'''
   Avatar <b>não varia</b>. É sempre <code>avatar-bg</code>, sólido, nos três tipos — inclusive
   no Photo, onde ele é o chão enquanto a imagem carrega. Sem tipo × status a multiplicar,
   sobram quatro medições.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_AV_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{AVATAR_A11Y['fails']}</b><span>reprovas</span></div>
-    <div class="stat"><b>0</b><span>exceções</span></div>
-    <div class="stat"><b>9,98:1</b><span>pior margem</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Contraste contra o fundo efetivo</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Papel</th><th></th><th>Cor / fundo</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{avatar_a11y_rows()}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -3935,6 +3904,43 @@ AVATAR_A11Y_TAB = f'''
   </div>
 </section>'''
 
+
+AVATAR_OVERVIEW, AVATAR_PLAYGROUND, AVATAR_A11Y_TAB = model_tabs(
+    'avatar', old_ov=AVATAR_OVERVIEW, old_specs=AVATAR_SPECS, guide=AVATAR_GUIDE, old_a11y=AVATAR_A11Y_TAB,
+    preview=av('photo', 'lg') + av('initials', 'lg') + av('icon', 'lg'),
+    usage='Use para dizer quem é a pessoa: autor de um comentário, dono de uma tarefa, participante de '
+          'uma conversa. O tipo não se escolhe: é o primeiro da cadeia foto → iniciais → ícone que tem '
+          'material para existir.',
+    states=['As nove combinações'],
+    keep_ov=['Os três tipos são uma cadeia, não um menu'],
+    presets={'Linha de lista · sm': {'avsize': 'sm'}, 'Topo de perfil · lg': {'avsize': 'lg'}},
+    extra_dd=[
+        ('do', 'Um tamanho só por grupo, escolhido pelo papel na tela.'),
+        ('do', 'Iniciais com no máximo dois caracteres, em maiúsculas.'),
+        ('do', 'Imagem quebrada cai para iniciais ou ícone, nunca para caixa vazia.'),
+        ('dont', 'Pular etapa da cadeia: havendo foto, é foto.'),
+        ('dont', 'Avatar clicável sozinho: quem é acionável é o elemento de fora.'),
+        ('dont', 'Trocar o glifo do tipo Icon: é sempre <code>user</code>.'),
+    ],
+    classes=[
+        ('.al-avatar', '—', 'O círculo, sempre com o fundo <code>avatar-bg</code>.'),
+        ('.al-avatar--&#123;tamanho&#125;', 'sm · md · lg',
+         f'{AVATAR_DIAM["sm"]}, {AVATAR_DIAM["md"]} e {AVATAR_DIAM["lg"]}px. O tamanho sai do papel na tela.'),
+        ('.al-avatar__photo', '&lt;img alt=""&gt;', 'A foto. O <code>alt</code> é vazio: o nome vem do Avatar.'),
+        ('.al-avatar__initials', '1 ou 2 letras', 'As iniciais, em maiúsculas.'),
+        ('svg.al-icon', 'user', 'O glifo do tipo Icon.'),
+        ('aria-hidden', 'true', 'Decorativo: ao lado do nome escrito.'),
+        ('role="img" + aria-label', 'o nome', 'Sozinho: o Avatar é quem diz o nome.'),
+    ],
+    contrast=role_contrast(AVATAR_A11Y['rows'], [
+        ('Iniciais', {'label'}, 'ok', 'Texto contra o fundo do Avatar, que não varia entre os tipos.',
+         '1.4.3 Contraste (mínimo)', 'Tipo Initials, nos três tamanhos'),
+        ('Ícone', {'icon'}, 'ok', 'O glifo contra o mesmo fundo, medido contra o piso dele.',
+         '1.4.11 Contraste não textual', 'Tipo Icon, nos três tamanhos'),
+    ], f'<p>O fundo do Avatar não varia: é sempre <code>avatar-bg</code>. São {N_AV_MEDIDAS} medições no '
+       f'portão de build, nenhuma reprova. Não há anel nem alvo de toque: o Avatar não é acionável.</p>',
+       key='what'),
+)
 
 # ═══════════════════════════════════════════════════════════════ Select · abas
 # 7 estados, um tamanho, sem variante. O que varia e quase sempre so a borda -
@@ -7288,8 +7294,6 @@ DV_SR = [('announced', 'Anunciado'), ('decorative', 'Decorativo')]
 DV_SURF = [('canvas', 'Tela'), ('surface', 'Faixa de seção'), ('raised', 'Card ou modal')]
 
 N_DV_MEDIDAS = len(DIVIDER_A11Y['rows'])
-N_DV_EXC = sum(1 for r in DIVIDER_A11Y['rows'] if r['exception'])
-DV_PIOR = min(DIVIDER_A11Y['rows'], key=lambda r: r['ratio'])
 
 
 def dv_btn(label):
@@ -7354,39 +7358,17 @@ def divider_token_rows():
     return '\n'.join(rows)
 
 
-def divider_a11y_rows():
-    nomes = {'bg-canvas': 'Tela', 'bg-surface': 'Faixa de seção',
-             'bg-surface-raised': 'Card ou modal'}
-    out = []
-    for r in DIVIDER_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fg"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        if r['invisible']:
-            veredito = '<span class="fail">invisível</span>'
-        elif r['pass']:
-            veredito = '<span class="pass">passa</span>'
-        else:
-            veredito = '<span class="exc">exceção declarada</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{nomes[r["bg"]]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">{r["fg"]} / {r["bgHex"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{veredito}</td></tr>')
-    return '\n'.join(out)
-
-
 DIVIDER_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage" id="divider-stage">{dv_box('sections', 'announced')}</div>
 
-    <div class="controls" id="divider-controls">
-      <div class="ctl"><span class="ctl-name">Contexto</span>{seg('dvctx', DV_CTX, 'sections')}</div>
-      <div class="ctl"><span class="ctl-name">Leitor de tela</span>{seg('dvsr', DV_SR, 'announced')}</div>
-      <div class="ctl"><span class="ctl-name">Superfície</span>{seg('dvsurf', DV_SURF, 'canvas')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('dvtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    <div class="controls controls--fields" id="divider-controls">
+      {pg_field('dvctx', 'Contexto', DV_CTX, 'sections')}
+      {pg_field('dvsr', 'Leitor de tela', DV_SR, 'announced')}
+      {pg_field('dvsurf', 'Superfície', DV_SURF, 'canvas')}
+      {pg_field('dvtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
     </div>
 
     <div class="codewrap">
@@ -7644,21 +7626,8 @@ DIVIDER_A11Y_TAB = f'''
   <p style="margin-top:12px">A exceção cobre uma linha <b>discreta</b>. Não cobre uma linha que
   não existe: por isso o portão tem um segundo julgamento, que reprova linha da mesma cor do
   fundo. Foi ele que pegou o <code>border-subtle</code> sumindo no card escuro na etapa 6.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_DV_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_DV_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{sum(1 for r in DIVIDER_A11Y['rows'] if r['invisible'])}</b><span>linhas invisíveis</span></div>
-    <div class="stat"><b>{DV_PIOR['ratio']:.2f}:1</b><span>a mais discreta</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Contraste contra o fundo efetivo</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Superfície</th><th></th><th>Linha / fundo</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{divider_a11y_rows()}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -7691,6 +7660,37 @@ TH_DIVIDER = ('<div class="th-divider"><span></span><span></span>'
               '<hr class="al-divider" aria-hidden="true"><span></span></div>')
 
 
+DIVIDER_OVERVIEW, DIVIDER_PLAYGROUND, DIVIDER_A11Y_TAB = model_tabs(
+    'divider', old_ov=DIVIDER_OVERVIEW, old_specs=DIVIDER_SPECS, guide=DIVIDER_GUIDE,
+    old_a11y=DIVIDER_A11Y_TAB,
+    preview=dv_box('sections', 'announced'),
+    preview_style='display:block; width:min(420px,100%)',
+    usage='Use para separar grupos de conteúdo quando o espaço sozinho não basta. Horizontal entre '
+          'blocos empilhados, vertical entre itens lado a lado.',
+    states=['As duas variantes'],
+    presets={'Uma linha entre os grupos': {'dvctx': 'list'}, 'Horizontal · blocos empilhados': {'dvctx': 'sections'},
+             'Vertical · itens lado a lado': {'dvctx': 'toolbar'}},
+    extra_dd=[
+        ('do', 'Espaço antes de linha: a linha entra quando o espaço não basta.'),
+        ('do', 'Mesmo espaço dos dois lados da linha.'),
+        ('do', 'Decorativo leva <code>aria-hidden="true"</code>.'),
+        ('dont', 'Divisor no começo ou no fim de um grupo, ou dois seguidos.'),
+        ('dont', 'Texto dentro do divisor.'),
+        ('dont', 'Divisor no lugar da borda de um contêiner.'),
+    ],
+    classes=[
+        ('hr.al-divider', '—', 'Horizontal. O <code>&lt;hr&gt;</code> é anunciado como separador.'),
+        ('.al-divider--vertical', '—', 'Entre itens lado a lado. Anunciado, leva <code>aria-orientation="vertical"</code>.'),
+        ('aria-hidden', 'true', 'Decorativo: quando o título e o espaço já separam.'),
+    ],
+    contrast=role_contrast(DIVIDER_A11Y['rows'], [
+        ('Linha', {None}, 'exc',
+         'Exceção declarada: o critério só vale para o que é necessário entender, e a regra 8 garante '
+         'que a linha nunca seja a única pista. Um segundo julgamento reprova linha da cor do fundo.',
+         '1.4.11 Contraste não textual', 'Tela, faixa de seção e card ou modal'),
+    ], f'<p>São {N_DV_MEDIDAS} medições no portão de build, todas em exceção declarada, e nenhuma linha '
+       f'invisível.</p>', key='what'),
+)
 
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
@@ -7706,8 +7706,6 @@ CD_MOD_PAD = {'spaced': ' al-card--spaced', 'default': '', 'tight': ' al-card--t
 
 N_CD_MEDIDAS = len(CARD_A11Y['rows'])
 N_CD_EXC = sum(1 for r in CARD_A11Y['rows'] if r['exception'])
-N_CD_PASS = sum(1 for r in CARD_A11Y['rows'] if r['pass'])
-N_CD_FAIL = sum(1 for r in CARD_A11Y['rows'] if not r['pass'] and not r['exception'])
 CD_CHEVRON = al_icon('chevron-right', cls='al-icon al-icon--20 cd-chevron')
 
 
@@ -7807,42 +7805,18 @@ def card_token_rows():
     return '\n'.join(rows)
 
 
-def card_a11y_rows():
-    nomes = {'filled': 'Filled', 'border': 'Border', 'elevated': 'Elevated', 'all': 'Todos'}
-    oque = {'title': 'título', 'description': 'descrição', 'border': 'borda',
-            'bg-boundary': 'fundo × página', 'ring': 'anel de foco'}
-    out = []
-    for r in CARD_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        if r['invisible']:
-            v = '<span class="fail">invisível</span>'
-        elif r['pass']:
-            v = '<span class="pass">passa</span>'
-        else:
-            v = '<span class="exc">exceção declarada</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{nomes[r["type"]]}</td>'
-            f'<td class="tok dim">{r["state"]}</td><td class="tok dim">{oque[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 CARD_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage" id="card-stage"><div class="cd-page" data-cdpage="surface">{CD_DEMOS["filled|default|static"]["html"]}</div></div>
 
-    <div class="controls" id="card-controls">
-      <div class="ctl"><span class="ctl-name">Tipo</span>{seg('cdtype', CD_TYPES, 'filled')}</div>
-      <div class="ctl"><span class="ctl-name">Padding</span>{seg('cdpad', CD_PADS, 'default')}</div>
-      <div class="ctl"><span class="ctl-name">Interação</span>{seg('cdint', CD_INTS, 'static')}</div>
-      <div class="ctl"><span class="ctl-name">Página</span>{seg('cdpage', CD_PAGES, 'surface')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('cdtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    <div class="controls controls--fields" id="card-controls">
+      {pg_field('cdtype', 'Tipo', CD_TYPES, 'filled')}
+      {pg_field('cdpad', 'Padding', CD_PADS, 'default')}
+      {pg_field('cdint', 'Interação', CD_INTS, 'static')}
+      {pg_field('cdpage', 'Página', CD_PAGES, 'surface')}
+      {pg_field('cdtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
     </div>
     <p class="cd-warn" id="card-warn" hidden>Filled direto na tela some — fundo e página têm a mesma cor no claro. A regra 2 manda pôr o Filled sobre <code>bg-surface</code>.</p>
 
@@ -8071,21 +8045,8 @@ CARD_A11Y_TAB = f'''
   passar 4,5:1 sem exceção. Borda, anel e limite do card têm piso de 3:1: hover e foco passam,
   e a borda e o fundo em repouso são as duas exceções declaradas. Um terceiro julgamento
   reprova o card <b>invisível</b>, sem nada que o separe da página.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_CD_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_CD_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>{N_CD_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{N_CD_FAIL}</b><span>reprovas</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Contraste contra o fundo efetivo</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Tipo</th><th>Estado</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{card_a11y_rows()}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -8123,6 +8084,55 @@ TH_CARD = ('<div class="th-card">'
            '<div class="al-card al-card--elevated al-card--tight"><span></span><span></span></div>'
            '</div>')
 
+
+CARD_OVERVIEW, CARD_PLAYGROUND, CARD_A11Y_TAB = model_tabs(
+    'card', old_ov=CARD_OVERVIEW, old_specs=CARD_SPECS, guide=CARD_GUIDE, old_a11y=CARD_A11Y_TAB,
+    preview=(cd_card('filled', title='Filled', desc='Sobre a superfície.')
+             + cd_card('border', title='Border', desc='Sobre a tela ou em grade densa.')
+             + cd_card('elevated', title='Elevated', desc='Para destaque.')),
+    preview_style='display:grid; grid-template-columns:repeat(auto-fit,minmax(min(180px,100%),1fr)); gap:16px; width:100%',
+    usage='Use para agrupar um assunto só, com título e descrição, numa grade ou lista. Clicável inteiro '
+          'quando leva a um lugar; estático com botões quando tem mais de uma ação.',
+    states=['As 36 variantes'],
+    presets={'Filled · sobre superfície': {'cdtype': 'filled', 'cdpage': 'surface'},
+             'Border · sobre a tela': {'cdtype': 'border', 'cdpage': 'canvas'},
+             'Elevated · destaque': {'cdtype': 'elevated'},
+             'Uma ação: o card inteiro': {'cdint': 'clickable'}},
+    extra_dd=[
+        ('do', 'Mesmo tipo e mesmo padding em toda a grade.'),
+        ('do', 'Título de verdade, no nível de heading da página.'),
+        ('do', 'Ações explícitas no fim do card, uma primária.'),
+        ('dont', 'Card dentro de card.'),
+        ('dont', 'Card no lugar de modal, drawer, accordion ou tab.'),
+        ('dont', 'Card desabilitado ou pressionado: não existem.'),
+    ],
+    classes=[
+        ('.al-card', '—', 'A caixa. Sem modificador de tipo, é Filled.'),
+        ('.al-card--border · --elevated', '—', 'Os outros dois tipos.'),
+        ('.al-card--spaced · --tight', '—', 'Padding 24 ou 8; sem modificador, 16.'),
+        ('.al-card--clickable', '—', 'O card inteiro é um alvo: o link do título se estica sobre ele.'),
+        ('.al-card__header', '—', 'Título e descrição.'),
+        ('.al-card__title', 'h2 a h4', 'Um título de verdade, no nível que a página pede.'),
+        ('.al-card__description', 'texto', 'Orientação curta.'),
+        ('.al-card__link', '&lt;a&gt;', 'Só no clicável: o link é o título.'),
+    ],
+    contrast=role_contrast(CARD_A11Y['rows'], [
+        ('Título', {'title'}, 'ok', 'O título contra o fundo do card.', '1.4.3 Contraste (mínimo)', 'Os três tipos'),
+        ('Descrição', {'description'}, 'ok', 'A descrição contra o fundo do card.', '1.4.3 Contraste (mínimo)', 'Os três tipos'),
+        ('Borda', {'border'}, 'ok', 'A borda que acende no hover e no foco do clicável.', '1.4.11 Contraste não textual',
+         'Hover e foco'),
+        ('Borda em repouso', {'border'}, 'exc',
+         'Exceção declarada: a borda do Border é discreta, e o título e o espaço já separam o card.',
+         '1.4.11 Contraste não textual', 'Border, em repouso'),
+        ('Fundo do card', {'bg-boundary'}, 'exc',
+         'Exceção declarada: o fundo do Filled e do Elevated fica perto da página. Quem separa é a página '
+         'cinza no Filled e a sombra no Elevated; um card invisível reprova.', '1.4.11 Contraste não textual',
+         'Filled e Elevated, em repouso'),
+        ('Anel de foco', {'ring'}, 'ok', 'O anel envolve o card inteiro. Laranja é só foco.',
+         '2.4.13 Aparência do foco', 'Clicável com foco'),
+    ], f'<p>O portão mede cada tema, tipo, estado e página onde o card pode ficar. São {N_CD_MEDIDAS} '
+       f'medições, nenhuma reprova e {N_CD_EXC} ficam em exceção declarada.</p>', key='what'),
+)
 
 # ═══════════════════════════════════════════════════════════════ Tab · abas
 # Terceiro componente do Tier 3, e o primeiro do AL com comportamento em JS
@@ -8612,8 +8622,6 @@ AC_STATES = [('repouso', 'Repouso'), ('hover', 'Hover'), ('pressed', 'Pressed'),
 
 N_AC_MEDIDAS = len(ACC_A11Y['rows'])
 N_AC_EXC = sum(1 for r in ACC_A11Y['rows'] if r['exception'])
-N_AC_PASS = sum(1 for r in ACC_A11Y['rows'] if r['pass'])
-N_AC_FAIL = sum(1 for r in ACC_A11Y['rows'] if not r['pass'] and not r['exception'])
 N_AC_EXC_KEYS = len(ACC['pending'])
 
 AC_FAQ = [
@@ -8700,28 +8708,6 @@ def accordion_token_rows():
     return '\n'.join(rows)
 
 
-def accordion_a11y_rows():
-    oque = {'title': 'título', 'chevron': 'chevron', 'divider': 'divisória',
-            'bg-boundary': 'item × página', 'ring': 'anel de foco'}
-    out = []
-    for r in ACC_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        if r['invisible']:
-            v = '<span class="fail">invisível</span>'
-        elif r['pass']:
-            v = '<span class="pass">passa</span>'
-        else:
-            v = '<span class="exc">exceção declarada</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="tok dim">{r["state"]}</td><td class="name">{oque[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 AC_PAG = [
     ('Cartão de crédito', 'credit-card', 'Parcele em até 12 vezes sem juros acima de R$ 300.'),
     ('Pix', 'send', 'O pagamento é aprovado na hora e o pedido segue no mesmo dia.'),
@@ -8734,11 +8720,11 @@ ACCORDION_OVERVIEW = f'''
   <div class="pg">
     <div class="stage" id="accordion-stage"><div class="ac-page" data-acpage="surface">{AC_DEMOS["none|multi"]["html"]}</div></div>
 
-    <div class="controls" id="accordion-controls">
-      <div class="ctl"><span class="ctl-name">Ícone</span>{seg('acicon', AC_ICONS, 'none')}</div>
-      <div class="ctl"><span class="ctl-name">Abertura</span>{seg('acmode', AC_MODES, 'multi')}</div>
-      <div class="ctl"><span class="ctl-name">Página</span>{seg('acpage', AC_PAGES, 'surface')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('actheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    <div class="controls controls--fields" id="accordion-controls">
+      {pg_field('acicon', 'Ícone', AC_ICONS, 'none')}
+      {pg_field('acmode', 'Abertura', AC_MODES, 'multi')}
+      {pg_field('acpage', 'Página', AC_PAGES, 'surface')}
+      {pg_field('actheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
     </div>
     <p class="cd-warn" id="accordion-warn" hidden>Direto na tela clara o item some: fundo e página têm a mesma cor. A regra 14 manda pôr o Accordion sobre <code>bg-surface</code>.</p>
 
@@ -8956,21 +8942,8 @@ ACCORDION_A11Y_TAB = f'''
   <code>bg-surface</code>, a única página onde o Accordion pode ficar. O título tem que passar
   4,5:1 sem exceção; chevron e anel, 3:1. A divisória e o limite do item são as duas exceções
   declaradas. Um terceiro julgamento reprova o item <b>invisível</b>.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_AC_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_AC_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>{N_AC_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{N_AC_FAIL}</b><span>reprovas</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Contraste contra o fundo efetivo</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Estado</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{accordion_a11y_rows()}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -9014,6 +8987,48 @@ TH_ACCORDION = ('<div class="th-accordion" aria-hidden="true">'
                 '</div>')
 
 
+ACCORDION_OVERVIEW, ACCORDION_PLAYGROUND, ACCORDION_A11Y_TAB = model_tabs(
+    'accordion', old_ov=ACCORDION_OVERVIEW, old_specs=ACCORDION_SPECS, guide=ACCORDION_GUIDE,
+    old_a11y=ACCORDION_A11Y_TAB,
+    preview=ac_demo('none', 'multi')[0],
+    preview_style='display:block; width:min(520px,100%)',
+    usage='Use para conteúdo secundário que a pessoa abre se quiser, como perguntas frequentes ou '
+          'detalhes. Se ela vai ler tudo, não use: deixe o conteúdo aberto.',
+    states=['As 8 variantes'],
+    presets={'Perguntas: vários abertos': {'acmode': 'multi'},
+             'Forma de pagamento: um por vez': {'acmode': 'single'}},
+    extra_dd=[
+        ('do', 'Vários abertos por padrão, todos fechados ao carregar.'),
+        ('do', 'Títulos paralelos e distintos, que resumem o conteúdo.'),
+        ('do', 'Sempre sobre <code>bg-surface</code>.'),
+        ('dont', 'Esconder o essencial dentro de um item.'),
+        ('dont', 'Um Accordion dentro do outro.'),
+        ('dont', 'Heading dentro do cabeçalho: o título real vem antes da pilha.'),
+    ],
+    classes=[
+        ('details.al-accordion', '—', 'Um item: o <code>&lt;details&gt;</code> nativo, sem ARIA.'),
+        ('open', '—', 'Aberto. Todos começam fechados.'),
+        ('name', 'texto', 'O mesmo <code>name</code> na pilha: um aberto por vez.'),
+        ('.al-accordion__header', '&lt;summary&gt;', 'O cabeçalho, o único que reage.'),
+        ('.al-accordion__icon', 'ícone', 'Opcional, à esquerda, decorativo.'),
+        ('.al-accordion__title', 'texto', 'Resume o conteúdo. Não é heading.'),
+        ('.al-accordion__chevron', 'ícone', 'No fim, decorativo.'),
+        ('.al-accordion__content', '—', 'O conteúdo do item.'),
+    ],
+    contrast=role_contrast(ACC_A11Y['rows'], [
+        ('Título', {'title'}, 'ok', 'O título contra o fundo do cabeçalho em cada estado.', '1.4.3 Contraste (mínimo)'),
+        ('Chevron', {'chevron'}, 'ok', 'A seta contra o mesmo fundo.', '1.4.11 Contraste não textual'),
+        ('Anel de foco', {'ring'}, 'ok', 'O anel fica acima do conteúdo, contra a superfície.', '2.4.13 Aparência do foco'),
+        ('Divisória', {'divider'}, 'exc',
+         'Exceção declarada: a linha entre itens é decorativa; o título e o chevron identificam cada um.',
+         '1.4.11 Contraste não textual'),
+        ('Fundo do item', {'bg-boundary'}, 'exc',
+         'Exceção declarada: o item sobre a superfície é discreto; por isso a pilha vive sempre sobre '
+         '<code>bg-surface</code>.', '1.4.11 Contraste não textual'),
+    ], f'<p>São {N_AC_MEDIDAS} medições no portão de build, nenhuma reprova e {N_AC_EXC} ficam em '
+       f'exceção declarada.</p>', key='what'),
+)
+
 # ═══════════════════════════════════════════════════════════ Modal · abas
 # Quinto componente do Tier 3, e o segundo com script proprio (modal.js). E o
 # <dialog> nativo aberto por showModal(): prende o foco, deixa a pagina inerte
@@ -9027,8 +9042,6 @@ MD_KINDS = [('confirm', 'Confirmação'), ('delete', 'Exclusão'), ('form', 'For
 
 N_MD_MEDIDAS = len(MOD_A11Y['rows'])
 N_MD_EXC = sum(1 for r in MOD_A11Y['rows'] if r['exception'])
-N_MD_PASS = sum(1 for r in MOD_A11Y['rows'] if r['pass'])
-N_MD_FAIL = sum(1 for r in MOD_A11Y['rows'] if not r['pass'] and not r['exception'])
 N_MD_EXC_KEYS = len(MOD['pending'])
 MD_OFFSET = MOD['resolved']['modal-offset']
 MD_DURATION = MOD['resolved']['modal-duration']
@@ -9164,45 +9177,18 @@ def modal_token_rows():
     return '\n'.join(rows)
 
 
-def modal_a11y_rows():
-    oque = {'title': 'título e texto do miolo', 'ring-on-card': 'anel de foco no card',
-            'primary-button-on-card': 'botão Primary no card', 'danger-button-on-card': 'botão Danger no card',
-            'secondary-border-on-card': 'borda do Secondary no card',
-            'card-on-dimmed-canvas': 'card × tela escurecida',
-            'card-on-dimmed-surface': 'card × superfície escurecida'}
-    out = []
-    for r in MOD_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        if r['invisible']:
-            v = '<span class="fail">invisível</span>'
-        elif r['pass']:
-            v = '<span class="pass">passa</span>'
-        else:
-            v = '<span class="exc">exceção declarada</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{oque[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 MODAL_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage" id="modal-stage"><div class="md-prev" id="modal-prev" aria-hidden="true"></div></div>
 
-    <div class="controls" id="modal-controls">
-      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('mdsize', MD_SIZES, 'md')}</div>
-      <div class="ctl"><span class="ctl-name">Conteúdo</span>{seg('mdkind', MD_KINDS, 'delete')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('mdtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="md-open">
-        <p class="md-open-note">Abre o Modal escolhido sobre a página inteira. Esc, ou um botão, fecha.</p>
-        <button type="button" class="al-btn al-btn--primary al-btn--md" id="modal-open"><span class="al-btn__label">Abrir de verdade</span></button>
-      </div>
+    <div class="controls controls--fields" id="modal-controls">
+      {pg_field('mdsize', 'Tamanho', MD_SIZES, 'md')}
+      {pg_field('mdkind', 'Conteúdo', MD_KINDS, 'delete')}
+      {pg_field('mdtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      <div class="pg-action"><button type="button" class="al-btn al-btn--secondary al-btn--sm" id="modal-open">
+        <span class="al-btn__label">Visualizar</span></button></div>
     </div>
 
     <div class="codewrap">
@@ -9212,7 +9198,7 @@ MODAL_OVERVIEW = f'''
     </div>
   </div>
   <p style="margin-top:14px">
-    A prévia acima é só um desenho do Modal. <b>Abrir de verdade</b> faz o que o componente faz: o card
+    A prévia acima é só um desenho do Modal. <b>Visualizar</b> faz o que o componente faz: o card
     sobe, o fundo escurece e o resto da página fica inerte. Tabule: o foco não sai do Modal. No de
     <b>Exclusão</b> ele entra em “Cancelar”; no <b>Formulário</b>, no primeiro campo.
   </p>
@@ -9420,27 +9406,8 @@ MODAL_A11Y_TAB = f'''
   contra a página <b>escurecida</b> pelo fundo (o scrim composto sobre a tela e sobre a superfície). O
   título tem que passar 4,5:1 sem exceção; anel, botões e borda, 3:1. A separação do card no escuro é a
   única exceção declarada. Um segundo julgamento reprova o card <b>invisível</b>.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_MD_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_MD_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>{N_MD_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{N_MD_FAIL}</b><span>reprovas</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Contraste contra o fundo efetivo</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{modal_a11y_rows()}</tbody>
-  </table></div>
-  <div class="note" style="margin-top:16px">
-    <b>Exceção declarada: o card não se separa do fundo escurecido no escuro</b>
-    O card (<code>bg-surface-raised</code>) contra a página escurecida fica em 1,79 a 1,86:1, abaixo de 3:1. Quem
-    separa é o card clarear mais a sombra, a regra da Foundation para o tema escuro. Subir a opacidade
-    do fundo não resolve (a 72% o par vai a 1,88:1) e o Modal nunca ganha contorno para compensar.
-  </div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -9495,8 +9462,6 @@ CHROME_MODAL = """
 .md-copy{margin:0; color:var(--al-text-secondary)}
 .al-modal__content > .md-copy + .md-copy{margin-block-start:var(--al-space-12)}
 .md-fields{display:flex; flex-direction:column; gap:var(--al-space-16)}
-.md-open{display:flex; flex-direction:column; align-items:flex-start; gap:12px}
-.md-open-note{margin:0; font-size:13px; line-height:20px; color:var(--al-text-secondary); max-width:none}
 .md-trigs{display:grid; gap:20px; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); margin-top:16px}
 .md-trig{display:flex; flex-direction:column; align-items:flex-start; gap:8px}
 .md-trig .cap{margin:0}
@@ -9539,7 +9504,7 @@ JS_MODAL = r"""
   var live = null;
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -9579,7 +9544,7 @@ JS_MODAL = r"""
     if (!live.open) live.showModal();
   }
 
-  document.querySelectorAll('#modal-controls input').forEach(function (inp) {
+  document.querySelectorAll('#modal-controls input, #modal-controls select').forEach(function (inp) {
     inp.addEventListener('input', render);
   });
   document.getElementById('modal-open').addEventListener('click', open);
@@ -9598,6 +9563,47 @@ JS_MODAL = r"""
 """
 
 
+MODAL_OVERVIEW, MODAL_PLAYGROUND, MODAL_A11Y_TAB = model_tabs(
+    'modal', old_ov=MODAL_OVERVIEW, old_specs=MODAL_SPECS, guide=MODAL_GUIDE, old_a11y=MODAL_A11Y_TAB,
+    js=True, preview=md_frozen('pv-md', 'sm', 'delete'),
+    usage='Use para uma tarefa curta que pede uma resposta antes de seguir: confirmar, excluir, editar um '
+          'dado. O <code>modal.js</code> abre pelo atributo e devolve o foco ao fechar.',
+    states=['Os três tamanhos'],
+    ov_rename={'Quatro cenários, abertos por atributo': 'Exemplos'},
+    extra_dd=[
+        ('do', 'Título obrigatório e visível, com verbo e substantivo.'),
+        ('do', 'No máximo duas ações, a principal à direita.'),
+        ('do', 'Esc sempre fecha; o clique no fundo fecha só sem campos.'),
+        ('dont', 'Modal dentro de Modal.'),
+        ('dont', 'Formulário longo: isso é página ou Drawer.'),
+        ('dont', 'Divisória entre título, miolo e ações.'),
+    ],
+    classes=[
+        ('dialog.al-modal', '—', 'O <code>&lt;dialog&gt;</code> nativo, aberto por <code>showModal()</code>.'),
+        ('.al-modal--&#123;tamanho&#125;', 'sm · md · lg', '320, 480 e 640px de largura máxima.'),
+        ('.al-modal__title', 'h2', 'Obrigatório. Nomeia o Modal por <code>aria-labelledby</code>.'),
+        ('.al-modal__content', '—', 'O miolo, livre. Só ele rola.'),
+        ('.al-modal__actions', 'botões', 'No máximo dois, o principal à direita.'),
+        ('aria-labelledby', 'id do título', 'O nome do Modal.'),
+        ('data-al-modal-open', 'id do Modal', 'No botão que abre.'),
+        ('data-al-modal-close', '—', 'Em quem fecha, dentro do Modal.'),
+    ],
+    contrast=role_contrast(MOD_A11Y['rows'], [
+        ('Título', {'title'}, 'ok', 'O título contra a caixa.', '1.4.3 Contraste (mínimo)', 'Os três tamanhos'),
+        ('Botões sobre a caixa', {'primary-button-on-card', 'danger-button-on-card', 'secondary-border-on-card'},
+         'ok', 'O preenchimento do Primary e do Danger e a borda do Secondary contra a caixa.',
+         '1.4.11 Contraste não textual', 'Primary, Danger e Secondary'),
+        ('Anel de foco', {'ring-on-card'}, 'ok', 'O anel contra a caixa, não contra a página.',
+         '2.4.13 Aparência do foco', 'Qualquer controle do Modal'),
+        ('Caixa sobre o fundo escurecido', {'card-on-dimmed-canvas', 'card-on-dimmed-surface'}, 'ok',
+         'A caixa contra a página escurecida.', '1.4.11 Contraste não textual', 'Tema claro'),
+        ('Caixa no escuro', {'card-on-dimmed-canvas', 'card-on-dimmed-surface'}, 'exc',
+         'Exceção declarada: no escuro a caixa fica perto do fundo escurecido. O título e os botões '
+         'identificam o Modal.', '1.4.11 Contraste não textual', 'Tema escuro'),
+    ], f'<p>São {N_MD_MEDIDAS} medições no portão de build, nenhuma reprova e {N_MD_EXC} ficam em '
+       f'exceção declarada.</p>', key='what'),
+)
+
 # ═══════════════════════════════════════════════════════════ Drawer · abas
 # Sexto e ultimo componente do Tier 3, e o terceiro com script proprio
 # (drawer.js). E o <dialog> nativo aberto por showModal(), colado na direita:
@@ -9612,8 +9618,6 @@ DW_KINDS = [('detail', 'Detalhes'), ('form', 'Formulário'), ('notice', 'Notific
 
 N_DW_MEDIDAS = len(DRW_A11Y['rows'])
 N_DW_EXC = sum(1 for r in DRW_A11Y['rows'] if r['exception'])
-N_DW_PASS = sum(1 for r in DRW_A11Y['rows'] if r['pass'])
-N_DW_FAIL = sum(1 for r in DRW_A11Y['rows'] if not r['pass'] and not r['exception'])
 N_DW_EXC_KEYS = len(DRW['pending'])
 DW_DURATION = DRW['resolved']['drawer-duration']
 
@@ -9772,47 +9776,18 @@ def drawer_token_rows():
     return '\n'.join(rows)
 
 
-def drawer_a11y_rows():
-    oque = {'title': 'título e texto do miolo', 'x-icon-on-panel': 'ícone do X no painel',
-            'ring-on-panel': 'anel de foco no painel', 'primary-button-on-panel': 'botão Primary no painel',
-            'secondary-border-on-panel': 'borda do Secondary no painel',
-            'ghost-hover-text': 'texto do Ghost em hover', 'ghost-hover-distinct-from-panel': 'hover do Ghost × painel',
-            'ghost-active-text': 'texto do Ghost pressionado', 'ghost-active-distinct-from-panel': 'pressed do Ghost × painel',
-            'panel-on-dimmed-canvas': 'painel × tela escurecida',
-            'panel-on-dimmed-surface': 'painel × superfície escurecida'}
-    out = []
-    for r in DRW_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        if r['invisible']:
-            v = '<span class="fail">invisível</span>'
-        elif r['pass']:
-            v = '<span class="pass">passa</span>'
-        else:
-            v = '<span class="exc">exceção declarada</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{oque[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 DRAWER_OVERVIEW = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage" id="drawer-stage"><div class="dw-prev" id="drawer-prev" aria-hidden="true"></div></div>
 
-    <div class="controls" id="drawer-controls">
-      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('dwsize', DW_SIZES, 'md')}</div>
-      <div class="ctl"><span class="ctl-name">Conteúdo</span>{seg('dwkind', DW_KINDS, 'form')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('dwtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="md-open">
-        <p class="md-open-note">Abre o Drawer escolhido sobre a página inteira, colado na direita. Esc, o X ou um botão fecha.</p>
-        <button type="button" class="al-btn al-btn--primary al-btn--md" id="drawer-open"><span class="al-btn__label">Abrir de verdade</span></button>
-      </div>
+    <div class="controls controls--fields" id="drawer-controls">
+      {pg_field('dwsize', 'Tamanho', DW_SIZES, 'md')}
+      {pg_field('dwkind', 'Conteúdo', DW_KINDS, 'form')}
+      {pg_field('dwtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      <div class="pg-action"><button type="button" class="al-btn al-btn--secondary al-btn--sm" id="drawer-open">
+        <span class="al-btn__label">Visualizar</span></button></div>
     </div>
 
     <div class="codewrap">
@@ -9822,7 +9797,7 @@ DRAWER_OVERVIEW = f'''
     </div>
   </div>
   <p style="margin-top:14px">
-    A prévia acima é só um desenho do Drawer, com uma altura de exemplo. <b>Abrir de verdade</b> faz o que o
+    A prévia acima é só um desenho do Drawer, com uma altura de exemplo. <b>Visualizar</b> faz o que o
     componente faz: o painel entra pela direita, o fundo escurece e o resto da página fica inerte. Tabule: o foco
     não sai do Drawer. Em <b>Detalhes</b> ele entra no X; em <b>Formulário</b>, no primeiro campo; em
     <b>Notificações</b>, que não tem X, na ação principal.
@@ -10047,28 +10022,8 @@ DRAWER_A11Y_TAB = f'''
   julgamento a mais tranca o defeito do Modal 0.18.1: o hover e o pressed do Ghost e do Secondary têm que ser
   <b>diferentes</b> do painel. A separação do painel no escuro é a única exceção declarada, e um julgamento
   reprova o painel <b>invisível</b>.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_DW_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_DW_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>{N_DW_EXC}</b><span>em exceção declarada</span></div>
-    <div class="stat"><b>{N_DW_FAIL}</b><span>reprovas</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Contraste contra o fundo efetivo</h2>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{drawer_a11y_rows()}</tbody>
-  </table></div>
-  <div class="note" style="margin-top:16px">
-    <b>Exceção declarada: o painel não se separa do fundo escurecido no escuro</b>
-    O painel (<code>bg-surface-raised</code>) contra a página escurecida fica em 1,79 a 1,86:1, abaixo de 3:1, na
-    borda de dentro. Quem separa é o painel clarear mais a sombra, a regra da Foundation para o tema escuro. Subir a
-    opacidade do fundo não resolve (a 72% o par vai a 1,88:1) e o Drawer nunca ganha contorno para compensar. É a
-    mesma exceção do Modal e do Card.
-  </div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -10170,7 +10125,7 @@ JS_DRAWER = r"""
   var live = null;
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -10210,7 +10165,7 @@ JS_DRAWER = r"""
     if (!live.open) live.showModal();
   }
 
-  document.querySelectorAll('#drawer-controls input').forEach(function (inp) {
+  document.querySelectorAll('#drawer-controls input, #drawer-controls select').forEach(function (inp) {
     inp.addEventListener('input', render);
   });
   document.getElementById('drawer-open').addEventListener('click', open);
@@ -10228,6 +10183,55 @@ JS_DRAWER = r"""
 })();
 """
 
+
+DRAWER_OVERVIEW, DRAWER_PLAYGROUND, DRAWER_A11Y_TAB = model_tabs(
+    'drawer', old_ov=DRAWER_OVERVIEW, old_specs=DRAWER_SPECS, guide=DRAWER_GUIDE, old_a11y=DRAWER_A11Y_TAB,
+    js=True, preview=dw_frozen('pv-dw', 'sm', 'detail'),
+    usage='Use para ver ou editar algo sem perder a página de vista: detalhe de um item, um formulário '
+          'curto. Entra só pela direita. O <code>drawer.js</code> abre pelo atributo e devolve o foco.',
+    states=['Os três tamanhos'],
+    ov_rename={'Quatro cenários, abertos por atributo': 'Exemplos'},
+    extra_dd=[
+        ('do', 'Título obrigatório e visível, com o nome do objeto ou da tarefa.'),
+        ('do', 'X e Esc sempre fecham, e o foco volta a quem abriu.'),
+        ('do', 'No máximo duas ações; os botões esticam e dividem a largura.'),
+        ('dont', 'Drawer sobre Drawer.'),
+        ('dont', 'Fluxo longo, de várias etapas: isso é página.'),
+        ('dont', 'Entrar por outro lado que não a direita.'),
+    ],
+    classes=[
+        ('dialog.al-drawer', '—', 'O <code>&lt;dialog&gt;</code> nativo, aberto por <code>showModal()</code>.'),
+        ('.al-drawer--&#123;tamanho&#125;', 'sm · md · lg', '320, 480 e 640px de largura.'),
+        ('.al-drawer__header', '—', 'Título à esquerda e o X à direita.'),
+        ('.al-drawer__title', 'h2', 'Obrigatório. Nomeia o Drawer por <code>aria-labelledby</code>.'),
+        ('.al-drawer__content', '—', 'O miolo, livre. Só ele rola.'),
+        ('.al-drawer__actions', 'botões', 'Rodapé fixo, no máximo dois botões.'),
+        ('data-al-drawer-open', 'id do Drawer', 'No botão que abre.'),
+        ('data-al-drawer-close', '—', 'No X e em quem mais fecha.'),
+    ],
+    contrast=role_contrast(DRW_A11Y['rows'], [
+        ('Título', {'title'}, 'ok', 'O título contra o painel.', '1.4.3 Contraste (mínimo)', 'Os três tamanhos'),
+        ('X', {'x-icon-on-panel'}, 'ok', 'O ícone do X contra o painel.', '1.4.11 Contraste não textual',
+         'Icon Button Ghost sm'),
+        ('Botões sobre o painel', {'primary-button-on-panel', 'secondary-border-on-panel'}, 'ok',
+         'O preenchimento do Primary e a borda do Secondary contra o painel.', '1.4.11 Contraste não textual',
+         'Primary e Secondary'),
+        ('Ghost no hover e no pressed', {'ghost-hover-text', 'ghost-active-text'}, 'ok',
+         'O texto do Ghost sobre o fundo de hover e pressed do painel.', '1.4.3 Contraste (mínimo)',
+         'Hover e pressed'),
+        ('Hover e pressed visíveis', {'ghost-hover-distinct-from-panel', 'ghost-active-distinct-from-panel'}, 'ok',
+         'O fundo de hover e pressed não pode sumir no painel: os semânticos <code>-raised</code> existem por isso.',
+         '1.4.11 Contraste não textual', 'Hover e pressed'),
+        ('Anel de foco', {'ring-on-panel'}, 'ok', 'O anel contra o painel.', '2.4.13 Aparência do foco',
+         'Qualquer controle do Drawer'),
+        ('Painel sobre o fundo escurecido', {'panel-on-dimmed-canvas', 'panel-on-dimmed-surface'}, 'ok',
+         'O painel contra a página escurecida.', '1.4.11 Contraste não textual', 'Tema claro'),
+        ('Painel no escuro', {'panel-on-dimmed-canvas', 'panel-on-dimmed-surface'}, 'exc',
+         'Exceção declarada: no escuro o painel fica perto do fundo escurecido. O título, o X e a borda da '
+         'tela identificam o Drawer.', '1.4.11 Contraste não textual', 'Tema escuro'),
+    ], f'<p>São {N_DW_MEDIDAS} medições no portão de build, nenhuma reprova e {N_DW_EXC} ficam em '
+       f'exceção declarada.</p>', key='what'),
+)
 
 # ═══════════════════════════════════════════════════════════ Sidebar · abas
 # Primeiro componente do Tier 4, e o primeiro que e LAYOUT de pagina: a Sidebar
@@ -13411,8 +13415,8 @@ PAGES = [
         'ícone — e o tipo é o primeiro da fila que tem material para existir.',
         [('Estável', True), ('9 variantes no Figma', False),
          (f'{N_AVATAR_TOKENS} tokens', False), ('0 exceções', False)],
-        [('overview', 'Visão geral', AVATAR_OVERVIEW), ('specs', 'Especificações', AVATAR_SPECS),
-         ('guide', 'Diretrizes', AVATAR_GUIDE), ('a11y', 'Acessibilidade', AVATAR_A11Y_TAB)])),
+        [('overview', 'Visão geral', AVATAR_OVERVIEW), ('playground', 'Playground', AVATAR_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(AVATAR_GUIDE)), ('a11y', 'Acessibilidade', AVATAR_A11Y_TAB)])),
     ('select', 'Componentes', page(
         'select',
         'Escolha única dentro de um formulário. É o <code>&lt;select&gt;</code> nativo: a lista '
@@ -13483,8 +13487,8 @@ PAGES = [
         'padrão, e decorativo quando a estrutura já separa.',
         [('Estável', True), ('2 variantes no Figma', False),
          (f'{N_DIVIDER_TOKENS} tokens', False), ('1 exceção declarada', False)],
-        [('overview', 'Visão geral', DIVIDER_OVERVIEW), ('specs', 'Especificações', DIVIDER_SPECS),
-         ('guide', 'Diretrizes', DIVIDER_GUIDE), ('a11y', 'Acessibilidade', DIVIDER_A11Y_TAB)])),
+        [('overview', 'Visão geral', DIVIDER_OVERVIEW), ('playground', 'Playground', DIVIDER_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(DIVIDER_GUIDE)), ('a11y', 'Acessibilidade', DIVIDER_A11Y_TAB)])),
     ('card', 'Componentes', page(
         'card',
         'Um contêiner para um assunto que se lê ou se resolve sozinho. Três tipos, três paddings, '
@@ -13492,8 +13496,8 @@ PAGES = [
         'card inteiro.',
         [('Estável', True), ('36 variantes no Figma', False),
          (f'{N_CARD_TOKENS} tokens', False), ('2 exceções declaradas', False)],
-        [('overview', 'Visão geral', CARD_OVERVIEW), ('specs', 'Especificações', CARD_SPECS),
-         ('guide', 'Diretrizes', CARD_GUIDE), ('a11y', 'Acessibilidade', CARD_A11Y_TAB)])),
+        [('overview', 'Visão geral', CARD_OVERVIEW), ('playground', 'Playground', CARD_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(CARD_GUIDE)), ('a11y', 'Acessibilidade', CARD_A11Y_TAB)])),
     ('tab', 'Componentes', page(
         'tab',
         'Troca o conteúdo na mesma tela sem sair dela, ou leva a outra página com o mesmo visual. '
@@ -13510,8 +13514,8 @@ PAGES = [
         'padrão, um por vez quando os itens são alternativas.',
         [('Estável', True), ('8 variantes no Figma', False),
          (f'{N_ACC_TOKENS} tokens', False), (f'{N_AC_EXC_KEYS} exceções declaradas', False)],
-        [('overview', 'Visão geral', ACCORDION_OVERVIEW), ('specs', 'Especificações', ACCORDION_SPECS),
-         ('guide', 'Diretrizes', ACCORDION_GUIDE), ('a11y', 'Acessibilidade', ACCORDION_A11Y_TAB)])),
+        [('overview', 'Visão geral', ACCORDION_OVERVIEW), ('playground', 'Playground', ACCORDION_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(ACCORDION_GUIDE)), ('a11y', 'Acessibilidade', ACCORDION_A11Y_TAB)])),
     ('modal', 'Componentes', page(
         'modal',
         'Uma tarefa curta que pede resposta antes de a pessoa seguir. É o &lt;dialog&gt; nativo aberto por '
@@ -13519,8 +13523,8 @@ PAGES = [
         'botão X: o rodapé sempre traz uma saída.',
         [('Estável', True), ('3 variantes no Figma', False),
          (f'{N_MOD_TOKENS} tokens', False), (f'{N_MD_EXC_KEYS} exceção declarada', False)],
-        [('overview', 'Visão geral', MODAL_OVERVIEW), ('specs', 'Especificações', MODAL_SPECS),
-         ('guide', 'Diretrizes', MODAL_GUIDE), ('a11y', 'Acessibilidade', MODAL_A11Y_TAB)])),
+        [('overview', 'Visão geral', MODAL_OVERVIEW), ('playground', 'Playground', MODAL_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(MODAL_GUIDE)), ('a11y', 'Acessibilidade', MODAL_A11Y_TAB)])),
     ('drawer', 'Componentes', page(
         'drawer',
         'Ver ou editar algo sem perder a página de vista. É o &lt;dialog&gt; nativo aberto por showModal() e '
@@ -13528,8 +13532,8 @@ PAGES = [
         'Sempre tem uma saída visível: o X ou o rodapé.',
         [('Estável', True), ('3 variantes no Figma', False),
          (f'{N_DRW_TOKENS} tokens', False), (f'{N_DW_EXC_KEYS} exceção declarada', False)],
-        [('overview', 'Visão geral', DRAWER_OVERVIEW), ('specs', 'Especificações', DRAWER_SPECS),
-         ('guide', 'Diretrizes', DRAWER_GUIDE), ('a11y', 'Acessibilidade', DRAWER_A11Y_TAB)])),
+        [('overview', 'Visão geral', DRAWER_OVERVIEW), ('playground', 'Playground', DRAWER_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(DRAWER_GUIDE)), ('a11y', 'Acessibilidade', DRAWER_A11Y_TAB)])),
     ('sidebar', 'Componentes', page(
         'sidebar',
         'A navegação principal do produto, presa à esquerda na altura da tela. É um &lt;aside&gt; com o '
@@ -14207,7 +14211,7 @@ JS_AVATAR = r"""
   var nameInput = document.getElementById('avatar-name');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
 
@@ -14266,7 +14270,7 @@ JS_AVATAR = r"""
     code.innerHTML = lines.join('\n');
   }
 
-  document.querySelectorAll('#avatar-controls input').forEach(function (i) {
+  document.querySelectorAll('#avatar-controls input, #avatar-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
 
@@ -15239,7 +15243,7 @@ JS_DIVIDER = r"""
   var code = document.getElementById('divider-code');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -15256,7 +15260,7 @@ JS_DIVIDER = r"""
     code.innerHTML = esc(demo.code);
   }
 
-  document.querySelectorAll('#divider-controls input').forEach(function (i) {
+  document.querySelectorAll('#divider-controls input, #divider-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
   document.getElementById('divider-copy').addEventListener('click', function () {
@@ -15318,7 +15322,7 @@ JS_CARD = r"""
   var warn = document.getElementById('card-warn');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -15341,7 +15345,7 @@ JS_CARD = r"""
     if (e.target.closest('.al-card__link')) e.preventDefault();
   });
 
-  document.querySelectorAll('#card-controls input').forEach(function (inp) {
+  document.querySelectorAll('#card-controls input, #card-controls select').forEach(function (inp) {
     inp.addEventListener('input', render);
   });
   document.getElementById('card-copy').addEventListener('click', function () {
@@ -15543,7 +15547,7 @@ JS_ACCORDION = r"""
   var warn = document.getElementById('accordion-warn');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -15560,7 +15564,7 @@ JS_ACCORDION = r"""
     warn.hidden = pg !== 'canvas';
   }
 
-  document.querySelectorAll('#accordion-controls input').forEach(function (inp) {
+  document.querySelectorAll('#accordion-controls input, #accordion-controls select').forEach(function (inp) {
     inp.addEventListener('input', render);
   });
   document.getElementById('accordion-copy').addEventListener('click', function () {
