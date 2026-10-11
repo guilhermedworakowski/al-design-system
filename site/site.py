@@ -625,9 +625,11 @@ def seg(name, options, checked):
     return '\n'.join(out)
 
 
-def token_rows():
+def token_rows(only=None):
     rows = []
     for v, _ in VARIANTS:
+        if only and v != only:
+            continue
         for role in ['bg', 'bg-hover', 'bg-active', 'bg-disabled', 'label',
                      'label-disabled', 'border', 'border-disabled', 'ring']:
             name = f'button-{v}-{role}'
@@ -831,6 +833,28 @@ code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-su
 .controls{border-top:1px solid var(--al-border-subtle); background:var(--al-bg-canvas);
   padding:20px 22px; display:grid; gap:16px}
 .ctl{display:grid; grid-template-columns:104px 1fr; gap:14px; align-items:center}
+/* controles feitos com o Select e o Input do AL (o Button testa o modelo) */
+.controls--fields{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:var(--al-space-24); padding:var(--al-space-24)}
+.tok-tabs{margin-bottom:var(--al-space-16)}
+
+/* ── exemplos: um card por configuração, com Descrição | Código em Tab Square ── */
+.ex-list{display:grid; gap:var(--al-space-24)}
+.ex{border:1px solid var(--al-border-subtle); border-radius:12px; overflow:hidden; background:var(--al-bg-canvas)}
+.ex__title{margin:0; padding:var(--al-space-16) var(--al-space-24); font-size:var(--al-font-size-md);
+  line-height:var(--al-line-height-md); font-weight:var(--al-font-weight-semibold); letter-spacing:0;
+  border-bottom:1px solid var(--al-border-subtle)}
+.ex__stage{min-height:160px}
+.ex__row{display:flex; flex-wrap:wrap; gap:var(--al-space-12); align-items:center; justify-content:center}
+.ex__bar{display:flex; align-items:center; justify-content:space-between; gap:var(--al-space-12);
+  flex-wrap:wrap; padding:var(--al-space-8) var(--al-space-16); border-top:1px solid var(--al-border-subtle)}
+.ex__panel{border-top:1px solid var(--al-border-subtle)}
+.ex__panel--desc{padding:var(--al-space-16) var(--al-space-24)}
+.ex__panel p{margin:0; font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  color:var(--al-text-secondary)}
+.codeblock{margin-top:var(--al-space-16); border:1px solid var(--al-border-subtle); border-radius:10px; overflow:hidden}
+table.tbl-fit{min-width:0}
+td.ddt-tag{width:1%; white-space:nowrap}
 .ctl > label:first-child, .ctl > .ctl-name{
   font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.1em;
   text-transform:uppercase; color:var(--al-text-secondary);
@@ -1755,111 +1779,6 @@ TAB_MOTION_TOKENS = f'''
 </section>'''
 
 # ═══════════════════════════════════════════════════════════════ Button · abas
-BTN_OVERVIEW = f'''
-<section>
-  <h2>Playground</h2>
-  <div class="pg">
-    <div class="stage" id="stage">
-      <button type="button" class="al-btn al-btn--primary al-btn--md" id="demo">
-        <span class="al-btn__spinner" aria-hidden="true"></span>
-        <span class="al-btn__icon al-btn__icon--leading" hidden>{ICON_SVG}</span>
-        <span class="al-btn__label">Publicar</span>
-        <span class="al-btn__icon al-btn__icon--trailing" hidden>{ARROW_SVG}</span>
-      </button>
-    </div>
-
-    <div class="controls">
-      <div class="ctl"><span class="ctl-name">Variante</span>{seg('variant', VARIANTS, 'primary')}</div>
-      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('size', SIZES, 'md')}</div>
-      <div class="ctl"><span class="ctl-name">Estado</span>{seg('state', STATES, 'default')}</div>
-      <div class="ctl"><span class="ctl-name">Ícone</span>{seg('icon', ICONS, 'none')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('theme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="labeltext">Rótulo</label>
-        <input class="txt" id="labeltext" type="text" value="Publicar" maxlength="40"></div>
-    </div>
-
-    <div class="codewrap">
-      <div class="codebar"><span>Marcação</span>
-        <button type="button" class="copy" id="copy">Copiar</button></div>
-      <pre><code id="code"></code></pre>
-    </div>
-  </div>
-  <p style="margin-top:14px">
-    O botão acima é o componente real: esta página carrega o mesmo <code>button.css</code> que vai
-    para produção. Hover, pressed e focus são forçados por classe, porque não dá para simular
-    ponteiro — as declarações são as mesmas.
-  </p>
-</section>
-
-<section>
-  <h2>As quatro variantes</h2>
-  <div class="dd">
-    <div class="cell">
-      <span class="lab" style="color:var(--al-text-secondary)">Ação principal e alternativa</span>
-      <div class="stage2">
-        <button type="button" class="al-btn al-btn--ghost al-btn--md" tabindex="-1"><span class="al-btn__label">Cancelar</span></button>
-        <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Salvar rascunho</span></button>
-        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
-      </div>
-      <p class="cap">Um Primary só, e ele fecha o grupo. Ghost e Secondary abrem caminho sem competir.</p>
-    </div>
-    <div class="cell">
-      <span class="lab" style="color:var(--al-text-secondary)">Ação destrutiva</span>
-      <div class="stage2">
-        <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Manter conta</span></button>
-        <button type="button" class="al-btn al-btn--danger al-btn--md" tabindex="-1"><span class="al-btn__label">Excluir conta</span></button>
-      </div>
-      <p class="cap">Danger só quando a ação destrói e é difícil de desfazer. Nunca para algo reversível.</p>
-    </div>
-  </div>
-</section>'''
-
-BTN_SPECS = f'''
-<section>
-  <h2>Anatomia</h2>
-  <div class="anat">
-    <div><b>Contêiner</b><span>Pílula. Raio total, borda de 1px sempre presente — transparente quando a variante não tem borda.</span></div>
-    <div><b>Spinner</b><span>16px, ocupa o lugar do ícone da esquerda quando <code>aria-busy</code> está ligado.</span></div>
-    <div><b>Ícone à esquerda</b><span>16px. Reforça a ação. Opcional, sempre <code>aria-hidden</code>.</span></div>
-    <div><b>Rótulo</b><span>Obrigatório. É também o nome acessível do botão.</span></div>
-    <div><b>Ícone à direita</b><span>16px. Indica movimento ou que algo abre.</span></div>
-  </div>
-</section>
-
-<section>
-  <h2>Todos os estados</h2>
-  {specimen_grid()}
-</section>
-
-<section>
-  <h2>Medidas</h2>
-  <div class="scroller">
-    <table>
-      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
-      <tbody>{geo_rows()}</tbody>
-    </table>
-  </div>
-  <div class="note" style="margin-top:16px">
-    <b>Não existe token de altura</b>
-    Altura é consequência: <code>padding-y</code> × 2 mais a entrelinha. Dá
-    {BTN['derived']['height']['sm']}px no <code>sm</code> e {BTN['derived']['height']['md']}px no
-    <code>md</code> — conferido no navegador contra o Figma. Um token de altura fixaria a mesma
-    decisão em dois lugares.
-  </div>
-</section>
-
-<section>
-  <h2>Tokens de cor</h2>
-  <div class="ctl" style="margin-bottom:14px"><span class="ctl-name">Filtrar</span>
-    {seg('tokfilter', [('all', 'Todas')] + VARIANTS, 'all')}</div>
-  <div class="scroller">
-    <table>
-      <thead><tr><th>Token do Button</th><th>Aponta para</th><th>Resolve em (claro)</th></tr></thead>
-      <tbody id="tokbody">{token_rows()}</tbody>
-    </table>
-  </div>
-</section>'''
-
 BTN_GUIDE = '''
 <section>
   <h2>Hierarquia</h2>
@@ -12624,6 +12543,277 @@ OVERVIEWS = ('fundacao', 'componentes')
 NAV_INFO = {it[0]: (grupo, it[1], it[2] if len(it) > 2 else '') for grupo, itens in SITE_NAV for it in itens}
 NAV_INFO['prova'] = ('Foundation', 'A prova', '')
 
+# ═══════════════════════════════════════════════ Button · estrutura das abas
+# Modelo das páginas de componente (bloco F, a partir do Astryx), testado no
+# Button antes de ir para os outros:
+#   Visão geral  - prévia, uso, anatomia, faça e não faça, exemplos
+#   Playground   - playground, classes e atributos, estados, medidas, tokens
+#   Diretrizes   - as regras completas
+#   Acessibilidade
+# Fica aqui embaixo, e não junto do resto do Button, porque os controles do
+# playground são o Select e o Input do AL (sel/inp são definidos depois).
+
+def pg_select(cid, rotulo, opcoes, valor):
+    """Select do AL como controle de playground: valor pré-selecionado, sem
+    placeholder (regra 10 do Select). Vale também com 2 ou 3 opções: divergência
+    consciente da regra 1 do Select (decisão do Gui, 11/10), porque o Radio lado a
+    lado quebrava linha e os seis controles ficam com a mesma forma."""
+    ops = ''.join(f'<option value="{v}"{" selected" if v == valor else ""}>{t}</option>'
+                  for v, t in opcoes)
+    return (f'<div class="al-select"><div class="al-select__labelrow">'
+            f'<label class="al-select__label" for="{cid}">{rotulo}</label></div>'
+            f'<div class="al-select__control"><select id="{cid}" class="al-select__field">{ops}</select>'
+            f'{SELECT_CHEVRON}</div></div>')
+
+
+def tok_tabs():
+    """Tokens de cor em Tab Square: uma aba por variante, cada painel com a
+    própria tabela (segundo nível dentro do Tab Line da página)."""
+    abas = [('all', 'Todas')] + VARIANTS
+    bt, pn = [], []
+    for i, (v, rot) in enumerate(abas):
+        tid, pid = f'btntok-t-{v}', f'btntok-p-{v}'
+        on = i == 0
+        roving = '' if on else ' tabindex="-1"'
+        bt.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
+                  f'aria-selected="{"true" if on else "false"}" aria-controls="{pid}"{roving}>'
+                  f'<span class="al-tab__label">{rot}</span></button>')
+        pn.append(f'<div class="tok-panel" role="tabpanel" id="{pid}" aria-labelledby="{tid}" '
+                  f'tabindex="0"{"" if on else " hidden"}><h3 class="sr-only">{rot}</h3>'
+                  f'<div class="scroller"><table><thead><tr><th>Token do Button</th><th>Aponta para</th>'
+                  f'<th>Resolve em (claro)</th></tr></thead>'
+                  f'<tbody>{token_rows(None if v == "all" else v)}</tbody></table></div></div>')
+    return ('<div class="al-tabs al-tabs--square tok-tabs" role="tablist" '
+            'aria-label="Tokens de cor por variante">'
+            + ''.join(bt) + '</div>' + ''.join(pn))
+
+
+def btn_markup(variant, label, size='md', icon=None, busy=False, live=False):
+    """O mesmo botão em duas formas: `live` para a página (fora da ordem de
+    tabulação, como todo exemplo estático) e código para copiar."""
+    icons = {BTN_ICON_LEADING: ICON_SVG, BTN_ICON_TRAILING: ARROW_SVG}
+    attrs = ' aria-busy="true" aria-disabled="true"' if busy else ''
+    ti = ' tabindex="-1"' if live else ''
+    inner = []
+    if busy:
+        inner.append('<span class="al-btn__spinner" aria-hidden="true"></span>')
+    for side, name in (('leading', icon if icon == BTN_ICON_LEADING else None),):
+        if name:
+            svg = icons[name] if live else f'<svg class="al-icon" aria-hidden="true" focusable="false"><!-- {name} --></svg>'
+            inner.append(f'<span class="al-btn__icon al-btn__icon--leading">{svg}</span>')
+    inner.append(f'<span class="al-btn__label">{label}</span>')
+    if icon == BTN_ICON_TRAILING:
+        svg = icons[icon] if live else f'<svg class="al-icon" aria-hidden="true" focusable="false"><!-- {icon} --></svg>'
+        inner.append(f'<span class="al-btn__icon al-btn__icon--trailing">{svg}</span>')
+    head = f'<button type="button" class="al-btn al-btn--{variant} al-btn--{size}"{attrs}{ti}>'
+    if live:
+        return head + ''.join(inner) + '</button>'
+    return head + '\n' + '\n'.join('  ' + x for x in inner) + '\n</button>'
+
+
+# (id, título, botões, descrição, preset do playground)
+BTN_EXAMPLES = [
+    ('hierarquia', 'Ação principal e alternativa',
+     [('ghost', 'Cancelar', {}), ('secondary', 'Salvar rascunho', {}), ('primary', 'Publicar', {})],
+     'Um Primary só, e ele fecha o grupo. Ghost e Secondary abrem caminho sem competir.',
+     {'variant': 'primary', 'size': 'md', 'state': 'default', 'icon': 'none', 'label': 'Publicar'}),
+    ('destrutiva', 'Ação destrutiva',
+     [('secondary', 'Manter conta', {}), ('danger', 'Excluir conta', {})],
+     'Danger só quando a ação destrói e é difícil de desfazer. Nunca para algo reversível.',
+     {'variant': 'danger', 'size': 'md', 'state': 'default', 'icon': 'none', 'label': 'Excluir conta'}),
+    ('icone', 'Com ícone',
+     [('secondary', 'Baixar relatório', {'icon': BTN_ICON_LEADING}),
+      ('primary', 'Continuar', {'icon': BTN_ICON_TRAILING})],
+     'O ícone à esquerda reforça a ação; o da direita indica movimento ou que algo abre. '
+     'Os dois são decorativos: quem diz a ação é o rótulo.',
+     {'variant': 'primary', 'size': 'md', 'state': 'default', 'icon': 'trailing', 'label': 'Continuar'}),
+    ('tamanhos', 'Tamanhos',
+     [('primary', 'Publicar', {'size': 'sm'}), ('primary', 'Publicar', {'size': 'md'})],
+     '<code>md</code>, com 48px, é o padrão e alcança o alvo de toque recomendado. '
+     '<code>sm</code>, com 36px, só onde a densidade justifica.',
+     {'variant': 'primary', 'size': 'sm', 'state': 'default', 'icon': 'none', 'label': 'Publicar'}),
+    ('carregando', 'Carregando',
+     [('primary', 'Publicar', {'busy': True})],
+     '<code>aria-busy</code> com <code>aria-disabled</code>: o botão continua na ordem de foco '
+     'e o handler fica travado no JS.',
+     {'variant': 'primary', 'size': 'md', 'state': 'busy', 'icon': 'none', 'label': 'Publicar'}),
+]
+
+
+def btn_example(eid, title, buttons, desc, preset):
+    gid = f'btnex-{eid}'
+    live = ''.join(btn_markup(v, l, live=True, **o) for v, l, o in buttons)
+    code = '\n'.join(btn_markup(v, l, **o) for v, l, o in buttons)
+    code = code.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+    tabs, panels = [], []
+    for i, (slug, rot) in enumerate((('desc', 'Descrição'), ('code', 'Código'))):
+        tid, pid = f'{gid}-t-{slug}', f'{gid}-p-{slug}'
+        on = i == 0
+        roving = '' if on else ' tabindex="-1"'
+        tabs.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
+                    f'aria-selected="{"true" if on else "false"}" aria-controls="{pid}"'
+                    f'{roving}><span class="al-tab__label">{rot}</span></button>')
+        body = (f'<p>{desc}</p>' if slug == 'desc'
+                else f'<pre><code>{code}</code></pre>')
+        panels.append(f'<div class="ex__panel ex__panel--{slug}" role="tabpanel" id="{pid}" '
+                      f'aria-labelledby="{tid}" tabindex="0"{"" if on else " hidden"}>'
+                      f'<h4 class="sr-only">{rot}</h4>{body}</div>')
+    data = json.dumps(preset).replace('"', '&quot;')
+    return (f'<div class="ex"><h3 class="ex__title">{title}</h3>'
+            f'<div class="stage ex__stage"><div class="ex__row">{live}</div></div>'
+            f'<div class="ex__bar"><div class="al-tabs al-tabs--square" role="tablist" '
+            f'aria-label="{title}">{"".join(tabs)}</div>'
+            f'<button type="button" class="al-btn al-btn--ghost al-btn--sm" data-pg-preset="{data}">'
+            f'<span class="al-btn__label">Abrir no playground</span></button></div>'
+            f'{"".join(panels)}</div>')
+
+
+def do_dont_rows(rows):
+    out = []
+    for kind, text in rows:
+        t = tg('filled', 'success', 'sm', 'Faça') if kind == 'do' else tg('filled', 'error', 'sm', 'Não faça')
+        out.append(f'<tr><td class="ddt-tag">{t}</td><td>{text}</td></tr>')
+    return ''.join(out)
+
+
+BTN_DO_DONT = [
+    ('do', 'Um Primary por tela, no fim do grupo.'),
+    ('do', 'Verbo na frente e o substantivo que diz sobre o quê: "Criar projeto".'),
+    ('do', 'Capitalização de frase: "Salvar alterações".'),
+    ('do', 'No carregamento, <code>aria-busy</code> com <code>aria-disabled</code>: o botão continua focável.'),
+    ('do', 'Em formulário, deixe o envio habilitado e mostre o erro ao tentar enviar.'),
+    ('dont', 'Dois Primary no mesmo grupo. Se as duas são principais, nenhuma é.'),
+    ('dont', '"OK" ou "Clique aqui": não dizem o que confirmam.'),
+    ('dont', 'Caixa alta, ou rótulo quebrado em duas linhas.'),
+    ('dont', 'Danger para uma ação reversível.'),
+    ('dont', 'O atributo <code>disabled</code> no carregamento: tira o botão da ordem de foco.'),
+]
+
+BTN_OVERVIEW = f'''
+<section>
+  <h2 class="sr-only">Prévia</h2>
+  <div class="pg"><div class="stage"><div class="ex__row">
+    {btn_markup('primary', 'Primary', live=True)}{btn_markup('secondary', 'Secondary', live=True)}{btn_markup('ghost', 'Ghost', live=True)}{btn_markup('danger', 'Danger', live=True)}
+  </div></div></div>
+</section>
+
+<section>
+  <h2>Uso</h2>
+  <p>Use para disparar uma ação da tela, como salvar, publicar ou excluir. As quatro variantes
+  marcam o peso de cada ação na hierarquia, e o rótulo diz qual é a ação.</p>
+  <div class="codeblock"><pre><code>@import "al-design-system/foundation.css";
+@import "al-design-system/components/button.css";</code></pre></div>
+</section>
+
+<section>
+  <h2>Anatomia</h2>
+  <div class="scroller"><table class="tbl-fit">
+    <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td class="name">Contêiner</td><td>Pílula. Raio total, borda de 1px sempre presente — transparente quando a variante não tem borda.</td></tr>
+      <tr><td class="name">Spinner</td><td>16px, ocupa o lugar do ícone da esquerda quando <code>aria-busy</code> está ligado.</td></tr>
+      <tr><td class="name">Ícone à esquerda</td><td>16px. Reforça a ação. Opcional, sempre <code>aria-hidden</code>.</td></tr>
+      <tr><td class="name">Rótulo</td><td>Obrigatório. É também o nome acessível do botão.</td></tr>
+      <tr><td class="name">Ícone à direita</td><td>16px. Indica movimento ou que algo abre.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Faça e não faça</h2>
+  <div class="scroller"><table class="tbl-fit">
+    <thead><tr><th>Orientação</th><th>Prática</th></tr></thead>
+    <tbody>{do_dont_rows(BTN_DO_DONT)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Exemplos</h2>
+  <div class="ex-list">{''.join(btn_example(*e) for e in BTN_EXAMPLES)}</div>
+</section>'''
+
+BTN_PLAYGROUND = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="stage">
+      <button type="button" class="al-btn al-btn--primary al-btn--md" id="demo">
+        <span class="al-btn__spinner" aria-hidden="true"></span>
+        <span class="al-btn__icon al-btn__icon--leading" hidden>{ICON_SVG}</span>
+        <span class="al-btn__label">Publicar</span>
+        <span class="al-btn__icon al-btn__icon--trailing" hidden>{ARROW_SVG}</span>
+      </button>
+    </div>
+
+    <div class="controls controls--fields" id="btn-controls">
+      {pg_select('btn-variant', 'Variante', VARIANTS, 'primary')}
+      {pg_select('btn-size', 'Tamanho', SIZES, 'md')}
+      {pg_select('btn-state', 'Estado', STATES, 'default')}
+      {pg_select('btn-icon', 'Ícone', ICONS, 'none')}
+      {pg_select('btn-theme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('btn-label', 'Rótulo', valor='Publicar')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="copy">Copiar</button></div>
+      <pre><code id="code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">
+    O botão acima é o componente real: esta página carrega o mesmo <code>button.css</code> que vai
+    para produção. Hover, pressed e focus são forçados por classe, porque não dá para simular
+    ponteiro — as declarações são as mesmas.
+  </p>
+</section>
+
+<section>
+  <h2>Classes e atributos</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Classe ou atributo</th><th>Valores</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td class="tok">.al-btn</td><td class="tok dim">—</td><td>Base. Obrigatória em todo botão.</td></tr>
+      <tr><td class="tok">.al-btn--&#123;variante&#125;</td><td class="tok dim">primary · secondary · ghost · danger</td><td>Peso na hierarquia. Uma por botão.</td></tr>
+      <tr><td class="tok">.al-btn--&#123;tamanho&#125;</td><td class="tok dim">sm · md</td><td>36px ou 48px de altura. <code>md</code> é o padrão.</td></tr>
+      <tr><td class="tok">.al-btn__label</td><td class="tok dim">texto</td><td>O rótulo. Obrigatório, e é o nome acessível.</td></tr>
+      <tr><td class="tok">.al-btn__icon--leading</td><td class="tok dim">ícone de 16px</td><td>Antes do rótulo. O <code>svg</code> leva <code>aria-hidden</code>.</td></tr>
+      <tr><td class="tok">.al-btn__icon--trailing</td><td class="tok dim">ícone de 16px</td><td>Depois do rótulo. O <code>svg</code> leva <code>aria-hidden</code>.</td></tr>
+      <tr><td class="tok">.al-btn__spinner</td><td class="tok dim">—</td><td>Aparece com <code>aria-busy</code>, no lugar do ícone da esquerda.</td></tr>
+      <tr><td class="tok">type</td><td class="tok dim">button · submit · reset</td><td>Sempre declarado: dentro de <code>&lt;form&gt;</code> o padrão do HTML é <code>submit</code>.</td></tr>
+      <tr><td class="tok">aria-disabled</td><td class="tok dim">true</td><td>Desabilitado sem sair da ordem de foco.</td></tr>
+      <tr><td class="tok">aria-busy</td><td class="tok dim">true</td><td>Carregando. Sempre junto com <code>aria-disabled</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Todos os estados</h2>
+  {specimen_grid()}
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+      <tbody>{geo_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Não existe token de altura</b>
+    Altura é consequência: <code>padding-y</code> × 2 mais a entrelinha. Dá
+    {BTN['derived']['height']['sm']}px no <code>sm</code> e {BTN['derived']['height']['md']}px no
+    <code>md</code> — conferido no navegador contra o Figma. Um token de altura fixaria a mesma
+    decisão em dois lugares.
+  </div>
+</section>
+
+<section>
+  <h2>Tokens de cor</h2>
+  {tok_tabs()}
+</section>'''
+
+
 PAGES = [
     ('fundacao', 'Fundação', simple_page(
         'fundacao',
@@ -12703,7 +12893,7 @@ PAGES = [
         'dois tamanhos, cinco estados.',
         [('Estável', True), ('40 variantes no Figma', False), (f'{N_BTN_TOKENS} tokens', False),
          ('0 valores soltos', False)],
-        [('overview', 'Visão geral', BTN_OVERVIEW), ('specs', 'Especificações', BTN_SPECS),
+        [('overview', 'Visão geral', BTN_OVERVIEW), ('playground', 'Playground', BTN_PLAYGROUND),
          ('guide', 'Diretrizes', BTN_GUIDE), ('a11y', 'Acessibilidade', BTN_A11Y)])),
 
     ('icon-button', 'Componentes', page(
@@ -13064,16 +13254,27 @@ JS = r"""
   var lead = demo.querySelector('.al-btn__icon--leading');
   var trail = demo.querySelector('.al-btn__icon--trailing');
   var label = demo.querySelector('.al-btn__label');
-  var input = document.getElementById('labeltext');
+  var input = document.getElementById('btn-label');
 
   function pick(name) {
     var el = document.querySelector('input[name="' + name + '"]:checked');
     return el ? el.value : null;
   }
 
+  // os controles são o Select, o Radio e o Input do AL
+  function val(name) {
+    var r = document.querySelector('input[name="btn-' + name + '"]:checked');
+    return r ? r.value : document.getElementById('btn-' + name).value;
+  }
+  function setVal(name, v) {
+    var r = document.querySelector('input[name="btn-' + name + '"][value="' + v + '"]');
+    if (r) r.checked = true;
+    else document.getElementById('btn-' + name).value = v;
+  }
+
   function render() {
-    var variant = pick('variant'), size = pick('size');
-    var state = pick('state'), icon = pick('icon'), theme = pick('theme');
+    var variant = val('variant'), size = val('size');
+    var state = val('state'), icon = val('icon'), theme = val('theme');
 
     demo.className = 'al-btn al-btn--' + variant + ' al-btn--' + size
       + (state === 'hover' || state === 'active' || state === 'focus' ? ' is-' + state : '');
@@ -13100,32 +13301,40 @@ JS = r"""
     if (state === 'busy') attrs = ' aria-busy="true" aria-disabled="true"';
     var lines = ['&lt;button type="button" class="' + cls + '"' + attrs + '&gt;'];
     if (state === 'busy') lines.push('  &lt;span class="al-btn__spinner" aria-hidden="true"&gt;&lt;/span&gt;');
-    if (icon === 'leading' && state !== 'busy')
-      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading"&gt;')
-      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- LEADING --&gt;&lt;/svg&gt;')
+    if (icon === 'leading' && state !== 'busy') {
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading"&gt;');
+      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- LEADING --&gt;&lt;/svg&gt;');
       lines.push('  &lt;/span&gt;');
+    }
     lines.push('  &lt;span class="al-btn__label"&gt;' +
       (input.value || 'Button').replace(/&/g, '&amp;').replace(/</g, '&lt;') + '&lt;/span&gt;');
-    if (icon === 'trailing')
-      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing"&gt;')
-      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- TRAILING --&gt;&lt;/svg&gt;')
+    if (icon === 'trailing') {
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing"&gt;');
+      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- TRAILING --&gt;&lt;/svg&gt;');
       lines.push('  &lt;/span&gt;');
+    }
     lines.push('&lt;/button&gt;');
     code.innerHTML = lines.join('\n');
   }
 
-  document.querySelectorAll('.controls input').forEach(function (el) {
+  document.querySelectorAll('#btn-controls select, #btn-controls input').forEach(function (el) {
     el.addEventListener('change', render);
     el.addEventListener('input', render);
   });
 
-  // filtro da tabela de tokens
-  document.querySelectorAll('input[name="tokfilter"]').forEach(function (el) {
-    el.addEventListener('change', function () {
-      var v = pick('tokfilter');
-      document.querySelectorAll('#tokbody tr').forEach(function (tr) {
-        tr.hidden = (v !== 'all' && tr.getAttribute('data-variant') !== v);
+  // "Abrir no playground" dos exemplos: configura os controles e abre a aba
+  document.querySelectorAll('#pg-button [data-pg-preset]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var preset = JSON.parse(b.getAttribute('data-pg-preset'));
+      ['variant', 'size', 'state', 'icon'].forEach(function (k) {
+        if (preset[k]) setVal(k, preset[k]);
       });
+      if (preset.label) input.value = preset.label;
+      render();
+      var tab = document.getElementById('t-button-playground');
+      tab.click();
+      tab.focus();
+      document.getElementById('p-button-playground').scrollIntoView({ block: 'start' });
     });
   });
 
