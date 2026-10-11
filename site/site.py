@@ -796,10 +796,14 @@ body{
 }
 .panel{padding-top:36px}
 
-section{margin-bottom:52px}
-h2{font-size:12.5px; font-family:var(--al-font-mono); font-weight:500; letter-spacing:.13em;
-  text-transform:uppercase; color:var(--al-text-secondary); margin:0 0 20px;
-  padding-bottom:10px; border-bottom:1px solid var(--al-border-subtle)}
+/* ── corpo: o que se repete entre as páginas ──
+   Seções a 40px uma da outra. O h2 é o eyebrow do portfólio: Mono em Body/sm,
+   caixa alta, text-brand, a 16px do conteúdo. O portfólio usa peso 300, que a
+   Foundation não tem; aqui fica o regular. */
+section{margin-bottom:var(--al-space-40)}
+h2{margin:0 0 var(--al-space-16); font-family:var(--al-font-mono); font-size:var(--al-font-size-sm);
+  line-height:var(--al-line-height-sm); font-weight:var(--al-font-weight-regular);
+  text-transform:uppercase; color:var(--al-text-brand)}
 h3{font-size:18px; font-weight:600; letter-spacing:-.015em; margin:0 0 8px}
 h3.sub{font-size:11px; font-family:var(--al-font-mono); font-weight:500; letter-spacing:.12em;
   text-transform:uppercase; color:var(--al-text-secondary); margin:30px 0 12px;
