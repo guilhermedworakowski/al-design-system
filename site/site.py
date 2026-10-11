@@ -794,7 +794,7 @@ body{
   .page-tabs{top:calc(2 * var(--al-space-12) + var(--al-icon-button-md-icon-size)
     + 2 * var(--al-icon-button-md-padding) + var(--al-border-width-1))}
 }
-.panel{padding-top:36px}
+.panel{padding-top:var(--al-space-40)}
 
 /* ── corpo: o que se repete entre as páginas ──
    Seções a 40px uma da outra. O h2 é o eyebrow do portfólio: Mono em Body/sm,
