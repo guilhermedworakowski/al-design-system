@@ -146,6 +146,7 @@ def run():
         for f in failures:
             print('   ', f)
         return 1
+    write_json(rows, targets)
     print(f'{len(rows)} combinations measured. 0 failures.')
     if exempt:
         print(f'{len(exempt)} brand exceptions inherited from the Foundation, all >= {HARD_FLOOR}:1:')
@@ -154,6 +155,22 @@ def run():
     print('Disabled stays out of the minimum by design: 1.4.3 exempts inactive')
     print('components, and raising that contrast would make disabled look clickable.')
     return 0
+
+
+
+def write_json(rows, targets):
+    """The measurements the site prints in its contrast table, so the page and
+    the gate never disagree."""
+    out = {
+        'rows': [{'group': g, 'theme': t, 'label': l, 'fg': fg, 'bg': bg,
+                  'ratio': None if ratio is None else round(ratio, 2), 'floor': floor,
+                  'pass': ok, 'exception': exc}
+                 for g, t, l, fg, bg, ratio, floor, ok, exc in rows],
+        'targets': [{'size': s, 'box': h, 'meetsRecommended': h >= 44} for s, h in targets],
+    }
+    os.makedirs(os.path.dirname(comp_out('button', 'a11y.json')), exist_ok=True)
+    json.dump(out, open(comp_out('button', 'a11y.json'), 'w'), indent=2, ensure_ascii=False)
+    print('build/components/button/a11y.json written')
 
 
 if __name__ == '__main__':

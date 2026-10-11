@@ -44,6 +44,7 @@ BTN = json.load(open(comp_out('button', 'tokens.json')))
 FOUND_CSS = open(FOUNDATION_CSS).read()
 BTN_TOKENS = open(comp_out('button', 'al-button-tokens.css')).read()
 BTN_CSS = open(comp_src('button', 'button.css')).read()
+BTN_A11Y_DATA = json.load(open(comp_out('button', 'a11y.json')))
 ICON_TOKENS = open(comp_out('icon', 'al-icon-tokens.css')).read()
 ICON_CSS = open(comp_src('icon', 'icon.css')).read()
 ICON_MANIFEST = json.load(open(comp_out('icon', 'icons.json')))
@@ -625,9 +626,11 @@ def seg(name, options, checked):
     return '\n'.join(out)
 
 
-def token_rows():
+def token_rows(only=None):
     rows = []
     for v, _ in VARIANTS:
+        if only and v != only:
+            continue
         for role in ['bg', 'bg-hover', 'bg-active', 'bg-disabled', 'label',
                      'label-disabled', 'border', 'border-disabled', 'ring']:
             name = f'button-{v}-{role}'
@@ -794,12 +797,16 @@ body{
   .page-tabs{top:calc(2 * var(--al-space-12) + var(--al-icon-button-md-icon-size)
     + 2 * var(--al-icon-button-md-padding) + var(--al-border-width-1))}
 }
-.panel{padding-top:36px}
+.panel{padding-top:var(--al-space-40)}
 
-section{margin-bottom:52px}
-h2{font-size:12.5px; font-family:var(--al-font-mono); font-weight:500; letter-spacing:.13em;
-  text-transform:uppercase; color:var(--al-text-secondary); margin:0 0 20px;
-  padding-bottom:10px; border-bottom:1px solid var(--al-border-subtle)}
+/* ── corpo: o que se repete entre as páginas ──
+   Seções a 40px uma da outra. O h2 é o eyebrow do portfólio: Mono em Body/sm,
+   caixa alta, text-brand, a 16px do conteúdo. O portfólio usa peso 300, que a
+   Foundation não tem; aqui fica o regular. */
+section{margin-bottom:var(--al-space-40)}
+h2{margin:0 0 var(--al-space-16); font-family:var(--al-font-mono); font-size:var(--al-font-size-sm);
+  line-height:var(--al-line-height-sm); font-weight:var(--al-font-weight-regular);
+  text-transform:uppercase; color:var(--al-text-brand)}
 h3{font-size:18px; font-weight:600; letter-spacing:-.015em; margin:0 0 8px}
 h3.sub{font-size:11px; font-family:var(--al-font-mono); font-weight:500; letter-spacing:.12em;
   text-transform:uppercase; color:var(--al-text-secondary); margin:30px 0 12px;
@@ -807,7 +814,10 @@ h3.sub{font-size:11px; font-family:var(--al-font-mono); font-weight:500; letter-
 h3.sub:first-child{margin-top:0}
 .count{font-family:var(--al-font-mono); font-size:10.5px; letter-spacing:0; text-transform:none;
   color:var(--al-text-secondary); opacity:.8; font-weight:400}
-p{margin:0 0 13px; max-width:68ch}
+p{margin:0 0 13px; max-width:62ch}
+/* o texto corrido da seção, abaixo do h2: Body/sm em text-secondary */
+section > p{font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  color:var(--al-text-secondary)}
 p:last-child{margin-bottom:0}
 code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-subtle);
   padding:2px 5px; border-radius:4px; white-space:nowrap}
@@ -824,6 +834,28 @@ code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-su
 .controls{border-top:1px solid var(--al-border-subtle); background:var(--al-bg-canvas);
   padding:20px 22px; display:grid; gap:16px}
 .ctl{display:grid; grid-template-columns:104px 1fr; gap:14px; align-items:center}
+/* controles feitos com o Select e o Input do AL (o Button testa o modelo) */
+.controls--fields{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:var(--al-space-24); padding:var(--al-space-24)}
+.tok-tabs{margin-bottom:var(--al-space-16)}
+
+/* ── exemplos: um card por configuração, com Descrição | Código em Tab Square ── */
+.ex-list{display:grid; gap:var(--al-space-24)}
+.ex{border:1px solid var(--al-border-subtle); border-radius:12px; overflow:hidden; background:var(--al-bg-canvas)}
+.ex__title{margin:0; padding:var(--al-space-16) var(--al-space-24); font-size:var(--al-font-size-md);
+  line-height:var(--al-line-height-md); font-weight:var(--al-font-weight-semibold); letter-spacing:0;
+  border-bottom:1px solid var(--al-border-subtle)}
+.ex__stage{min-height:160px}
+.ex__row{display:flex; flex-wrap:wrap; gap:var(--al-space-12); align-items:center; justify-content:center}
+.ex__bar{display:flex; align-items:center; justify-content:space-between; gap:var(--al-space-12);
+  flex-wrap:wrap; padding:var(--al-space-8) var(--al-space-16); border-top:1px solid var(--al-border-subtle)}
+.ex__panel{border-top:1px solid var(--al-border-subtle)}
+.ex__panel--desc{padding:var(--al-space-16) var(--al-space-24)}
+.ex__panel p{margin:0; max-width:none; font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  color:var(--al-text-secondary)}
+.codeblock{margin-top:var(--al-space-16); border:1px solid var(--al-border-subtle); border-radius:10px; overflow:hidden}
+table.tbl-fit{min-width:0}
+td.ddt-tag{width:1%; white-space:nowrap}
 .ctl > label:first-child, .ctl > .ctl-name{
   font-family:var(--al-font-mono); font-size:10.5px; font-weight:500; letter-spacing:.1em;
   text-transform:uppercase; color:var(--al-text-secondary);
@@ -831,7 +863,7 @@ code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-su
 .seg{display:inline-flex; flex-wrap:wrap; gap:6px}
 .seg input{position:absolute; opacity:0; width:1px; height:1px}
 .seg label{
-  padding:6px 13px; border-radius:9999px; border:1px solid var(--al-border-default);
+  padding:6px 13px; border-radius:9999px; border:1px solid var(--al-border-subtle);
   font-size:13px; cursor:pointer; color:var(--al-text-secondary); user-select:none;
 }
 .seg label:hover{background:var(--al-bg-hover); color:var(--al-text-primary)}
@@ -842,7 +874,7 @@ code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-su
 .seg input:focus-visible + label{outline:2px solid var(--al-border-focus); outline-offset:2px}
 .txt{
   font-family:inherit; font-size:13.5px; padding:7px 11px; width:100%; max-width:280px;
-  border:1px solid var(--al-border-default); border-radius:8px;
+  border:1px solid var(--al-border-subtle); border-radius:8px;
   background:var(--al-bg-canvas); color:var(--al-text-primary);
 }
 .txt:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:1px; border-color:var(--al-border-focus)}
@@ -854,7 +886,7 @@ code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-su
 .codebar span{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500;
   letter-spacing:.1em; text-transform:uppercase; color:var(--al-text-secondary)}
 .copy{
-  appearance:none; border:1px solid var(--al-border-default); background:var(--al-bg-canvas);
+  appearance:none; border:1px solid var(--al-border-subtle); background:var(--al-bg-canvas);
   color:var(--al-text-secondary); font-family:var(--al-font-mono); font-size:11px;
   padding:5px 12px; border-radius:9999px; cursor:pointer;
 }
@@ -866,14 +898,21 @@ pre code{background:none; padding:0; font-size:12.5px; line-height:1.65; white-s
 /* ── tabelas ── */
 .scroller{overflow-x:auto; border:1px solid var(--al-border-subtle); border-radius:10px}
 .scroll-x{overflow-x:auto}
-table{border-collapse:collapse; width:100%; font-size:13px; min-width:620px}
-th,td{padding:9px 15px; text-align:left; border-bottom:1px solid var(--al-border-subtle)}
-thead th{font-family:var(--al-font-mono); font-size:10px; font-weight:500; letter-spacing:.1em;
+table{border-collapse:collapse; width:100%; font-size:var(--al-font-size-sm);
+  line-height:var(--al-line-height-sm); min-width:620px}
+th,td{padding:var(--al-space-8) var(--al-space-16); text-align:left; border-bottom:1px solid var(--al-border-subtle)}
+thead th{font-family:var(--al-font-mono); font-size:var(--al-font-size-xs); line-height:var(--al-line-height-xs);
+  font-weight:500; letter-spacing:.1em;
   text-transform:uppercase; color:var(--al-text-secondary); background:var(--al-bg-surface); white-space:nowrap}
 tbody tr:last-child td{border-bottom:0}
-td.tok{font-family:var(--al-font-mono); font-size:12px; white-space:nowrap}
+td.tok{font-family:var(--al-font-mono); font-size:var(--al-font-size-xs); white-space:nowrap}
 td.tok.dim, td.num.dim{color:var(--al-text-secondary)}
 td.name{font-weight:600}
+/* tabela de requisitos de acessibilidade: a referência WCAG embaixo da orientação */
+table.a11y-req{min-width:860px}
+table.a11y-req td{vertical-align:top}
+table.a11y-req .wcag{display:block; margin-top:var(--al-space-4); font-family:var(--al-font-mono);
+  font-size:var(--al-font-size-xs); line-height:var(--al-line-height-xs); color:var(--al-text-secondary)}
 td.num{font-family:var(--al-font-mono); text-align:right; font-variant-numeric:tabular-nums}
 th.num{text-align:right}
 td.num.strong{font-weight:600}
@@ -987,30 +1026,40 @@ th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
 .anat b{display:block; font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
   text-transform:uppercase; color:var(--al-bg-brand); margin-bottom:5px}
 .anat span{font-size:13px; color:var(--al-text-secondary)}
-.note{padding:15px 18px; background:var(--al-bg-surface); border-left:2px solid var(--al-bg-brand);
-  border-radius:0 8px 8px 0; font-size:14px; margin-bottom:14px}
+/* nota: o título em Body/sm bold text-primary, o texto em Body/sm text-secondary,
+   sobre surface com a lateral em border-subtle */
+.note{padding:15px 18px; background:var(--al-bg-surface); border-left:2px solid var(--al-border-subtle);
+  border-radius:0 8px 8px 0; font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  color:var(--al-text-secondary); margin-bottom:14px}
 .note:last-child{margin-bottom:0}
-.note b{display:block; margin-bottom:4px}
-.note p{max-width:74ch; font-size:14px}
+.note b{display:block; margin-bottom:4px; font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  font-weight:var(--al-font-weight-bold); color:var(--al-text-primary)}
+.note p{font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm); color:var(--al-text-secondary)}
 .note p + p{margin-top:9px}
 .rule{display:grid; grid-template-columns:auto 1fr; gap:18px; padding:20px 0;
   border-top:1px solid var(--al-border-subtle)}
 .rule:last-of-type{border-bottom:1px solid var(--al-border-subtle)}
-.rn{font-family:var(--al-font-mono); font-size:11.5px; font-weight:500;
-  color:var(--al-text-secondary); padding-top:3px}
+.rn{font-family:var(--al-font-mono); font-size:var(--al-font-size-xs); line-height:var(--al-line-height-xs);
+  font-weight:500; color:var(--al-text-secondary); padding-top:var(--al-space-2)}
+/* regra numerada: título em Body/sm bold text-primary, texto em Body/sm text-secondary */
+.rule h3{font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  font-weight:var(--al-font-weight-bold); letter-spacing:0; color:var(--al-text-primary)}
+.rule p{font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm); color:var(--al-text-secondary)}
 .dd{display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:1px;
   background:var(--al-border-subtle); border:1px solid var(--al-border-subtle);
   border-radius:10px; overflow:hidden; margin-bottom:14px}
-.dd .cell{background:var(--al-bg-canvas); padding:18px 20px; display:flex; flex-direction:column; gap:13px}
-.dd .lab{font-family:var(--al-font-mono); font-size:10px; font-weight:500; letter-spacing:.13em;
-  text-transform:uppercase; display:flex; align-items:center; gap:7px}
-.dd .do .lab{color:var(--al-text-success)}
-.dd .no .lab{color:var(--al-text-danger)}
-.dd .do .lab::before, .dd .no .lab::before{content:''; width:7px; height:7px; border-radius:50%;
-  background:currentColor}
+/* bloco de exemplo (Diretrizes, Acessibilidade): mesmos espaços dos cards de
+   Exemplos. Faça / Não faça é Tag, como na tabela; o título é Body/sm bold
+   text-primary e a legenda Body/sm text-secondary, na largura toda */
+.dd .cell{background:var(--al-bg-canvas); padding:var(--al-space-16) var(--al-space-24);
+  display:flex; flex-direction:column; gap:var(--al-space-16)}
+.dd .dd-head{display:flex; flex-wrap:wrap; align-items:center; gap:var(--al-space-8)}
+.dd .lab{font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  font-weight:var(--al-font-weight-bold); color:var(--al-text-primary)}
 .dd .stage2{display:flex; flex-wrap:wrap; gap:11px; align-items:center; padding:18px 16px;
   background:var(--al-bg-surface); border-radius:8px; min-height:72px}
-.dd .cap{font-size:13px; color:var(--al-text-secondary); margin:0}
+.dd .cap{margin:0; max-width:none; font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  color:var(--al-text-secondary)}
 .dd .cap b{color:var(--al-text-primary); font-weight:600}
 
 /* ── estados forçados: SÓ para o playground e as folhas de espécimes.
@@ -1744,111 +1793,6 @@ TAB_MOTION_TOKENS = f'''
 </section>'''
 
 # ═══════════════════════════════════════════════════════════════ Button · abas
-BTN_OVERVIEW = f'''
-<section>
-  <h2>Playground</h2>
-  <div class="pg">
-    <div class="stage" id="stage">
-      <button type="button" class="al-btn al-btn--primary al-btn--md" id="demo">
-        <span class="al-btn__spinner" aria-hidden="true"></span>
-        <span class="al-btn__icon al-btn__icon--leading" hidden>{ICON_SVG}</span>
-        <span class="al-btn__label">Publicar</span>
-        <span class="al-btn__icon al-btn__icon--trailing" hidden>{ARROW_SVG}</span>
-      </button>
-    </div>
-
-    <div class="controls">
-      <div class="ctl"><span class="ctl-name">Variante</span>{seg('variant', VARIANTS, 'primary')}</div>
-      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('size', SIZES, 'md')}</div>
-      <div class="ctl"><span class="ctl-name">Estado</span>{seg('state', STATES, 'default')}</div>
-      <div class="ctl"><span class="ctl-name">Ícone</span>{seg('icon', ICONS, 'none')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('theme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="labeltext">Rótulo</label>
-        <input class="txt" id="labeltext" type="text" value="Publicar" maxlength="40"></div>
-    </div>
-
-    <div class="codewrap">
-      <div class="codebar"><span>Marcação</span>
-        <button type="button" class="copy" id="copy">Copiar</button></div>
-      <pre><code id="code"></code></pre>
-    </div>
-  </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
-    O botão acima é o componente real: esta página carrega o mesmo <code>button.css</code> que vai
-    para produção. Hover, pressed e focus são forçados por classe, porque não dá para simular
-    ponteiro — as declarações são as mesmas.
-  </p>
-</section>
-
-<section>
-  <h2>As quatro variantes</h2>
-  <div class="dd">
-    <div class="cell">
-      <span class="lab" style="color:var(--al-text-secondary)">Ação principal e alternativa</span>
-      <div class="stage2">
-        <button type="button" class="al-btn al-btn--ghost al-btn--md" tabindex="-1"><span class="al-btn__label">Cancelar</span></button>
-        <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Salvar rascunho</span></button>
-        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
-      </div>
-      <p class="cap">Um Primary só, e ele fecha o grupo. Ghost e Secondary abrem caminho sem competir.</p>
-    </div>
-    <div class="cell">
-      <span class="lab" style="color:var(--al-text-secondary)">Ação destrutiva</span>
-      <div class="stage2">
-        <button type="button" class="al-btn al-btn--secondary al-btn--md" tabindex="-1"><span class="al-btn__label">Manter conta</span></button>
-        <button type="button" class="al-btn al-btn--danger al-btn--md" tabindex="-1"><span class="al-btn__label">Excluir conta</span></button>
-      </div>
-      <p class="cap">Danger só quando a ação destrói e é difícil de desfazer. Nunca para algo reversível.</p>
-    </div>
-  </div>
-</section>'''
-
-BTN_SPECS = f'''
-<section>
-  <h2>Anatomia</h2>
-  <div class="anat">
-    <div><b>Contêiner</b><span>Pílula. Raio total, borda de 1px sempre presente — transparente quando a variante não tem borda.</span></div>
-    <div><b>Spinner</b><span>16px, ocupa o lugar do ícone da esquerda quando <code>aria-busy</code> está ligado.</span></div>
-    <div><b>Ícone à esquerda</b><span>16px. Reforça a ação. Opcional, sempre <code>aria-hidden</code>.</span></div>
-    <div><b>Rótulo</b><span>Obrigatório. É também o nome acessível do botão.</span></div>
-    <div><b>Ícone à direita</b><span>16px. Indica movimento ou que algo abre.</span></div>
-  </div>
-</section>
-
-<section>
-  <h2>Todos os estados</h2>
-  {specimen_grid()}
-</section>
-
-<section>
-  <h2>Medidas</h2>
-  <div class="scroller">
-    <table>
-      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
-      <tbody>{geo_rows()}</tbody>
-    </table>
-  </div>
-  <div class="note" style="margin-top:16px">
-    <b>Não existe token de altura</b>
-    Altura é consequência: <code>padding-y</code> × 2 mais a entrelinha. Dá
-    {BTN['derived']['height']['sm']}px no <code>sm</code> e {BTN['derived']['height']['md']}px no
-    <code>md</code> — conferido no navegador contra o Figma. Um token de altura fixaria a mesma
-    decisão em dois lugares.
-  </div>
-</section>
-
-<section>
-  <h2>Tokens de cor</h2>
-  <div class="ctl" style="margin-bottom:14px"><span class="ctl-name">Filtrar</span>
-    {seg('tokfilter', [('all', 'Todas')] + VARIANTS, 'all')}</div>
-  <div class="scroller">
-    <table>
-      <thead><tr><th>Token do Button</th><th>Aponta para</th><th>Resolve em (claro)</th></tr></thead>
-      <tbody id="tokbody">{token_rows()}</tbody>
-    </table>
-  </div>
-</section>'''
-
 BTN_GUIDE = '''
 <section>
   <h2>Hierarquia</h2>
@@ -1924,7 +1868,72 @@ BTN_GUIDE = '''
   </div>
 </section>'''
 
-BTN_A11Y = '''
+def btn_contrast():
+    """Tabela de contraste no modelo do Astryx (Requisito | Mínimo | Aplica-se a
+    | Medido | Orientação). Os números vêm do a11y.json que o portão do Button
+    grava: a página nunca diverge da medição."""
+    rows = BTN_A11Y_DATA['rows']
+
+    def rng(sel):
+        rs = sorted(r['ratio'] for r in rows if r['ratio'] is not None and sel(r))
+        f = lambda x: f'{x:.2f}'.replace('.', ',')
+        return f'{f(rs[0])}:1' if rs[0] == rs[-1] else f'{f(rs[0])} a {f(rs[-1])}:1'
+
+    def is_state(r, *states):
+        return r['label'].split(' · ')[1] in states
+
+    label = rng(lambda r: r['group'] == 'label' and r['floor'] == 4.5)
+    marca = rng(lambda r: r['group'] == 'label' and r['exception'])
+    # exceções agrupadas por estado: "Default nos dois temas, Hover no escuro"
+    por_estado = {}
+    for r in rows:
+        if r['exception']:
+            por_estado.setdefault(r['label'].split(' · ')[1], set()).add(r['theme'])
+    nomes = {'default': 'Default', 'hover': 'Hover', 'active': 'Pressed'}
+    exc_txt = ', '.join(f'{nomes[e]} {"nos dois temas" if len(t) == 2 else "no " + ("claro" if "light" in t else "escuro")}'
+                        for e, t in sorted(por_estado.items(), key=lambda kv: list(nomes).index(kv[0])))
+    borda = rng(lambda r: r['group'] == 'boundary')
+    foco = rng(lambda r: r['group'] == 'focus')
+    off = rng(lambda r: r['group'] == 'label' and is_state(r, 'disabled'))
+    alvo = ' e '.join(f'{t["box"]}px' for t in BTN_A11Y_DATA['targets'])
+    n = sum(1 for r in rows if r['ratio'] is not None)
+
+    linhas = [
+        ('Rótulo', '4,5:1', 'Default, Hover e Pressed das quatro variantes, nos dois temas', label,
+         'O texto contra o fundo que ele toca de fato. Sem preenchimento, o fundo é o canvas, e é contra ele que se mede.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Rótulo do Primary', '3:1', exc_txt, marca,
+         'Exceção de marca herdada da Foundation: branco sobre o laranja da âncora. Fica acima de 3:1, o piso de texto grande e de elemento não-textual.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Contorno do botão', '3:1', 'Preenchimento do Primary e do Danger, borda do Secondary', borda,
+         'O limite visível do botão contra o canvas. O Ghost não tem contorno: o rótulo é que identifica o controle.',
+         '1.4.11 Contraste não textual'),
+        ('Anel de foco', '3:1', 'Focus, nas quatro variantes', foco,
+         'O anel contra o canvas. O Danger usa o anel de erro, para não brigar com o vermelho do preenchimento.',
+         '2.4.13 Aparência do foco'),
+        ('Desabilitado', 'Não exigido', 'Disabled', off,
+         'Componente inativo fica fora do critério. O contraste baixo é sinal: subir faria o desabilitado parecer clicável.',
+         '1.4.3 Contraste (mínimo)'),
+        ('Alvo de toque', '24 × 24px', 'sm e md', alvo,
+         'Os dois tamanhos passam. Só o md alcança os 44px que Apple e Google recomendam para toque.',
+         '2.5.8 Tamanho do alvo (mínimo)'),
+    ]
+    trs = ''.join(f'<tr><td class="name">{a}</td><td class="tok">{b}</td><td>{c}</td>'
+                  f'<td class="tok">{d}</td><td>{e}<span class="wcag">WCAG {w}</span></td></tr>'
+                  for a, b, c, d, e, w in linhas)
+    return f'''
+<section>
+  <h2>Contraste</h2>
+  <p>Cada combinação é medida renderizada: variante, estado e tema, contra o fundo que o botão
+  tem de fato. São {n} medições no portão de build, e nenhuma reprova.</p>
+  <div class="scroller" style="margin-top:16px"><table class="a11y-req">
+    <thead><tr><th>Requisito</th><th>Mínimo</th><th>Aplica-se a</th><th>Medido</th><th>Orientação</th></tr></thead>
+    <tbody>{trs}</tbody>
+  </table></div>
+</section>'''
+
+
+BTN_A11Y = btn_contrast() + '''
 <section>
   <h2>Foco</h2>
   <p>O anel tem duas camadas: 2px de respiro na cor do fundo e 2px na cor do foco. O respiro é o que impede o anel de encostar no preenchimento — sem ele, laranja sobre laranja daria 1,00:1.</p>
@@ -2054,7 +2063,7 @@ ICON_OVERVIEW = f'''
       <pre><code id="icon-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Escolha <b>Livre</b> na caixa e digite qualquer número: 40, 96, 17. Nada quebra, e o traço
     engrossa junto — é a diferença entre escala fixa e escala nomeada. As tintas
     <code>on-brand</code> e <code>on-solid</code> trocam o fundo do palco, porque elas só existem
@@ -2368,7 +2377,7 @@ IB_OVERVIEW = f'''
       <pre><code id="ib-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O botão acima é o componente real: esta página carrega o mesmo
     <code>icon-button.css</code> que vai para produção. Hover, pressed e focus são forçados por
     classe, porque não dá para simular ponteiro — as declarações são as mesmas. Repare que o
@@ -2855,7 +2864,7 @@ TAG_OVERVIEW = f'''
       <pre><code id="tag-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     A tag acima é o componente real: esta página carrega o mesmo <code>tag.css</code> que vai
     para produção. Repare que o <code>aria-label</code> do X acompanha o rótulo — sem isso,
     numa lista de seis filtros, seis botões chamados “Remover” são indistinguíveis por leitor
@@ -3268,7 +3277,7 @@ AVATAR_OVERVIEW = f'''
       <pre><code id="avatar-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Troque o <b>Contexto</b> e veja a marcação mudar: ao lado de um nome escrito o avatar sai
     da árvore de acessibilidade (<code>aria-hidden</code>); sozinho, ele vira a informação e
     precisa de <code>role="img"</code> com o nome. É o mesmo componente — muda o contrato, não
@@ -3780,7 +3789,7 @@ SELECT_OVERVIEW = f'''
       <pre><code id="select-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O campo acima é o componente real: esta página carrega o mesmo
     <code>select.css</code> que vai para produção. Tabule até ele para ver o anel, e repare que
     o estado de erro nasce de <code>aria-invalid</code> na marcação — não há classe de erro
@@ -4060,7 +4069,7 @@ SELECT_A11Y_TAB = f'''
     <div class="stat"><b>6</b><span>regras por campo</span></div>
     <div class="stat"><b>{'pendente' if SELECT_A11Y['markupPending'] else 'medido'}</b><span>estado do contrato</span></div>
   </div>
-  <p style="margin-top:12px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:12px">
     O portão remove <code>&lt;style&gt;</code> e <code>&lt;script&gt;</code> antes de procurar
     marcação. Sem isso ele media o <code>&lt;select&gt;</code> de exemplo que vive no comentário
     de anatomia do <code>select.css</code> como se fosse um campo de verdade — e
@@ -4265,7 +4274,7 @@ CHECKBOX_OVERVIEW = f'''
       <pre><code id="cbx-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O checkbox acima é o componente real: esta página carrega o mesmo <code>checkbox.css</code>
     que vai para produção. Clique no texto e não só na caixa — também marca. No erro, a mensagem
     em vermelho abaixo dele <b>não faz parte do componente</b>: é o formulário descrevendo o erro
@@ -4745,7 +4754,7 @@ RADIO_OVERVIEW = f'''
       <pre><code id="rd-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Os radios acima são o componente real: esta página carrega o mesmo <code>radio.css</code> que
     vai para produção. Tabule até eles e use as setas — foco e escolha andam juntos. O
     <code>fieldset</code> e o <code>legend</code> <b>não fazem parte do componente</b>: são a
@@ -5217,7 +5226,7 @@ SWITCH_OVERVIEW = f'''
       <pre><code id="sw-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O switch acima é o componente real: esta página carrega o mesmo <code>switch.css</code> que vai
     para produção. Tabule até ele e aperte Espaço. Por baixo é um
     <code>&lt;input type="checkbox"&gt;</code> com <code>role="switch"</code>, e é isso que faz o leitor
@@ -5693,7 +5702,7 @@ INPUT_OVERVIEW = f'''
       <pre><code id="input-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O campo acima é o componente real: esta página carrega o mesmo <code>input.css</code> que vai
     para produção. Ligue o contador e digite além de 40 caracteres — o número fica vermelho e o
     campo <b>não trava</b>. Ligue o prefixo e clique em “www.”: o cursor vai para o campo.
@@ -6205,7 +6214,7 @@ TEXTAREA_OVERVIEW = f'''
       <pre><code id="textarea-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O campo acima é o componente real: esta página carrega o mesmo <code>textarea.css</code> que
     vai para produção. Aperte Enter dentro dele — quebra a linha, nunca envia. Puxe o canto: só
     para baixo, e nunca abaixo de 3 linhas. Ligue o contador, escolha o valor longo e digite além
@@ -6716,7 +6725,7 @@ PASSWORD_OVERVIEW = f'''
       <pre><code id="password-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O campo acima é o componente real: esta página carrega o mesmo <code>password.css</code> e o
     mesmo <code>password.js</code> que vão para produção. Digite, tabule até o olho e aperte
     Espaço — a senha aparece, o ícone vira o olho cortado e o foco fica no botão.
@@ -7140,7 +7149,7 @@ DIVIDER_OVERVIEW = f'''
       <pre><code id="divider-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O <b>Contexto</b> decide a orientação e o elemento: entre seções empilhadas a linha é
     horizontal; numa lista ela vira um item, <code>&lt;li role="separator"&gt;</code>, porque
     <code>&lt;ul&gt;</code> só aceita <code>&lt;li&gt;</code>; entre botões lado a lado ela é
@@ -7597,7 +7606,7 @@ CARD_OVERVIEW = f'''
       <pre><code id="card-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Com <b>Clicável</b>, tabule até o card e passe o ponteiro: o anel envolve o card inteiro, e o
     clique vale em qualquer ponto dele, mas quem recebe o foco é o link do título. Troque a
     <b>Página</b> para tela com o Filled para ver por que a regra 2 existe, e o <b>Tema</b> para
@@ -8067,7 +8076,7 @@ TAB_OVERVIEW = f'''
       <pre><code id="tab-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Em <b>Painel</b>, tabule até o grupo: o Tab para uma vez, na aba aberta, e as setas trocam de
     aba e de painel. Em <b>Navegação</b>, o mesmo visual vira lista de links, e o Tab passa por
     todos. Troque o <b>Tema</b> para escuro com a Square para ver a seleção tonal.
@@ -8493,7 +8502,7 @@ ACCORDION_OVERVIEW = f'''
       <pre><code id="accordion-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Tabule até um cabeçalho e use Enter ou Espaço: o anel envolve só o cabeçalho, e o foco não
     sai dele ao abrir. Com <b>Um por vez</b>, abrir um item fecha o outro. Troque o <b>Tema</b>
     para escuro e passe o ponteiro: o cabeçalho clareia em relação ao item.
@@ -8956,7 +8965,7 @@ MODAL_OVERVIEW = f'''
       <pre><code id="modal-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     A prévia acima é só um desenho do Modal. <b>Abrir de verdade</b> faz o que o componente faz: o card
     sobe, o fundo escurece e o resto da página fica inerte. Tabule: o foco não sai do Modal. No de
     <b>Exclusão</b> ele entra em “Cancelar”; no <b>Formulário</b>, no primeiro campo.
@@ -9566,7 +9575,7 @@ DRAWER_OVERVIEW = f'''
       <pre><code id="drawer-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     A prévia acima é só um desenho do Drawer, com uma altura de exemplo. <b>Abrir de verdade</b> faz o que o
     componente faz: o painel entra pela direita, o fundo escurece e o resto da página fica inerte. Tabule: o foco
     não sai do Drawer. Em <b>Detalhes</b> ele entra no X; em <b>Formulário</b>, no primeiro campo; em
@@ -10176,7 +10185,7 @@ SIDEBAR_OVERVIEW = f'''
       <pre><code id="sidebar-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O palco é uma página pequena de verdade, com o CSS e o <code>sidebar.js</code> reais. Em <b>Tela larga</b>
     ela tem 1200px, reduzida para caber: clique nos itens, passe o mouse, role o miolo da Sidebar. Em
     <b>Celular</b> ela tem 375px: a Sidebar sai da página e o botão Menu a abre como painel pela esquerda.
@@ -10784,7 +10793,7 @@ BREADCRUMB_OVERVIEW = f'''
       <pre><code id="breadcrumb-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Em <b>Large</b>, tabule até o <b>…</b> e aperte Enter: o menu abre e o foco fica no botão; o Tab
     entra nos links, o Esc fecha e devolve o foco. Passe o mouse na trilha — só o cursor muda — e
     nos itens do menu, que têm hover. Troque o <b>Tema</b> para escuro e repita no menu.
@@ -11269,7 +11278,7 @@ TOOLTIP_OVERVIEW = f'''
       <pre><code id="tooltip-code"></code></pre>
     </div>
   </div>
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     Pare o mouse num botão: o tooltip espera {TT_DELAY_SHOW}ms. Com um aberto, passe para o vizinho — ele
     troca na hora. Leve o mouse até o tooltip: ele fica. Tabule até um botão: abre na hora; clique com o
     mouse: não abre. Esc fecha sem tirar o foco. Troque o <b>Lado</b> e o <b>Tema</b>.
@@ -11732,7 +11741,7 @@ TOAST_OVERVIEW = f'''
     </div>
   </div>
   {TS_TEMPLATES}
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O palco mostra o toast parado. <b>Mostrar toast</b> dispara o de verdade, no canto inferior direito da
     janela. Sucesso e Informação saem sozinhos em {TS_TIMEOUT // 1000}s — pare o mouse em cima e o relógio
     pausa. Aviso e Erro ficam até o X. Clique várias vezes: eles entram em fila, um por vez.
@@ -12203,7 +12212,7 @@ ALERT_OVERVIEW = f'''
     </div>
   </div>
   {ALR_TEMPLATES}
-  <p style="margin-top:14px; font-size:13.5px; color:var(--al-text-secondary)">
+  <p style="margin-top:14px">
     O alerta do palco é o de verdade: o X fecha com o <code>alert.js</code>. Trocar um controle traz de volta.
     <b>Inserir com anúncio</b> põe o mesmo alerta como se ele chegasse depois do carregamento — é aí que o
     leitor de tela o anuncia. Ao trocar o status, o X segue a regra 20: Aviso e Perigo nascem sem ele.
@@ -12613,6 +12622,277 @@ OVERVIEWS = ('fundacao', 'componentes')
 NAV_INFO = {it[0]: (grupo, it[1], it[2] if len(it) > 2 else '') for grupo, itens in SITE_NAV for it in itens}
 NAV_INFO['prova'] = ('Foundation', 'A prova', '')
 
+# ═══════════════════════════════════════════════ Button · estrutura das abas
+# Modelo das páginas de componente (bloco F, a partir do Astryx), testado no
+# Button antes de ir para os outros:
+#   Visão geral  - prévia, uso, anatomia, faça e não faça, exemplos
+#   Playground   - playground, classes e atributos, estados, medidas, tokens
+#   Diretrizes   - as regras completas
+#   Acessibilidade
+# Fica aqui embaixo, e não junto do resto do Button, porque os controles do
+# playground são o Select e o Input do AL (sel/inp são definidos depois).
+
+def pg_select(cid, rotulo, opcoes, valor):
+    """Select do AL como controle de playground: valor pré-selecionado, sem
+    placeholder (regra 10 do Select). Vale também com 2 ou 3 opções: divergência
+    consciente da regra 1 do Select (decisão do Gui, 11/10), porque o Radio lado a
+    lado quebrava linha e os seis controles ficam com a mesma forma."""
+    ops = ''.join(f'<option value="{v}"{" selected" if v == valor else ""}>{t}</option>'
+                  for v, t in opcoes)
+    return (f'<div class="al-select"><div class="al-select__labelrow">'
+            f'<label class="al-select__label" for="{cid}">{rotulo}</label></div>'
+            f'<div class="al-select__control"><select id="{cid}" class="al-select__field">{ops}</select>'
+            f'{SELECT_CHEVRON}</div></div>')
+
+
+def tok_tabs():
+    """Tokens de cor em Tab Square: uma aba por variante, cada painel com a
+    própria tabela (segundo nível dentro do Tab Line da página)."""
+    abas = [('all', 'Todas')] + VARIANTS
+    bt, pn = [], []
+    for i, (v, rot) in enumerate(abas):
+        tid, pid = f'btntok-t-{v}', f'btntok-p-{v}'
+        on = i == 0
+        roving = '' if on else ' tabindex="-1"'
+        bt.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
+                  f'aria-selected="{"true" if on else "false"}" aria-controls="{pid}"{roving}>'
+                  f'<span class="al-tab__label">{rot}</span></button>')
+        pn.append(f'<div class="tok-panel" role="tabpanel" id="{pid}" aria-labelledby="{tid}" '
+                  f'tabindex="0"{"" if on else " hidden"}><h3 class="sr-only">{rot}</h3>'
+                  f'<div class="scroller"><table><thead><tr><th>Token do Button</th><th>Aponta para</th>'
+                  f'<th>Resolve em (claro)</th></tr></thead>'
+                  f'<tbody>{token_rows(None if v == "all" else v)}</tbody></table></div></div>')
+    return ('<div class="al-tabs al-tabs--square tok-tabs" role="tablist" '
+            'aria-label="Tokens de cor por variante">'
+            + ''.join(bt) + '</div>' + ''.join(pn))
+
+
+def btn_markup(variant, label, size='md', icon=None, busy=False, live=False):
+    """O mesmo botão em duas formas: `live` para a página (fora da ordem de
+    tabulação, como todo exemplo estático) e código para copiar."""
+    icons = {BTN_ICON_LEADING: ICON_SVG, BTN_ICON_TRAILING: ARROW_SVG}
+    attrs = ' aria-busy="true" aria-disabled="true"' if busy else ''
+    ti = ' tabindex="-1"' if live else ''
+    inner = []
+    if busy:
+        inner.append('<span class="al-btn__spinner" aria-hidden="true"></span>')
+    for side, name in (('leading', icon if icon == BTN_ICON_LEADING else None),):
+        if name:
+            svg = icons[name] if live else f'<svg class="al-icon" aria-hidden="true" focusable="false"><!-- {name} --></svg>'
+            inner.append(f'<span class="al-btn__icon al-btn__icon--leading">{svg}</span>')
+    inner.append(f'<span class="al-btn__label">{label}</span>')
+    if icon == BTN_ICON_TRAILING:
+        svg = icons[icon] if live else f'<svg class="al-icon" aria-hidden="true" focusable="false"><!-- {icon} --></svg>'
+        inner.append(f'<span class="al-btn__icon al-btn__icon--trailing">{svg}</span>')
+    head = f'<button type="button" class="al-btn al-btn--{variant} al-btn--{size}"{attrs}{ti}>'
+    if live:
+        return head + ''.join(inner) + '</button>'
+    return head + '\n' + '\n'.join('  ' + x for x in inner) + '\n</button>'
+
+
+# (id, título, botões, descrição, preset do playground)
+BTN_EXAMPLES = [
+    ('hierarquia', 'Ação principal e alternativa',
+     [('ghost', 'Cancelar', {}), ('secondary', 'Salvar rascunho', {}), ('primary', 'Publicar', {})],
+     'Um Primary só, e ele fecha o grupo. Ghost e Secondary abrem caminho sem competir.',
+     {'variant': 'primary', 'size': 'md', 'state': 'default', 'icon': 'none', 'label': 'Publicar'}),
+    ('destrutiva', 'Ação destrutiva',
+     [('secondary', 'Manter conta', {}), ('danger', 'Excluir conta', {})],
+     'Danger só quando a ação destrói e é difícil de desfazer. Nunca para algo reversível.',
+     {'variant': 'danger', 'size': 'md', 'state': 'default', 'icon': 'none', 'label': 'Excluir conta'}),
+    ('icone', 'Com ícone',
+     [('secondary', 'Baixar relatório', {'icon': BTN_ICON_LEADING}),
+      ('primary', 'Continuar', {'icon': BTN_ICON_TRAILING})],
+     'O ícone à esquerda reforça a ação; o da direita indica movimento ou que algo abre. '
+     'Os dois são decorativos: quem diz a ação é o rótulo.',
+     {'variant': 'primary', 'size': 'md', 'state': 'default', 'icon': 'trailing', 'label': 'Continuar'}),
+    ('tamanhos', 'Tamanhos',
+     [('primary', 'Publicar', {'size': 'sm'}), ('primary', 'Publicar', {'size': 'md'})],
+     '<code>md</code>, com 48px, é o padrão e alcança o alvo de toque recomendado. '
+     '<code>sm</code>, com 36px, só onde a densidade justifica.',
+     {'variant': 'primary', 'size': 'sm', 'state': 'default', 'icon': 'none', 'label': 'Publicar'}),
+    ('carregando', 'Carregando',
+     [('primary', 'Publicar', {'busy': True})],
+     '<code>aria-busy</code> com <code>aria-disabled</code>: o botão continua na ordem de foco '
+     'e o handler fica travado no JS.',
+     {'variant': 'primary', 'size': 'md', 'state': 'busy', 'icon': 'none', 'label': 'Publicar'}),
+]
+
+
+def btn_example(eid, title, buttons, desc, preset):
+    gid = f'btnex-{eid}'
+    live = ''.join(btn_markup(v, l, live=True, **o) for v, l, o in buttons)
+    code = '\n'.join(btn_markup(v, l, **o) for v, l, o in buttons)
+    code = code.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
+    tabs, panels = [], []
+    for i, (slug, rot) in enumerate((('desc', 'Descrição'), ('code', 'Código'))):
+        tid, pid = f'{gid}-t-{slug}', f'{gid}-p-{slug}'
+        on = i == 0
+        roving = '' if on else ' tabindex="-1"'
+        tabs.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
+                    f'aria-selected="{"true" if on else "false"}" aria-controls="{pid}"'
+                    f'{roving}><span class="al-tab__label">{rot}</span></button>')
+        body = (f'<p>{desc}</p>' if slug == 'desc'
+                else f'<pre><code>{code}</code></pre>')
+        panels.append(f'<div class="ex__panel ex__panel--{slug}" role="tabpanel" id="{pid}" '
+                      f'aria-labelledby="{tid}" tabindex="0"{"" if on else " hidden"}>'
+                      f'<h4 class="sr-only">{rot}</h4>{body}</div>')
+    data = json.dumps(preset).replace('"', '&quot;')
+    return (f'<div class="ex"><h3 class="ex__title">{title}</h3>'
+            f'<div class="stage ex__stage"><div class="ex__row">{live}</div></div>'
+            f'<div class="ex__bar"><div class="al-tabs al-tabs--square" role="tablist" '
+            f'aria-label="{title}">{"".join(tabs)}</div>'
+            f'<button type="button" class="al-btn al-btn--ghost al-btn--sm" data-pg-preset="{data}">'
+            f'<span class="al-btn__label">Abrir no playground</span></button></div>'
+            f'{"".join(panels)}</div>')
+
+
+def do_dont_rows(rows):
+    out = []
+    for kind, text in rows:
+        t = tg('filled', 'success', 'sm', 'Faça') if kind == 'do' else tg('filled', 'error', 'sm', 'Não faça')
+        out.append(f'<tr><td class="ddt-tag">{t}</td><td>{text}</td></tr>')
+    return ''.join(out)
+
+
+BTN_DO_DONT = [
+    ('do', 'Um Primary por tela, no fim do grupo.'),
+    ('do', 'Verbo na frente e o substantivo que diz sobre o quê: "Criar projeto".'),
+    ('do', 'Capitalização de frase: "Salvar alterações".'),
+    ('do', 'No carregamento, <code>aria-busy</code> com <code>aria-disabled</code>: o botão continua focável.'),
+    ('do', 'Em formulário, deixe o envio habilitado e mostre o erro ao tentar enviar.'),
+    ('dont', 'Dois Primary no mesmo grupo. Se as duas são principais, nenhuma é.'),
+    ('dont', '"OK" ou "Clique aqui": não dizem o que confirmam.'),
+    ('dont', 'Caixa alta, ou rótulo quebrado em duas linhas.'),
+    ('dont', 'Danger para uma ação reversível.'),
+    ('dont', 'O atributo <code>disabled</code> no carregamento: tira o botão da ordem de foco.'),
+]
+
+BTN_OVERVIEW = f'''
+<section>
+  <h2 class="sr-only">Prévia</h2>
+  <div class="pg"><div class="stage"><div class="ex__row">
+    {btn_markup('primary', 'Primary', live=True)}{btn_markup('secondary', 'Secondary', live=True)}{btn_markup('ghost', 'Ghost', live=True)}{btn_markup('danger', 'Danger', live=True)}
+  </div></div></div>
+</section>
+
+<section>
+  <h2>Uso</h2>
+  <p>Use para disparar uma ação da tela, como salvar, publicar ou excluir. As quatro variantes
+  marcam o peso de cada ação na hierarquia, e o rótulo diz qual é a ação.</p>
+  <div class="codeblock"><pre><code>@import "al-design-system/foundation.css";
+@import "al-design-system/components/button.css";</code></pre></div>
+</section>
+
+<section>
+  <h2>Anatomia</h2>
+  <div class="scroller"><table class="tbl-fit">
+    <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td class="name">Contêiner</td><td>Pílula. Raio total, borda de 1px sempre presente — transparente quando a variante não tem borda.</td></tr>
+      <tr><td class="name">Spinner</td><td>16px, ocupa o lugar do ícone da esquerda quando <code>aria-busy</code> está ligado.</td></tr>
+      <tr><td class="name">Ícone à esquerda</td><td>16px. Reforça a ação. Opcional, sempre <code>aria-hidden</code>.</td></tr>
+      <tr><td class="name">Rótulo</td><td>Obrigatório. É também o nome acessível do botão.</td></tr>
+      <tr><td class="name">Ícone à direita</td><td>16px. Indica movimento ou que algo abre.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Faça e não faça</h2>
+  <div class="scroller"><table class="tbl-fit">
+    <thead><tr><th>Orientação</th><th>Prática</th></tr></thead>
+    <tbody>{do_dont_rows(BTN_DO_DONT)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Exemplos</h2>
+  <div class="ex-list">{''.join(btn_example(*e) for e in BTN_EXAMPLES)}</div>
+</section>'''
+
+BTN_PLAYGROUND = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="stage">
+      <button type="button" class="al-btn al-btn--primary al-btn--md" id="demo">
+        <span class="al-btn__spinner" aria-hidden="true"></span>
+        <span class="al-btn__icon al-btn__icon--leading" hidden>{ICON_SVG}</span>
+        <span class="al-btn__label">Publicar</span>
+        <span class="al-btn__icon al-btn__icon--trailing" hidden>{ARROW_SVG}</span>
+      </button>
+    </div>
+
+    <div class="controls controls--fields" id="btn-controls">
+      {pg_select('btn-variant', 'Variante', VARIANTS, 'primary')}
+      {pg_select('btn-size', 'Tamanho', SIZES, 'md')}
+      {pg_select('btn-state', 'Estado', STATES, 'default')}
+      {pg_select('btn-icon', 'Ícone', ICONS, 'none')}
+      {pg_select('btn-theme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('btn-label', 'Rótulo', valor='Publicar')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="copy">Copiar</button></div>
+      <pre><code id="code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">
+    O botão acima é o componente real: esta página carrega o mesmo <code>button.css</code> que vai
+    para produção. Hover, pressed e focus são forçados por classe, porque não dá para simular
+    ponteiro — as declarações são as mesmas.
+  </p>
+</section>
+
+<section>
+  <h2>Classes e atributos</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Classe ou atributo</th><th>Valores</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td class="tok">.al-btn</td><td class="tok dim">—</td><td>Base. Obrigatória em todo botão.</td></tr>
+      <tr><td class="tok">.al-btn--&#123;variante&#125;</td><td class="tok dim">primary · secondary · ghost · danger</td><td>Peso na hierarquia. Uma por botão.</td></tr>
+      <tr><td class="tok">.al-btn--&#123;tamanho&#125;</td><td class="tok dim">sm · md</td><td>36px ou 48px de altura. <code>md</code> é o padrão.</td></tr>
+      <tr><td class="tok">.al-btn__label</td><td class="tok dim">texto</td><td>O rótulo. Obrigatório, e é o nome acessível.</td></tr>
+      <tr><td class="tok">.al-btn__icon--leading</td><td class="tok dim">ícone de 16px</td><td>Antes do rótulo. O <code>svg</code> leva <code>aria-hidden</code>.</td></tr>
+      <tr><td class="tok">.al-btn__icon--trailing</td><td class="tok dim">ícone de 16px</td><td>Depois do rótulo. O <code>svg</code> leva <code>aria-hidden</code>.</td></tr>
+      <tr><td class="tok">.al-btn__spinner</td><td class="tok dim">—</td><td>Aparece com <code>aria-busy</code>, no lugar do ícone da esquerda.</td></tr>
+      <tr><td class="tok">type</td><td class="tok dim">button · submit · reset</td><td>Sempre declarado: dentro de <code>&lt;form&gt;</code> o padrão do HTML é <code>submit</code>.</td></tr>
+      <tr><td class="tok">aria-disabled</td><td class="tok dim">true</td><td>Desabilitado sem sair da ordem de foco.</td></tr>
+      <tr><td class="tok">aria-busy</td><td class="tok dim">true</td><td>Carregando. Sempre junto com <code>aria-disabled</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Todos os estados</h2>
+  {specimen_grid()}
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+      <tbody>{geo_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Não existe token de altura</b>
+    Altura é consequência: <code>padding-y</code> × 2 mais a entrelinha. Dá
+    {BTN['derived']['height']['sm']}px no <code>sm</code> e {BTN['derived']['height']['md']}px no
+    <code>md</code> — conferido no navegador contra o Figma. Um token de altura fixaria a mesma
+    decisão em dois lugares.
+  </div>
+</section>
+
+<section>
+  <h2>Tokens de cor</h2>
+  {tok_tabs()}
+</section>'''
+
+
 PAGES = [
     ('fundacao', 'Fundação', simple_page(
         'fundacao',
@@ -12692,7 +12972,7 @@ PAGES = [
         'dois tamanhos, cinco estados.',
         [('Estável', True), ('40 variantes no Figma', False), (f'{N_BTN_TOKENS} tokens', False),
          ('0 valores soltos', False)],
-        [('overview', 'Visão geral', BTN_OVERVIEW), ('specs', 'Especificações', BTN_SPECS),
+        [('overview', 'Visão geral', BTN_OVERVIEW), ('playground', 'Playground', BTN_PLAYGROUND),
          ('guide', 'Diretrizes', BTN_GUIDE), ('a11y', 'Acessibilidade', BTN_A11Y)])),
 
     ('icon-button', 'Componentes', page(
@@ -13053,16 +13333,27 @@ JS = r"""
   var lead = demo.querySelector('.al-btn__icon--leading');
   var trail = demo.querySelector('.al-btn__icon--trailing');
   var label = demo.querySelector('.al-btn__label');
-  var input = document.getElementById('labeltext');
+  var input = document.getElementById('btn-label');
 
   function pick(name) {
     var el = document.querySelector('input[name="' + name + '"]:checked');
     return el ? el.value : null;
   }
 
+  // os controles são o Select, o Radio e o Input do AL
+  function val(name) {
+    var r = document.querySelector('input[name="btn-' + name + '"]:checked');
+    return r ? r.value : document.getElementById('btn-' + name).value;
+  }
+  function setVal(name, v) {
+    var r = document.querySelector('input[name="btn-' + name + '"][value="' + v + '"]');
+    if (r) r.checked = true;
+    else document.getElementById('btn-' + name).value = v;
+  }
+
   function render() {
-    var variant = pick('variant'), size = pick('size');
-    var state = pick('state'), icon = pick('icon'), theme = pick('theme');
+    var variant = val('variant'), size = val('size');
+    var state = val('state'), icon = val('icon'), theme = val('theme');
 
     demo.className = 'al-btn al-btn--' + variant + ' al-btn--' + size
       + (state === 'hover' || state === 'active' || state === 'focus' ? ' is-' + state : '');
@@ -13089,32 +13380,40 @@ JS = r"""
     if (state === 'busy') attrs = ' aria-busy="true" aria-disabled="true"';
     var lines = ['&lt;button type="button" class="' + cls + '"' + attrs + '&gt;'];
     if (state === 'busy') lines.push('  &lt;span class="al-btn__spinner" aria-hidden="true"&gt;&lt;/span&gt;');
-    if (icon === 'leading' && state !== 'busy')
-      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading"&gt;')
-      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- LEADING --&gt;&lt;/svg&gt;')
+    if (icon === 'leading' && state !== 'busy') {
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--leading"&gt;');
+      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- LEADING --&gt;&lt;/svg&gt;');
       lines.push('  &lt;/span&gt;');
+    }
     lines.push('  &lt;span class="al-btn__label"&gt;' +
       (input.value || 'Button').replace(/&/g, '&amp;').replace(/</g, '&lt;') + '&lt;/span&gt;');
-    if (icon === 'trailing')
-      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing"&gt;')
-      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- TRAILING --&gt;&lt;/svg&gt;')
+    if (icon === 'trailing') {
+      lines.push('  &lt;span class="al-btn__icon al-btn__icon--trailing"&gt;');
+      lines.push('    &lt;svg class="al-icon" aria-hidden="true" focusable="false"&gt;&lt;!-- TRAILING --&gt;&lt;/svg&gt;');
       lines.push('  &lt;/span&gt;');
+    }
     lines.push('&lt;/button&gt;');
     code.innerHTML = lines.join('\n');
   }
 
-  document.querySelectorAll('.controls input').forEach(function (el) {
+  document.querySelectorAll('#btn-controls select, #btn-controls input').forEach(function (el) {
     el.addEventListener('change', render);
     el.addEventListener('input', render);
   });
 
-  // filtro da tabela de tokens
-  document.querySelectorAll('input[name="tokfilter"]').forEach(function (el) {
-    el.addEventListener('change', function () {
-      var v = pick('tokfilter');
-      document.querySelectorAll('#tokbody tr').forEach(function (tr) {
-        tr.hidden = (v !== 'all' && tr.getAttribute('data-variant') !== v);
+  // "Abrir no playground" dos exemplos: configura os controles e abre a aba
+  document.querySelectorAll('#pg-button [data-pg-preset]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var preset = JSON.parse(b.getAttribute('data-pg-preset'));
+      ['variant', 'size', 'state', 'icon'].forEach(function (k) {
+        if (preset[k]) setVal(k, preset[k]);
       });
+      if (preset.label) input.value = preset.label;
+      render();
+      var tab = document.getElementById('t-button-playground');
+      tab.click();
+      tab.focus();
+      document.getElementById('p-button-playground').scrollIntoView({ block: 'start' });
     });
   });
 
@@ -14912,7 +15211,7 @@ CHROME_MOTION = """
 .mo-dot{width:12px; height:12px; flex:none; box-sizing:border-box; border-radius:50%;
   border:2px solid var(--al-toast-success-icon)}
 .mo-cell .al-btn{align-self:flex-start}
-.mo-fine{font-size:13px; color:var(--al-text-secondary); margin-top:14px; max-width:74ch}
+.mo-fine{margin-top:14px}
 
 .mo-bars .bar-name{width:196px}
 .mo-track, .mo-track .bar{display:block}
@@ -15029,6 +15328,25 @@ HTML = (
     + JS_MOTION + '</script>\n'
 )
 
+# Blocos de exemplo: o tipo (Faça / Não faça) sai como Tag Success / Error sm,
+# como na tabela da Visão geral. Vale para célula .do/.no e para rótulo
+# pintado de success/danger; um rótulo que não é só "Faça"/"Não faça" vira o
+# título ao lado da Tag. Rótulo sem tipo perde a cor solta e vira título.
+def dd_tags(html):
+    def sub(m):
+        abre, classes, cor, texto = m.group(1), m.group(2), m.group(3), m.group(4)
+        kind = ('do' if ' do' in f' {classes}' or cor == 'success' else
+                'no' if ' no' in f' {classes}' or cor == 'danger' else None)
+        if not kind:
+            return f'{abre}<span class="lab">{texto}</span>'
+        tag = tg('filled', 'success', 'sm', 'Faça') if kind == 'do' else tg('filled', 'error', 'sm', 'Não faça')
+        titulo = '' if texto.strip() in ('Faça', 'Não faça') else f'<span class="lab">{texto}</span>'
+        return f'{abre}<span class="dd-head">{tag}{titulo}</span>'
+    return re.sub(r'(<div class="cell([^"]*)"[^>]*>\s*)<span class="lab"'
+                  r'(?: style="color:var\(--al-text-(\w+)\)")?>(.*?)</span>', sub, html, flags=re.S)
+
+
+HTML = dd_tags(HTML)
 open(out(SITE_HTML), 'w', encoding='utf-8').write(HTML)
 
 print(f'build/site/index.html escrito ({len(HTML):,} bytes)')
