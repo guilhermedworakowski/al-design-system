@@ -3130,25 +3130,7 @@ def tag_token_rows():
     return '\n'.join(rows)
 
 
-def tag_a11y_rows(group):
-    out = []
-    for r in TAG_A11Y['rows']:
-        if r['group'] != group:
-            continue
-        verdict = ('<span class="exc">isento</span>' if r['exempt']
-                   else '<span class="pass">passa</span>')
-        chips = (f'<span class="chip sm" style="background:{r["fg"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bg"]}"></span>')
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{r["label"]}</td><td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">{r["fg"]} / {r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td><td>{verdict}</td></tr>')
-    return '\n'.join(out)
-
-
 N_TAG_MEDIDAS = len([r for r in TAG_A11Y['rows'] if not r['exempt']])
-N_TAG_ISENTAS = len(TAG_A11Y['rows']) - N_TAG_MEDIDAS
 TAG_SM_BOX = TAG_A11Y['targets'][0]['box']
 TAG_MD_BOX = TAG_A11Y['targets'][1]['box']
 
@@ -3158,14 +3140,13 @@ TAG_OVERVIEW = f'''
   <div class="pg">
     <div class="stage" id="tag-stage">{tg('filled', 'success')}</div>
 
-    <div class="controls" id="tag-controls">
-      <div class="ctl"><span class="ctl-name">Tipo</span>{seg('tagtype', TAG_TYPES, 'filled')}</div>
-      <div class="ctl"><span class="ctl-name">Status</span>{seg('tagstatus', TAG_STATUSES, 'success')}</div>
-      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('tagsize', TAG_SIZES, 'md')}</div>
-      <div class="ctl"><span class="ctl-name">Dismissible</span>{seg('tagdis', [('no', 'Só leitura'), ('yes', 'Com X')], 'no')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tagtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><label for="tag-label" class="ctl-name">Rótulo</label>
-        <input class="txt" id="tag-label" type="text" value="Pago" maxlength="28"></div>
+    <div class="controls controls--fields" id="tag-controls">
+      {pg_field('tagtype', 'Tipo', TAG_TYPES, 'filled')}
+      {pg_field('tagstatus', 'Status', TAG_STATUSES, 'success')}
+      {pg_field('tagsize', 'Tamanho', TAG_SIZES, 'md')}
+      {pg_field('tagdis', 'Dismissible', [('no', 'Só leitura'), ('yes', 'Com X')], 'no')}
+      {pg_field('tagtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      {inp('tag-label', 'Rótulo', valor='Pago')}
     </div>
 
     <div class="codewrap">
@@ -3411,64 +3392,8 @@ TAG_A11Y_TAB = f'''
   dá 3,34:1 — no Icon Button isso é <b>aprovação</b>; aqui seria <b>reprova</b>. Foi por isso que
   o status Brand ficou de fora desta versão, e é por isso que este componente tem
   <b>zero exceções</b> — o primeiro do AL a fechar em zero carregando texto.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_TAG_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{TAG_A11Y['fails']}</b><span>reprovas</span></div>
-    <div class="stat"><b>{N_TAG_ISENTAS}</b><span>isentas medidas</span></div>
-    <div class="stat"><b>{TAG_A11Y['floors']['text']}:1</b><span>piso do rótulo</span></div>
-  </div>
 </section>
 
-<section>
-  <h2>Rótulo contra o fundo efetivo</h2>
-  <p>O <code>outlined</code> não tem preenchimento, então o rótulo não está sobre um sólido —
-  está sobre a tela. Por isso ele é medido contra os <b>dois</b> fundos: a tela e a superfície,
-  porque tag quase sempre vive dentro de card, tabela ou painel. O <code>filled</code> cobre o
-  fundo, e uma medição basta.</p>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Rótulo / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{tag_a11y_rows('label')}</tbody>
-  </table></div>
-</section>
-
-<section>
-  <h2>O limite do pill</h2>
-  <p>Medido e listado, mas <b>isento</b> — e a razão importa. O 1.4.11 cobra contraste de
-  elemento gráfico <b>necessário para entender o conteúdo</b>. No Icon Button o desenho é a única
-  coisa que informa que existe um acionável ali, então o limite é portão. Aqui quem informa é o
-  texto, e o contorno é decoração. É o que faz o <code>filled neutral</code> aparecer em 1,32:1
-  sem reprovar — e ele fica medido para ninguém “corrigir” achando que escapou.</p>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Limite / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{tag_a11y_rows('boundary')}</tbody>
-  </table></div>
-</section>
-
-<section>
-  <h2>Foco</h2>
-  <p>Só o X recebe foco — a tag é conteúdo, não controle. O anel tem duas camadas: 2px de
-  respiro na cor do fundo e 2px na cor do foco, e é o respiro que impede o anel de encostar no
-  preenchimento. Ele é sombra, então não empurra layout, e não anima.</p>
-  <div class="dd" style="margin-top:16px">
-    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel no X</span>
-      <div class="stage2">
-        {tg('filled', 'success', 'md', None, True, ' is-focus')}
-        {tg('outlined', 'info', 'md', None, True, ' is-focus')}
-      </div>
-      <p class="cap">Aparece no <code>:focus-visible</code> — teclado sim, clique de mouse não.
-      Aqui está forçado por classe, para dar para ver parado.</p>
-    </div>
-    <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">O que não existe</span>
-      <div class="stage2">{tg('outlined', 'neutral', 'md', 'Interno', True)}</div>
-      <p class="cap">Sem hover no X e sem estado na tag. <b>Nenhuma transição neste
-      componente</b> — é o único do AL sem duração literal esperando a escala de motion.</p>
-    </div>
-  </div>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Combinação</th><th></th><th>Anel / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{tag_a11y_rows('focus')}</tbody>
-  </table></div>
-</section>
 
 <section>
   <h2>O contrato de marcação</h2>
@@ -3494,6 +3419,49 @@ TAG_A11Y_TAB = f'''
 </section>'''
 
 
+TAG_OVERVIEW, TAG_PLAYGROUND, TAG_A11Y_TAB = model_tabs(
+    'tag', old_ov=TAG_OVERVIEW, old_specs=TAG_SPECS, guide=TAG_GUIDE, old_a11y=TAG_A11Y_TAB,
+    preview=(tg('filled', 'success') + tg('filled', 'warning') + tg('filled', 'error') + tg('filled', 'info')
+             + tg('outlined', 'neutral', 'md', 'Interno')),
+    usage='Use para um rótulo curto de estado ou categoria. Não dispara nada: é conteúdo, fica fora da '
+          'ordem de tabulação, e quem carrega o sentido é o texto.',
+    states=['As vinte combinações'],
+    presets={'Uma entidade, um estado': {'tagtype': 'filled'}, 'Três ou mais, juntas': {'tagtype': 'outlined'},
+             'Numa barra de filtros': {'tagdis': 'yes'}},
+    extra_dd=[
+        ('do', 'Uma palavra, em sentence case.'),
+        ('do', 'Uma Tag de status por entidade.'),
+        ('do', 'Depois de remover, o foco vai para a Tag anterior.'),
+        ('dont', 'Os dois tipos misturados no mesmo grupo.'),
+        ('dont', 'Truncar o rótulo: o texto se resolve na origem.'),
+        ('dont', 'Tag no lugar de um banner ou Alert.'),
+    ],
+    classes=[
+        ('.al-tag', '—', 'A pílula.'),
+        ('.al-tag--filled · --outlined', '—', 'O tipo.'),
+        ('.al-tag--&#123;status&#125;', 'success · warning · error · info · neutral', 'A cor, que só reforça o texto.'),
+        ('.al-tag--sm · --md', '20 · 28px', 'O tamanho.'),
+        ('.al-tag__dismiss', '&lt;button&gt;', 'O X da Tag removível, com <code>aria-label</code> que diz o quê.'),
+    ],
+    contrast=role_contrast(TAG_A11Y['rows'], [
+        ('Rótulo', {'label'}, 'ok', 'O texto contra o fundo da pílula. Aqui o piso é 4,5:1: quem carrega o '
+         'sentido é texto.', '1.4.3 Contraste (mínimo)', 'Os cinco status, nos dois tipos'),
+        ('Limite da pílula', {'boundary'}, 'exc',
+         'Medido e isento: a pílula não é controle, e o texto identifica a Tag sozinho.',
+         '1.4.11 Contraste não textual', 'Fundo do Filled e borda do Outlined'),
+        ('Anel de foco', {'focus'}, 'ok', 'O anel do X da Tag removível.', '2.4.13 Aparência do foco', 'O X'),
+    ], f'<p>O piso é 4,5:1, não 3:1: na Tag quem carrega o sentido é texto. São {N_TAG_MEDIDAS} medições '
+       f'no portão de build, e nenhuma reprova.</p>', key='group'),
+)
+
+# Tokens de cor do Tag em Tab Square, como no Button: o filtro antigo saiu.
+_TAG_ROWS = tag_token_rows().split('\n')
+TAG_PLAYGROUND = re.sub(
+    r'<div class="ctl" style="margin-bottom:14px"><span class="ctl-name">Filtrar</span>.*?</tbody>\s*</table>\s*</div>',
+    lambda m: tok_tabs('tagtok', 'Tag', lambda v: '\n'.join(r for r in _TAG_ROWS if v is None or f'data-type="{v}"' in r),
+                       [('all', 'Todos')] + TAG_TYPES),
+    TAG_PLAYGROUND, count=1, flags=re.S)
+assert 'tagtokfilter' not in TAG_PLAYGROUND
 
 # ══════════════════════════════════════════════════════════ COMPONENTE · Avatar
 AVATAR_TYPES = [('initials', 'Initials'), ('icon', 'Icon'), ('photo', 'Photo')]
@@ -11520,10 +11488,10 @@ TOOLTIP_OVERVIEW = f'''
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage tt-stage" id="tooltip-stage">{TT_DEMOS["name-top"]["html"]}</div>
-    <div class="controls" id="tooltip-controls">
-      <div class="ctl"><span class="ctl-name">Uso</span>{seg('ttuse', TT_USES, 'name')}</div>
-      <div class="ctl"><span class="ctl-name">Lado</span>{seg('ttside', TT_SIDES, 'top')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tttheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    <div class="controls controls--fields" id="tooltip-controls">
+      {pg_field('ttuse', 'Uso', TT_USES, 'name')}
+      {pg_field('ttside', 'Lado', TT_SIDES, 'top')}
+      {pg_field('tttheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
     </div>
 
     <div class="codewrap">
@@ -11710,27 +11678,7 @@ TOOLTIP_GUIDE = f'''
 </section>'''
 
 
-TT_OQUE = {'text': 'texto', 'icon (currentColor)': 'icone (currentColor)',
-           'box on the page': 'caixa sobre a pagina'}
-
-
-def tooltip_a11y_rows():
-    out = []
-    for r in TTP_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{TT_OQUE[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 N_TT_MEDIDAS = len(TTP_A11Y['rows'])
-N_TT_PASS = sum(1 for r in TTP_A11Y['rows'] if r['pass'])
 
 
 TOOLTIP_A11Y_TAB = f'''
@@ -11739,16 +11687,6 @@ TOOLTIP_A11Y_TAB = f'''
   <p>O tooltip mora na camada mais alta do navegador, com fundo opaco: o texto e o ícone só encostam no
   fundo do próprio tooltip. O que muda de lugar é a caixa — ela pode cair sobre a tela, a superfície ou
   um Modal aberto. Sem borda e sem seta, é o fundo invertido que a separa da página.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_TT_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_TT_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>0</b><span>exceções</span></div>
-    <div class="stat"><b>{N_TT_MEDIDAS - N_TT_PASS}</b><span>reprovas</span></div>
-  </div>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{tooltip_a11y_rows()}</tbody>
-  </table></div>
 </section>
 
 <section>
@@ -11830,7 +11768,7 @@ JS_TOOLTIP = r"""
   var code = document.getElementById('tooltip-code');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -11848,7 +11786,7 @@ JS_TOOLTIP = r"""
     code.innerHTML = esc(demo.code);
   }
 
-  document.querySelectorAll('#tooltip-controls input').forEach(function (inp) {
+  document.querySelectorAll('#tooltip-controls input, #tooltip-controls select').forEach(function (inp) {
     inp.addEventListener('input', render);
   });
   document.getElementById('tooltip-copy').addEventListener('click', function () {
@@ -11866,6 +11804,38 @@ JS_TOOLTIP = r"""
 """
 
 
+TOOLTIP_OVERVIEW, TOOLTIP_PLAYGROUND, TOOLTIP_A11Y_TAB = model_tabs(
+    'tooltip', old_ov=TOOLTIP_OVERVIEW, old_specs=TOOLTIP_SPECS, guide=TOOLTIP_GUIDE,
+    old_a11y=TOOLTIP_A11Y_TAB, js=True,
+    preview=tt_frozen('Excluir'),
+    usage='Use para dar nome a um botão só com ícone, ou para um complemento curto que não é essencial. '
+          'Só em elemento focável; o <code>tooltip.js</code> abre no hover e no foco.',
+    states=['Os quatro lados'],
+    presets={'Nome · aria-labelledby': {'ttuse': 'name'}, 'Descrição · aria-describedby': {'ttuse': 'desc'}},
+    extra_dd=[
+        ('do', 'Uma frase curta, até duas linhas.'),
+        ('do', 'Em cima por padrão; vira sozinho se não couber.'),
+        ('do', 'Esc fecha sem mover o foco.'),
+        ('dont', 'Informação essencial, erro ou confirmação.'),
+        ('dont', 'Tooltip em elemento desabilitado ou não focável.'),
+        ('dont', 'Abrir no clique ou no toque.'),
+    ],
+    classes=[
+        ('.al-tooltip', 'popover', 'A caixa, com <code>role="tooltip"</code> e <code>popover="manual"</code>.'),
+        ('.al-tooltip__icon', 'ícone', 'Decorativo, na cor do texto.'),
+        ('.al-tooltip__text', 'texto', 'Uma frase curta.'),
+        ('data-placement', 'top · bottom · left · right', 'O lado. Em cima por padrão.'),
+        ('aria-labelledby', 'id do tooltip', 'No gatilho, quando o tooltip é o nome.'),
+        ('aria-describedby', 'id do tooltip', 'No gatilho, quando o tooltip é complemento.'),
+    ],
+    contrast=role_contrast(TTP_A11Y['rows'], [
+        ('Texto', {'text'}, 'ok', 'O texto contra a caixa invertida.', '1.4.3 Contraste (mínimo)', 'Nos dois temas'),
+        ('Ícone', {'icon (currentColor)'}, 'ok', 'O ícone herda a cor do texto.', '1.4.11 Contraste não textual',
+         'Nos dois temas'),
+        ('Caixa sobre a página', {'box on the page'}, 'ok', 'A caixa invertida contra a tela, a superfície e o card.',
+         '1.4.11 Contraste não textual', 'Tela, superfície e card'),
+    ], f'<p>São {N_TT_MEDIDAS} medições no portão de build, e nenhuma reprova.</p>', key='what'),
+)
 
 # ══════════════════════════════════════════════════════════════ Toast · abas
 # Segundo componente do Tier 5 e do piloto em duas sessoes: a pagina nasce na
@@ -11980,12 +11950,12 @@ TOAST_OVERVIEW = f'''
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage ts-stage" id="toast-stage">{TS_DEMOS["success-1"]["frozen"]}</div>
-    <div class="controls" id="toast-controls">
-      <div class="ctl"><span class="ctl-name">Status</span>{seg('tsstatus', TS_STATUSES, 'success')}</div>
-      <div class="ctl"><span class="ctl-name">Conteúdo</span>{seg('tsdesc', TS_DESCS, '1')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('tstheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><span class="ctl-name">Disparar</span><div><button type="button" class="al-btn al-btn--primary al-btn--sm" id="toast-fire">
-        <span class="al-btn__label">Mostrar toast</span></button></div></div>
+    <div class="controls controls--fields" id="toast-controls">
+      {pg_field('tsstatus', 'Status', TS_STATUSES, 'success')}
+      {pg_field('tsdesc', 'Conteúdo', TS_DESCS, '1')}
+      {pg_field('tstheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+      <div class="pg-action"><button type="button" class="al-btn al-btn--secondary al-btn--sm" id="toast-fire">
+        <span class="al-btn__label">Visualizar</span></button></div>
     </div>
 
     <div class="codewrap">
@@ -11996,7 +11966,7 @@ TOAST_OVERVIEW = f'''
   </div>
   {TS_TEMPLATES}
   <p style="margin-top:14px">
-    O palco mostra o toast parado. <b>Mostrar toast</b> dispara o de verdade, no canto inferior direito da
+    O palco mostra o toast parado. <b>Visualizar</b> dispara o de verdade, no canto inferior direito da
     janela. Sucesso e Informação saem sozinhos em {TS_TIMEOUT // 1000}s — pare o mouse em cima e o relógio
     pausa. Aviso e Erro ficam até o X. Clique várias vezes: eles entram em fila, um por vez.
   </p>
@@ -12170,29 +12140,7 @@ TOAST_GUIDE = f'''
 </section>'''
 
 
-TS_OQUE = {'title': 'titulo', 'description': 'descricao', 'X / rest': 'X / repouso',
-           'X / hover': 'X / hover', 'X / pressed': 'X / pressionado', 'X / focus ring': 'X / anel de foco'}
-TS_OQUE.update({f'{s} / {en}': f'{s} / {pt}' for s in ('success', 'warning', 'error', 'info')
-                for en, pt in (('icon', 'icone'), ('border', 'borda'))})
-
-
-def toast_a11y_rows():
-    out = []
-    for r in TST_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{TS_OQUE[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 N_TS_MEDIDAS = len(TST_A11Y['rows'])
-N_TS_PASS = sum(1 for r in TST_A11Y['rows'] if r['pass'])
 
 
 TOAST_A11Y_TAB = f'''
@@ -12202,16 +12150,6 @@ TOAST_A11Y_TAB = f'''
   encostam no fundo do próprio toast. Quem encosta na página é a borda — e a página pode ser a tela, a
   superfície ou um Modal aberto, onde o fundo do toast e o da página são a mesma cor. A borda é decorativa
   (quem diz o status é o ícone), mas é ela que separa a caixa da página, então passa no 3:1 igual.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_TS_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_TS_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>0</b><span>exceções</span></div>
-    <div class="stat"><b>{N_TS_MEDIDAS - N_TS_PASS}</b><span>reprovas</span></div>
-  </div>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{toast_a11y_rows()}</tbody>
-  </table></div>
 </section>
 
 <section>
@@ -12286,7 +12224,7 @@ JS_TOAST = r"""
   var region = document.getElementById('ts-region');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -12309,7 +12247,7 @@ JS_TOAST = r"""
   document.getElementById('toast-fire').addEventListener('click', function () {
     if (window.alToast) window.alToast.show('ts-pg-' + key());
   });
-  document.querySelectorAll('#toast-controls input').forEach(function (inp) {
+  document.querySelectorAll('#toast-controls input, #toast-controls select').forEach(function (inp) {
     inp.addEventListener('input', render);
   });
   document.getElementById('toast-copy').addEventListener('click', function () {
@@ -12327,6 +12265,44 @@ JS_TOAST = r"""
 """
 
 
+TOAST_OVERVIEW, TOAST_PLAYGROUND, TOAST_A11Y_TAB = model_tabs(
+    'toast', old_ov=TOAST_OVERVIEW, old_specs=TOAST_SPECS, guide=TOAST_GUIDE, old_a11y=TOAST_A11Y_TAB,
+    js=True, preview=ts_frozen('success'),
+    usage='Use para responder a algo que acabou de acontecer: salvo, enviado, falhou. Um por vez, no '
+          'canto inferior direito, e nunca rouba o foco. O <code>toast.js</code> cuida da fila.',
+    states=['Os quatro status', 'Com e sem descrição'],
+    extra_dd=[
+        ('do', 'Título curto: a coisa e o que aconteceu.'),
+        ('do', 'Sucesso e Informação saem em 6s; Aviso e Erro ficam até fechar.'),
+        ('do', 'Um por vez, em fila.'),
+        ('dont', 'Informação essencial: ela não pode sumir.'),
+        ('dont', 'Botão de ação dentro do Toast.'),
+        ('dont', 'Repetir o que a tela já mostra.'),
+    ],
+    classes=[
+        ('.al-toast-region', 'popover', 'A região, que existe antes da mensagem.'),
+        ('.al-toast', '—', 'A caixa.'),
+        ('.al-toast--&#123;status&#125;', 'success · warning · error · info', 'O status: ícone e borda.'),
+        ('.al-toast__icon', 'ícone', 'Fixo por status. É ele que diz o status, não a cor.'),
+        ('.al-toast__text', '—', 'Título e descrição.'),
+        ('.al-toast__title · __description', 'texto', 'O título, sem ponto; a descrição, opcional, com ponto.'),
+        ('.al-toast__close', 'Icon Button', 'O X, com <code>aria-label</code>. Fecha sempre.'),
+        ('data-leaving', '—', 'Ligado pelo JS na saída, para o fade.'),
+    ],
+    contrast=role_contrast(TST_A11Y['rows'], [
+        ('Título e descrição', {'title', 'description'}, 'ok', 'O texto contra o fundo do Toast.',
+         '1.4.3 Contraste (mínimo)', 'Os quatro status'),
+        ('Ícone', {'success / icon', 'warning / icon', 'error / icon', 'info / icon'}, 'ok',
+         'O ícone de cada status contra o fundo.', '1.4.11 Contraste não textual', 'Os quatro status'),
+        ('Borda', {'success / border', 'warning / border', 'error / border', 'info / border'}, 'ok',
+         'A borda contra a página: é ela que separa a caixa.', '1.4.11 Contraste não textual',
+         'Tela, superfície e card'),
+        ('X', {'X / rest', 'X / hover', 'X / pressed'}, 'ok', 'O ícone do X em repouso, hover e pressed.',
+         '1.4.11 Contraste não textual', 'Repouso, hover e pressed'),
+        ('Anel de foco', {'X / focus ring'}, 'ok', 'O anel do X contra o fundo do Toast.', '2.4.13 Aparência do foco',
+         'O X'),
+    ], f'<p>São {N_TS_MEDIDAS} medições no portão de build, e nenhuma reprova.</p>', key='what'),
+)
 
 
 # ══════════════════════════════════════════════════════════════ Alert · abas
@@ -12450,13 +12426,11 @@ ALERT_OVERVIEW = f'''
   <h2>Playground</h2>
   <div class="pg">
     <div class="stage alr-stage" id="alert-stage"><div class="al-alert-slot alr-slot" id="alert-slot">{ALR_DEMOS[ALR_DEFAULT]["html"]}</div></div>
-    <div class="controls" id="alert-controls">
-      <div class="ctl"><span class="ctl-name">Status</span>{seg('alrstatus', ALR_STATUSES, 'warning')}</div>
-      <div class="ctl"><span class="ctl-name">Ações</span>{seg('alracts', ALR_ACTS, '1')}</div>
-      <div class="ctl"><span class="ctl-name">Fechar</span>{seg('alrclose', ALR_CLOSES, '0')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('alrtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-      <div class="ctl"><span class="ctl-name">Inserir</span><div><button type="button" class="al-btn al-btn--secondary al-btn--sm" id="alert-fire">
-        <span class="al-btn__label">Inserir com anúncio</span></button></div></div>
+    <div class="controls controls--fields" id="alert-controls">
+      {pg_field('alrstatus', 'Status', ALR_STATUSES, 'warning')}
+      {pg_field('alracts', 'Ações', ALR_ACTS, '1')}
+      {pg_field('alrclose', 'Fechar', ALR_CLOSES, '0')}
+      {pg_field('alrtheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
     </div>
 
     <div class="codewrap">
@@ -12468,8 +12442,7 @@ ALERT_OVERVIEW = f'''
   {ALR_TEMPLATES}
   <p style="margin-top:14px">
     O alerta do palco é o de verdade: o X fecha com o <code>alert.js</code>. Trocar um controle traz de volta.
-    <b>Inserir com anúncio</b> põe o mesmo alerta como se ele chegasse depois do carregamento — é aí que o
-    leitor de tela o anuncia. Ao trocar o status, o X segue a regra 20: Aviso e Perigo nascem sem ele.
+    Ao trocar o status, o X segue a regra 20: Aviso e Perigo nascem sem ele.
   </p>
 </section>
 
@@ -12635,30 +12608,7 @@ ALERT_GUIDE = f'''
 </section>'''
 
 
-AL_OQUE = {'title': 'titulo', 'description': 'descricao', 'focus ring': 'anel de foco'}
-AL_OQUE.update({f'{s} / {en}': f'{s} / {pt}' for s in ('success', 'warning', 'danger', 'info')
-                for en, pt in (('icon', 'icone'), ('border', 'borda'))})
-AL_OQUE.update({f'{w} / {en}': f'{w} / {pt}' for w in ('X', 'Ghost')
-                for en, pt in (('rest', 'repouso'), ('hover', 'hover'), ('pressed', 'pressionado'))})
-
-
-def alert_a11y_rows():
-    out = []
-    for r in ALR_A11Y['rows']:
-        chips = (f'<span class="chip sm" style="background:{r["fgHex"]}"></span>'
-                 f'<span class="chip sm" style="background:{r["bgHex"]}"></span>')
-        v = '<span class="pass">passa</span>' if r['pass'] else '<span class="fail">reprova</span>'
-        out.append(
-            f'<tr><td class="tok dim">{"claro" if r["theme"] == "light" else "escuro"}</td>'
-            f'<td class="name">{AL_OQUE[r["what"]]}</td>'
-            f'<td class="chipcell">{chips}</td><td class="tok dim">{r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
-            f'<td class="tok dim">{r["floor"]}:1</td><td>{v}</td></tr>')
-    return '\n'.join(out)
-
-
 N_ALR_MEDIDAS = len(ALR_A11Y['rows'])
-N_ALR_PASS = sum(1 for r in ALR_A11Y['rows'] if r['pass'])
 
 
 ALERT_A11Y_TAB = f'''
@@ -12669,16 +12619,6 @@ ALERT_A11Y_TAB = f'''
   status é o ícone), mas é ela que separa a caixa da página, então passa no 3:1 igual. O X e o Ghost das ações
   são medidos em repouso, hover e pressionado, e o anel de foco contra o fundo do Alert. O rótulo do Primary
   fica de fora: ele só encosta no próprio botão, que não muda aqui.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_ALR_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{N_ALR_PASS}</b><span>passam</span></div>
-    <div class="stat"><b>0</b><span>exceções</span></div>
-    <div class="stat"><b>{N_ALR_MEDIDAS - N_ALR_PASS}</b><span>reprovas</span></div>
-  </div>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>O quê</th><th></th><th>Contra</th><th>Razão</th><th>Piso</th><th></th></tr></thead>
-    <tbody>{alert_a11y_rows()}</tbody>
-  </table></div>
 </section>
 
 <section>
@@ -12712,6 +12652,49 @@ ALERT_A11Y_TAB = f'''
     <div><b>Movimento reduzido</b><span>Aparece e some sem transição.</span></div>
   </div>
 </section>'''
+
+ALERT_OVERVIEW, ALERT_PLAYGROUND, ALERT_A11Y_TAB = model_tabs(
+    'alert', old_ov=ALERT_OVERVIEW, old_specs=ALERT_SPECS, guide=ALERT_GUIDE, old_a11y=ALERT_A11Y_TAB,
+    js=True, preview=alr_frozen('warning'), preview_style='display:block; width:100%',
+    usage='Use para uma mensagem que vale para a página inteira e continua valendo: no topo, abaixo do '
+          'header, um por página. O <code>alert.js</code> liga o X e anuncia o que entra depois.',
+    states=['Os quatro status', 'Com e sem ações'],
+    extra_dd=[
+        ('do', 'Título curto que diz o assunto, e descrição sempre.'),
+        ('do', 'Até duas ações, alinhadas à direita, com verbo e objeto.'),
+        ('do', 'X só no que pode ser ignorado.'),
+        ('dont', 'Mais de um Alert na página.'),
+        ('dont', 'Erro de preenchimento: ele fica no campo.'),
+        ('dont', 'Título como heading.'),
+    ],
+    classes=[
+        ('.al-alert', '—', 'A caixa.'),
+        ('.al-alert--&#123;status&#125;', 'success · warning · danger · info', 'O status: ícone e borda.'),
+        ('.al-alert__body', '—', 'Ícone, texto e X.'),
+        ('.al-alert__icon', 'ícone', 'Fixo por status. É ele que diz o status, não a cor.'),
+        ('.al-alert__text', '—', 'Título e descrição.'),
+        ('.al-alert__title · __description', 'texto', 'O título não é heading; a descrição tem até duas linhas.'),
+        ('.al-alert__actions', 'botões', 'Até duas ações, à direita.'),
+        ('.al-alert__close', 'Icon Button', 'O X, com <code>aria-label</code> e <code>data-al-alert-close</code>.'),
+        ('.al-alert-slot', '—', 'Onde um Alert inserido depois é anunciado.'),
+    ],
+    contrast=role_contrast(ALR_A11Y['rows'], [
+        ('Título e descrição', {'title', 'description'}, 'ok', 'O texto contra o fundo do Alert.',
+         '1.4.3 Contraste (mínimo)', 'Os quatro status'),
+        ('Ícone', {'success / icon', 'warning / icon', 'danger / icon', 'info / icon'}, 'ok',
+         'O ícone de cada status contra o fundo.', '1.4.11 Contraste não textual', 'Os quatro status'),
+        ('Borda', {'success / border', 'warning / border', 'danger / border', 'info / border'}, 'ok',
+         'A borda contra a página: é ela que separa a caixa.', '1.4.11 Contraste não textual',
+         'Tela, superfície e card'),
+        ('X', {'X / rest', 'X / hover', 'X / pressed'}, 'ok', 'O ícone do X em repouso, hover e pressed.',
+         '1.4.11 Contraste não textual', 'Repouso, hover e pressed'),
+        ('Ação Ghost', {'Ghost / rest', 'Ghost / hover', 'Ghost / pressed'}, 'ok',
+         'O rótulo do Ghost sobre o fundo do Alert em cada estado.', '1.4.3 Contraste (mínimo)',
+         'Repouso, hover e pressed'),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel contra o fundo do Alert.', '2.4.13 Aparência do foco',
+         'X e ações'),
+    ], f'<p>São {N_ALR_MEDIDAS} medições no portão de build, e nenhuma reprova.</p>', key='what'),
+)
 
 
 # Miniatura do card: casca (o card inteiro ja e um link).
@@ -12756,7 +12739,7 @@ JS_ALERT = r"""
   var code = document.getElementById('alert-code');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
   function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -12780,11 +12763,8 @@ JS_ALERT = r"""
       if (c) c.checked = true;
     });
   });
-  document.querySelectorAll('#alert-controls input').forEach(function (inp) {
+  document.querySelectorAll('#alert-controls input, #alert-controls select').forEach(function (inp) {
     inp.addEventListener('input', render);
-  });
-  document.getElementById('alert-fire').addEventListener('click', function () {
-    if (window.alAlert) window.alAlert.show('alr-pg-' + key(), { slot: slot });
   });
   document.getElementById('alert-copy').addEventListener('click', function () {
     var btn = this;
@@ -13410,8 +13390,8 @@ PAGES = [
         'de tabulação, e quem carrega o sentido é o texto — a cor apenas reforça.',
         [('Estável', True), ('20 variantes no Figma', False), (f'{N_TAG_TOKENS} tokens', False),
          ('0 exceções', False)],
-        [('overview', 'Visão geral', TAG_OVERVIEW), ('specs', 'Especificações', TAG_SPECS),
-         ('guide', 'Diretrizes', TAG_GUIDE), ('a11y', 'Acessibilidade', TAG_A11Y_TAB)])),
+        [('overview', 'Visão geral', TAG_OVERVIEW), ('playground', 'Playground', TAG_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(TAG_GUIDE)), ('a11y', 'Acessibilidade', TAG_A11Y_TAB)])),
 
     ('avatar', 'Componentes', page(
         'avatar',
@@ -13563,8 +13543,8 @@ PAGES = [
         'próprio ARIA; some no Esc e nunca tem nada clicável dentro.',
         [('Estável', True), ('1 componente no Figma', False),
          (f'{N_TTP_TOKENS} tokens', False), (f'{N_TT_LITERALS} valores declarados', False)],
-        [('overview', 'Visão geral', TOOLTIP_OVERVIEW), ('specs', 'Especificações', TOOLTIP_SPECS),
-         ('guide', 'Diretrizes', TOOLTIP_GUIDE), ('a11y', 'Acessibilidade', TOOLTIP_A11Y_TAB)])),
+        [('overview', 'Visão geral', TOOLTIP_OVERVIEW), ('playground', 'Playground', TOOLTIP_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(TOOLTIP_GUIDE)), ('a11y', 'Acessibilidade', TOOLTIP_A11Y_TAB)])),
     ('toast', 'Componentes', page(
         'toast',
         'Uma mensagem curta no canto da tela sobre algo que acabou de acontecer: um sucesso, um aviso, um erro '
@@ -13572,8 +13552,8 @@ PAGES = [
         'aviso nem erro.',
         [('Estável', True), ('4 variantes no Figma', False),
          (f'{N_TST_TOKENS} tokens', False), (f'{N_TS_LITERALS} valores declarados', False)],
-        [('overview', 'Visão geral', TOAST_OVERVIEW), ('specs', 'Especificações', TOAST_SPECS),
-         ('guide', 'Diretrizes', TOAST_GUIDE), ('a11y', 'Acessibilidade', TOAST_A11Y_TAB)])),
+        [('overview', 'Visão geral', TOAST_OVERVIEW), ('playground', 'Playground', TOAST_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(TOAST_GUIDE)), ('a11y', 'Acessibilidade', TOAST_A11Y_TAB)])),
     ('alert', 'Componentes', page(
         'alert',
         'Um bloco no topo da página, abaixo do header, sobre um assunto que pede atenção: um sucesso que '
@@ -13581,8 +13561,8 @@ PAGES = [
         'opcional — e só é anunciado quando chega depois do carregamento.',
         [('Estável', True), ('4 variantes no Figma', False),
          (f'{N_ALR_TOKENS} tokens', False), ('0 valores declarados', False)],
-        [('overview', 'Visão geral', ALERT_OVERVIEW), ('specs', 'Especificações', ALERT_SPECS),
-         ('guide', 'Diretrizes', ALERT_GUIDE), ('a11y', 'Acessibilidade', ALERT_A11Y_TAB)])),
+        [('overview', 'Visão geral', ALERT_OVERVIEW), ('playground', 'Playground', ALERT_PLAYGROUND),
+         ('guide', 'Diretrizes', anat_to_tables(ALERT_GUIDE)), ('a11y', 'Acessibilidade', ALERT_A11Y_TAB)])),
 ]
 
 REPO_URL = 'https://github.com/guilhermedworakowski/al-design-system'
@@ -14104,7 +14084,7 @@ JS_TAG = r"""
   var labelInput = document.getElementById('tag-label');
 
   function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
     return el ? el.value : null;
   }
 
@@ -14142,7 +14122,7 @@ JS_TAG = r"""
     code.innerHTML = lines.join('\n');
   }
 
-  document.querySelectorAll('#tag-controls input').forEach(function (i) {
+  document.querySelectorAll('#tag-controls input, #tag-controls select').forEach(function (i) {
     i.addEventListener('input', render);
   });
 
