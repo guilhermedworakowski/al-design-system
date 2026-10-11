@@ -1048,16 +1048,18 @@ th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
 .dd{display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:1px;
   background:var(--al-border-subtle); border:1px solid var(--al-border-subtle);
   border-radius:10px; overflow:hidden; margin-bottom:14px}
-.dd .cell{background:var(--al-bg-canvas); padding:18px 20px; display:flex; flex-direction:column; gap:13px}
-.dd .lab{font-family:var(--al-font-mono); font-size:10px; font-weight:500; letter-spacing:.13em;
-  text-transform:uppercase; display:flex; align-items:center; gap:7px}
-.dd .do .lab{color:var(--al-text-success)}
-.dd .no .lab{color:var(--al-text-danger)}
-.dd .do .lab::before, .dd .no .lab::before{content:''; width:7px; height:7px; border-radius:50%;
-  background:currentColor}
+/* bloco de exemplo (Diretrizes, Acessibilidade): mesmos espaços dos cards de
+   Exemplos. Faça / Não faça é Tag, como na tabela; o título é Body/sm bold
+   text-primary e a legenda Body/sm text-secondary, na largura toda */
+.dd .cell{background:var(--al-bg-canvas); padding:var(--al-space-16) var(--al-space-24);
+  display:flex; flex-direction:column; gap:var(--al-space-16)}
+.dd .dd-head{display:flex; flex-wrap:wrap; align-items:center; gap:var(--al-space-8)}
+.dd .lab{font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  font-weight:var(--al-font-weight-bold); color:var(--al-text-primary)}
 .dd .stage2{display:flex; flex-wrap:wrap; gap:11px; align-items:center; padding:18px 16px;
   background:var(--al-bg-surface); border-radius:8px; min-height:72px}
-.dd .cap{font-size:13px; color:var(--al-text-secondary); margin:0}
+.dd .cap{margin:0; max-width:none; font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  color:var(--al-text-secondary)}
 .dd .cap b{color:var(--al-text-primary); font-weight:600}
 
 /* ── estados forçados: SÓ para o playground e as folhas de espécimes.
@@ -15326,6 +15328,25 @@ HTML = (
     + JS_MOTION + '</script>\n'
 )
 
+# Blocos de exemplo: o tipo (Faça / Não faça) sai como Tag Success / Error sm,
+# como na tabela da Visão geral. Vale para célula .do/.no e para rótulo
+# pintado de success/danger; um rótulo que não é só "Faça"/"Não faça" vira o
+# título ao lado da Tag. Rótulo sem tipo perde a cor solta e vira título.
+def dd_tags(html):
+    def sub(m):
+        abre, classes, cor, texto = m.group(1), m.group(2), m.group(3), m.group(4)
+        kind = ('do' if ' do' in f' {classes}' or cor == 'success' else
+                'no' if ' no' in f' {classes}' or cor == 'danger' else None)
+        if not kind:
+            return f'{abre}<span class="lab">{texto}</span>'
+        tag = tg('filled', 'success', 'sm', 'Faça') if kind == 'do' else tg('filled', 'error', 'sm', 'Não faça')
+        titulo = '' if texto.strip() in ('Faça', 'Não faça') else f'<span class="lab">{texto}</span>'
+        return f'{abre}<span class="dd-head">{tag}{titulo}</span>'
+    return re.sub(r'(<div class="cell([^"]*)"[^>]*>\s*)<span class="lab"'
+                  r'(?: style="color:var\(--al-text-(\w+)\)")?>(.*?)</span>', sub, html, flags=re.S)
+
+
+HTML = dd_tags(HTML)
 open(out(SITE_HTML), 'w', encoding='utf-8').write(HTML)
 
 print(f'build/site/index.html escrito ({len(HTML):,} bytes)')
