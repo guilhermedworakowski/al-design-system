@@ -838,7 +838,7 @@ code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-su
 .seg{display:inline-flex; flex-wrap:wrap; gap:6px}
 .seg input{position:absolute; opacity:0; width:1px; height:1px}
 .seg label{
-  padding:6px 13px; border-radius:9999px; border:1px solid var(--al-border-default);
+  padding:6px 13px; border-radius:9999px; border:1px solid var(--al-border-subtle);
   font-size:13px; cursor:pointer; color:var(--al-text-secondary); user-select:none;
 }
 .seg label:hover{background:var(--al-bg-hover); color:var(--al-text-primary)}
@@ -849,7 +849,7 @@ code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-su
 .seg input:focus-visible + label{outline:2px solid var(--al-border-focus); outline-offset:2px}
 .txt{
   font-family:inherit; font-size:13.5px; padding:7px 11px; width:100%; max-width:280px;
-  border:1px solid var(--al-border-default); border-radius:8px;
+  border:1px solid var(--al-border-subtle); border-radius:8px;
   background:var(--al-bg-canvas); color:var(--al-text-primary);
 }
 .txt:focus-visible{outline:2px solid var(--al-border-focus); outline-offset:1px; border-color:var(--al-border-focus)}
@@ -861,7 +861,7 @@ code{font-family:var(--al-font-mono); font-size:.86em; background:var(--al-bg-su
 .codebar span{font-family:var(--al-font-mono); font-size:10.5px; font-weight:500;
   letter-spacing:.1em; text-transform:uppercase; color:var(--al-text-secondary)}
 .copy{
-  appearance:none; border:1px solid var(--al-border-default); background:var(--al-bg-canvas);
+  appearance:none; border:1px solid var(--al-border-subtle); background:var(--al-bg-canvas);
   color:var(--al-text-secondary); font-family:var(--al-font-mono); font-size:11px;
   padding:5px 12px; border-radius:9999px; cursor:pointer;
 }
@@ -994,7 +994,7 @@ th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
 .anat b{display:block; font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
   text-transform:uppercase; color:var(--al-bg-brand); margin-bottom:5px}
 .anat span{font-size:13px; color:var(--al-text-secondary)}
-.note{padding:15px 18px; background:var(--al-bg-surface); border-left:2px solid var(--al-bg-brand);
+.note{padding:15px 18px; background:var(--al-bg-surface); border-left:2px solid var(--al-border-subtle);
   border-radius:0 8px 8px 0; font-size:14px; margin-bottom:14px}
 .note:last-child{margin-bottom:0}
 .note b{display:block; margin-bottom:4px}
