@@ -27,13 +27,14 @@ A navegacao e o switch de tema sao componentes do AL, nao casca: os portoes de
 marcacao da Sidebar, do Tab, do Avatar, do Icon Button, do Divider e do Switch
 leem o HTML emitido e cobram o contrato de cada um.
 
-Rodar: python3 site/site.py     (escreve build/site/index.html)
+Rodar: python3 site/site.py     (escreve build/site/index.html, o site publicado,
+                                 e build/artifact/index.html, a versão completa do artifact)
 """
 import base64, glob, json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'tools'))
-from paths import BUILD, FOUNDATION_SRC, TOKENS_JSON, FOUNDATION_CSS, SITE_HTML, comp_src, comp_out, out  # noqa: E402
+from paths import BUILD, FOUNDATION_SRC, TOKENS_JSON, FOUNDATION_CSS, SITE_HTML, ARTIFACT_HTML, comp_src, comp_out, out  # noqa: E402
 sys.path.insert(0, FOUNDATION_SRC)
 
 from color import cr  # noqa: E402  - contraste medido, nunca escrito a mao
@@ -464,14 +465,14 @@ def contrast_tables():
         out.append('<div class="scroller"><table><thead><tr><th>Par</th><th>Frente</th><th>Fundo</th>'
                    '<th class="num">Medido</th><th class="num">Mín.</th><th></th></tr></thead><tbody>')
         for r in rows:
-            tag = 'exc' if r.get('exception') else 'pass'
-            word = 'MARCA' if r.get('exception') else 'AA'
+            tag = 'warning' if r.get('exception') else 'success'
+            word = 'Marca' if r.get('exception') else 'AA'
             out.append(f'<tr><td>{r["label"]}</td>'
                        f'<td class="tok"><span class="chip sm" style="background:{r["fgHex"]}"></span>{r["fg"]}</td>'
                        f'<td class="tok"><span class="chip sm" style="background:{r["bgHex"]}"></span>{r["bg"]}</td>'
                        f'<td class="num strong">{r["ratio"]:.2f}:1</td>'
                        f'<td class="num dim">{r["min"]}</td>'
-                       f'<td><span class="{tag}">{word}</span></td></tr>')
+                       f'<td><span class="al-tag al-tag--filled al-tag--{tag} al-tag--sm">{word}</span></td></tr>')
         out.append('</tbody></table></div>')
     return ''.join(out)
 
@@ -920,6 +921,30 @@ def anat_to_tables(html):
         t = anat_table(m.group(2)).replace('<th>Elemento</th>', '<th>Item</th>')
         return t.replace('<div class="scroller">', f'<div class="scroller" style="{st.group(1)}">', 1) if st else t
     return ANAT_RE.sub(rep, html)
+
+
+NOTE_RUN_RE = re.compile(r'<div class="note"[^>]*>.*?</div>(?:\s*<div class="note"[^>]*>.*?</div>)*', re.S)
+
+
+def notes_to_tables(html):
+    """Notas empilhadas viram tabela Item | Descrição, como as grades `.anat`.
+
+    Conta título por título: duas notas seguidas, ou uma nota com dois títulos,
+    já são uma lista e vão para a tabela. Nota com um título só fica nota, como
+    as que acompanham uma tabela no Button."""
+    def rep(m):
+        items = []
+        for body in re.findall(r'<div class="note"[^>]*>(.*?)</div>', m.group(0), re.S):
+            for t, d in re.findall(r'<b>(.*?)</b>(.*?)(?=<b>|$)', body, re.S):
+                paras = re.findall(r'<p[^>]*>(.*?)</p>', d, re.S) or [d]
+                items.append((t.strip(), '<br><br>'.join(' '.join(x.split()) for x in paras)))
+        if len(items) < 2:
+            return m.group(0)
+        trs = ''.join(f'<tr><td class="name">{t}</td><td>{d}</td></tr>' for t, d in items)
+        return ('<div class="scroller" style="margin-top:18px"><table class="tbl-fit">'
+                '<thead><tr><th>Item</th><th>Descrição</th></tr></thead>'
+                f'<tbody>{trs}</tbody></table></div>')
+    return NOTE_RUN_RE.sub(rep, html)
 
 
 def usage_section(text, comp, js=False):
@@ -1412,10 +1437,6 @@ td.chipcell{width:30px; padding-right:4px}
 .chip{display:inline-block; width:18px; height:18px; border-radius:5px; vertical-align:middle;
   border:1px solid var(--al-border-subtle)}
 .chip.sm{width:11px; height:11px; border-radius:3px; margin-right:7px; vertical-align:-1px}
-.pass,.exc{display:inline-block; font-family:var(--al-font-mono); font-size:9.5px; font-weight:500;
-  letter-spacing:.05em; padding:2px 8px; border-radius:9999px; white-space:nowrap;
-  background:var(--al-bg-success-subtle); color:var(--al-text-success)}
-.exc{background:var(--al-bg-warning-subtle); color:var(--al-text-warning)}
 
 /* ── estatísticas ── */
 .stats{display:flex; flex-wrap:wrap; border:1px solid var(--al-border-subtle);
@@ -1758,20 +1779,21 @@ TAB_PRINCIPIOS = f'''
   <h2>As cinco decisões que travam o resto</h2>
   <p>Tudo o que vem depois é consequência destas. São fáceis de desfazer por engano numa
   contribuição, então ficam registradas antes de qualquer valor.</p>
-  <div class="scroller" style="margin-top:18px"><table><tbody>
-    <tr><td class="tok" style="width:96px">âncora</td><td><b>{META['brandAnchor']} é imutável.</b>
+  <div class="scroller" style="margin-top:18px"><table class="tbl-fit">
+    <thead><tr><th>Item</th><th>Descrição</th></tr></thead><tbody>
+    <tr><td class="name">Âncora</td><td><b>{META['brandAnchor']} é imutável.</b>
       Ela fixa L 0,666 na escada compartilhada. Mudar a âncora é mudar a marca inteira.</td></tr>
-    <tr><td class="tok">rótulo</td><td><b>Texto claro sobre a marca.</b> Branco sobre
+    <tr><td class="name">Rótulo</td><td><b>Texto claro sobre a marca.</b> Branco sobre
       <code>{META['brandAnchor']}</code> dá {cr(O['500'], '#FFFFFF'):.2f}:1 — abaixo dos 4,5:1 de texto
       normal, acima dos 3:1 de texto grande e de elemento não-textual. É escolha de identidade,
       tomada com o número na mão.</td></tr>
-    <tr><td class="tok">neutro</td><td><b>O cinza é acromático.</b> Chroma zero em toda a rampa —
+    <tr><td class="name">Neutro</td><td><b>O cinza é acromático.</b> Chroma zero em toda a rampa —
       <code>r = g = b</code> nos onze degraus. A escala fria anterior saiu junto com a atualização
       da marca.</td></tr>
-    <tr><td class="tok">escuro</td><td><b>O tema escuro não é inversão.</b> Sólidos vão para o degrau
+    <tr><td class="name">Escuro</td><td><b>O tema escuro não é inversão.</b> Sólidos vão para o degrau
       500 com texto escuro, tonalizados de 100 para 950, e elevação troca sombra por superfície que
       clareia.</td></tr>
-    <tr><td class="tok">portão</td><td><b>Contraste é portão de build.</b> Os {N_PAIRS} pares rodam a
+    <tr><td class="name">Portão</td><td><b>Contraste é portão de build.</b> Os {N_PAIRS} pares rodam a
       cada alteração de cor. Um par abaixo do mínimo quebra o build — nunca se afrouxa o
       mínimo.</td></tr>
   </tbody></table></div>
@@ -1779,8 +1801,8 @@ TAB_PRINCIPIOS = f'''
 
 <section>
   <h2>Como um componente entra no sistema</h2>
-  <p>Oito etapas, uma fechada antes de a próxima abrir. O Button percorreu as oito; é por isso
-  que ele é o único componente publicado até aqui.</p>
+  <p>Oito etapas, uma fechada antes de a próxima abrir. Todo componente publicado percorreu
+  as oito.</p>
   <div class="anat" style="margin-top:18px">
     <div><b>01 · Definir</b><span>Escopo, precedentes em Carbon, Primer, Polaris, Material e Spectrum, auditoria do que já existe.</span></div>
     <div><b>02 · Desenhar</b><span>Forma e composição no Figma. Etapa humana, por escolha.</span></div>
@@ -2273,7 +2295,7 @@ TAB_MOTION_TOKENS = f'''
   <h2>Como um componente consome</h2>
   <p>A curva muda conforme o estado de destino, e é isso que faz o mesmo elemento abrir e fechar com
   curvas diferentes. A duração é a do porte, nas duas direções.</p>
-  <pre><code>.painel {{
+  <div class="codeblock"><pre><code>.painel {{
   transition: opacity var(--al-motion-duration-panel) var(--al-motion-easing-exit);
 }}
 .painel[data-open] {{
@@ -2281,7 +2303,7 @@ TAB_MOTION_TOKENS = f'''
 }}
 @media (prefers-reduced-motion: reduce) {{
   .painel {{ transition: none; }}
-}}</code></pre>
+}}</code></pre></div>
 </section>'''
 
 # ═══════════════════════════════════════════════════════════════ Button · abas
@@ -2540,7 +2562,7 @@ def icon_token_rows():
     return '\n'.join(rows)
 
 
-ICON_OVERVIEW = f'''
+ICON_PLAYGROUND = f'''
 <section>
   <h2>Playground</h2>
   <div class="pg">
@@ -2548,15 +2570,15 @@ ICON_OVERVIEW = f'''
       <span id="icon-slot">{al_icon('settings')}</span>
     </div>
 
-    <div class="controls">
-      <div class="ctl"><label for="icon-name">Ícone</label>
-        <select class="txt" id="icon-name">{icon_options()}</select></div>
-      <div class="ctl"><span class="ctl-name">Caixa</span>{seg('iconbox', ICON_BOXES, '24')}</div>
-      <div class="ctl"><label for="icon-free">Livre</label>
-        <input class="txt" id="icon-free" type="number" min="8" max="160" step="1" value="40"
-               style="max-width:120px" disabled></div>
-      <div class="ctl"><span class="ctl-name">Tinta</span>{seg('iconink', ICON_INKS, 'inherit')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('icontheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
+    <div class="controls controls--fields" id="icon-controls">
+      <div class="al-select"><div class="al-select__labelrow">
+        <label class="al-select__label" for="icon-name">Ícone</label></div>
+        <div class="al-select__control"><select id="icon-name" class="al-select__field">{icon_options()}</select>
+        {SELECT_CHEVRON}</div></div>
+      {pg_field('iconbox', 'Caixa', ICON_BOXES, '24')}
+      {inp('icon-free', 'Livre', tipo='number', valor='40', disabled=True)}
+      {pg_field('iconink', 'Tinta', ICON_INKS, 'inherit')}
+      {pg_field('icontheme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
     </div>
 
     <div class="codewrap">
@@ -2571,15 +2593,9 @@ ICON_OVERVIEW = f'''
     <code>on-brand</code> e <code>on-solid</code> trocam o fundo do palco, porque elas só existem
     sobre preenchimento.
   </p>
-</section>
+</section>'''
 
-<section>
-  <h2>Dentro de um acionável</h2>
-  <p>O caso que importa, e o motivo de o padrão ser <code>currentColor</code>: nenhum ícone abaixo
-  declara cor. Eles herdam a do rótulo, e é por isso que acertam os quatro estados do Button sem
-  uma linha a mais. No Figma isso precisa da collection <code>3. Icon ink</code> com quatro modes,
-  porque o Figma não tem essa palavra-chave.</p>
-  <div class="pb-row" style="margin-top:18px">
+ICON_EX_LIVE = f'''
     <button type="button" class="al-btn al-btn--primary al-btn--md">
       <span class="al-btn__icon al-btn__icon--leading">{al_icon('check')}</span>
       <span class="al-btn__label">Salvar</span></button>
@@ -2595,16 +2611,40 @@ ICON_OVERVIEW = f'''
     <button type="button" class="al-btn al-btn--primary al-btn--md" aria-disabled="true">
       <span class="al-btn__icon al-btn__icon--leading">{al_icon('lock')}</span>
       <span class="al-btn__label">Indisponível</span></button>
-  </div>
+'''
+
+ICON_EX_DESC = ('O caso que importa, e o motivo de o padrão ser <code>currentColor</code>: nenhum ícone abaixo declara cor. Eles herdam a do rótulo, e é por isso que acertam os quatro estados do Button sem uma linha a mais. No Figma isso precisa da collection <code>3. Icon ink</code> com quatro modes, porque o Figma não tem essa palavra-chave.')
+
+ICON_OVERVIEW = (preview_section(''.join(al_icon(n) for n in
+                                         ['search', 'heart', 'settings', 'bell', 'star', 'trash']))
+                 + usage_section('Use para dar forma a uma ação ou a um estado, sempre junto de um rótulo '
+                                 'ou de um nome acessível. O ícone herda a cor do texto ao redor, então '
+                                 'dentro de um componente do AL ele não precisa de classe de tinta.', 'icon')
+                 + f'''
+<section>
+  <h2>Anatomia</h2>
+  <div class="scroller"><table class="tbl-fit">
+    <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td class="name">Caixa</td><td>Quadrado de 24px por padrão, definido por <code>--al-icon-box</code>. A escala é 16, 20, 24 e 32; qualquer outro valor entra por <code>style</code>.</td></tr>
+      <tr><td class="name">Desenho</td><td>Lucide, no grid de 24, com cantos e junções redondos. Vem do arquivo <code>.svg</code> da biblioteca.</td></tr>
+      <tr><td class="name">Traço</td><td>2 no grid de 24, gravado no próprio <code>.svg</code>. Escala junto com a caixa.</td></tr>
+    </tbody>
+  </table></div>
 </section>
 
 <section>
+  <h2>Exemplos</h2>
+  {ex_list('icon-ex', 'icon', [('Dentro de um acionável', '', ICON_EX_LIVE, ICON_EX_DESC)])}
+</section>
+
+''' + f'''<section>
   <h2>A biblioteca · {N_ICONS} ícones</h2>
   <p>Desenho Lucide, grid de 24, traço de 2, cantos e junções redondos. O portão
   <code>icons.py</code> recusa qualquer arquivo que fuja disso — o risco desta pasta não é um valor
   errado, é um ícone de outra família entrando sem ninguém ver. Clique para copiar o nome.</p>
   <div style="margin-top:24px">{icon_library()}</div>
-</section>'''
+</section>''')
 
 def icon_a11y_rows(group):
     out = []
@@ -2612,9 +2652,9 @@ def icon_a11y_rows(group):
         if r['group'] != group:
             continue
         if r['exempt']:
-            verdict = '<span class="exc">isento</span>'
+            verdict = '<span class="al-tag al-tag--filled al-tag--warning al-tag--sm">Isento</span>'
         else:
-            verdict = '<span class="pass">passa</span>'
+            verdict = '<span class="al-tag al-tag--filled al-tag--success al-tag--sm">Passa</span>'
         out.append(
             f'<tr><td class="tok dim">{r["theme"]}</td><td class="name">{r["label"]}</td>'
             f'<td class="chipcell"><span class="chip sm" style="background:{r["fg"]}"></span>'
@@ -2680,7 +2720,7 @@ ICON_A11Y_TAB = f'''
 
 ICON_SPECS = f'''
 <section>
-  <h2>Sem escala fixa</h2>
+  <h2>Medidas</h2>
   <p>O desenho é vetorizado no grid de 24, então a mesma marcação vale em qualquer tamanho e o
   traço escala junto. Os quatro degraus abaixo são os recorrentes, não um teto.</p>
   <div class="scroller" style="margin-top:20px"><table>
@@ -2702,7 +2742,7 @@ ICON_SPECS = f'''
 </section>
 
 <section>
-  <h2>Os {len(ICON_TOK['alias'])} tokens</h2>
+  <h2>Tokens</h2>
   <p>Todos alias, nenhum valor próprio. As quatro tintas espelham uma a uma as modes da collection
   <code>3. Icon ink</code> do Figma — mas o padrão do componente não é nenhuma delas, é
   <code>currentColor</code>. Elas são a saída explícita, para ícone que não tenha de quem herdar.</p>
@@ -2717,12 +2757,12 @@ ICON_SPECS = f'''
   <p>Ícone do AL vive dentro de acionável, e nesse lugar ele é quase sempre decorativo: quem carrega
   o sentido é o rótulo. Ícone decorativo anunciado por leitor de tela vira ruído duplicado.</p>
   <h3 class="sub">Decorativo — o caso padrão</h3>
-  <pre><code>&lt;svg class="al-icon al-icon--16" aria-hidden="true" focusable="false"&gt;…&lt;/svg&gt;</code></pre>
+  <div class="codeblock"><pre><code>&lt;svg class="al-icon al-icon--16" aria-hidden="true" focusable="false"&gt;…&lt;/svg&gt;</code></pre></div>
   <p style="margin-top:12px">Os dois atributos fazem coisas diferentes:
   <code>aria-hidden</code> tira do leitor de tela, <code>focusable="false"</code> tira da ordem de
   tabulação — SVG inline entra nela sozinho em alguns navegadores.</p>
   <h3 class="sub">Quando o ícone carrega o sentido</h3>
-  <pre><code>&lt;svg class="al-icon" role="img" aria-label="Erro de validação"&gt;…&lt;/svg&gt;</code></pre>
+  <div class="codeblock"><pre><code>&lt;svg class="al-icon" role="img" aria-label="Erro de validação"&gt;…&lt;/svg&gt;</code></pre></div>
   <p style="margin-top:12px">Botão só de ícone é o caso limite e não é este: ali o nome acessível
   vai no <code>&lt;button&gt;</code>, nunca no <code>svg</code>. Quem resolve isso é o Icon Button.</p>
 </section>
@@ -2732,11 +2772,11 @@ ICON_SPECS = f'''
   <div class="scroller"><table>
     <thead><tr><th>Arquivo</th><th>O que faz</th><th>Resultado</th></tr></thead>
     <tbody>
-      <tr><td class="tok">icons/*.svg</td><td>{N_ICONS} desenhos · Lucide · ISC</td><td><span class="pass">70/70</span></td></tr>
-      <tr><td class="tok">icon.css</td><td>o componente: caixa e tinta, escrito à mão</td><td><span class="pass">0 literais</span></td></tr>
-      <tr><td class="tok">tokens.py</td><td>portão de alias · gera al-icon-tokens.css</td><td><span class="pass">0 valores soltos</span></td></tr>
-      <tr><td class="tok">check.py</td><td>portão de CSS literal</td><td><span class="pass">0 pendências</span></td></tr>
-      <tr><td class="tok">icons.py</td><td>portão de desenho · recusa ícone fora da família</td><td><span class="pass">70/70</span></td></tr>
+      <tr><td class="tok">icons/*.svg</td><td>{N_ICONS} desenhos · Lucide · ISC</td><td><span class="al-tag al-tag--filled al-tag--success al-tag--sm">70/70</span></td></tr>
+      <tr><td class="tok">icon.css</td><td>o componente: caixa e tinta, escrito à mão</td><td><span class="al-tag al-tag--filled al-tag--success al-tag--sm">0 literais</span></td></tr>
+      <tr><td class="tok">tokens.py</td><td>portão de alias · gera al-icon-tokens.css</td><td><span class="al-tag al-tag--filled al-tag--success al-tag--sm">0 valores soltos</span></td></tr>
+      <tr><td class="tok">check.py</td><td>portão de CSS literal</td><td><span class="al-tag al-tag--filled al-tag--success al-tag--sm">0 pendências</span></td></tr>
+      <tr><td class="tok">icons.py</td><td>portão de desenho · recusa ícone fora da família</td><td><span class="al-tag al-tag--filled al-tag--success al-tag--sm">70/70</span></td></tr>
       <tr><td class="tok">NOTICE</td><td>ISC do Lucide — o resto do AL segue {META['license']}</td><td></td></tr>
     </tbody>
   </table></div>
@@ -2747,6 +2787,17 @@ ICON_SPECS = f'''
   </div>
 </section>'''
 
+
+ICON_CLASSES = [
+    ('.al-icon', '—', 'Base. Caixa de 24px e tinta herdada do texto (<code>currentColor</code>).'),
+    ('.al-icon--&#123;caixa&#125;', '16 · 20 · 24 · 32', 'Caixa da escala. Sem modificador, 24.'),
+    ('--al-icon-box', 'qualquer px', 'Caixa fora da escala, por <code>style</code>, sem classe nova.'),
+    ('.al-icon--ink-&#123;tinta&#125;', 'default · disabled · on-brand · on-solid',
+     'Tinta explícita, para ícone que não tem de quem herdar.'),
+    ('aria-hidden', 'true', 'Decorativo, o caso padrão: sai do leitor de tela.'),
+    ('focusable', 'false', 'Tira o <code>svg</code> da ordem de tabulação.'),
+    ('role · aria-label', 'img · texto', 'Só quando o ícone carrega o sentido sozinho.'),
+]
 
 # ═══════════════════════════════════════════════════════════════════ páginas
 LANDING_FUNDACAO = f'''
@@ -13306,7 +13357,7 @@ PAGES = [
         'O que está decidido antes dos valores: as cinco escolhas que sustentam o sistema, as oito '
         'etapas que um componente percorre e os quatro portões que recusam o que não passa.',
         [('5 decisões', True), ('8 etapas', False), ('4 portões', False)],
-        TAB_PRINCIPIOS)),
+        notes_to_tables(anat_to_tables(TAB_PRINCIPIOS)))),
 
     ('prova', 'Fundação', simple_page(
         'prova',
@@ -13321,8 +13372,8 @@ PAGES = [
         f'com dois temas cada, e {N_PAIRS} pares medidos antes de qualquer um virar token.',
         [(f'{N_PRIM} primitivas', False), (f'{N_SEM} semânticos', True), ('OKLCH', False),
          ('WCAG 2.1 AA', False)],
-        [('escala', 'Escala', TAB_ESCALA), ('semanticos', 'Semânticos', TAB_SEMANTICOS),
-         ('contraste', 'Contraste', TAB_CONTRASTE)])),
+        [('escala', 'Escala', notes_to_tables(TAB_ESCALA)), ('semanticos', 'Semânticos', notes_to_tables(TAB_SEMANTICOS)),
+         ('contraste', 'Contraste', notes_to_tables(TAB_CONTRASTE))])),
 
     ('tipografia', 'Fundação', page(
         'tipografia',
@@ -13330,7 +13381,7 @@ PAGES = [
         'escolhe um estilo, não quatro valores soltos.',
         [(f'{len(T["type"]["styles"])} estilos', True), ('4 pesos', False),
          (f'{len(T["type"]["size"])} tamanhos', False)],
-        [('escala', 'Escala', TAB_TIPO_ESCALA), ('tokens', 'Tokens', TAB_TIPO_TOKENS)])),
+        [('escala', 'Escala', notes_to_tables(TAB_TIPO_ESCALA)), ('tokens', 'Tokens', notes_to_tables(TAB_TIPO_TOKENS))])),
 
     ('espacamento', 'Fundação', page(
         'espacamento',
@@ -13338,8 +13389,8 @@ PAGES = [
         'pelo mesmo portão de contraste que as cores.',
         [(f'{len(T["space"])} degraus de espaço', True), (f'{len(T["radius"])} raios', False),
          ('6 elevações', False)],
-         [('espaco', 'Espaçamento', TAB_ESPACO), ('radius', 'Radius e borda', TAB_RADIUS),
-         ('elevacao', 'Elevação', TAB_ELEVACAO), ('foco', 'Foco', TAB_FOCO)])),
+         [('espaco', 'Espaçamento', notes_to_tables(TAB_ESPACO)), ('radius', 'Radius e borda', notes_to_tables(TAB_RADIUS)),
+         ('elevacao', 'Elevação', notes_to_tables(TAB_ELEVACAO)), ('foco', 'Foco', notes_to_tables(TAB_FOCO))])),
 
     ('motion', 'Fundação', page(
         'motion',
@@ -13347,7 +13398,7 @@ PAGES = [
         'acelera — e a duração, do porte de quem se move. Nenhum componente escreve milissegundo à mão.',
         [(f'{N_MO_TOKENS} tokens', True), ('2 tipos de ação', False), ('1 loop', False),
          (f'{len(MO_DUR)} durações', False), (f'{N_MO_CONSUMERS} componentes consomem', False)],
-        [('movimentos', 'Movimentos', TAB_MOTION_MOVIMENTOS), ('tokens', 'Tokens', TAB_MOTION_TOKENS)])),
+        [('movimentos', 'Movimentos', notes_to_tables(TAB_MOTION_MOVIMENTOS)), ('tokens', 'Tokens', notes_to_tables(TAB_MOTION_TOKENS))])),
 
     ('icon', 'Fundação', page(
         'icon',
@@ -13355,8 +13406,9 @@ PAGES = [
         'componente serve em 16 ou em 96, e o peso da linha acompanha em vez de ficar para trás.',
         [(f'{N_ICONS} ícones', True), ('Grid 24 · traço 2', False),
          (f'{len(ICON_TOK["alias"])} tokens', False), ('0 valores soltos', False)],
-        [('overview', 'Visão geral', ICON_OVERVIEW), ('specs', 'Especificações', ICON_SPECS),
-         ('a11y', 'Acessibilidade', ICON_A11Y_TAB)])),
+        [('overview', 'Visão geral', notes_to_tables(ICON_OVERVIEW)),
+         ('playground', 'Playground', notes_to_tables(ICON_PLAYGROUND + classes_section(ICON_CLASSES) + ICON_SPECS)),
+         ('a11y', 'Acessibilidade', notes_to_tables(ICON_A11Y_TAB))])),
 
     ('componentes', 'Componentes', simple_page(
         'componentes',
@@ -13580,7 +13632,8 @@ def site_nav_group(rotulo, itens):
             f'<ul class="al-tabs al-tabs--square" aria-labelledby="{gid}">{lis}</ul></div>')
 
 
-RAIL = (
+def rail(nav):
+    return (
     '<a class="skip" href="#conteudo">Pular para o conteúdo</a>\n'
     '<aside class="al-sidebar" id="site-sidebar" aria-label="Barra lateral">\n'
     '  <div class="al-sidebar__profile">\n'
@@ -13597,12 +13650,15 @@ RAIL = (
     '  </div>\n'
     '  <nav class="al-sidebar__nav" aria-label="Navegação do design system">\n'
     '    <div class="al-sidebar__content">\n'
-    + '\n'.join('      ' + site_nav_group(r, i) for r, i in SITE_NAV) + '\n'
+    + '\n'.join('      ' + site_nav_group(r, i) for r, i in nav) + '\n'
     '      <hr class="al-divider">\n'
     f'      {sw("themeswitch", "Tema escuro")}\n'
     '    </div>\n'
     '  </nav>\n'
     '</aside>')
+
+
+RAIL = rail(SITE_NAV)
 
 # O botão Menu é do produto (regra 24 da Sidebar): só existe abaixo de 1024px,
 # quando a Sidebar vira painel modal pela esquerda (sidebar.js).
@@ -13927,7 +13983,7 @@ JS_ICON = r"""
 
   sel.addEventListener('change', render);
   free.addEventListener('input', render);
-  document.querySelectorAll('input[name="iconbox"], input[name="iconink"], input[name="icontheme"]')
+  document.querySelectorAll('select[name="iconbox"], select[name="iconink"], select[name="icontheme"]')
     .forEach(function (el) { el.addEventListener('change', render); });
 
   // clicar num icone da biblioteca leva ele para o palco e copia o nome
@@ -15776,10 +15832,38 @@ def dd_tags(html):
                   r'(?: style="color:var\(--al-text-(\w+)\)")?>(.*?)</span>', sub, html, flags=re.S)
 
 
-HTML = dd_tags(HTML)
-open(out(SITE_HTML), 'w', encoding='utf-8').write(HTML)
+# Princípios e A prova são páginas de bastidor, de quando o sistema estava sendo
+# construído: ficam no artifact, que é a versão de trabalho, e saem do site
+# publicado (decisão do Gui, 11/10). O site publicado é build/site/index.html,
+# que também é o que os portões de acessibilidade medem; o artifact é
+# build/artifact/index.html.
+SO_NO_ARTIFACT = ('principios', 'prova')
+HTML_PUBLICO = HTML.replace(RAIL, rail([(g, [it for it in itens if it[0] not in SO_NO_ARTIFACT])
+                                        for g, itens in SITE_NAV]), 1)
+for _pid, _, _html in PAGES:
+    if _pid in SO_NO_ARTIFACT:
+        assert HTML_PUBLICO.count(_html) == 1, _pid
+        HTML_PUBLICO = HTML_PUBLICO.replace(_html + '\n', '', 1)
+_landing = LANDING_FUNDACAO.replace('Os sete assuntos', 'Os cinco assuntos')
+for _l in LANDING_FUNDACAO.splitlines(keepends=True):
+    if any(f"card('{_pid}'" in _l or f'href="#/{_pid}"' in _l for _pid in SO_NO_ARTIFACT):
+        _landing = _landing.replace(_l, '')
+assert HTML_PUBLICO.count(LANDING_FUNDACAO) == 1
+HTML_PUBLICO = HTML_PUBLICO.replace(LANDING_FUNDACAO, _landing)
+# a descrição da Visão geral citava a página A prova
+_LEDE_ARTIFACT = 'a medida, o movimento e a prova de que tudo isso atravessa o portão.'
+assert HTML_PUBLICO.count(_LEDE_ARTIFACT) == 1
+HTML_PUBLICO = HTML_PUBLICO.replace(_LEDE_ARTIFACT, 'a medida e o movimento.')
+for _pid in SO_NO_ARTIFACT:
+    assert f'data-page="{_pid}"' not in HTML_PUBLICO and f'id="pg-{_pid}"' not in HTML_PUBLICO, _pid
 
-print(f'build/site/index.html escrito ({len(HTML):,} bytes)')
+HTML = dd_tags(HTML)
+HTML_PUBLICO = dd_tags(HTML_PUBLICO)
+open(out(SITE_HTML), 'w', encoding='utf-8').write(HTML_PUBLICO)
+open(out(ARTIFACT_HTML), 'w', encoding='utf-8').write(HTML)
+
+print(f'build/site/index.html escrito ({len(HTML_PUBLICO):,} bytes) — sem {", ".join(SO_NO_ARTIFACT)}')
+print(f'build/artifact/index.html escrito ({len(HTML):,} bytes) — completo, para o artifact')
 print(f'  páginas no trilho : {len(PAGES)} — ' + ', '.join(p[0] for p in PAGES))
 print(f'  primitivas        : {N_PRIM}')
 print(f'  semânticos        : {N_SEM} × 2 temas')
