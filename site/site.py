@@ -1868,16 +1868,36 @@ BTN_GUIDE = '''
   </div>
 </section>'''
 
-def btn_contrast():
-    """Tabela de contraste no modelo do Astryx (Requisito | Mínimo | Aplica-se a
-    | Medido | Orientação). Os números vêm do a11y.json que o portão do Button
-    grava: a página nunca diverge da medição."""
-    rows = BTN_A11Y_DATA['rows']
+def contrast_range(rows, sel):
+    """Menor e maior razão das linhas do a11y.json que passam no filtro."""
+    rs = sorted(r['ratio'] for r in rows if r['ratio'] is not None and sel(r))
+    f = lambda x: f'{x:.2f}'.replace('.', ',')
+    return f'{f(rs[0])}:1' if rs[0] == rs[-1] else f'{f(rs[0])} a {f(rs[-1])}:1'
 
-    def rng(sel):
-        rs = sorted(r['ratio'] for r in rows if r['ratio'] is not None and sel(r))
-        f = lambda x: f'{x:.2f}'.replace('.', ',')
-        return f'{f(rs[0])}:1' if rs[0] == rs[-1] else f'{f(rs[0])} a {f(rs[-1])}:1'
+
+def contrast_section(intro, linhas):
+    """Tabela de contraste no modelo do Astryx (Requisito | Mínimo | Aplica-se a
+    | Medido | Orientação). `linhas` = [(requisito, mínimo, aplica-se, medido,
+    orientação, critério WCAG)]."""
+    trs = ''.join(f'<tr><td class="name">{a}</td><td class="tok">{b}</td><td>{c}</td>'
+                  f'<td class="tok">{d}</td><td>{e}<span class="wcag">WCAG {w}</span></td></tr>'
+                  for a, b, c, d, e, w in linhas)
+    return f'''
+<section>
+  <h2>Contraste</h2>
+  {intro}
+  <div class="scroller" style="margin-top:16px"><table class="a11y-req">
+    <thead><tr><th>Requisito</th><th>Mínimo</th><th>Aplica-se a</th><th>Medido</th><th>Orientação</th></tr></thead>
+    <tbody>{trs}</tbody>
+  </table></div>
+</section>'''
+
+
+def btn_contrast():
+    """Os números vêm do a11y.json que o portão do Button grava: a página nunca
+    diverge da medição."""
+    rows = BTN_A11Y_DATA['rows']
+    rng = lambda sel: contrast_range(rows, sel)
 
     def is_state(r, *states):
         return r['label'].split(' · ')[1] in states
@@ -1918,19 +1938,9 @@ def btn_contrast():
          'Os dois tamanhos passam. Só o md alcança os 44px que Apple e Google recomendam para toque.',
          '2.5.8 Tamanho do alvo (mínimo)'),
     ]
-    trs = ''.join(f'<tr><td class="name">{a}</td><td class="tok">{b}</td><td>{c}</td>'
-                  f'<td class="tok">{d}</td><td>{e}<span class="wcag">WCAG {w}</span></td></tr>'
-                  for a, b, c, d, e, w in linhas)
-    return f'''
-<section>
-  <h2>Contraste</h2>
-  <p>Cada combinação é medida renderizada: variante, estado e tema, contra o fundo que o botão
-  tem de fato. São {n} medições no portão de build, e nenhuma reprova.</p>
-  <div class="scroller" style="margin-top:16px"><table class="a11y-req">
-    <thead><tr><th>Requisito</th><th>Mínimo</th><th>Aplica-se a</th><th>Medido</th><th>Orientação</th></tr></thead>
-    <tbody>{trs}</tbody>
-  </table></div>
-</section>'''
+    return contrast_section(
+        f'<p>Cada combinação é medida renderizada: variante, estado e tema, contra o fundo que o botão\n'
+        f'  tem de fato. São {n} medições no portão de build, e nenhuma reprova.</p>', linhas)
 
 
 BTN_A11Y = btn_contrast() + '''
@@ -2265,7 +2275,7 @@ LANDING_FUNDACAO = f'''
 # Reaproveita VARIANTS e STATES do Button de propósito: o recorte é o mesmo, e
 # duplicar as listas seria abrir espaço para elas divergirem sem ninguém ver.
 IB_SIZES = [('sm', 'sm · 36px'), ('md', 'md · 48px')]
-IB_ICON_CHOICES = [('search', 'Buscar'), ('x', 'Fechar'),
+IB_ICON_CHOICES = [('search', 'Buscar'), ('x', 'Fechar'), ('pencil', 'Editar'),
                    ('trash', 'Excluir'), ('ellipsis-vertical', 'Mais opções')]
 IB_ROLES = ['bg', 'bg-hover', 'bg-active', 'bg-disabled', 'ink',
             'ink-disabled', 'border', 'border-disabled', 'ring']
@@ -2277,22 +2287,6 @@ def ib(variant, size, label, name, extra='', cls=''):
             f'al-icon-btn--{size}{cls}" aria-label="{label}" tabindex="-1"{extra}>'
             f'<span class="al-icon-btn__spinner" aria-hidden="true"></span>'
             f'{al_icon(name)}</button>')
-
-
-def ib_token_rows():
-    rows = []
-    for v, _ in VARIANTS:
-        for role in IB_ROLES:
-            name = f'icon-button-{v}-{role}'
-            ref = IB['alias'][name]
-            res = IB['resolved'][name]
-            lt = res['light'] if isinstance(res, dict) else res
-            sw = (f'<span class="chip sm" style="background:{lt}"></span>'
-                  if isinstance(lt, str) and lt.startswith('#') else '')
-            rows.append(f'<tr data-variant="{v}"><td class="tok">--al-{name}</td>'
-                        f'<td class="tok dim">{"transparente" if ref == "transparent" else ref}</td>'
-                        f'<td class="tok">{sw}{lt}</td></tr>')
-    return '\n'.join(rows)
 
 
 def ib_geo_rows():
@@ -2329,172 +2323,6 @@ def ib_specimen_grid():
         out.append('</div></div>')
     return '\n'.join(out)
 
-
-def ib_a11y_rows(group):
-    out = []
-    for r in IB_A11Y['rows']:
-        if r['group'] != group:
-            continue
-        verdict = ('<span class="exc">isento</span>' if r['exempt']
-                   else '<span class="pass">passa</span>')
-        chips = ''
-        if str(r['fg']).startswith('#'):
-            chips = (f'<span class="chip sm" style="background:{r["fg"]}"></span>'
-                     f'<span class="chip sm" style="background:{r["bg"]}"></span>')
-        out.append(
-            f'<tr><td class="tok dim">{r["theme"]}</td><td class="name">{r["label"]}</td>'
-            f'<td class="chipcell">{chips}</td>'
-            f'<td class="tok dim">{r["fg"]} / {r["bg"]}</td>'
-            f'<td class="num strong">{r["ratio"]:.2f}:1</td><td>{verdict}</td></tr>')
-    return '\n'.join(out)
-
-
-N_IB_MEDIDAS = len([r for r in IB_A11Y['rows'] if not r['exempt']])
-
-IB_OVERVIEW = f'''
-<section>
-  <h2>Playground</h2>
-  <div class="pg">
-    <div class="stage" id="ib-stage">
-      <button type="button" class="al-icon-btn al-icon-btn--primary al-icon-btn--md"
-              id="ib-demo" aria-label="Buscar">
-        <span class="al-icon-btn__spinner" aria-hidden="true"></span>
-        {al_icon('search')}
-      </button>
-    </div>
-
-    <div class="controls" id="ib-controls">
-      <div class="ctl"><span class="ctl-name">Variante</span>{seg('ibvariant', VARIANTS, 'primary')}</div>
-      <div class="ctl"><span class="ctl-name">Tamanho</span>{seg('ibsize', IB_SIZES, 'md')}</div>
-      <div class="ctl"><span class="ctl-name">Estado</span>{seg('ibstate', STATES, 'default')}</div>
-      <div class="ctl"><span class="ctl-name">Ícone</span>{seg('ibicon', IB_ICON_CHOICES, 'search')}</div>
-      <div class="ctl"><span class="ctl-name">Tema</span>{seg('ibtheme', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}</div>
-    </div>
-
-    <div class="codewrap">
-      <div class="codebar"><span>Marcação</span>
-        <button type="button" class="copy" id="ib-copy">Copiar</button></div>
-      <pre><code id="ib-code"></code></pre>
-    </div>
-  </div>
-  <p style="margin-top:14px">
-    O botão acima é o componente real: esta página carrega o mesmo
-    <code>icon-button.css</code> que vai para produção. Hover, pressed e focus são forçados por
-    classe, porque não dá para simular ponteiro — as declarações são as mesmas. Repare que o
-    <code>aria-label</code> acompanha o ícone escolhido: sem ele, o botão fica mudo.
-  </p>
-</section>
-
-<section>
-  <h2>O que muda em relação ao Button</h2>
-  <div class="dd">
-    <div class="cell">
-      <span class="lab" style="color:var(--al-text-secondary)">Mesma barra, mesma altura</span>
-      <div class="stage2">
-        {ib('ghost', 'md', 'Editar', 'pencil')}
-        {ib('ghost', 'md', 'Duplicar', 'copy')}
-        {ib('ghost', 'md', 'Excluir', 'trash')}
-        <button type="button" class="al-btn al-btn--primary al-btn--md" tabindex="-1"><span class="al-btn__label">Publicar</span></button>
-      </div>
-      <p class="cap">48px nos dois. É o que faz Icon Button e Button conviverem numa toolbar sem
-      desalinhar — e a razão de o <code>md</code> usar ícone 24 com padding 12.</p>
-    </div>
-    <div class="cell">
-      <span class="lab" style="color:var(--al-text-secondary)">O carregando não move nada</span>
-      <div class="stage2">
-        {ib('primary', 'md', 'Salvar', 'refresh-cw')}
-        {ib('primary', 'md', 'Salvando', 'refresh-cw', ' aria-busy="true" aria-disabled="true"')}
-      </div>
-      <p class="cap">O spinner ocupa a caixa exata do ícone. No Button a largura pode pular e o
-      rótulo muda junto; aqui não há rótulo para trocar.</p>
-    </div>
-  </div>
-</section>
-
-<section>
-  <h2>As quatro variantes</h2>
-  <div class="dd">
-    <div class="cell">
-      <span class="lab" style="color:var(--al-text-secondary)">Barra de ferramentas</span>
-      <div class="stage2">
-        {ib('ghost', 'md', 'Buscar', 'search')}
-        {ib('ghost', 'md', 'Filtrar', 'filter')}
-        {ib('ghost', 'md', 'Mais opções', 'ellipsis-vertical')}
-      </div>
-      <p class="cap">Ghost é o padrão em grupo denso: uma variante só para o grupo inteiro.</p>
-    </div>
-    <div class="cell">
-      <span class="lab" style="color:var(--al-text-secondary)">Ação destrutiva em contexto</span>
-      <div class="stage2">
-        {ib('secondary', 'md', 'Editar linha', 'pencil')}
-        {ib('danger', 'md', 'Excluir linha', 'trash')}
-      </div>
-      <p class="cap">Danger só quando a linha ou o card ao redor já diz <b>o quê</b> está sendo
-      excluído — o ícone sozinho não identifica o alvo.</p>
-    </div>
-  </div>
-</section>'''
-
-IB_SPECS = f'''
-<section>
-  <h2>Anatomia</h2>
-  <div class="anat">
-    <div><b>Contêiner</b><span>Círculo. Raio total, borda de 1px sempre presente — transparente quando a variante não tem borda.</span></div>
-    <div><b>Spinner</b><span>A mesma caixa do ícone, {IB['resolved']['icon-button-sm-icon-size']}px no <code>sm</code> e {IB['resolved']['icon-button-md-icon-size']}px no <code>md</code>. Entra com <code>aria-busy</code>.</span></div>
-    <div><b>Ícone</b><span>Obrigatório e único. Sempre <code>aria-hidden</code>: quem carrega o sentido é o nome acessível.</span></div>
-    <div><b>Nome acessível</b><span><code>aria-label</code> no botão. Não é opcional — é o contrato do componente.</span></div>
-  </div>
-  <div class="note" style="margin-top:16px">
-    <b>Não há rótulo, e é isso que muda tudo</b>
-    O Button tem cinco partes; este tem três. A que falta — o rótulo — é justamente a que
-    carregava o sentido, o nome acessível e o piso de contraste de 4,5:1. Sem ela, esses três
-    papéis se mudam de lugar: sentido vai para o ícone, nome vai para o <code>aria-label</code>,
-    e o piso cai para 3:1 porque o portador deixou de ser texto.
-  </div>
-</section>
-
-<section>
-  <h2>Todos os estados</h2>
-  {ib_specimen_grid()}
-</section>
-
-<section>
-  <h2>Medidas</h2>
-  <div class="scroller">
-    <table>
-      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
-      <tbody>{ib_geo_rows()}</tbody>
-    </table>
-  </div>
-  <div class="note" style="margin-top:16px">
-    <b>Não existe token de caixa</b>
-    A caixa é consequência: <code>padding</code> × 2 mais o ícone. Dá
-    {IB['derived']['box']['sm']}×{IB['derived']['box']['sm']}px no <code>sm</code> e
-    {IB['derived']['box']['md']}×{IB['derived']['box']['md']}px no <code>md</code> — exatamente as
-    alturas do Button. E é um padding só por tamanho, nos quatro lados: o botão é quadrado, então
-    separar <code>padding-x</code> de <code>padding-y</code> fixaria a mesma decisão duas vezes.
-  </div>
-</section>
-
-<section>
-  <h2>Tokens de cor</h2>
-  <div class="ctl" style="margin-bottom:14px"><span class="ctl-name">Filtrar</span>
-    {seg('ibtokfilter', [('all', 'Todas')] + VARIANTS, 'all')}</div>
-  <div class="scroller">
-    <table>
-      <thead><tr><th>Token do Icon Button</th><th>Aponta para</th><th>Resolve em (claro)</th></tr></thead>
-      <tbody id="ibtokbody">{ib_token_rows()}</tbody>
-    </table>
-  </div>
-  <div class="note" style="margin-top:16px">
-    <b>{N_IB_TOKENS} tokens no código, 28 variáveis no Figma</b>
-    A diferença não é esquecimento. As oito tintas vêm da collection <code>3. Icon ink</code>, que
-    resolve por <b>modo</b> — um mecanismo que o CSS não tem, e por isso no código cada tinta
-    precisa ser uma custom property concreta. Os quatro anéis são <i>effect styles</i>, porque
-    sombra não pode ser variável no Figma. E os dois <code>icon-size</code> ligam direto à
-    Fundação, como no Button.
-  </div>
-</section>'''
 
 IB_GUIDE = f'''
 <section>
@@ -2618,51 +2446,45 @@ IB_GUIDE = f'''
   </div>
 </section>'''
 
-IB_A11Y = f'''
-<section>
-  <h2>O piso é 3:1, não 4,5:1</h2>
-  <p>Esta é a única diferença conceitual entre o Icon Button e o Button, e ela explica quase tudo
-  nesta aba. Lá o portador do sentido é um rótulo de <b>texto</b>: critério 1.4.3, piso 4,5:1.
-  Aqui é um <b>ícone</b>, conteúdo não-textual: critério 1.4.11, piso 3:1.</p>
-  <p style="margin-top:12px">A consequência é concreta. Branco sobre a marca dá 3,34:1 — no Button
-  isso é uma <b>exceção de marca nomeada</b>; aqui é <b>aprovação</b>. Por isso este componente
-  tem zero exceções de marca, e o laranja do Primary ficou como está.</p>
-  <div class="stats">
-    <div class="stat hl"><b>{N_IB_MEDIDAS}</b><span>combinações medidas</span></div>
-    <div class="stat"><b>{IB_A11Y['fails']}</b><span>reprovas</span></div>
-    <div class="stat"><b>0</b><span>exceções de marca</span></div>
-    <div class="stat"><b>{IB_A11Y['floor']}:1</b><span>piso não-textual</span></div>
-  </div>
-</section>
+def ib_contrast():
+    """Mesma tabela do Button, lida do a11y.json do portão do Icon Button. O
+    piso aqui é 3:1 em tudo: quem carrega o sentido é um ícone, não texto."""
+    rows = IB_A11Y['rows']
+    rng = lambda sel: contrast_range(rows, sel)
+    n = sum(1 for r in rows if not r['exempt'])
+    alvo = ' e '.join(f'{t["box"]}px' for t in IB_A11Y['targets'])
+    linhas = [
+        ('Ícone', '3:1', 'Default, Hover e Pressed das quatro variantes, nos dois temas',
+         rng(lambda r: r['group'] == 'ink' and not r['exempt']),
+         'A tinta do ícone contra o fundo que ela toca de fato. Sem preenchimento, o fundo é o canvas. '
+         'Branco sobre a marca dá 3,34:1: no Button seria exceção de marca, aqui é aprovação.',
+         '1.4.11 Contraste não textual'),
+        ('Contorno do botão', '3:1', 'Preenchimento do Primary e do Danger, borda do Secondary, ícone do Ghost',
+         rng(lambda r: r['group'] == 'boundary'),
+         'O limite visível do botão contra o canvas. O Ghost não tem contorno nem texto: o próprio ícone é o limite.',
+         '1.4.11 Contraste não textual'),
+        ('Anel de foco', '3:1', 'Focus, nas quatro variantes', rng(lambda r: r['group'] == 'focus'),
+         'O anel contra o canvas. O Danger usa o anel de erro, para não brigar com o vermelho do preenchimento.',
+         '2.4.13 Aparência do foco'),
+        ('Desabilitado', 'Não exigido', 'Disabled', rng(lambda r: r['exempt']),
+         'Componente inativo fica fora do critério. O contraste baixo é sinal: subir faria o desabilitado parecer clicável.',
+         '1.4.11 Contraste não textual'),
+        ('Alvo de toque', '24 × 24px', 'sm e md', alvo,
+         'Os dois tamanhos passam. Só o md alcança os 44px que o Carbon recomenda para alvo de ícone, e não há '
+         'expansão de área por CSS: o sm só entra em densidade alta.',
+         '2.5.8 Tamanho do alvo (mínimo)'),
+    ]
+    intro = (f'<p>O piso é 3:1, não 4,5:1. No Button quem carrega o sentido é um rótulo de <b>texto</b>; '
+             f'aqui é um <b>ícone</b>, conteúdo não textual. Cada combinação é medida renderizada, contra o '
+             f'fundo que o botão tem de fato: são {n} medições no portão de build, e nenhuma reprova.</p>')
+    return contrast_section(intro, linhas)
 
-<section>
-  <h2>Tinta do ícone contra o fundo efetivo</h2>
-  <p>Variante sem preenchimento encosta na <b>tela</b>, nunca em “transparente” — por isso Ghost e
-  Secondary são medidos contra o fundo que aparece por trás deles. O <code>disabled</code> entra
-  medido e isento: o WCAG dispensa componente inativo, e subir esse contraste faria o desabilitado
-  parecer clicável.</p>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Variante · estado</th><th></th><th>Tinta / fundo</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{ib_a11y_rows('ink')}</tbody>
-  </table></div>
-</section>
 
-<section>
-  <h2>O limite do componente</h2>
-  <p>No Button, a variante sem preenchimento e sem borda não precisa de limite próprio: ela é
-  texto, e vale como texto. <b>Aqui essa frase seria falsa</b> — não existe texto. No Ghost, o
-  próprio ícone é o limite visível do componente, e é ele que o portão mede contra a tela.</p>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Variante</th><th></th><th>Frente / tela</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{ib_a11y_rows('boundary')}</tbody>
-  </table></div>
-</section>
-
+IB_A11Y = ib_contrast() + f'''
 <section>
   <h2>Foco</h2>
   <p>O anel tem duas camadas: 2px de respiro na cor do fundo e 2px na cor do foco. O respiro é o
-  que impede o anel de encostar no preenchimento — sem ele, laranja sobre laranja daria 1,00:1.
-  Danger usa o anel de erro, para o foco não brigar com o vermelho.</p>
+  que impede o anel de encostar no preenchimento — sem ele, laranja sobre laranja daria 1,00:1.</p>
   <div class="dd" style="margin-top:16px">
     <div class="cell"><span class="lab" style="color:var(--al-text-secondary)">Anel padrão</span>
       <div class="stage2">
@@ -2677,10 +2499,6 @@ IB_A11Y = f'''
       <p class="cap">Danger aponta para <code>focusRing.error</code>, não para o padrão.</p>
     </div>
   </div>
-  <div class="scroller" style="margin-top:20px"><table>
-    <thead><tr><th>Tema</th><th>Variante</th><th></th><th>Anel / tela</th><th>Razão</th><th></th></tr></thead>
-    <tbody>{ib_a11y_rows('focus')}</tbody>
-  </table></div>
 </section>
 
 <section>
@@ -12645,13 +12463,14 @@ def pg_select(cid, rotulo, opcoes, valor):
             f'{SELECT_CHEVRON}</div></div>')
 
 
-def tok_tabs():
+def tok_tabs(pref, comp, rows_fn):
     """Tokens de cor em Tab Square: uma aba por variante, cada painel com a
-    própria tabela (segundo nível dentro do Tab Line da página)."""
+    própria tabela (segundo nível dentro do Tab Line da página). `rows_fn(v)`
+    devolve as linhas de uma variante, ou de todas com None."""
     abas = [('all', 'Todas')] + VARIANTS
     bt, pn = [], []
     for i, (v, rot) in enumerate(abas):
-        tid, pid = f'btntok-t-{v}', f'btntok-p-{v}'
+        tid, pid = f'{pref}-t-{v}', f'{pref}-p-{v}'
         on = i == 0
         roving = '' if on else ' tabindex="-1"'
         bt.append(f'<button class="al-tab" role="tab" type="button" id="{tid}" '
@@ -12659,9 +12478,9 @@ def tok_tabs():
                   f'<span class="al-tab__label">{rot}</span></button>')
         pn.append(f'<div class="tok-panel" role="tabpanel" id="{pid}" aria-labelledby="{tid}" '
                   f'tabindex="0"{"" if on else " hidden"}><h3 class="sr-only">{rot}</h3>'
-                  f'<div class="scroller"><table><thead><tr><th>Token do Button</th><th>Aponta para</th>'
+                  f'<div class="scroller"><table><thead><tr><th>Token do {comp}</th><th>Aponta para</th>'
                   f'<th>Resolve em (claro)</th></tr></thead>'
-                  f'<tbody>{token_rows(None if v == "all" else v)}</tbody></table></div></div>')
+                  f'<tbody>{rows_fn(None if v == "all" else v)}</tbody></table></div></div>')
     return ('<div class="al-tabs al-tabs--square tok-tabs" role="tablist" '
             'aria-label="Tokens de cor por variante">'
             + ''.join(bt) + '</div>' + ''.join(pn))
@@ -12720,9 +12539,14 @@ BTN_EXAMPLES = [
 
 
 def btn_example(eid, title, buttons, desc, preset):
-    gid = f'btnex-{eid}'
     live = ''.join(btn_markup(v, l, live=True, **o) for v, l, o in buttons)
     code = '\n'.join(btn_markup(v, l, **o) for v, l, o in buttons)
+    return ex_card(f'btnex-{eid}', title, live, code, desc, preset)
+
+
+def ex_card(gid, title, live, code, desc, preset):
+    """Cartão de exemplo: palco, abas Descrição e Código e o botão que leva o
+    exemplo para o playground da página."""
     code = code.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
     tabs, panels = [], []
     for i, (slug, rot) in enumerate((('desc', 'Descrição'), ('code', 'Código'))):
@@ -12889,7 +12713,238 @@ BTN_PLAYGROUND = f'''
 
 <section>
   <h2>Tokens de cor</h2>
-  {tok_tabs()}
+  {tok_tabs('btntok', 'Button', token_rows)}
+</section>'''
+
+# ═══════════════════════════════════════════ Icon Button · estrutura das abas
+# O modelo do Button aplicado ao irmão sem rótulo.
+
+def ib_code(variant, size, label, name, busy=False):
+    attrs = ' aria-busy="true" aria-disabled="true"' if busy else ''
+    return (f'<button type="button" class="al-icon-btn al-icon-btn--{variant} al-icon-btn--{size}"\n'
+            f'        aria-label="{label}"{attrs}>\n'
+            f'  <span class="al-icon-btn__spinner" aria-hidden="true"></span>\n'
+            f'  <svg class="al-icon" aria-hidden="true" focusable="false"><!-- {name} --></svg>\n'
+            f'</button>')
+
+
+def ib_example(eid, title, items, desc, preset):
+    """`items` = [(variante, tamanho, nome acessível, ícone, ocupado)]; um item
+    com variante 'btn' é um Button de texto, para o exemplo lado a lado."""
+    live, code = [], []
+    for v, sz, lab, name, busy in items:
+        if v == 'btn':
+            live.append(btn_markup('primary', lab, live=True))
+            code.append(btn_markup('primary', lab))
+        else:
+            live.append(ib(v, sz, lab, name, ' aria-busy="true" aria-disabled="true"' if busy else ''))
+            code.append(ib_code(v, sz, lab, name, busy))
+    return ex_card(f'ibex-{eid}', title, ''.join(live), '\n'.join(code), desc, preset)
+
+
+def ib_pre(variant, icon, size='md', state='default'):
+    return {'variant': variant, 'size': size, 'state': state, 'icon': icon}
+
+
+IB_EXAMPLES = [
+    ('barra', 'Barra de ferramentas',
+     [('ghost', 'md', 'Editar', 'pencil', False), ('ghost', 'md', 'Duplicar', 'copy', False),
+      ('ghost', 'md', 'Excluir', 'trash', False)],
+     'Ghost é o padrão em grupo denso, e uma variante só para o grupo inteiro. A diferença entre '
+     'os botões vem da posição e do ícone.',
+     ib_pre('ghost', 'pencil')),
+    ('com-button', 'Ao lado do Button',
+     [('ghost', 'md', 'Editar', 'pencil', False), ('ghost', 'md', 'Duplicar', 'copy', False),
+      ('btn', 'md', 'Publicar', None, False)],
+     '48px nos dois. É o que faz Icon Button e Button conviverem numa barra sem desalinhar, e a '
+     'razão de o <code>md</code> usar ícone 24 com padding 12.',
+     ib_pre('ghost', 'pencil')),
+    ('destrutiva', 'Ação destrutiva em contexto',
+     [('secondary', 'md', 'Editar linha', 'pencil', False), ('danger', 'md', 'Excluir linha', 'trash', False)],
+     'Danger só quando a linha ou o card ao redor já diz <b>o quê</b> está sendo excluído: o ícone '
+     'sozinho não identifica o alvo.',
+     ib_pre('danger', 'trash')),
+    ('tamanhos', 'Tamanhos',
+     [('primary', 'sm', 'Buscar', 'search', False), ('primary', 'md', 'Buscar', 'search', False)],
+     f'<code>md</code>, com {IB["derived"]["box"]["md"]}px, é o padrão e alcança o alvo de toque '
+     f'recomendado. <code>sm</code>, com {IB["derived"]["box"]["sm"]}px, só em densidade alta.',
+     ib_pre('primary', 'search', size='sm')),
+    ('carregando', 'Carregando',
+     [('primary', 'md', 'Salvar', 'refresh-cw', False), ('primary', 'md', 'Salvando', 'refresh-cw', True)],
+     'O spinner ocupa a caixa exata do ícone, então nada se move. Como não há rótulo para trocar, '
+     'o aviso de que algo começou vai numa região viva (<code>role="status"</code>) fora do botão.',
+     ib_pre('primary', 'search', state='busy')),
+]
+
+IB_DO_DONT = [
+    ('do', 'Só ações reconhecíveis sem legenda: buscar, fechar, mais opções.'),
+    ('do', 'Uma variante para o grupo inteiro.'),
+    ('do', '<code>aria-label</code> com a ação: "Buscar", nunca "Lupa".'),
+    ('do', 'Tooltip em todo botão só com ícone.'),
+    ('do', 'No carregamento, <code>aria-busy</code> com <code>aria-disabled</code> e o aviso numa região viva.'),
+    ('dont', 'Na ação principal da tela: ela pede Button com rótulo.'),
+    ('dont', 'Ícone que o desenho não resolve sozinho, como filtrar, exportar ou arquivar.'),
+    ('dont', 'Primary, Secondary e Danger misturados entre ações irmãs.'),
+    ('dont', '<code>aria-label</code> e <code>aria-labelledby</code> juntos: o portão recusa.'),
+    ('dont', 'O atributo <code>disabled</code> no carregamento: tira o botão da ordem de foco.'),
+]
+
+IB_OVERVIEW = f'''
+<section>
+  <h2 class="sr-only">Prévia</h2>
+  <div class="pg"><div class="stage"><div class="ex__row">
+    {ib('primary', 'md', 'Buscar', 'search')}{ib('secondary', 'md', 'Editar', 'pencil')}{ib('ghost', 'md', 'Mais opções', 'ellipsis-vertical')}{ib('danger', 'md', 'Excluir', 'trash')}
+  </div></div></div>
+</section>
+
+<section>
+  <h2>Uso</h2>
+  <p>Use para uma ação reconhecível pelo desenho, como buscar, fechar ou abrir mais opções, quando
+  não há espaço para rótulo. As quatro variantes são as do Button, e o nome da ação vai no
+  <code>aria-label</code>.</p>
+  <div class="codeblock"><pre><code>@import "al-design-system/foundation.css";
+@import "al-design-system/components/icon-button.css";</code></pre></div>
+</section>
+
+<section>
+  <h2>Anatomia</h2>
+  <div class="scroller"><table class="tbl-fit">
+    <thead><tr><th>Elemento</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td class="name">Contêiner</td><td>Círculo. Raio total, borda de 1px sempre presente — transparente quando a variante não tem borda.</td></tr>
+      <tr><td class="name">Spinner</td><td>A mesma caixa do ícone, {IB['resolved']['icon-button-sm-icon-size']}px no <code>sm</code> e {IB['resolved']['icon-button-md-icon-size']}px no <code>md</code>. Entra com <code>aria-busy</code>.</td></tr>
+      <tr><td class="name">Ícone</td><td>Obrigatório e único. Sempre <code>aria-hidden</code>: quem carrega o sentido é o nome acessível.</td></tr>
+      <tr><td class="name">Nome acessível</td><td><code>aria-label</code> no botão. Não é opcional — é o contrato do componente.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px">
+    <b>Não há rótulo, e é isso que muda tudo</b>
+    O Button tem cinco partes; este tem três. A que falta — o rótulo — é justamente a que
+    carregava o sentido, o nome acessível e o piso de contraste de 4,5:1. Sem ela, esses três
+    papéis se mudam de lugar: sentido vai para o ícone, nome vai para o <code>aria-label</code>,
+    e o piso cai para 3:1 porque o portador deixou de ser texto.
+  </div>
+</section>
+
+<section>
+  <h2>Faça e não faça</h2>
+  <div class="scroller"><table class="tbl-fit">
+    <thead><tr><th>Orientação</th><th>Prática</th></tr></thead>
+    <tbody>{do_dont_rows(IB_DO_DONT)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Exemplos</h2>
+  <div class="ex-list">{''.join(ib_example(*e) for e in IB_EXAMPLES)}</div>
+</section>'''
+
+
+def ib_token_rows(variant):
+    rows = []
+    for v, _ in VARIANTS:
+        if variant and v != variant:
+            continue
+        for role in IB_ROLES:
+            name = f'icon-button-{v}-{role}'
+            ref = IB['alias'][name]
+            res = IB['resolved'][name]
+            lt = res['light'] if isinstance(res, dict) else res
+            sw = (f'<span class="chip sm" style="background:{lt}"></span>'
+                  if isinstance(lt, str) and lt.startswith('#') else '')
+            rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                        f'<td class="tok dim">{"transparente" if ref == "transparent" else ref}</td>'
+                        f'<td class="tok">{sw}{lt}</td></tr>')
+    return '\n'.join(rows)
+
+
+IB_PLAYGROUND = f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="ib-stage">
+      <button type="button" class="al-icon-btn al-icon-btn--primary al-icon-btn--md"
+              id="ib-demo" aria-label="Buscar">
+        <span class="al-icon-btn__spinner" aria-hidden="true"></span>
+        {al_icon('search')}
+      </button>
+    </div>
+
+    <div class="controls controls--fields" id="ib-controls">
+      {pg_select('ib-variant', 'Variante', VARIANTS, 'primary')}
+      {pg_select('ib-size', 'Tamanho', IB_SIZES, 'md')}
+      {pg_select('ib-state', 'Estado', STATES, 'default')}
+      {pg_select('ib-icon', 'Ícone', IB_ICON_CHOICES, 'search')}
+      {pg_select('ib-theme', 'Tema', [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')], 'auto')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>Marcação</span>
+        <button type="button" class="copy" id="ib-copy">Copiar</button></div>
+      <pre><code id="ib-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">
+    O botão acima é o componente real: esta página carrega o mesmo
+    <code>icon-button.css</code> que vai para produção. Hover, pressed e focus são forçados por
+    classe, porque não dá para simular ponteiro — as declarações são as mesmas. O
+    <code>aria-label</code> acompanha o ícone escolhido: sem ele, o botão fica mudo.
+  </p>
+</section>
+
+<section>
+  <h2>Classes e atributos</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>Classe ou atributo</th><th>Valores</th><th>Descrição</th></tr></thead>
+    <tbody>
+      <tr><td class="tok">.al-icon-btn</td><td class="tok dim">—</td><td>Base. Obrigatória em todo botão.</td></tr>
+      <tr><td class="tok">.al-icon-btn--&#123;variante&#125;</td><td class="tok dim">primary · secondary · ghost · danger</td><td>Peso na hierarquia. Uma por botão, e uma por grupo.</td></tr>
+      <tr><td class="tok">.al-icon-btn--&#123;tamanho&#125;</td><td class="tok dim">sm · md</td><td>{IB['derived']['box']['sm']}px ou {IB['derived']['box']['md']}px de lado. <code>md</code> é o padrão.</td></tr>
+      <tr><td class="tok">.al-icon-btn__spinner</td><td class="tok dim">—</td><td>Aparece com <code>aria-busy</code>, na caixa do ícone.</td></tr>
+      <tr><td class="tok">svg.al-icon</td><td class="tok dim">um ícone</td><td>Obrigatório e único. Leva <code>aria-hidden="true"</code>.</td></tr>
+      <tr><td class="tok">aria-label</td><td class="tok dim">a ação</td><td>Obrigatório: é o nome acessível. Descreve a ação, nunca o desenho.</td></tr>
+      <tr><td class="tok">aria-labelledby</td><td class="tok dim">id do tooltip</td><td>No lugar do <code>aria-label</code> quando há tooltip. Nunca os dois.</td></tr>
+      <tr><td class="tok">type</td><td class="tok dim">button · submit · reset</td><td>Sempre declarado: dentro de <code>&lt;form&gt;</code> o padrão do HTML é <code>submit</code>.</td></tr>
+      <tr><td class="tok">aria-disabled</td><td class="tok dim">true</td><td>Desabilitado sem sair da ordem de foco.</td></tr>
+      <tr><td class="tok">aria-busy</td><td class="tok dim">true</td><td>Carregando. Sempre junto com <code>aria-disabled</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Todos os estados</h2>
+  {ib_specimen_grid()}
+</section>
+
+<section>
+  <h2>Medidas</h2>
+  <div class="scroller">
+    <table>
+      <thead><tr><th>Tamanho</th><th>Token</th><th>Aponta para</th><th>Valor</th></tr></thead>
+      <tbody>{ib_geo_rows()}</tbody>
+    </table>
+  </div>
+  <div class="note" style="margin-top:16px">
+    <b>Não existe token de caixa</b>
+    A caixa é consequência: <code>padding</code> × 2 mais o ícone. Dá
+    {IB['derived']['box']['sm']}×{IB['derived']['box']['sm']}px no <code>sm</code> e
+    {IB['derived']['box']['md']}×{IB['derived']['box']['md']}px no <code>md</code> — exatamente as
+    alturas do Button. E é um padding só por tamanho, nos quatro lados: o botão é quadrado, então
+    separar <code>padding-x</code> de <code>padding-y</code> fixaria a mesma decisão duas vezes.
+  </div>
+</section>
+
+<section>
+  <h2>Tokens de cor</h2>
+  {tok_tabs('ibtok', 'Icon Button', ib_token_rows)}
+  <div class="note" style="margin-top:16px">
+    <b>{N_IB_TOKENS} tokens no código, 28 variáveis no Figma</b>
+    A diferença não é esquecimento. As oito tintas vêm da collection <code>3. Icon ink</code>, que
+    resolve por <b>modo</b> — um mecanismo que o CSS não tem, e por isso no código cada tinta
+    precisa ser uma custom property concreta. Os quatro anéis são <i>effect styles</i>, porque
+    sombra não pode ser variável no Figma. E os dois <code>icon-size</code> ligam direto à
+    Fundação, como no Button.
+  </div>
 </section>'''
 
 
@@ -12981,7 +13036,7 @@ PAGES = [
         'sentido — e é daí que vêm o nome acessível obrigatório e o piso de contraste de 3:1.',
         [('Estável', True), ('40 variantes no Figma', False), (f'{N_IB_TOKENS} tokens', False),
          ('0 exceções de marca', False)],
-        [('overview', 'Visão geral', IB_OVERVIEW), ('specs', 'Especificações', IB_SPECS),
+        [('overview', 'Visão geral', IB_OVERVIEW), ('playground', 'Playground', IB_PLAYGROUND),
          ('guide', 'Diretrizes', IB_GUIDE), ('a11y', 'Acessibilidade', IB_A11Y)])),
 
     ('tag', 'Componentes', page(
@@ -13546,14 +13601,12 @@ JS_ICONBUTTON = r"""
   // nas Diretrizes, em vez de carregar uma segunda cópia de cada ícone.
   var SVG = {};
   ROTULOS.forEach(function (par) {
-    var achado = document.querySelector('.al-icon-btn[aria-label="' + par[1] + '"] svg');
+    var achado = document.querySelector('#pg-icon-button .al-icon-btn[aria-label="' + par[1] + '"] svg');
     if (achado) SVG[par[0]] = achado.outerHTML;
   });
 
-  function pick(name) {
-    var el = document.querySelector('input[name="' + name + '"]:checked');
-    return el ? el.value : null;
-  }
+  // os controles são o Select do AL
+  function val(name) { return document.getElementById('ib-' + name).value; }
 
   function rotulo(nome) {
     for (var i = 0; i < ROTULOS.length; i++) {
@@ -13563,8 +13616,8 @@ JS_ICONBUTTON = r"""
   }
 
   function render() {
-    var variant = pick('ibvariant'), size = pick('ibsize');
-    var state = pick('ibstate'), icone = pick('ibicon'), theme = pick('ibtheme');
+    var variant = val('variant'), size = val('size');
+    var state = val('state'), icone = val('icon'), theme = val('theme');
     var rot = rotulo(icone);
 
     demo.className = 'al-icon-btn al-icon-btn--' + variant + ' al-icon-btn--' + size
@@ -13609,16 +13662,22 @@ JS_ICONBUTTON = r"""
     code.innerHTML = lines.join('\n');
   }
 
-  document.querySelectorAll('#ib-controls input').forEach(function (el) {
+  document.querySelectorAll('#ib-controls select').forEach(function (el) {
     el.addEventListener('change', render);
   });
 
-  document.querySelectorAll('input[name="ibtokfilter"]').forEach(function (el) {
-    el.addEventListener('change', function () {
-      var v = pick('ibtokfilter');
-      document.querySelectorAll('#ibtokbody tr').forEach(function (tr) {
-        tr.hidden = (v !== 'all' && tr.getAttribute('data-variant') !== v);
+  // "Abrir no playground" dos exemplos: configura os controles e abre a aba
+  document.querySelectorAll('#pg-icon-button [data-pg-preset]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var preset = JSON.parse(b.getAttribute('data-pg-preset'));
+      ['variant', 'size', 'state', 'icon'].forEach(function (k) {
+        if (preset[k]) document.getElementById('ib-' + k).value = preset[k];
       });
+      render();
+      var tab = document.getElementById('t-icon-button-playground');
+      tab.click();
+      tab.focus();
+      document.getElementById('p-icon-button-playground').scrollIntoView({ block: 'start' });
     });
   });
 
