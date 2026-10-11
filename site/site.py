@@ -994,11 +994,15 @@ th.fam{text-align:left; width:120px; padding-right:12px; vertical-align:middle}
 .anat b{display:block; font-family:var(--al-font-mono); font-size:10px; letter-spacing:.1em;
   text-transform:uppercase; color:var(--al-bg-brand); margin-bottom:5px}
 .anat span{font-size:13px; color:var(--al-text-secondary)}
+/* nota: o título em Body/sm bold text-primary, o texto em Body/sm text-secondary,
+   sobre surface com a lateral em border-subtle */
 .note{padding:15px 18px; background:var(--al-bg-surface); border-left:2px solid var(--al-border-subtle);
-  border-radius:0 8px 8px 0; font-size:14px; margin-bottom:14px}
+  border-radius:0 8px 8px 0; font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  color:var(--al-text-secondary); margin-bottom:14px}
 .note:last-child{margin-bottom:0}
-.note b{display:block; margin-bottom:4px}
-.note p{max-width:74ch; font-size:14px}
+.note b{display:block; margin-bottom:4px; font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm);
+  font-weight:var(--al-font-weight-bold); color:var(--al-text-primary)}
+.note p{font-size:var(--al-font-size-sm); line-height:var(--al-line-height-sm); color:var(--al-text-secondary)}
 .note p + p{margin-top:9px}
 .rule{display:grid; grid-template-columns:auto 1fr; gap:18px; padding:20px 0;
   border-top:1px solid var(--al-border-subtle)}
