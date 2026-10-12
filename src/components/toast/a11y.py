@@ -93,16 +93,16 @@ DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('toast', 'a11y.json')
 
 PAGES = ('bg-canvas', 'bg-surface', 'bg-surface-raised')
-# The status names and the X name stay in Portuguese: the site this gate
-# measures is in Portuguese, and these are the exact strings it renders.
+# The status names and the X name the gate expects, exactly as the site renders
+# them. The gate measures the English page (build/site/index.html).
 STATUS = {
-    'success': ('Sucesso', 'circle-check'),
-    'warning': ('Aviso', 'triangle-alert'),
-    'error':   ('Erro', 'circle-alert'),
-    'info':    ('Informação', 'info'),
+    'success': ('Success', 'circle-check'),
+    'warning': ('Warning', 'triangle-alert'),
+    'error':   ('Error', 'circle-alert'),
+    'info':    ('Info', 'info'),
 }
 CLOSE_CLASSES = {'al-icon-btn', 'al-icon-btn--ghost', 'al-icon-btn--sm', 'al-toast__close'}
-CLOSE_LABEL = 'Fechar notificação'
+CLOSE_LABEL = 'Close notification'
 INTERACTIVE = ('a', 'button', 'input', 'select', 'textarea', 'details', 'summary')
 
 
