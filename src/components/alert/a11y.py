@@ -103,16 +103,16 @@ DEFAULT_HTML = SITE_HTML
 OUT_JSON = comp_out('alert', 'a11y.json')
 
 PAGES = ('bg-canvas', 'bg-surface')
-# The status names and the X name stay in Portuguese: the site this gate
-# measures is in Portuguese, and these are the exact strings it renders.
+# The status names and the X name the gate expects, exactly as the site renders
+# them. The gate measures the English page (build/site/index.html).
 STATUS = {
-    'success': ('Sucesso', 'circle-check'),
-    'warning': ('Aviso', 'triangle-alert'),
-    'danger':  ('Perigo', 'circle-alert'),
-    'info':    ('Informação', 'info'),
+    'success': ('Success', 'circle-check'),
+    'warning': ('Warning', 'triangle-alert'),
+    'danger':  ('Danger', 'circle-alert'),
+    'info':    ('Info', 'info'),
 }
 CLOSE_CLASSES = {'al-icon-btn', 'al-icon-btn--ghost', 'al-icon-btn--sm', 'al-alert__close'}
-CLOSE_LABEL = 'Fechar aviso'
+CLOSE_LABEL = 'Close alert'
 INTERACTIVE = ('a', 'button', 'input', 'select', 'textarea', 'details', 'summary')
 HEADINGS = ('h1', 'h2', 'h3', 'h4', 'h5', 'h6')
 
