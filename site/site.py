@@ -20130,15 +20130,6 @@ LANDING_COMPONENTES = tr(f'''
     {card('toast', 'Toast', 'A confirmação de algo que acabou de acontecer, no canto da tela. Um por vez, em fila; Sucesso e Informação saem sozinhos, Aviso e Erro esperam o X.', TH_TOAST)}
     {card('alert', 'Alert', 'Um assunto que pede atenção, no topo da página, abaixo do header. Um por página; Aviso e Perigo ficam até a situação se resolver.', TH_ALERT)}
   </div>
-</section>
-
-<section>
-  <h2>A V1 fechou</h2>
-  <p>Os primitivos, o formulário, a estrutura, a navegação e o feedback atravessaram as oito etapas,
-  um componente de cada vez — e a disciplina de fechar um antes de abrir o outro é a resposta à dívida
-  de “componente pronto sem documentação”. O tier de <b>feedback</b> foi o último: Tooltip, Toast e
-  Alert, os três já no pipeline em duas sessões, em que a página nasce junto com o código e é nela que
-  o QA acontece. Com o Alert, os cinco tiers estão fechados.</p>
 </section>''', f'''
 <section>
   <h2>Published</h2>
@@ -20166,15 +20157,6 @@ LANDING_COMPONENTES = tr(f'''
     {card('toast', 'Toast', 'The confirmation of something that just happened, in the corner of the screen. One at a time, in a queue; Success and Info leave on their own, Warning and Error wait for the X.', TH_TOAST)}
     {card('alert', 'Alert', 'A subject that calls for attention, at the top of the page, below the header. One per page; Warning and Danger stay until the situation is resolved.', TH_ALERT)}
   </div>
-</section>
-
-<section>
-  <h2>V1 is closed</h2>
-  <p>The primitives, the form, the structure, the navigation and the feedback went through the eight stages,
-  one component at a time, and the discipline of closing one before opening the next is the answer to the debt
-  of “a finished component with no documentation”. The <b>feedback</b> tier was the last one: Tooltip, Toast and
-  Alert, all three already in the two-session pipeline, where the page is born along with the code and is where
-  QA happens. With the Alert, the five tiers are closed.</p>
 </section>''')
 
 # O selo da pagina Componentes conta os cards publicados do indice - era um
