@@ -1,0 +1,71 @@
+/* AL Design System - Link
+ *
+ * Always an <a href>. One type, always underlined: the underline is what
+ * separates the link from text, not the color (WCAG 1.4.1) - and it is what
+ * pays the default's declared contrast exception. Never remove it.
+ *
+ * Standalone (.al-link) uses label-md. Inside running text (.al-link--inline)
+ * it inherits the paragraph font and takes no icon.
+ *
+ * The underline is text-decoration, not a bottom border: it has to follow the
+ * text when an inline link wraps across lines. Its color is currentColor, so
+ * it follows the state's ink with no token of its own; the icon does the same.
+ */
+
+.al-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--al-link-gap);
+  color: var(--al-link-text-default);
+  font-family: var(--al-font-sans);
+  font-size: var(--al-link-font-size);
+  line-height: var(--al-link-line-height);
+  font-weight: var(--al-link-font-weight);
+  letter-spacing: var(--al-link-tracking);
+  text-decoration-line: underline;
+  text-decoration-thickness: var(--al-link-underline-default);
+  text-underline-offset: var(--al-link-underline-offset);
+  outline: none;
+  transition:
+    color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    text-decoration-thickness var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* the icon is decorative (aria-hidden in the markup); the text says it all */
+.al-link__icon {
+  flex: none;
+  width: var(--al-link-icon-size);
+  height: var(--al-link-icon-size);
+  color: currentColor;
+}
+
+/* inline: inherits the paragraph; a ring split across lines repeats per line */
+.al-link--inline {
+  display: inline;
+  font: inherit;
+  letter-spacing: inherit;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.al-link--inline .al-link__icon {
+  display: none;
+}
+
+.al-link:hover {
+  color: var(--al-link-text-hover);
+  text-decoration-thickness: var(--al-link-underline-hover);
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* :focus-visible, not :focus - the ring shows from the keyboard, not on click.
+   Same ring as the Button: a shadow, so it doesn't push the layout. */
+.al-link:focus-visible {
+  color: var(--al-link-text-focus);
+  text-decoration-thickness: var(--al-link-underline-hover);
+  box-shadow: var(--al-link-ring);
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-link { transition: none; }
+}
