@@ -2,6 +2,12 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.1.0] - 2026-10-21
+
+### Added
+- **Link**, in Actions: the native `<a href>`, always underlined, with an optional icon on the right. Standalone it uses label-md; with `al-link--inline` it inherits the paragraph font and hides the icon. Three states (default, hover, focus), 10 tokens, 22 usage rules, its own CSS and accessibility gates, and a page in the documentation site in English and Portuguese.
+- One declared contrast exception: the default ink is the brand orange (`color-orange-500`), below 4.5:1 on the light canvas, the light surface and the dark surface. The underline, present in every state, keeps the link from depending on color alone (WCAG 1.4.1).
+
 ## [1.0.1] - 2026-10-09
 
 Preparation for the open-source launch. No class or token changed meaning; one Sidebar style and two gate rules (Tab and Breadcrumb) changed (see Changed).
@@ -154,6 +160,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
+[1.1.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v0.23.0...v1.0.0
 [0.23.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v0.22.0...v0.23.0
