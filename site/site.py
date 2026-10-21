@@ -144,6 +144,10 @@ LINK = json.load(open(comp_out('link', 'tokens.json')))
 LINK_TOKENS = open(comp_out('link', 'al-link-tokens.css')).read()
 LINK_CSS = open(comp_src('link', 'link.css')).read()
 LINK_A11Y = json.load(open(comp_out('link', 'a11y.json')))
+PROG = json.load(open(comp_out('progress', 'tokens.json')))
+PROG_TOKENS = open(comp_out('progress', 'al-progress-tokens.css')).read()
+PROG_CSS = open(comp_src('progress', 'progress.css')).read()
+PROG_A11Y = json.load(open(comp_out('progress', 'a11y.json')))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
 CARD_CSS = open(comp_src('card', 'card.css')).read()
@@ -230,6 +234,7 @@ N_TTP_TOKENS = len(TTP['alias'])
 N_TST_TOKENS = len(TST['alias'])
 N_ALR_TOKENS = len(ALR['alias'])
 N_LINK_TOKENS = len(LINK['alias'])
+N_PROG_TOKENS = len(PROG['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -275,7 +280,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
-                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS)
+                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -299,7 +304,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + TTP_TOKENS + '\n' + TTP_CSS
             + '\n' + TST_TOKENS + '\n' + TST_CSS
             + '\n' + ALR_TOKENS + '\n' + ALR_CSS
-            + '\n' + LINK_TOKENS + '\n' + LINK_CSS)
+            + '\n' + LINK_TOKENS + '\n' + LINK_CSS
+            + '\n' + PROG_TOKENS + '\n' + PROG_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1368,6 +1374,132 @@ O laranja some ali.
 | Link desabilitado | Não existe | Destino indisponível é texto puro. |
 | Tipos inline e standalone separados | Um tipo só | O inline só herda a fonte do parágrafo e esconde o ícone. |
 | Outros fundos | Não medidos | Só o canvas e o surface; um fundo novo passa pelo portão antes. |
+"""
+
+GUIDE_PT['progress'] = """# Progress · Regras de uso
+
+Uma barra de progresso mostra quanto de uma tarefa do sistema já foi feito, enquanto a pessoa espera.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Tarefa longa do sistema:** um envio, uma instalação, uma importação. | **Barra para espaço usado:** isso é um medidor, não progresso. |
+| **Steps para partes contáveis:** "Arquivo 3 de 5". | **Steps como etapas de formulário:** quem avança é a pessoa, não o sistema. |
+| **A barra ocupa o container.** | **Largura fixa que quebra o layout no celular.** |
+| **O rótulo diz a tarefa:** "Enviando relatorio.pdf". | **"Carregando…" sem assunto.** |
+| **Quando falha, uma mensagem diz.** | **Barra vermelha como única pista do erro.** |
+| **Rótulo ou porcentagem sempre junto da barra.** | **Thin sozinha, sem nada que diga o que ela mede.** |
+| **Duração desconhecida: o loading do Button.** | **Barra que vai e volta sem parar.** |
+
+## Regras
+
+### Quando usar
+
+**1. Só para trabalho do sistema que leva tempo e pode ser medido.**
+Um envio, uma instalação, uma importação. A pessoa só espera; o progresso não depende dela.
+*Precedentes: Carbon e Spectrum.*
+
+**2. Não para operação com menos de uns 5 segundos.**
+Use o loading do Button. Uma barra que pisca e some é ruído.
+*Precedente: Carbon.*
+
+**3. Não para medir quantidade.**
+Armazenamento usado, meta atingida: isso é um medidor, que o AL não tem.
+*Precedente: Spectrum.*
+
+**4. Não como etapas de formulário.**
+Um fluxo em que a pessoa avança por conta própria pede um indicador de etapas, que está fora do escopo.
+*Precedente: Carbon.*
+
+### Tipos
+
+**5. Label é o padrão.**
+Use quando a tarefa ocupa o foco da tela. O rótulo diz o que está acontecendo, a porcentagem diz quanto falta.
+
+**6. Steps é para trabalho dividido em partes contáveis do sistema.**
+"Arquivo 3 de 5": quando a parte é a unidade que a pessoa entende, ela informa mais que uma porcentagem.
+*Precedente: Primer.*
+
+**7. Thin é para tarefa de fundo.**
+Dentro de um card, de uma linha ou de um painel, onde o progresso é secundário. Sempre perto de um texto que diga qual é a tarefa (regras 20 e 22).
+
+**8. Uma barra por tarefa.**
+Várias tarefas, várias barras, uma por linha. Uma barra nunca soma tarefas diferentes.
+
+### Tamanho e layout
+
+**9. A barra ocupa a largura do container.**
+Ela não tem largura própria. Evite passar de 6 colunas ou ficar abaixo de 48px.
+*Precedente: Carbon.*
+
+**10. Só sobre canvas, surface ou surface-raised.**
+O trilho foi calibrado para os três. Nunca sobre cor de marca nem sobre feedback sólido.
+
+### Conteúdo
+
+**11. O rótulo diz a ação ou o objeto.**
+"Instalando", "Enviando relatorio.pdf". Nunca um "Carregando…" genérico.
+
+**12. A porcentagem é inteira.**
+Sem casas decimais; texto secundário à direita.
+
+**13. Steps segue "N de total".**
+Com o nome da unidade quando ajuda: "Arquivo 3 de 5".
+
+**14. Texto curto, numa linha.**
+O detalhe vai numa linha de apoio fora do componente.
+
+### Estados e comportamento
+
+**15. O valor só cresce.**
+Nunca volta atrás e não fica muito tempo parado em 99%. Se a estimativa piorar, mude o rótulo, não a barra.
+*Precedente: Material.*
+
+**16. Quando a tarefa termina, a barra sai e o resultado entra no lugar.**
+Um Toast, um Alert ou o próprio conteúdo. A barra não fica parada em 100%.
+
+**17. Erro não é cor da barra.**
+O AL não tem tipo de erro. A mensagem vai num Alert ou numa linha de texto, e a barra para onde estava.
+*Precedente: Carbon.*
+
+**18. Cancelar é um botão fora do componente.**
+Ao lado dele, quando a tarefa pode ser cancelada. A barra não é clicável.
+
+### Acessibilidade
+
+**19. Um `<progress>` nativo, ou `role="progressbar"`.**
+Com `aria-valuenow`, `aria-valuemin` e `aria-valuemax`, para o leitor de tela ler o valor. O elemento nativo já entrega os três.
+*Precedentes: Primer e Mosaic.*
+
+**20. Toda barra tem nome acessível.**
+Label e Steps: o rótulo visível, por `aria-labelledby`. Thin: `aria-label` ou o texto vizinho.
+*Precedentes: Primer e Material.*
+
+**21. A barra não recebe foco.**
+É status passivo. Quando a tarefa termina, quem anuncia é um Toast ou um Alert; a barra não tem `aria-live` próprio.
+*Precedentes: Primer e Carbon.*
+
+**22. A barra nunca é a única pista.**
+O preenchimento fica a 2,53:1 do trilho no claro e a 2,2:1 no escuro, abaixo de 3:1. Quem informa é a porcentagem na Label, a contagem na Steps e o nome com `aria-valuenow` na Thin.
+> **Divergência consciente** do Primer, que pede 3:1 entre segmentos: o AL mantém a cor da marca no preenchimento e paga com texto sempre presente.
+
+**23. Sem animação contínua.**
+Só a largura muda, com a duração de feedback do motion, e respeita `prefers-reduced-motion`.
+
+### Fora de escopo
+
+**24. Sem indeterminado, sem circular, sem cor de status, sem buffer.**
+Se a duração é desconhecida, use o loading do Button. Se a demanda aparecer, ela volta para a etapa 1 como tipo novo.
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Indeterminado | Não existe | O loading do Button ou o spinner. |
+| Circular | Não existe | Tipo novo, de volta à etapa 1. |
+| Cor de sucesso ou de erro | Não existe | A mensagem vai num Alert ou num Toast. |
+| Medidor (quantidade, não tarefa) | Não existe | Componente próprio, não um tipo do Progress. |
 """
 
 
@@ -12599,6 +12731,361 @@ LINK_OVERVIEW, LINK_PLAYGROUND, LINK_A11Y_TAB = model_tabs(
 )
 
 
+# ═══════════════════════════════════════════════════════════ Progress · abas
+# Feedback and status. Só determinado, três tipos: Label, Steps e Thin. Toda
+# barra da página é o <progress> real com o progress.css; os exemplos "a
+# evitar" são casca do site (pr-fake), nunca um .al-progress errado.
+PR_TYPE = tr([('label', 'Label'), ('steps', 'Steps'), ('thin', 'Thin')],
+             [('label', 'Label'), ('steps', 'Steps'), ('thin', 'Thin')])
+PR_VALUE = [('25', '25%'), ('67', '67%'), ('100', '100%')]
+PR_SURF = tr([('canvas', 'Tela'), ('surface', 'Faixa de seção'), ('raised', 'Card elevado')],
+             [('canvas', 'Canvas'), ('surface', 'Section band'), ('raised', 'Raised card')])
+PR_H_STATES = tr('Os três tipos', 'The three types')
+PR_LAB_LABEL = tr('Label · rótulo e porcentagem', 'Label · label and percentage')
+PR_LAB_STEPS = tr('Steps · N de total', 'Steps · N of total')
+PR_LAB_THIN = tr('Thin · tarefa de fundo', 'Thin · background task')
+N_PR_MEDIDAS = len(PROG_A11Y['rows'])
+_PR_N = [0]
+
+
+def pr_id():
+    _PR_N[0] += 1
+    return f'pr-{_PR_N[0]}'
+
+
+def pr_demo(kind, value='67', label=None):
+    """Um Progress real, devolvido como (html, codigo). Steps lê o valor como
+    partes de 5; Thin leva o nome do texto ao lado, fora do componente."""
+    v = int(value)
+    i = pr_id()
+    if kind == 'steps':
+        n = round(v * 5 / 100)
+        lab = label or tr(f'Arquivo {n} de 5', f'File {n} of 5')
+        html = (f'<div class="al-progress al-progress--steps"><div class="al-progress__header">'
+                f'<span class="al-progress__label" id="{i}">{lab}</span></div>'
+                f'<progress class="al-progress__bar" value="{n}" max="5" aria-labelledby="{i}"></progress></div>')
+        code = ['<div class="al-progress al-progress--steps">', '  <div class="al-progress__header">',
+                f'    <span class="al-progress__label" id="upload-label">{lab}</span>', '  </div>',
+                f'  <progress class="al-progress__bar" value="{n}" max="5"',
+                '            aria-labelledby="upload-label"></progress>', '</div>']
+    elif kind == 'thin':
+        lab = label or tr('Sincronizando fotos', 'Syncing photos')
+        html = (f'<div class="pr-thin"><span id="{i}">{lab}</span><div class="al-progress al-progress--thin">'
+                f'<progress class="al-progress__bar" value="{v}" max="100" aria-labelledby="{i}"></progress></div></div>')
+        code = [f'<span id="sync-label">{lab}</span>', '<div class="al-progress al-progress--thin">',
+                f'  <progress class="al-progress__bar" value="{v}" max="100"',
+                '            aria-labelledby="sync-label"></progress>', '</div>']
+    else:
+        lab = label or tr('Instalando', 'Installing')
+        html = (f'<div class="al-progress"><div class="al-progress__header">'
+                f'<span class="al-progress__label" id="{i}">{lab}</span>'
+                f'<span class="al-progress__value">{v}%</span></div>'
+                f'<progress class="al-progress__bar" value="{v}" max="100" aria-labelledby="{i}"></progress></div>')
+        code = ['<div class="al-progress">', '  <div class="al-progress__header">',
+                f'    <span class="al-progress__label" id="install-label">{lab}</span>',
+                f'    <span class="al-progress__value">{v}%</span>', '  </div>',
+                f'  <progress class="al-progress__bar" value="{v}" max="100"',
+                '            aria-labelledby="install-label"></progress>', '</div>']
+    return html, '\n'.join(code)
+
+
+def pr_box(kind, value='67', surf='canvas', label=None):
+    return f'<div class="pr-box" data-surf="{surf}">{pr_demo(kind, value, label)[0]}</div>'
+
+
+def pr_fake(width, label=None, value=None, cls=''):
+    """Casca de exemplo a evitar: parece uma barra, não é o componente."""
+    head = (f'<span class="pr-fake__head"><span>{label}</span><span>{value or ""}</span></span>'
+            if label else '')
+    return (f'<div class="pr-fake {cls}">{head}<span class="pr-fake__track">'
+            f'<span class="pr-fake__fill" style="width:{width}%"></span></span></div>')
+
+
+PR_DEMOS = {f'{k}|{v}': dict(zip(('html', 'code'), pr_demo(k, v)))
+            for k, _ in PR_TYPE for v, _ in PR_VALUE}
+
+
+def prog_token_rows(names):
+    rows = []
+    for name in names:
+        res = PROG['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, (int, float)):
+            light = dark = f'{res}px'
+        else:
+            light = dark = '—'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{PROG["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+PR_COLOR_NAMES = ('progress-track-bg', 'progress-fill-bg', 'progress-label-text', 'progress-meta-text')
+PR_GEO_NAMES = ('progress-height', 'progress-height-thin', 'progress-gap', 'progress-radius')
+
+
+def pr_playground(t):
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="progress-stage">{pr_box('label')}</div>
+
+    <div class="controls controls--fields" id="progress-controls">
+      {pg_field('prtype', t['type'], PR_TYPE, 'label')}
+      {pg_field('prvalue', t['value'], PR_VALUE, '67')}
+      {pg_field('prsurf', t['surf'], PR_SURF, 'canvas')}
+      {pg_field('prtheme', t['theme'], t['themes'], 'auto')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="progress-copy">{t['copy']}</button></div>
+      <pre><code id="progress-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>'''
+
+
+def pr_overview(t):
+    return pr_playground(t) + f'''
+
+<section>
+  <h2>{t['h_task']}</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">{t['do_lab']}</span>
+      <div class="stage2" style="display:block">{pr_box('label', '67', label=t['do_text'])}</div>
+      <p class="cap">{t['do_cap']}</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">{t['no_lab']}</span>
+      <div class="stage2" style="display:block">{pr_fake(48, t['no_text'], t['no_val'])}</div>
+      <p class="cap">{t['no_cap']}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>{PR_H_STATES}</h2>
+  <div class="dd dd--3">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{PR_LAB_LABEL}</span>
+      <div class="stage2" style="display:block">{pr_box('label')}</div>
+      <p class="cap">{t['cap_label']}</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{PR_LAB_STEPS}</span>
+      <div class="stage2" style="display:block">{pr_box('steps', '60')}</div>
+      <p class="cap">{t['cap_steps']}</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{PR_LAB_THIN}</span>
+      <div class="stage2" style="display:block">{pr_box('thin')}</div>
+      <p class="cap">{t['cap_thin']}</p>
+    </div>
+  </div>
+</section>'''
+
+
+PROG_OVERVIEW = tr(pr_overview({
+    'type': 'Tipo', 'value': 'Valor', 'surf': 'Superfície', 'theme': 'Tema',
+    'themes': [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')],
+    'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'O <b>Tipo</b> decide o que acompanha a barra: rótulo e porcentagem, a contagem de '
+            'partes, ou só a barra fina ao lado de um texto. Troque o <b>Valor</b>: só a largura do '
+            'preenchimento muda, e a barra nunca entra na ordem do Tab.',
+    'h_task': 'Uma tarefa do sistema, não uma quantidade',
+    'do_lab': 'Envio de arquivo', 'do_text': 'Enviando relatorio.pdf',
+    'do_cap': 'O sistema trabalha e a pessoa espera. <i>Carbon, Spectrum.</i>',
+    'no_lab': 'Espaço usado', 'no_text': 'Armazenamento', 'no_val': '7,2 de 15 GB',
+    'no_cap': 'Uma quantidade não termina: isso é um medidor, que o AL não tem.',
+    'cap_label': 'O padrão. A tarefa ocupa o foco da tela.',
+    'cap_steps': 'Partes contáveis do sistema. A contagem diz mais que a porcentagem.',
+    'cap_thin': 'Tarefa de fundo, sempre ao lado do texto que a nomeia.'}), pr_overview({
+    'type': 'Type', 'value': 'Value', 'surf': 'Surface', 'theme': 'Theme',
+    'themes': [('auto', 'System'), ('light', 'Light'), ('dark', 'Dark')],
+    'markup': 'Markup', 'copy': 'Copy',
+    'note': 'The <b>Type</b> decides what goes with the bar: a label and a percentage, a count of '
+            'parts, or just the thin bar next to a text. Change the <b>Value</b>: only the fill width '
+            'changes, and the bar never enters the tab order.',
+    'h_task': 'A system task, not a quantity',
+    'do_lab': 'File upload', 'do_text': 'Uploading report.pdf',
+    'do_cap': 'The system works and the person waits. <i>Carbon, Spectrum.</i>',
+    'no_lab': 'Storage used', 'no_text': 'Storage', 'no_val': '7.2 of 15 GB',
+    'no_cap': 'A quantity never finishes: that is a meter, which AL does not have.',
+    'cap_label': 'The default. The task holds the focus of the screen.',
+    'cap_steps': 'Countable system parts. The count says more than a percentage.',
+    'cap_thin': 'A background task, always next to the text that names it.'}))
+
+
+def pr_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+  <div class="note" style="margin-top:16px"><b>{t['note_t']}</b> {t['note']}</div>
+</section>
+
+<section>
+  <h2>{T_MEASURES}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{prog_token_rows(PR_GEO_NAMES)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{prog_token_rows(PR_COLOR_NAMES)}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px"><b>{t['track_t']}</b> {t['track']}</div>
+</section>'''
+
+
+PROG_SPECS = tr(pr_specs({
+    'anat': [('Elemento', '<code>&lt;progress value max&gt;</code> nativo. Nunca uma <code>&lt;div&gt;</code> com largura.'),
+             ('Cabeçalho', 'Label e Steps: rótulo à esquerda e, na Label, a porcentagem à direita. Body/sm, 14/20.'),
+             ('Trilho', '8px de altura (4px na Thin), pontas arredondadas, em <code>bg-track</code>.'),
+             ('Preenchimento', 'A parte feita, em <code>bg-brand</code>. A largura vem de <code>value/max</code>.'),
+             ('Espaço', '8px entre o cabeçalho e a barra. A largura é a do container.')],
+    'note_t': 'Largura fixa no Figma, do container no código.',
+    'note': 'Os 320px do Figma são da demonstração. No código a barra ocupa o container, e o '
+            'preenchimento sai do valor, não de uma medida.',
+    'th': 'Token do Progress', 'to': 'Aponta para', 'light': 'Claro', 'dark': 'Escuro',
+    'track_t': 'O trilho é um semântico novo.',
+    'track': '<code>bg-track</code> nasceu na Foundation para este componente: precisa aparecer sobre '
+             'canvas, surface e surface-raised nos dois temas. Tem os valores do <code>bg-active</code>, '
+             'com nome próprio para que o estado pressionado nunca mova o trilho.'}), pr_specs({
+    'anat': [('Element', 'A native <code>&lt;progress value max&gt;</code>. Never a <code>&lt;div&gt;</code> with a width.'),
+             ('Header', 'Label and Steps: the label on the left and, in Label, the percentage on the right. Body/sm, 14/20.'),
+             ('Track', '8px high (4px in Thin), rounded ends, in <code>bg-track</code>.'),
+             ('Fill', 'The done part, in <code>bg-brand</code>. The width comes from <code>value/max</code>.'),
+             ('Space', '8px between the header and the bar. The width is the container\'s.')],
+    'note_t': 'A fixed width in Figma, the container\'s in code.',
+    'note': 'The 320px in Figma belong to the demo. In code the bar fills its container, and the fill '
+            'comes from the value, not from a measure.',
+    'th': 'Progress token', 'to': 'Points to', 'light': 'Light', 'dark': 'Dark',
+    'track_t': 'The track is a new semantic.',
+    'track': '<code>bg-track</code> was born in the Foundation for this component: it has to read on '
+             'canvas, surface and surface-raised in both themes. It has the values of <code>bg-active</code>, '
+             'with a name of its own so the pressed state never moves the track.'}))
+
+PROG_A11Y_TAB = tr('''
+<section>
+  <h2>Uma exceção, paga pelo texto</h2>
+  <p>O preenchimento fica abaixo de 3:1 contra o trilho: 2,53:1 no claro e 2,2:1 no escuro. É a cor
+  da marca mantida de propósito, e só se sustenta porque a barra nunca é a única pista: a Label tem
+  a porcentagem, a Steps tem a contagem, e a Thin tem nome e valor lidos pelo leitor de tela.</p>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Fora do Tab</b><span>A barra é status passivo: não recebe foco e não tem <code>tabindex</code>.</span></div>
+    <div><b>Nome e valor</b><span>O <code>&lt;progress&gt;</code> nativo entrega o papel e o valor; o nome vem do rótulo por <code>aria-labelledby</code>.</span></div>
+    <div><b>Sem aria-live</b><span>A barra não anuncia cada passo. O fim da tarefa é anunciado por um Toast ou um Alert.</span></div>
+    <div><b>Menos movimento</b><span>Com <code>prefers-reduced-motion</code>, a largura salta para o valor novo. No Firefox ela sempre salta.</span></div>
+  </div>
+</section>''', '''
+<section>
+  <h2>One exception, paid for by the text</h2>
+  <p>The fill falls below 3:1 against the track: 2.53:1 in light and 2.2:1 in dark. It is the brand
+  color kept on purpose, and it only holds because the bar is never the only cue: Label has the
+  percentage, Steps has the count, and Thin has a name and a value read by the screen reader.</p>
+</section>
+
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>Out of the tab order</b><span>The bar is a passive status: it takes no focus and has no <code>tabindex</code>.</span></div>
+    <div><b>Name and value</b><span>The native <code>&lt;progress&gt;</code> gives the role and the value; the name comes from the label through <code>aria-labelledby</code>.</span></div>
+    <div><b>No aria-live</b><span>The bar does not announce each step. A Toast or an Alert announces the end of the task.</span></div>
+    <div><b>Reduced motion</b><span>With <code>prefers-reduced-motion</code>, the width jumps to the new value. In Firefox it always jumps.</span></div>
+  </div>
+</section>''')
+
+PR_MD = guide_md('progress')
+PR_CLIP = '<div class="pr-clip">{}</div>'
+PROG_GUIDE = guide_tab(PR_MD, [
+    (pr_box('label', '67', label=tr('Importando contatos', 'Importing contacts')),
+     pr_fake(48, tr('Armazenamento', 'Storage'), tr('7,2 de 15 GB', '7.2 of 15 GB'))),
+    (pr_box('steps', '60'),
+     pr_fake(50, tr('Etapa 2 de 4: Endereço', 'Step 2 of 4: Address'), '', 'pr-fake--meta')),
+    (pr_box('label'),
+     PR_CLIP.format(pr_fake(67, tr('Instalando', 'Installing'), '67%', 'pr-fake--wide'))),
+    (pr_box('label', '40', label=tr('Enviando relatorio.pdf', 'Uploading report.pdf')),
+     pr_fake(40, tr('Carregando…', 'Loading…'), '40%')),
+    (pr_box('label', '40', label=tr('Enviando relatorio.pdf', 'Uploading report.pdf'))
+     + '<p class="pr-err">' + tr('O envio falhou. Tente de novo.', 'The upload failed. Try again.') + '</p>',
+     pr_fake(40, tr('Enviando relatorio.pdf', 'Uploading report.pdf'), '40%', 'pr-fake--danger')),
+    (pr_box('thin'), pr_fake(67, cls='pr-fake--thin')),
+    ('<button type="button" class="al-btn al-btn--primary al-btn--md" aria-busy="true" aria-disabled="true">'
+     '<span class="al-btn__spinner" aria-hidden="true"></span><span class="al-btn__label">'
+     + tr('Salvando', 'Saving') + '</span></button>',
+     pr_fake(35, tr('Salvando', 'Saving'), '', 'pr-fake--meta')),
+])
+
+TH_PROGRESS = (f'<div class="pr-th"><div class="al-progress"><div class="al-progress__header">'
+               f'<span class="al-progress__label">{tr("Instalando", "Installing")}</span>'
+               f'<span class="al-progress__value">67%</span></div>'
+               f'<progress class="al-progress__bar" value="67" max="100" aria-hidden="true"></progress></div></div>')
+
+PROG_OVERVIEW, PROG_PLAYGROUND, PROG_A11Y_TAB = model_tabs(
+    'progress', old_ov=PROG_OVERVIEW, old_specs=PROG_SPECS, guide=PROG_GUIDE, old_a11y=PROG_A11Y_TAB,
+    preview=pr_box('label'),
+    usage=tr('Use para mostrar quanto de uma tarefa do sistema já foi feito: um envio, uma instalação, '
+             'uma importação. Só determinado; com o modificador <code>al-progress--steps</code> para '
+             'partes contáveis e <code>al-progress--thin</code> para tarefa de fundo.',
+             'Use it to show how much of a system task is done: an upload, an install, an import. '
+             'Determinate only; with the <code>al-progress--steps</code> modifier for countable parts '
+             'and <code>al-progress--thin</code> for a background task.'),
+    states=[PR_H_STATES],
+    presets={PR_LAB_LABEL: {'prtype': 'label'}, PR_LAB_STEPS: {'prtype': 'steps'},
+             PR_LAB_THIN: {'prtype': 'thin'}},
+    classes=tr([
+        ('.al-progress', '—', 'O bloco: cabeçalho e barra, na largura do container.'),
+        ('.al-progress--steps', '—', 'Rótulo "N de total" no texto secundário, sem porcentagem.'),
+        ('.al-progress--thin', '—', 'Só a barra, com 4px. O nome vem do texto ao lado.'),
+        ('progress.al-progress__bar', '<code>value</code>, <code>max</code>, <code>aria-labelledby</code>',
+         'A barra nativa. Sem <code>tabindex</code> e sem <code>aria-live</code>.'),
+    ], [
+        ('.al-progress', '—', 'The block: header and bar, at the container\'s width.'),
+        ('.al-progress--steps', '—', '"N of total" label in the secondary ink, no percentage.'),
+        ('.al-progress--thin', '—', 'The bar alone, 4px. The name comes from the text next to it.'),
+        ('progress.al-progress__bar', '<code>value</code>, <code>max</code>, <code>aria-labelledby</code>',
+         'The native bar. No <code>tabindex</code> and no <code>aria-live</code>.'),
+    ]),
+    contrast=role_contrast([dict(r, floor=r['min']) for r in PROG_A11Y['rows']], tr([
+        ('Rótulo', {'label label-text'}, 'ok', 'Use <code>text-primary</code>.', WCAG_143,
+         'Canvas, surface e surface-raised'),
+        ('Porcentagem e contagem', {'label meta-text', 'steps meta-text'}, 'ok',
+         'Use <code>text-secondary</code>.', WCAG_143, 'Canvas, surface e surface-raised'),
+        ('Preenchimento sobre o fundo', {'label fill', 'steps fill', 'thin fill'}, 'ok',
+         'A laranja da marca passa 3:1 nos três fundos.', WCAG_1411, 'Canvas, surface e surface-raised'),
+        ('Preenchimento sobre o trilho', {'label fill on track', 'steps fill on track', 'thin fill on track'},
+         'exc', 'Exceção declarada: a barra nunca é a única pista (regra 22).', WCAG_1411, 'Os três tipos'),
+    ], [
+        ('Label', {'label label-text'}, 'ok', 'Use <code>text-primary</code>.', WCAG_143,
+         'Canvas, surface and surface-raised'),
+        ('Percentage and count', {'label meta-text', 'steps meta-text'}, 'ok',
+         'Use <code>text-secondary</code>.', WCAG_143, 'Canvas, surface and surface-raised'),
+        ('Fill on the background', {'label fill', 'steps fill', 'thin fill'}, 'ok',
+         'The brand orange passes 3:1 on all three backgrounds.', WCAG_1411, 'Canvas, surface and surface-raised'),
+        ('Fill on the track', {'label fill on track', 'steps fill on track', 'thin fill on track'},
+         'exc', 'Declared exception: the bar is never the only cue (rule 22).', WCAG_1411, 'All three types'),
+    ]), tr(f'<p>São {N_PR_MEDIDAS} medições no portão de build: nenhuma reprova, e as que ficam abaixo '
+           f'de 3:1 são o preenchimento sobre o trilho, a exceção declarada.</p>',
+           f'<p>That is {N_PR_MEDIDAS} measurements in the build gate: no failures, and the ones below '
+           f'3:1 are the fill on the track, the declared exception.</p>'), key='what'),
+)
+
+
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
 # clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
@@ -20626,6 +21113,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('tooltip', 'Tooltip', 'O nome de um botão só com ícone, ou um complemento curto. Abre no hover e no foco, fecha no Esc, e nunca carrega o que a pessoa precisa para seguir.', TH_TOOLTIP)}
     {card('toast', 'Toast', 'A confirmação de algo que acabou de acontecer, no canto da tela. Um por vez, em fila; Sucesso e Informação saem sozinhos, Aviso e Erro esperam o X.', TH_TOAST)}
     {card('alert', 'Alert', 'Um assunto que pede atenção, no topo da página, abaixo do header. Um por página; Aviso e Perigo ficam até a situação se resolver.', TH_ALERT)}
+    {card('progress', 'Progress', 'Quanto de uma tarefa do sistema já foi feito. O &lt;progress&gt; nativo, só determinado, e a barra nunca é a única pista.', TH_PROGRESS)}
   </div>
 </section>''', f'''
 <section>
@@ -20654,6 +21142,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('tooltip', 'Tooltip', 'The name of an icon-only button, or a short complement. It opens on hover and focus, closes on Esc, and never carries what the person needs to move on.', TH_TOOLTIP)}
     {card('toast', 'Toast', 'The confirmation of something that just happened, in the corner of the screen. One at a time, in a queue; Success and Info leave on their own, Warning and Error wait for the X.', TH_TOAST)}
     {card('alert', 'Alert', 'A subject that calls for attention, at the top of the page, below the header. One per page; Warning and Danger stay until the situation is resolved.', TH_ALERT)}
+    {card('progress', 'Progress', 'How much of a system task is done. The native &lt;progress&gt;, determinate only, and the bar is never the only cue.', TH_PROGRESS)}
   </div>
 </section>''')
 
@@ -20684,8 +21173,8 @@ SITE_NAV = [
     ('Content', [('card', 'Card'), ('modal', 'Modal'), ('drawer', 'Drawer'), ('avatar', 'Avatar'),
                  ('divider', 'Divider'), ('accordion', 'Accordion')]),
     ('Navigation', [('sidebar', 'Sidebar'), ('breadcrumb', 'Breadcrumb'), ('tab', 'Tab')]),
-    ('Feedback and status', [('alert', 'Alert'), ('toast', 'Toast'), ('tooltip', 'Tooltip'),
-                             ('tag', 'Tag')]),
+    ('Feedback and status', [('alert', 'Alert'), ('progress', 'Progress'), ('toast', 'Toast'),
+                             ('tooltip', 'Tooltip'), ('tag', 'Tag')]),
 ]
 # O Hero lê daqui a seção (rótulo do grupo) e o título (rótulo do item). As
 # duas "Visão geral" são a raiz do breadcrumb: a da Foundation para o grupo
@@ -21530,6 +22019,17 @@ PAGES = [
          (f'{N_TST_TOKENS} tokens', False), (tr(f'{N_TS_LITERALS} valores declarados', f'{N_TS_LITERALS} declared values'), False)],
         [('overview', T_OV, TOAST_OVERVIEW), ('playground', 'Playground', TOAST_PLAYGROUND),
          ('guide', T_GUIDE, anat_to_tables(TOAST_GUIDE)), ('a11y', T_A11Y, TOAST_A11Y_TAB)])),
+    ('progress', 'Componentes', page(
+        'progress',
+        tr('Mostra quanto de uma tarefa do sistema já foi feito, enquanto a pessoa espera. É o '
+           '<code>&lt;progress&gt;</code> nativo, só determinado, em três tipos: Label, Steps e Thin.',
+           'Shows how much of a system task is done, while the person waits. It is the native '
+           '<code>&lt;progress&gt;</code>, determinate only, in three types: Label, Steps and Thin.'),
+        [(T_STABLE, True), (tr('3 variantes no Figma', '3 variants in Figma'), False),
+         (f'{N_PROG_TOKENS} tokens', False), (tr('1 exceção declarada', '1 declared exception'), False)],
+        [('overview', T_OV, PROG_OVERVIEW), ('playground', 'Playground', PROG_PLAYGROUND),
+         ('guide', T_GUIDE, anat_to_tables(PROG_GUIDE)), ('a11y', T_A11Y, PROG_A11Y_TAB)])),
+
     ('alert', 'Componentes', page(
         'alert',
         tr('Um bloco no topo da página, abaixo do header, sobre um assunto que pede atenção: um sucesso que '
@@ -23299,6 +23799,75 @@ CHROME_LINK = """
 """
 
 
+JS_PROGRESS_DATA = 'var PR_DEMOS = ' + json.dumps(PR_DEMOS, ensure_ascii=False) + ';\n'
+
+JS_PROGRESS = r"""
+(function () {
+  // ── playground do Progress ──
+  var stage = document.getElementById('progress-stage');
+  if (!stage) return;
+  var code = document.getElementById('progress-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinação vem pronto do site.py (PR_DEMOS).
+  function render() {
+    var type = pick('prtype'), value = pick('prvalue'), surf = pick('prsurf'), theme = pick('prtheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = PR_DEMOS[type + '|' + value];
+    stage.innerHTML = '<div class="pr-box" data-surf="' + surf + '">' + demo.html + '</div>';
+    code.innerHTML = esc(demo.code);
+  }
+
+  document.querySelectorAll('#progress-controls input, #progress-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('progress-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = AL_T.failed; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_PROGRESS = """
+/* ── páginas do Progress ──
+   Casca do site. A barra em si é sempre o .al-progress, do progress.css real. */
+.pr-box{box-sizing:border-box; inline-size:360px; max-inline-size:100%; padding:var(--al-space-16); border-radius:8px;
+  background:var(--al-bg-canvas)}
+.pr-box[data-surf="surface"]{background:var(--al-bg-surface)}
+.pr-box[data-surf="raised"]{background:var(--al-bg-surface-raised)}
+.pr-thin{display:flex; flex-direction:column; gap:var(--al-space-8); font-size:14px; line-height:20px;
+  color:var(--al-text-secondary)}
+.pr-th{width:100%; max-width:240px}
+.pr-err{margin:8px 0 0; font-size:14px; line-height:20px; color:var(--al-text-danger)}
+.dd--3{grid-template-columns:repeat(auto-fit, minmax(220px, 1fr))}
+/* exemplos a evitar: casca, nunca um .al-progress errado */
+.pr-fake{display:flex; flex-direction:column; gap:8px; inline-size:328px; max-inline-size:100%; font-size:14px; line-height:20px}
+.pr-fake__head{display:flex; justify-content:space-between; gap:16px; color:var(--al-text-primary)}
+.pr-fake__head span + span{color:var(--al-text-secondary)}
+.pr-fake__track{display:block; height:8px; border-radius:999px; background:var(--al-bg-track); overflow:hidden}
+.pr-fake__fill{display:block; height:100%; border-radius:999px; background:var(--al-bg-brand)}
+.pr-fake--meta .pr-fake__head span:first-child{color:var(--al-text-secondary)}
+.pr-fake--danger .pr-fake__fill{background:var(--al-bg-danger)}
+.pr-fake--thin .pr-fake__track{height:4px}
+.pr-clip{width:100%; overflow:hidden}
+.pr-fake--wide{inline-size:160%; max-inline-size:none}
+"""
+
+
 JS_DIVIDER_DATA = 'var DV_DEMOS = ' + json.dumps(DV_DEMOS, ensure_ascii=False) + ';\n'
 
 JS_DIVIDER = r"""
@@ -23825,7 +24394,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_LINK + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -23833,7 +24402,7 @@ HTML = (
     + 'var AL_T = ' + json.dumps(AL_T, ensure_ascii=False) + ';\n' + JS + JS_PRESETS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
-    + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + JS_LINK_DATA + JS_LINK
+    + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + JS_LINK_DATA + JS_LINK + JS_PROGRESS_DATA + JS_PROGRESS
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL

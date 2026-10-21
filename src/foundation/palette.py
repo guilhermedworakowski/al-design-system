@@ -30,6 +30,13 @@ SEM = {
   # and the Switch declares the exception in its own gate (decided 2026-09-25).
   'bg-thumb':           (c('neutral',400), c('neutral',600)),
   'bg-thumb-disabled':  (c('neutral',300), c('neutral',700)),
+  # the empty part of a bar that fills up (Progress). It has to read above
+  # canvas, surface and surface-raised in both themes, and no existing
+  # semantic does that by name - same values as bg-active, kept separate so a
+  # change to the pressed state never moves the track. Out of PAIRS: the track
+  # is a capacity hint, not information; the Progress gate measures the fill
+  # against it (decided 2026-10-21).
+  'bg-track':           (c('neutral',200), c('neutral',700)),
   # the dimmed background behind a modal layer (Modal; also serves the Drawer).
   # It is the only semantic with transparency: #RRGGBBAA, 56% in light and 64%
   # in dark. It stays out of PAIRS because its contrast only exists composited
