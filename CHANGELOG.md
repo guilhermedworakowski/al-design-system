@@ -2,6 +2,13 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.2.0] - 2026-10-21
+
+### Added
+- **Progress**, in Feedback: the native `<progress value max>`, determinate only, in three types: Label (label and percentage), Steps ("N of total") and Thin (a 4px bar for background tasks). 9 tokens, 24 usage rules, its own CSS and accessibility gates, and a page in the documentation site in English and Portuguese.
+- **`bg-track`**, a new semantic in the Foundation: the empty part of a bar that fills up, readable on canvas, surface and surface-raised in both themes (neutral-200 light, neutral-700 dark).
+- One declared contrast exception: the fill against the track is below 3:1 (2.53:1 light, 2.2:1 dark). The bar is never the only cue: Label shows the percentage, Steps the count, and Thin a name and value read by assistive tech.
+
 ## [1.1.0] - 2026-10-21
 
 ### Added
@@ -160,6 +167,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
+[1.2.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v0.23.0...v1.0.0

@@ -10,7 +10,7 @@ Design system open source, do Figma ao código. CSS puro, um pouco de JavaScript
 
 ## O que é
 
-- **Foundation + 24 componentes**, desenhados no Figma e codados a partir dos mesmos tokens.
+- **Foundation + 25 componentes**, desenhados no Figma e codados a partir dos mesmos tokens.
 - **Temas claro e escuro** já incluídos. Por padrão segue o sistema operacional, e dá para forçar um.
 - **A acessibilidade é conferida no build.** Cada combinação renderizada (variante × estado × tema) tem o contraste medido contra o fundo onde ela realmente aparece, e o contrato de marcação de cada componente é verificado. Se algo reprova, o build para.
 - **Nada é digitado à mão.** Tokens, variáveis CSS, `tokens.json` e as tabelas da documentação saem todos de uma fonte só.
@@ -43,6 +43,7 @@ Design system open source, do Figma ao código. CSS puro, um pouco de JavaScript
 | Feedback | Tooltip | ✓ | [diretrizes](src/components/tooltip/guidelines.md) |
 | | Toast | ✓ | [diretrizes](src/components/toast/guidelines.md) |
 | | Alert | ✓ | [diretrizes](src/components/alert/guidelines.md) |
+| | Progress | | [diretrizes](src/components/progress/guidelines.md) |
 
 Cada arquivo de diretrizes traz as regras de uso (quando usar, quando não usar, conteúdo, comportamento e acessibilidade) e, quando houver, as exceções de contraste que o componente declara. Por enquanto as diretrizes estão em inglês; a versão em português chega junto com o site novo.
 
@@ -55,7 +56,7 @@ npm install al-design-system
 Ou direto de uma CDN, fixado numa versão:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.1.0/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.2.0/dist/al.css">
 ```
 
 Cada [Release no GitHub](https://github.com/guilhermedworakowski/al-design-system/releases) também traz a pasta `dist/` num zip.
@@ -64,7 +65,7 @@ Cada [Release no GitHub](https://github.com/guilhermedworakowski/al-design-syste
 
 | Arquivo | O que é |
 |---|---|
-| `al.css` | Foundation + os 24 componentes, num arquivo só |
+| `al.css` | Foundation + os 25 componentes, num arquivo só |
 | `foundation.css` | Só a Foundation: cor, tipografia, espaçamento, radius, tamanho de ícone, elevação, anel de foco e motion |
 | `components/<nome>.css` | Um componente (os tokens + o CSS dele) |
 | `components/<nome>.js` | O comportamento, para os 9 componentes que têm script |
