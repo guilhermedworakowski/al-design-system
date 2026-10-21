@@ -1,0 +1,90 @@
+/* AL Design System - Progress
+ *
+ * Determinate only. The bar is a native <progress value max>: the browser
+ * exposes the value to assistive tech with no extra ARIA, and the name comes
+ * from the visible label through aria-labelledby (Thin: aria-label).
+ *
+ * Three types, one block:
+ *   .al-progress               Label - label + percentage over an 8px bar
+ *   .al-progress--steps        Steps - "N of total" in the meta ink
+ *   .al-progress--thin         Thin  - a 4px bar alone, no header
+ *
+ * The bar is never the only carrier of progress (usage rule 22): that is what
+ * pays the declared fill-on-track exception. No focus, no aria-live - the end
+ * of the task is announced by a Toast or an Alert, not by the bar.
+ *
+ * <progress> needs vendor pseudo-elements: WebKit/Blink draw the track in
+ * ::-webkit-progress-bar and the fill in ::-webkit-progress-value; Firefox
+ * paints the track on the element and the fill in ::-moz-progress-bar.
+ */
+
+.al-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-progress-gap);
+  inline-size: 100%;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-progress-font-size);
+  line-height: var(--al-progress-line-height);
+  font-weight: var(--al-progress-font-weight);
+}
+
+.al-progress__header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--al-progress-gap);
+}
+
+.al-progress__label {
+  color: var(--al-progress-label-text);
+}
+
+/* percentage; tabular figures keep it from jittering as it counts up */
+.al-progress__value {
+  flex: none;
+  color: var(--al-progress-meta-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.al-progress--steps .al-progress__label {
+  color: var(--al-progress-meta-text);
+}
+
+/* ----------------------------------------------------------------- bar */
+.al-progress__bar {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  inline-size: 100%;
+  block-size: var(--al-progress-height);
+  border: none;
+  border-radius: var(--al-progress-radius);
+  overflow: hidden;
+  background-color: var(--al-progress-track-bg);
+  color: var(--al-progress-fill-bg);
+}
+
+.al-progress--thin .al-progress__bar {
+  block-size: var(--al-progress-height-thin);
+}
+
+.al-progress__bar::-webkit-progress-bar {
+  background-color: var(--al-progress-track-bg);
+  border-radius: var(--al-progress-radius);
+}
+
+/* the width change is the only motion: no shimmer, no loop (rule 23) */
+.al-progress__bar::-webkit-progress-value {
+  background-color: var(--al-progress-fill-bg);
+  border-radius: var(--al-progress-radius);
+  transition: inline-size var(--al-motion-duration-feedback) var(--al-motion-easing-enter);
+}
+
+.al-progress__bar::-moz-progress-bar {
+  background-color: var(--al-progress-fill-bg);
+  border-radius: var(--al-progress-radius);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-progress__bar::-webkit-progress-value { transition: none; }
+}
