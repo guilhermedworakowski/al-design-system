@@ -1,0 +1,153 @@
+/* AL Design System - Pagination
+ *
+ * Four types, one block. Previous, Next and Load more are Buttons (Ghost sm,
+ * Secondary sm) and rows per page is the Select: this file only lays them out
+ * and draws what is the Pagination's own - the page items and the range text.
+ *
+ *   .al-pagination                 Numbered - previous, pages, next
+ *   .al-pagination--simple         Simple   - previous and next only
+ *   .al-pagination--load-more      Load more - one Secondary Button
+ *   .al-pagination--range          Range    - "Showing 41-60 of 312" + rows
+ *
+ * Markup (usage rules 20-22): a <nav aria-label="Pagination"> with the pages
+ * in a <ul>. A page is an <a> when it changes the URL and a <button> when it
+ * swaps content in place. The current page carries aria-current="page" - that
+ * is what styles it, so the look can never disagree with what is announced.
+ * The ellipsis is aria-hidden: it is not a control (rule 10).
+ *
+ * Disabled previous/next is the Button's own disabled state (rule 16), not a
+ * Pagination style.
+ *
+ * NEVER ON SURFACE-RAISED (rule 8): the hovers use bg-hover/bg-active, which
+ * vanish on the raised surface.
+ *
+ * NO HEIGHT: 36 = padding 8 + line 20 + padding 8. min-inline-size uses the
+ * same sum so a one-digit page stays a circle and "16" grows into a pill.
+ */
+
+.al-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--al-pagination-gap);
+}
+
+.al-pagination__pages {
+  display: flex;
+  align-items: center;
+  gap: var(--al-pagination-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ------------------------------------------------------------- page item */
+.al-pagination__item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-inline-size: calc(var(--al-pagination-item-padding) * 2 + var(--al-pagination-line-height));
+  margin: 0;
+  padding: var(--al-pagination-item-padding);
+  border: 0;
+  border-radius: var(--al-pagination-item-radius);
+  background-color: transparent;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-pagination-font-size);
+  line-height: var(--al-pagination-line-height);
+  font-weight: var(--al-pagination-font-weight);
+  font-variant-numeric: tabular-nums;
+  color: var(--al-pagination-item-label);
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit), color var(--al-motion-duration-feedback) var(--al-motion-easing-exit), box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+.al-pagination__item:hover {
+  background-color: var(--al-pagination-item-bg-hover);
+}
+
+.al-pagination__item:active {
+  background-color: var(--al-pagination-item-bg-active);
+}
+
+/* focus is rest plus the ring, keyboard only */
+.al-pagination__item:focus-visible {
+  outline: none;
+  box-shadow: var(--al-focus-ring-default);
+}
+
+/* current: tonal at rest and focus, brand on hover and pressed (rule 19) */
+.al-pagination__item[aria-current="page"] {
+  background-color: var(--al-pagination-current-bg);
+  color: var(--al-pagination-current-label);
+}
+
+.al-pagination__item[aria-current="page"]:hover {
+  background-color: var(--al-pagination-current-bg-hover);
+  color: var(--al-pagination-current-label-hover);
+}
+
+.al-pagination__item[aria-current="page"]:active {
+  background-color: var(--al-pagination-current-bg-active);
+  color: var(--al-pagination-current-label-hover);
+}
+
+/* ENTER - destination states take the enter curve, as in the Tab */
+.al-pagination__item:hover,
+.al-pagination__item:active,
+.al-pagination__item:focus-visible {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* ------------------------------------------------------------- ellipsis */
+.al-pagination__ellipsis {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: calc(var(--al-pagination-item-padding) * 2 + var(--al-pagination-line-height));
+  padding: var(--al-pagination-item-padding);
+  box-sizing: border-box;
+  color: var(--al-pagination-ellipsis);
+}
+
+/* ---------------------------------------------------------------- range */
+.al-pagination--range {
+  gap: var(--al-pagination-range-gap);
+}
+
+.al-pagination__range,
+.al-pagination__rows-label {
+  margin: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-pagination-font-size);
+  line-height: var(--al-pagination-line-height);
+  font-weight: var(--al-pagination-range-font-weight);
+  font-variant-numeric: tabular-nums;
+  color: var(--al-pagination-range-text);
+}
+
+.al-pagination__rows {
+  display: flex;
+  align-items: center;
+  gap: var(--al-pagination-rows-gap);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-pagination__item {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-pagination__item[aria-current="page"] {
+    outline: var(--al-border-width-1) solid CanvasText;
+  }
+
+  .al-pagination__item:focus-visible {
+    outline: var(--al-border-width-focus) solid Highlight;
+    outline-offset: var(--al-border-focus-offset);
+  }
+}
