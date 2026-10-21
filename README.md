@@ -10,7 +10,7 @@ An open-source design system, from Figma to code. Plain CSS, a little vanilla Ja
 
 ## What it is
 
-- **Foundation + 23 components**, designed in Figma and coded from the same tokens.
+- **Foundation + 24 components**, designed in Figma and coded from the same tokens.
 - **Light and dark themes** built in. It follows the operating system by default, and you can force one.
 - **Accessibility is checked by the build.** Every rendered combination (variant × state × theme) is measured for contrast against the background it actually sits on, and each component's markup contract is verified. If something fails, the build stops.
 - **Nothing is typed by hand.** Tokens, CSS variables, `tokens.json` and the documentation tables are all generated from one source.
@@ -22,6 +22,7 @@ An open-source design system, from Figma to code. Plain CSS, a little vanilla Ja
 | Actions and display | Button | | [guidelines](src/components/button/guidelines.md) |
 | | Icon | | (70 icons, see [Icons](#icons)) |
 | | Icon Button | | [guidelines](src/components/icon-button/guidelines.md) |
+| | Link | | [guidelines](src/components/link/guidelines.md) |
 | | Tag | | [guidelines](src/components/tag/guidelines.md) |
 | | Avatar | | [guidelines](src/components/avatar/guidelines.md) |
 | Forms | Select | | [guidelines](src/components/select/guidelines.md) |
@@ -54,7 +55,7 @@ npm install al-design-system
 Or straight from a CDN, pinned to a version:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.0.1/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.1.0/dist/al.css">
 ```
 
 Each [GitHub Release](https://github.com/guilhermedworakowski/al-design-system/releases) also carries the `dist/` folder as a zip.
@@ -63,7 +64,7 @@ Each [GitHub Release](https://github.com/guilhermedworakowski/al-design-system/r
 
 | File | What it is |
 |---|---|
-| `al.css` | Foundation + all 23 components, in one file |
+| `al.css` | Foundation + all 24 components, in one file |
 | `foundation.css` | Only the Foundation: color, typography, spacing, radius, icon size, elevation, focus ring and motion |
 | `components/<name>.css` | One component (its tokens + its CSS) |
 | `components/<name>.js` | The behavior, for the 9 components that have a script |
