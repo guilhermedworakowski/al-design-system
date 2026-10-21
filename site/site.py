@@ -140,6 +140,10 @@ DIVIDER = json.load(open(comp_out('divider', 'tokens.json')))
 DIVIDER_TOKENS = open(comp_out('divider', 'al-divider-tokens.css')).read()
 DIVIDER_CSS = open(comp_src('divider', 'divider.css')).read()
 DIVIDER_A11Y = json.load(open(comp_out('divider', 'a11y.json')))
+LINK = json.load(open(comp_out('link', 'tokens.json')))
+LINK_TOKENS = open(comp_out('link', 'al-link-tokens.css')).read()
+LINK_CSS = open(comp_src('link', 'link.css')).read()
+LINK_A11Y = json.load(open(comp_out('link', 'a11y.json')))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
 CARD_CSS = open(comp_src('card', 'card.css')).read()
@@ -225,6 +229,7 @@ N_BCR_TOKENS = len(BCR['alias'])
 N_TTP_TOKENS = len(TTP['alias'])
 N_TST_TOKENS = len(TST['alias'])
 N_ALR_TOKENS = len(ALR['alias'])
+N_LINK_TOKENS = len(LINK['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -270,7 +275,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
-                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS)
+                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -293,7 +298,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + BCR_TOKENS + '\n' + BCR_CSS
             + '\n' + TTP_TOKENS + '\n' + TTP_CSS
             + '\n' + TST_TOKENS + '\n' + TST_CSS
-            + '\n' + ALR_TOKENS + '\n' + ALR_CSS)
+            + '\n' + ALR_TOKENS + '\n' + ALR_CSS
+            + '\n' + LINK_TOKENS + '\n' + LINK_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1231,6 +1237,137 @@ O modo de alto contraste descarta `box-shadow` — o anel sumiria junto. O compo
 | Danger contornado | Não existe | Mesma ausência deliberada do Button. |
 | Selecionado / toggle | Não existe | Componente novo, não variante: precisa de `aria-pressed` e contrato de estado próprio. Primer e Spectrum tratam como separado. |
 | Com rótulo visível | Set irmão | `Button`, que já resolve ícone à esquerda e à direita. |
+"""
+
+GUIDE_PT['link'] = """# Link · Regras de uso
+
+Um link leva a pessoa para outro lugar: outra página, uma seção da mesma página ou um arquivo.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Link vai para algum lugar:** outra página, uma seção, um arquivo. | **Link que abre um Modal:** o leitor de tela diz "link" e a pessoa espera sair dali. |
+| **No meio do texto, herda o parágrafo:** mesmo tamanho, mesma entrelinha. | **Link maior que o texto em volta:** quebra a linha. |
+| **O rótulo diz o destino:** "Ver política de privacidade". | **"Clique aqui":** fora de contexto, numa lista de links, não diz nada. |
+| **Solto, com a seta:** reforça o "seguir em frente". | **Ícone no meio do texto:** desalinha a linha. |
+| **Sublinhado em todos os estados.** | **Link "visitado" cinza:** parece desabilitado. |
+| **O foco mostra o anel pelo teclado.** | **Sublinhado mais grosso como única pista de foco.** |
+| **Sobre o canvas ou o surface, sublinhado.** | **Tirar o sublinhado para "limpar" o laranja:** o link passa a depender só da cor. |
+
+## Regras
+
+### Quando usar
+
+**1. Use para ir a algum lugar.**
+Outra página, outra seção da mesma página ou um arquivo para baixar. Para onde a pessoa vai é Link; o que ela faz é Button.
+*Precedentes: Primer e Carbon.*
+
+**2. Nunca para ação na própria página.**
+Abrir um Modal, enviar um formulário, expandir um bloco: use o Button Ghost. O leitor de tela anuncia "link", e a pessoa espera sair dali.
+*Precedente: Primer.*
+> **Divergência consciente** do Polaris, que permite ação no link.
+
+**3. Nunca como a ação principal da tela.**
+Tem menos peso visual que qualquer Button e não carrega hierarquia de ação.
+*Precedente: Carbon.*
+
+### Inline e standalone
+
+**4. No meio do texto, o link herda a fonte do parágrafo.**
+Tamanho, entrelinha e peso. Um link maior ou menor que o texto em volta quebra a linha.
+*Precedente: Carbon.*
+
+**5. Solto, o link usa o label-md.**
+O tamanho padrão de interface do AL.
+*Precedente: Carbon.*
+
+**6. Poucos links por parágrafo.**
+Muitos links competem entre si e cansam quem navega por teclado.
+*Precedente: Carbon.*
+
+### Rótulo
+
+**7. O texto diz para onde o link leva.**
+"Ver política de privacidade", nunca "clique aqui" ou "saiba mais" sozinhos: quem usa leitor de tela navega por uma lista de links fora de contexto.
+*Precedentes: Primer e WCAG 2.4.4.*
+
+**8. Mesmo texto, mesmo destino.**
+Dois links para lugares diferentes têm textos diferentes.
+*Precedente: WCAG 2.4.4.*
+
+**9. Uma frase curta, sem ponto final.**
+No meio do texto, a pontuação fica fora do link.
+*Precedente: Carbon.*
+
+### Ícone
+
+**10. O ícone fica só à direita, e é opcional.**
+Reforça o destino: uma seta para seguir em frente, um ícone de link externo. No link solto a seta é recomendada, não obrigatória.
+*Precedente: Carbon.*
+
+**11. Sem ícone no meio do texto.**
+Desalinha a linha e chama atenção demais. O modificador inline esconde o ícone.
+*Precedente: Carbon.*
+
+**12. O ícone é decorativo.**
+`aria-hidden="true"`: o texto já diz tudo. Se o link abre em outra aba, isso vai no texto, não só no ícone.
+*Precedente: WCAG 3.2.5.*
+
+### Estados
+
+**13. O sublinhado está em todos os estados.**
+1px em repouso, 2px no hover e no foco. É ele que separa o link do texto, não a cor.
+*Precedentes: Primer e WCAG 1.4.1.*
+
+**14. Não existe estado de visitado.**
+Em interface de produto a pessoa volta às mesmas telas o tempo todo, e marcar visitado não ajuda. Se um site de conteúdo precisar, entra como evolução do componente, com cor própria que passe 4,5:1.
+
+**15. Não existe link desabilitado.**
+Se o destino não está disponível, tire o link e mostre só o texto. Um link que não leva a lugar nenhum confunde o teclado e o leitor de tela.
+*Precedentes: Primer e GOV.UK.*
+
+### Acessibilidade
+
+**16. Sempre um `<a href>` de verdade.**
+Nunca um `<span>` ou `<div>` com clique: sem `href`, o link sai da ordem de tabulação e perde o "abrir em nova aba".
+*Precedentes: Primer e WCAG 4.1.2.*
+
+**17. O foco é o anel do Button.**
+2px de `bg-canvas` e 2px de `border-focus`. Sublinhado mais grosso sozinho não basta como indicador de foco. No Figma o anel não aparece porque o frame não tem preenchimento; no código funciona.
+*Precedente: WCAG 2.4.7.*
+> **Limitação conhecida** do Figma, a mesma do Button Ghost.
+
+**18. Nova aba é exceção, não padrão.**
+Quando acontecer, avise no rótulo: "(abre em nova aba)".
+*Precedentes: WCAG 3.2.5 e Carbon.*
+
+### A exceção de contraste
+
+**19. O Default usa a laranja da marca mesmo abaixo de 4,5:1.**
+3,34:1 no canvas claro, 3,12:1 no surface claro e 4,36:1 no surface escuro. Decisão de design sobre a cor de ação, paga pela regra 13: o sublinhado nunca sai, então o link nunca depende só da cor.
+> **Divergência consciente** do Primer, que pede 4,5:1.
+
+**20. Nunca tire o sublinhado para compensar a cor.**
+Sem ele, a exceção da regra 19 deixa de ter o que a sustente.
+*Precedente: WCAG 1.4.1.*
+
+**21. Só sobre `bg-canvas` e `bg-surface`.**
+São os dois fundos medidos. O contraste é medido contra o fundo, não contra o texto em volta: o sublinhado já separa os dois.
+*Precedente: WCAG 1.4.3.*
+
+**22. Nunca sobre fundo escuro de marca, nem dentro de um Toast ou Tooltip invertido.**
+O laranja some ali.
+*Precedente: WCAG 1.4.3.*
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Estado de visitado | Não existe | Evolução para site de conteúdo, com cor própria de 4,5:1. Nunca cinza. |
+| Link desabilitado | Não existe | Destino indisponível é texto puro. |
+| Tipos inline e standalone separados | Um tipo só | O inline só herda a fonte do parágrafo e esconde o ícone. |
+| Outros fundos | Não medidos | Só o canvas e o surface; um fundo novo passa pelo portão antes. |
 """
 
 
@@ -12103,6 +12240,365 @@ DIVIDER_OVERVIEW, DIVIDER_PLAYGROUND, DIVIDER_A11Y_TAB = model_tabs(
            f'invisible line.</p>'), key='what'),
 )
 
+# ═══════════════════════════════════════════════════════════════ Link · abas
+# Primeiro componente depois da V1, na categoria Actions. Um tipo só, sempre
+# sublinhado; solto ou no meio do texto. Todo link da página sai do link.css
+# real. Hover e foco parados na vitrine usam as classes lk-sim-* da casca do
+# site, que repetem o link.css com os mesmos tokens - o componente não tem
+# classe de estado.
+LK_ARROW = al_icon('arrow-right', 'al-link__icon')
+LK_USE = tr([('standalone', 'Solto'), ('inline', 'No meio do texto')],
+            [('standalone', 'Standalone'), ('inline', 'Inline')])
+LK_ICON = tr([('arrow', 'Com seta'), ('none', 'Sem ícone')],
+             [('arrow', 'With arrow'), ('none', 'No icon')])
+LK_SURF = tr([('canvas', 'Tela'), ('surface', 'Faixa de seção')],
+             [('canvas', 'Canvas'), ('surface', 'Section band')])
+LK_H_STATES = tr('Todos os estados', 'All states')
+LK_LAB_STAND = tr('Solto · label-md', 'Standalone · label-md')
+LK_LAB_INLINE = tr('No meio do texto · herda o parágrafo', 'Inline · inherits the paragraph')
+N_LK_MEDIDAS = len(LINK_A11Y['rows'])
+
+
+def lk(label, icon=False, inline=False, sim=''):
+    cls = 'al-link' + (' al-link--inline' if inline else '') + (f' lk-sim-{sim}' if sim else '')
+    return f'<a class="{cls}" href="#link">{label}{LK_ARROW if icon and not inline else ""}</a>'
+
+
+def lk_demo(use, icon):
+    """O mesmo uso que o playground mostra, devolvido como (html, codigo)."""
+    if use == 'inline':
+        a, b, c = tr(('Seu cartão vence em 30 dias. Atualize os dados na ', 'página de pagamento',
+                      ' para não interromper a assinatura.'),
+                     ('Your card expires in 30 days. Update it on the ', 'payment page',
+                      ' so the subscription is not interrupted.'))
+        html = f'<p class="lk-par">{a}{lk(b, inline=True)}{c}</p>'
+        code = [f'<p>{a}', f'  <a class="al-link al-link--inline" href="/pagamento">{b}</a>', f'{c}</p>']
+    else:
+        lab = tr('Ver todos os pedidos', 'View all orders')
+        html = lk(lab, icon=icon == 'arrow')
+        ic = ('\n  <svg class="al-link__icon" aria-hidden="true" …></svg>' if icon == 'arrow' else '')
+        code = [f'<a class="al-link" href="/pedidos">{lab}{ic}', '</a>']
+    return html, '\n'.join(code)
+
+
+def lk_box(use, icon, surf='canvas'):
+    return f'<div class="lk-box" data-surf="{surf}">{lk_demo(use, icon)[0]}</div>'
+
+
+LK_DEMOS = {f'{u}|{i}': dict(zip(('html', 'code'), lk_demo(u, i)))
+            for u, _ in LK_USE for i, _ in LK_ICON}
+
+
+def link_token_rows(names):
+    rows = []
+    for name in names:
+        res = LINK['resolved'][name]
+        if isinstance(res, dict) and 'light' in res and str(res['light']).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, (int, float)):
+            light = dark = f'{res}px'
+        else:
+            light = dark = '—'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{LINK["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+LK_COLOR_NAMES = ('link-text-default', 'link-text-hover', 'link-text-focus')
+LK_GEO_NAMES = ('link-underline-default', 'link-underline-hover', 'link-underline-offset',
+                'link-gap', 'link-icon-size')
+
+
+def lk_playground(t):
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="link-stage">{lk_box('standalone', 'arrow')}</div>
+
+    <div class="controls controls--fields" id="link-controls">
+      {pg_field('lkuse', t['use'], LK_USE, 'standalone')}
+      {pg_field('lkicon', t['icon'], LK_ICON, 'arrow')}
+      {pg_field('lksurf', t['surf'], LK_SURF, 'canvas')}
+      {pg_field('lktheme', t['theme'], t['themes'], 'auto')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="link-copy">{t['copy']}</button></div>
+      <pre><code id="link-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>'''
+
+
+LINK_OVERVIEW = tr(lk_playground({
+    'use': 'Uso', 'icon': 'Ícone', 'surf': 'Superfície', 'theme': 'Tema',
+    'themes': [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')],
+    'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'O <b>Uso</b> decide a tipografia: solto, o link é label-md; no meio do texto, herda '
+            'o parágrafo e esconde o ícone. Passe o mouse e use o Tab: o sublinhado engrossa nos '
+            'dois, e só o teclado acende o anel.'}) + f'''
+
+<section>
+  <h2>Para onde vai, não o que faz</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Leva a outra página</span>
+      <div class="stage2">{lk(tr("Ver todos os pedidos", "View all orders"), icon=True)}</div>
+      <p class="cap">O destino está no rótulo, e a seta reforça o seguir em frente. <i>Primer, Carbon.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Abre um Modal</span>
+      <div class="stage2"><span class="lk-fake">Excluir conta</span></div>
+      <p class="cap">O leitor de tela diz “link” e a pessoa espera sair. Ação na página é Button Ghost.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Os dois usos</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{LK_LAB_STAND}</span>
+      <div class="stage2" style="display:block">{lk_box('standalone', 'arrow')}</div>
+      <p class="cap">Fora do texto: no rodapé de um card, numa lista de atalhos, abaixo de um formulário.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{LK_LAB_INLINE}</span>
+      <div class="stage2" style="display:block">{lk_box('inline', 'none')}</div>
+      <p class="cap">Mesmo tamanho e entrelinha do texto em volta, sem ícone, e quebra de linha junto com ele.</p>
+    </div>
+  </div>
+</section>''', lk_playground({
+    'use': 'Use', 'icon': 'Icon', 'surf': 'Surface', 'theme': 'Theme',
+    'themes': [('auto', 'System'), ('light', 'Light'), ('dark', 'Dark')],
+    'markup': 'Markup', 'copy': 'Copy',
+    'note': 'The <b>Use</b> decides the typography: standalone, the link is label-md; inline, it '
+            'inherits the paragraph and hides the icon. Hover and press Tab: the underline gets '
+            'thicker on both, and only the keyboard lights the ring.'}) + f'''
+
+<section>
+  <h2>Where it goes, not what it does</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">Goes to another page</span>
+      <div class="stage2">{lk(tr("Ver todos os pedidos", "View all orders"), icon=True)}</div>
+      <p class="cap">The destination is in the label, and the arrow reinforces going forward. <i>Primer, Carbon.</i></p>
+    </div>
+    <div class="cell no">
+      <span class="lab">Opens a Modal</span>
+      <div class="stage2"><span class="lk-fake">Delete account</span></div>
+      <p class="cap">The screen reader says “link” and the person expects to leave. An action on the page is a Ghost Button.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The two uses</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{LK_LAB_STAND}</span>
+      <div class="stage2" style="display:block">{lk_box('standalone', 'arrow')}</div>
+      <p class="cap">Outside running text: a card footer, a list of shortcuts, below a form.</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{LK_LAB_INLINE}</span>
+      <div class="stage2" style="display:block">{lk_box('inline', 'none')}</div>
+      <p class="cap">The same size and line height as the text around it, no icon, and it wraps with it.</p>
+    </div>
+  </div>
+</section>''')
+
+
+def lk_states(t):
+    cells = ''.join(f'''
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">State = {s}</span>
+      <div class="stage2" style="display:block">{lk(t['label'], icon=True, sim=sim)}</div>
+      <p class="cap">{cap}</p>
+    </div>''' for s, sim, cap in t['rows'])
+    return f'''
+<section>
+  <h2>{LK_H_STATES}</h2>
+  <div class="dd">{cells}
+  </div>
+</section>'''
+
+
+def lk_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+  <div class="note" style="margin-top:16px"><b>{t['note_t']}</b> {t['note']}</div>
+</section>
+{lk_states(t)}
+<section>
+  <h2>{T_MEASURES}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{link_token_rows(LK_GEO_NAMES)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{link_token_rows(LK_COLOR_NAMES)}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px"><b>{t['prim_t']}</b> {t['prim']}</div>
+</section>'''
+
+
+LINK_SPECS = tr(lk_specs({
+    'anat': [('Elemento', '<code>&lt;a href&gt;</code>, sempre. Nunca <code>&lt;span&gt;</code> ou <code>&lt;div&gt;</code> com clique.'),
+             ('Rótulo', 'Label/md quando solto. No meio do texto, herda fonte, tamanho e entrelinha do parágrafo.'),
+             ('Sublinhado', '<code>text-decoration</code>, não borda: acompanha o texto quando o link quebra de linha. 1px em repouso, 2px no hover e no foco, a 4px do texto.'),
+             ('Ícone', 'Opcional, só à direita, 20px, a 8px do rótulo. Decorativo, segue a cor do texto. Some no uso inline.'),
+             ('Anel de foco', 'O mesmo do Button: 2px de <code>bg-canvas</code> e 2px de <code>border-focus</code>, só pelo teclado.')],
+    'note_t': 'Borda no Figma, sublinhado no código.',
+    'note': 'No Figma o sublinhado é a borda de baixo da caixa. No código ele é sublinhado de texto, '
+            'para quebrar de linha junto com o link; por isso fica a 4px do texto e a altura pode '
+            'variar 1 ou 2px.',
+    'label': 'Ver todos os pedidos',
+    'rows': [('Default', '', 'Laranja da marca, sublinhado de 1px.'),
+             ('Hover', 'hover', '<code>text-brand</code>, sublinhado de 2px.'),
+             ('Focus', 'focus', 'Como o hover, mais o anel do Button.')],
+    'th': 'Token do Link', 'to': 'Aponta para', 'light': 'Claro', 'dark': 'Escuro',
+    'prim_t': 'O Default aponta para a paleta, não para um semântico.',
+    'prim': 'Não existe semântico de texto em <code>#FC5000</code>: o <code>text-brand</code> é mais '
+            'escuro justamente porque esse laranja não chega a 4,5:1 no branco. O token aponta para '
+            '<code>color-orange-500</code>, igual nos dois temas, e a exceção é declarada.'}), lk_specs({
+    'anat': [('Element', '<code>&lt;a href&gt;</code>, always. Never a <code>&lt;span&gt;</code> or a <code>&lt;div&gt;</code> with a click handler.'),
+             ('Label', 'Label/md when standalone. Inline, it inherits the paragraph font, size and line height.'),
+             ('Underline', '<code>text-decoration</code>, not a border: it follows the text when the link wraps. 1px at rest, 2px on hover and focus, 4px from the text.'),
+             ('Icon', 'Optional, right side only, 20px, 8px from the label. Decorative, it follows the text color. Hidden inline.'),
+             ('Focus ring', 'The Button ring: 2px of <code>bg-canvas</code> and 2px of <code>border-focus</code>, keyboard only.')],
+    'note_t': 'A border in Figma, an underline in code.',
+    'note': 'In Figma the underline is the bottom border of the box. In code it is a text underline, '
+            'so it wraps with the link; that is why it sits 4px from the text and the height can '
+            'differ by 1 or 2px.',
+    'label': 'View all orders',
+    'rows': [('Default', '', 'Brand orange, 1px underline.'),
+             ('Hover', 'hover', '<code>text-brand</code>, 2px underline.'),
+             ('Focus', 'focus', 'Like hover, plus the Button ring.')],
+    'th': 'Link token', 'to': 'Points to', 'light': 'Light', 'dark': 'Dark',
+    'prim_t': 'The default points to the palette, not to a semantic.',
+    'prim': 'There is no text semantic at <code>#FC5000</code>: <code>text-brand</code> is darker '
+            'precisely because this orange does not reach 4.5:1 on white. The token points to '
+            '<code>color-orange-500</code>, the same in both themes, and the exception is declared.'}))
+
+LINK_A11Y_TAB = tr(f'''
+<section>
+  <h2>Uma exceção de marca, paga pelo sublinhado</h2>
+  <p>O laranja do Default fica abaixo de 4,5:1 no canvas claro, no surface claro e no surface
+  escuro. É decisão de design sobre a cor de ação, e só se sustenta porque o sublinhado nunca
+  sai: quem não distingue a cor ainda vê a linha embaixo do texto (WCAG 1.4.1).</p>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Tab</b><span>Todo <code>&lt;a href&gt;</code> entra na ordem de tabulação, na ordem de leitura. Enter segue o link.</span></div>
+    <div><b>Anel só pelo teclado</b><span><code>:focus-visible</code>: o clique não acende o anel, o Tab acende.</span></div>
+    <div><b>“Link”</b><span>O leitor anuncia o papel e o rótulo. O ícone é <code>aria-hidden</code> e não entra no nome.</span></div>
+    <div><b>Quebra de linha</b><span>No meio do texto, o anel se repete em cada linha do link (<code>box-decoration-break: clone</code>).</span></div>
+    <div><b>Menos movimento</b><span>Com <code>prefers-reduced-motion</code>, a troca de cor e de espessura é instantânea.</span></div>
+  </div>
+</section>''', f'''
+<section>
+  <h2>A brand exception, paid for by the underline</h2>
+  <p>The default orange falls below 4.5:1 on the light canvas, the light surface and the dark
+  surface. It is a design decision about the action color, and it only holds because the
+  underline never leaves: someone who can't tell the color apart still sees the line under the
+  text (WCAG 1.4.1).</p>
+</section>
+
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>Tab</b><span>Every <code>&lt;a href&gt;</code> enters the tab order, in reading order. Enter follows the link.</span></div>
+    <div><b>Ring from the keyboard only</b><span><code>:focus-visible</code>: a click does not light the ring, Tab does.</span></div>
+    <div><b>“Link”</b><span>The reader announces the role and the label. The icon is <code>aria-hidden</code> and stays out of the name.</span></div>
+    <div><b>Wrapping</b><span>Inline, the ring repeats on each line of the link (<code>box-decoration-break: clone</code>).</span></div>
+    <div><b>Reduced motion</b><span>With <code>prefers-reduced-motion</code>, the color and thickness change is instant.</span></div>
+  </div>
+</section>''')
+
+LK_MD = guide_md('link')
+LINK_GUIDE = guide_tab(LK_MD, [
+    (lk(tr('Ver todos os pedidos', 'View all orders'), icon=True),
+     '<span class="lk-fake">' + tr('Excluir conta', 'Delete account') + '</span>'),
+    (lk_box('inline', 'none'),
+     '<p class="lk-par">' + tr('Atualize os dados na ', 'Update it on the ')
+     + '<span class="lk-fake lk-fake--big">' + tr('página de pagamento', 'payment page') + '</span>.</p>'),
+    (lk(tr('Ver política de privacidade', 'View privacy policy')),
+     '<span class="lk-fake">' + tr('Clique aqui', 'Click here') + '</span>'),
+    (lk(tr('Ver detalhes do plano', 'View plan details'), icon=True),
+     '<p class="lk-par">' + tr('Atualize na ', 'Update it on the ')
+     + '<span class="lk-fake">' + tr('página', 'page') + ' ' + LK_ARROW.replace('al-link__icon', 'al-icon') + '</span>.</p>'),
+    (lk(tr('Ver pedidos', 'View orders'), sim='hover'),
+     '<span class="lk-fake lk-fake--gray">' + tr('Ver pedidos', 'View orders') + '</span>'),
+    (lk(tr('Ver pedidos', 'View orders'), sim='focus'),
+     '<span class="lk-fake lk-fake--thick">' + tr('Ver pedidos', 'View orders') + '</span>'),
+    (lk(tr('Ver pedidos', 'View orders')),
+     '<span class="lk-fake lk-fake--bare">' + tr('Ver pedidos', 'View orders') + '</span>'),
+])
+
+TH_LINK = f'<a class="al-link" href="#link" tabindex="-1">{tr("Ver pedidos", "View orders")}{LK_ARROW}</a>'
+
+LINK_OVERVIEW, LINK_PLAYGROUND, LINK_A11Y_TAB = model_tabs(
+    'link', old_ov=LINK_OVERVIEW, old_specs=LINK_SPECS, guide=LINK_GUIDE, old_a11y=LINK_A11Y_TAB,
+    preview=lk_box('standalone', 'arrow'),
+    usage=tr('Use para levar a pessoa a outra página, a outra seção ou a um arquivo. Solto, com '
+             'label-md; no meio do texto, com o modificador <code>al-link--inline</code>.',
+             'Use it to take the person to another page, another section or a file. Standalone, '
+             'with label-md; inside running text, with the <code>al-link--inline</code> modifier.'),
+    states=[LK_H_STATES],
+    presets={LK_LAB_STAND: {'lkuse': 'standalone'}, LK_LAB_INLINE: {'lkuse': 'inline'}},
+    classes=tr([
+        ('a.al-link', '—', 'Link solto, em label-md.'),
+        ('.al-link--inline', '—', 'No meio do texto: herda a fonte do parágrafo e esconde o ícone.'),
+        ('.al-link__icon', '—', 'Ícone opcional à direita, com <code>aria-hidden="true"</code>.'),
+    ], [
+        ('a.al-link', '—', 'Standalone link, in label-md.'),
+        ('.al-link--inline', '—', 'Inside running text: inherits the paragraph font and hides the icon.'),
+        ('.al-link__icon', '—', 'Optional icon on the right, with <code>aria-hidden="true"</code>.'),
+    ]),
+    contrast=role_contrast([dict(r, floor=r['min']) for r in LINK_A11Y['rows']], tr([
+        ('Texto em repouso', {'text default'}, 'exc',
+         'Exceção de marca declarada: o sublinhado nunca sai (regras 13 e 19).',
+         WCAG_143, 'Canvas claro, surface claro e surface escuro'),
+        ('Texto em repouso', {'text default'}, 'ok', 'Passa no canvas escuro.', WCAG_143, 'Canvas escuro'),
+        ('Texto no hover e no foco', {'text hover', 'text focus'}, 'ok',
+         'Use <code>text-brand</code>.', WCAG_143, 'Canvas e surface'),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel do Button contra o fundo em volta.',
+         WCAG_1411, 'Canvas e surface'),
+        ('Texto sobre o halo do anel', {'focus text on halo'}, 'ok',
+         'O halo interno é <code>bg-canvas</code> mesmo sobre o surface.', WCAG_143, 'Canvas e surface'),
+    ], [
+        ('Text at rest', {'text default'}, 'exc',
+         'Declared brand exception: the underline never leaves (rules 13 and 19).',
+         WCAG_143, 'Light canvas, light surface and dark surface'),
+        ('Text at rest', {'text default'}, 'ok', 'Passes on the dark canvas.', WCAG_143, 'Dark canvas'),
+        ('Text on hover and focus', {'text hover', 'text focus'}, 'ok',
+         'Use <code>text-brand</code>.', WCAG_143, 'Canvas and surface'),
+        ('Focus ring', {'focus ring'}, 'ok', 'The Button ring against the background around it.',
+         WCAG_1411, 'Canvas and surface'),
+        ('Text on the ring halo', {'focus text on halo'}, 'ok',
+         'The inner halo is <code>bg-canvas</code> even on the surface.', WCAG_143, 'Canvas and surface'),
+    ]), tr(f'<p>São {N_LK_MEDIDAS} medições no portão de build: nenhuma reprova, e as três abaixo '
+           f'de 4,5:1 são a exceção de marca declarada.</p>',
+           f'<p>That is {N_LK_MEDIDAS} measurements in the build gate: no failures, and the three '
+           f'below 4.5:1 are the declared brand exception.</p>'), key='what'),
+)
+
+
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
 # clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
@@ -20109,6 +20605,7 @@ LANDING_COMPONENTES = tr(f'''
   <div class="cards">
     {card('button', 'Button', 'Quatro variantes, dois tamanhos, cinco estados — com playground que instancia o CSS real.', TH_BUTTON)}
     {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_ICONBUTTON)}
+    {card('link', 'Link', 'Leva a outra página, a outra seção ou a um arquivo. Um &lt;a href&gt; de verdade, sempre sublinhado — solto ou no meio do texto.', TH_LINK)}
     {card('tag', 'Tag', 'Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.', TH_TAG)}
     {card('avatar', 'Avatar', 'Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.', TH_AVATAR)}
     {card('select', 'Select', 'Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.', TH_SELECT)}
@@ -20136,6 +20633,7 @@ LANDING_COMPONENTES = tr(f'''
   <div class="cards">
     {card('button', 'Button', 'Four variants, two sizes, five states, with a playground that instantiates the real CSS.', TH_BUTTON)}
     {card('icon-button', 'Icon Button', 'The button with no visible label. The same pill and the same states as the Button, with a required accessible name.', TH_ICONBUTTON)}
+    {card('link', 'Link', 'Takes the person to another page, another section or a file. A real &lt;a href&gt;, always underlined, standalone or inside running text.', TH_LINK)}
     {card('tag', 'Tag', 'A short label of state or category. Content, not a control, and the first in AL to close with zero exceptions while carrying text.', TH_TAG)}
     {card('avatar', 'Avatar', 'Who the person is, in three types that form a chain: photo, initials, icon, in that order, never an empty box.', TH_AVATAR)}
     {card('select', 'Select', 'A single choice in a form. It is the native &lt;select&gt;: the list belongs to the browser, and that is what buys keyboard and mobile for free.', TH_SELECT)}
@@ -20179,7 +20677,7 @@ SITE_NAV = [
                     ('tipografia', tr('Tipografia', 'Typography')), ('espacamento', tr('Espaçamento', 'Spacing')),
                     ('motion', 'Motion'), ('icon', tr('Ícones', 'Icons'))]),
     (tr('Componentes', 'Components'), [('componentes', T_OV, tr(' dos componentes', ' of the components'))]),
-    ('Actions', [('button', 'Button'), ('icon-button', 'Icon button')]),
+    ('Actions', [('button', 'Button'), ('icon-button', 'Icon button'), ('link', 'Link')]),
     ('Forms and inputs', [('input', 'Input'), ('password', 'Password'), ('select', 'Select'),
                           ('checkbox', 'Checkbox'), ('radio', 'Radio'), ('textarea', 'Textarea'),
                           ('switch', 'Switch')]),
@@ -20829,6 +21327,19 @@ PAGES = [
          (tr('0 exceções de marca', '0 brand exceptions'), False)],
         [('overview', T_OV, IB_OVERVIEW), ('playground', 'Playground', IB_PLAYGROUND),
          ('guide', T_GUIDE, anat_to_tables(IB_GUIDE)), ('a11y', T_A11Y, IB_A11Y)])),
+
+    ('link', 'Componentes', page(
+        'link',
+        tr('Leva a pessoa para outro lugar: outra página, outra seção ou um arquivo. É o '
+           '<code>&lt;a href&gt;</code> nativo, sempre sublinhado — solto em label-md, ou no meio '
+           'do texto herdando o parágrafo.',
+           'Takes the person somewhere else: another page, another section or a file. It is the '
+           'native <code>&lt;a href&gt;</code>, always underlined: standalone in label-md, or inside '
+           'running text, inheriting the paragraph.'),
+        [(T_STABLE, True), (tr('3 variantes no Figma', '3 variants in Figma'), False),
+         (f'{N_LINK_TOKENS} tokens', False), (tr('1 exceção declarada', '1 declared exception'), False)],
+        [('overview', T_OV, LINK_OVERVIEW), ('playground', 'Playground', LINK_PLAYGROUND),
+         ('guide', T_GUIDE, anat_to_tables(LINK_GUIDE)), ('a11y', T_A11Y, LINK_A11Y_TAB)])),
 
     ('tag', 'Componentes', page(
         'tag',
@@ -22719,6 +23230,75 @@ JS_PASSWORD = r"""
 """
 
 
+JS_LINK_DATA = 'var LK_DEMOS = ' + json.dumps(LK_DEMOS, ensure_ascii=False) + ';\n'
+
+JS_LINK = r"""
+(function () {
+  // ── playground do Link ──
+  var stage = document.getElementById('link-stage');
+  if (!stage) return;
+  var code = document.getElementById('link-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinação vem pronto do site.py (LK_DEMOS).
+  function render() {
+    var use = pick('lkuse'), icon = pick('lkicon'), surf = pick('lksurf'), theme = pick('lktheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = LK_DEMOS[use + '|' + icon];
+    stage.innerHTML = '<div class="lk-box" data-surf="' + surf + '">' + demo.html + '</div>';
+    code.innerHTML = esc(demo.code);
+  }
+
+  document.querySelectorAll('#link-controls input, #link-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('link-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = AL_T.failed; });
+    }
+  });
+  // os links de demonstração não navegam
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a.al-link[href="#link"]');
+    if (a) e.preventDefault();
+  });
+  render();
+})();
+"""
+
+
+CHROME_LINK = """
+/* ── páginas do Link ──
+   Casca do site. O link em si é sempre o .al-link, do link.css real. */
+.lk-box{padding:var(--al-space-16); border-radius:8px; background:var(--al-bg-canvas)}
+.lk-box[data-surf="surface"]{background:var(--al-bg-surface)}
+.lk-par{margin:0; font-size:16px; line-height:24px; color:var(--al-text-primary); max-width:46ch}
+/* hover e foco parados na vitrine: as mesmas declarações do link.css */
+.al-link.lk-sim-hover{color:var(--al-link-text-hover); text-decoration-thickness:var(--al-link-underline-hover)}
+.al-link.lk-sim-focus{color:var(--al-link-text-focus); text-decoration-thickness:var(--al-link-underline-hover);
+  box-shadow:var(--al-link-ring)}
+/* exemplos a evitar: casca, nunca um .al-link errado */
+.lk-fake{display:inline-flex; align-items:center; gap:8px; font-size:14px; line-height:20px; font-weight:500;
+  color:var(--al-link-text-default); text-decoration:underline; text-underline-offset:4px}
+.lk-fake--big{font-size:20px}
+.lk-fake--gray{color:var(--al-text-secondary)}
+.lk-fake--thick{text-decoration-thickness:2px; color:var(--al-link-text-focus)}
+.lk-fake--bare{text-decoration:none}
+.lk-fake .al-icon{width:20px; height:20px}
+"""
+
+
 JS_DIVIDER_DATA = 'var DV_DEMOS = ' + json.dumps(DV_DEMOS, ensure_ascii=False) + ';\n'
 
 JS_DIVIDER = r"""
@@ -23245,7 +23825,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_LINK + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -23253,7 +23833,7 @@ HTML = (
     + 'var AL_T = ' + json.dumps(AL_T, ensure_ascii=False) + ';\n' + JS + JS_PRESETS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
-    + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER
+    + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + JS_LINK_DATA + JS_LINK
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
