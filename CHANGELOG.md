@@ -2,6 +2,12 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.5.0] - 2026-10-22
+
+### Added
+- **Menu**, in Actions: the actions that don't fit on screen, behind a ⋮ Icon Button. A `role="menu"` list of `<button role="menuitem">` with the WAI-ARIA menu button keyboard pattern (Enter, Space or Down open on the first item, Up on the last; arrows wrap, Home and End, Esc returns focus to the trigger). A fixed 200px panel on `bg-surface-raised`, optional icon and shortcut per item (the shortcut is only shown, announced by `aria-keyshortcuts`), the Divider between groups, and a Danger item that goes last. Disabled items use `aria-disabled` and stay focusable. Focus is a 2px inset outline. Its own script (`menu.js`), 27 tokens, 26 usage rules, its own CSS and accessibility gates, and a page in the documentation site in English and Portuguese.
+- No new Foundation token. The panel width is a declared value. Danger hovers on `bg-danger-subtle` and presses on `bg-danger` with white text, because red on the -raised greys failed in dark mode. Two declared contrast exceptions: the panel border (a content box, like the Breadcrumb menu) and disabled.
+
 ## [1.4.0] - 2026-10-21
 
 ### Added
@@ -179,6 +185,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
+[1.5.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.1.0...v1.2.0
