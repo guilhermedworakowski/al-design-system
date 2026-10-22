@@ -1,0 +1,188 @@
+/* AL Design System - Menu
+ *
+ * Written by hand. Depends on al-foundation.css, the Icon Button (trigger),
+ * the Icon, the Divider (separator) and al-menu-tokens.css. Behavior:
+ * menu.js.
+ *
+ * No value here is literal: color, space, radius, border, shadow, ring, width
+ * and type come from var(--al-menu-*). The check.py next to it rejects the
+ * file if any escapes.
+ *
+ * MARKUP (WAI-ARIA menu button)
+ *
+ *   <div class="al-menu">
+ *     <button class="al-icon-button al-icon-button--ghost al-icon-button--sm"
+ *             aria-label="More actions" aria-haspopup="menu"
+ *             aria-expanded="false" aria-controls="m1">...</button>
+ *     <ul class="al-menu__list" role="menu" id="m1" aria-label="More actions" hidden>
+ *       <li role="none">
+ *         <button class="al-menu__item" role="menuitem" tabindex="-1"
+ *                 aria-keyshortcuts="Meta+E">
+ *           <svg class="al-icon al-icon--16" aria-hidden="true">...</svg>
+ *           <span class="al-menu__label">Edit</span>
+ *           <kbd class="al-menu__shortcut" aria-hidden="true">⌘E</kbd>
+ *         </button>
+ *       </li>
+ *       <li class="al-divider" role="separator"></li>
+ *       <li role="none">
+ *         <button class="al-menu__item al-menu__item--danger" role="menuitem"
+ *                 tabindex="-1">...Delete...</button>
+ *       </li>
+ *     </ul>
+ *   </div>
+ *
+ *   Disabled: aria-disabled="true" on the item, never `disabled` - the item
+ *   stays focusable and is announced as unavailable (rule A=a, APG).
+ *   The shortcut is aria-hidden: aria-keyshortcuts already announces it, and
+ *   the product implements the key (rule 11).
+ *
+ * STATES
+ *
+ *   hover   :hover, not while focused - the ring on bg-hover-raised would
+ *           drop to 2.88:1 (rule 25)
+ *   pressed :active
+ *   focus   :focus-visible, inset ring (an outer ring hits the neighbours)
+ *   danger  hover bg-danger-subtle, pressed bg-danger with white ink (rule 16)
+ *
+ * The item has no height: 36 = padding-y x 2 + line height.
+ *
+ * MOTION
+ *
+ *   Same fade as the Breadcrumb menu: `motion-duration-feedback`, ease-out
+ *   on opening, ease-in on closing. None with prefers-reduced-motion.
+ */
+
+.al-menu {
+  position: relative;
+  display: inline-block;
+}
+
+/* ------------------------------------------------------------------ panel */
+/* Aligned to the trigger's start edge, `offset` below it - as in Figma. */
+.al-menu__list {
+  position: absolute;
+  top: calc(100% + var(--al-menu-offset));
+  left: 0;
+  z-index: 1;
+  display: flex;
+  inline-size: var(--al-menu-width);
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: var(--al-menu-gap);
+  margin: 0;
+  padding: var(--al-menu-padding);
+  list-style: none;
+  border: var(--al-menu-border-width) solid var(--al-menu-border);
+  border-radius: var(--al-menu-radius);
+  background-color: var(--al-menu-bg);
+  box-shadow: var(--al-menu-shadow);
+  transition:
+    opacity var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    display var(--al-motion-duration-feedback) var(--al-motion-easing-exit) allow-discrete;
+}
+
+.al-menu__list[hidden] {
+  display: none;
+  opacity: 0;
+}
+
+.al-menu__list:not([hidden]) {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+@starting-style {
+  .al-menu__list:not([hidden]) {
+    opacity: 0;
+  }
+}
+
+/* ------------------------------------------------------------------- item */
+.al-menu__item {
+  --al-icon-box: var(--al-menu-item-icon-size);
+
+  display: flex;
+  inline-size: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  gap: var(--al-menu-item-gap);
+  margin: 0;
+  padding: var(--al-menu-item-padding-y) var(--al-menu-item-padding-x);
+  border: 0;
+  border-radius: var(--al-menu-item-radius);
+  background-color: transparent;
+  color: var(--al-menu-item-meta);
+  font-family: inherit;
+  font-size: var(--al-menu-font-size);
+  line-height: var(--al-menu-line-height);
+  font-weight: var(--al-menu-font-weight);
+  letter-spacing: var(--al-menu-tracking);
+  text-align: start;
+  cursor: pointer;
+  transition: background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+.al-menu__label {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--al-menu-item-label);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.al-menu__shortcut {
+  flex: none;
+  font: inherit;
+}
+
+/* hover and pressed: icon and shortcut darken with the label */
+.al-menu__item:hover:not(:focus-visible):not([aria-disabled="true"]) {
+  background-color: var(--al-menu-item-bg-hover);
+  color: var(--al-menu-item-meta-hover);
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+.al-menu__item:active:not([aria-disabled="true"]) {
+  background-color: var(--al-menu-item-bg-active);
+  color: var(--al-menu-item-meta-hover);
+}
+
+.al-menu__item:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 var(--al-menu-ring-width) var(--al-menu-ring);
+}
+
+/* ----------------------------------------------------------------- danger */
+.al-menu__item--danger,
+.al-menu__item--danger .al-menu__label {
+  color: var(--al-menu-danger-label);
+}
+
+.al-menu__item--danger:hover:not(:focus-visible):not([aria-disabled="true"]) {
+  background-color: var(--al-menu-danger-bg-hover);
+  color: var(--al-menu-danger-label);
+}
+
+.al-menu__item--danger:active:not([aria-disabled="true"]) {
+  background-color: var(--al-menu-danger-bg-active);
+}
+
+.al-menu__item--danger:active:not([aria-disabled="true"]),
+.al-menu__item--danger:active:not([aria-disabled="true"]) .al-menu__label {
+  color: var(--al-menu-danger-label-active);
+}
+
+/* --------------------------------------------------------------- disabled */
+/* Below AA on purpose (WCAG 1.4.3 exempts disabled controls, rule 18). */
+.al-menu__item[aria-disabled="true"],
+.al-menu__item[aria-disabled="true"] .al-menu__label {
+  color: var(--al-menu-item-label-disabled);
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-menu__list,
+  .al-menu__item {
+    transition: none;
+  }
+}
