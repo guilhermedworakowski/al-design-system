@@ -13,14 +13,16 @@
  *     <div class="al-empty-state__text">
  *       <h2 class="al-empty-state__title" id="es-title">No projects yet</h2>
  *       <p class="al-empty-state__description">Projects you create show up
- *         here. <a class="al-link" href="/docs">Learn more</a></p>
+ *         here.</p>
  *     </div>
- *     <button class="al-btn al-btn--primary" type="button">Create project</button>
+ *     <button class="al-btn al-btn--primary al-btn--md" type="button">
+ *       <span class="al-btn__label">Create project</span>
+ *     </button>
  *   </section>
  *
  *   Icon, description and button are optional (rules 9, 13, 16). At most one
- *   button, always Primary (rule 15); a second action is a Link in the
- *   description (rule 18).
+ *   button, always Primary (rule 15). No Link inside: Figma has none, and a
+ *   second action has no place here (rule 18).
  *
  *   After a search or filter (decision A=a), the empty state is rendered into
  *   a container with role="status", so it is announced once. On first load it
