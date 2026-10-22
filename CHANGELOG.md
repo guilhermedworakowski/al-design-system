@@ -2,6 +2,14 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.8.0] - 2026-10-22
+
+### Added
+- **Slider**, in Forms: picks a value in a range when the position matters more than the exact number. The native `<input type="range">`, one thumb, one size, no error state. The value sits next to the label in an `<output>`, with the unit announced through `aria-valuetext`; the thumb is drawn at 20px inside a 24px target. `slider.js` fills the track in WebKit/Blink and writes the value. 20 tokens, 24 usage rules.
+- **Rating**, in Forms: collects an opinion on a 1 to 5 scale, or shows an average read-only. A `<fieldset>` with five native radios, no script: one Tab stop, the arrows move and check. Five whole stars in the brand color; read-only is a single `role="img"` with the exact value in its name. 13 tokens, 22 usage rules.
+- Both with their own CSS and accessibility gates and a page in the documentation site in English and Portuguese.
+- No new Foundation token. Declared contrast exceptions: the Slider fill on the track (the Progress pair) and its hover/active thumb in dark; the Rating hover preview against a checked star.
+
 ## [1.7.0] - 2026-10-22
 
 ### Added
@@ -197,6 +205,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
+[1.8.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.4.0...v1.5.0
