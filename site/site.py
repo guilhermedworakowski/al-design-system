@@ -26222,8 +26222,8 @@ CHROME_STEPPER = """
   border-radius:8px; background:var(--al-bg-canvas)}
 .stp-box[data-surf="surface"]{background:var(--al-bg-surface)}
 .stp-box[data-surf="raised"]{background:var(--al-bg-surface-raised)}
-.stp-box[data-orient="horizontal"]{inline-size:560px; max-inline-size:100%}
-.stp-box[data-orient="vertical"]{inline-size:320px; max-inline-size:100%}
+.stp-box[data-orient="horizontal"]{inline-size:min(560px, 100%); min-inline-size:0}
+.stp-box[data-orient="vertical"]{inline-size:min(320px, 100%); min-inline-size:0}
 .stp-th{display:flex; align-items:center; gap:0}
 .stp-th .al-stepper__indicator{flex:none}
 .stp-th__l{inline-size:28px; block-size:1px; background:var(--al-stepper-connector)}
