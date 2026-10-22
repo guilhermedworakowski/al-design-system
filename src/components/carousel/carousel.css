@@ -1,0 +1,146 @@
+/* AL Design System - Carousel
+ *
+ * Depends on: al-foundation.css, al-carousel-tokens.css, and the Icon Button
+ * (al-icon-tokens.css + icon.css + al-icon-button-tokens.css + icon-button.css)
+ * for the arrows. Behavior in carousel.js.
+ *
+ * The basic carousel of the APG (usage rules 13-23): previous and next below
+ * the content, disabled at the ends, no loop, no auto-rotation. The dots are
+ * decorative.
+ *
+ *   <section class="al-carousel" aria-roledescription="carousel" aria-labelledby="t">
+ *     <h2 id="t">Visible title</h2>                         (rule 9 - the page's heading)
+ *     <div class="al-carousel__viewport">
+ *       <div class="al-carousel__slide" role="group"
+ *            aria-roledescription="slide" aria-label="1 of 5">…</div>
+ *       …
+ *     </div>
+ *     <div class="al-carousel__controls">
+ *       <span class="al-carousel__dots" aria-hidden="true">
+ *         <span class="al-carousel__dot"></span>…            (one per slide, carousel.js marks the current)
+ *       </span>
+ *       <div class="al-carousel__nav">
+ *         <button type="button" class="al-icon-btn al-icon-btn--secondary al-icon-btn--sm"
+ *                 data-al-carousel="prev" aria-label="Previous slide">…chevron-left…</button>
+ *         <button type="button" class="al-icon-btn al-icon-btn--secondary al-icon-btn--sm"
+ *                 data-al-carousel="next" aria-label="Next slide">…chevron-right…</button>
+ *       </div>
+ *     </div>
+ *     <p class="al-carousel__live" aria-live="polite" aria-atomic="true"></p>
+ *   </section>
+ *
+ * SLIDE WIDTH IS THE LAYOUT'S (rule 6): --al-carousel-slide-size is a public
+ * adjustment point, not a token. Default 100% = one slide per view; set it
+ * narrower than the viewport so the next slide shows cut at the edge.
+ *
+ * NO JS NEEDED FOR FOCUS (rule 23): focusing a link inside a slide out of
+ * view scrolls the viewport natively.
+ *
+ * The viewport hides its scrollbar: the arrows, swipe and the trackpad move
+ * it. Smooth scrolling is turned off under prefers-reduced-motion (rule 16).
+ */
+
+.al-carousel {
+  --al-carousel-slide-size: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-carousel-controls-gap);
+  min-inline-size: 0;
+}
+
+/* -------------------------------------------------------------- viewport */
+.al-carousel__viewport {
+  display: flex;
+  gap: var(--al-carousel-gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.al-carousel__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.al-carousel__slide {
+  flex: 0 0 var(--al-carousel-slide-size);
+  scroll-snap-align: start;
+  overflow: hidden;
+  border-radius: var(--al-carousel-slide-radius);
+  background-color: var(--al-carousel-slide-bg);   /* rule 18 - shows only when the image is missing */
+}
+
+.al-carousel__slide > img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/* -------------------------------------------------------------- controls */
+.al-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.al-carousel__nav {
+  display: flex;
+  gap: var(--al-carousel-nav-gap);
+  margin-inline-start: auto;
+}
+
+/* the dots: decorative, shape carries the current one (rule 22) */
+.al-carousel__dots {
+  display: flex;
+  align-items: center;
+  gap: var(--al-carousel-dot-gap);
+}
+
+.al-carousel__dot {
+  inline-size: var(--al-carousel-dot-size);
+  block-size: var(--al-carousel-dot-size);
+  border-radius: var(--al-carousel-dot-radius);
+  background-color: var(--al-carousel-dot);
+  transition:
+    inline-size var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+.al-carousel__dot[data-current] {
+  inline-size: var(--al-carousel-dot-current-width);
+  background-color: var(--al-carousel-dot-current);
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* the polite region that announces the position after an arrow (rule 21) */
+.al-carousel__live {
+  position: absolute;
+  inline-size: var(--al-border-width-1);
+  block-size: var(--al-border-width-1);
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .al-carousel__viewport {
+    scroll-behavior: auto;
+  }
+
+  .al-carousel__dot {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .al-carousel__dot {
+    background-color: CanvasText;
+  }
+
+  .al-carousel__dot[data-current] {
+    background-color: Highlight;
+  }
+}
