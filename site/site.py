@@ -166,6 +166,10 @@ STP = json.load(open(comp_out('stepper', 'tokens.json')))
 STP_TOKENS = open(comp_out('stepper', 'al-stepper-tokens.css')).read()
 STP_CSS = open(comp_src('stepper', 'stepper.css')).read()
 STP_A11Y = json.load(open(comp_out('stepper', 'a11y.json')))
+ES = json.load(open(comp_out('empty-state', 'tokens.json')))
+ES_TOKENS = open(comp_out('empty-state', 'al-empty-state-tokens.css')).read()
+ES_CSS = open(comp_src('empty-state', 'empty-state.css')).read()
+ES_A11Y = json.load(open(comp_out('empty-state', 'a11y.json')))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
 CARD_CSS = open(comp_src('card', 'card.css')).read()
@@ -257,6 +261,7 @@ N_PAG_TOKENS = len(PAG['alias'])
 N_NF_TOKENS = len(NF['alias'])
 N_MENU_TOKENS = len(MENU['alias'])
 N_STP_TOKENS = len(STP['alias'])
+N_ES_TOKENS = len(ES['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -303,7 +308,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
                          TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS, NF_TOKENS, MENU_TOKENS,
-                         STP_TOKENS)
+                         STP_TOKENS, ES_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -332,7 +337,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + PAG_TOKENS + '\n' + PAG_CSS
             + '\n' + NF_TOKENS + '\n' + NF_CSS
             + '\n' + MENU_TOKENS + '\n' + MENU_CSS
-            + '\n' + STP_TOKENS + '\n' + STP_CSS)
+            + '\n' + STP_TOKENS + '\n' + STP_CSS
+            + '\n' + ES_TOKENS + '\n' + ES_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -2062,6 +2068,133 @@ Carbon e Phoenix Group têm os dois. Para pular de passo, use os botões; um err
 | Estado de erro | Fora da v1 | O campo e o Alert do formulário levam o erro; um token voltaria à etapa 3. |
 | Stepper compacto para mais de 5 passos | Não existe | Reparta a tarefa (regra 1). |
 | Tamanhos | Um só | Tamanho novo volta para a etapa 1. |
+"""
+
+
+GUIDE_PT['empty-state'] = """# Empty state · Regras de uso
+
+O Empty state ocupa o lugar do conteúdo que não está lá: diz o que está vazio, por quê e o que fazer.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Um Empty state no lugar da lista que estaria ali.** | **Um Empty state para uma falha de carregamento.** |
+| **Sobre a tela ou sobre uma faixa de seção.** | **Dentro de um Card, Modal ou Drawer.** |
+| **Um título que diz o que está vazio, e um ícone desse objeto.** | **"Sem dados" com um ícone de alerta.** |
+| **Uma ação Primary que resolve o vazio.** | **Dois botões, ou um link ao lado do botão.** |
+| **O título como heading no nível da página.** | **O título em negrito sem ser heading.** |
+| **Erro vai para o Alert.** | **Uma variante de erro do Empty state.** |
+
+## Regras
+
+### Quando usar
+
+**1. Quando uma área que mostraria dados está vazia.**
+Primeiro uso, busca ou filtro sem resultado, ou depois de apagar tudo.
+*Precedente: Carbon.*
+
+**2. Não use para erro de sistema ou falha de carregamento.**
+Isso é o Alert: o Empty state diz "não tem nada aqui", não "algo quebrou".
+*Precedente: Carbon, que separa erro de vazio.*
+
+**3. Não use durante o carregamento.**
+Enquanto os dados chegam, mostre o Progress ou o esqueleto da área. O vazio só aparece quando se sabe que está vazio.
+*Precedente: Carbon.*
+
+**4. Um por área vazia, nunca vários empilhados.**
+Se a página inteira está vazia, use um só, no lugar do conteúdo principal.
+*Precedente: Polaris.*
+
+### Onde mora
+
+**5. Só sobre bg-canvas ou bg-surface.**
+A caixa é bg-surface-raised: dentro de Card, Modal ou Drawer fica branco sobre branco e some.
+
+**6. Ocupa o lugar do conteúdo que faltou.**
+Na mesma posição em que a lista ou a tabela estaria; não flutua no meio da tela.
+*Precedentes: Primer e Carbon.*
+
+**7. Até 600px de largura, centralizado no espaço que tem.**
+Numa tela estreita ele encolhe junto.
+*Precedente: Primer (narrow).*
+
+### Conteúdo
+
+**8. O título diz o que está vazio, não que está vazio.**
+"Nenhum projeto ainda", não "Sem dados".
+*Precedente: Polaris.*
+
+**9. A descrição explica o porquê, ou o que fazer, em uma ou duas frases.**
+É opcional quando o título basta.
+*Precedentes: Lightning e Carbon.*
+
+**10. Busca sem resultado repete o termo e sugere ajustar a busca ou os filtros.**
+*Precedentes: Carbon e NN/g.*
+
+**11. Tom neutro, sem culpa e sem piada.**
+"Nenhum resultado para 'X'", não "Ops! Não achamos nada".
+*Precedente: Polaris.*
+
+**12. Sem texto de marketing.**
+O vazio aponta o próximo passo; não vende recurso.
+*Precedente: Polaris.*
+
+**13. O ícone é opcional e decorativo.**
+`aria-hidden`: o título já diz tudo.
+*Precedente: Polaris (ilustração com alt vazio).*
+
+**14. O ícone é o objeto que falta (pasta, busca, sino), nunca alerta ou erro.**
+Um ícone de alerta faz o vazio parecer falha.
+*Precedente: Carbon.*
+
+### Ação
+
+**15. No máximo uma ação, sempre Primary.**
+A ação que resolve o vazio, como "Criar projeto".
+*Precedente: Polaris.*
+
+**16. Sem ação quando não há o que fazer.**
+Por exemplo, uma lista que só o sistema preenche.
+*Precedente: Lightning.*
+
+**17. O rótulo da ação é verbo + objeto, pelas regras do Button.**
+*Precedente: Polaris.*
+
+**18. Sem Link dentro do Empty state, nem na descrição.**
+O Figma não tem, e o Link Default cairia a 3,2:1 sobre surface-raised no escuro.
+> **Divergência consciente** do Polaris, que permite um link secundário.
+
+### Acessibilidade
+
+**19. O título é sempre heading, no nível que o esboço da página pede.**
+h2, h3: a classe não fixa a tag.
+*Precedentes: Siteimprove e Unkey.*
+
+**20. A ordem de leitura é ícone, título, descrição, ação; o foco não pula para o botão.**
+Depois de uma busca ou filtro, o vazio entra dentro de `role="status"` e é anunciado uma vez; na primeira carga ele é estático.
+*Precedentes: Primer e ICDS.*
+
+**21. A borda da caixa é decorativa.**
+Mede de 1,47 a 2,42:1 contra a página. O WCAG 1.4.11 pede 3:1 de contorno de controle; a caixa é conteúdo, reconhecida pelo que diz. A mesma isenção do Card.
+
+### Fora da v1
+
+**22. Sem ilustração, sem tamanho compacto e sem variante de erro.**
+Vazio dentro de tabela ou Menu é texto simples em text-secondary; erro é o Alert.
+
+**23. Nunca duas ações.**
+Se uma segunda parecer necessária, ela mora fora do Empty state.
+*Precedente: Polaris (uma ação principal).*
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Ilustração | Fora da v1 | Um componente novo, com biblioteca própria. |
+| Tamanho compacto | Fora da v1 | Texto simples em text-secondary dentro da tabela ou do Menu. |
+| Variante de erro | Não existe | O Alert. |
+| Segunda ação ou Link | Não existe | Mora fora do Empty state (regras 18 e 23). |
 """
 
 
@@ -15119,6 +15252,315 @@ STP_OVERVIEW, STP_PLAYGROUND, STP_A11Y_TAB = model_tabs(
 )
 
 
+# ═══════════════════════════════════════════════════════ Empty state · abas
+# Feedback and status. Um tamanho, uma ação. Todo Empty state da página sai do
+# empty-state.css real; os exemplos "a evitar" são casca do site (es-fake),
+# nunca um .al-empty-state errado.
+ES_ICON = tr([('on', 'Com ícone'), ('off', 'Sem ícone')], [('on', 'With icon'), ('off', 'No icon')])
+ES_DESC = tr([('on', 'Com descrição'), ('off', 'Sem descrição')], [('on', 'With description'), ('off', 'No description')])
+ES_ACT = tr([('on', 'Com ação'), ('off', 'Sem ação')], [('on', 'With action'), ('off', 'No action')])
+ES_CASE = tr([('first', 'Primeiro uso'), ('search', 'Busca sem resultado'), ('cleared', 'Tudo resolvido')],
+             [('first', 'First use'), ('search', 'Search with no results'), ('cleared', 'All cleared')])
+ES_SURF = tr([('canvas', 'Tela'), ('surface', 'Faixa de seção')], [('canvas', 'Canvas'), ('surface', 'Section band')])
+ES_H_CASES = tr('Os três casos', 'The three cases')
+# caso -> (ícone, título, descrição, ação)
+ES_TEXT = tr({
+    'first': ('folder', 'Nenhum projeto ainda', 'Os projetos que você criar aparecem aqui.', 'Criar projeto'),
+    'search': ('search', 'Nenhum resultado para “tokns”', 'Confira a ortografia ou use menos palavras.', 'Limpar busca'),
+    'cleared': ('bell', 'Nenhuma notificação', 'Avisos sobre seus projetos aparecem aqui.', ''),
+}, {
+    'first': ('folder', 'No projects yet', 'Projects you create show up here.', 'Create project'),
+    'search': ('search', 'No results for “tokns”', 'Check the spelling or try fewer words.', 'Clear search'),
+    'cleared': ('bell', 'No notifications', 'Alerts about your projects show up here.', ''),
+})
+ES_LAB = {k: lab for k, lab in ES_CASE}
+N_ES_MEDIDAS = len(ES_A11Y['rows'])
+N_ES_EXC = ES_A11Y['summary']['exceptions']
+_ES_N = [0]
+
+
+def es_demo(case='first', icon='on', desc='on', act='on'):
+    """Um Empty state real, devolvido como (html, codigo)."""
+    ic, title, d, btn = ES_TEXT[case]
+    _ES_N[0] += 1
+    hid = f'es-t{_ES_N[0]}'
+    parts, code = [], [f'<section class="al-empty-state" aria-labelledby="{hid}">']
+    if icon == 'on':
+        parts.append(al_icon(ic, 'al-icon al-empty-state__icon'))
+        code.append(f'  <svg class="al-icon al-empty-state__icon" aria-hidden="true" focusable="false">…{ic}…</svg>')
+    txt = f'<h3 class="al-empty-state__title" id="{hid}">{title}</h3>'
+    code += ['  <div class="al-empty-state__text">', f'    <h3 class="al-empty-state__title" id="{hid}">{title}</h3>']
+    if desc == 'on':
+        txt += f'<p class="al-empty-state__description">{d}</p>'
+        code.append(f'    <p class="al-empty-state__description">{d}</p>')
+    parts.append(f'<div class="al-empty-state__text">{txt}</div>')
+    code.append('  </div>')
+    if act == 'on' and btn:
+        b = (f'<button class="al-btn al-btn--primary al-btn--md" type="button">'
+             f'<span class="al-btn__label">{btn}</span></button>')
+        parts.append(b)
+        code += ['  <button class="al-btn al-btn--primary al-btn--md" type="button">',
+                 f'    <span class="al-btn__label">{btn}</span>', '  </button>']
+    code.append('</section>')
+    # <es-section> só enquanto o site.py recorta as abas por <section>; vira <section> no fim (ES_TAG).
+    html = f'<es-section class="al-empty-state" aria-labelledby="{hid}">{"".join(parts)}</es-section>'
+    if case == 'search':
+        html = f'<div role="status">{html}</div>'
+        code = ['<div role="status">'] + ['  ' + c for c in code] + ['</div>']
+    return html, '\n'.join(code)
+
+
+def es_box(case='first', icon='on', desc='on', act='on', surf='canvas'):
+    return f'<div class="es-box" data-surf="{surf}">{es_demo(case, icon, desc, act)[0]}</div>'
+
+
+def es_fake(title, desc='', icon='folder', btns=(), cls=''):
+    """Casca de exemplo a evitar: parece um Empty state, não é o componente."""
+    b = ''.join(f'<span class="es-fake__b{" is-ghost" if i else ""}">{x}</span>' for i, x in enumerate(btns))
+    ic = al_icon(icon, 'al-icon es-fake__i') if icon else ''
+    d = f'<span class="es-fake__d">{desc}</span>' if desc else ''
+    return (f'<div class="es-fake {cls}" aria-hidden="true">{ic}<span class="es-fake__t">{title}</span>{d}'
+            + (f'<span class="es-fake__bs">{b}</span>' if b else '') + '</div>')
+
+
+def ES_TAG(html):
+    return (html.replace('<es-section', '<section').replace('</es-section>', '</section>')
+            .replace('&lt;es-section', '&lt;section').replace('&lt;/es-section&gt;', '&lt;/section&gt;'))
+
+
+ES_DEMOS = {f'{c}|{i}|{d}|{a}': {'html': ES_TAG(h), 'code': k}
+            for c, _ in ES_CASE for i, _ in ES_ICON for d, _ in ES_DESC for a, _ in ES_ACT
+            for h, k in [es_demo(c, i, d, a)]}
+
+
+def es_token_rows(names):
+    rows = []
+    for name in names:
+        res = ES['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, (int, float)):
+            light = dark = f'{res}px'
+        else:
+            light = dark = '—'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{ES["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+ES_COLOR_NAMES = tuple(f'empty-state-{r}' for r in ('bg', 'border', 'icon', 'title', 'description'))
+ES_GEO_NAMES = tuple(f'empty-state-{r}' for r in (
+    'max-width', 'padding', 'radius', 'border-width', 'icon-size', 'gap-icon', 'gap-text', 'gap-action'))
+
+
+def es_playground(t):
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="es-stage">{es_box()}</div>
+
+    <div class="controls controls--fields" id="es-controls">
+      {pg_field('escase', t['case'], ES_CASE, 'first')}
+      {pg_field('esicon', t['icon'], ES_ICON, 'on')}
+      {pg_field('esdesc', t['desc'], ES_DESC, 'on')}
+      {pg_field('esact', t['act'], ES_ACT, 'on')}
+      {pg_field('essurf', t['surf'], ES_SURF, 'canvas')}
+      {pg_field('estheme', t['theme'], t['themes'], 'auto')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="es-copy">{t['copy']}</button></div>
+      <pre><code id="es-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>'''
+
+
+def es_overview(t):
+    cells = ''.join(f'''
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{ES_LAB[c]}</span>
+      <div class="stage2" style="display:block">{es_box(c)}</div>
+      <p class="cap">{t['cap_' + c]}</p>
+    </div>''' for c, _ in ES_CASE)
+    return es_playground(t) + f'''
+
+<section>
+  <h2>{t['h_where']}</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">{t['do_lab']}</span>
+      <div class="stage2" style="display:block">{es_box('first', surf='surface')}</div>
+      <p class="cap">{t['do_cap']}</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">{t['no_lab']}</span>
+      <div class="stage2" style="display:block"><div class="es-box" data-surf="raised">{es_fake(ES_TEXT['first'][1], ES_TEXT['first'][2], 'folder', (ES_TEXT['first'][3],), 'es-fake--raised')}</div></div>
+      <p class="cap">{t['no_cap']}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>{ES_H_CASES}</h2>
+  <div class="dd">{cells}
+  </div>
+</section>'''
+
+
+ES_OVERVIEW = tr(es_overview({
+    'case': 'Caso', 'icon': 'Ícone', 'desc': 'Descrição', 'act': 'Ação', 'surf': 'Superfície', 'theme': 'Tema',
+    'themes': [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')],
+    'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'Troque o <b>Caso</b>: a busca sem resultado entra dentro de <code>role="status"</code> e é anunciada '
+            'uma vez; os outros são estáticos. Ícone, descrição e ação são opcionais; a ação, quando existe, é uma só.',
+    'h_where': 'Onde ele mora',
+    'do_lab': 'Sobre a tela ou uma faixa de seção', 'do_cap': 'A borda desenha a caixa contra a página.',
+    'no_lab': 'Dentro de Card, Modal ou Drawer', 'no_cap': 'Branco sobre branco: a caixa some.',
+    'cap_first': 'Diz o que vai aparecer e oferece a ação que cria o primeiro item.',
+    'cap_search': 'Repete o termo buscado e é anunciado pelo leitor de tela.',
+    'cap_cleared': 'Sem ação: não há nada a fazer.'}), es_overview({
+    'case': 'Case', 'icon': 'Icon', 'desc': 'Description', 'act': 'Action', 'surf': 'Surface', 'theme': 'Theme',
+    'themes': [('auto', 'System'), ('light', 'Light'), ('dark', 'Dark')],
+    'markup': 'Markup', 'copy': 'Copy',
+    'note': 'Change the <b>Case</b>: the search with no results renders inside <code>role="status"</code> and is '
+            'announced once; the others are static. Icon, description and action are optional; the action, when '
+            'there is one, is only one.',
+    'h_where': 'Where it lives',
+    'do_lab': 'On the canvas or a section band', 'do_cap': 'The border draws the box against the page.',
+    'no_lab': 'Inside a Card, Modal or Drawer', 'no_cap': 'White on white: the box disappears.',
+    'cap_first': 'Says what will show up and offers the action that creates the first item.',
+    'cap_search': 'Repeats the search term and is announced by the screen reader.',
+    'cap_cleared': 'No action: there is nothing to do.'}))
+
+
+def es_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+  <div class="note" style="margin-top:16px"><b>{t['note_t']}</b> {t['note']}</div>
+</section>
+
+<section>
+  <h2>{T_MEASURES}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{es_token_rows(ES_GEO_NAMES)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{es_token_rows(ES_COLOR_NAMES)}</tbody>
+  </table></div>
+</section>'''
+
+
+ES_SPECS = tr(es_specs({
+    'anat': [('Caixa', '<code>&lt;section class="al-empty-state"&gt;</code>, até 600px, padding de 48, raio de 24, fundo <code>bg-surface-raised</code> e borda de 1px em <code>border-default</code> desenhada por fora.'),
+             ('Ícone', '32px em <code>text-primary</code>, decorativo. 16px até o título.'),
+             ('Título', 'Heading/xs 20/28, sempre heading; o nível vem da página.'),
+             ('Descrição', 'Body/md 16/24 em <code>text-secondary</code>, 8px abaixo do título.'),
+             ('Ação', 'Um Button Primary md, 24px abaixo do texto.')],
+    'note_t': 'Sem token, de propósito.',
+    'note': 'A altura é padding + conteúdo. A ação usa os tokens do Button. O alinhamento centralizado é layout.',
+    'th': 'Token do Empty state', 'to': 'Aponta para', 'light': 'Claro', 'dark': 'Escuro'}), es_specs({
+    'anat': [('Box', '<code>&lt;section class="al-empty-state"&gt;</code>, up to 600px, 48 of padding, 24 of radius, <code>bg-surface-raised</code> background and a 1px <code>border-default</code> border drawn outside.'),
+             ('Icon', '32px in <code>text-primary</code>, decorative. 16px to the title.'),
+             ('Title', 'Heading/xs 20/28, always a heading; the level comes from the page.'),
+             ('Description', 'Body/md 16/24 in <code>text-secondary</code>, 8px under the title.'),
+             ('Action', 'One Button Primary md, 24px under the text.')],
+    'note_t': 'No token, on purpose.',
+    'note': 'Height is padding + content. The action uses the Button\'s tokens. Centering is layout.',
+    'th': 'Empty state token', 'to': 'Points to', 'light': 'Light', 'dark': 'Dark'}))
+
+ES_A11Y_TAB = tr('''
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Ordem do Tab</b><span>A caixa não recebe foco. O Tab vai direto para a ação, quando existe.</span></div>
+    <div><b>Título</b><span>Sempre heading, no nível do esboço da página; a seção é nomeada por ele com <code>aria-labelledby</code>.</span></div>
+    <div><b>Ícone</b><span><code>aria-hidden="true"</code>: o título já diz tudo.</span></div>
+    <div><b>Depois de busca ou filtro</b><span>Entra dentro de <code>role="status"</code> e é anunciado uma vez, sem roubar o foco. Na primeira carga é estático.</span></div>
+    <div><b>Alto contraste</b><span>No <code>forced-colors</code> a sombra some; a caixa ganha um contorno na cor do texto do sistema.</span></div>
+  </div>
+</section>''', '''
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>Tab order</b><span>The box takes no focus. Tab goes straight to the action, when there is one.</span></div>
+    <div><b>Title</b><span>Always a heading, at the page outline\'s level; the section is named by it with <code>aria-labelledby</code>.</span></div>
+    <div><b>Icon</b><span><code>aria-hidden="true"</code>: the title already says everything.</span></div>
+    <div><b>After a search or filter</b><span>Renders inside <code>role="status"</code> and is announced once, without taking focus. On first load it is static.</span></div>
+    <div><b>High contrast</b><span>In <code>forced-colors</code> the shadow is removed; the box gets an outline in the system\'s text color.</span></div>
+  </div>
+</section>''')
+
+ES_MD = guide_md('empty-state')
+ES_GUIDE = guide_tab(ES_MD, [
+    (es_box('first', 'on', 'on', 'off'), es_fake(tr('Não foi possível carregar', 'Could not load'),
+                                                 tr('Tente de novo mais tarde.', 'Try again later.'), 'triangle-alert')),
+    (es_box('first', surf='surface'), '<div class="es-box" data-surf="raised">' + es_fake(ES_TEXT['first'][1], ES_TEXT['first'][2], 'folder', (ES_TEXT['first'][3],), 'es-fake--raised') + '</div>'),
+    (es_box('first', 'on', 'on', 'off'), es_fake(tr('Sem dados', 'No data'), '', 'triangle-alert')),
+    (es_box('first'), es_fake(ES_TEXT['first'][1], ES_TEXT['first'][2], 'folder', (tr('Saiba mais', 'Learn more'), ES_TEXT['first'][3]))),
+    (es_box('cleared'), es_fake(ES_TEXT['cleared'][1], ES_TEXT['cleared'][2], 'bell', (), 'es-fake--bold')),
+    (es_box('search', 'on', 'on', 'off'), es_fake(tr('Erro ao buscar', 'Search failed'), '', 'circle-x')),
+])
+
+TH_EMPTY_STATE = ('<div class="es-th" aria-hidden="true">' + al_icon('folder', 'al-icon es-th__i')
+                  + '<span class="es-th__t"></span><span class="es-th__d"></span><span class="es-th__b"></span></div>')
+
+ES_OVERVIEW, ES_PLAYGROUND, ES_A11Y_TAB = model_tabs(
+    'empty-state', old_ov=ES_OVERVIEW, old_specs=ES_SPECS, guide=ES_GUIDE, old_a11y=ES_A11Y_TAB,
+    preview=es_box(),
+    usage=tr('Use no lugar da lista ou tabela que ficou vazia, sobre <code>bg-canvas</code> ou <code>bg-surface</code>. '
+             'Depois de uma busca ou filtro, coloque dentro de <code>role="status"</code>.',
+             'Use it in place of the list or table that came up empty, on <code>bg-canvas</code> or <code>bg-surface</code>. '
+             'After a search or filter, put it inside <code>role="status"</code>.'),
+    states=[ES_H_CASES],
+    presets={ES_LAB[c]: {'escase': c} for c, _ in ES_CASE},
+    classes=tr([
+        ('section.al-empty-state', '<code>aria-labelledby</code> no título', 'A caixa.'),
+        ('.al-empty-state__icon', '<code>aria-hidden="true"</code>', 'O ícone opcional, com <code>.al-icon</code>.'),
+        ('.al-empty-state__text', '—', 'Agrupa título e descrição.'),
+        ('.al-empty-state__title', 'h2, h3…', 'O título, sempre heading.'),
+        ('.al-empty-state__description', '—', 'A descrição opcional.'),
+        ('.al-btn.al-btn--primary.al-btn--md', '—', 'A ação opcional, uma só.'),
+    ], [
+        ('section.al-empty-state', '<code>aria-labelledby</code> on the title', 'The box.'),
+        ('.al-empty-state__icon', '<code>aria-hidden="true"</code>', 'The optional icon, with <code>.al-icon</code>.'),
+        ('.al-empty-state__text', '—', 'Groups title and description.'),
+        ('.al-empty-state__title', 'h2, h3…', 'The title, always a heading.'),
+        ('.al-empty-state__description', '—', 'The optional description.'),
+        ('.al-btn.al-btn--primary.al-btn--md', '—', 'The optional action, only one.'),
+    ]),
+    contrast=role_contrast([dict(r, floor=r['min']) for r in ES_A11Y['rows']], tr([
+        ('Título e descrição', {'title', 'description'}, 'ok',
+         'Sobre o fundo da caixa, <code>bg-surface-raised</code>.', WCAG_143, 'Canvas e surface'),
+        ('Ícone', {'icon'}, 'ok', 'Decorativo, medido mesmo assim.', WCAG_1411, 'Canvas e surface'),
+        ('Borda da caixa', {'box border'}, 'exc',
+         'Exceção declarada: decorativa, como a do Card (regra 21).', WCAG_1411, 'Canvas e surface'),
+    ], [
+        ('Title and description', {'title', 'description'}, 'ok',
+         'On the box background, <code>bg-surface-raised</code>.', WCAG_143, 'Canvas and surface'),
+        ('Icon', {'icon'}, 'ok', 'Decorative, measured anyway.', WCAG_1411, 'Canvas and surface'),
+        ('Box border', {'box border'}, 'exc',
+         'Declared exception: decorative, like the Card\'s (rule 21).', WCAG_1411, 'Canvas and surface'),
+    ]), tr(f'<p>São {N_ES_MEDIDAS} medições no portão de build: nenhuma reprova e {N_ES_EXC} exceções '
+           f'declaradas, todas da borda.</p>',
+           f'<p>That is {N_ES_MEDIDAS} measurements in the build gate: no failures and {N_ES_EXC} declared '
+           f'exceptions, all of them the border.</p>'), key='what'),
+)
+
+
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
 # clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
@@ -23128,6 +23570,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('link', 'Link', 'Leva a outra página, a outra seção ou a um arquivo. Um &lt;a href&gt; de verdade, sempre sublinhado — solto ou no meio do texto.', TH_LINK)}
     {card('menu', 'Menu', 'As ações que não cabem na tela, atrás de um ⋮. Lista de ações com teclado da W3C, Danger por último e atalho só mostrado.', TH_MENU)}
     {card('stepper', 'Stepper', 'Onde a pessoa está numa tarefa linear de 3 a 5 passos: concluído, atual e pendente, numa linha contínua. Horizontal ou vertical, nunca a única navegação.', TH_STEPPER)}
+    {card('empty-state', 'Empty state', 'O lugar do conteúdo que não está lá: diz o que está vazio, por quê e o que fazer. Um tamanho, uma ação Primary, nunca para erro.', TH_EMPTY_STATE)}
     {card('tag', 'Tag', 'Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.', TH_TAG)}
     {card('avatar', 'Avatar', 'Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.', TH_AVATAR)}
     {card('select', 'Select', 'Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.', TH_SELECT)}
@@ -23161,6 +23604,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('link', 'Link', 'Takes the person to another page, another section or a file. A real &lt;a href&gt;, always underlined, standalone or inside running text.', TH_LINK)}
     {card('menu', 'Menu', 'The actions that do not fit on screen, behind a ⋮. A list of actions with the W3C keyboard pattern, Danger last and the shortcut only shown.', TH_MENU)}
     {card('stepper', 'Stepper', 'Where the person is in a linear task of 3 to 5 steps: completed, current and upcoming, on one continuous line. Horizontal or vertical, never the only navigation.', TH_STEPPER)}
+    {card('empty-state', 'Empty state', 'The place of content that is not there: says what is empty, why and what to do. One size, one Primary action, never for errors.', TH_EMPTY_STATE)}
     {card('tag', 'Tag', 'A short label of state or category. Content, not a control, and the first in AL to close with zero exceptions while carrying text.', TH_TAG)}
     {card('avatar', 'Avatar', 'Who the person is, in three types that form a chain: photo, initials, icon, in that order, never an empty box.', TH_AVATAR)}
     {card('select', 'Select', 'A single choice in a form. It is the native &lt;select&gt;: the list belongs to the browser, and that is what buys keyboard and mobile for free.', TH_SELECT)}
@@ -23216,7 +23660,7 @@ SITE_NAV = [
                  ('divider', 'Divider'), ('accordion', 'Accordion')]),
     ('Navigation', [('sidebar', 'Sidebar'), ('breadcrumb', 'Breadcrumb'), ('pagination', 'Pagination'),
                     ('stepper', 'Stepper'), ('tab', 'Tab')]),
-    ('Feedback and status', [('alert', 'Alert'), ('progress', 'Progress'), ('toast', 'Toast'),
+    ('Feedback and status', [('alert', 'Alert'), ('empty-state', 'Empty state'), ('progress', 'Progress'), ('toast', 'Toast'),
                              ('tooltip', 'Tooltip'), ('tag', 'Tag')]),
 ]
 # O Hero lê daqui a seção (rótulo do grupo) e o título (rótulo do item). As
@@ -24104,6 +24548,17 @@ PAGES = [
          (f'{N_STP_TOKENS} tokens', False), (tr(f'{N_STP_EXC} exceções declaradas', f'{N_STP_EXC} declared exceptions'), False)],
         [('overview', T_OV, STP_OVERVIEW), ('playground', 'Playground', STP_PLAYGROUND),
          ('guide', T_GUIDE, anat_to_tables(STP_GUIDE)), ('a11y', T_A11Y, STP_A11Y_TAB)])),
+
+    ('empty-state', 'Componentes', page(
+        'empty-state',
+        tr('Ocupa o lugar do conteúdo que não está lá: diz o que está vazio, por quê e o que fazer. Um tamanho, '
+           'até 600px, com no máximo uma ação Primary.',
+           'Takes the place of content that is not there: says what is empty, why and what to do. One size, '
+           'up to 600px, with at most one Primary action.'),
+        [(T_STABLE, True), (tr('1 componente no Figma', '1 component in Figma'), False),
+         (f'{N_ES_TOKENS} tokens', False), (tr(f'{N_ES_EXC} exceções declaradas', f'{N_ES_EXC} declared exceptions'), False)],
+        [('overview', T_OV, ES_TAG(ES_OVERVIEW)), ('playground', 'Playground', ES_TAG(ES_PLAYGROUND)),
+         ('guide', T_GUIDE, ES_TAG(anat_to_tables(ES_GUIDE))), ('a11y', T_A11Y, ES_TAG(ES_A11Y_TAB))])),
 
     ('pagination', 'Componentes', page(
         'pagination',
@@ -26242,6 +26697,78 @@ CHROME_STEPPER = """
 """
 
 
+JS_ES_DATA = 'var ES_DEMOS = ' + json.dumps(ES_DEMOS, ensure_ascii=False) + ';\n'
+
+JS_ES = r"""
+(function () {
+  // ── playground do Empty state ──
+  var stage = document.getElementById('es-stage');
+  if (!stage) return;
+  var code = document.getElementById('es-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinação vem pronto do site.py (ES_DEMOS).
+  function render() {
+    var c = pick('escase'), i = pick('esicon'), d = pick('esdesc'), a = pick('esact'), surf = pick('essurf'), theme = pick('estheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = ES_DEMOS[c + '|' + i + '|' + d + '|' + a];
+    stage.innerHTML = '<div class="es-box" data-surf="' + surf + '">' + demo.html + '</div>';
+    code.innerHTML = esc(demo.code);
+  }
+
+  document.querySelectorAll('#es-controls input, #es-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('es-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = AL_T.failed; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_EMPTY_STATE = """
+/* ── páginas do Empty state ──
+   Casca do site. O Empty state em si é sempre o .al-empty-state, do empty-state.css real. */
+.es-box{box-sizing:border-box; inline-size:100%; padding:var(--al-space-24) var(--al-space-16);
+  border-radius:8px; background:var(--al-bg-canvas)}
+.es-box[data-surf="surface"]{background:var(--al-bg-surface)}
+.es-box[data-surf="raised"]{background:var(--al-bg-surface-raised)}
+.es-th{display:flex; flex-direction:column; align-items:center; gap:6px; padding:16px 24px; border-radius:12px;
+  background:var(--al-empty-state-bg); box-shadow:0 0 0 1px var(--al-empty-state-border)}
+.es-th__i{inline-size:20px; block-size:20px; color:var(--al-empty-state-icon)}
+.es-th__t{inline-size:72px; block-size:8px; border-radius:4px; background:var(--al-empty-state-title)}
+.es-th__d{inline-size:96px; block-size:6px; border-radius:3px; background:var(--al-border-default)}
+.es-th__b{inline-size:44px; block-size:14px; border-radius:999px; background:var(--al-bg-brand)}
+/* exemplos a evitar: casca, nunca um .al-empty-state errado */
+.es-fake{box-sizing:border-box; display:flex; flex-direction:column; align-items:center; gap:8px; inline-size:100%;
+  padding:32px 16px; border-radius:24px; background:var(--al-bg-surface-raised);
+  box-shadow:0 0 0 1px var(--al-border-default); text-align:center; color:var(--al-text-primary)}
+.es-fake--raised{box-shadow:none}
+.es-fake__i{inline-size:32px; block-size:32px}
+.es-fake__t{font-size:20px; line-height:28px; font-weight:600}
+.es-fake--bold .es-fake__t{font-size:16px; line-height:24px; font-weight:700}
+.es-fake__d{font-size:16px; line-height:24px; color:var(--al-text-secondary)}
+.es-fake__bs{display:flex; gap:8px; margin-top:16px}
+.es-fake__b{display:inline-flex; align-items:center; block-size:36px; padding:0 16px; border-radius:999px;
+  font-size:14px; font-weight:500; background:var(--al-bg-brand); color:var(--al-text-on-brand)}
+.es-fake__b.is-ghost{background:none; color:var(--al-text-brand); text-decoration:underline}
+"""
+
+
 CHROME_MENU = """
 /* ── páginas do Menu ──
    Casca do site. O menu em si é sempre o .al-menu, do menu.css real. */
@@ -26805,7 +27332,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_MENU + CHROME_STEPPER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_MENU + CHROME_STEPPER + CHROME_EMPTY_STATE + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -26817,6 +27344,7 @@ HTML = (
     + NF_JS + JS_NUMBER_FIELD
     + MENU_JS.replace('</', '<\\/') + JS_MENU_DATA + JS_MENU
     + JS_STEPPER_DATA + JS_STEPPER
+    + JS_ES_DATA + JS_ES
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
