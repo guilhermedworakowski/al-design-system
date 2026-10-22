@@ -2,6 +2,12 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.6.0] - 2026-10-22
+
+### Added
+- **Stepper**, in Navigation: where the person is in a linear task of 3 to 5 steps. An `<ol>` inside `<nav aria-label="Progress">`, horizontal (title under the circle, one continuous line) or vertical (rail on the left, optional description). Three states: completed is tonal with a check, current is solid and carries `aria-current="step"`, upcoming is outlined in `border-strong`. Each step spells its status in hidden text. Steps are not clickable and there is no error state in this version. No script, 26 tokens, 24 usage rules, its own CSS and accessibility gates, and a page in the documentation site in English and Portuguese.
+- No new Foundation token. Two declared contrast exceptions: the white number on the brand (the Foundation's brand exception) and the pending line, decorative like the Divider.
+
 ## [1.5.0] - 2026-10-22
 
 ### Added
@@ -185,6 +191,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
+[1.6.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.2.0...v1.3.0
