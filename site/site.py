@@ -157,6 +157,11 @@ NF_TOKENS = open(comp_out('number-field', 'al-number-field-tokens.css')).read()
 NF_CSS = open(comp_src('number-field', 'number-field.css')).read()
 NF_JS = open(comp_src('number-field', 'number-field.js')).read()
 NF_A11Y = json.load(open(comp_out('number-field', 'a11y.json')))
+MENU = json.load(open(comp_out('menu', 'tokens.json')))
+MENU_TOKENS = open(comp_out('menu', 'al-menu-tokens.css')).read()
+MENU_CSS = open(comp_src('menu', 'menu.css')).read()
+MENU_JS = open(comp_src('menu', 'menu.js')).read()
+MENU_A11Y = json.load(open(comp_out('menu', 'a11y.json')))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
 CARD_CSS = open(comp_src('card', 'card.css')).read()
@@ -246,6 +251,7 @@ N_LINK_TOKENS = len(LINK['alias'])
 N_PROG_TOKENS = len(PROG['alias'])
 N_PAG_TOKENS = len(PAG['alias'])
 N_NF_TOKENS = len(NF['alias'])
+N_MENU_TOKENS = len(MENU['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -291,7 +297,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
-                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS, NF_TOKENS)
+                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS, NF_TOKENS, MENU_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -318,7 +324,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + LINK_TOKENS + '\n' + LINK_CSS
             + '\n' + PROG_TOKENS + '\n' + PROG_CSS
             + '\n' + PAG_TOKENS + '\n' + PAG_CSS
-            + '\n' + NF_TOKENS + '\n' + NF_CSS)
+            + '\n' + NF_TOKENS + '\n' + NF_CSS
+            + '\n' + MENU_TOKENS + '\n' + MENU_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1774,6 +1781,146 @@ Tamanho ou layout novo volta para a etapa 1.
 | Segurar para repetir | Não existe | Um clique é um passo. |
 | Corrigir ao sair do campo | Não existe | O formulário mostra o erro e mantém o valor. |
 | Tamanhos e botões empilhados | Um tamanho, lado a lado | Tamanho novo volta para a etapa 1. |
+"""
+
+
+GUIDE_PT['menu'] = """# Menu · Regras de uso
+
+O menu guarda as ações que não cabem na tela, atrás de um botão ⋮, e executa a que a pessoa escolher.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Ações sobre um objeto: editar, duplicar, excluir.** | **Links para outras páginas num menu de ações.** |
+| **Um verbo curto: “Editar”, “Duplicar”.** | **Uma frase que não cabe em 200px.** |
+| **Atalhos que o produto implementa de verdade.** | **Um valor ou um liga/desliga do lado direito do item.** |
+| **O Danger por último, depois da linha.** | **O Danger no meio da lista.** |
+| **Desativado quando a ação existe mas está indisponível agora.** | **Um item desativado que nunca vai ficar disponível.** |
+
+## Regras
+
+### Quando usar
+
+**1. Para ações sobre um objeto ou sobre a tela.**
+Editar, duplicar, excluir. O item faz uma ação, não leva a outra página. Para navegar, use links, como no “…” do Breadcrumb ou na Sidebar.
+*Precedentes: Primer ActionMenu e Carbon Overflow menu.*
+
+**2. Nunca para escolher um valor de formulário.**
+Isso é o Select: nativo, e o valor vai junto com o formulário.
+*Precedentes: Primer e Carbon.*
+
+**3. Só com duas ações ou mais que não cabem na tela.**
+Uma ação só, ou a ação principal da tela, é um Button visível. Escondê-la custa um clique e a tira de vista.
+*Precedentes: Carbon Overflow menu e Material.*
+
+### Conteúdo
+
+**4. O rótulo é um verbo curto.**
+“Editar”, “Duplicar”, “Excluir”. Nunca uma frase.
+*Precedentes: Primer e Carbon.*
+
+**5. A largura é fixa em 200px, e o rótulo cabe em uma linha.**
+Se não couber, encurte o texto. No código, o rótulo que transborda termina em “…”.
+*Precedente: Carbon, que também limita a largura.*
+
+**6. Ordene por frequência de uso, com as ações parecidas juntas.**
+*Precedentes: Carbon e Primer.*
+
+**7. Os grupos são separados só pela linha.**
+O Divider, sem título de grupo.
+*Precedentes: Carbon e PatternFly.*
+
+### Ícone e atalho
+
+**8. O ícone é opcional, mas vale para o menu inteiro: todos ou nenhum.**
+Assim os textos ficam alinhados.
+*Precedente: Primer ActionList.*
+
+**9. O ícone é decorativo.**
+É `aria-hidden`; quem dá o sentido é o rótulo, como no Button.
+
+**10. O atalho fica à direita, no formato do sistema da pessoa.**
+“⌘E” no Mac, “Ctrl+E” no Windows e no Linux.
+*Precedente: Primer.*
+
+**11. O menu só mostra o atalho; quem faz a tecla funcionar é o produto.**
+Ele é anunciado pelo `aria-keyshortcuts`. Nunca mostre um atalho que não funciona.
+*Precedentes: WAI-ARIA APG e Primer.*
+
+**12. O lado direito do item é só do atalho.**
+Nada de valor, botão ou liga/desliga ali.
+*Precedente: Primer.*
+
+### Danger
+
+**13. O Danger é só para ação destrutiva.**
+Excluir, remover, revogar. Nunca vermelho só para chamar atenção.
+*Precedente: Carbon.*
+
+**14. O Danger fica sempre por último, depois da linha.**
+*Precedente: Carbon Overflow menu.*
+> **Divergência consciente:** o Primer não tem regra de posição para o Danger; esta é do AL, seguindo o Carbon.
+
+**15. Se a ação não pode ser desfeita, o Danger abre um Modal de confirmação.**
+O menu não confirma nada.
+*Precedente: Carbon.*
+
+**16. No hover, o Danger fica vermelho claro; no pressed, vermelho cheio com texto branco.**
+Os cinzas -raised apagavam o vermelho no escuro (3.31:1 no hover e 2.2:1 no pressed).
+*Precedente: Carbon, que usa a cor de erro no hover do danger.*
+
+### Estados
+
+**17. Desative o item quando a ação existe mas está indisponível agora.**
+Se ela nunca vai estar disponível para aquela pessoa, tire o item.
+*Precedente: Primer.*
+
+**18. O desativado fica abaixo do contraste AA de propósito (2.1:1).**
+O WCAG 1.4.3 isenta componentes desativados. Não escureça para “corrigir”.
+
+**19. O painel é sempre bg-surface-raised, com o hover e o pressed -raised.**
+O hover comum some na superfície elevada, como visto no ajuste do Modal 0.18.1.
+
+**20. A borda do painel fica abaixo de 3:1 de propósito.**
+O 3:1 do WCAG 1.4.11 vale para o contorno de controles; o painel é uma caixa de conteúdo, separada pela sombra. A mesma exceção do menu do Breadcrumb.
+
+### Teclado e leitor de tela
+
+**21. O gatilho é um Icon Button com `aria-haspopup="menu"`, `aria-expanded` e nome.**
+Por exemplo, “Mais ações”.
+*Precedente: WAI-ARIA APG Menu Button.*
+
+**22. Enter, Espaço ou ↓ abrem o menu no primeiro item; ↑ abre no último.**
+*Precedente: WAI-ARIA APG.*
+
+**23. Dentro, as setas dão a volta e Home e End vão às pontas.**
+Esc fecha e devolve o foco ao gatilho. Tab fecha o menu.
+*Precedentes: WAI-ARIA APG e Primer.*
+
+**24. Escolher uma ação fecha o menu e devolve o foco ao gatilho.**
+A não ser que a ação abra um Modal: aí o foco vai para o Modal.
+*Precedente: WAI-ARIA APG.*
+
+**25. O foco é um contorno laranja de 2px por dentro do item, e tira o fundo de hover.**
+O anel de fora encostaria nos vizinhos, e sobre o fundo de hover o anel cairia para 2.88:1. O item desativado também recebe foco e é anunciado como indisponível.
+*Precedente: WAI-ARIA APG, para o desativado focável.*
+> **Divergência consciente** do Primer, que pula os itens desativados.
+
+### Fora desta versão
+
+**26. Sem submenu, sem item marcável, sem título de grupo e sem largura variável.**
+Para escolher um valor, use o Select ou o Radio. Para mais níveis, repense a tela.
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Submenu | Não existe | Repense a tela; mais níveis escondem ações. |
+| Item marcável (check ou rádio) | Não existe | O Checkbox, o Radio ou o Select. |
+| Título de grupo | Não existe | A linha separa os grupos. |
+| Largura variável | Fixa em 200px | Encurte o rótulo. |
+| Links como itens | Não permitido | Uma lista de navegação, como o “…” do Breadcrumb. |
 """
 
 
@@ -14133,6 +14280,386 @@ NF_OVERVIEW, NF_PLAYGROUND, NF_A11Y_TAB = model_tabs(
 )
 
 
+# ═════════════════════════════════════════════════════════════ Menu · abas
+# Actions. O gatilho é o Icon Button e a lista o menu.css e o menu.js reais.
+# Os painéis abertos fora do playground são o componente estático, inerte
+# (mn-static); os exemplos "a evitar" são casca do site (mn-fake), nunca um
+# .al-menu errado. Os estados forçados (mn-force-*) leem os mesmos tokens.
+MENU_DOTS = al_icon('ellipsis-vertical')
+MENU_NAME = tr('Mais ações', 'More actions')
+N_MENU_MEDIDAS = len(MENU_A11Y['rows'])
+N_MENU_EXC = MENU_A11Y['summary']['exceptions']
+MENU_H_STATES = tr('Os cinco estados', 'The five states')
+# (rótulo pt, rótulo en, ícone, atalho, teclas)
+MENU_ITEMS = [
+    ('Editar', 'Edit', 'pencil', '⌘E', 'Meta+E'),
+    ('Duplicar', 'Duplicate', 'copy', '⌘D', 'Meta+D'),
+    ('Compartilhar', 'Share', 'share-2', None, None),
+    ('Baixar', 'Download', 'download', '⌘S', 'Meta+S'),
+]
+MENU_DANGER = ('Excluir', 'Delete', 'trash', '⌫', 'Meta+Backspace')
+_MENU_N = [0]
+
+
+def menu_id():
+    _MENU_N[0] += 1
+    return f'mn-{_MENU_N[0]}'
+
+
+def menu_item(spec, *, icon=True, shortcut=True, danger=False, disabled=False, force=None, code=False):
+    pt, en, ic, sc, keys = spec
+    cls = 'al-menu__item' + (' al-menu__item--danger' if danger else '') + (f' mn-force-{force}' if force else '')
+    a = f' aria-keyshortcuts="{keys}"' if (shortcut and keys) else ''
+    d = ' aria-disabled="true"' if disabled else ''
+    svg = ('<svg class="al-icon al-icon--16" aria-hidden="true" focusable="false">…</svg>' if code
+           else al_icon(ic, 'al-icon al-icon--16')) if icon else ''
+    k = f'<kbd class="al-menu__shortcut" aria-hidden="true">{sc}</kbd>' if (shortcut and sc) else ''
+    return (f'<li role="none"><button type="button" class="{cls}" role="menuitem" tabindex="-1"{a}{d}>'
+            f'{svg}<span class="al-menu__label">{tr(pt, en)}</span>{k}</button></li>')
+
+
+def menu_list(lid, *, icon=True, shortcut=True, danger=True, disabled=True, hidden=True, code=False):
+    items = [menu_item(x, icon=icon, shortcut=shortcut, disabled=(disabled and x[0] == 'Baixar'), code=code)
+             for x in MENU_ITEMS]
+    if danger:
+        items += ['<li class="al-divider" role="separator"></li>',
+                  menu_item(MENU_DANGER, icon=icon, shortcut=shortcut, danger=True, code=code)]
+    h = ' hidden' if hidden else ''
+    nl = '\n    ' if code else ''
+    return (f'<ul class="al-menu__list" role="menu" id="{lid}" aria-label="{MENU_NAME}"{h}>{nl}'
+            + nl.join(items) + ('\n  ' if code else '') + '</ul>')
+
+
+def menu_html(*, icon=True, shortcut=True, danger=True, disabled=True, open_=False, code=False):
+    lid = 'actions' if code else menu_id()
+    nl = '\n  ' if code else ''
+    dots = '<svg class="al-icon" aria-hidden="true" focusable="false">…</svg>' if code else MENU_DOTS
+    return (f'<div class="al-menu">{nl}<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" '
+            f'aria-label="{MENU_NAME}" aria-haspopup="menu" aria-expanded="{"true" if open_ else "false"}" '
+            f'aria-controls="{lid}">{dots}</button>{nl}'
+            + menu_list(lid, icon=icon, shortcut=shortcut, danger=danger, disabled=disabled,
+                        hidden=not open_, code=code)
+            + ('\n' if code else '') + '</div>')
+
+
+def menu_static(**kw):
+    """O painel aberto, parado e inerte: para olhar, não para usar."""
+    return f'<div class="mn-static" inert>{menu_list(menu_id(), hidden=False, **kw)}</div>'
+
+
+def menu_fake(rows, cls=''):
+    """Casca de exemplo a evitar. `rows`: texto; '!' = vermelho, '|' = linha,
+    'texto::direita' põe algo no lado direito."""
+    out = []
+    for r in rows:
+        if r == '|':
+            out.append('<span class="mn-fake__sep"></span>')
+            continue
+        red = r.startswith('!')
+        label, _, right = r.lstrip('!').partition('::')
+        out.append(f'<span class="mn-fake__i{" is-red" if red else ""}"><span>{label}</span>'
+                   + (f'<span class="mn-fake__r">{right}</span>' if right else '') + '</span>')
+    return f'<div class="mn-fake {cls}" aria-hidden="true">{"".join(out)}</div>'
+
+
+MENU_DEMOS = {}
+for _i in ('on', 'off'):
+    for _s in ('on', 'off'):
+        for _d in ('on', 'off'):
+            for _x in ('on', 'off'):
+                _kw = dict(icon=_i == 'on', shortcut=_s == 'on', danger=_d == 'on', disabled=_x == 'on')
+                MENU_DEMOS[f'{_i}|{_s}|{_d}|{_x}'] = {'html': menu_html(open_=True, **_kw),
+                                                      'code': menu_html(code=True, **_kw)}
+MENU_ONOFF = tr([('on', 'Sim'), ('off', 'Não')], [('on', 'Yes'), ('off', 'No')])
+
+MENU_COLOR_NAMES = ('menu-bg', 'menu-border', 'menu-item-label', 'menu-item-meta', 'menu-item-meta-hover',
+                    'menu-item-bg-hover', 'menu-item-bg-active', 'menu-item-label-disabled',
+                    'menu-danger-label', 'menu-danger-bg-hover', 'menu-danger-bg-active',
+                    'menu-danger-label-active', 'menu-ring')
+MENU_GEO_NAMES = ('menu-width', 'menu-padding', 'menu-gap', 'menu-offset', 'menu-radius', 'menu-border-width',
+                  'menu-item-padding-y', 'menu-item-padding-x', 'menu-item-gap', 'menu-item-radius',
+                  'menu-item-icon-size', 'menu-ring-width', 'menu-shadow', 'menu-font')
+
+
+def menu_token_rows(names):
+    rows = []
+    for name in names:
+        res = MENU['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, (int, float)):
+            light = dark = f'{res}px'
+        elif isinstance(res, (list, tuple)):
+            light = dark = f'{res[1]}/{res[2]} · {res[3]}'
+        else:
+            light = dark = 'Elevation/3'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{MENU["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+def menu_states():
+    nomes = [('rest', 'Default'), ('hover', 'Hover'), ('pressed', 'Pressed'), ('focus', 'Focus'),
+             ('disabled', 'Disabled')]
+    cells = []
+    for slug, nome in nomes:
+        par = ''.join(
+            '<div class="mn-static" inert><ul class="al-menu__list" role="menu" aria-label="' + MENU_NAME + '">'
+            + menu_item(spec, danger=dz, disabled=slug == 'disabled',
+                        force=None if slug in ('rest', 'disabled') else slug) + '</ul></div>'
+            for spec, dz in ((MENU_ITEMS[0], False), (MENU_DANGER, True)))
+        cells.append(f'<div class="cell"><span class="lab" style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2 mn-pair">{par}</div></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+TH_MENU = ('<div class="mn-th" aria-hidden="true"><span class="mn-th__dots">' + MENU_DOTS + '</span>'
+           '<span class="mn-th__panel"><span>' + tr('Editar', 'Edit') + '</span><span>'
+           + tr('Duplicar', 'Duplicate') + '</span><span class="mn-th__sep"></span><span class="is-red">'
+           + tr('Excluir', 'Delete') + '</span></span></div>')
+
+
+def menu_overview(t):
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="menu-stage">{MENU_DEMOS['on|on|on|on']['html']}</div>
+
+    <div class="controls controls--fields" id="menu-controls">
+      {pg_field('mnicon', t['icon'], MENU_ONOFF, 'on')}
+      {pg_field('mnshort', t['short'], MENU_ONOFF, 'on')}
+      {pg_field('mndanger', 'Danger', MENU_ONOFF, 'on')}
+      {pg_field('mndis', t['dis'], MENU_ONOFF, 'on')}
+      {pg_field('mntheme', t['theme'], t['themes'], 'auto')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="menu-copy">{t['copy']}</button></div>
+      <pre><code id="menu-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>
+
+<section>
+  <h2>{t['h_icons']}</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{t['lab_full']}</span>
+      <div class="stage2" style="display:block">{menu_static()}</div>
+      <p class="cap">{t['cap_full']}</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{t['lab_plain']}</span>
+      <div class="stage2" style="display:block">{menu_static(icon=False, shortcut=False, disabled=False)}</div>
+      <p class="cap">{t['cap_plain']}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>{MENU_H_STATES}</h2>
+  {menu_states()}
+</section>'''
+
+
+MENU_OVERVIEW = tr(menu_overview({
+    'icon': 'Ícones', 'short': 'Atalhos', 'dis': 'Item desativado', 'theme': 'Tema',
+    'themes': [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')],
+    'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'O menu acima é o componente real: esta página carrega o mesmo <code>menu.css</code> e o mesmo '
+            '<code>menu.js</code> que vão para produção. Tabule até o ⋮ e use Enter, ↓ ou ↑; dentro, as setas, '
+            'Home, End, Esc e Tab. Clicar fora fecha.',
+    'h_icons': 'Com e sem ícones',
+    'lab_full': 'Ícone e atalho em todos', 'cap_full': 'O “Compartilhar” não tem atalho: o lado direito fica vazio. <i>Primer.</i>',
+    'lab_plain': 'Só o texto', 'cap_plain': 'Sem ícone em nenhum item: os textos continuam alinhados.'}), menu_overview({
+    'icon': 'Icons', 'short': 'Shortcuts', 'dis': 'Disabled item', 'theme': 'Theme',
+    'themes': [('auto', 'System'), ('light', 'Light'), ('dark', 'Dark')],
+    'markup': 'Markup', 'copy': 'Copy',
+    'note': 'The menu above is the real component: this page loads the same <code>menu.css</code> and the same '
+            '<code>menu.js</code> that go to production. Tab to the ⋮ and use Enter, ↓ or ↑; inside, the arrows, '
+            'Home, End, Esc and Tab. Clicking outside closes it.',
+    'h_icons': 'With and without icons',
+    'lab_full': 'Icon and shortcut on all', 'cap_full': '“Share” has no shortcut: the right side stays empty. <i>Primer.</i>',
+    'lab_plain': 'Text only', 'cap_plain': 'No icon on any item: the labels still line up.'}))
+
+
+def menu_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+  <div class="note" style="margin-top:16px"><b>{t['note_t']}</b> {t['note']}</div>
+</section>
+
+<section>
+  <h2>{T_MEASURES}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{menu_token_rows(MENU_GEO_NAMES)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{menu_token_rows(MENU_COLOR_NAMES)}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px"><b>{t['dz_t']}</b> {t['dz']}</div>
+</section>
+
+<section>
+  <h2>{t['h_js']}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['js'])}</div>
+</section>'''
+
+
+MENU_SPECS = tr(menu_specs({
+    'anat': [('Gatilho', 'O Icon Button Ghost sm com o ícone ellipsis-vertical, <code>aria-haspopup="menu"</code>, <code>aria-expanded</code> e nome.'),
+             ('Painel', '<code>&lt;ul role="menu"&gt;</code> de 200px fixos sobre <code>bg-surface-raised</code>, borda, raio 12 e Elevation/3. Abre 4px abaixo do gatilho, alinhado à esquerda.'),
+             ('Item', '<code>&lt;button role="menuitem" tabindex="-1"&gt;</code>: 8px × 12px de espaço interno, raio 8, Body/sm 14/20.'),
+             ('Ícone', '16px, decorativo, em <code>text-secondary</code>; escurece com o rótulo no hover e no pressed.'),
+             ('Atalho', '<code>&lt;kbd aria-hidden="true"&gt;</code> à direita; quem anuncia é o <code>aria-keyshortcuts</code>.'),
+             ('Linha', 'O Divider real, <code>&lt;li class="al-divider" role="separator"&gt;</code>.')],
+    'note_t': 'Sem altura fixa.',
+    'note': 'Os 36px do item saem de 8 + 20 + 8. A largura de 200px é o único valor declarado: a Fundação não tem escala de largura.',
+    'th': 'Token do Menu', 'to': 'Aponta para', 'light': 'Claro', 'dark': 'Escuro',
+    'dz_t': 'O Danger sai dos cinzas -raised.',
+    'dz': 'No escuro, o vermelho sobre o hover -raised dava 3.31:1. O hover vai para <code>bg-danger-subtle</code> e o '
+          'pressed para <code>bg-danger</code> com texto branco.',
+    'h_js': 'O comportamento: <code>menu.js</code>',
+    'js': [('Abre no lugar certo', 'Enter, Espaço e ↓ no primeiro item; ↑ no último.'),
+           ('Setas que dão a volta', '↑ e ↓ circulam, Home e End vão às pontas. O desativado também é parada.'),
+           ('Fecha e devolve o foco', 'Esc e a escolha de um item devolvem o foco ao gatilho; Tab e o clique fora só fecham.'),
+           ('Modal tem prioridade', 'Se a ação abriu um <code>&lt;dialog&gt;</code>, o foco fica nele.'),
+           ('Desativado não executa', 'O clique é barrado na fase de captura, antes de qualquer ação ligada ao item.'),
+           ('Conteúdo inserido depois', '<code>window.alMenu.init(elemento)</code>.')]}), menu_specs({
+    'anat': [('Trigger', 'The Ghost sm Icon Button with the ellipsis-vertical icon, <code>aria-haspopup="menu"</code>, <code>aria-expanded</code> and a name.'),
+             ('Panel', 'A fixed 200px <code>&lt;ul role="menu"&gt;</code> on <code>bg-surface-raised</code>, with border, 12 radius and Elevation/3. It opens 4px below the trigger, aligned to its start.'),
+             ('Item', 'A <code>&lt;button role="menuitem" tabindex="-1"&gt;</code>: 8px × 12px of padding, 8 radius, Body/sm 14/20.'),
+             ('Icon', '16px, decorative, in <code>text-secondary</code>; it darkens with the label on hover and pressed.'),
+             ('Shortcut', 'A <code>&lt;kbd aria-hidden="true"&gt;</code> on the right; <code>aria-keyshortcuts</code> announces it.'),
+             ('Line', 'The real Divider, <code>&lt;li class="al-divider" role="separator"&gt;</code>.')],
+    'note_t': 'No fixed height.',
+    'note': 'The item’s 36px come from 8 + 20 + 8. The 200px width is the only declared value: the Foundation has no width scale.',
+    'th': 'Menu token', 'to': 'Points to', 'light': 'Light', 'dark': 'Dark',
+    'dz_t': 'Danger leaves the -raised greys.',
+    'dz': 'In dark, red on the -raised hover gave 3.31:1. Hover goes to <code>bg-danger-subtle</code> and pressed to '
+          '<code>bg-danger</code> with white text.',
+    'h_js': 'The behavior: <code>menu.js</code>',
+    'js': [('Opens in the right place', 'Enter, Space and ↓ on the first item; ↑ on the last.'),
+           ('Arrows that wrap', '↑ and ↓ cycle, Home and End go to the ends. The disabled item is a stop too.'),
+           ('Closes and returns focus', 'Esc and choosing an item return focus to the trigger; Tab and a click outside only close.'),
+           ('A Modal wins', 'If the action opened a <code>&lt;dialog&gt;</code>, focus stays there.'),
+           ('Disabled does not run', 'The click is stopped in the capture phase, before any action bound to the item.'),
+           ('Content added later', '<code>window.alMenu.init(element)</code>.')]}))
+
+MENU_A11Y_TAB = tr('''
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Uma parada no Tab</b><span>O Tab chega no ⋮; os itens têm <code>tabindex="-1"</code> e se percorrem pelas setas.</span></div>
+    <div><b>Anunciado como menu</b><span>O gatilho diz que abre um menu e se está aberto; cada item é um <code>menuitem</code>.</span></div>
+    <div><b>Desativado focável</b><span><code>aria-disabled="true"</code>: o leitor de tela chega nele e anuncia “indisponível”.</span></div>
+    <div><b>Atalho anunciado uma vez</b><span>O <code>&lt;kbd&gt;</code> é escondido e o <code>aria-keyshortcuts</code> fala.</span></div>
+    <div><b>Foco visível</b><span>Contorno interno de 2px em <code>border-focus</code>, sempre sobre o fundo do painel.</span></div>
+  </div>
+</section>''', '''
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>One Tab stop</b><span>Tab reaches the ⋮; the items have <code>tabindex="-1"</code> and are reached with the arrows.</span></div>
+    <div><b>Announced as a menu</b><span>The trigger says it opens a menu and whether it is open; each item is a <code>menuitem</code>.</span></div>
+    <div><b>Focusable disabled</b><span><code>aria-disabled="true"</code>: the screen reader reaches it and says “unavailable”.</span></div>
+    <div><b>Shortcut announced once</b><span>The <code>&lt;kbd&gt;</code> is hidden and <code>aria-keyshortcuts</code> speaks.</span></div>
+    <div><b>Visible focus</b><span>A 2px inset outline in <code>border-focus</code>, always on the panel background.</span></div>
+  </div>
+</section>''')
+
+MENU_MD = guide_md('menu')
+MENU_GUIDE = guide_tab(MENU_MD, [
+    (menu_static(shortcut=False, disabled=False),
+     menu_fake([tr('Ir para Configurações ↗', 'Go to Settings ↗'), tr('Abrir o perfil ↗', 'Open profile ↗'),
+                tr('Ajuda ↗', 'Help ↗')])),
+    (menu_static(icon=False, shortcut=False, danger=False, disabled=False),
+     menu_fake([tr('Fazer uma cópia deste arquivo na mesma pasta', 'Make a copy of this file in the same folder'),
+                tr('Editar', 'Edit')], 'mn-fake--wrap')),
+    (menu_static(disabled=False, danger=False),
+     menu_fake([tr('Editar::⌘E', 'Edit::⌘E'), tr('Notificações::Ligado', 'Notifications::On'),
+                tr('Ordenar::Nome', 'Sort::Name')])),
+    (menu_static(disabled=False),
+     menu_fake([tr('Editar', 'Edit'), tr('!Excluir', '!Delete'), tr('Duplicar', 'Duplicate'),
+                tr('Compartilhar', 'Share')])),
+    (menu_static(shortcut=False),
+     menu_fake([tr('Editar', 'Edit'), tr('Duplicar', 'Duplicate'),
+                tr('Recurso do plano Enterprise', 'Enterprise plan feature')], 'mn-fake--dim')),
+])
+
+MENU_OVERVIEW, MENU_PLAYGROUND, MENU_A11Y_TAB = model_tabs(
+    'menu', old_ov=MENU_OVERVIEW, old_specs=MENU_SPECS, guide=MENU_GUIDE, old_a11y=MENU_A11Y_TAB, js=True,
+    preview=menu_static(), preview_style='display:block',
+    usage=tr('Use para as ações sobre um objeto que não cabem na tela. O gatilho é o Icon Button; a lista, '
+             '<code>role="menu"</code>, e o <code>menu.js</code> cuida do teclado.',
+             'Use it for the actions on an object that do not fit on screen. The trigger is the Icon Button; the list, '
+             '<code>role="menu"</code>, and <code>menu.js</code> handles the keyboard.'),
+    states=[MENU_H_STATES],
+    classes=tr([
+        ('.al-menu', '—', 'Invólucro: o gatilho e a lista, que se posiciona por ele.'),
+        ('gatilho', '<code>aria-haspopup="menu"</code>, <code>aria-expanded</code>, <code>aria-controls</code>',
+         'O Icon Button Ghost sm, com nome.'),
+        ('.al-menu__list', '<code>role="menu"</code>, <code>hidden</code>', 'O painel de 200px.'),
+        ('.al-menu__item', '<code>role="menuitem"</code>, <code>tabindex="-1"</code>', 'Um <code>&lt;button&gt;</code>; o <code>&lt;li&gt;</code> leva <code>role="none"</code>.'),
+        ('.al-menu__item--danger', '—', 'A ação destrutiva, sempre por último.'),
+        ('aria-disabled', 'true', 'Desativado, mas focável. Nunca o <code>disabled</code> nativo.'),
+        ('.al-menu__label / __shortcut', '<code>aria-keyshortcuts</code>', 'O rótulo e o <code>&lt;kbd aria-hidden&gt;</code> do atalho.'),
+    ], [
+        ('.al-menu', '—', 'Wrapper: the trigger and the list, which is positioned by it.'),
+        ('trigger', '<code>aria-haspopup="menu"</code>, <code>aria-expanded</code>, <code>aria-controls</code>',
+         'The Ghost sm Icon Button, with a name.'),
+        ('.al-menu__list', '<code>role="menu"</code>, <code>hidden</code>', 'The 200px panel.'),
+        ('.al-menu__item', '<code>role="menuitem"</code>, <code>tabindex="-1"</code>', 'A <code>&lt;button&gt;</code>; its <code>&lt;li&gt;</code> takes <code>role="none"</code>.'),
+        ('.al-menu__item--danger', '—', 'The destructive action, always last.'),
+        ('aria-disabled', 'true', 'Disabled but focusable. Never the native <code>disabled</code>.'),
+        ('.al-menu__label / __shortcut', '<code>aria-keyshortcuts</code>', 'The label and the shortcut’s <code>&lt;kbd aria-hidden&gt;</code>.'),
+    ]),
+    contrast=role_contrast([dict(r, floor=r['min']) for r in MENU_A11Y['rows']], tr([
+        ('Rótulo', {f'default {s} label' for s in ('rest', 'hover', 'pressed', 'focus')}, 'ok',
+         'Use <code>text-primary</code>, também sobre o hover e o pressed -raised.', WCAG_143, 'Repouso, hover, pressed, foco'),
+        ('Ícone e atalho', {f'default {s} icon/shortcut' for s in ('rest', 'hover', 'pressed', 'focus')}, 'ok',
+         '<code>text-secondary</code> em repouso; <code>text-primary</code> no hover e no pressed.', WCAG_143, 'Repouso, hover, pressed, foco'),
+        ('Danger', {f'danger {s} {p}' for s in ('rest', 'hover', 'pressed', 'focus') for p in ('label', 'icon/shortcut')}, 'ok',
+         'Vermelho no painel e no hover claro; branco no pressed cheio.', WCAG_143, 'Repouso, hover, pressed, foco'),
+        ('Anel de foco', {'default focus ring', 'danger focus ring'}, 'ok',
+         'Sempre sobre o painel: o foco tira o fundo de hover.', WCAG_1411, 'Foco'),
+        ('Desativado', {f'{k} disabled {p}' for k in ('default', 'danger') for p in ('label', 'icon/shortcut')}, 'exc',
+         'Componente inativo fica fora do critério.', WCAG_143, 'Desativado'),
+        ('Borda do painel', {'panel border on bg-canvas', 'panel border on bg-surface'}, 'exc',
+         'Exceção declarada: o painel é caixa de conteúdo, separada pela sombra.', WCAG_1411, 'Canvas e surface'),
+    ], [
+        ('Label', {f'default {s} label' for s in ('rest', 'hover', 'pressed', 'focus')}, 'ok',
+         'Use <code>text-primary</code>, on the -raised hover and pressed too.', WCAG_143, 'Rest, hover, pressed, focus'),
+        ('Icon and shortcut', {f'default {s} icon/shortcut' for s in ('rest', 'hover', 'pressed', 'focus')}, 'ok',
+         '<code>text-secondary</code> at rest; <code>text-primary</code> on hover and pressed.', WCAG_143, 'Rest, hover, pressed, focus'),
+        ('Danger', {f'danger {s} {p}' for s in ('rest', 'hover', 'pressed', 'focus') for p in ('label', 'icon/shortcut')}, 'ok',
+         'Red on the panel and the light hover; white on the solid pressed.', WCAG_143, 'Rest, hover, pressed, focus'),
+        ('Focus ring', {'default focus ring', 'danger focus ring'}, 'ok',
+         'Always on the panel: focus drops the hover background.', WCAG_1411, 'Focus'),
+        ('Disabled', {f'{k} disabled {p}' for k in ('default', 'danger') for p in ('label', 'icon/shortcut')}, 'exc',
+         'Inactive components fall outside the criterion.', WCAG_143, 'Disabled'),
+        ('Panel border', {'panel border on bg-canvas', 'panel border on bg-surface'}, 'exc',
+         'Declared exception: the panel is a content box, set apart by the shadow.', WCAG_1411, 'Canvas and surface'),
+    ]), tr(f'<p>São {N_MENU_MEDIDAS} medições no portão de build: nenhuma reprova e {N_MENU_EXC} em exceção '
+           f'declarada, todas herdadas da tokenização.</p>',
+           f'<p>That is {N_MENU_MEDIDAS} measurements in the build gate: no failures and {N_MENU_EXC} under a '
+           f'declared exception, all inherited from tokenization.</p>'), key='what'),
+)
+
+
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
 # clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
@@ -22140,6 +22667,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('button', 'Button', 'Quatro variantes, dois tamanhos, cinco estados — com playground que instancia o CSS real.', TH_BUTTON)}
     {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_ICONBUTTON)}
     {card('link', 'Link', 'Leva a outra página, a outra seção ou a um arquivo. Um &lt;a href&gt; de verdade, sempre sublinhado — solto ou no meio do texto.', TH_LINK)}
+    {card('menu', 'Menu', 'As ações que não cabem na tela, atrás de um ⋮. Lista de ações com teclado da W3C, Danger por último e atalho só mostrado.', TH_MENU)}
     {card('tag', 'Tag', 'Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.', TH_TAG)}
     {card('avatar', 'Avatar', 'Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.', TH_AVATAR)}
     {card('select', 'Select', 'Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.', TH_SELECT)}
@@ -22171,6 +22699,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('button', 'Button', 'Four variants, two sizes, five states, with a playground that instantiates the real CSS.', TH_BUTTON)}
     {card('icon-button', 'Icon Button', 'The button with no visible label. The same pill and the same states as the Button, with a required accessible name.', TH_ICONBUTTON)}
     {card('link', 'Link', 'Takes the person to another page, another section or a file. A real &lt;a href&gt;, always underlined, standalone or inside running text.', TH_LINK)}
+    {card('menu', 'Menu', 'The actions that do not fit on screen, behind a ⋮. A list of actions with the W3C keyboard pattern, Danger last and the shortcut only shown.', TH_MENU)}
     {card('tag', 'Tag', 'A short label of state or category. Content, not a control, and the first in AL to close with zero exceptions while carrying text.', TH_TAG)}
     {card('avatar', 'Avatar', 'Who the person is, in three types that form a chain: photo, initials, icon, in that order, never an empty box.', TH_AVATAR)}
     {card('select', 'Select', 'A single choice in a form. It is the native &lt;select&gt;: the list belongs to the browser, and that is what buys keyboard and mobile for free.', TH_SELECT)}
@@ -22217,7 +22746,7 @@ SITE_NAV = [
                     ('tipografia', tr('Tipografia', 'Typography')), ('espacamento', tr('Espaçamento', 'Spacing')),
                     ('motion', 'Motion'), ('icon', tr('Ícones', 'Icons'))]),
     (tr('Componentes', 'Components'), [('componentes', T_OV, tr(' dos componentes', ' of the components'))]),
-    ('Actions', [('button', 'Button'), ('icon-button', 'Icon button'), ('link', 'Link')]),
+    ('Actions', [('button', 'Button'), ('icon-button', 'Icon button'), ('link', 'Link'), ('menu', 'Menu')]),
     ('Forms and inputs', [('input', 'Input'), ('password', 'Password'), ('number-field', 'Number field'),
                           ('select', 'Select'),
                           ('checkbox', 'Checkbox'), ('radio', 'Radio'), ('textarea', 'Textarea'),
@@ -23092,6 +23621,17 @@ PAGES = [
          (f'{N_PROG_TOKENS} tokens', False), (tr('1 exceção declarada', '1 declared exception'), False)],
         [('overview', T_OV, PROG_OVERVIEW), ('playground', 'Playground', PROG_PLAYGROUND),
          ('guide', T_GUIDE, anat_to_tables(PROG_GUIDE)), ('a11y', T_A11Y, PROG_A11Y_TAB)])),
+
+    ('menu', 'Componentes', page(
+        'menu',
+        tr('Guarda as ações que não cabem na tela atrás de um ⋮ e executa a que a pessoa escolher. O gatilho é o '
+           'Icon Button; a lista, um <code>role="menu"</code> com o teclado da W3C, 200px fixos e o Danger por último.',
+           'Holds the actions that do not fit on screen behind a ⋮ and runs the one the person picks. The trigger is the '
+           'Icon Button; the list, a <code>role="menu"</code> with the W3C keyboard pattern, a fixed 200px and Danger last.'),
+        [(T_STABLE, True), (tr('13 variantes no Figma', '13 variants in Figma'), False),
+         (f'{N_MENU_TOKENS} tokens', False), (tr('2 exceções declaradas', '2 declared exceptions'), False)],
+        [('overview', T_OV, MENU_OVERVIEW), ('playground', 'Playground', MENU_PLAYGROUND),
+         ('guide', T_GUIDE, anat_to_tables(MENU_GUIDE)), ('a11y', T_A11Y, MENU_A11Y_TAB)])),
 
     ('pagination', 'Componentes', page(
         'pagination',
@@ -25114,6 +25654,89 @@ CHROME_NUMBER_FIELD = """
 """
 
 
+JS_MENU_DATA = 'var MENU_DEMOS = ' + json.dumps(MENU_DEMOS, ensure_ascii=False) + ';\n'
+
+JS_MENU = r"""
+(function () {
+  // ── playground do Menu ──
+  // O teclado é o menu.js do componente, embutido logo antes deste bloco.
+  // Aqui só o que é da página: montar o palco a partir de MENU_DEMOS.
+  if (!window.alMenu) return;
+  var stage = document.getElementById('menu-stage');
+  if (!stage) return;
+  var code = document.getElementById('menu-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  function render() {
+    var key = [pick('mnicon'), pick('mnshort'), pick('mndanger'), pick('mndis')].join('|');
+    var theme = pick('mntheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    stage.innerHTML = MENU_DEMOS[key].html;
+    window.alMenu.init(stage);
+    code.innerHTML = esc(MENU_DEMOS[key].code) + '\n&lt;script src="menu.js"&gt;&lt;/script&gt;';
+  }
+
+  document.querySelectorAll('#menu-controls input, #menu-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('menu-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = AL_T.failed; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_MENU = """
+/* ── páginas do Menu ──
+   Casca do site. O menu em si é sempre o .al-menu, do menu.css real. */
+#menu-stage{display:block; min-block-size:320px; padding:var(--al-space-16)}
+.mn-static .al-menu__list{position:static}
+.mn-pair{display:flex; flex-wrap:wrap; gap:12px}
+.mn-pair .mn-static .al-menu__list{inline-size:auto; min-inline-size:160px}
+/* estados forçados: as mesmas regras do menu.css, lendo os mesmos tokens */
+.al-menu__item.mn-force-hover{background-color:var(--al-menu-item-bg-hover); color:var(--al-menu-item-meta-hover)}
+.al-menu__item.mn-force-pressed{background-color:var(--al-menu-item-bg-active); color:var(--al-menu-item-meta-hover)}
+.al-menu__item.mn-force-focus{box-shadow:inset 0 0 0 var(--al-menu-ring-width) var(--al-menu-ring)}
+.al-menu__item--danger.mn-force-hover{background-color:var(--al-menu-danger-bg-hover); color:var(--al-menu-danger-label)}
+.al-menu__item--danger.mn-force-pressed{background-color:var(--al-menu-danger-bg-active)}
+.al-menu__item--danger.mn-force-pressed, .al-menu__item--danger.mn-force-pressed .al-menu__label{color:var(--al-menu-danger-label-active)}
+/* miniatura do card */
+.mn-th{display:flex; flex-direction:column; align-items:flex-start; gap:4px}
+.mn-th__dots{display:inline-flex; color:var(--al-text-primary)}
+.mn-th__dots svg{width:16px; height:16px}
+.mn-th__panel{display:flex; flex-direction:column; gap:2px; inline-size:112px; padding:4px; box-sizing:border-box;
+  border:1px solid var(--al-border-default); border-radius:8px; background:var(--al-bg-surface-raised);
+  box-shadow:var(--al-elevation-3); font-size:12px; line-height:16px; color:var(--al-text-primary)}
+.mn-th__panel > span{padding:4px 8px}
+.mn-th__panel .is-red{color:var(--al-text-danger)}
+.mn-th__sep{padding:0 !important; border-top:1px solid var(--al-border-default)}
+/* exemplos a evitar: casca, nunca um .al-menu errado */
+.mn-fake{display:flex; flex-direction:column; gap:2px; inline-size:200px; box-sizing:border-box; padding:4px;
+  border:1px solid var(--al-border-default); border-radius:12px; background:var(--al-bg-surface-raised);
+  box-shadow:var(--al-elevation-3); font-size:14px; line-height:20px; color:var(--al-text-primary)}
+.mn-fake__i{display:flex; justify-content:space-between; gap:8px; padding:8px 12px; white-space:nowrap; overflow:hidden}
+.mn-fake__i.is-red{color:var(--al-text-danger)}
+.mn-fake__r{color:var(--al-text-secondary)}
+.mn-fake__sep{border-top:1px solid var(--al-border-default)}
+.mn-fake--wrap .mn-fake__i{white-space:normal}
+.mn-fake--dim .mn-fake__i:last-child{color:var(--al-text-disabled)}
+"""
+
+
 JS_DIVIDER_DATA = 'var DV_DEMOS = ' + json.dumps(DV_DEMOS, ensure_ascii=False) + ';\n'
 
 JS_DIVIDER = r"""
@@ -25640,7 +26263,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_MENU + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -25650,6 +26273,7 @@ HTML = (
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
     + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + JS_LINK_DATA + JS_LINK + JS_PROGRESS_DATA + JS_PROGRESS + JS_PAGINATION_DATA + JS_PAGINATION
     + NF_JS + JS_NUMBER_FIELD
+    + MENU_JS.replace('</', '<\\/') + JS_MENU_DATA + JS_MENU
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
@@ -25755,6 +26379,9 @@ print(f'  tokens do Password: {N_PASSWORD_TOKENS}  '
 print(f'  tokens do Number f.: {N_NF_TOKENS}  '
       f'({len(NF_A11Y["rows"])} combinacoes medidas, {NF_A11Y["fails"]} reprovas, '
       f'{sum(NF_A11Y["exceptions"].values())} medicoes em excecao declarada)')
+print(f'  tokens do Menu    : {N_MENU_TOKENS}  '
+      f'({len(MENU_A11Y["rows"])} combinacoes medidas, {MENU_A11Y["summary"]["fail"]} reprovas, '
+      f'{MENU_A11Y["summary"]["exceptions"]} medicoes em excecao declarada)')
 print(f'  tokens do Divider : {N_DIVIDER_TOKENS}  '
       f'({len(DIVIDER_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in DIVIDER_A11Y["rows"] if r["invisible"])} invisiveis, '
