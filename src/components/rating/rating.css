@@ -38,7 +38,6 @@
 .al-rating {
   display: flex;
   flex-direction: column;
-  gap: var(--al-rating-label-gap);
   margin: 0;
   padding: 0;
   border: none;
@@ -49,8 +48,11 @@
   font-weight: var(--al-rating-font-weight);
 }
 
+/* a <legend> is not a flex item, so the fieldset's gap doesn't reach it:
+   the space below it is its own margin */
 .al-rating__label {
   padding: 0;
+  margin-block-end: var(--al-rating-label-gap);
   color: var(--al-rating-label-text);
 }
 
@@ -119,7 +121,8 @@
   box-shadow: var(--al-focus-ring-default);
 }
 
-/* disabled - last, because it wins over all. The on stars stay filled. */
+/* disabled - last, because it wins over all. The on stars stay filled.
+   The on selectors carry :has() specificity, so the ink is set again there. */
 .al-rating:disabled .al-rating__star {
   --_ink: var(--al-rating-star-disabled);
   cursor: not-allowed;
@@ -127,6 +130,7 @@
 
 .al-rating:disabled .al-rating__star:has(.al-rating__input:checked),
 .al-rating:disabled .al-rating__star:has(~ .al-rating__star .al-rating__input:checked) {
+  --_ink: var(--al-rating-star-disabled);
   --_fill: var(--al-rating-star-disabled);
 }
 
