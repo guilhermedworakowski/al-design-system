@@ -23,7 +23,7 @@ COMPONENTS = [
     'button', 'icon', 'icon-button', 'tag', 'avatar', 'select', 'checkbox',
     'radio', 'switch', 'input', 'textarea', 'password', 'divider', 'card',
     'tab', 'accordion', 'modal', 'drawer', 'sidebar', 'breadcrumb', 'tooltip',
-    'toast', 'alert', 'link', 'progress', 'pagination', 'number-field',
+    'toast', 'alert', 'link', 'progress', 'pagination', 'number-field', 'menu',
 ]
 
 FOUNDATION_SRC = os.path.join(SRC, 'foundation')
