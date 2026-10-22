@@ -2,6 +2,12 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.4.0] - 2026-10-21
+
+### Added
+- **Number field**, in Forms and inputs: a native `<input type="number">` between a − and a + button, for a small quantity adjusted a little at a time. The steppers are out of the Tab order (one tab stop; the arrow keys and typing change the value), turn off at the minimum and maximum, and never clamp what was typed: the form reads `validity` and shows the error. Read-only has no steppers. The box is 140px wide; label and help text may be wider. Its own script (`number-field.js`), 33 tokens, 24 usage rules, its own CSS and accessibility gates, and a page in the documentation site in English and Portuguese.
+- No new Foundation token. The box width is a declared value, like the Toast and the Tooltip widths. Two declared contrast exceptions, inherited from the Input: the border at rest and disabled.
+
 ## [1.3.0] - 2026-10-21
 
 ### Added
@@ -173,6 +179,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
+[1.4.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.0.1...v1.1.0

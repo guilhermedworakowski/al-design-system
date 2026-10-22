@@ -152,6 +152,11 @@ PAG = json.load(open(comp_out('pagination', 'tokens.json')))
 PAG_TOKENS = open(comp_out('pagination', 'al-pagination-tokens.css')).read()
 PAG_CSS = open(comp_src('pagination', 'pagination.css')).read()
 PAG_A11Y = json.load(open(comp_out('pagination', 'a11y.json')))
+NF = json.load(open(comp_out('number-field', 'tokens.json')))
+NF_TOKENS = open(comp_out('number-field', 'al-number-field-tokens.css')).read()
+NF_CSS = open(comp_src('number-field', 'number-field.css')).read()
+NF_JS = open(comp_src('number-field', 'number-field.js')).read()
+NF_A11Y = json.load(open(comp_out('number-field', 'a11y.json')))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
 CARD_CSS = open(comp_src('card', 'card.css')).read()
@@ -240,6 +245,7 @@ N_ALR_TOKENS = len(ALR['alias'])
 N_LINK_TOKENS = len(LINK['alias'])
 N_PROG_TOKENS = len(PROG['alias'])
 N_PAG_TOKENS = len(PAG['alias'])
+N_NF_TOKENS = len(NF['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -285,7 +291,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
-                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS)
+                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS, NF_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -311,7 +317,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + ALR_TOKENS + '\n' + ALR_CSS
             + '\n' + LINK_TOKENS + '\n' + LINK_CSS
             + '\n' + PROG_TOKENS + '\n' + PROG_CSS
-            + '\n' + PAG_TOKENS + '\n' + PAG_CSS)
+            + '\n' + PAG_TOKENS + '\n' + PAG_CSS
+            + '\n' + NF_TOKENS + '\n' + NF_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1638,6 +1645,135 @@ Os itens do AL têm 36×36.
 | Campo para digitar a página | Não existe | Um Input separado, fora do Pagination. |
 | Tamanhos | Um só, sm | Tamanho novo volta para a etapa 1. |
 | Uso sobre bg-surface-raised | Não permitido | Os hovers -raised seriam tokens novos, de volta à etapa 3. |
+"""
+
+
+GUIDE_PT['number-field'] = """# Number field · Regras de uso
+
+O number field guarda uma quantidade pequena que a pessoa ajusta aos poucos, com o − e o + em volta do valor.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Uma quantidade: itens, pessoas, parcelas.** | **Um número que não é quantidade, como o CEP.** |
+| **O rótulo diz o que se conta, com a unidade.** | **Um rótulo genérico, como “Número”.** |
+| **Nasce com valor, e o − apagado no mínimo.** | **Campo vazio, sem de onde partir.** |
+| **Uma parada de Tab: o campo.** | **O foco parando no − e no +.** |
+| **Erro que dá a faixa válida.** | **Erro que só deixa o campo vermelho.** |
+| **Botões de pelo menos 24×24.** | **Botões pequenos, abaixo do alvo mínimo.** |
+| **A unidade no rótulo.** | **Unidade ou moeda como sufixo dentro da caixa.** |
+
+## Regras
+
+### Quando usar
+
+**1. Para quantidades pequenas ajustadas aos poucos.**
+Itens no carrinho, número de pessoas, parcelas. O − e o + só valem a pena quando o passo é pequeno perto da faixa.
+*Precedentes: Polaris e Spectrum.*
+
+**2. Nunca para número que não é quantidade.**
+CEP, telefone, cartão, CPF ou ano vão no Input com `inputmode="numeric"`. Ninguém incrementa um CEP.
+*Precedentes: Carbon e Spectrum.*
+
+**3. Não para faixas grandes ou valores livres.**
+Preço ou salário vão no Input: clicar no + mil vezes não é ajuste.
+*Precedente: Spectrum.*
+
+**4. Não para poucas opções fixas.**
+Para 3 a 5 valores, use Radio ou Select.
+*Precedente: Material.*
+
+### Conteúdo
+
+**5. O rótulo diz o que está sendo contado.**
+“Quantidade”, “Adultos”. Nunca só “Número”.
+*Precedentes: Carbon e Polaris.*
+
+**6. A unidade vai no rótulo ou no texto de apoio.**
+“Peso (kg)”. Não existe sufixo nesta versão.
+
+**7. Mínimo, máximo e passo vão no texto de apoio quando não são óbvios.**
+“De 1 a 10”.
+*Precedente: Spectrum.*
+
+**8. Marque o opcional, não o obrigatório.**
+O padrão do AL, o mesmo do Input.
+
+### Valor e limites
+
+**9. O campo sempre nasce com um valor.**
+O mínimo ou o padrão mais comum. Nunca vazio, e sem placeholder.
+*Precedente: Polaris.*
+
+**10. No limite, o botão daquela ponta desativa.**
+No mínimo o − fica desativado, no máximo o +. O outro continua ativo.
+*Precedentes: Spectrum e Polaris.*
+
+**11. O valor digitado fora da faixa não é travado durante a digitação.**
+Ao sair do campo, o formulário mostra o erro e mantém o que foi digitado. Travar no meio impede escrever “15” quando o mínimo é 10.
+> **Divergência consciente** do Polaris, que corrige sozinho para o limite. O mesmo princípio do Input: o limite nunca trava a digitação.
+
+**12. O passo é inteiro por padrão.**
+Para decimal, defina o `step` e explique no texto de apoio.
+
+### Interação
+
+**13. O − e o + ficam fora da ordem do Tab.**
+O campo é uma parada só: as setas mudam o valor, e também dá para digitar.
+*Precedente: Carbon.*
+> **Divergência consciente** do Spectrum, que deixa os botões focáveis. O AL segue o Carbon para um campo nunca ocupar três paradas de Tab.
+
+**14. Os botões não têm hover próprio.**
+O hover é a borda do campo; o cursor vira mãozinha sobre o botão.
+
+**15. Clicar num botão não move o foco.**
+O valor muda e o foco fica onde estava. Um clique é um passo: segurar não repete.
+
+### Estados
+
+**16. O erro diz o que corrigir e a faixa válida.**
+“Escolha de 1 a 10”. O texto de apoio é obrigatório no erro, como no Input.
+
+**17. O read-only mostra só o valor, sem botões.**
+Nada muda ali, então os botões seriam só ruído.
+
+**18. Disabled só quando a pessoa não pode agir ali agora.**
+Diga perto o motivo. O disabled fica abaixo do contraste pela isenção do WCAG 1.4.3, exceção declarada como no Button e no Input.
+
+**19. A borda de repouso abaixo de 3:1 é exceção consciente.**
+O rótulo visível e o valor dentro pagam a exceção, herdada do Input e do Select.
+
+### Acessibilidade
+
+**20. `<input type="number">` nativo, anunciado como spinbutton com mínimo e máximo.**
+Nunca uma `div` recriada com `role`.
+*Precedentes: Carbon e BFIT-Bund.*
+
+**21. Os botões são `<button tabindex="-1">` com `aria-label`.**
+“Diminuir quantidade”. Ficam disponíveis para mouse e toque.
+*Precedente: Carbon.*
+
+**22. Cada botão tem área de pelo menos 24×24.**
+WCAG 2.5.8. O ícone não pode encolher.
+*Precedente: WCAG 2.5.8.*
+
+### Fora desta versão
+
+**23. Unidade, sufixo, moeda e porcentagem ficam de fora.**
+Se a necessidade aparecer, use o Input com afixo.
+
+**24. Tamanhos extras e botões empilhados ficam de fora.**
+Tamanho ou layout novo volta para a etapa 1.
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Sufixo de unidade ou moeda | Não existe | O Input com afixo. |
+| Segurar para repetir | Não existe | Um clique é um passo. |
+| Corrigir ao sair do campo | Não existe | O formulário mostra o erro e mantém o valor. |
+| Tamanhos e botões empilhados | Um tamanho, lado a lado | Tamanho novo volta para a etapa 1. |
 """
 
 
@@ -13613,6 +13749,390 @@ PAG_OVERVIEW, PAG_PLAYGROUND, PAG_A11Y_TAB = model_tabs(
 )
 
 
+# ═════════════════════════════════════════════════════════ Number field · abas
+# Forms and inputs. A pele do Input com o − e o + em volta do valor. Todo campo
+# da pagina sai do number-field.css e do number-field.js reais; os exemplos "a
+# evitar" que o contrato de marcacao recusaria (campo vazio, erro sem
+# mensagem, foco no botao) sao casca do site (nf-fake), nunca um
+# .al-number-field errado.
+NF_MINUS = al_icon('minus')
+NF_PLUS = al_icon('plus')
+NF_QTY = tr('Quantidade', 'Quantity')
+NF_HELP = tr('De 1 a 10', 'From 1 to 10')
+NF_ERR = tr('Escolha de 1 a 10', 'Choose from 1 to 10')
+NF_DEC = tr('Diminuir', 'Decrease')
+NF_INC = tr('Aumentar', 'Increase')
+NF_H_STATES = tr('Os sete estados', 'The seven states')
+AL_T.update({'nfLabel': NF_QTY, 'nfHelp': NF_HELP, 'nfErr': NF_ERR, 'nfDec': NF_DEC, 'nfInc': NF_INC,
+             'nfOpt': T_OPTIONAL,
+             'nfJsNote': tr('mostra os botões e desativa o do limite', 'shows the steppers and turns off the one at the limit')})
+N_NF_MEDIDAS = len(NF_A11Y['rows'])
+N_NF_EXC = sum(NF_A11Y['exceptions'].values())
+NF_DER = NF['derived']
+
+
+def nf(cid, rotulo=NF_QTY, valor='3', *, mn='1', mx='10', apoio=None, erro=None, opcional=False,
+       readonly=False, disabled=False, sim=None):
+    """Um Number field real. Os botoes nascem `hidden` e o number-field.js os
+    revela e desativa o do limite. `sim` escreve na MESMA variavel privada que
+    o number-field.css usa para o hover."""
+    a = ['class="al-number-field__field"', f'id="{cid}"', 'type="number"', f'min="{mn}"', f'max="{mx}"',
+         'step="1"', f'value="{valor}"']
+    msg = erro or apoio
+    if msg:
+        a.append(f'aria-describedby="{cid}-help"')
+    if erro:
+        a.append('aria-invalid="true"')
+    if readonly:
+        a.append('readonly')
+    if disabled:
+        a.append('disabled')
+    dis = ' disabled' if disabled else ''
+    nome = rotulo.split(' (')[0].lower()
+
+    def step(d, verbo, ic):
+        return (f'<button class="al-number-field__step" type="button" tabindex="-1" data-step="{d}" '
+                f'aria-controls="{cid}" aria-label="{verbo} {nome}"{dis} hidden>{ic}</button>')
+    opt = f'<span class="al-number-field__optional">{T_OPTIONAL}</span>' if opcional else ''
+    estilo = f' style="--_border-state: var(--al-number-field-border-{sim})"' if sim else ''
+    help_ = f'<p class="al-number-field__help" id="{cid}-help">{msg}</p>' if msg else ''
+    return (f'<div class="al-number-field"><div class="al-number-field__labelrow">'
+            f'<label class="al-number-field__label" for="{cid}">{rotulo}</label>{opt}</div>'
+            f'<div class="al-number-field__control"{estilo}>{step("down", NF_DEC, NF_MINUS)}'
+            f'<input {" ".join(a)}>{step("up", NF_INC, NF_PLUS)}</div>{help_}</div>')
+
+
+def nf_fake(rotulo, valor, *, apoio=None, cls='', antes=True, depois=True, sufixo=None):
+    """Casca de exemplo a evitar: parece um Number field, não é o componente."""
+    m = f'<span class="nf-fake__step">{NF_MINUS}</span>' if antes else ''
+    p = f'<span class="nf-fake__step">{NF_PLUS}</span>' if depois else ''
+    s = f'<span class="nf-fake__suffix">{sufixo}</span>' if sufixo else ''
+    h = f'<span class="nf-fake__help">{apoio}</span>' if apoio else ''
+    return (f'<div class="nf-fake {cls}" aria-hidden="true"><span class="nf-fake__label">{rotulo}</span>'
+            f'<span class="nf-fake__box">{m}<span class="nf-fake__value">{valor}{s}</span>{p}</span>{h}</div>')
+
+
+NF_STATES = [('default', 'Default'), ('hover', 'Hover'), ('focus', 'Focus'), ('error', 'Error'),
+             ('focus-error', 'Focus + Error'), ('readonly', 'Read-only'), ('disabled', 'Disabled')]
+
+
+def nf_specimens():
+    notas = tr({
+        'default': 'Já nasce com valor. Os dois botões ativos, porque 3 está longe dos limites.',
+        'hover': 'Só existe sob o ponteiro: a variável privada foi escrita direto. Os botões não têm hover próprio.',
+        'focus': 'Clique <b>ou</b> tabule até o campo: borda e anel laranja na caixa. Os botões nunca recebem foco.',
+        'error': 'Vem de <code>aria-invalid="true"</code>. O 12 fica como foi digitado, e a mensagem dá a faixa.',
+        'focus-error': 'Tabule até ele: o anel fica vinho.',
+        'readonly': 'Sem botões: nada muda ali. O valor continua legível e o campo continua focável.',
+        'disabled': 'Campo e botões levam <code>disabled</code>: o Tab pula, e nada muda.',
+    }, {
+        'default': 'It is born with a value. Both steppers are active, because 3 is far from the limits.',
+        'hover': 'Only exists under the pointer: the private variable was written directly. The steppers have no hover of their own.',
+        'focus': 'Click <b>or</b> tab to the field: orange border and ring on the box. The steppers never take focus.',
+        'error': 'Comes from <code>aria-invalid="true"</code>. The 12 stays as typed, and the message gives the range.',
+        'focus-error': 'Tab to it: the ring turns wine red.',
+        'readonly': 'No steppers: nothing changes there. The value stays readable and the field stays focusable.',
+        'disabled': 'Field and steppers get <code>disabled</code>: Tab skips them, and nothing changes.',
+    })
+    cells = []
+    for slug, nome in NF_STATES:
+        kw = dict(cid=f'nf-{slug}', apoio=NF_HELP)
+        if slug == 'hover':
+            kw['sim'] = 'hover'
+        if slug in ('error', 'focus-error'):
+            kw.update(valor='12', erro=NF_ERR, apoio=None)
+        if slug == 'readonly':
+            kw.update(readonly=True, apoio=None)
+        if slug == 'disabled':
+            kw.update(disabled=True, apoio=None)
+        cells.append(f'<div class="cell"><span class="lab" '
+                     f'style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2" style="display:block">{nf(**kw)}</div>'
+                     f'<p class="cap">{notas[slug]}</p></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def nf_token_rows(geo=False):
+    rows = []
+    for name, ref in NF['alias'].items():
+        res = NF['resolved'].get(name)
+        cor = isinstance(res, dict) and 'light' in res
+        if geo == cor:
+            continue
+        if cor:
+            lt, dk = res['light'], res['dark']
+            sw = lambda v: (f'<span class="chip sm" style="background:{v}"></span>' if str(v).startswith('#') else '')
+            rows.append(f'<tr><td class="tok">--al-{name}</td><td class="tok dim">{ref}</td>'
+                        f'<td class="tok dim">{sw(lt)}{lt}</td><td class="tok dim">{sw(dk)}{dk}</td></tr>')
+        else:
+            v = (f'{res[1]}/{res[2]} · {tr("peso", "weight")} {res[3]}' if isinstance(res, (list, tuple))
+                 else f'{res}px')
+            rows.append(f'<tr><td class="tok">--al-{name}</td><td class="tok dim">{ref}</td>'
+                        f'<td class="num">{v}</td></tr>')
+    return '\n'.join(rows)
+
+
+TH_NUMBER_FIELD = ('<div class="th-nf" aria-hidden="true">'
+                   f'<span class="th-nf__label">{NF_QTY}</span>'
+                   f'<span class="th-nf__box">{al_icon("minus", "al-icon th-nf__ic")}<span>3</span>'
+                   f'{al_icon("plus", "al-icon th-nf__ic")}</span></div>')
+
+
+def nf_overview(t):
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="number-field-stage">{nf('play-nf', apoio=NF_HELP)}</div>
+
+    <div class="controls controls--fields" id="number-field-controls">
+      {pg_field('nfstate', t['state'], t['states'], 'rest')}
+      {pg_field('nfvalue', t['value'], t['values'], 'mid')}
+      {pg_field('nfopt', t['opt'], t['opts'], 'off')}
+      {pg_field('nftheme', t['theme'], THEMES, 'auto')}
+      {inp('number-field-label', t['label'], valor=NF_QTY)}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="number-field-copy">{t['copy']}</button></div>
+      <pre><code id="number-field-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>
+
+<section>
+  <h2>{t['h_limits']}</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{t['lab_min']}</span>
+      <div class="stage2" style="display:block">{nf('nfo-min', valor='1', apoio=NF_HELP)}</div>
+      <p class="cap">{t['cap_min']}</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{t['lab_max']}</span>
+      <div class="stage2" style="display:block">{nf('nfo-max', valor='10', apoio=NF_HELP)}</div>
+      <p class="cap">{t['cap_max']}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>{NF_H_STATES}</h2>
+  {nf_specimens()}
+</section>'''
+
+
+NF_OVERVIEW = tr(nf_overview({
+    'state': 'Estado', 'states': [('rest', 'Repouso'), ('error', 'Erro'), ('readonly', 'Read-only'), ('disabled', 'Desabilitado')],
+    'value': 'Valor', 'values': [('min', 'No mínimo'), ('mid', 'No meio'), ('max', 'No máximo')],
+    'opt': 'Opcional', 'opts': [('off', 'Não'), ('on', 'Sim')],
+    'theme': 'Tema', 'label': 'Rótulo', 'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'O campo acima é o componente real: esta página carrega o mesmo <code>number-field.css</code> e o '
+            'mesmo <code>number-field.js</code> que vão para produção. Tabule até ele e use ↑ e ↓, ou clique no '
+            '− e no + — o foco fica onde estava, e o botão da ponta se desativa no limite.',
+    'h_limits': 'Os limites',
+    'lab_min': 'No mínimo · o − desativa', 'cap_min': 'O − fica apagado; o + continua ativo. <i>Spectrum; Polaris.</i>',
+    'lab_max': 'No máximo · o + desativa', 'cap_max': 'O mesmo do outro lado. Digitar acima do máximo não trava: o formulário mostra o erro.'}),
+    nf_overview({
+    'state': 'State', 'states': [('rest', 'Rest'), ('error', 'Error'), ('readonly', 'Read-only'), ('disabled', 'Disabled')],
+    'value': 'Value', 'values': [('min', 'At the minimum'), ('mid', 'In the middle'), ('max', 'At the maximum')],
+    'opt': 'Optional', 'opts': [('off', 'No'), ('on', 'Yes')],
+    'theme': 'Theme', 'label': 'Label', 'markup': 'Markup', 'copy': 'Copy',
+    'note': 'The field above is the real component: this page loads the same <code>number-field.css</code> and the '
+            'same <code>number-field.js</code> that go to production. Tab to it and use ↑ and ↓, or click the − '
+            'and the +: focus stays where it was, and the stepper at the end turns off at the limit.',
+    'h_limits': 'The limits',
+    'lab_min': 'At the minimum · the − turns off', 'cap_min': 'The − fades; the + stays active. <i>Spectrum; Polaris.</i>',
+    'lab_max': 'At the maximum · the + turns off', 'cap_max': 'The same on the other side. Typing above the maximum is not blocked: the form shows the error.'}))
+
+
+def nf_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+</section>
+
+<section>
+  <h2>{T_MEASURES}</h2>
+  <p>{t['measures']}</p>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['val']}</th></tr></thead>
+    <tbody>{nf_token_rows(geo=True)}</tbody>
+  </table></div>
+  <div class="stats">
+    <div class="stat hl"><b>{N_NF_TOKENS}</b><span>{t['s_tok']}</span></div>
+    <div class="stat"><b>1</b><span>{t['s_lit']}</span></div>
+    <div class="stat"><b>7</b><span>{t['s_states']}</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{nf_token_rows()}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{t['h_js']}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['js'])}</div>
+</section>'''
+
+
+NF_SPECS = tr(nf_specs({
+    'anat': [('Rótulo', '<code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo, com a marca “(Opcional)” quando for o caso. Pode passar da largura da caixa.'),
+             ('Caixa', f'O <code>__control</code>: borda, fundo, raio e anel. Largura fixa de {NF["resolved"]["number-field-width"]}px.'),
+             ('Campo', '<code>&lt;input type="number"&gt;</code> nativo, centralizado, com <code>min</code>, <code>max</code> e <code>step</code>. As setas do navegador ficam escondidas.'),
+             ('− e +', f'<code>&lt;button tabindex="-1"&gt;</code> de {NF_DER["stepper-target"]}×{NF_DER["stepper-target"]}, com os ícones minus e plus. Fora da ordem do Tab.'),
+             ('Texto de apoio', 'A faixa (“De 1 a 10”) ou, no erro, o que corrigir. Também pode passar da caixa.')],
+    'measures': f'Não existe <code>height</code>: {NF_DER["field-height"]}px saem do padding e da entrelinha, com a borda '
+                f'descontada. O componente tem <b>{NF_DER["total-height"]}px</b>, e <b>{NF_DER["total-height-with-help"]}px</b> '
+                f'com o texto de apoio. A largura é o único valor declarado: a Fundação não tem escala de largura.',
+    'th': 'Token do Number field', 'to': 'Aponta para', 'val': 'Valor', 'light': 'Claro', 'dark': 'Escuro',
+    's_tok': 'tokens', 's_lit': 'valor declarado (a largura)', 's_states': 'estados',
+    'h_js': 'O comportamento: <code>number-field.js</code>',
+    'js': [('Revela os botões', 'Nascem <code>hidden</code>. Sem JavaScript, as setas do teclado continuam funcionando.'),
+           ('Um clique, um passo', '<code>stepUp()</code> e <code>stepDown()</code>, com <code>input</code> e <code>change</code>. Segurar não repete.'),
+           ('O foco não sai do lugar', 'Clicar no − ou no + não move o foco.'),
+           ('Desativa no limite', 'O − no mínimo, o + no máximo. Campo desabilitado desativa os dois.'),
+           ('Nunca corrige o digitado', 'Fora da faixa, o formulário lê <code>validity</code> e mostra o erro.'),
+           ('Conteúdo inserido depois', '<code>window.alNumberField.init(elemento)</code>.')]}), nf_specs({
+    'anat': [('Label', '<code>&lt;label for&gt;</code> linked to the field <code>id</code>, with the “(Optional)” mark when it applies. It may be wider than the box.'),
+             ('Box', f'The <code>__control</code>: border, background, radius and ring. A fixed width of {NF["resolved"]["number-field-width"]}px.'),
+             ('Field', 'A native <code>&lt;input type="number"&gt;</code>, centered, with <code>min</code>, <code>max</code> and <code>step</code>. The browser arrows are hidden.'),
+             ('− and +', f'A {NF_DER["stepper-target"]}×{NF_DER["stepper-target"]} <code>&lt;button tabindex="-1"&gt;</code>, with the minus and plus icons. Out of the Tab order.'),
+             ('Help text', 'The range (“From 1 to 10”) or, on error, what to fix. It may also be wider than the box.')],
+    'measures': f'There is no <code>height</code>: {NF_DER["field-height"]}px come from the padding and the line height, with the '
+                f'border taken out. The component is <b>{NF_DER["total-height"]}px</b>, and <b>{NF_DER["total-height-with-help"]}px</b> '
+                f'with the help text. The width is the only declared value: the Foundation has no width scale.',
+    'th': 'Number field token', 'to': 'Points to', 'val': 'Value', 'light': 'Light', 'dark': 'Dark',
+    's_tok': 'tokens', 's_lit': 'declared value (the width)', 's_states': 'states',
+    'h_js': 'The behavior: <code>number-field.js</code>',
+    'js': [('Reveals the steppers', 'They start <code>hidden</code>. Without JavaScript, the arrow keys still work.'),
+           ('One click, one step', '<code>stepUp()</code> and <code>stepDown()</code>, with <code>input</code> and <code>change</code>. Holding does not repeat.'),
+           ('Focus stays put', 'Clicking the − or the + does not move focus.'),
+           ('Turns off at the limit', 'The − at the minimum, the + at the maximum. A disabled field turns off both.'),
+           ('Never fixes what was typed', 'Out of range, the form reads <code>validity</code> and shows the error.'),
+           ('Content added later', '<code>window.alNumberField.init(element)</code>.')]}))
+
+NF_A11Y_TAB = tr(f'''
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Uma parada só</b><span>O Tab chega no campo e segue adiante: o − e o + têm <code>tabindex="-1"</code>.</span></div>
+    <div><b>Setas e digitação</b><span>↑ e ↓ mudam o valor, e o botão da ponta reacende quando sai do limite.</span></div>
+    <div><b>Anunciado como spinbutton</b><span>O <code>&lt;input type="number"&gt;</code> nativo anuncia o valor, o mínimo e o máximo.</span></div>
+    <div><b>Read-only focável, disabled pulado</b><span>O read-only recebe foco para ser lido; o disabled sai da ordem.</span></div>
+    <div><b>Alvo</b><span>{NF_DER["stepper-target"]}×{NF_DER["stepper-target"]}, o mínimo exato do 2.5.8.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>O contrato de marcação</h2>
+  <p>Sete regras, medidas por <code>src/components/number-field/a11y.py</code> no HTML que este site emite. Quebram o build.</p>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>{NF_A11Y['markupChecked']}</b><span>campos conferidos no HTML</span></div>
+    <div class="stat"><b>7</b><span>regras por campo</span></div>
+  </div>
+</section>''', f'''
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>A single stop</b><span>Tab reaches the field and moves on: the − and the + have <code>tabindex="-1"</code>.</span></div>
+    <div><b>Arrows and typing</b><span>↑ and ↓ change the value, and the stepper at the end lights up again when it leaves the limit.</span></div>
+    <div><b>Announced as a spin button</b><span>The native <code>&lt;input type="number"&gt;</code> announces the value, the minimum and the maximum.</span></div>
+    <div><b>Read-only focusable, disabled skipped</b><span>Read-only takes focus so it can be read; disabled leaves the order.</span></div>
+    <div><b>Target</b><span>{NF_DER["stepper-target"]}×{NF_DER["stepper-target"]}, the exact 2.5.8 minimum.</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>The markup contract</h2>
+  <p>Seven rules, measured by <code>src/components/number-field/a11y.py</code> in the HTML this site emits. They break the build.</p>
+  <div class="stats" style="margin-top:16px">
+    <div class="stat hl"><b>{NF_A11Y['markupChecked']}</b><span>fields checked in the HTML</span></div>
+    <div class="stat"><b>7</b><span>rules per field</span></div>
+  </div>
+</section>''')
+
+NF_MD = guide_md('number-field')
+NF_GUIDE = guide_tab(NF_MD, [
+    (nf('nfd-1', apoio=NF_HELP), nf('nfd-1b', tr('CEP', 'Zip code'), '01310', mn='0', mx='99999')),
+    (nf('nfd-2', tr('Peso (kg)', 'Weight (kg)'), '12', mx='50', apoio=tr('De 1 a 50', 'From 1 to 50')),
+     nf('nfd-2b', tr('Número', 'Number'), '12', mx='50')),
+    (nf('nfd-3', valor='1', apoio=NF_HELP), nf_fake(NF_QTY, '', apoio=NF_HELP)),
+    (nf('nfd-4', apoio=NF_HELP), nf_fake(NF_QTY, '3', apoio=NF_HELP, cls='nf-fake--btnfocus')),
+    (nf('nfd-5', valor='12', erro=NF_ERR), nf_fake(NF_QTY, '12', cls='nf-fake--error')),
+    (nf('nfd-6', apoio=NF_HELP), nf_fake(NF_QTY, '3', apoio=NF_HELP, cls='nf-fake--tiny')),
+    (nf('nfd-7', tr('Peso (kg)', 'Weight (kg)'), '12', mx='50'), nf_fake(tr('Peso', 'Weight'), '12', sufixo=' kg')),
+])
+
+NF_OVERVIEW, NF_PLAYGROUND, NF_A11Y_TAB = model_tabs(
+    'number-field', old_ov=NF_OVERVIEW, old_specs=NF_SPECS, guide=NF_GUIDE, old_a11y=NF_A11Y_TAB, js=True,
+    preview=nf('pv-nf', apoio=NF_HELP),
+    preview_style='display:block',
+    usage=tr('Use para uma quantidade pequena que a pessoa ajusta aos poucos. É o '
+             '<code>&lt;input type="number"&gt;</code> nativo entre o − e o +; o '
+             '<code>number-field.js</code> liga os botões.',
+             'Use it for a small quantity the person adjusts a little at a time. It is the native '
+             '<code>&lt;input type="number"&gt;</code> between the − and the +; '
+             '<code>number-field.js</code> wires the steppers.'),
+    states=[NF_H_STATES],
+    classes=tr([
+        ('.al-number-field', '—', 'Invólucro: rótulo, caixa e texto de apoio.'),
+        ('.al-number-field__label', 'texto', '<code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Obrigatório.'),
+        ('.al-number-field__optional', 'texto', 'A marca “(Opcional)”.'),
+        ('.al-number-field__control', '—', 'A caixa de 140px: borda, fundo e anel, com o campo e os botões dentro.'),
+        ('.al-number-field__field', '&lt;input type="number"&gt;', 'O campo nativo, com <code>min</code>, <code>max</code>, <code>step</code> e <code>value</code>.'),
+        ('.al-number-field__step', '&lt;button tabindex="-1"&gt;', 'O − (<code>data-step="down"</code>) e o + (<code>data-step="up"</code>). Nascem <code>hidden</code>.'),
+        ('.al-number-field__help', 'texto', 'A faixa, ou a mensagem de erro.'),
+        ('aria-invalid', 'true', 'Erro. Sempre com <code>aria-describedby</code> apontando a mensagem.'),
+        ('readonly · disabled', '—', 'No campo. O read-only esconde os botões; o disabled vai também nos botões.'),
+    ], [
+        ('.al-number-field', '—', 'Wrapper: label, box and help text.'),
+        ('.al-number-field__label', 'text', '<code>&lt;label for&gt;</code> linked to the field <code>id</code>. Required.'),
+        ('.al-number-field__optional', 'text', 'The “(Optional)” mark.'),
+        ('.al-number-field__control', '—', 'The 140px box: border, background and ring, with the field and the steppers inside.'),
+        ('.al-number-field__field', '&lt;input type="number"&gt;', 'The native field, with <code>min</code>, <code>max</code>, <code>step</code> and <code>value</code>.'),
+        ('.al-number-field__step', '&lt;button tabindex="-1"&gt;', 'The − (<code>data-step="down"</code>) and the + (<code>data-step="up"</code>). They start <code>hidden</code>.'),
+        ('.al-number-field__help', 'text', 'The range, or the error message.'),
+        ('aria-invalid', 'true', 'Error. Always with <code>aria-describedby</code> pointing to the message.'),
+        ('readonly · disabled', '—', 'On the field. Read-only hides the steppers; disabled goes on the steppers too.'),
+    ]),
+    contrast=role_contrast(NF_A11Y['rows'], tr([
+        ('Valor', {'value'}, 'ok', 'O número contra o fundo do campo, inclusive no read-only.', WCAG_143),
+        ('Rótulo e apoio', {'label', 'help'}, 'ok', 'O texto contra a página.', WCAG_143),
+        ('Erro', {'error message'}, 'ok', 'A mensagem de erro contra a página.', WCAG_143),
+        ('− e +', {'stepper'}, 'ok', 'Os ícones contra o fundo do campo.', WCAG_1411),
+        ('Borda', {'border'}, 'ok', 'A borda contra a página nos estados que a acendem.', WCAG_1411),
+        ('Borda em repouso e read-only', {'border'}, 'exc',
+         'Exceção declarada: o rótulo visível e o valor pagam a borda.', WCAG_1411),
+        ('Botão no limite', {'stepper at limit'}, 'exc',
+         'Um botão desativado: fica fora do critério, como o disabled.', WCAG_1411),
+        ('Anel de foco', {'field ring'}, 'ok', 'O anel da caixa contra a página.', WCAG_2413),
+        ('Desabilitado', {'border', 'label', 'stepper', 'value'}, 'dis',
+         'Componente inativo fica fora do critério. Subir o contraste faria o campo parecer editável.', WCAG_143),
+    ], [
+        ('Value', {'value'}, 'ok', 'The number against the field background, read-only included.', WCAG_143),
+        ('Label and help', {'label', 'help'}, 'ok', 'The text against the page.', WCAG_143),
+        ('Error', {'error message'}, 'ok', 'The error message against the page.', WCAG_143),
+        ('− and +', {'stepper'}, 'ok', 'The icons against the field background.', WCAG_1411),
+        ('Border', {'border'}, 'ok', 'The border against the page in the states that light it up.', WCAG_1411),
+        ('Border at rest and read-only', {'border'}, 'exc',
+         'Declared exception: the visible label and the value pay for the border.', WCAG_1411),
+        ('Stepper at the limit', {'stepper at limit'}, 'exc',
+         'A disabled button: outside the criterion, like disabled.', WCAG_1411),
+        ('Focus ring', {'field ring'}, 'ok', 'The box ring against the page.', WCAG_2413),
+        ('Disabled', {'border', 'label', 'stepper', 'value'}, 'dis',
+         'Inactive components fall outside the criterion. Raising the contrast would make the field look editable.', WCAG_143),
+    ]), forms_intro(N_NF_MEDIDAS, N_NF_EXC)),
+)
+
+
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
 # clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
@@ -21628,6 +22148,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('switch', 'Switch', 'Liga ou desliga algo que vale na hora, sem “Salvar”. Checkbox nativo com role="switch" e o trilho do AL pintado por cima.', TH_SWITCH)}
     {card('input', 'Input', 'Resposta livre de uma linha. Input nativo dentro de uma caixa que aceita prefixo, sufixo e contador — e um read-only que se lê.', TH_INPUT)}
     {card('password', 'Password', 'Senha com o olho de mostrar e ocultar. Input nativo de senha, um botão de verdade dentro da caixa, e um script que esconde de novo no envio.', TH_PASSWORD)}
+    {card('number-field', 'Number field', 'Uma quantidade pequena ajustada aos poucos. Input nativo de número entre o − e o +, uma parada de Tab só, e o botão do limite apagado.', TH_NUMBER_FIELD)}
     {card('textarea', 'Textarea', 'Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.', TH_TEXTAREA)}
     {card('divider', 'Divider', 'A linha entre dois grupos de conteúdo. É o &lt;hr&gt; nativo, horizontal ou vertical — e entra só quando o espaço não basta.', TH_DIVIDER)}
     {card('card', 'Card', 'Um assunto num contêiner. Três tipos, três paddings, e o clicável inteiro feito com um link de verdade no título.', TH_CARD)}
@@ -21658,6 +22179,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('switch', 'Switch', 'Turns something on or off that takes effect right away, with no “Save”. A native checkbox with role="switch" and the AL track painted on top.', TH_SWITCH)}
     {card('input', 'Input', 'A free one-line answer. A native input inside a box that accepts prefix, suffix and counter, and a read-only state that can be read.', TH_INPUT)}
     {card('password', 'Password', 'A password with the show and hide eye. A native password input, a real button inside the box, and a script that hides it again on submit.', TH_PASSWORD)}
+    {card('number-field', 'Number field', 'A small quantity adjusted a little at a time. A native number input between the − and the +, a single tab stop, and the stepper at the limit turned off.', TH_NUMBER_FIELD)}
     {card('textarea', 'Textarea', 'A free multi-line answer. The native textarea itself is the box: it scrolls instead of growing, resizes only vertically, and Enter breaks the line.', TH_TEXTAREA)}
     {card('divider', 'Divider', 'The line between two groups of content. It is the native &lt;hr&gt;, horizontal or vertical, and it only comes in when space is not enough.', TH_DIVIDER)}
     {card('card', 'Card', 'One subject in a container. Three types, three paddings, and the fully clickable one made with a real link in the title.', TH_CARD)}
@@ -21696,7 +22218,8 @@ SITE_NAV = [
                     ('motion', 'Motion'), ('icon', tr('Ícones', 'Icons'))]),
     (tr('Componentes', 'Components'), [('componentes', T_OV, tr(' dos componentes', ' of the components'))]),
     ('Actions', [('button', 'Button'), ('icon-button', 'Icon button'), ('link', 'Link')]),
-    ('Forms and inputs', [('input', 'Input'), ('password', 'Password'), ('select', 'Select'),
+    ('Forms and inputs', [('input', 'Input'), ('password', 'Password'), ('number-field', 'Number field'),
+                          ('select', 'Select'),
                           ('checkbox', 'Checkbox'), ('radio', 'Radio'), ('textarea', 'Textarea'),
                           ('switch', 'Switch')]),
     ('Content', [('card', 'Card'), ('modal', 'Modal'), ('drawer', 'Drawer'), ('avatar', 'Avatar'),
@@ -22449,6 +22972,16 @@ PAGES = [
          (f'{N_PASSWORD_TOKENS} tokens', False), (tr('2 exceções declaradas', '2 declared exceptions'), False)],
         [('overview', T_OV, PASSWORD_OVERVIEW), ('playground', 'Playground', PASSWORD_PLAYGROUND),
          ('guide', T_GUIDE, anat_to_tables(PASSWORD_GUIDE)), ('a11y', T_A11Y, PASSWORD_A11Y_TAB)])),
+    ('number-field', 'Componentes', page(
+        'number-field',
+        tr('Uma quantidade pequena que a pessoa ajusta aos poucos. É o <code>&lt;input type="number"&gt;</code> '
+           'nativo entre o − e o +, numa caixa de 140px: uma parada de Tab só, e o botão da ponta apaga no limite.',
+           'A small quantity the person adjusts a little at a time. It is the native <code>&lt;input type="number"&gt;</code> '
+           'between the − and the +, in a 140px box: a single tab stop, and the stepper at the end turns off at the limit.'),
+        [(T_STABLE, True), (tr('7 estados no Figma', '7 states in Figma'), False),
+         (f'{N_NF_TOKENS} tokens', False), (tr('2 exceções declaradas', '2 declared exceptions'), False)],
+        [('overview', T_OV, NF_OVERVIEW), ('playground', 'Playground', NF_PLAYGROUND),
+         ('guide', T_GUIDE, anat_to_tables(NF_GUIDE)), ('a11y', T_A11Y, NF_A11Y_TAB)])),
     ('divider', 'Componentes', page(
         'divider',
         tr('A linha que separa dois grupos de conteúdo quando o espaço sozinho não basta. É o '
@@ -24470,6 +25003,117 @@ CHROME_PAGINATION = """
 """
 
 
+JS_NUMBER_FIELD = r"""
+(function () {
+  // ── playground do Number field ──
+  // O comportamento dos botões é o number-field.js do componente, embutido
+  // logo antes deste bloco. Aqui só o que é da página: montar o palco.
+  if (!window.alNumberField) return;
+  window.alNumberField.init();
+  var stage = document.getElementById('number-field-stage');
+  if (!stage) return;
+  var code = document.getElementById('number-field-code');
+  var labelInput = document.getElementById('number-field-label');
+  var MINUS = stage.querySelector('[data-step="down"] svg').outerHTML;
+  var PLUS = stage.querySelector('[data-step="up"] svg').outerHTML;
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function render() {
+    var estado = pick('nfstate'), valor = pick('nfvalue'), opt = pick('nfopt') === 'on';
+    var theme = pick('nftheme');
+    var rotulo = (labelInput.value || '').trim() || AL_T.nfLabel;
+    var erro = estado === 'error', ro = estado === 'readonly', off = estado === 'disabled';
+    var v = erro ? '12' : (valor === 'min' ? '1' : valor === 'max' ? '10' : '3');
+    var msg = erro ? AL_T.nfErr : (ro || off ? '' : AL_T.nfHelp);
+
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+
+    function montar(id, escapar) {
+      var e = escapar ? function (s) { return s.replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+                      : function (s) { return s; };
+      var nl = escapar ? '\n' : '';
+      var sp = function (n) { return escapar ? new Array(n + 1).join(' ') : ''; };
+      var nome = esc(rotulo.split(' (')[0].toLowerCase());
+      var a = ['class="al-number-field__field"', 'id="' + id + '"', 'type="number"',
+               'min="1"', 'max="10"', 'step="1"', 'value="' + v + '"'];
+      if (msg) a.push('aria-describedby="' + id + '-help"');
+      if (erro) a.push('aria-invalid="true"');
+      if (ro) a.push('readonly');
+      if (off) a.push('disabled');
+      function step(d, verbo, ic) {
+        return sp(4) + e('<button class="al-number-field__step" type="button" tabindex="-1" data-step="' + d
+          + '" aria-controls="' + id + '" aria-label="' + verbo + ' ' + nome + '"' + (off ? ' disabled' : '') + ' hidden>')
+          + (escapar ? e('<svg class="al-icon" …>') + (d === 'down' ? 'minus' : 'plus') + e('</svg>') : ic)
+          + e('</button>') + nl;
+      }
+      var out = e('<div class="al-number-field">') + nl
+        + sp(2) + e('<div class="al-number-field__labelrow">') + nl
+        + sp(4) + e('<label class="al-number-field__label" for="' + id + '">') + esc(rotulo) + e('</label>') + nl
+        + (opt ? sp(4) + e('<span class="al-number-field__optional">') + AL_T.nfOpt + e('</span>') + nl : '')
+        + sp(2) + e('</div>') + nl
+        + sp(2) + e('<div class="al-number-field__control">') + nl
+        + step('down', AL_T.nfDec, MINUS)
+        + sp(4) + e('<input ' + a.join(' ') + '>') + nl
+        + step('up', AL_T.nfInc, PLUS)
+        + sp(2) + e('</div>') + nl;
+      if (msg) out += sp(2) + e('<p class="al-number-field__help" id="' + id + '-help">') + msg + e('</p>') + nl;
+      return out + e('</div>');
+    }
+
+    stage.innerHTML = montar('play-nf', false);
+    window.alNumberField.init(stage);
+    code.innerHTML = montar('quantity', true)
+      + '\n&lt;script src="number-field.js"&gt;&lt;/script&gt;  &lt;!-- ' + AL_T.nfJsNote + ' --&gt;';
+  }
+
+  document.querySelectorAll('#number-field-controls input, #number-field-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('number-field-copy').addEventListener('click', function () {
+    var btn = this;
+    navigator.clipboard.writeText(code.textContent).then(function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    }).catch(function () {});
+  });
+  render();
+})();
+"""
+
+
+CHROME_NUMBER_FIELD = """
+/* ── páginas do Number field ──
+   Casca do site. O campo em si é sempre o .al-number-field, do number-field.css real. */
+#number-field-stage{display:block; padding-inline:8px}
+.th-nf{display:flex; flex-direction:column; gap:6px; align-items:flex-start}
+.th-nf__label{font-size:12px; line-height:16px; color:var(--al-text-primary)}
+.th-nf__box{display:flex; align-items:center; justify-content:space-between; gap:12px; box-sizing:border-box;
+  width:112px; padding:6px 8px; border:1px solid var(--al-border-default); border-radius:6px;
+  background:var(--al-bg-surface-raised); font-size:13px; color:var(--al-text-primary)}
+.th-nf__ic{width:16px; height:16px}
+/* exemplos a evitar: casca, nunca um .al-number-field errado */
+.nf-fake{display:flex; flex-direction:column; gap:8px; align-items:flex-start; font-size:16px; line-height:24px;
+  color:var(--al-text-primary)}
+.nf-fake__box{display:flex; align-items:center; justify-content:space-between; box-sizing:border-box; width:140px;
+  padding:11px; border:1px solid var(--al-border-default); border-radius:8px; background:var(--al-bg-surface-raised)}
+.nf-fake__step{display:inline-flex; width:24px; height:24px; border-radius:999px}
+.nf-fake__step svg{width:24px; height:24px}
+.nf-fake__value{flex:1; text-align:center}
+.nf-fake__help{font-size:12px; line-height:16px; color:var(--al-text-secondary)}
+.nf-fake--btnfocus .nf-fake__step:last-child{box-shadow:0 0 0 2px var(--al-bg-canvas), 0 0 0 4px var(--al-shadow-focus-default)}
+.nf-fake--error .nf-fake__box{border-color:var(--al-border-danger)}
+.nf-fake--tiny .nf-fake__step, .nf-fake--tiny .nf-fake__step svg{width:14px; height:14px}
+"""
+
+
 JS_DIVIDER_DATA = 'var DV_DEMOS = ' + json.dumps(DV_DEMOS, ensure_ascii=False) + ';\n'
 
 JS_DIVIDER = r"""
@@ -24996,7 +25640,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -25005,6 +25649,7 @@ HTML = (
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
     + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + JS_LINK_DATA + JS_LINK + JS_PROGRESS_DATA + JS_PROGRESS + JS_PAGINATION_DATA + JS_PAGINATION
+    + NF_JS + JS_NUMBER_FIELD
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
@@ -25107,6 +25752,9 @@ print(f'  tokens do Textarea: {N_TEXTAREA_TOKENS}  '
 print(f'  tokens do Password: {N_PASSWORD_TOKENS}  '
       f'({len(PASSWORD_A11Y["rows"])} combinacoes medidas, {PASSWORD_A11Y["fails"]} reprovas, '
       f'{sum(PASSWORD_A11Y["exceptions"].values())} medicoes em excecao declarada)')
+print(f'  tokens do Number f.: {N_NF_TOKENS}  '
+      f'({len(NF_A11Y["rows"])} combinacoes medidas, {NF_A11Y["fails"]} reprovas, '
+      f'{sum(NF_A11Y["exceptions"].values())} medicoes em excecao declarada)')
 print(f'  tokens do Divider : {N_DIVIDER_TOKENS}  '
       f'({len(DIVIDER_A11Y["rows"])} combinacoes medidas, '
       f'{sum(1 for r in DIVIDER_A11Y["rows"] if r["invisible"])} invisiveis, '
