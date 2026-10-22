@@ -25,11 +25,21 @@
  * same sum so a one-digit page stays a circle and "16" grows into a pill.
  */
 
+/* ONE LINE (decided with Gui on 2026-10-21): wrapping split Previous, the
+   pages and Next into three rows. The row never wraps; when it does not fit,
+   the CONTAINER scrolls sideways (overflow-x: auto, with room for the focus
+   ring). Range is the exception: text and rows may wrap. */
 .al-pagination {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--al-pagination-gap);
+  inline-size: max-content;
+}
+
+.al-pagination--range {
+  flex-wrap: wrap;
+  inline-size: auto;
 }
 
 .al-pagination__pages {

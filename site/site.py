@@ -148,6 +148,10 @@ PROG = json.load(open(comp_out('progress', 'tokens.json')))
 PROG_TOKENS = open(comp_out('progress', 'al-progress-tokens.css')).read()
 PROG_CSS = open(comp_src('progress', 'progress.css')).read()
 PROG_A11Y = json.load(open(comp_out('progress', 'a11y.json')))
+PAG = json.load(open(comp_out('pagination', 'tokens.json')))
+PAG_TOKENS = open(comp_out('pagination', 'al-pagination-tokens.css')).read()
+PAG_CSS = open(comp_src('pagination', 'pagination.css')).read()
+PAG_A11Y = json.load(open(comp_out('pagination', 'a11y.json')))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
 CARD_CSS = open(comp_src('card', 'card.css')).read()
@@ -235,6 +239,7 @@ N_TST_TOKENS = len(TST['alias'])
 N_ALR_TOKENS = len(ALR['alias'])
 N_LINK_TOKENS = len(LINK['alias'])
 N_PROG_TOKENS = len(PROG['alias'])
+N_PAG_TOKENS = len(PAG['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -280,7 +285,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
-                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS)
+                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -305,7 +310,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + TST_TOKENS + '\n' + TST_CSS
             + '\n' + ALR_TOKENS + '\n' + ALR_CSS
             + '\n' + LINK_TOKENS + '\n' + LINK_CSS
-            + '\n' + PROG_TOKENS + '\n' + PROG_CSS)
+            + '\n' + PROG_TOKENS + '\n' + PROG_CSS
+            + '\n' + PAG_TOKENS + '\n' + PAG_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1500,6 +1506,138 @@ Se a duração é desconhecida, use o loading do Button. Se a demanda aparecer, 
 | Circular | Não existe | Tipo novo, de volta à etapa 1. |
 | Cor de sucesso ou de erro | Não existe | A mensagem vai num Alert ou num Toast. |
 | Medidor (quantidade, não tarefa) | Não existe | Componente próprio, não um tipo do Progress. |
+"""
+
+
+GUIDE_PT['pagination'] = """# Pagination · Regras de uso
+
+A paginação divide uma lista longa em páginas, ou a carrega em partes, para a pessoa percorrê-la.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Lista longa, a partir de 25 itens.** | **Páginas para uma lista curta que cabe numa tela.** |
+| **Embaixo da lista que ela controla.** | **A mesma paginação em cima e embaixo da lista.** |
+| **Janela fixa de 7 posições.** | **Uma fileira de números que cresce e encolhe com a página.** |
+| **Previous e Next sempre com texto.** | **Só as setas, sem texto.** |
+| **Previous desativado na primeira página.** | **Previous escondido na primeira página, mudando o Next de lugar.** |
+| **Página atual marcada pelo aria-current.** | **Página atual marcada só pela cor, sem nada anunciado.** |
+
+## Regras
+
+### Quando usar
+
+**1. Para listas longas, a partir de uns 25 itens.**
+Com menos, mostre tudo de uma vez.
+*Precedentes: Polaris e Carbon.*
+
+**2. Nunca para etapas de um fluxo.**
+Passos que a pessoa percorre usam o Progress tipo Steps ou botões de avançar e voltar.
+*Precedente: Carbon.*
+
+**3. Escolha o tipo pelo que a pessoa precisa.**
+Numbered para pular para uma página. Simple quando o total é desconhecido ou caro de contar. Load more para manter a posição de leitura, como num feed. Range quando o total de itens é o ponto, como numa tabela.
+*Precedentes: Carbon e Polaris.*
+
+**4. Load more antes de rolagem infinita.**
+A rolagem infinita esconde o rodapé e é ruim para teclado e leitor de tela.
+*Precedente: Shopify.*
+
+### Posição
+
+**5. Embaixo da lista que controla, alinhada a ela.**
+*Precedentes: Polaris e Carbon.*
+
+**6. Uma por lista.**
+Não repita em cima. Se a lista for longa demais, filtre melhor.
+*Precedente: Polaris.*
+
+**7. Numa tabela, o Range à esquerda e a navegação à direita.**
+*Precedente: Carbon.*
+
+**8. Só sobre bg-canvas ou bg-surface, nunca sobre bg-surface-raised.**
+O hover some sobre a superfície elevada, como no ajuste do Modal 0.18.1. Por isso, nada de Pagination dentro de Modal ou Drawer.
+> **Divergência consciente:** decisão do AL, sem precedente nos sistemas de referência.
+
+### Números
+
+**9. Janela fixa de 7 posições quando há mais de 7 páginas.**
+No começo: 1 2 3 4 5 … 16. No meio: 1 … 7 8 9 … 16. No fim: 1 … 12 13 14 15 16. A primeira e a última sempre aparecem.
+*Precedentes: Primer e Carbon.*
+
+**10. As reticências não são clicáveis.**
+Só avisam que há páginas no meio; as vizinhas levam até lá.
+*Precedente: Primer.*
+
+**11. A largura não muda.**
+O número de posições nunca muda com a página atual, para Previous e Next nunca pularem.
+*Precedente: Primer.*
+
+### Conteúdo
+
+**12. Previous e Next sempre com texto, nunca só a seta.**
+A seta é decorativa.
+*Precedente: Primer.*
+
+**13. Load more diz quantos traz: "Load 20 more".**
+Se faltam menos de 20, mostre o número real.
+*Precedente: Polaris.*
+
+**14. O Range segue "Showing 41–60 of 312".**
+Com traço de intervalo, no mesmo formato em todas as telas.
+*Precedente: Carbon.*
+
+**15. Rows per page com poucas opções.**
+Por exemplo 10, 20, 50 e 100.
+*Precedente: Carbon.*
+
+### Estados
+
+**16. Previous desativado na primeira página, Next na última.**
+Desativado, não escondido, para os botões não mudarem de lugar. No Figma é uma troca de instância para o Button desativado.
+*Precedente: Polaris.*
+
+**17. Quando não há mais nada, o Load more sai.**
+Um texto curto entra no lugar, como "That's everything".
+*Precedente: Shopify.*
+
+**18. Enquanto carrega, o Load more usa o loading do Button.**
+A lista já carregada fica na tela.
+*Precedente: Polaris.*
+
+**19. A página atual é tonal, não contornada.**
+Contorno parece foco no AL. O fundo bg-brand-subtle quase não aparece, então quem marca a página atual é o número na cor da marca. Isso paga a exceção da seleção tonal, como no Tab Square.
+> **Divergência consciente** da referência contornada.
+
+### Acessibilidade
+
+**20. Um `<nav>` chamado "Pagination", com as páginas num `<ul>`.**
+*Precedentes: Primer e Queensland.*
+
+**21. A página atual leva `aria-current="page"`, e cada página tem nome "Page 3".**
+*Precedentes: Primer e Carbon.*
+
+**22. Páginas são links quando mudam a URL, botões quando trocam o conteúdo no lugar.**
+Como botões, o foco vai para o início do conteúdo novo.
+*Precedente: Primer.*
+
+**23. Depois do Load more, o foco vai para o primeiro item novo.**
+Não fica no botão.
+*Precedente: Primer.*
+
+**24. O alvo tem no mínimo 24×24.**
+Os itens do AL têm 36×36.
+*Precedentes: Primer e WCAG 2.5.8.*
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Botões de primeira e última | Não existe | A primeira e a última já são números. |
+| Campo para digitar a página | Não existe | Um Input separado, fora do Pagination. |
+| Tamanhos | Um só, sm | Tamanho novo volta para a etapa 1. |
+| Uso sobre bg-surface-raised | Não permitido | Os hovers -raised seriam tokens novos, de volta à etapa 3. |
 """
 
 
@@ -13086,6 +13224,395 @@ PROG_OVERVIEW, PROG_PLAYGROUND, PROG_A11Y_TAB = model_tabs(
 )
 
 
+# ═══════════════════════════════════════════════════════════ Pagination · abas
+# Navigation. Quatro tipos: Numbered, Simple, Load more e Range. Previous,
+# Next e Load more são o Button real; Rows per page é o Select real. Os
+# números são <button> (trocam o conteúdo no lugar, regra 22). Exemplos "a
+# evitar" são casca do site (pag-fake), nunca um .al-pagination errado.
+PAG_TYPE = [('numbered', 'Numbered'), ('simple', 'Simple'), ('load-more', 'Load more'), ('range', 'Range')]
+PAG_CUR = tr([('1', 'Página 1'), ('3', 'Página 3'), ('8', 'Página 8'), ('16', 'Página 16')],
+             [('1', 'Page 1'), ('3', 'Page 3'), ('8', 'Page 8'), ('16', 'Page 16')])
+PAG_SURF = tr([('canvas', 'Tela'), ('surface', 'Faixa de seção')], [('canvas', 'Canvas'), ('surface', 'Section band')])
+PAG_H_STATES = tr('Os quatro tipos', 'The four types')
+PAG_LAB = {'numbered': tr('Numbered · pular para a página', 'Numbered · jump to a page'),
+           'simple': tr('Simple · total desconhecido', 'Simple · unknown total'),
+           'load-more': tr('Load more · mantém a posição', 'Load more · keeps the position'),
+           'range': tr('Range · o total é o ponto', 'Range · the total is the point')}
+N_PAG_MEDIDAS = len(PAG_A11Y['rows'])
+N_PAG_EXC = PAG_A11Y['summary']['exceptions']
+PAG_TOTAL = 16
+_PAG_N = [0]
+PAG_L = al_icon('chevron-left')
+PAG_R = al_icon('chevron-right')
+PAG_E = al_icon('ellipsis')
+
+
+def pag_id():
+    _PAG_N[0] += 1
+    return f'pag-{_PAG_N[0]}'
+
+
+def pag_window(c, t=PAG_TOTAL):
+    """Janela fixa de 7 posições (regra 9); 0 é a reticência."""
+    if t <= 7:
+        return list(range(1, t + 1))
+    if c <= 4:
+        return [1, 2, 3, 4, 5, 0, t]
+    if c >= t - 3:
+        return [1, 0, t - 4, t - 3, t - 2, t - 1, t]
+    return [1, 0, c - 1, c, c + 1, 0, t]
+
+
+def pag_btn(side, off):
+    dis = ' aria-disabled="true"' if off else ''
+    if side == 'prev':
+        return (f'<button type="button" class="al-btn al-btn--ghost al-btn--sm"{dis}>'
+                f'<span class="al-btn__icon al-btn__icon--leading">{PAG_L}</span>'
+                f'<span class="al-btn__label">Previous</span></button>')
+    return (f'<button type="button" class="al-btn al-btn--ghost al-btn--sm"{dis}>'
+            f'<span class="al-btn__label">Next</span>'
+            f'<span class="al-btn__icon al-btn__icon--trailing">{PAG_R}</span></button>')
+
+
+def pag_btn_code(side, off):
+    dis = ' aria-disabled="true"' if off else ''
+    if side == 'prev':
+        return [f'  <button type="button" class="al-btn al-btn--ghost al-btn--sm"{dis}>',
+                '    <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" aria-hidden="true" focusable="false">…</svg></span>',
+                '    <span class="al-btn__label">Previous</span>', '  </button>']
+    return [f'  <button type="button" class="al-btn al-btn--ghost al-btn--sm"{dis}>',
+            '    <span class="al-btn__label">Next</span>',
+            '    <span class="al-btn__icon al-btn__icon--trailing"><svg class="al-icon" aria-hidden="true" focusable="false">…</svg></span>',
+            '  </button>']
+
+
+def pag_demo(kind, cur='3'):
+    """Um Pagination real, devolvido como (html, codigo)."""
+    c = int(cur)
+    if kind == 'simple':
+        html = (f'<nav class="al-pagination al-pagination--simple" aria-label="Pagination">'
+                f'{pag_btn("prev", c == 1)}{pag_btn("next", c == PAG_TOTAL)}</nav>')
+        code = (['<nav class="al-pagination al-pagination--simple" aria-label="Pagination">']
+                + pag_btn_code('prev', c == 1) + pag_btn_code('next', c == PAG_TOTAL) + ['</nav>'])
+    elif kind == 'load-more':
+        html = ('<div class="al-pagination al-pagination--load-more">'
+                '<button type="button" class="al-btn al-btn--secondary al-btn--sm">'
+                '<span class="al-btn__label">Load 20 more</span></button></div>')
+        code = ['<div class="al-pagination al-pagination--load-more">',
+                '  <button type="button" class="al-btn al-btn--secondary al-btn--sm">',
+                '    <span class="al-btn__label">Load 20 more</span>', '  </button>', '</div>']
+    elif kind == 'range':
+        i = pag_id()
+        a, z = (c - 1) * 20 + 1, min(c * 20, 312)
+        ops = ''.join(f'<option{" selected" if n == 20 else ""}>{n}</option>' for n in (10, 20, 50, 100))
+        html = (f'<div class="al-pagination al-pagination--range">'
+                f'<p class="al-pagination__range">Showing {a}–{z} of 312</p>'
+                f'<div class="al-pagination__rows"><label class="al-pagination__rows-label" for="{i}-sel">Rows per page</label>'
+                f'<div class="al-select"><div class="al-select__control"><select class="al-select__field" id="{i}-sel">'
+                f'{ops}</select>{SELECT_CHEVRON}</div></div></div></div>')
+        code = ['<div class="al-pagination al-pagination--range">',
+                f'  <p class="al-pagination__range">Showing {a}–{z} of 312</p>',
+                '  <div class="al-pagination__rows">',
+                '    <label class="al-pagination__rows-label" for="rows">Rows per page</label>',
+                '    <div class="al-select"><div class="al-select__control">',
+                '      <select class="al-select__field" id="rows">…</select>',
+                '      <svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false">…</svg>',
+                '    </div></div>', '  </div>', '</div>']
+    else:
+        lis, lc = [], []
+        for n in pag_window(c):
+            if not n:
+                lis.append(f'<li><span class="al-pagination__ellipsis" aria-hidden="true">{PAG_E}</span></li>')
+                lc.append('    <li><span class="al-pagination__ellipsis" aria-hidden="true"><svg class="al-icon" aria-hidden="true" focusable="false">…</svg></span></li>')
+            else:
+                cur_a = ' aria-current="page"' if n == c else ''
+                lis.append(f'<li><button type="button" class="al-pagination__item" aria-label="Page {n}"{cur_a}>{n}</button></li>')
+                lc.append(f'    <li><button type="button" class="al-pagination__item" aria-label="Page {n}"{cur_a}>{n}</button></li>')
+        html = (f'<nav class="al-pagination" aria-label="Pagination">{pag_btn("prev", c == 1)}'
+                f'<ul class="al-pagination__pages">{"".join(lis)}</ul>{pag_btn("next", c == PAG_TOTAL)}</nav>')
+        code = (['<nav class="al-pagination" aria-label="Pagination">'] + pag_btn_code('prev', c == 1)
+                + ['  <ul class="al-pagination__pages">'] + lc + ['  </ul>']
+                + pag_btn_code('next', c == PAG_TOTAL) + ['</nav>'])
+    return html, '\n'.join(code)
+
+
+def pag_box(kind, cur='3', surf='canvas'):
+    return f'<div class="pag-box" data-surf="{surf}">{pag_demo(kind, cur)[0]}</div>'
+
+
+def pag_fake(items, cls=''):
+    """Casca de exemplo a evitar: parece paginação, não é o componente."""
+    cells = ''.join(f'<span class="pag-fake__i{" is-cur" if x.startswith("*") else ""}">{x.lstrip("*")}</span>'
+                    for x in items)
+    return f'<div class="pag-fake {cls}" aria-hidden="true">{cells}</div>'
+
+
+PAG_DEMOS = {f'{k}|{v}': dict(zip(('html', 'code'), pag_demo(k, v)))
+             for k, _ in PAG_TYPE for v, _ in PAG_CUR}
+
+
+def pag_token_rows(names):
+    rows = []
+    for name in names:
+        res = PAG['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, (int, float)):
+            light = dark = f'{res}px'
+        else:
+            light = dark = '—'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{PAG["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+PAG_COLOR_NAMES = ('pagination-item-label', 'pagination-item-bg-hover', 'pagination-item-bg-active',
+                   'pagination-current-bg', 'pagination-current-label', 'pagination-current-bg-hover',
+                   'pagination-current-bg-active', 'pagination-current-label-hover',
+                   'pagination-ellipsis', 'pagination-range-text')
+PAG_GEO_NAMES = ('pagination-item-padding', 'pagination-item-radius', 'pagination-gap',
+                 'pagination-range-gap', 'pagination-rows-gap')
+
+
+def pag_playground(t):
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="pagination-stage">{pag_box('numbered')}</div>
+
+    <div class="controls controls--fields" id="pagination-controls">
+      {pg_field('pgntype', t['type'], PAG_TYPE, 'numbered')}
+      {pg_field('pgncur', t['cur'], PAG_CUR, '3')}
+      {pg_field('pgnsurf', t['surf'], PAG_SURF, 'canvas')}
+      {pg_field('pgntheme', t['theme'], t['themes'], 'auto')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="pagination-copy">{t['copy']}</button></div>
+      <pre><code id="pagination-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>'''
+
+
+def pag_overview(t):
+    cells = ''.join(f'''
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{PAG_LAB[k]}</span>
+      <div class="stage2" style="display:block">{pag_box(k, '3' if k != 'range' else '3')}</div>
+      <p class="cap">{t['cap_' + k.replace('-', '_')]}</p>
+    </div>''' for k, _ in PAG_TYPE)
+    return pag_playground(t) + f'''
+
+<section>
+  <h2>{t['h_window']}</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">{t['do_lab']}</span>
+      <div class="stage2" style="display:block">{pag_box('numbered', '8')}</div>
+      <p class="cap">{t['do_cap']}</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">{t['no_lab']}</span>
+      <div class="stage2" style="display:block">{pag_fake(['‹', '1', '2', '*3', '4', '5', '6', '7', '8', '9', '10', '›'])}</div>
+      <p class="cap">{t['no_cap']}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>{PAG_H_STATES}</h2>
+  <div class="dd">{cells}
+  </div>
+</section>'''
+
+
+PAG_OVERVIEW = tr(pag_overview({
+    'type': 'Tipo', 'cur': 'Página atual', 'surf': 'Superfície', 'theme': 'Tema',
+    'themes': [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')],
+    'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'O <b>Tipo</b> decide como a pessoa percorre a lista. Troque a <b>Página atual</b>: a janela '
+            'de números se recalcula, mas mantém 7 posições, e o Previous ou o Next desativa nas pontas.',
+    'h_window': 'Uma janela fixa, não uma fileira',
+    'do_lab': 'Janela de 7 posições', 'do_cap': 'Primeira, última, atual e vizinhas. A largura não muda. <i>Primer.</i>',
+    'no_lab': 'Todas as páginas', 'no_cap': 'A fileira cresce com o total e empurra o Next para fora da tela.',
+    'cap_numbered': 'Para pular para uma página específica.',
+    'cap_simple': 'Quando o total é desconhecido ou caro de contar.',
+    'cap_load_more': 'Num feed: a pessoa não perde o lugar onde estava.',
+    'cap_range': 'Numa tabela, quando o total de itens é o que importa.'}), pag_overview({
+    'type': 'Type', 'cur': 'Current page', 'surf': 'Surface', 'theme': 'Theme',
+    'themes': [('auto', 'System'), ('light', 'Light'), ('dark', 'Dark')],
+    'markup': 'Markup', 'copy': 'Copy',
+    'note': 'The <b>Type</b> decides how the person moves through the list. Change the <b>Current page</b>: '
+            'the window of numbers is recalculated but keeps 7 positions, and Previous or Next turns off at the ends.',
+    'h_window': 'A fixed window, not a row',
+    'do_lab': 'A window of 7 positions', 'do_cap': 'First, last, current and neighbors. The width never changes. <i>Primer.</i>',
+    'no_lab': 'Every page', 'no_cap': 'The row grows with the total and pushes Next off the screen.',
+    'cap_numbered': 'To jump to a given page.',
+    'cap_simple': 'When the total is unknown or costly to count.',
+    'cap_load_more': 'In a feed: the person keeps their place.',
+    'cap_range': 'In a table, when the total of items is what matters.'}))
+
+
+def pag_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+  <div class="note" style="margin-top:16px"><b>{t['note_t']}</b> {t['note']}</div>
+</section>
+
+<section>
+  <h2>{T_MEASURES}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{pag_token_rows(PAG_GEO_NAMES)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{pag_token_rows(PAG_COLOR_NAMES)}</tbody>
+  </table></div>
+  <div class="note" style="margin-top:16px"><b>{t['cur_t']}</b> {t['cur']}</div>
+</section>'''
+
+
+PAG_SPECS = tr(pag_specs({
+    'anat': [('Container', '<code>&lt;nav aria-label="Pagination"&gt;</code>, com os números num <code>&lt;ul&gt;</code>. 4px entre os itens.'),
+             ('Previous e Next', 'O Button Ghost sm, com a seta decorativa. Desativado nas pontas por <code>aria-disabled</code>.'),
+             ('Item de página', '36×36: 8px de espaço interno em volta da linha de 20. Redondo, Label/md 14/20.'),
+             ('Página atual', 'Tonal: <code>bg-brand-subtle</code> com o número em <code>text-brand</code>, e <code>aria-current="page"</code>.'),
+             ('Reticências', 'O ícone ellipsis em <code>text-secondary</code>, fora da leitura do leitor de tela.'),
+             ('Range', 'Body/sm em <code>text-secondary</code>, 16px até o seletor; o Select real, 8px depois do rótulo.')],
+    'note_t': 'Sem altura fixa.',
+    'note': 'Os 36px saem de 8 + 20 + 8. A largura mínima usa a mesma soma: um dígito fica círculo e "16" vira pílula.',
+    'th': 'Token do Pagination', 'to': 'Aponta para', 'light': 'Claro', 'dark': 'Escuro',
+    'cur_t': 'A página atual escurece na interação.',
+    'cur': 'No hover e no pressed, o tonal vira <code>bg-brand-hover</code> e <code>bg-brand-active</code> com o número '
+           'em branco, como o Tab Square selecionado.'}), pag_specs({
+    'anat': [('Container', 'A <code>&lt;nav aria-label="Pagination"&gt;</code>, with the numbers in a <code>&lt;ul&gt;</code>. 4px between items.'),
+             ('Previous and Next', 'The Ghost sm Button, with a decorative arrow. Turned off at the ends by <code>aria-disabled</code>.'),
+             ('Page item', '36×36: 8px of padding around a 20px line. Round, Label/md 14/20.'),
+             ('Current page', 'Tonal: <code>bg-brand-subtle</code> with the number in <code>text-brand</code>, and <code>aria-current="page"</code>.'),
+             ('Ellipsis', 'The ellipsis icon in <code>text-secondary</code>, hidden from the screen reader.'),
+             ('Range', 'Body/sm in <code>text-secondary</code>, 16px to the selector; the real Select, 8px after the label.')],
+    'note_t': 'No fixed height.',
+    'note': 'The 36px come from 8 + 20 + 8. The minimum width uses the same sum: one digit is a circle and "16" grows into a pill.',
+    'th': 'Pagination token', 'to': 'Points to', 'light': 'Light', 'dark': 'Dark',
+    'cur_t': 'The current page darkens on interaction.',
+    'cur': 'On hover and pressed, the tonal fill becomes <code>bg-brand-hover</code> and <code>bg-brand-active</code> with a '
+           'white number, like the selected Tab Square.'}))
+
+PAG_A11Y_TAB = tr('''
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Ordem do Tab</b><span>Previous, os números e Next. As reticências não recebem foco.</span></div>
+    <div><b>Página atual</b><span><code>aria-current="page"</code> é o que pinta a página atual: o visual nunca discorda do que é anunciado.</span></div>
+    <div><b>Nome de cada página</b><span><code>aria-label="Page 3"</code>: o leitor de tela não lê só "3".</span></div>
+    <div><b>Pontas</b><span>Previous e Next ficam <code>aria-disabled</code>: continuam focáveis e não mudam de lugar.</span></div>
+    <div><b>Load more</b><span>Depois do clique, o foco vai para o primeiro item novo.</span></div>
+    <div><b>Alvo</b><span>36×36, acima dos 24×24 do critério 2.5.8.</span></div>
+  </div>
+</section>''', '''
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>Tab order</b><span>Previous, the numbers and Next. The ellipsis takes no focus.</span></div>
+    <div><b>Current page</b><span><code>aria-current="page"</code> is what paints the current page: the look never disagrees with what is announced.</span></div>
+    <div><b>Page names</b><span><code>aria-label="Page 3"</code>: the screen reader does not read just "3".</span></div>
+    <div><b>Ends</b><span>Previous and Next become <code>aria-disabled</code>: they stay focusable and don't move.</span></div>
+    <div><b>Load more</b><span>After the click, focus goes to the first new item.</span></div>
+    <div><b>Target</b><span>36×36, above the 24×24 of criterion 2.5.8.</span></div>
+  </div>
+</section>''')
+
+PAG_MD = guide_md('pagination')
+PAG_GUIDE = guide_tab(PAG_MD, [
+    (pag_box('numbered'), pag_fake(['‹', '*1', '›'])),
+    (pag_box('simple', '1'), pag_fake(['‹ Previous', 'Next ›'], 'pag-fake--top')),
+    (pag_box('numbered', '8'), pag_fake(['‹', '1', '2', '*3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '›'])),
+    (pag_box('simple'), pag_fake(['‹', '›'])),
+    (pag_box('simple', '1'), pag_fake(['Next ›'], 'pag-fake--right')),
+    (pag_box('numbered', '1'), pag_fake(['‹', '1', '2', '*3', '4', '›'], 'pag-fake--color')),
+])
+
+TH_PAGINATION = (f'<div class="pag-th" aria-hidden="true">'
+                 f'<span class="al-pagination__item">1</span><span class="al-pagination__item">2</span>'
+                 f'<span class="al-pagination__item" style="background:var(--al-pagination-current-bg);color:var(--al-pagination-current-label)">3</span>'
+                 f'<span class="al-pagination__ellipsis">{PAG_E}</span><span class="al-pagination__item">16</span></div>')
+
+PAG_OVERVIEW, PAG_PLAYGROUND, PAG_A11Y_TAB = model_tabs(
+    'pagination', old_ov=PAG_OVERVIEW, old_specs=PAG_SPECS, guide=PAG_GUIDE, old_a11y=PAG_A11Y_TAB,
+    preview=pag_box('numbered'),
+    usage=tr('Use para percorrer uma lista longa: números para pular, Previous e Next quando o total é '
+             'desconhecido, Load more num feed e Range numa tabela. Com os modificadores '
+             '<code>al-pagination--simple</code>, <code>--load-more</code> e <code>--range</code>.',
+             'Use it to move through a long list: numbers to jump, Previous and Next when the total is '
+             'unknown, Load more in a feed and Range in a table. With the modifiers '
+             '<code>al-pagination--simple</code>, <code>--load-more</code> and <code>--range</code>.'),
+    states=[PAG_H_STATES],
+    presets={PAG_LAB[k]: {'pgntype': k} for k, _ in PAG_TYPE},
+    classes=tr([
+        ('nav.al-pagination', '<code>aria-label="Pagination"</code>', 'Numbered: Previous, os números e Next.'),
+        ('.al-pagination--simple / --load-more / --range', '—', 'Os outros três tipos.'),
+        ('.al-pagination__item', '<code>aria-label</code>, <code>aria-current="page"</code>',
+         'Um número: <code>&lt;button&gt;</code> se troca o conteúdo, <code>&lt;a&gt;</code> se muda a URL.'),
+        ('.al-pagination__ellipsis', '<code>aria-hidden="true"</code>', 'As reticências, fora do foco e da leitura.'),
+        ('.al-pagination__range / __rows', '—', 'O texto do Range e o grupo do Rows per page.'),
+    ], [
+        ('nav.al-pagination', '<code>aria-label="Pagination"</code>', 'Numbered: Previous, the numbers and Next.'),
+        ('.al-pagination--simple / --load-more / --range', '—', 'The other three types.'),
+        ('.al-pagination__item', '<code>aria-label</code>, <code>aria-current="page"</code>',
+         'A number: a <code>&lt;button&gt;</code> when it swaps content, an <code>&lt;a&gt;</code> when it changes the URL.'),
+        ('.al-pagination__ellipsis', '<code>aria-hidden="true"</code>', 'The ellipsis, out of focus and out of reading.'),
+        ('.al-pagination__range / __rows', '—', 'The Range text and the Rows per page group.'),
+    ]),
+    contrast=role_contrast([dict(r, floor=r['min']) for r in PAG_A11Y['rows']], tr([
+        ('Número da página', {f'page {s} label' for s in ('rest', 'hover', 'pressed', 'focus')}, 'ok',
+         'Use <code>text-primary</code>.', WCAG_143, 'Canvas e surface'),
+        ('Número da página atual', {f'current {s} label' for s in ('rest', 'hover', 'pressed', 'focus')}, 'ok',
+         'Tonal em <code>text-brand</code>; branco no hover e no pressed.', WCAG_143, 'Canvas e surface'),
+        ('Branco no hover da atual', {'current hover label'}, 'exc',
+         'Exceção da marca no escuro, herdada da Foundation.', WCAG_143, 'Só no escuro'),
+        ('Fundo da página atual', {'current hover fill', 'current pressed fill'}, 'ok',
+         'A marca no hover e no pressed passa 3:1.', WCAG_1411, 'Canvas e surface'),
+        ('Fundo tonal da página atual', {'current rest fill', 'current focus fill', 'current pressed fill'}, 'exc',
+         'Exceção declarada: quem marca a página é o número e o <code>aria-current</code> (regra 19).', WCAG_1411, 'Canvas e surface'),
+        ('Anel de foco', {'page focus ring', 'current focus ring'}, 'ok',
+         'O anel da Foundation, com folga em <code>bg-canvas</code>.', WCAG_1411, 'Canvas e surface'),
+        ('Reticências e Range', {'ellipsis', 'range text'}, 'ok', 'Use <code>text-secondary</code>.', WCAG_143,
+         'Canvas e surface'),
+    ], [
+        ('Page number', {f'page {s} label' for s in ('rest', 'hover', 'pressed', 'focus')}, 'ok',
+         'Use <code>text-primary</code>.', WCAG_143, 'Canvas and surface'),
+        ('Current page number', {f'current {s} label' for s in ('rest', 'hover', 'pressed', 'focus')}, 'ok',
+         'Tonal in <code>text-brand</code>; white on hover and pressed.', WCAG_143, 'Canvas and surface'),
+        ('White on the current hover', {'current hover label'}, 'exc',
+         'The brand exception in dark, inherited from the Foundation.', WCAG_143, 'Dark only'),
+        ('Current page fill', {'current hover fill', 'current pressed fill'}, 'ok',
+         'The brand on hover and pressed passes 3:1.', WCAG_1411, 'Canvas and surface'),
+        ('Tonal current page fill', {'current rest fill', 'current focus fill', 'current pressed fill'}, 'exc',
+         'Declared exception: the number and <code>aria-current</code> mark the page (rule 19).', WCAG_1411, 'Canvas and surface'),
+        ('Focus ring', {'page focus ring', 'current focus ring'}, 'ok',
+         'The Foundation ring, with a gap in <code>bg-canvas</code>.', WCAG_1411, 'Canvas and surface'),
+        ('Ellipsis and Range', {'ellipsis', 'range text'}, 'ok', 'Use <code>text-secondary</code>.', WCAG_143,
+         'Canvas and surface'),
+    ]), tr(f'<p>São {N_PAG_MEDIDAS} medições no portão de build: nenhuma reprova e {N_PAG_EXC} exceções '
+           f'declaradas, todas herdadas da tokenização.</p>',
+           f'<p>That is {N_PAG_MEDIDAS} measurements in the build gate: no failures and {N_PAG_EXC} declared '
+           f'exceptions, all inherited from tokenization.</p>'), key='what'),
+)
+
+
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
 # clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
@@ -21114,6 +21641,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('toast', 'Toast', 'A confirmação de algo que acabou de acontecer, no canto da tela. Um por vez, em fila; Sucesso e Informação saem sozinhos, Aviso e Erro esperam o X.', TH_TOAST)}
     {card('alert', 'Alert', 'Um assunto que pede atenção, no topo da página, abaixo do header. Um por página; Aviso e Perigo ficam até a situação se resolver.', TH_ALERT)}
     {card('progress', 'Progress', 'Quanto de uma tarefa do sistema já foi feito. O &lt;progress&gt; nativo, só determinado, e a barra nunca é a única pista.', TH_PROGRESS)}
+    {card('pagination', 'Pagination', 'Percorre uma lista longa: números para pular, Previous e Next, Load more ou Range. Janela fixa de 7 posições e página atual em aria-current.', TH_PAGINATION)}
   </div>
 </section>''', f'''
 <section>
@@ -21143,6 +21671,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('toast', 'Toast', 'The confirmation of something that just happened, in the corner of the screen. One at a time, in a queue; Success and Info leave on their own, Warning and Error wait for the X.', TH_TOAST)}
     {card('alert', 'Alert', 'A subject that calls for attention, at the top of the page, below the header. One per page; Warning and Danger stay until the situation is resolved.', TH_ALERT)}
     {card('progress', 'Progress', 'How much of a system task is done. The native &lt;progress&gt;, determinate only, and the bar is never the only cue.', TH_PROGRESS)}
+    {card('pagination', 'Pagination', 'Moves through a long list: numbers to jump, Previous and Next, Load more or Range. A fixed window of 7 positions and the current page in aria-current.', TH_PAGINATION)}
   </div>
 </section>''')
 
@@ -21172,7 +21701,8 @@ SITE_NAV = [
                           ('switch', 'Switch')]),
     ('Content', [('card', 'Card'), ('modal', 'Modal'), ('drawer', 'Drawer'), ('avatar', 'Avatar'),
                  ('divider', 'Divider'), ('accordion', 'Accordion')]),
-    ('Navigation', [('sidebar', 'Sidebar'), ('breadcrumb', 'Breadcrumb'), ('tab', 'Tab')]),
+    ('Navigation', [('sidebar', 'Sidebar'), ('breadcrumb', 'Breadcrumb'), ('pagination', 'Pagination'),
+                    ('tab', 'Tab')]),
     ('Feedback and status', [('alert', 'Alert'), ('progress', 'Progress'), ('toast', 'Toast'),
                              ('tooltip', 'Tooltip'), ('tag', 'Tag')]),
 ]
@@ -22029,6 +22559,17 @@ PAGES = [
          (f'{N_PROG_TOKENS} tokens', False), (tr('1 exceção declarada', '1 declared exception'), False)],
         [('overview', T_OV, PROG_OVERVIEW), ('playground', 'Playground', PROG_PLAYGROUND),
          ('guide', T_GUIDE, anat_to_tables(PROG_GUIDE)), ('a11y', T_A11Y, PROG_A11Y_TAB)])),
+
+    ('pagination', 'Componentes', page(
+        'pagination',
+        tr('Divide uma lista longa em páginas, ou a carrega em partes, para a pessoa percorrê-la. Quatro '
+           'tipos: Numbered, Simple, Load more e Range; Previous, Next e Load more são o Button.',
+           'Splits a long list into pages, or loads it in parts, so the person can move through it. Four '
+           'types: Numbered, Simple, Load more and Range; Previous, Next and Load more are the Button.'),
+        [(T_STABLE, True), (tr('13 variantes no Figma', '13 variants in Figma'), False),
+         (f'{N_PAG_TOKENS} tokens', False), (tr(f'{N_PAG_EXC} exceções declaradas', f'{N_PAG_EXC} declared exceptions'), False)],
+        [('overview', T_OV, PAG_OVERVIEW), ('playground', 'Playground', PAG_PLAYGROUND),
+         ('guide', T_GUIDE, anat_to_tables(PAG_GUIDE)), ('a11y', T_A11Y, PAG_A11Y_TAB)])),
 
     ('alert', 'Componentes', page(
         'alert',
@@ -23868,6 +24409,67 @@ CHROME_PROGRESS = """
 """
 
 
+JS_PAGINATION_DATA = 'var PAG_DEMOS = ' + json.dumps(PAG_DEMOS, ensure_ascii=False) + ';\n'
+
+JS_PAGINATION = r"""
+(function () {
+  // ── playground do Pagination ──
+  var stage = document.getElementById('pagination-stage');
+  if (!stage) return;
+  var code = document.getElementById('pagination-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinação vem pronto do site.py (PAG_DEMOS).
+  function render() {
+    var type = pick('pgntype'), cur = pick('pgncur'), surf = pick('pgnsurf'), theme = pick('pgntheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = PAG_DEMOS[type + '|' + cur];
+    stage.innerHTML = '<div class="pag-box" data-surf="' + surf + '">' + demo.html + '</div>';
+    code.innerHTML = esc(demo.code);
+  }
+
+  document.querySelectorAll('#pagination-controls input, #pagination-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('pagination-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = AL_T.failed; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_PAGINATION = """
+/* ── páginas do Pagination ──
+   Casca do site. A paginação em si é sempre o .al-pagination, do pagination.css real. */
+.pag-box{box-sizing:border-box; max-inline-size:100%; padding:var(--al-space-16); border-radius:8px;
+  background:var(--al-bg-canvas); overflow-x:auto}
+.pag-box[data-surf="surface"]{background:var(--al-bg-surface)}
+.pag-th{display:flex; align-items:center; gap:4px}
+/* exemplos a evitar: casca, nunca um .al-pagination errado */
+.pag-fake{display:flex; align-items:center; gap:4px; font-size:14px; line-height:20px; font-weight:500;
+  color:var(--al-text-primary); max-inline-size:100%; overflow:hidden; white-space:nowrap}
+.pag-fake__i{display:inline-flex; align-items:center; justify-content:center; min-inline-size:36px; padding:8px; box-sizing:border-box}
+.pag-fake__i.is-cur{border:1px solid var(--al-border-strong); border-radius:999px}
+.pag-fake--color .pag-fake__i.is-cur{border:0; color:var(--al-text-brand)}
+.pag-fake--right{justify-content:flex-end}
+.pag-fake--wide{gap:16px}
+"""
+
+
 JS_DIVIDER_DATA = 'var DV_DEMOS = ' + json.dumps(DV_DEMOS, ensure_ascii=False) + ';\n'
 
 JS_DIVIDER = r"""
@@ -24394,7 +24996,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -24402,7 +25004,7 @@ HTML = (
     + 'var AL_T = ' + json.dumps(AL_T, ensure_ascii=False) + ';\n' + JS + JS_PRESETS + JS_ICON + JS_IB_DATA + JS_ICONBUTTON + JS_TAG_DATA + JS_TAG
     + JS_AVATAR_DATA + JS_AVATAR + JS_SELECT_DATA + JS_SELECT
     + JS_CHECKBOX_DATA + JS_CHECKBOX + JS_RADIO + JS_SWITCH + JS_INPUT + JS_TEXTAREA
-    + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + JS_LINK_DATA + JS_LINK + JS_PROGRESS_DATA + JS_PROGRESS
+    + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + JS_LINK_DATA + JS_LINK + JS_PROGRESS_DATA + JS_PROGRESS + JS_PAGINATION_DATA + JS_PAGINATION
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
