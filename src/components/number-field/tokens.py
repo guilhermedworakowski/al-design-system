@@ -44,12 +44,15 @@ HEIGHT IS NOT A TOKEN
   48 = padding-y x2 + line height (12 + 24 + 12), with the 1px border
   overlapping the padding. The same as the Input.
 
-WIDTH IS NOT A TOKEN
+WIDTH IS FIXED: 140
 
-  The field takes 100% of its container, decided on 2026-10-21 against the
-  128px drawn in Figma. The steppers sit at the edges and the value stays
-  centered; `stepper-gap` is only the minimum space between a stepper and the
-  value.
+  The box (`__control`) is 140px wide, decided on 2026-10-21 - it replaced
+  the 100% of the container chosen in the token stage. A quantity is a few
+  digits; a field stretched across the form puts the - and the + far apart.
+  Label and help text are NOT limited by it: they may be wider than the box.
+  The Foundation has no container width scale, so it is a declared literal -
+  the same exception as the Sidebar, the Tooltip and the Toast. In Figma it
+  lives in the `4. Components` collection (number-field/width).
 """
 import json, os, sys
 
@@ -116,6 +119,11 @@ GEOM = {
     'radius':       'radius.lg',
     'border-width': 'border.width.1',
     'icon-size':    'iconSize.24',   # also each stepper's clickable area
+}
+
+# Exception (2026-10-21): the Foundation has no container width scale.
+WIDTH = {
+    'width': 140,
 }
 
 TYPE = {
@@ -232,6 +240,10 @@ def run():
             except KeyError:
                 problems.append(f'{name}: {ref} does not exist in the Foundation')
 
+    for role, px in WIDTH.items():
+        alias[f'{C}-{role}'] = f'{px}px'
+        resolved[f'{C}-{role}'] = px
+
     # derived - a check, not a token. See the note in the header.
     pad_y = resolve_foundation(GEOM['padding-y'])
     gap = resolve_foundation(GEOM['gap'])
@@ -303,7 +315,7 @@ def run():
                        'disabled', 'focus', 'readonly'],
             'note': (
                 'The Input\'s skin with a - and a + stepper and the value centered. One size '
-                '(48px), 100% of the container. The steppers are out of the Tab order '
+                '(48px), the box fixed at 140px (label and help may be wider). The steppers are out of the Tab order '
                 '(Carbon): one tab stop, arrow keys or typing. No hover or ring on the '
                 'steppers; the one at the limit goes disabled, in code only. Read-only has '
                 'no steppers. No placeholder. Two contrast exceptions declared in pending.'
@@ -373,6 +385,11 @@ def write_css(derived):
     w('  /* geometry */')
     for role, ref in GEOM.items():
         w(f'  --al-{C}-{role}: {css_ref(ref)};')
+
+    w('')
+    w('  /* width of the box - declared literal, the Foundation has no width scale */')
+    for role, px in WIDTH.items():
+        w(f'  --al-{C}-{role}: {px}px;')
 
     w('')
     w('  /* typography - one style becomes four vars */')
