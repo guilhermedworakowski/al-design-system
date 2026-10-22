@@ -1,0 +1,219 @@
+/* AL Design System - Stepper
+ *
+ * Depends on: al-foundation.css, al-stepper-tokens.css, al-icon-tokens.css + icon.css
+ *
+ *   .al-stepper                 Horizontal - title under the circle, one line
+ *   .al-stepper--vertical       Vertical   - rail on the left, text on the right
+ *
+ * Markup (usage rules 17-19): an <ol> inside <nav aria-label="Progress">.
+ * Status is a class on the step; the current one also carries
+ * aria-current="step", and that attribute is what styles it, so the look can
+ * never disagree with what is announced. Each step spells its status out in
+ * hidden text - the check and the color say nothing to a screen reader.
+ *
+ *   <nav aria-label="Progress">
+ *     <ol class="al-stepper">
+ *       <li class="al-stepper__step al-stepper__step--completed">
+ *         <span class="al-stepper__indicator">
+ *           <svg class="al-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…check…</svg>
+ *         </span>
+ *         <span class="al-stepper__text">
+ *           <span class="al-stepper__label">Account</span>
+ *           <span class="al-stepper__status">completed</span>
+ *           <span class="al-stepper__description">Optional description</span>
+ *         </span>
+ *       </li>
+ *       <li class="al-stepper__step" aria-current="step">
+ *         <span class="al-stepper__indicator" aria-hidden="true">2</span> …
+ *       </li>
+ *       <li class="al-stepper__step"> … upcoming … </li>
+ *     </ol>
+ *   </nav>
+ *
+ * NOT CLICKABLE (rule 24): no hover, no focus, no link. Moving between steps
+ * is the form's Back / Continue.
+ *
+ * ONE CONTINUOUS LINE (rule 15): each horizontal step draws half a line on
+ * each side of its circle (::before / ::after) and the steps touch, so the
+ * halves join. The line before a step is brand when the step is completed or
+ * current; the line after, only when completed. The outer halves stay
+ * unpainted - they keep the circle centered over the title.
+ *
+ * THE BORDER IS ALWAYS THERE: the current step paints it in its own fill, so
+ * the circle never changes size between states.
+ *
+ * NO TOKEN, ON PURPOSE: the vertical text drops by (circle - line) / 2 so the
+ * title's first line centers on the circle.
+ */
+
+.al-stepper {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--al-font-sans);
+}
+
+/* ---------------------------------------------------------- horizontal */
+.al-stepper__step {
+  display: grid;
+  flex: 1 1 0;
+  grid-template-columns: 1fr var(--al-stepper-indicator-size) 1fr;
+  align-items: center;
+  row-gap: var(--al-stepper-horizontal-gap);
+  min-inline-size: 0;
+}
+
+.al-stepper__step::before,
+.al-stepper__step::after {
+  content: '';
+  grid-row: 1;
+  block-size: var(--al-stepper-connector-thickness);
+  background-color: var(--al-stepper-connector);
+}
+
+.al-stepper__step::before { grid-column: 1; }
+.al-stepper__step::after  { grid-column: 3; }
+
+.al-stepper__step--completed::before,
+.al-stepper__step--completed::after,
+.al-stepper__step[aria-current='step']::before {
+  background-color: var(--al-stepper-connector-done);
+}
+
+.al-stepper__step:first-child::before,
+.al-stepper__step:last-child::after {
+  background-color: transparent;
+}
+
+.al-stepper__indicator {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+.al-stepper__text {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  padding-inline: var(--al-stepper-horizontal-text-padding);
+  text-align: center;
+}
+
+/* ------------------------------------------------------------ vertical */
+.al-stepper--vertical {
+  flex-direction: column;
+}
+
+.al-stepper--vertical .al-stepper__step {
+  flex: none;
+  grid-template-columns: var(--al-stepper-indicator-size) 1fr;
+  grid-template-rows: auto 1fr;
+  align-items: start;
+  column-gap: var(--al-stepper-vertical-gap);
+  row-gap: 0;
+}
+
+.al-stepper--vertical .al-stepper__step::before {
+  display: none;
+}
+
+.al-stepper--vertical .al-stepper__step::after {
+  grid-row: 2;
+  grid-column: 1;
+  justify-self: center;
+  align-self: stretch;
+  inline-size: var(--al-stepper-connector-thickness);
+  block-size: auto;
+  margin-block: var(--al-stepper-vertical-rail-gap);
+}
+
+.al-stepper--vertical .al-stepper__step:last-child::after {
+  display: none;
+}
+
+.al-stepper--vertical .al-stepper__indicator {
+  grid-column: 1;
+}
+
+.al-stepper--vertical .al-stepper__text {
+  grid-row: 1 / span 2;
+  grid-column: 2;
+  padding-block: calc((var(--al-stepper-indicator-size) - var(--al-stepper-line-height)) / 2)
+                 var(--al-stepper-vertical-step-gap);
+  padding-inline: 0;
+  text-align: start;
+}
+
+.al-stepper--vertical .al-stepper__step:last-child .al-stepper__text {
+  padding-block-end: 0;
+}
+
+/* ----------------------------------------------------------- indicator */
+.al-stepper__indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: var(--al-stepper-indicator-size);
+  block-size: var(--al-stepper-indicator-size);
+  border: var(--al-stepper-indicator-border-width) solid var(--al-stepper-upcoming-border);
+  border-radius: var(--al-stepper-indicator-radius);
+  background-color: var(--al-stepper-upcoming-bg);
+  color: var(--al-stepper-upcoming-number);
+  font-size: var(--al-stepper-font-size);
+  line-height: var(--al-stepper-line-height);
+  font-weight: var(--al-stepper-font-weight);
+  font-variant-numeric: tabular-nums;
+}
+
+.al-stepper__indicator .al-icon {
+  --al-icon-box: var(--al-stepper-icon-size);
+}
+
+.al-stepper__step--completed .al-stepper__indicator {
+  border-color: var(--al-stepper-completed-border);
+  background-color: var(--al-stepper-completed-bg);
+  color: var(--al-stepper-completed-icon);
+}
+
+.al-stepper__step[aria-current='step'] .al-stepper__indicator {
+  border-color: var(--al-stepper-current-bg);
+  background-color: var(--al-stepper-current-bg);
+  color: var(--al-stepper-current-number);
+}
+
+/* ---------------------------------------------------------------- text */
+.al-stepper__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-stepper-text-gap);
+}
+
+.al-stepper__label {
+  font-size: var(--al-stepper-font-size);
+  line-height: var(--al-stepper-line-height);
+  font-weight: var(--al-stepper-font-weight);
+  color: var(--al-stepper-label-upcoming);
+}
+
+.al-stepper__step--completed .al-stepper__label,
+.al-stepper__step[aria-current='step'] .al-stepper__label {
+  color: var(--al-stepper-label);
+}
+
+.al-stepper__description {
+  font-size: var(--al-stepper-description-font-size);
+  line-height: var(--al-stepper-description-line-height);
+  font-weight: var(--al-stepper-description-font-weight);
+  color: var(--al-stepper-description);
+}
+
+/* Read, never seen (rule 19). One border-width is the 1px box the pattern
+   needs; clip-path hides it. */
+.al-stepper__status {
+  position: absolute;
+  inline-size: var(--al-border-width-1);
+  block-size: var(--al-border-width-1);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
