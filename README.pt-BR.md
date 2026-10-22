@@ -10,7 +10,7 @@ Design system open source, do Figma ao código. CSS puro, um pouco de JavaScript
 
 ## O que é
 
-- **Foundation + 32 componentes**, desenhados no Figma e codados a partir dos mesmos tokens.
+- **Foundation + 33 componentes**, desenhados no Figma e codados a partir dos mesmos tokens.
 - **Temas claro e escuro** já incluídos. Por padrão segue o sistema operacional, e dá para forçar um.
 - **A acessibilidade é conferida no build.** Cada combinação renderizada (variante × estado × tema) tem o contraste medido contra o fundo onde ela realmente aparece, e o contrato de marcação de cada componente é verificado. Se algo reprova, o build para.
 - **Nada é digitado à mão.** Tokens, variáveis CSS, `tokens.json` e as tabelas da documentação saem todos de uma fonte só.
@@ -44,6 +44,7 @@ Design system open source, do Figma ao código. CSS puro, um pouco de JavaScript
 | | Drawer | ✓ | [diretrizes](src/components/drawer/guidelines.md) |
 | Navegação | Sidebar | ✓ | [diretrizes](src/components/sidebar/guidelines.md) |
 | | Breadcrumb | ✓ | [diretrizes](src/components/breadcrumb/guidelines.md) |
+| | Carousel | ✓ | [diretrizes](src/components/carousel/guidelines.md) |
 | | Pagination | | [diretrizes](src/components/pagination/guidelines.md) |
 | | Stepper | | [diretrizes](src/components/stepper/guidelines.md) |
 | Feedback | Tooltip | ✓ | [diretrizes](src/components/tooltip/guidelines.md) |
@@ -63,7 +64,7 @@ npm install al-design-system
 Ou direto de uma CDN, fixado numa versão:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.8.0/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.9.0/dist/al.css">
 ```
 
 Cada [Release no GitHub](https://github.com/guilhermedworakowski/al-design-system/releases) também traz a pasta `dist/` num zip.
@@ -72,10 +73,10 @@ Cada [Release no GitHub](https://github.com/guilhermedworakowski/al-design-syste
 
 | Arquivo | O que é |
 |---|---|
-| `al.css` | Foundation + os 32 componentes, num arquivo só |
+| `al.css` | Foundation + os 33 componentes, num arquivo só |
 | `foundation.css` | Só a Foundation: cor, tipografia, espaçamento, radius, tamanho de ícone, elevação, anel de foco e motion |
 | `components/<nome>.css` | Um componente (os tokens + o CSS dele) |
-| `components/<nome>.js` | O comportamento, para os 12 componentes que têm script |
+| `components/<nome>.js` | O comportamento, para os 13 componentes que têm script |
 | `icons/*.svg`, `icons/icons.json` | Os 70 ícones |
 | `tokens.json` | Os tokens da Foundation, para ler por código |
 
@@ -106,7 +107,7 @@ A marcação exata de cada componente (qual elemento, quais atributos) está des
 
 ### Scripts
 
-Password, Number field, Slider, Menu, Tab, Modal, Drawer, Sidebar, Breadcrumb, Tooltip, Toast e Alert precisam do script, carregado uma vez por página. Cada um liga sozinho os componentes que já estão na página:
+Password, Number field, Slider, Menu, Tab, Modal, Drawer, Sidebar, Breadcrumb, Carousel, Tooltip, Toast e Alert precisam do script, carregado uma vez por página. Cada um liga sozinho os componentes que já estão na página:
 
 ```html
 <script src="node_modules/al-design-system/dist/components/modal.js" defer></script>
