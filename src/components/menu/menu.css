@@ -11,7 +11,7 @@
  * MARKUP (WAI-ARIA menu button)
  *
  *   <div class="al-menu">
- *     <button class="al-icon-button al-icon-button--ghost al-icon-button--sm"
+ *     <button class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm"
  *             aria-label="More actions" aria-haspopup="menu"
  *             aria-expanded="false" aria-controls="m1">...</button>
  *     <ul class="al-menu__list" role="menu" id="m1" aria-label="More actions" hidden>

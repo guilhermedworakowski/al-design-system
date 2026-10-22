@@ -73,14 +73,18 @@
       if (next) { e.preventDefault(); next.focus(); }
     });
 
+    // capture: runs before any handler the product put on the item itself
+    list.addEventListener('click', function (e) {
+      var item = e.target.closest('[role="menuitem"]');
+      if (item && item.getAttribute('aria-disabled') === 'true') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, true);
+
     list.addEventListener('click', function (e) {
       var item = e.target.closest('[role="menuitem"]');
       if (!item) return;
-      if (item.getAttribute('aria-disabled') === 'true') {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return;
-      }
       // after the product's handlers: if one opened a dialog, focus stays there
       setTimeout(function () {
         var stay = document.activeElement && document.activeElement.closest('dialog[open]');
