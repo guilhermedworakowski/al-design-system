@@ -60,6 +60,7 @@
   flex: 1 1 0;
   grid-template-columns: 1fr var(--al-stepper-indicator-size) 1fr;
   align-items: center;
+  align-content: start;
   row-gap: var(--al-stepper-horizontal-gap);
   min-inline-size: 0;
 }
