@@ -25,7 +25,7 @@ APPROVED = {
     'checkbox': 24, 'radio': 27, 'switch': 25, 'input': 31, 'textarea': 29,
     'password': 30, 'divider': 17, 'card': 24, 'tab': 26, 'accordion': 28,
     'modal': 29, 'drawer': 30, 'sidebar': 33, 'breadcrumb': 28, 'tooltip': 28,
-    'toast': 27, 'alert': 29, 'link': 22, 'progress': 24,
+    'toast': 27, 'alert': 29, 'link': 22, 'progress': 24, 'pagination': 24,
 }
 
 # The Icon gets no guidelines: only the Foundation icons page.
