@@ -2,6 +2,13 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.9.0] - 2026-10-22
+
+### Added
+- **Carousel**, in Navigation: a row of items of the same kind in a space that only fits a few. The basic APG carousel: previous and next below the content (the Icon Button Secondary sm), disabled at the ends, no loop and no auto-rotation. Each arrow moves one page and never skips the slide cut at the edge; after an arrow, a polite live region says which slides are in view. The dots are decorative and the current one is a 24px pill. The slide width belongs to the layout, through `--al-carousel-slide-size`. `carousel.js` wires the arrows, the dots and the announcement, and wakes up a carousel born hidden. 11 tokens, 24 usage rules.
+- Its own CSS and accessibility gates and a page in the documentation site in English and Portuguese.
+- No new Foundation token. Declared contrast exceptions: the current dot against the others (the shape carries the state) and the empty slide against the page (content, not a control).
+
 ## [1.8.0] - 2026-10-22
 
 ### Added
@@ -205,6 +212,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
+[1.9.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.7.0...v1.8.0
 [1.7.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.5.0...v1.6.0

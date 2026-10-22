@@ -179,6 +179,11 @@ RAT = json.load(open(comp_out('rating', 'tokens.json')))
 RAT_TOKENS = open(comp_out('rating', 'al-rating-tokens.css')).read()
 RAT_CSS = open(comp_src('rating', 'rating.css')).read()
 RAT_A11Y = json.load(open(comp_out('rating', 'a11y.json')))
+CAR = json.load(open(comp_out('carousel', 'tokens.json')))
+CAR_TOKENS = open(comp_out('carousel', 'al-carousel-tokens.css')).read()
+CAR_CSS = open(comp_src('carousel', 'carousel.css')).read()
+CAR_JS = open(comp_src('carousel', 'carousel.js')).read()
+CAR_A11Y = json.load(open(comp_out('carousel', 'a11y.json')))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
 CARD_CSS = open(comp_src('card', 'card.css')).read()
@@ -273,6 +278,7 @@ N_STP_TOKENS = len(STP['alias'])
 N_ES_TOKENS = len(ES['alias'])
 N_SLD_TOKENS = len(SLD['alias'])
 N_RAT_TOKENS = len(RAT['alias'])
+N_CAR_TOKENS = len(CAR['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -319,7 +325,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
                          TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS, NF_TOKENS, MENU_TOKENS,
-                         STP_TOKENS, ES_TOKENS, SLD_TOKENS, RAT_TOKENS)
+                         STP_TOKENS, ES_TOKENS, SLD_TOKENS, RAT_TOKENS, CAR_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -351,7 +357,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + STP_TOKENS + '\n' + STP_CSS
             + '\n' + ES_TOKENS + '\n' + ES_CSS
             + '\n' + SLD_TOKENS + '\n' + SLD_CSS
-            + '\n' + RAT_TOKENS + '\n' + RAT_CSS)
+            + '\n' + RAT_TOKENS + '\n' + RAT_CSS
+            + '\n' + CAR_TOKENS + '\n' + CAR_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -2467,6 +2474,140 @@ O `bg-warning` é um marrom escuro no claro (#704F00) e não lê como estrela.
 | Voltar a zero | Não existe | O formulário oferece "sem nota". |
 | Tamanhos | Não existe | Um tamanho, 24px. |
 | Outros ícones | Não existe | Volta para a etapa 1. |
+"""
+
+GUIDE_PT['carousel'] = """# Carousel · Regras de uso
+
+Um carousel mostra uma fileira de itens do mesmo tipo num espaço que só cabe alguns, e deixa a pessoa andar por eles.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Itens do mesmo tipo para folhear:** fotos, cards relacionados. | **A mensagem principal da página em banners que giram.** |
+| **O próximo slide cortado na borda, as setas embaixo.** | **Setas por cima da imagem, slides que cabem certinho.** |
+| **Um título visível em cima, cada slide se sustentando sozinho.** | **"Continua no próximo slide."** |
+| **A seta da ponta desativa.** | **Dar a volta para o primeiro slide.** |
+| **Setas com nome; as bolinhas só mostram onde você está.** | **Bolinhas clicáveis como único jeito de andar.** |
+| **A pessoa é quem move.** | **Rotação automática.** |
+
+### O formato paga as bolinhas
+
+A bolinha atual contra as outras mede 1,46:1 no claro e 1,10:1 no escuro. Só é aceitável porque o formato carrega o estado (uma pílula de 24px contra um ponto de 8px) e as bolinhas são decorativas: `aria-hidden`, sem foco e sem clique.
+
+## Regras
+
+### Quando usar
+
+**1. Para itens do mesmo tipo que a pessoa folheia.**
+Fotos de um produto, cards relacionados, um portfólio: ver todos não é obrigatório.
+*Precedentes: Material (multi-browse) e Porsche.*
+
+**2. Nunca para a mensagem principal da página nem para banners que competem.**
+Use um destaque estático. As pessoas ignoram o que parece anúncio e, nos testes, falham até quando a resposta está no primeiro slide.
+*Precedentes: NN/g e Yale.*
+
+**3. Nunca esconda conteúdo de que a tarefa precisa.**
+A maioria não passa do primeiro slide.
+*Precedentes: NN/g e Smashing.*
+
+**4. De 3 a 10 slides.**
+Com 1 ou 2, mostre lado a lado; com mais de 10, use uma grade com o Pagination.
+*Precedente: Smashing; o teto de 10 é do AL.*
+
+### Composição
+
+**5. Um carousel por área visível.**
+Duas setas iguais lado a lado deixam confuso qual controla o quê.
+*Precedente: Smashing.*
+
+**6. Todos os slides têm a mesma largura, e o próximo aparece cortado na borda.**
+O corte é a pista visual de que tem mais. A largura é do layout: `--al-carousel-slide-size`.
+*Precedente: Material (uncontained).*
+> **Divergência consciente** do multi-browse do Material: o AL não tem slides de tamanhos mistos.
+
+**7. Os controles ficam embaixo do conteúdo, nunca por cima.**
+Bolinhas à esquerda, setas à direita. Sobre uma imagem, a seta perderia o contraste.
+*Precedente: o tutorial de carrosséis do W3C pede controles claramente visíveis.*
+
+**8. O espaço em volta do carousel é do layout.**
+A mesma regra do Divider e do Card.
+
+### Conteúdo
+
+**9. Um título visível em cima, que também dá nome à região.**
+O `aria-labelledby` aponta para ele: um nome só para quem vê e para quem usa leitor de tela.
+*Precedente: padrão de carousel da APG.*
+
+**10. Cada slide se sustenta sozinho.**
+Nada de "continua no próximo slide": a pessoa pode pular slides ou parar no primeiro.
+*Precedente: NN/g.*
+
+**11. Imagem que informa leva texto alternativo; imagem decorativa leva alt vazio.**
+*Precedente: o tutorial de imagens do W3C, aplicado ao de carrosséis.*
+
+**12. Slide clicável usa o link esticado do Card.**
+Nunca dois links no mesmo slide.
+*Precedente: regras do Card no AL.*
+
+### Navegação e estados
+
+**13. As setas desativam nas pontas, sem dar a volta.**
+Dar a volta tira a noção de começo e fim.
+*Precedente: APG, cujo carousel manual não precisa de laço.*
+
+**14. Cada seta avança uma página: quantos slides couberem inteiros.**
+O primeiro slide que estava cortado vira o primeiro da nova página, então nenhum slide é pulado.
+*Precedentes: Material e Smashing.*
+
+**15. Toque e trackpad rolam livres e encaixam no slide mais próximo.**
+*Precedente: Material.*
+
+**16. A rolagem suave desliga quando a pessoa pede menos movimento.**
+*Precedente: tokens de Motion do AL e WCAG 2.3.3.*
+
+**17. Sem rotação automática, nunca.**
+Sem um botão de pausa ela reprova na WCAG 2.2.2, e prejudica quem tem menos coordenação motora.
+*Precedentes: NN/g, APG e W3C.*
+
+**18. Slide sem imagem, ou com imagem que falhou, mostra `bg-subtle`, e o texto alternativo continua lá.**
+*Precedente: o fallback do Avatar no AL.*
+
+### Acessibilidade
+
+**19. Uma `<section>` com `aria-roledescription="carousel"`, com o nome do título.**
+Cada slide é um `role="group"` com `aria-roledescription="slide"` e um rótulo como "2 de 5".
+*Precedente: padrão de carousel da APG.*
+
+**20. As setas são `<button>` nativos com os nomes "Slide anterior" e "Próximo slide".**
+Nas pontas recebem `disabled`, e o foco passa para a outra seta, para nunca cair na página.
+*Precedentes: o tutorial de carrosséis do W3C e a APG.*
+
+**21. Depois de uma seta, uma região viva educada diz quais slides estão à vista.**
+"Slides 3 a 4 de 5". Arrastar e o trackpad não anunciam nada.
+*Precedente: o tutorial de carrosséis do W3C ("Item x of y").*
+
+**22. As bolinhas são decorativas: `aria-hidden`, sem foco e sem clique.**
+A atual se distingue pelo formato, que paga a exceção dot-shape.
+> **Divergência consciente** da APG, que prefere indicadores clicáveis: o AL fica com o carousel básico.
+
+**23. O foco que entra num slide fora da vista rola até ele.**
+O foco nunca fica escondido (WCAG 2.4.11). O navegador faz isso sozinho.
+
+### Fora de escopo
+
+**24. Sem rotação automática, carousel vertical, laço, tamanhos mistos nem miniaturas como navegação.**
+Se a necessidade aparecer, volta à etapa 1 como versão nova. O slide vazio contra a página é isento do 3:1: é conteúdo e não controle, e sobre surface-raised no escuro o conteúdo desenha a própria borda.
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Rotação automática | Não existe | Um destaque estático (regra 2). |
+| Bolinhas clicáveis | Não existe | As setas movem (regra 22). |
+| Laço | Não existe | As setas desativam nas pontas. |
+| Vertical | Não existe | Uma lista ou uma grade. |
+| Miniaturas como navegação | Não existe | Volta à etapa 1 como versão nova. |
 """
 
 
@@ -16454,6 +16595,349 @@ RT_OVERVIEW, RT_PLAYGROUND, RT_A11Y_TAB = model_tabs(
 )
 
 
+# ═════════════════════════════════════════════════════════════ Carousel · abas
+# Navigation. O carousel básico da APG: setas embaixo, desativadas nas pontas,
+# bolinhas decorativas. Todo Carousel da página sai do carousel.css e do
+# carousel.js reais; os exemplos "a evitar" são casca do site (car-fake), nunca
+# um .al-carousel errado.
+CAR_H_STATES = tr('As três posições', 'The three positions')
+N_CAR_MEDIDAS = len(CAR_A11Y['rows'])
+N_CAR_EXC = CAR_A11Y['summary']['exceptions']
+CAR_TITLE = tr('Projetos recentes', 'Recent projects')
+CAR_ITEMS = tr(('Identidade visual', 'App de finanças', 'Site institucional', 'Painel de vendas',
+                'Loja online', 'Guia de marca', 'App de saúde', 'Sistema de reservas'),
+               ('Brand identity', 'Finance app', 'Company website', 'Sales dashboard',
+                'Online store', 'Brand guide', 'Health app', 'Booking system'))
+CAR_KIND = tr('Estudo de caso', 'Case study')
+CAR_OF = tr('de', 'of')
+CAR_PREV = tr('Slide anterior', 'Previous slide')
+CAR_NEXT = tr('Próximo slide', 'Next slide')
+CAR_LIVE = tr('Slides {first} a {last} de {total}', 'Slides {first} to {last} of {total}')
+CAR_LIVE_ONE = tr('Slide {first} de {total}', 'Slide {first} of {total}')
+CAR_SIZES = tr([('320px', '320px · o próximo cortado'), ('240px', '240px · vários à vista'), ('100%', '100% · um por vez')],
+               [('320px', '320px · the next one cut'), ('240px', '240px · several in view'), ('100%', '100% · one at a time')])
+CAR_COUNTS = [('4', '4'), ('6', '6'), ('8', '8')]
+CAR_SURF = tr([('canvas', 'Tela'), ('surface', 'Faixa de seção'), ('raised', 'Modal ou Drawer')],
+              [('canvas', 'Canvas'), ('surface', 'Section band'), ('raised', 'Modal or Drawer')])
+AL_T.update({'carLive': CAR_LIVE, 'carLiveOne': CAR_LIVE_ONE})
+
+
+def car_btn(which, code=False):
+    label, icon = (CAR_PREV, 'chevron-left') if which == 'prev' else (CAR_NEXT, 'chevron-right')
+    svg = (f'<svg class="al-icon" aria-hidden="true" focusable="false">…{icon}…</svg>' if code else al_icon(icon))
+    return (f'<button type="button" class="al-icon-btn al-icon-btn--secondary al-icon-btn--sm" '
+            f'data-al-carousel="{which}" aria-label="{label}">{svg}</button>')
+
+
+def car_demo(cid, n=6, size='320px', title=CAR_TITLE, start=0):
+    """Um Carousel real, devolvido como (html, codigo). `start` só serve às
+    vitrines: o JS do site rola até aquele slide ao carregar."""
+    n = int(n)
+    st = '' if size == '100%' else f' style="--al-carousel-slide-size: {size}"'
+    sa = f' data-car-start="{start}"' if start else ''
+    head = (f'<section class="al-carousel" aria-roledescription="carousel" aria-labelledby="{cid}-t"{st}'
+            f' data-al-live="{CAR_LIVE}" data-al-live-one="{CAR_LIVE_ONE}"{sa}>')
+    slides, sc = [], []
+    for i in range(1, n + 1):
+        body = (f'<span class="car-slide__kind">{CAR_KIND}</span>'
+                f'<span class="car-slide__title">{CAR_ITEMS[(i - 1) % len(CAR_ITEMS)]}</span>')
+        attrs = f'class="al-carousel__slide" role="group" aria-roledescription="slide" aria-label="{i} {CAR_OF} {n}"'
+        slides.append(f'<div {attrs}><div class="car-slide">{body}</div></div>')
+        if i <= 2:
+            sc.append(f'    <div {attrs}>…</div>')
+    if n > 2:
+        sc.append('    …')
+    dots = '<span class="al-carousel__dot"></span>' * n
+    html = (head + f'<h3 class="car-title" id="{cid}-t">{title}</h3>'
+            f'<div class="al-carousel__viewport">{"".join(slides)}</div>'
+            f'<div class="al-carousel__controls"><span class="al-carousel__dots" aria-hidden="true">{dots}</span>'
+            f'<div class="al-carousel__nav">{car_btn("prev")}{car_btn("next")}</div></div>'
+            '<p class="al-carousel__live" aria-live="polite" aria-atomic="true"></p></section>')
+    code = '\n'.join([head.replace(sa, ''), f'  <h2 id="{cid}-t">{title}</h2>',
+                      '  <div class="al-carousel__viewport">'] + sc + ['  </div>',
+                      '  <div class="al-carousel__controls">',
+                      '    <span class="al-carousel__dots" aria-hidden="true">',
+                      f'      <span class="al-carousel__dot"></span>  <!-- × {n} -->',
+                      '    </span>', '    <div class="al-carousel__nav">',
+                      '      ' + car_btn('prev', True), '      ' + car_btn('next', True), '    </div>', '  </div>',
+                      '  <p class="al-carousel__live" aria-live="polite" aria-atomic="true"></p>', '</section>'])
+    return html, code
+
+
+def car_hide(html):
+    """O split_sections das abas corta no primeiro </section>, e o Carousel é
+    uma <section>. Dentro das abas ele viaja como <al-carsec>; a página volta
+    a tag no registro (car_show)."""
+    return html.replace('<section', '<al-carsec').replace('</section>', '</al-carsec>')
+
+
+def car_show(html):
+    return html.replace('<al-carsec', '<section').replace('</al-carsec>', '</section>')
+
+
+def car_box(cid, n=6, size='320px', surf='canvas', start=0, title=CAR_TITLE):
+    return car_hide(f'<div class="car-box" data-surf="{surf}">{car_demo(cid, n, size, title, start)[0]}</div>')
+
+
+def car_fake(kind):
+    """Casca de exemplo a evitar: parece um Carousel, não é o componente."""
+    if kind == 'banner':
+        body = (f'<span class="car-fake__banner">{tr("Até 50% off em tudo", "Up to 50% off everything")}'
+                f'<small>{tr("Só esta semana", "This week only")}</small></span>')
+        return f'<div class="car-fake car-fake--banner" aria-hidden="true">{body}<span class="car-fake__over">‹</span><span class="car-fake__over is-r">›</span></div>'
+    slides = {
+        'fit': [CAR_ITEMS[0], CAR_ITEMS[1]],
+        'cont': [tr('Nossa história começa…', 'Our story starts…'), tr('…continua aqui', '…continues here')],
+        'dots': [CAR_ITEMS[0], CAR_ITEMS[1]],
+        'loop': [CAR_ITEMS[4], CAR_ITEMS[5]],
+        'auto': [CAR_ITEMS[2], CAR_ITEMS[3]],
+    }[kind]
+    cells = ''.join(f'<span class="car-fake__s">{s}</span>' for s in slides)
+    extra = {
+        'fit': '',
+        'cont': '',
+        'dots': '<span class="car-fake__dots is-click"><i class="on"></i><i></i><i></i><i></i></span>',
+        'loop': f'<span class="car-fake__loop">↻ {tr("volta ao 1", "back to 1")}</span>',
+        'auto': f'<span class="car-fake__auto">{tr("troca em 3 s", "changes in 3 s")}</span>',
+    }[kind]
+    return f'<div class="car-fake car-fake--{kind}" aria-hidden="true"><span class="car-fake__row">{cells}</span>{extra}</div>'
+
+
+CAR_DEMOS = {f'{n}|{s}': dict(zip(('html', 'code'), car_demo('play-car', n, s)))
+             for n, _ in CAR_COUNTS for s, _ in CAR_SIZES}
+
+
+def car_overview(t):
+    pos = ''.join(f'''
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{lab}</span>
+      <div class="stage2" style="display:block">{car_box(f'car-pos-{k}', 6, '240px', start=start)}</div>
+      <p class="cap">{t['cap_' + k]}</p>
+    </div>''' for k, lab, start in (('start', t['lab_start'], 0), ('middle', t['lab_middle'], 2),
+                                    ('end', t['lab_end'], 5)))
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="carousel-stage"><div class="car-box" data-surf="canvas">{car_hide(CAR_DEMOS['6|320px']['html'])}</div></div>
+
+    <div class="controls controls--fields" id="carousel-controls">
+      {pg_field('carsize', t['size'], CAR_SIZES, '320px')}
+      {pg_field('carcount', t['count'], CAR_COUNTS, '6')}
+      {pg_field('carsurf', t['surf'], CAR_SURF, 'canvas')}
+      {pg_field('cartheme', t['theme'], THEMES, 'auto')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="carousel-copy">{t['copy']}</button></div>
+      <pre><code id="carousel-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>
+
+<section>
+  <h2>{t['h_width']}</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{t['lab_cut']}</span>
+      <div class="stage2" style="display:block">{car_box('car-w-cut', 5, '320px')}</div>
+      <p class="cap">{t['cap_cut']}</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{t['lab_one']}</span>
+      <div class="stage2" style="display:block">{car_box('car-w-one', 4, '100%')}</div>
+      <p class="cap">{t['cap_one']}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>{CAR_H_STATES}</h2>
+  <div class="dd">{pos}
+  </div>
+</section>'''
+
+
+CAR_OVERVIEW = tr(car_overview({
+    'size': 'Largura do slide', 'count': 'Slides', 'surf': 'Superfície', 'theme': 'Tema',
+    'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'O carousel acima é o componente real: esta página carrega o mesmo <code>carousel.css</code> e o mesmo '
+            '<code>carousel.js</code> que vão para produção. Use as setas, arraste no trackpad, ou tabule até as setas '
+            'e use Enter. Na ponta, a seta desativa e o foco passa para a outra.',
+    'h_width': 'A largura é do layout',
+    'lab_cut': '320px · o próximo cortado', 'cap_cut': 'O corte na borda diz que tem mais. <i>Material, uncontained.</i>',
+    'lab_one': '100% · um por vez', 'cap_one': 'O padrão, sem ajuste: um slide ocupa a faixa toda.',
+    'lab_start': 'Início', 'cap_start': 'A seta anterior desativa; a pílula marca o primeiro slide.',
+    'lab_middle': 'Meio', 'cap_middle': 'As duas setas ativas.',
+    'lab_end': 'Fim', 'cap_end': 'O último slide encosta na direita e a seta próxima desativa: sem dar a volta.'}),
+    car_overview({
+    'size': 'Slide width', 'count': 'Slides', 'surf': 'Surface', 'theme': 'Theme',
+    'markup': 'Markup', 'copy': 'Copy',
+    'note': 'The carousel above is the real component: this page loads the same <code>carousel.css</code> and the same '
+            '<code>carousel.js</code> that go to production. Use the arrows, swipe on the trackpad, or tab to the arrows '
+            'and press Enter. At the end, the arrow turns off and focus moves to the other one.',
+    'h_width': 'The width is the layout\'s',
+    'lab_cut': '320px · the next one cut', 'cap_cut': 'The cut at the edge says there is more. <i>Material, uncontained.</i>',
+    'lab_one': '100% · one at a time', 'cap_one': 'The default, with no adjustment: one slide fills the row.',
+    'lab_start': 'Start', 'cap_start': 'The previous arrow turns off; the pill marks the first slide.',
+    'lab_middle': 'Middle', 'cap_middle': 'Both arrows active.',
+    'lab_end': 'End', 'cap_end': 'The last slide meets the right edge and the next arrow turns off: no loop.'}))
+
+
+def car_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+  <div class="note" style="margin-top:16px"><b>{t['note_t']}</b> {t['note']}</div>
+</section>
+
+<section>
+  <h2>{T_MEASURES}</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['val']}</th></tr></thead>
+    <tbody>{comp_token_rows(CAR, geo=True)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{comp_token_rows(CAR)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{t['h_js']}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['js'])}</div>
+</section>'''
+
+
+CAR_SPECS = tr(car_specs({
+    'anat': [('Container', '<code>&lt;section aria-roledescription="carousel"&gt;</code> com o nome do título visível, por <code>aria-labelledby</code>.'),
+             ('Faixa', '<code>.al-carousel__viewport</code>: rola na horizontal, encaixa no começo de cada slide, 16px entre eles, sem barra de rolagem.'),
+             ('Slide', '<code>role="group"</code> com <code>aria-roledescription="slide"</code> e "2 de 5". Cantos de 8px, fundo <code>bg-subtle</code> só quando falta a imagem.'),
+             ('Bolinhas', 'Decorativas, em <code>aria-hidden</code>. Ponto de 8px em <code>border-strong</code>; a atual é uma pílula de 24×8 em <code>bg-brand</code>.'),
+             ('Setas', 'O Icon Button Secondary sm, com chevron-left e chevron-right, 8px entre eles, à direita da linha de controles.'),
+             ('Região viva', '<code>.al-carousel__live</code> com <code>aria-live="polite"</code>, escondida da tela.')],
+    'note_t': 'A largura do slide não é token.',
+    'note': 'É do layout: <code>--al-carousel-slide-size</code>. O padrão é 100%, um por vez; para o próximo aparecer '
+            'cortado, use uma largura menor que a faixa, como os 320px do Figma.',
+    'th': 'Token do Carousel', 'to': 'Aponta para', 'val': 'Valor', 'light': 'Claro', 'dark': 'Escuro',
+    'h_js': 'O comportamento: <code>carousel.js</code>',
+    'js': [('Uma página por seta', 'O próximo começa no primeiro slide que não estava inteiro à vista: nenhum slide é pulado.'),
+           ('Pontas', 'A seta da ponta recebe <code>disabled</code>; se tinha o foco, o foco passa para a outra.'),
+           ('Bolinha atual', '<code>data-current</code> na bolinha do primeiro slide à vista.'),
+           ('Anúncio', 'Só depois de uma seta: a frase vem de <code>data-al-live</code> e <code>data-al-live-one</code>.'),
+           ('Conteúdo inserido depois', '<code>window.alCarousel.init(elemento)</code>.')]}), car_specs({
+    'anat': [('Container', 'A <code>&lt;section aria-roledescription="carousel"&gt;</code> named by its visible title, through <code>aria-labelledby</code>.'),
+             ('Row', '<code>.al-carousel__viewport</code>: scrolls horizontally, snaps to each slide\'s start, 16px between them, no scrollbar.'),
+             ('Slide', '<code>role="group"</code> with <code>aria-roledescription="slide"</code> and "2 of 5". 8px corners, <code>bg-subtle</code> only when the image is missing.'),
+             ('Dots', 'Decorative, in <code>aria-hidden</code>. An 8px dot in <code>border-strong</code>; the current one is a 24×8 pill in <code>bg-brand</code>.'),
+             ('Arrows', 'The Icon Button Secondary sm, with chevron-left and chevron-right, 8px apart, on the right of the controls row.'),
+             ('Live region', '<code>.al-carousel__live</code> with <code>aria-live="polite"</code>, hidden from the screen.')],
+    'note_t': 'The slide width is not a token.',
+    'note': 'It belongs to the layout: <code>--al-carousel-slide-size</code>. The default is 100%, one at a time; for the '
+            'next one to show cut, use a width smaller than the row, like the 320px in Figma.',
+    'th': 'Carousel token', 'to': 'Points to', 'val': 'Value', 'light': 'Light', 'dark': 'Dark',
+    'h_js': 'The behavior: <code>carousel.js</code>',
+    'js': [('One page per arrow', 'Next starts at the first slide not fully in view: no slide is ever skipped.'),
+           ('Ends', 'The arrow at the end gets <code>disabled</code>; if it had focus, focus moves to the other one.'),
+           ('Current dot', '<code>data-current</code> on the dot of the first slide in view.'),
+           ('Announcement', 'Only after an arrow: the sentence comes from <code>data-al-live</code> and <code>data-al-live-one</code>.'),
+           ('Content added later', '<code>window.alCarousel.init(element)</code>.')]}))
+
+CAR_A11Y_TAB = tr('''
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Ordem do Tab</b><span>As duas setas e o que houver de focável dentro dos slides. A faixa e as bolinhas não recebem foco.</span></div>
+    <div><b>Pontas</b><span>A seta da ponta desativa e o foco passa para a outra: nunca cai na página.</span></div>
+    <div><b>Foco fora da vista</b><span>Um link num slide escondido rola até a vista quando recebe o foco (2.4.11).</span></div>
+    <div><b>Nome e posição</b><span>A região tem o nome do título; cada slide diz "2 de 5".</span></div>
+    <div><b>Anúncio</b><span>Depois de uma seta, "Slides 3 a 4 de 5". Arrastar não anuncia.</span></div>
+    <div><b>Movimento</b><span>Sem rotação automática; a rolagem suave desliga com menos movimento.</span></div>
+  </div>
+</section>''', '''
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>Tab order</b><span>The two arrows and whatever is focusable inside the slides. The row and the dots take no focus.</span></div>
+    <div><b>Ends</b><span>The arrow at the end turns off and focus moves to the other one: it never falls to the page.</span></div>
+    <div><b>Focus out of view</b><span>A link in a hidden slide scrolls into view when it takes focus (2.4.11).</span></div>
+    <div><b>Name and position</b><span>The region takes the title as its name; each slide says "2 of 5".</span></div>
+    <div><b>Announcement</b><span>After an arrow, "Slides 3 to 4 of 5". Swiping announces nothing.</span></div>
+    <div><b>Motion</b><span>No auto-rotation; smooth scrolling turns off with reduced motion.</span></div>
+  </div>
+</section>''')
+
+CAR_MD = guide_md('carousel')
+CAR_GUIDE = guide_tab(CAR_MD, [
+    (car_box('cg-1', 5, '240px'), car_fake('banner')),
+    (car_box('cg-2', 5, '320px'), car_fake('fit')),
+    (car_box('cg-3', 5, '240px', title=tr('Mais vendidos', 'Best sellers')), car_fake('cont')),
+    (car_box('cg-4', 6, '240px', start=5), car_fake('loop')),
+    (car_box('cg-5', 5, '240px'), car_fake('dots')),
+    (car_box('cg-6', 5, '240px'), car_fake('auto')),
+])
+
+TH_CAROUSEL = ('<div class="car-th" aria-hidden="true"><span class="car-th__row">'
+               '<span></span><span></span><span class="is-cut"></span></span>'
+               '<span class="car-th__dots"><i class="on"></i><i></i><i></i><i></i></span></div>')
+
+CAR_OVERVIEW, CAR_PLAYGROUND, CAR_A11Y_TAB = model_tabs(
+    'carousel', old_ov=CAR_OVERVIEW, old_specs=CAR_SPECS, guide=CAR_GUIDE, old_a11y=CAR_A11Y_TAB, js=True,
+    preview=car_box('pv-car', 6, '240px'), preview_style='display:block',
+    usage=tr('Use para itens do mesmo tipo que a pessoa folheia, de 3 a 10. Defina a largura do slide no layout '
+             'com <code>--al-carousel-slide-size</code>; o <code>carousel.js</code> liga as setas, as bolinhas e o anúncio.',
+             'Use it for items of the same kind the person browses, from 3 to 10. Set the slide width in the layout '
+             'with <code>--al-carousel-slide-size</code>; <code>carousel.js</code> wires the arrows, the dots and the announcement.'),
+    states=[CAR_H_STATES],
+    classes=tr([
+        ('section.al-carousel', '<code>aria-roledescription="carousel"</code>, <code>aria-labelledby</code>', 'O container, com o nome do título visível.'),
+        ('--al-carousel-slide-size', '320px, 100%…', 'A largura do slide, do layout. Padrão 100%.'),
+        ('data-al-live / data-al-live-one', '{first}, {last}, {total}', 'A frase do anúncio, no idioma da página.'),
+        ('.al-carousel__viewport', '—', 'A faixa que rola, com os slides dentro.'),
+        ('.al-carousel__slide', '<code>role="group"</code>, <code>aria-roledescription="slide"</code>', 'Um slide, com o rótulo "2 de 5".'),
+        ('.al-carousel__dots / __dot', '<code>aria-hidden="true"</code>', 'Uma bolinha por slide; o JS marca a atual.'),
+        ('[data-al-carousel="prev|next"]', '<code>aria-label</code>', 'As setas: Icon Button Secondary sm.'),
+        ('.al-carousel__live', '<code>aria-live="polite"</code>', 'A região do anúncio, escondida.'),
+    ], [
+        ('section.al-carousel', '<code>aria-roledescription="carousel"</code>, <code>aria-labelledby</code>', 'The container, named by the visible title.'),
+        ('--al-carousel-slide-size', '320px, 100%…', 'The slide width, set by the layout. Default 100%.'),
+        ('data-al-live / data-al-live-one', '{first}, {last}, {total}', 'The announcement sentence, in the page\'s language.'),
+        ('.al-carousel__viewport', '—', 'The row that scrolls, with the slides inside.'),
+        ('.al-carousel__slide', '<code>role="group"</code>, <code>aria-roledescription="slide"</code>', 'A slide, labelled "2 of 5".'),
+        ('.al-carousel__dots / __dot', '<code>aria-hidden="true"</code>', 'One dot per slide; the JS marks the current one.'),
+        ('[data-al-carousel="prev|next"]', '<code>aria-label</code>', 'The arrows: Icon Button Secondary sm.'),
+        ('.al-carousel__live', '<code>aria-live="polite"</code>', 'The announcement region, hidden.'),
+    ]),
+    contrast=role_contrast([dict(r, floor=r['min']) for r in CAR_A11Y['rows']], tr([
+        ('Bolinhas', {'dot', 'current dot'}, 'ok', 'Cada bolinha contra a página.', WCAG_1411, 'Canvas, surface e raised'),
+        ('Setas', {'arrow border', 'chevron'}, 'ok', 'A borda e o chevron do Icon Button contra a página.', WCAG_1411,
+         'Canvas, surface e raised'),
+        ('Anel de foco das setas', {'arrow focus ring'}, 'ok', 'O anel contra a página.', WCAG_2413, 'Canvas, surface e raised'),
+        ('Bolinha atual contra as outras', {'current vs dot'}, 'exc',
+         'Exceção declarada: o formato carrega o estado e as bolinhas são decorativas (regra 22).', WCAG_141,
+         tr('Os dois temas', 'Both themes')),
+        ('Slide vazio', {'empty slide'}, 'exc',
+         'Exceção declarada: o slide é conteúdo e não controle (regra 24).', WCAG_1411, 'Canvas, surface e raised'),
+    ], [
+        ('Dots', {'dot', 'current dot'}, 'ok', 'Each dot against the page.', WCAG_1411, 'Canvas, surface and raised'),
+        ('Arrows', {'arrow border', 'chevron'}, 'ok', 'The Icon Button border and chevron against the page.', WCAG_1411,
+         'Canvas, surface and raised'),
+        ('Arrow focus ring', {'arrow focus ring'}, 'ok', 'The ring against the page.', WCAG_2413, 'Canvas, surface and raised'),
+        ('Current dot against the others', {'current vs dot'}, 'exc',
+         'Declared exception: the shape carries the state and the dots are decorative (rule 22).', WCAG_141, 'Both themes'),
+        ('Empty slide', {'empty slide'}, 'exc',
+         'Declared exception: the slide is content, not a control (rule 24).', WCAG_1411, 'Canvas, surface and raised'),
+    ]), forms_intro(N_CAR_MEDIDAS, N_CAR_EXC), key='what'),
+)
+
+
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
 # clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
@@ -24463,6 +24947,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('link', 'Link', 'Leva a outra página, a outra seção ou a um arquivo. Um &lt;a href&gt; de verdade, sempre sublinhado — solto ou no meio do texto.', TH_LINK)}
     {card('menu', 'Menu', 'As ações que não cabem na tela, atrás de um ⋮. Lista de ações com teclado da W3C, Danger por último e atalho só mostrado.', TH_MENU)}
     {card('stepper', 'Stepper', 'Onde a pessoa está numa tarefa linear de 3 a 5 passos: concluído, atual e pendente, numa linha contínua. Horizontal ou vertical, nunca a única navegação.', TH_STEPPER)}
+    {card('carousel', 'Carousel', 'Uma fileira de itens do mesmo tipo para folhear, num espaço que só cabe alguns. Setas embaixo que desativam nas pontas, sem rotação automática.', TH_CAROUSEL)}
     {card('empty-state', 'Empty state', 'O lugar do conteúdo que não está lá: diz o que está vazio, por quê e o que fazer. Um tamanho, uma ação Primary, nunca para erro.', TH_EMPTY_STATE)}
     {card('tag', 'Tag', 'Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.', TH_TAG)}
     {card('avatar', 'Avatar', 'Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.', TH_AVATAR)}
@@ -24499,6 +24984,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('link', 'Link', 'Takes the person to another page, another section or a file. A real &lt;a href&gt;, always underlined, standalone or inside running text.', TH_LINK)}
     {card('menu', 'Menu', 'The actions that do not fit on screen, behind a ⋮. A list of actions with the W3C keyboard pattern, Danger last and the shortcut only shown.', TH_MENU)}
     {card('stepper', 'Stepper', 'Where the person is in a linear task of 3 to 5 steps: completed, current and upcoming, on one continuous line. Horizontal or vertical, never the only navigation.', TH_STEPPER)}
+    {card('carousel', 'Carousel', 'A row of items of the same kind to browse, in a space that only fits a few. Arrows below that turn off at the ends, no auto-rotation.', TH_CAROUSEL)}
     {card('empty-state', 'Empty state', 'The place of content that is not there: says what is empty, why and what to do. One size, one Primary action, never for errors.', TH_EMPTY_STATE)}
     {card('tag', 'Tag', 'A short label of state or category. Content, not a control, and the first in AL to close with zero exceptions while carrying text.', TH_TAG)}
     {card('avatar', 'Avatar', 'Who the person is, in three types that form a chain: photo, initials, icon, in that order, never an empty box.', TH_AVATAR)}
@@ -24555,7 +25041,7 @@ SITE_NAV = [
                           ('switch', 'Switch'), ('slider', 'Slider'), ('rating', 'Rating')]),
     ('Content', [('card', 'Card'), ('modal', 'Modal'), ('drawer', 'Drawer'), ('avatar', 'Avatar'),
                  ('divider', 'Divider'), ('accordion', 'Accordion')]),
-    ('Navigation', [('sidebar', 'Sidebar'), ('breadcrumb', 'Breadcrumb'), ('pagination', 'Pagination'),
+    ('Navigation', [('sidebar', 'Sidebar'), ('breadcrumb', 'Breadcrumb'), ('carousel', 'Carousel'), ('pagination', 'Pagination'),
                     ('stepper', 'Stepper'), ('tab', 'Tab')]),
     ('Feedback and status', [('alert', 'Alert'), ('empty-state', 'Empty state'), ('progress', 'Progress'), ('toast', 'Toast'),
                              ('tooltip', 'Tooltip'), ('tag', 'Tag')]),
@@ -25465,6 +25951,17 @@ PAGES = [
          (f'{N_STP_TOKENS} tokens', False), (tr(f'{N_STP_EXC} exceções declaradas', f'{N_STP_EXC} declared exceptions'), False)],
         [('overview', T_OV, STP_OVERVIEW), ('playground', 'Playground', STP_PLAYGROUND),
          ('guide', T_GUIDE, anat_to_tables(STP_GUIDE)), ('a11y', T_A11Y, STP_A11Y_TAB)])),
+
+    ('carousel', 'Componentes', car_show(page(
+        'carousel',
+        tr('Mostra uma fileira de itens do mesmo tipo num espaço que só cabe alguns. O carousel básico da APG: '
+           'setas embaixo que desativam nas pontas, bolinhas decorativas e nenhuma rotação automática.',
+           'Shows a row of items of the same kind in a space that only fits a few. The basic APG carousel: '
+           'arrows below that turn off at the ends, decorative dots and no auto-rotation.'),
+        [(T_STABLE, True), (tr('3 posições no Figma', '3 positions in Figma'), False),
+         (f'{N_CAR_TOKENS} tokens', False), (tr('2 exceções declaradas', '2 declared exceptions'), False)],
+        [('overview', T_OV, CAR_OVERVIEW), ('playground', 'Playground', CAR_PLAYGROUND),
+         ('guide', T_GUIDE, anat_to_tables(CAR_GUIDE)), ('a11y', T_A11Y, CAR_A11Y_TAB)]))),
 
     ('empty-state', 'Componentes', page(
         'empty-state',
@@ -27614,6 +28111,105 @@ CHROME_STEPPER = """
 """
 
 
+JS_CAROUSEL_DATA = 'var CAR_DEMOS = ' + json.dumps(CAR_DEMOS, ensure_ascii=False) + ';\n'
+
+JS_CAROUSEL = r"""
+(function () {
+  // ── vitrines do Carousel: as posições Meio e Fim começam roladas ──
+  // Elas nascem em abas fechadas: rola quando a faixa ganha largura, uma vez.
+  document.querySelectorAll('.al-carousel[data-car-start]').forEach(function (c) {
+    var vp = c.querySelector('.al-carousel__viewport');
+    var s = c.querySelectorAll('.al-carousel__slide')[+c.getAttribute('data-car-start')];
+    if (!vp || !s || !('ResizeObserver' in window)) return;
+    var ro = new ResizeObserver(function () {
+      if (!vp.clientWidth) return;
+      ro.disconnect();
+      vp.style.scrollBehavior = 'auto';
+      vp.scrollLeft = s.offsetLeft - vp.firstElementChild.offsetLeft;
+      vp.style.scrollBehavior = '';
+    });
+    ro.observe(vp);
+  });
+
+  // ── playground do Carousel ──
+  var stage = document.getElementById('carousel-stage');
+  if (!stage) return;
+  var code = document.getElementById('carousel-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinação vem pronto do site.py (CAR_DEMOS).
+  function render() {
+    var size = pick('carsize'), n = pick('carcount'), surf = pick('carsurf'), theme = pick('cartheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = CAR_DEMOS[n + '|' + size];
+    stage.innerHTML = '<div class="car-box" data-surf="' + surf + '">' + demo.html + '</div>';
+    if (window.alCarousel) window.alCarousel.init(stage);
+    code.innerHTML = esc(demo.code) + '\n\n&lt;script src="carousel.js"&gt;&lt;/script&gt;';
+  }
+
+  document.querySelectorAll('#carousel-controls input, #carousel-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('carousel-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = AL_T.failed; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_CAROUSEL = """
+/* ── páginas do Carousel ──
+   Casca do site. O Carousel em si é sempre o .al-carousel, do carousel.css real. */
+.car-box{box-sizing:border-box; inline-size:100%; min-inline-size:0; padding:var(--al-space-24) var(--al-space-16);
+  border-radius:8px; background:var(--al-bg-canvas)}
+.car-box[data-surf="surface"]{background:var(--al-bg-surface)}
+.car-box[data-surf="raised"]{background:var(--al-bg-surface-raised)}
+.car-title{margin:0; font-size:16px; line-height:24px; font-weight:600; color:var(--al-text-primary)}
+.car-slide{display:flex; flex-direction:column; justify-content:flex-end; gap:4px; box-sizing:border-box;
+  min-block-size:160px; padding:var(--al-space-16)}
+.car-slide__kind{font-size:12px; line-height:16px; color:var(--al-text-secondary)}
+.car-slide__title{font-size:16px; line-height:24px; font-weight:600; color:var(--al-text-primary)}
+.car-th{display:flex; flex-direction:column; gap:10px; inline-size:150px}
+.car-th__row{display:flex; gap:6px; overflow:hidden}
+.car-th__row span{flex:0 0 60px; block-size:40px; border-radius:4px; background:var(--al-carousel-slide-bg)}
+.car-th__dots{display:flex; gap:4px; align-items:center}
+.car-th__dots i{inline-size:5px; block-size:5px; border-radius:999px; background:var(--al-carousel-dot)}
+.car-th__dots i.on{inline-size:14px; background:var(--al-carousel-dot-current)}
+/* exemplos a evitar: casca, nunca um .al-carousel errado */
+.car-fake{position:relative; display:flex; flex-direction:column; gap:12px; inline-size:100%; max-inline-size:360px;
+  font-size:14px; line-height:20px; color:var(--al-text-primary)}
+.car-fake__row{display:flex; gap:12px}
+.car-fake__s{flex:1 1 0; min-inline-size:0; min-block-size:96px; box-sizing:border-box; padding:12px; border-radius:8px;
+  background:var(--al-bg-subtle); display:flex; align-items:flex-end; font-weight:600}
+.car-fake__banner{display:flex; flex-direction:column; justify-content:center; gap:4px; min-block-size:120px;
+  padding:16px 40px; border-radius:8px; background:var(--al-bg-brand); color:var(--al-text-on-brand); font-size:20px;
+  line-height:28px; font-weight:700}
+.car-fake__banner small{font-size:14px; font-weight:400}
+.car-fake__over{position:absolute; top:50%; left:8px; transform:translateY(-50%); inline-size:24px; block-size:24px;
+  border-radius:999px; background:rgba(255,255,255,.35); color:var(--al-text-on-brand); display:flex;
+  align-items:center; justify-content:center; font-size:18px}
+.car-fake__over.is-r{left:auto; right:8px}
+.car-fake__dots{display:flex; gap:10px}
+.car-fake__dots i{inline-size:12px; block-size:12px; border-radius:999px; border:1px solid var(--al-border-strong)}
+.car-fake__dots i.on{background:var(--al-text-brand); border-color:var(--al-text-brand)}
+.car-fake__loop, .car-fake__auto{align-self:flex-end; font-size:12px; color:var(--al-text-secondary)}
+"""
+
+
 JS_SLIDER = r"""
 (function () {
   // ── playground do Slider ──
@@ -28421,7 +29017,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_MENU + CHROME_STEPPER + CHROME_EMPTY_STATE + CHROME_SLIDER + CHROME_RATING + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_MENU + CHROME_STEPPER + CHROME_CAROUSEL + CHROME_EMPTY_STATE + CHROME_SLIDER + CHROME_RATING + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -28433,6 +29029,7 @@ HTML = (
     + NF_JS + JS_NUMBER_FIELD
     + MENU_JS.replace('</', '<\\/') + JS_MENU_DATA + JS_MENU
     + JS_STEPPER_DATA + JS_STEPPER
+    + CAR_JS.replace('</', '<\\/') + JS_CAROUSEL_DATA + JS_CAROUSEL
     + JS_ES_DATA + JS_ES
     + SLD_JS.replace('</', '<\\/') + JS_SLIDER + JS_RATING
     + JS_CARD_DATA + JS_CARD
