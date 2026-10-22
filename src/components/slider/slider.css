@@ -1,0 +1,195 @@
+/* AL Design System - Slider
+ *
+ * One thumb, one size, no error. The control is a native
+ * <input type="range">: the browser gives the keyboard (arrows, Page Up/Down,
+ * Home/End - rule 16), the click on the track (rule 21) and the value to
+ * assistive tech. The name comes from the visible <label for> (rule 17).
+ *
+ *   <div class="al-slider">
+ *     <div class="al-slider__header">
+ *       <label class="al-slider__label" for="vol">Volume</label>
+ *       <output class="al-slider__value" for="vol">60%</output>
+ *     </div>
+ *     <input class="al-slider__input" id="vol" type="range"
+ *            min="0" max="100" value="60" data-unit="%">
+ *     <div class="al-slider__range"><span>0%</span><span>100%</span></div>
+ *   </div>
+ *
+ * THE FILL NEEDS slider.js
+ *
+ *   Only Firefox paints the filled part (::-moz-range-progress). WebKit/Blink
+ *   paint it from --al-slider-progress, a percentage slider.js keeps in sync
+ *   with the value (it also writes the <output> and aria-valuetext). Without
+ *   the script the track still works; the fill shows only in Firefox.
+ *
+ * THE HIT AREA IS THE INPUT, NOT THE THUMB
+ *
+ *   The input is 24px tall (slider-thumb-hit) and the whole row takes the
+ *   pointer; the thumb is drawn at 20px inside it (WCAG 2.5.8, audit A2).
+ *   Figma's track frame is 20px - the 4px are the hit area.
+ *
+ * Vendor pseudo-elements can't share a rule: a selector list with one the
+ * browser doesn't know is dropped whole. That is why the track and the thumb
+ * are written twice.
+ */
+
+.al-slider {
+  /* public adjustment point: slider.js writes it from value/min/max */
+  --al-slider-progress: 0%;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-slider-gap);
+  inline-size: 100%;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-slider-font-size);
+  line-height: var(--al-slider-line-height);
+  font-weight: var(--al-slider-font-weight);
+}
+
+.al-slider__header,
+.al-slider__range {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--al-slider-gap);
+}
+
+.al-slider__label {
+  color: var(--al-slider-label-text);
+}
+
+/* tabular figures keep the number from jittering while it is dragged */
+.al-slider__value {
+  flex: none;
+  color: var(--al-slider-value-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.al-slider__range {
+  color: var(--al-slider-range-text);
+  font-size: var(--al-slider-range-font-size);
+  line-height: var(--al-slider-range-line-height);
+}
+
+/* ---------------------------------------------------------------- input */
+.al-slider__input {
+  --_thumb-bg: var(--al-slider-thumb-bg);
+  --_fill: var(--al-slider-fill-bg);
+  --_track: var(--al-slider-track-bg);
+
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  inline-size: 100%;
+  block-size: var(--al-slider-thumb-hit);
+  margin: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* the ring is a shadow on the thumb, never an outline on the whole row */
+.al-slider__input:focus {
+  outline: none;
+}
+
+/* ---------------------------------------------------------------- track */
+.al-slider__input::-webkit-slider-runnable-track {
+  block-size: var(--al-slider-track-height);
+  border-radius: var(--al-slider-radius);
+  background: linear-gradient(to right,
+    var(--_fill) var(--al-slider-progress),
+    var(--_track) var(--al-slider-progress));
+}
+
+.al-slider__input::-moz-range-track {
+  block-size: var(--al-slider-track-height);
+  border-radius: var(--al-slider-radius);
+  background-color: var(--_track);
+}
+
+.al-slider__input::-moz-range-progress {
+  block-size: var(--al-slider-track-height);
+  border-radius: var(--al-slider-radius);
+  background-color: var(--_fill);
+}
+
+/* ---------------------------------------------------------------- thumb */
+/* WebKit puts the thumb at the top of the track: the margin centers it. */
+.al-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  inline-size: var(--al-slider-thumb-size);
+  block-size: var(--al-slider-thumb-size);
+  margin-block-start: calc((var(--al-slider-track-height) - var(--al-slider-thumb-size)) / 2);
+  border: none;
+  border-radius: var(--al-slider-radius);
+  background-color: var(--_thumb-bg);
+  transition:
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+.al-slider__input::-moz-range-thumb {
+  inline-size: var(--al-slider-thumb-size);
+  block-size: var(--al-slider-thumb-size);
+  border: none;
+  border-radius: var(--al-slider-radius);
+  background-color: var(--_thumb-bg);
+  transition:
+    background-color var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    box-shadow var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* --------------------------------------------------------------- states */
+/* hover and active are transient: below 3:1 in dark is the declared
+   thumb-transient exception (rule 15) */
+.al-slider__input:hover {
+  --_thumb-bg: var(--al-slider-thumb-bg-hover);
+}
+
+.al-slider__input:active {
+  --_thumb-bg: var(--al-slider-thumb-bg-active);
+}
+
+/* focus: an inner gap in bg-canvas, then the Foundation ring. Without the
+   gap the orange ring reads as a bigger thumb in light (audit A1). */
+.al-slider__input:focus-visible::-webkit-slider-thumb {
+  box-shadow:
+    inset 0 0 0 var(--al-border-width-2) var(--al-slider-thumb-focus-gap),
+    var(--al-focus-ring-default);
+}
+
+.al-slider__input:focus-visible::-moz-range-thumb {
+  box-shadow:
+    inset 0 0 0 var(--al-border-width-2) var(--al-slider-thumb-focus-gap),
+    var(--al-focus-ring-default);
+}
+
+/* disabled - last, because it wins over all */
+.al-slider__input:disabled {
+  --_thumb-bg: var(--al-slider-thumb-bg-disabled);
+  --_fill: var(--al-slider-fill-bg-disabled);
+  --_track: var(--al-slider-track-bg-disabled);
+  cursor: not-allowed;
+}
+
+.al-slider:has(.al-slider__input:disabled) :is(.al-slider__label, .al-slider__value, .al-slider__range) {
+  color: var(--al-slider-label-text-disabled);
+}
+
+/* ENTER - the destination states take the enter curve */
+.al-slider__input:hover::-webkit-slider-thumb,
+.al-slider__input:focus-visible::-webkit-slider-thumb {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+.al-slider__input:hover::-moz-range-thumb,
+.al-slider__input:focus-visible::-moz-range-thumb {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* --------------------------------------------------------- environment */
+@media (prefers-reduced-motion: reduce) {
+  .al-slider__input::-webkit-slider-thumb { transition: none; }
+  .al-slider__input::-moz-range-thumb { transition: none; }
+}

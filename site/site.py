@@ -170,6 +170,15 @@ ES = json.load(open(comp_out('empty-state', 'tokens.json')))
 ES_TOKENS = open(comp_out('empty-state', 'al-empty-state-tokens.css')).read()
 ES_CSS = open(comp_src('empty-state', 'empty-state.css')).read()
 ES_A11Y = json.load(open(comp_out('empty-state', 'a11y.json')))
+SLD = json.load(open(comp_out('slider', 'tokens.json')))
+SLD_TOKENS = open(comp_out('slider', 'al-slider-tokens.css')).read()
+SLD_CSS = open(comp_src('slider', 'slider.css')).read()
+SLD_JS = open(comp_src('slider', 'slider.js')).read()
+SLD_A11Y = json.load(open(comp_out('slider', 'a11y.json')))
+RAT = json.load(open(comp_out('rating', 'tokens.json')))
+RAT_TOKENS = open(comp_out('rating', 'al-rating-tokens.css')).read()
+RAT_CSS = open(comp_src('rating', 'rating.css')).read()
+RAT_A11Y = json.load(open(comp_out('rating', 'a11y.json')))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
 CARD_CSS = open(comp_src('card', 'card.css')).read()
@@ -262,6 +271,8 @@ N_NF_TOKENS = len(NF['alias'])
 N_MENU_TOKENS = len(MENU['alias'])
 N_STP_TOKENS = len(STP['alias'])
 N_ES_TOKENS = len(ES['alias'])
+N_SLD_TOKENS = len(SLD['alias'])
+N_RAT_TOKENS = len(RAT['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -308,7 +319,7 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
                          TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS, NF_TOKENS, MENU_TOKENS,
-                         STP_TOKENS, ES_TOKENS)
+                         STP_TOKENS, ES_TOKENS, SLD_TOKENS, RAT_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -338,7 +349,9 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + NF_TOKENS + '\n' + NF_CSS
             + '\n' + MENU_TOKENS + '\n' + MENU_CSS
             + '\n' + STP_TOKENS + '\n' + STP_CSS
-            + '\n' + ES_TOKENS + '\n' + ES_CSS)
+            + '\n' + ES_TOKENS + '\n' + ES_CSS
+            + '\n' + SLD_TOKENS + '\n' + SLD_CSS
+            + '\n' + RAT_TOKENS + '\n' + RAT_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -2195,6 +2208,265 @@ Se uma segunda parecer necessária, ela mora fora do Empty state.
 | Tamanho compacto | Fora da v1 | Texto simples em text-secondary dentro da tabela ou do Menu. |
 | Variante de erro | Não existe | O Alert. |
 | Segunda ação ou Link | Não existe | Mora fora do Empty state (regras 18 e 23). |
+"""
+
+GUIDE_PT['slider'] = """# Slider · Regras de uso
+
+Um slider escolhe um valor dentro de uma faixa quando a posição importa mais que o número exato.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Volume, brilho, raio de busca:** ajustados pelo efeito. | **Uma quantidade exata:** isso é o Number field. |
+| **O valor ao lado do rótulo, com a unidade.** | **Slider sem número:** só a trilha carrega o valor. |
+| **Um limite que não se ultrapassa:** mínimo e máximo resolvem. | **Mensagem de erro num slider:** ele nunca sai da faixa. |
+| **Desativado com o motivo por perto.** | **Desativado sem nada que diga por quê.** |
+| **O rótulo visível dá o nome do controle.** | **Um aria-label que repete o rótulo visível.** |
+| **Um controle, um valor.** | **Dois controles na mesma trilha:** use dois Number fields. |
+
+### O valor em texto paga a trilha
+
+O preenchimento fica abaixo de 3:1 contra a trilha (2,53:1 no claro, 2,2:1 no escuro), a mesma exceção do Progress. Só se sustenta porque o número ao lado do rótulo sempre diz o valor.
+
+## Regras
+
+### Quando usar
+
+**1. Quando a posição na faixa importa mais que o número exato.**
+Volume, brilho, raio de busca: a pessoa ajusta pelo efeito.
+*Precedente: Material (slider contínuo).*
+
+**2. Quando o número exato importa, use o Number field.**
+Acertar um número exato arrastando é frustrante.
+*Precedente: Carbon, que junta um campo numérico ao slider por isso.*
+
+**3. Só em faixas curtas o bastante para cada passo ser alcançável.**
+De 0 a 10.000 em 320px, cada pixel vale 31 unidades.
+*Precedente: Carbon.*
+
+**4. Não use para poucas opções com nome.**
+Pequeno, Médio, Grande é Radio ou Select. O slider diz faixa contínua, não categorias.
+*Precedente: Material, marcas discretas só em escala numérica.*
+
+### Conteúdo
+
+**5. O rótulo é sempre visível e diz o que se ajusta.**
+"Volume", nunca "Ajuste".
+*Precedente: Polaris.*
+
+**6. O valor atual fica à direita do rótulo, com a unidade.**
+"60%", "15 km". É o valor em texto que paga a trilha abaixo de 3:1.
+*Precedentes: Polaris e Carbon.*
+
+**7. O Show value só desliga quando o valor aparece em outro lugar.**
+Um preview ao vivo do efeito, por exemplo. Sem o número, a trilha seria a única pista.
+
+**8. Os limites aparecem quando não são óbvios.**
+Desligue numa escala de 0 a 100% que todo mundo conhece.
+*Precedente: Carbon.*
+
+**9. Limites e valor na mesma unidade e no mesmo formato.**
+"0 km", "50 km". Mudar o formato obriga a pessoa a converter de cabeça.
+*Precedente: Polaris.*
+
+### Comportamento
+
+**10. O efeito é imediato ou vai junto com o formulário.**
+Um ajuste de tela aplica na hora; um filtro de formulário espera o Enviar. Nunca os dois na mesma tela.
+*Precedentes: o Switch do AL e a Polaris.*
+
+**11. Sem estado de erro.**
+O slider sempre tem um valor válido. Se parte da faixa não vale, mude o mínimo e o máximo.
+> **Divergência consciente** da Polaris, que valida o range slider: o do AL nunca sai dos limites.
+
+**12. O valor inicial é sempre real, nunca vazio.**
+Um controle de faixa não tem estado vazio.
+*Precedente: o input range nativo.*
+
+**13. O passo é do formulário e é dito quando não é 1.**
+"De 5 em 5".
+*Precedente: Polaris.*
+
+### Estados
+
+**14. Desativado só quando a pessoa entende por quê.**
+De preferência com uma linha de texto perto. O contraste é isento (WCAG 1.4.3), como no Switch e no Checkbox.
+
+**15. Hover e active ficam abaixo de 3:1 no escuro sobre surface e surface-raised.**
+Exceção declarada: são passageiros, e o controle em repouso passa 3:1 nos três fundos.
+
+### Acessibilidade
+
+**16. Um `<input type="range">` nativo.**
+Setas movem um passo, Page Up e Page Down dez, Home e End vão aos limites.
+*Precedentes: Shopify, que recomenda o range nativo, e Carbon.*
+
+**17. O rótulo visível é o nome do controle.**
+`<label for>`, nunca um `aria-label` repetido.
+*Precedente: Carbon.*
+
+**18. Com unidade, o anúncio leva a unidade.**
+`aria-valuetext="60%"`: "60" sozinho não diz se é por cento ou quilômetro. O `slider.js` escreve a partir do `data-unit`.
+*Precedente: padrão de slider do APG.*
+
+**19. O controle tem alvo de 24px.**
+Desenhado com 20px, a linha do input tem 24px de altura (WCAG 2.5.8).
+
+**20. O foco mostra uma folga interna em `bg-canvas`, depois o anel.**
+Sem a folga, o anel laranja parece um controle maior no claro.
+
+**21. Clicar na trilha move o controle.**
+Arrastar nunca é o único jeito de mudar o valor (WCAG 2.5.7).
+
+### Fora de escopo
+
+**22. Sem intervalo com dois controles.**
+Se a necessidade aparecer, use dois Number fields, mínimo e máximo.
+*Precedente: Polaris, que junta campos de texto ao slider duplo.*
+
+**23. Sem marcas de passo, sem balão de valor, sem slider vertical.**
+O valor já está no cabeçalho.
+*Precedente: o Carbon também não tem vertical.*
+
+**24. Um tamanho, na largura do container.**
+A regra do Tier 2.
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Intervalo (dois controles) | Não existe | Dois Number fields, mínimo e máximo. |
+| Marcas de passo | Não existe | Volta para a etapa 1 como tipo novo. |
+| Balão de valor | Não existe | O valor está no cabeçalho. |
+| Vertical | Não existe | Não está previsto. |
+| Estado de erro | Não existe | Mude o mínimo e o máximo. |
+"""
+
+GUIDE_PT['rating'] = """# Rating · Regras de uso
+
+Um rating coleta uma opinião numa escala de 1 a 5, ou mostra uma média.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Uma opinião numa escala:** um produto, uma entrega, um atendimento. | **Pergunta de sim ou não:** estrela diz "mais é melhor". |
+| **A legenda diz o que se avalia.** | **"Avaliação" sem assunto.** |
+| **Começa vazio.** | **Três estrelas marcadas de antemão.** |
+| **Só leitura para uma média, com o número ao lado.** | **Um rating desativado para mostrar nota.** |
+| **Cinco radios com nome, de "1 estrela" a "5 estrelas".** | **Cinco botões sem grupo.** |
+| **Cinco estrelas inteiras, na cor da marca.** | **Meia estrela ou estrela âmbar.** |
+
+### A prévia é passageira
+
+A prévia do hover (`bg-brand-hover`) fica em 1,59:1 no claro e 1,15:1 no escuro contra uma estrela marcada. É exceção declarada: a prévia dura enquanto o ponteiro está ali, e o radio marcado carrega o valor.
+
+## Regras
+
+### Quando usar
+
+**1. Para coletar uma opinião numa escala de 1 a 5.**
+Um produto, um atendimento, uma experiência.
+*Precedente: Spectrum, uma escala de sentimento de 0 a 5.*
+
+**2. Para mostrar uma média, use o só leitura com o número ao lado.**
+"4,3 · 128 avaliações". Estrelas inteiras não mostram 4,3; o número mostra.
+*Precedente: WinUI, que recomenda o rating só leitura para exibir.*
+
+**3. Não use para escolhas sem ordem nem para sim ou não.**
+A estrela diz "mais é melhor".
+*Precedente: Spectrum.*
+
+**4. Vários ratings num grupo, cada um com a própria legenda.**
+"Atendimento", "Entrega".
+*Precedente: eBay EVO, um grupo nomeado pelo que avalia.*
+
+### Conteúdo
+
+**5. A legenda diz o que se avalia.**
+"Como foi a entrega?", nunca só "Avaliação".
+*Precedente: eBay EVO.*
+
+**6. Quando o significado de cada nota importa, mostre a escolhida ao lado.**
+"4 · Muito bom". Estrela não diz se 3 é bom ou ruim.
+*Precedente: MUI.*
+
+**7. O Show label só desliga quando a legenda já está ao redor.**
+Um título de card que pergunta, por exemplo. O nome acessível continua.
+*Precedente: Polaris, rótulo sempre presente, mesmo oculto.*
+
+### Comportamento
+
+**8. Começa sem nenhuma estrela marcada.**
+A não ser que a pessoa já tenha avaliado. Começar marcado induz a resposta.
+*Precedentes: MUI e Spectrum.*
+
+**9. Depois de marcado, não volta a zero na v1.**
+Se "sem nota" for resposta válida, o formulário oferece isso fora do rating.
+> **Divergência consciente** do MUI e do APG, que limpam a nota com um clique na estrela marcada.
+
+**10. No hover, as estrelas até o ponteiro viram prévia em `bg-brand-hover`.**
+O valor marcado continua. A prévia é a exceção declarada, paga pelo radio marcado.
+
+**11. Obrigatório e erro são do formulário.**
+A mensagem vai abaixo do grupo; o rating não tem estado de erro.
+*Precedente: o Radio do AL.*
+
+### Estados
+
+**12. Só leitura é uma imagem só, "3 de 5 estrelas".**
+Sem foco e sem estrelas individuais: ler cinco estrelas uma a uma é ruído.
+
+**13. Desativado só para uma avaliação bloqueada por enquanto.**
+Antes da entrega, por exemplo. Para mostrar nota, use o só leitura. O contraste é isento (WCAG 1.4.3).
+*Precedente: Spectrum, que separa desativado de exibição.*
+
+**14. O só leitura fica igual ao Default.**
+O que muda é o comportamento: sem foco, sem hover.
+> **Divergência consciente:** o MUI também fica igual; a Spectrum não tem só leitura.
+
+### Acessibilidade
+
+**15. Um grupo de radio.**
+Um `<fieldset>` com `<legend>` e cinco radios nativos, invisíveis por cima de cada estrela.
+*Precedentes: APG, MUI e eBay EVO.*
+
+**16. Cada radio tem nome próprio, de "1 estrela" a "5 estrelas".**
+A estrela desenhada é `aria-hidden`.
+*Precedentes: APG e eBay EVO.*
+
+**17. O grupo é uma parada só do Tab, e as setas movem e marcam.**
+*Precedente: APG, tabindex móvel.*
+
+**18. O anel de foco fica na estrela marcada.**
+Sem nada marcado, vai para a primeira.
+*Precedente: o radio nativo.*
+
+**19. A cor nunca é a única pista.**
+Estrela vazia é contorno e cheia é preenchida: a forma muda.
+*Precedente: MUI, citando a WCAG 1.4.1.*
+
+**20. Cada estrela é um alvo de 24px.**
+O mínimo da WCAG 2.5.8. Nunca menor.
+
+### Fora de escopo
+
+**21. Sem meia estrela, sem tamanhos, sem outro ícone.**
+Uma escala, um desenho.
+*A Spectrum aceita decimal; o AL deixou de fora na etapa 1.*
+
+**22. A estrela é da cor da marca, não âmbar.**
+O `bg-warning` é um marrom escuro no claro (#704F00) e não lê como estrela.
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Meia estrela | Não existe | O só leitura arredonda; o número diz o valor exato. |
+| Voltar a zero | Não existe | O formulário oferece "sem nota". |
+| Tamanhos | Não existe | Um tamanho, 24px. |
+| Outros ícones | Não existe | Volta para a etapa 1. |
 """
 
 
@@ -15561,6 +15833,627 @@ ES_OVERVIEW, ES_PLAYGROUND, ES_A11Y_TAB = model_tabs(
 )
 
 
+# ═══════════════════════════════════════════════════════════════ Slider · abas
+# Forms and inputs. O <input type="range"> nativo, um controle, sem erro. Todo
+# slider da pagina sai do slider.css e do slider.js reais; o preenchimento ja
+# nasce escrito em --al-slider-progress, e o slider.js o mantem. Os exemplos "a
+# evitar" sao casca do site (sl-fake), nunca um .al-slider errado.
+SL_VOL = tr('Volume', 'Volume')
+SL_H_STATES = tr('Os cinco estados', 'The five states')
+N_SL_MEDIDAS = len(SLD_A11Y['rows'])
+N_SL_EXC = SLD_A11Y['summary']['exceptions']
+AL_T.update({'slLabel': SL_VOL, 'slJsNote': tr('preenche a trilha e escreve o valor', 'fills the track and writes the value')})
+
+
+def sl(cid, rotulo=SL_VOL, valor=60, *, unit='%', mn=0, mx=100, step=1, show_value=True,
+       show_range=True, disabled=False, sim=None):
+    """Um Slider real. `sim` escreve na MESMA variavel privada que o
+    slider.css usa para o hover e o active."""
+    pct = round((valor - mn) / (mx - mn) * 100, 2)
+    a = ['class="al-slider__input"', f'id="{cid}"', 'type="range"', f'min="{mn}"', f'max="{mx}"',
+         f'step="{step}"', f'value="{valor}"']
+    if unit:
+        a += [f'data-unit="{unit}"', f'aria-valuetext="{valor}{unit}"']
+    if disabled:
+        a.append('disabled')
+    if sim:
+        a.append(f'style="--_thumb-bg: var(--al-slider-thumb-bg-{sim})"')
+    out = f'<output class="al-slider__value" for="{cid}">{valor}{unit}</output>' if show_value else ''
+    rng = (f'<div class="al-slider__range"><span>{mn}{unit}</span><span>{mx}{unit}</span></div>'
+           if show_range else '')
+    return (f'<div class="al-slider" style="--al-slider-progress: {pct}%">'
+            f'<div class="al-slider__header"><label class="al-slider__label" for="{cid}">{rotulo}</label>{out}</div>'
+            f'<input {" ".join(a)}>{rng}</div>')
+
+
+def sl_fake(rotulo='', valor='', *, pct=60, cls='', rng=None):
+    """Casca de exemplo a evitar: parece um Slider, não é o componente."""
+    head = (f'<span class="sl-fake__head"><span>{rotulo}</span><span>{valor}</span></span>'
+            if rotulo or valor else '')
+    r = f'<span class="sl-fake__range"><span>{rng[0]}</span><span>{rng[1]}</span></span>' if rng else ''
+    return (f'<div class="sl-fake {cls}" aria-hidden="true">{head}<span class="sl-fake__track">'
+            f'<span class="sl-fake__fill" style="width:{pct}%"></span>'
+            f'<span class="sl-fake__thumb" style="left:{pct}%"></span></span>{r}</div>')
+
+
+SL_STATES = [('default', 'Default'), ('hover', 'Hover'), ('active', 'Active'), ('focus', 'Focus'),
+             ('disabled', 'Disabled')]
+
+
+def sl_specimens():
+    notas = tr({
+        'default': 'O controle em <code>bg-brand</code>. Passa 3:1 nos três fundos, nos dois temas.',
+        'hover': 'Só existe sob o ponteiro: a variável privada foi escrita direto.',
+        'active': 'Enquanto arrasta. No escuro fica abaixo de 3:1 sobre surface: exceção declarada, é passageiro.',
+        'focus': 'Tabule até ele: folga interna em <code>bg-canvas</code> e o anel da Fundação.',
+        'disabled': 'Trilha, preenchimento e controle apagados; o Tab pula.',
+    }, {
+        'default': 'The thumb in <code>bg-brand</code>. It passes 3:1 on all three backgrounds, in both themes.',
+        'hover': 'Only exists under the pointer: the private variable was written directly.',
+        'active': 'While dragging. In dark it falls below 3:1 on surface: a declared exception, it is transient.',
+        'focus': 'Tab to it: an inner gap in <code>bg-canvas</code> and the Foundation ring.',
+        'disabled': 'Track, fill and thumb fade; Tab skips it.',
+    })
+    cells = []
+    for slug, nome in SL_STATES:
+        kw = dict(cid=f'sl-{slug}')
+        if slug in ('hover', 'active'):
+            kw['sim'] = slug
+        if slug == 'disabled':
+            kw['disabled'] = True
+        cells.append(f'<div class="cell"><span class="lab" '
+                     f'style="color:var(--al-text-secondary)">{nome}</span>'
+                     f'<div class="stage2" style="display:block">{sl(**kw)}</div>'
+                     f'<p class="cap">{notas[slug]}</p></div>')
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+def comp_token_rows(data, geo=False):
+    """Linhas de token de um componente: cor (claro e escuro) ou geometria."""
+    rows = []
+    for name, ref in data['alias'].items():
+        res = data['resolved'].get(name)
+        cor = isinstance(res, dict) and 'light' in res
+        if geo == cor:
+            continue
+        if cor:
+            lt, dk = res['light'], res['dark']
+            sw = lambda v: (f'<span class="chip sm" style="background:{v}"></span>' if str(v).startswith('#') else '')
+            rows.append(f'<tr><td class="tok">--al-{name}</td><td class="tok dim">{ref}</td>'
+                        f'<td class="tok dim">{sw(lt)}{lt}</td><td class="tok dim">{sw(dk)}{dk}</td></tr>')
+        else:
+            v = (f'{res[1]}/{res[2]} · {tr("peso", "weight")} {res[3]}' if isinstance(res, (list, tuple))
+                 else f'{res}px')
+            rows.append(f'<tr><td class="tok">--al-{name}</td><td class="tok dim">{ref}</td>'
+                        f'<td class="num">{v}</td></tr>')
+    return '\n'.join(rows)
+
+
+TH_SLIDER = (f'<div class="sl-th">{sl_fake(SL_VOL, "60%", cls="sl-fake--real")}</div>')
+
+
+def sl_overview(t):
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="slider-stage">{sl('play-sl')}</div>
+
+    <div class="controls controls--fields" id="slider-controls">
+      {pg_field('slstate', t['state'], t['states'], 'rest')}
+      {pg_field('slvalue', t['value'], [('20', '20'), ('60', '60'), ('100', '100')], '60')}
+      {pg_field('slshow', t['show'], t['shows'], 'both')}
+      {pg_field('sltheme', t['theme'], THEMES, 'auto')}
+      {inp('slider-label', t['label'], valor=SL_VOL)}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="slider-copy">{t['copy']}</button></div>
+      <pre><code id="slider-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>
+
+<section>
+  <h2>{t['h_units']}</h2>
+  <div class="dd">
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{t['lab_pct']}</span>
+      <div class="stage2" style="display:block">{sl('slo-pct', tr('Brilho', 'Brightness'), 40, show_range=False)}</div>
+      <p class="cap">{t['cap_pct']}</p>
+    </div>
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{t['lab_km']}</span>
+      <div class="stage2" style="display:block">{sl('slo-km', tr('Raio de busca', 'Search radius'), 15, unit=' km', mn=1, mx=50)}</div>
+      <p class="cap">{t['cap_km']}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>{SL_H_STATES}</h2>
+  {sl_specimens()}
+</section>'''
+
+
+SL_OVERVIEW = tr(sl_overview({
+    'state': 'Estado', 'states': [('rest', 'Repouso'), ('disabled', 'Desabilitado')],
+    'value': 'Valor', 'show': 'Mostrar', 'shows': [('both', 'Valor e limites'), ('value', 'Só o valor')],
+    'theme': 'Tema', 'label': 'Rótulo', 'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'O slider acima é o componente real: esta página carrega o mesmo <code>slider.css</code> e o '
+            'mesmo <code>slider.js</code> que vão para produção. Arraste, clique na trilha, ou tabule até ele '
+            'e use as setas, Page Up e Page Down, Home e End.',
+    'h_units': 'O valor sempre à mostra',
+    'lab_pct': 'Escala conhecida · sem limites', 'cap_pct': 'De 0 a 100% todo mundo conhece: os limites saem. <i>Carbon.</i>',
+    'lab_km': 'Com unidade · limites à mostra', 'cap_km': 'Valor e limites no mesmo formato, e o anúncio diz "15 km". <i>Polaris; APG.</i>'}),
+    sl_overview({
+    'state': 'State', 'states': [('rest', 'Rest'), ('disabled', 'Disabled')],
+    'value': 'Value', 'show': 'Show', 'shows': [('both', 'Value and limits'), ('value', 'Value only')],
+    'theme': 'Theme', 'label': 'Label', 'markup': 'Markup', 'copy': 'Copy',
+    'note': 'The slider above is the real component: this page loads the same <code>slider.css</code> and the '
+            'same <code>slider.js</code> that go to production. Drag it, click the track, or tab to it and use '
+            'the arrows, Page Up and Page Down, Home and End.',
+    'h_units': 'The value always in view',
+    'lab_pct': 'A known scale · no limits', 'cap_pct': 'Everyone knows 0 to 100%: the limits go. <i>Carbon.</i>',
+    'lab_km': 'With a unit · limits in view', 'cap_km': 'Value and limits in the same format, and the announcement says "15 km". <i>Polaris; APG.</i>'}))
+
+
+def sl_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+  <div class="note" style="margin-top:16px"><b>{t['note_t']}</b> {t['note']}</div>
+</section>
+
+<section>
+  <h2>{T_MEASURES}</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['val']}</th></tr></thead>
+    <tbody>{comp_token_rows(SLD, geo=True)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{comp_token_rows(SLD)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{t['h_js']}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['js'])}</div>
+</section>'''
+
+
+SL_SPECS = tr(sl_specs({
+    'anat': [('Cabeçalho', '<code>&lt;label for&gt;</code> à esquerda e o <code>&lt;output for&gt;</code> com o valor à direita. Body/md, 16/24.'),
+             ('Campo', '<code>&lt;input type="range"&gt;</code> nativo, com <code>min</code>, <code>max</code>, <code>step</code> e <code>value</code>. 24px de altura: é a área de toque.'),
+             ('Trilha', '4px, pontas arredondadas, em <code>bg-track</code>; a parte feita em <code>bg-brand</code>.'),
+             ('Controle', 'Círculo de 20px em <code>bg-brand</code>, centrado na trilha.'),
+             ('Limites', 'Mínimo e máximo nas pontas, em Caption e <code>text-secondary</code>. Opcionais.')],
+    'note_t': '20px no Figma, 24px no código.',
+    'note': 'O quadro da trilha no Figma tem 20px; no código a linha do input tem 24px, a área de toque '
+            'que a WCAG 2.5.8 pede. O componente fica 4px mais alto que o desenho, de propósito.',
+    'th': 'Token do Slider', 'to': 'Aponta para', 'val': 'Valor', 'light': 'Claro', 'dark': 'Escuro',
+    'h_js': 'O comportamento: <code>slider.js</code>',
+    'js': [('Preenche a trilha', 'Chrome e Safari pintam a parte feita a partir de <code>--al-slider-progress</code>; o Firefox pinta sozinho.'),
+           ('Escreve o valor', 'No <code>&lt;output for&gt;</code>, com o <code>data-unit</code> no fim.'),
+           ('Anuncia a unidade', 'Com <code>data-unit</code>, escreve <code>aria-valuetext</code>: "60%", não "60".'),
+           ('O resto é nativo', 'Teclado, clique na trilha e valor anunciado vêm do navegador.'),
+           ('Conteúdo inserido depois', '<code>window.alSlider.init(elemento)</code>.')]}), sl_specs({
+    'anat': [('Header', 'The <code>&lt;label for&gt;</code> on the left and the <code>&lt;output for&gt;</code> with the value on the right. Body/md, 16/24.'),
+             ('Field', 'A native <code>&lt;input type="range"&gt;</code>, with <code>min</code>, <code>max</code>, <code>step</code> and <code>value</code>. 24px tall: it is the target.'),
+             ('Track', '4px, rounded ends, in <code>bg-track</code>; the done part in <code>bg-brand</code>.'),
+             ('Thumb', 'A 20px circle in <code>bg-brand</code>, centered on the track.'),
+             ('Limits', 'Minimum and maximum at the ends, in Caption and <code>text-secondary</code>. Optional.')],
+    'note_t': '20px in Figma, 24px in code.',
+    'note': 'The track frame in Figma is 20px; in code the input row is 24px, the target WCAG 2.5.8 asks '
+            'for. The component is 4px taller than the drawing, on purpose.',
+    'th': 'Slider token', 'to': 'Points to', 'val': 'Value', 'light': 'Light', 'dark': 'Dark',
+    'h_js': 'The behavior: <code>slider.js</code>',
+    'js': [('Fills the track', 'Chrome and Safari paint the done part from <code>--al-slider-progress</code>; Firefox paints it natively.'),
+           ('Writes the value', 'Into the <code>&lt;output for&gt;</code>, with the <code>data-unit</code> at the end.'),
+           ('Announces the unit', 'With <code>data-unit</code>, it writes <code>aria-valuetext</code>: "60%", not "60".'),
+           ('The rest is native', 'Keyboard, the click on the track and the announced value come from the browser.'),
+           ('Content added later', '<code>window.alSlider.init(element)</code>.')]}))
+
+SL_A11Y_TAB = tr('''
+<section>
+  <h2>Duas exceções, pagas pelo texto e pelo repouso</h2>
+  <p>O preenchimento fica abaixo de 3:1 contra a trilha, a mesma exceção do Progress: o número ao lado do
+  rótulo sempre diz o valor. E, no escuro, o hover e o active ficam abaixo de 3:1 sobre surface e
+  surface-raised: são passageiros, e o controle em repouso passa 3:1 nos três fundos.</p>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Uma parada por slider</b><span>O Tab chega no input; o desativado sai da ordem.</span></div>
+    <div><b>Setas, páginas e pontas</b><span>Setas mudam um passo, Page Up e Page Down dez, Home e End vão aos limites.</span></div>
+    <div><b>Clique na trilha</b><span>Leva o controle até ali: arrastar nunca é o único jeito (2.5.7).</span></div>
+    <div><b>Nome e valor</b><span>O nome vem do <code>&lt;label for&gt;</code>; com unidade, o <code>aria-valuetext</code> diz "60%".</span></div>
+    <div><b>Alvo</b><span>A linha do input tem 24px de altura, o mínimo do 2.5.8.</span></div>
+  </div>
+</section>''', '''
+<section>
+  <h2>Two exceptions, paid by the text and by the resting state</h2>
+  <p>The fill falls below 3:1 against the track, the same exception as the Progress: the number next to the
+  label always says the value. And in dark, hover and active fall below 3:1 on surface and surface-raised:
+  they are transient, and the resting thumb passes 3:1 on all three backgrounds.</p>
+</section>
+
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>One stop per slider</b><span>Tab reaches the input; disabled leaves the order.</span></div>
+    <div><b>Arrows, pages and ends</b><span>Arrows change one step, Page Up and Page Down ten, Home and End go to the limits.</span></div>
+    <div><b>Click on the track</b><span>Moves the thumb there: dragging is never the only way (2.5.7).</span></div>
+    <div><b>Name and value</b><span>The name comes from the <code>&lt;label for&gt;</code>; with a unit, <code>aria-valuetext</code> says "60%".</span></div>
+    <div><b>Target</b><span>The input row is 24px tall, the 2.5.8 minimum.</span></div>
+  </div>
+</section>''')
+
+SL_MD = guide_md('slider')
+SL_GUIDE = guide_tab(SL_MD, [
+    (sl('sld-1'), sl_fake(tr('Quantidade', 'Quantity'), '37', pct=37)),
+    (sl('sld-2', tr('Raio de busca', 'Search radius'), 15, unit=' km', mn=1, mx=50),
+     sl_fake(tr('Raio de busca', 'Search radius'), '', pct=30)),
+    (sl('sld-3', tr('Desconto', 'Discount'), 30, mx=50),
+     sl_fake(tr('Desconto', 'Discount'), '80%', pct=80, cls='sl-fake--error')),
+    (sl('sld-4', tr('Qualidade do vídeo', 'Video quality'), 60, disabled=True) + '<p class="sl-why">'
+     + tr('Disponível depois do envio.', 'Available after the upload.') + '</p>',
+     sl_fake(tr('Qualidade do vídeo', 'Video quality'), '60%', cls='sl-fake--dis')),
+    (sl('sld-5'), sl_fake('', '60%', pct=60)),
+    (sl('sld-6', tr('Preço máximo', 'Maximum price'), 300, unit='', mn=0, mx=1000),
+     sl_fake(tr('Preço', 'Price'), '200–600', pct=60, cls='sl-fake--two')),
+])
+
+SL_OVERVIEW, SL_PLAYGROUND, SL_A11Y_TAB = model_tabs(
+    'slider', old_ov=SL_OVERVIEW, old_specs=SL_SPECS, guide=SL_GUIDE, old_a11y=SL_A11Y_TAB, js=True,
+    preview='<div class="sl-pv">' + sl('pv-sl') + '</div>',
+    preview_style='display:block',
+    usage=tr('Use para escolher um valor numa faixa quando a posição importa mais que o número exato. É o '
+             '<code>&lt;input type="range"&gt;</code> nativo; o <code>slider.js</code> preenche a trilha e '
+             'escreve o valor.',
+             'Use it to pick a value in a range when the position matters more than the exact number. It is '
+             'the native <code>&lt;input type="range"&gt;</code>; <code>slider.js</code> fills the track and '
+             'writes the value.'),
+    states=[SL_H_STATES],
+    classes=tr([
+        ('.al-slider', '—', 'Invólucro: cabeçalho, campo e limites, na largura do container.'),
+        ('.al-slider__label', 'texto', '<code>&lt;label for&gt;</code> ligado ao <code>id</code> do campo. Obrigatório.'),
+        ('.al-slider__value', '&lt;output for&gt;', 'O valor atual com a unidade. Só sai se o valor aparecer em outro lugar.'),
+        ('.al-slider__input', '&lt;input type="range"&gt;', 'O campo nativo, com <code>min</code>, <code>max</code>, <code>step</code> e <code>value</code>.'),
+        ('data-unit', '%, km…', 'A unidade: o <code>slider.js</code> a põe no valor e no <code>aria-valuetext</code>.'),
+        ('.al-slider__range', '—', 'Mínimo e máximo, em dois <code>&lt;span&gt;</code>. Opcional.'),
+        ('disabled', '—', 'No campo. Apaga trilha, controle e textos.'),
+    ], [
+        ('.al-slider', '—', 'Wrapper: header, field and limits, at the container\'s width.'),
+        ('.al-slider__label', 'text', '<code>&lt;label for&gt;</code> linked to the field <code>id</code>. Required.'),
+        ('.al-slider__value', '&lt;output for&gt;', 'The current value with its unit. Only goes when the value shows elsewhere.'),
+        ('.al-slider__input', '&lt;input type="range"&gt;', 'The native field, with <code>min</code>, <code>max</code>, <code>step</code> and <code>value</code>.'),
+        ('data-unit', '%, km…', 'The unit: <code>slider.js</code> adds it to the value and to <code>aria-valuetext</code>.'),
+        ('.al-slider__range', '—', 'Minimum and maximum, in two <code>&lt;span&gt;</code>. Optional.'),
+        ('disabled', '—', 'On the field. Fades the track, the thumb and the texts.'),
+    ]),
+    contrast=role_contrast([dict(r, floor=r['min']) for r in SLD_A11Y['rows']], tr([
+        ('Rótulo, valor e limites', {'label', 'value', 'range'}, 'ok', 'O texto contra a página.', WCAG_143,
+         'Canvas, surface e surface-raised'),
+        ('Preenchimento e controle', {'fill', 'thumb'}, 'ok', 'A laranja da marca passa 3:1 nos três fundos.',
+         WCAG_1411, 'Canvas, surface e surface-raised'),
+        ('Hover e active', {'thumb hover', 'thumb active'}, 'ok', 'Passam no claro e no canvas escuro.', WCAG_1411),
+        ('Hover e active no escuro', {'thumb hover', 'thumb active'}, 'exc',
+         'Exceção declarada: são passageiros, o repouso identifica o controle (regra 15).', WCAG_1411),
+        ('Preenchimento sobre a trilha', {'fill on track'}, 'exc',
+         'Exceção declarada: o valor em texto paga (regra 7).', WCAG_1411, tr('Os dois temas', 'Both themes')),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel contra a página.', WCAG_2413),
+    ], [
+        ('Label, value and limits', {'label', 'value', 'range'}, 'ok', 'The text against the page.', WCAG_143,
+         'Canvas, surface and surface-raised'),
+        ('Fill and thumb', {'fill', 'thumb'}, 'ok', 'The brand orange passes 3:1 on all three backgrounds.',
+         WCAG_1411, 'Canvas, surface and surface-raised'),
+        ('Hover and active', {'thumb hover', 'thumb active'}, 'ok', 'They pass in light and on the dark canvas.', WCAG_1411),
+        ('Hover and active in dark', {'thumb hover', 'thumb active'}, 'exc',
+         'Declared exception: they are transient, the resting state identifies the control (rule 15).', WCAG_1411),
+        ('Fill on the track', {'fill on track'}, 'exc',
+         'Declared exception: the value in text pays for it (rule 7).', WCAG_1411, 'Both themes'),
+        ('Focus ring', {'focus ring'}, 'ok', 'The ring against the page.', WCAG_2413),
+    ]), forms_intro(N_SL_MEDIDAS, N_SL_EXC), key='what'),
+)
+
+
+# ═══════════════════════════════════════════════════════════════ Rating · abas
+# Forms and inputs. Cinco radios nativos dentro de um <fieldset>, sem script.
+# Toda estrela da pagina sai do rating.css real; os exemplos "a evitar" sao
+# casca do site (rt-fake), nunca um .al-rating errado.
+RT_STAR = ('<svg class="al-rating__glyph{c}" viewBox="0 0 24 24" aria-hidden="true">'
+           '<path d="M12 3.2l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-.8z"/></svg>')
+RT_Q = tr('Como foi a entrega?', 'How was the delivery?')
+RT_ONE, RT_MANY = tr('estrela', 'star'), tr('estrelas', 'stars')
+RT_OF = tr('de 5 estrelas', 'out of 5 stars')
+RT_H_STATES = tr('Os cinco estados', 'The five states')
+N_RT_MEDIDAS = len(RAT_A11Y['rows'])
+N_RT_EXC = RAT_A11Y['summary']['exceptions']
+AL_T.update({'rtLabel': RT_Q, 'rtOne': RT_ONE, 'rtMany': RT_MANY, 'rtOf': RT_OF, 'rtStar': RT_STAR.format(c='')})
+
+
+def rt(name, legenda=RT_Q, marcada=0, *, disabled=False, preview=0, show_label=True):
+    """Um Rating real. `preview` pinta a prévia do hover com as MESMAS
+    variáveis privadas que o rating.css usa."""
+    estrelas = []
+    for k in range(1, 6):
+        chk = ' checked' if k == marcada else ''
+        st = (' style="--_ink: var(--al-rating-star-preview); --_fill: var(--al-rating-star-preview)"'
+              if marcada < k <= preview else '')
+        estrelas.append(f'<label class="al-rating__star"{st}><input class="al-rating__input" type="radio" '
+                        f'name="{name}" value="{k}" aria-label="{k} {RT_ONE if k == 1 else RT_MANY}"{chk}>'
+                        f'{RT_STAR.format(c="")}</label>')
+    leg = (f'<legend class="al-rating__label">{legenda}</legend>' if show_label
+           else f'<legend class="sr-only">{legenda}</legend>')
+    return (f'<fieldset class="al-rating"{" disabled" if disabled else ""}>{leg}'
+            f'<div class="al-rating__stars">{"".join(estrelas)}</div></fieldset>')
+
+
+def rt_ro(valor, extra=None):
+    """O Rating só leitura: uma imagem, estrelas arredondadas, valor exato no nome."""
+    on = int(valor + 0.5)
+    v = f'{valor:g}'.replace('.', tr(',', '.'))
+    s = ''.join(RT_STAR.format(c=' al-rating__glyph--on' if k <= on else '') for k in range(1, 6))
+    num = f'<span class="rt-num">{extra}</span>' if extra else ''
+    return (f'<div class="rt-ro"><span class="al-rating al-rating--readonly" role="img" '
+            f'aria-label="{v} {RT_OF}"><span class="al-rating__stars">{s}</span></span>{num}</div>')
+
+
+def rt_fake(legenda, n_on, *, cls='', extra=''):
+    """Casca de exemplo a evitar: parece um Rating, não é o componente."""
+    s = ''.join(f'<span class="rt-fake__star{" is-on" if k <= n_on else ""}">{RT_STAR.format(c="")}</span>'
+                for k in range(1, 6))
+    lab = f'<span class="rt-fake__label">{legenda}</span>' if legenda else ''
+    return f'<div class="rt-fake {cls}" aria-hidden="true">{lab}<span class="rt-fake__stars">{s}</span>{extra}</div>'
+
+
+RT_STATES = [('default', 'Default'), ('hover', 'Hover'), ('focus', 'Focus'), ('disabled', 'Disabled'),
+             ('readonly', 'Read-only')]
+
+
+def rt_specimens():
+    notas = tr({
+        'default': 'Começa vazio. As estrelas acendem até a marcada.',
+        'hover': 'A prévia em <code>bg-brand-hover</code> até o ponteiro; as marcadas ficam na cor da marca.',
+        'focus': 'Tabule até ele: o anel fica na estrela marcada, e as setas movem e marcam.',
+        'disabled': '<code>disabled</code> no <code>&lt;fieldset&gt;</code>: o Tab pula, a nota continua visível.',
+        'readonly': 'Uma imagem só, "4 de 5 estrelas". Sem foco e sem hover.',
+    }, {
+        'default': 'It starts empty. The stars light up to the checked one.',
+        'hover': 'The preview in <code>bg-brand-hover</code> up to the pointer; checked stars stay brand.',
+        'focus': 'Tab to it: the ring sits on the checked star, and the arrows move and check.',
+        'disabled': '<code>disabled</code> on the <code>&lt;fieldset&gt;</code>: Tab skips it, the score stays visible.',
+        'readonly': 'A single image, "4 out of 5 stars". No focus and no hover.',
+    })
+    corpo = {
+        'default': rt('rt-default'),
+        'hover': rt('rt-hover', marcada=3, preview=4),
+        'focus': rt('rt-focus', marcada=3),
+        'disabled': rt('rt-disabled', marcada=3, disabled=True),
+        'readonly': rt_ro(4),
+    }
+    cells = [f'<div class="cell"><span class="lab" style="color:var(--al-text-secondary)">{nome}</span>'
+             f'<div class="stage2" style="display:block">{corpo[slug]}</div>'
+             f'<p class="cap">{notas[slug]}</p></div>' for slug, nome in RT_STATES]
+    return '<div class="dd">' + ''.join(cells) + '</div>'
+
+
+TH_RATING = f'<div class="rt-th">{rt_fake("", 4, cls="rt-fake--real")}</div>'
+
+
+def rt_overview(t):
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="rating-stage">{rt('play-rt', marcada=3)}</div>
+
+    <div class="controls controls--fields" id="rating-controls">
+      {pg_field('rtstate', t['state'], t['states'], 'rest')}
+      {pg_field('rtvalue', t['value'], [('0', t['none']), ('1', '1'), ('3', '3'), ('5', '5')], '3')}
+      {pg_field('rtlabel', t['showl'], t['showls'], 'on')}
+      {pg_field('rttheme', t['theme'], THEMES, 'auto')}
+      {inp('rating-label', t['label'], valor=RT_Q)}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="rating-copy">{t['copy']}</button></div>
+      <pre><code id="rating-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>
+
+<section>
+  <h2>{t['h_avg']}</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">{t['do_lab']}</span>
+      <div class="stage2" style="display:block">{rt_ro(4.3, t['do_num'])}</div>
+      <p class="cap">{t['do_cap']}</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">{t['no_lab']}</span>
+      <div class="stage2" style="display:block">{rt_fake(t['no_text'], 4, cls='rt-fake--dis')}</div>
+      <p class="cap">{t['no_cap']}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>{RT_H_STATES}</h2>
+  {rt_specimens()}
+</section>'''
+
+
+RT_OVERVIEW = tr(rt_overview({
+    'state': 'Estado', 'states': [('rest', 'Editável'), ('disabled', 'Desabilitado'), ('readonly', 'Só leitura')],
+    'value': 'Nota', 'none': 'Nenhuma', 'showl': 'Legenda', 'showls': [('on', 'Visível'), ('off', 'Oculta')],
+    'theme': 'Tema', 'label': 'Legenda', 'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'O rating acima é o componente real: esta página carrega o mesmo <code>rating.css</code> que vai '
+            'para produção, e não há script. Tabule até ele e use as setas; passe o ponteiro para ver a prévia.',
+    'h_avg': 'Média é só leitura',
+    'do_lab': 'Só leitura com o número', 'do_num': '4,3 · 128 avaliações',
+    'do_cap': 'As estrelas arredondam; o número e o anúncio dizem 4,3. <i>WinUI.</i>',
+    'no_lab': 'Desativado para exibir', 'no_text': 'Avaliação',
+    'no_cap': 'Desativado diz "bloqueado por enquanto", não "isto é uma nota".'}),
+    rt_overview({
+    'state': 'State', 'states': [('rest', 'Editable'), ('disabled', 'Disabled'), ('readonly', 'Read-only')],
+    'value': 'Score', 'none': 'None', 'showl': 'Legend', 'showls': [('on', 'Visible'), ('off', 'Hidden')],
+    'theme': 'Theme', 'label': 'Legend', 'markup': 'Markup', 'copy': 'Copy',
+    'note': 'The rating above is the real component: this page loads the same <code>rating.css</code> that goes '
+            'to production, and there is no script. Tab to it and use the arrows; hover to see the preview.',
+    'h_avg': 'An average is read-only',
+    'do_lab': 'Read-only with the number', 'do_num': '4.3 · 128 reviews',
+    'do_cap': 'The stars round; the number and the announcement say 4.3. <i>WinUI.</i>',
+    'no_lab': 'Disabled to display', 'no_text': 'Rating',
+    'no_cap': 'Disabled says "blocked for now", not "this is a score".'}))
+
+
+def rt_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+</section>
+
+<section>
+  <h2>{T_MEASURES}</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['val']}</th></tr></thead>
+    <tbody>{comp_token_rows(RAT, geo=True)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller" style="margin-top:20px"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{comp_token_rows(RAT)}</tbody>
+  </table></div>
+</section>'''
+
+
+RT_SPECS = tr(rt_specs({
+    'anat': [('Grupo', '<code>&lt;fieldset&gt;</code> sem borda: o grupo de radio, e o <code>disabled</code> vai nele.'),
+             ('Legenda', '<code>&lt;legend&gt;</code> com o que se avalia, 8px acima das estrelas. Body/md, 16/24.'),
+             ('Estrela', 'Caixa de 24px com um radio nativo invisível por cima e o desenho <code>aria-hidden</code>.'),
+             ('Cheia e vazia', 'Cheia em <code>bg-brand</code>; vazia é contorno de 2px em <code>border-strong</code>.'),
+             ('Só leitura', 'Outra marcação: um <code>role="img"</code> com o valor exato no nome.')],
+    'th': 'Token do Rating', 'to': 'Aponta para', 'val': 'Valor', 'light': 'Claro', 'dark': 'Escuro'}), rt_specs({
+    'anat': [('Group', 'A <code>&lt;fieldset&gt;</code> with no border: the radio group, and <code>disabled</code> goes on it.'),
+             ('Legend', 'A <code>&lt;legend&gt;</code> with what is rated, 8px above the stars. Body/md, 16/24.'),
+             ('Star', 'A 24px box with an invisible native radio on top and the drawing <code>aria-hidden</code>.'),
+             ('Full and empty', 'Full in <code>bg-brand</code>; empty is a 2px outline in <code>border-strong</code>.'),
+             ('Read-only', 'Another markup: a <code>role="img"</code> with the exact value in its name.')],
+    'th': 'Rating token', 'to': 'Points to', 'val': 'Value', 'light': 'Light', 'dark': 'Dark'}))
+
+RT_A11Y_TAB = tr('''
+<section>
+  <h2>Uma exceção, paga pelo radio marcado</h2>
+  <p>A prévia do hover fica abaixo de 3:1 contra uma estrela marcada: 1,59:1 no claro e 1,15:1 no escuro.
+  Dura enquanto o ponteiro está ali, e o valor de verdade é o radio marcado, que o leitor de tela anuncia.</p>
+</section>
+
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Uma parada por grupo</b><span>O Tab entra uma vez; as setas movem e marcam. Desativado e só leitura saem da ordem.</span></div>
+    <div><b>Anel na marcada</b><span>Sem nada marcado, o anel vai para a primeira estrela.</span></div>
+    <div><b>Nomes</b><span>O grupo pela <code>&lt;legend&gt;</code>; cada radio de "1 estrela" a "5 estrelas".</span></div>
+    <div><b>Só leitura</b><span>Uma imagem, "4,3 de 5 estrelas": nada de ler cinco estrelas.</span></div>
+    <div><b>Alvo</b><span>Cada estrela tem 24px, o mínimo do 2.5.8.</span></div>
+  </div>
+</section>''', '''
+<section>
+  <h2>One exception, paid by the checked radio</h2>
+  <p>The hover preview falls below 3:1 against a checked star: 1.59:1 in light and 1.15:1 in dark. It lasts
+  while the pointer is there, and the real value is the checked radio, which the screen reader announces.</p>
+</section>
+
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>One stop per group</b><span>Tab enters once; the arrows move and check. Disabled and read-only leave the order.</span></div>
+    <div><b>Ring on the checked star</b><span>With nothing checked, the ring goes to the first star.</span></div>
+    <div><b>Names</b><span>The group by its <code>&lt;legend&gt;</code>; each radio from "1 star" to "5 stars".</span></div>
+    <div><b>Read-only</b><span>A single image, "4.3 out of 5 stars": no reading five stars.</span></div>
+    <div><b>Target</b><span>Each star is 24px, the 2.5.8 minimum.</span></div>
+  </div>
+</section>''')
+
+RT_MD = guide_md('rating')
+RT_GUIDE = guide_tab(RT_MD, [
+    (rt('rtd-1', marcada=4), rt_fake(tr('Você recomendaria?', 'Would you recommend it?'), 0)),
+    (rt('rtd-2', tr('Atendimento', 'Service'), 4) + '<p class="rt-num">' + tr('4 · Muito bom', '4 · Very good') + '</p>',
+     rt_fake(tr('Avaliação', 'Rating'), 4)),
+    (rt('rtd-3'), rt_fake(RT_Q, 3)),
+    (rt_ro(4, tr('4 · 52 avaliações', '4 · 52 reviews')), rt_fake('', 4, cls='rt-fake--dis')),
+    (rt('rtd-5', marcada=3), rt_fake(RT_Q, 3, cls='rt-fake--buttons')),
+    (rt_ro(3.5, tr('3,5 · 20 avaliações', '3.5 · 20 reviews')), rt_fake(RT_Q, 3, cls='rt-fake--half')),
+])
+
+RT_OVERVIEW, RT_PLAYGROUND, RT_A11Y_TAB = model_tabs(
+    'rating', old_ov=RT_OVERVIEW, old_specs=RT_SPECS, guide=RT_GUIDE, old_a11y=RT_A11Y_TAB,
+    preview=rt('pv-rt', marcada=3),
+    preview_style='display:block',
+    usage=tr('Use para coletar uma opinião numa escala de 1 a 5, ou, só leitura, para mostrar uma média. '
+             'São cinco radios nativos num <code>&lt;fieldset&gt;</code>, sem script.',
+             'Use it to collect an opinion on a 1 to 5 scale or, read-only, to show an average. It is five '
+             'native radios in a <code>&lt;fieldset&gt;</code>, with no script.'),
+    states=[RT_H_STATES],
+    classes=tr([
+        ('fieldset.al-rating', '—', 'O grupo. <code>disabled</code> aqui desativa as cinco estrelas.'),
+        ('.al-rating__label', '&lt;legend&gt;', 'O que se avalia. Obrigatória; oculta só com <code>sr-only</code>.'),
+        ('.al-rating__stars', '—', 'A fileira de estrelas, 4px entre elas.'),
+        ('.al-rating__star', '&lt;label&gt;', 'A caixa de 24px de cada estrela.'),
+        ('.al-rating__input', '&lt;input type="radio"&gt;', 'O radio nativo, invisível por cima, com <code>aria-label</code> "N estrelas".'),
+        ('.al-rating__glyph', '&lt;svg aria-hidden&gt;', 'O desenho da estrela.'),
+        ('.al-rating--readonly', 'role="img"', 'Só leitura: <code>aria-label</code> com o valor exato, sem radios.'),
+        ('.al-rating__glyph--on', '—', 'No só leitura, as estrelas cheias.'),
+    ], [
+        ('fieldset.al-rating', '—', 'The group. <code>disabled</code> here turns off all five stars.'),
+        ('.al-rating__label', '&lt;legend&gt;', 'What is rated. Required; hidden only with <code>sr-only</code>.'),
+        ('.al-rating__stars', '—', 'The row of stars, 4px apart.'),
+        ('.al-rating__star', '&lt;label&gt;', 'The 24px box of each star.'),
+        ('.al-rating__input', '&lt;input type="radio"&gt;', 'The native radio, invisible on top, with <code>aria-label</code> "N stars".'),
+        ('.al-rating__glyph', '&lt;svg aria-hidden&gt;', 'The star drawing.'),
+        ('.al-rating--readonly', 'role="img"', 'Read-only: <code>aria-label</code> with the exact value, no radios.'),
+        ('.al-rating__glyph--on', '—', 'In read-only, the full stars.'),
+    ]),
+    contrast=role_contrast([dict(r, floor=r['min']) for r in RAT_A11Y['rows']], tr([
+        ('Legenda', {'label'}, 'ok', 'O texto contra a página.', WCAG_143, 'Canvas, surface e surface-raised'),
+        ('Estrela cheia', {'star on'}, 'ok', 'A laranja da marca passa 3:1 nos três fundos.', WCAG_1411,
+         'Canvas, surface e surface-raised'),
+        ('Estrela vazia', {'star off'}, 'ok', 'O contorno em <code>border-strong</code>.', WCAG_1411,
+         'Canvas, surface e surface-raised'),
+        ('Prévia sobre a marcada', {'preview on star'}, 'exc',
+         'Exceção declarada: passageira, o radio marcado leva o valor (regra 10).', WCAG_1411, 'Os dois temas'),
+        ('Anel de foco', {'focus ring'}, 'ok', 'O anel contra a página.', WCAG_2413),
+    ], [
+        ('Legend', {'label'}, 'ok', 'The text against the page.', WCAG_143, 'Canvas, surface and surface-raised'),
+        ('Full star', {'star on'}, 'ok', 'The brand orange passes 3:1 on all three backgrounds.', WCAG_1411,
+         'Canvas, surface and surface-raised'),
+        ('Empty star', {'star off'}, 'ok', 'The outline in <code>border-strong</code>.', WCAG_1411,
+         'Canvas, surface and surface-raised'),
+        ('Preview on a checked star', {'preview on star'}, 'exc',
+         'Declared exception: transient, the checked radio carries the value (rule 10).', WCAG_1411, 'Both themes'),
+        ('Focus ring', {'focus ring'}, 'ok', 'The ring against the page.', WCAG_2413),
+    ]), forms_intro(N_RT_MEDIDAS, N_RT_EXC), key='what'),
+)
+
+
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
 # clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
@@ -23580,6 +24473,8 @@ LANDING_COMPONENTES = tr(f'''
     {card('input', 'Input', 'Resposta livre de uma linha. Input nativo dentro de uma caixa que aceita prefixo, sufixo e contador — e um read-only que se lê.', TH_INPUT)}
     {card('password', 'Password', 'Senha com o olho de mostrar e ocultar. Input nativo de senha, um botão de verdade dentro da caixa, e um script que esconde de novo no envio.', TH_PASSWORD)}
     {card('number-field', 'Number field', 'Uma quantidade pequena ajustada aos poucos. Input nativo de número entre o − e o +, uma parada de Tab só, e o botão do limite apagado.', TH_NUMBER_FIELD)}
+    {card('slider', 'Slider', 'Um valor numa faixa quando a posição importa mais que o número. Range nativo, o valor sempre à mostra ao lado do rótulo.', TH_SLIDER)}
+    {card('rating', 'Rating', 'Uma opinião de 1 a 5, ou uma média só leitura. Cinco radios nativos num fieldset, sem script, e a estrela na cor da marca.', TH_RATING)}
     {card('textarea', 'Textarea', 'Resposta livre de várias linhas. A própria textarea nativa é a caixa: rola em vez de crescer, redimensiona só na vertical, e Enter quebra a linha.', TH_TEXTAREA)}
     {card('divider', 'Divider', 'A linha entre dois grupos de conteúdo. É o &lt;hr&gt; nativo, horizontal ou vertical — e entra só quando o espaço não basta.', TH_DIVIDER)}
     {card('card', 'Card', 'Um assunto num contêiner. Três tipos, três paddings, e o clicável inteiro feito com um link de verdade no título.', TH_CARD)}
@@ -23614,6 +24509,8 @@ LANDING_COMPONENTES = tr(f'''
     {card('input', 'Input', 'A free one-line answer. A native input inside a box that accepts prefix, suffix and counter, and a read-only state that can be read.', TH_INPUT)}
     {card('password', 'Password', 'A password with the show and hide eye. A native password input, a real button inside the box, and a script that hides it again on submit.', TH_PASSWORD)}
     {card('number-field', 'Number field', 'A small quantity adjusted a little at a time. A native number input between the − and the +, a single tab stop, and the stepper at the limit turned off.', TH_NUMBER_FIELD)}
+    {card('slider', 'Slider', 'A value in a range when the position matters more than the number. A native range, with the value always next to the label.', TH_SLIDER)}
+    {card('rating', 'Rating', 'An opinion from 1 to 5, or a read-only average. Five native radios in a fieldset, no script, and the star in the brand color.', TH_RATING)}
     {card('textarea', 'Textarea', 'A free multi-line answer. The native textarea itself is the box: it scrolls instead of growing, resizes only vertically, and Enter breaks the line.', TH_TEXTAREA)}
     {card('divider', 'Divider', 'The line between two groups of content. It is the native &lt;hr&gt;, horizontal or vertical, and it only comes in when space is not enough.', TH_DIVIDER)}
     {card('card', 'Card', 'One subject in a container. Three types, three paddings, and the fully clickable one made with a real link in the title.', TH_CARD)}
@@ -23655,7 +24552,7 @@ SITE_NAV = [
     ('Forms and inputs', [('input', 'Input'), ('password', 'Password'), ('number-field', 'Number field'),
                           ('select', 'Select'),
                           ('checkbox', 'Checkbox'), ('radio', 'Radio'), ('textarea', 'Textarea'),
-                          ('switch', 'Switch')]),
+                          ('switch', 'Switch'), ('slider', 'Slider'), ('rating', 'Rating')]),
     ('Content', [('card', 'Card'), ('modal', 'Modal'), ('drawer', 'Drawer'), ('avatar', 'Avatar'),
                  ('divider', 'Divider'), ('accordion', 'Accordion')]),
     ('Navigation', [('sidebar', 'Sidebar'), ('breadcrumb', 'Breadcrumb'), ('pagination', 'Pagination'),
@@ -24416,6 +25313,26 @@ PAGES = [
          (f'{N_NF_TOKENS} tokens', False), (tr('2 exceções declaradas', '2 declared exceptions'), False)],
         [('overview', T_OV, NF_OVERVIEW), ('playground', 'Playground', NF_PLAYGROUND),
          ('guide', T_GUIDE, anat_to_tables(NF_GUIDE)), ('a11y', T_A11Y, NF_A11Y_TAB)])),
+    ('slider', 'Componentes', page(
+        'slider',
+        tr('Escolhe um valor numa faixa quando a posição importa mais que o número exato. É o '
+           '<code>&lt;input type="range"&gt;</code> nativo, um controle, sem erro, e o valor sempre à mostra.',
+           'Picks a value in a range when the position matters more than the exact number. It is the native '
+           '<code>&lt;input type="range"&gt;</code>, one thumb, no error, and the value always in view.'),
+        [(T_STABLE, True), (tr('5 estados no Figma', '5 states in Figma'), False),
+         (f'{N_SLD_TOKENS} tokens', False), (tr('2 exceções declaradas', '2 declared exceptions'), False)],
+        [('overview', T_OV, SL_OVERVIEW), ('playground', 'Playground', SL_PLAYGROUND),
+         ('guide', T_GUIDE, anat_to_tables(SL_GUIDE)), ('a11y', T_A11Y, SL_A11Y_TAB)])),
+    ('rating', 'Componentes', page(
+        'rating',
+        tr('Coleta uma opinião de 1 a 5, ou mostra uma média. São cinco radios nativos num '
+           '<code>&lt;fieldset&gt;</code>, sem script: uma parada de Tab, as setas marcam, e o só leitura é uma imagem.',
+           'Collects an opinion from 1 to 5, or shows an average. It is five native radios in a '
+           '<code>&lt;fieldset&gt;</code>, with no script: one tab stop, the arrows check, and read-only is an image.'),
+        [(T_STABLE, True), (tr('5 estados no Figma', '5 states in Figma'), False),
+         (f'{N_RAT_TOKENS} tokens', False), (tr('1 exceção declarada', '1 declared exception'), False)],
+        [('overview', T_OV, RT_OVERVIEW), ('playground', 'Playground', RT_PLAYGROUND),
+         ('guide', T_GUIDE, anat_to_tables(RT_GUIDE)), ('a11y', T_A11Y, RT_A11Y_TAB)])),
     ('divider', 'Componentes', page(
         'divider',
         tr('A linha que separa dois grupos de conteúdo quando o espaço sozinho não basta. É o '
@@ -26697,6 +27614,178 @@ CHROME_STEPPER = """
 """
 
 
+JS_SLIDER = r"""
+(function () {
+  // ── playground do Slider ──
+  var stage = document.getElementById('slider-stage');
+  if (!stage) return;
+  var code = document.getElementById('slider-code');
+  var labelInput = document.getElementById('slider-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function sp(n) { return new Array(n + 1).join(' '); }
+
+  function render() {
+    var state = pick('slstate'), value = pick('slvalue'), show = pick('slshow'), theme = pick('sltheme');
+    var label = labelInput.value.trim() || AL_T.slLabel;
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var id = 'play-sl', dis = state === 'disabled' ? ' disabled' : '';
+    var lines = [
+      '<div class="al-slider">',
+      sp(2) + '<div class="al-slider__header">',
+      sp(4) + '<label class="al-slider__label" for="' + id + '">' + esc(label) + '</label>',
+      sp(4) + '<output class="al-slider__value" for="' + id + '">' + value + '%</output>',
+      sp(2) + '</div>',
+      sp(2) + '<input class="al-slider__input" id="' + id + '" type="range"',
+      sp(9) + 'min="0" max="100" value="' + value + '" data-unit="%"' + dis + '>'
+    ];
+    if (show === 'both') lines.push(sp(2) + '<div class="al-slider__range"><span>0%</span><span>100%</span></div>');
+    lines.push('</div>');
+    var html = lines.join('\n');
+    stage.innerHTML = html;
+    window.alSlider.init(stage);
+    code.innerHTML = esc(html) + '\n\n&lt;script src="slider.js"&gt;&lt;/script&gt;  &lt;!-- ' + AL_T.slJsNote + ' --&gt;';
+  }
+
+  document.querySelectorAll('#slider-controls input, #slider-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('slider-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = AL_T.failed; });
+    }
+  });
+  render();
+})();
+"""
+
+JS_RATING = r"""
+(function () {
+  // ── playground do Rating ──
+  var stage = document.getElementById('rating-stage');
+  if (!stage) return;
+  var code = document.getElementById('rating-code');
+  var labelInput = document.getElementById('rating-label');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function sp(n) { return new Array(n + 1).join(' '); }
+  // a marcação mostra o desenho como "…"; o palco recebe o desenho real
+  function glyph(on, real) {
+    var cls = 'al-rating__glyph' + (on ? ' al-rating__glyph--on' : '');
+    return real ? AL_T.rtStar.replace('class="al-rating__glyph"', 'class="' + cls + '"')
+                : '<svg class="' + cls + '" viewBox="0 0 24 24" aria-hidden="true">…</svg>';
+  }
+
+  function build(state, value, showl, label, real) {
+    var lines = [], k;
+    if (state === 'readonly') {
+      lines.push('<span class="al-rating al-rating--readonly" role="img" aria-label="' + value + ' ' + AL_T.rtOf + '">');
+      lines.push(sp(2) + '<span class="al-rating__stars">');
+      for (k = 1; k <= 5; k++) lines.push(sp(4) + glyph(k <= value, real));
+      lines.push(sp(2) + '</span>', '</span>');
+    } else {
+      lines.push('<fieldset class="al-rating"' + (state === 'disabled' ? ' disabled' : '') + '>');
+      lines.push(sp(2) + '<legend class="' + (showl === 'on' ? 'al-rating__label' : 'sr-only') + '">' + esc(label) + '</legend>');
+      lines.push(sp(2) + '<div class="al-rating__stars">');
+      for (k = 1; k <= 5; k++) {
+        lines.push(sp(4) + '<label class="al-rating__star">');
+        lines.push(sp(6) + '<input class="al-rating__input" type="radio" name="play-rt" value="' + k + '"');
+        lines.push(sp(13) + 'aria-label="' + k + ' ' + (k === 1 ? AL_T.rtOne : AL_T.rtMany) + '"' + (k === value ? ' checked' : '') + '>');
+        lines.push(sp(6) + glyph(false, real));
+        lines.push(sp(4) + '</label>');
+      }
+      lines.push(sp(2) + '</div>', '</fieldset>');
+    }
+    return lines.join('\n');
+  }
+
+  function render() {
+    var state = pick('rtstate'), value = +pick('rtvalue'), showl = pick('rtlabel'), theme = pick('rttheme');
+    var label = labelInput.value.trim() || AL_T.rtLabel;
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    stage.innerHTML = build(state, value, showl, label, true);
+    var src = build(state, value, showl, label, false);
+    code.innerHTML = esc(src);
+  }
+
+  document.querySelectorAll('#rating-controls input, #rating-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('rating-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = AL_T.failed; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_SLIDER = """
+/* ── páginas do Slider ──
+   Casca do site. O controle em si é sempre o .al-slider, do slider.css real. */
+#slider-stage{display:flex; justify-content:center; padding-inline:8px}
+#slider-stage .al-slider{inline-size:360px; max-inline-size:100%}
+.sl-th{width:100%; max-width:220px}
+.sl-pv{inline-size:320px; max-inline-size:100%}
+.sl-why{margin:8px 0 0; font-size:14px; line-height:20px; color:var(--al-text-secondary)}
+/* exemplos a evitar: casca, nunca um .al-slider errado */
+.sl-fake{display:flex; flex-direction:column; gap:8px; inline-size:300px; max-inline-size:100%; font-size:16px; line-height:24px}
+.sl-fake__head{display:flex; justify-content:space-between; gap:16px; color:var(--al-text-primary)}
+.sl-fake__track{position:relative; display:block; block-size:4px; margin-block:10px; border-radius:999px; background:var(--al-bg-track)}
+.sl-fake__fill{position:absolute; inset-block:0; inset-inline-start:0; border-radius:999px; background:var(--al-bg-brand)}
+.sl-fake__thumb{position:absolute; inset-block-start:50%; inline-size:20px; block-size:20px; margin:-10px 0 0 -10px;
+  border-radius:50%; background:var(--al-bg-brand)}
+.sl-fake__range{display:flex; justify-content:space-between; font-size:12px; line-height:16px; color:var(--al-text-secondary)}
+.sl-fake--error .sl-fake__head span:last-child{color:var(--al-text-danger)}
+.sl-fake--dis .sl-fake__head{color:var(--al-text-disabled)}
+.sl-fake--dis .sl-fake__fill, .sl-fake--dis .sl-fake__thumb{background:var(--al-text-disabled)}
+.sl-fake--two .sl-fake__fill{inset-inline-start:20%}
+.sl-fake--two .sl-fake__track::before{content:""; position:absolute; inset-block-start:50%; inset-inline-start:20%;
+  inline-size:20px; block-size:20px; margin:-10px 0 0 -10px; border-radius:50%; background:var(--al-bg-brand)}
+"""
+
+CHROME_RATING = """
+/* ── páginas do Rating ──
+   Casca do site. As estrelas em si são sempre o .al-rating, do rating.css real. */
+.rt-ro{display:flex; align-items:center; flex-wrap:wrap; gap:8px}
+.rt-num{margin:0; font-size:14px; line-height:20px; color:var(--al-text-secondary); font-variant-numeric:tabular-nums}
+.rt-th{width:100%; max-width:220px; display:flex; justify-content:center}
+/* exemplos a evitar: casca, nunca um .al-rating errado */
+.rt-fake{display:flex; flex-direction:column; gap:8px; font-size:16px; line-height:24px; color:var(--al-text-primary)}
+.rt-fake__stars{display:flex; gap:4px}
+.rt-fake__star{display:block; inline-size:24px; block-size:24px}
+.rt-fake__star svg{display:block; inline-size:100%; block-size:100%; fill:none; stroke:var(--al-border-strong); stroke-width:2; stroke-linejoin:round}
+.rt-fake__star.is-on svg{fill:var(--al-bg-brand); stroke:var(--al-bg-brand)}
+.rt-fake--dis .rt-fake__star svg{stroke:var(--al-text-disabled)}
+.rt-fake--dis .rt-fake__star.is-on svg{fill:var(--al-text-disabled)}
+.rt-fake--buttons .rt-fake__star{inline-size:32px; block-size:32px; padding:4px; box-sizing:border-box;
+  border:1px solid var(--al-border-default); border-radius:6px}
+.rt-fake--half .rt-fake__star:nth-child(4) svg{fill:var(--al-bg-warning); stroke:var(--al-bg-warning)}
+.rt-fake--half .rt-fake__star.is-on svg{fill:var(--al-bg-warning); stroke:var(--al-bg-warning)}
+"""
+
+
 JS_ES_DATA = 'var ES_DEMOS = ' + json.dumps(ES_DEMOS, ensure_ascii=False) + ';\n'
 
 JS_ES = r"""
@@ -27332,7 +28421,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_MENU + CHROME_STEPPER + CHROME_EMPTY_STATE + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_MENU + CHROME_STEPPER + CHROME_EMPTY_STATE + CHROME_SLIDER + CHROME_RATING + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -27345,6 +28434,7 @@ HTML = (
     + MENU_JS.replace('</', '<\\/') + JS_MENU_DATA + JS_MENU
     + JS_STEPPER_DATA + JS_STEPPER
     + JS_ES_DATA + JS_ES
+    + SLD_JS.replace('</', '<\\/') + JS_SLIDER + JS_RATING
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
