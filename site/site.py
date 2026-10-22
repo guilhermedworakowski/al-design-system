@@ -162,6 +162,10 @@ MENU_TOKENS = open(comp_out('menu', 'al-menu-tokens.css')).read()
 MENU_CSS = open(comp_src('menu', 'menu.css')).read()
 MENU_JS = open(comp_src('menu', 'menu.js')).read()
 MENU_A11Y = json.load(open(comp_out('menu', 'a11y.json')))
+STP = json.load(open(comp_out('stepper', 'tokens.json')))
+STP_TOKENS = open(comp_out('stepper', 'al-stepper-tokens.css')).read()
+STP_CSS = open(comp_src('stepper', 'stepper.css')).read()
+STP_A11Y = json.load(open(comp_out('stepper', 'a11y.json')))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 CARD_TOKENS = open(comp_out('card', 'al-card-tokens.css')).read()
 CARD_CSS = open(comp_src('card', 'card.css')).read()
@@ -252,6 +256,7 @@ N_PROG_TOKENS = len(PROG['alias'])
 N_PAG_TOKENS = len(PAG['alias'])
 N_NF_TOKENS = len(NF['alias'])
 N_MENU_TOKENS = len(MENU['alias'])
+N_STP_TOKENS = len(STP['alias'])
 
 assert N_FAIL == 0, f'{N_FAIL} pares reprovados - o portao de contraste deveria ter barrado antes'
 
@@ -297,7 +302,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
                          SWITCH_TOKENS, INPUT_TOKENS, TEXTAREA_TOKENS,
                          PASSWORD_TOKENS, DIVIDER_TOKENS, CARD_TOKENS, TAB_TOKENS,
                          ACC_TOKENS, MOD_TOKENS, DRW_TOKENS, SBR_TOKENS, BCR_TOKENS,
-                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS, NF_TOKENS, MENU_TOKENS)
+                         TTP_TOKENS, TST_TOKENS, ALR_TOKENS, LINK_TOKENS, PROG_TOKENS, PAG_TOKENS, NF_TOKENS, MENU_TOKENS,
+                         STP_TOKENS)
             + '\n' + BTN_TOKENS + '\n' + BTN_CSS
             + '\n' + ICON_TOKENS + '\n' + ICON_CSS
             + '\n' + IB_TOKENS + '\n' + IB_CSS
@@ -325,7 +331,8 @@ CSS_REAL = (scope_themes(FOUND_CSS, BTN_TOKENS, ICON_TOKENS, IB_TOKENS, TAG_TOKE
             + '\n' + PROG_TOKENS + '\n' + PROG_CSS
             + '\n' + PAG_TOKENS + '\n' + PAG_CSS
             + '\n' + NF_TOKENS + '\n' + NF_CSS
-            + '\n' + MENU_TOKENS + '\n' + MENU_CSS)
+            + '\n' + MENU_TOKENS + '\n' + MENU_CSS
+            + '\n' + STP_TOKENS + '\n' + STP_CSS)
 
 
 # ─────────────────────────────────────────────────────────────────── os icones
@@ -1931,6 +1938,131 @@ def rule_html(n, title, paras, src):
 
 def rules_html(rules):
     return ''.join(rule_html(*r) for r in rules)
+
+
+GUIDE_PT['stepper'] = """# Stepper · Regras de uso
+
+O Stepper mostra onde a pessoa está numa tarefa linear dividida em passos: o que já foi feito, o que é agora e o que falta.
+
+## Faça e não faça
+
+| Faça | Não faça |
+|---|---|
+| **Uma tarefa linear de 3 a 5 passos.** | **Um Stepper para um formulário de dois passos.** |
+| **Vertical numa tela estreita.** | **Horizontal com títulos longos que quebram.** |
+| **Títulos de uma ou duas palavras.** | **Frases como título do passo.** |
+| **Todos os passos antes do atual concluídos.** | **Um passo concluído depois do atual.** |
+| **O estado dito em texto e aria-current no passo atual.** | **O passo atual marcado só pela cor.** |
+| **Voltar e Continuar no formulário, embaixo do passo.** | **O Stepper como único jeito de andar entre os passos.** |
+
+## Regras
+
+### Quando usar
+
+**1. Para uma tarefa linear de 3 a 5 passos.**
+Abaixo de 3, um título "Passo 1 de 2" basta. Acima de 5, a tarefa provavelmente precisa ser repartida.
+*Precedentes: Carbon (3 ou mais passos) e Red Hat (3 a 5).*
+
+**2. Não use quando os passos podem ser feitos em qualquer ordem.**
+O Stepper diz "você está aqui numa sequência". Seções livres usam o Tab.
+*Precedentes: Carbon e Singapore Government Design System.*
+
+**3. Não use para o progresso de uma operação, como um envio ou um upload.**
+Isso é o Progress.
+*Precedente: Carbon, que separa o Progress indicator do Progress bar.*
+
+**4. Nunca é a única navegação.**
+Voltar e Continuar ficam no formulário, embaixo do conteúdo do passo.
+*Precedente: Red Hat.*
+
+### Orientação
+
+**5. Horizontal para telas largas e títulos curtos.**
+O título fica embaixo do círculo e cada passo ocupa uma fatia igual da largura. Título longo quebra e desequilibra a faixa.
+*Precedente: Material ("evite nomes longos no horizontal").*
+
+**6. Vertical para telas estreitas, ou quando os passos precisam de descrição.**
+*Precedente: Material ("o vertical foi feito para telas estreitas").*
+
+**7. Uma orientação por fluxo em cada largura de tela.**
+Pode trocar de horizontal para vertical num ponto de quebra, mas a troca vale para o fluxo inteiro.
+> **Divergência consciente:** decisão do AL, a mesma lógica do Sidebar, que vira painel abaixo de 1024.
+
+**8. Sobre bg-canvas, bg-surface e bg-surface-raised.**
+O portão mediu os três e todas as combinações passam, então o Stepper pode viver dentro de Modal ou Drawer.
+
+### Conteúdo
+
+**9. Títulos de uma ou duas palavras, de preferência um substantivo.**
+Conta, Endereço, Revisão.
+*Precedente: Carbon v10 (uma a duas palavras).*
+
+**10. A descrição é opcional e tem uma linha.**
+Ela complementa o título e não repete a instrução do passo. No horizontal, use em todos os passos ou em nenhum.
+> **Divergência consciente:** decisão do AL; uma descrição solta desequilibra a faixa.
+
+**11. O número é a posição do passo, nunca um rótulo.**
+Começa em 1 e não pula.
+
+**12. O último passo é de revisão ou confirmação quando o fluxo grava algo.**
+*Precedente: Material (passo final de revisão).*
+
+### Estados
+
+**13. Três estados, e um único passo atual.**
+Concluído é tonal com check, atual é sólido, pendente é contornado.
+
+**14. Todos os passos antes do atual estão concluídos; todos depois estão pendentes.**
+Num fluxo linear não existe concluído depois do atual.
+
+**15. Uma linha contínua mostra o caminho percorrido.**
+Laranja até o passo atual, cinza depois. A meia linha antes do primeiro passo e a depois do último ficam sem cor.
+
+**16. Voltar a um passo concluído não apaga os dados dele.**
+O Stepper só reflete onde a pessoa está; quem decide é o formulário.
+*Precedente: Material (steppers lineares).*
+
+### Acessibilidade
+
+**17. Uma `<ol>` dentro de `<nav aria-label="Progress">`.**
+*Precedentes: Kendo (landmark de navegação) e o padrão de lista ordenada.*
+
+**18. O passo atual leva `aria-current="step"`.**
+*Precedentes: Trimble e Singapore Government Design System.*
+
+**19. Cada passo diz o estado em texto oculto: "concluído", "atual", "pendente".**
+O check e a cor não falam nada para o leitor de tela.
+*Precedente: Trimble.*
+
+**20. A cor nunca é a única pista.**
+Concluído tem check, atual é cheio, pendente é só contorno: a forma separa os três.
+*Precedente: Phoenix Group.*
+
+**21. A linha cinza é decorativa.**
+Mede 1,98:1 no escuro. O progresso é dito pelos círculos e pelo `aria-current`.
+> **Divergência consciente:** a mesma do Divider.
+
+**22. O número branco sobre a marca mede 3,34:1.**
+É a exceção de marca da Foundation, com piso de 3:1. O número também está no texto do passo, então nunca é a única fonte.
+
+**23. Quando o passo muda, o foco vai para o título do conteúdo do novo passo, e não para o Stepper.**
+> **Divergência consciente:** decisão do AL, a mesma lógica do Load more do Pagination.
+
+### Fora da v1
+
+**24. Os passos não são clicáveis e não existe estado de erro.**
+Carbon e Phoenix Group têm os dois. Para pular de passo, use os botões; um erro aparece no campo e no Alert do formulário. Se a demanda vier, entra numa versão de casa do meio, com hover, foco e um token de erro.
+> **Divergência consciente** do Carbon e do Phoenix Group.
+
+## Fora de escopo, de propósito
+
+| O quê | Situação | Se a necessidade aparecer |
+|---|---|---|
+| Passos clicáveis | Fora da v1 | Uma versão de casa do meio, com hover, foco e tamanho de alvo. |
+| Estado de erro | Fora da v1 | O campo e o Alert do formulário levam o erro; um token voltaria à etapa 3. |
+| Stepper compacto para mais de 5 passos | Não existe | Reparta a tarefa (regra 1). |
+| Tamanhos | Um só | Tamanho novo volta para a etapa 1. |
+"""
 
 
 def guide_tab(md, stages):
@@ -14660,6 +14792,333 @@ MENU_OVERVIEW, MENU_PLAYGROUND, MENU_A11Y_TAB = model_tabs(
 )
 
 
+# ═══════════════════════════════════════════════════════════ Stepper · abas
+# Navigation. Duas orientações, três estados, sem clique (regra 24). Todo
+# Stepper da página sai do stepper.css real; os exemplos "a evitar" são casca
+# do site (stp-fake), nunca um .al-stepper errado.
+STP_ORIENT = tr([('horizontal', 'Horizontal'), ('vertical', 'Vertical')],
+                [('horizontal', 'Horizontal'), ('vertical', 'Vertical')])
+STP_CUR = tr([('1', 'Passo 1'), ('2', 'Passo 2'), ('3', 'Passo 3'), ('4', 'Passo 4')],
+             [('1', 'Step 1'), ('2', 'Step 2'), ('3', 'Step 3'), ('4', 'Step 4')])
+STP_DESC = tr([('on', 'Com descrição'), ('off', 'Sem descrição')], [('on', 'With description'), ('off', 'No description')])
+STP_SURF = tr([('canvas', 'Tela'), ('surface', 'Faixa de seção'), ('raised', 'Modal ou Drawer')],
+              [('canvas', 'Canvas'), ('surface', 'Section band'), ('raised', 'Modal or Drawer')])
+STP_H_STATES = tr('Os três estados', 'The three states')
+STP_LAB = {'horizontal': tr('Horizontal · tela larga', 'Horizontal · wide screen'),
+           'vertical': tr('Vertical · tela estreita', 'Vertical · narrow screen')}
+STP_TITLES = tr(('Conta', 'Perfil', 'Revisão', 'Confirmação'), ('Account', 'Profile', 'Review', 'Confirm'))
+STP_DESCS = tr(('Login e senha', 'Seus dados', 'Confira tudo', 'Pronto'),
+               ('Login and password', 'Your details', 'Check everything', 'Done'))
+STP_STATUS = tr({'completed': 'concluído', 'current': 'atual', 'upcoming': 'pendente'},
+                {'completed': 'completed', 'current': 'current', 'upcoming': 'upcoming'})
+N_STP_MEDIDAS = len(STP_A11Y['rows'])
+N_STP_EXC = STP_A11Y['summary']['exceptions']
+STP_CHECK = al_icon('check')
+
+
+def stp_demo(orient='horizontal', cur='3', desc='on'):
+    """Um Stepper real de 4 passos, devolvido como (html, codigo)."""
+    c = int(cur)
+    lis, lc = [], []
+    for i, title in enumerate(STP_TITLES, 1):
+        st = 'completed' if i < c else 'current' if i == c else 'upcoming'
+        cls = 'al-stepper__step' + (' al-stepper__step--completed' if st == 'completed' else '')
+        cur_a = ' aria-current="step"' if st == 'current' else ''
+        if st == 'completed':
+            ind = f'<span class="al-stepper__indicator">{STP_CHECK}</span>'
+            ind_c = '<span class="al-stepper__indicator"><svg class="al-icon" aria-hidden="true" focusable="false">…check…</svg></span>'
+        else:
+            ind = ind_c = f'<span class="al-stepper__indicator" aria-hidden="true">{i}</span>'
+        d = f'<span class="al-stepper__description">{STP_DESCS[i - 1]}</span>' if desc == 'on' else ''
+        txt = (f'<span class="al-stepper__text"><span class="al-stepper__label">{title}</span>'
+               f'<span class="al-stepper__status">, {STP_STATUS[st]}</span>{d}</span>')
+        lis.append(f'<li class="{cls}"{cur_a}>{ind}{txt}</li>')
+        lc += [f'    <li class="{cls}"{cur_a}>', f'      {ind_c}', '      <span class="al-stepper__text">',
+               f'        <span class="al-stepper__label">{title}</span>',
+               f'        <span class="al-stepper__status">, {STP_STATUS[st]}</span>']
+        if d:
+            lc.append(f'        {d}')
+        lc += ['      </span>', '    </li>']
+    ol = 'al-stepper' + (' al-stepper--vertical' if orient == 'vertical' else '')
+    html = f'<nav aria-label="Progress"><ol class="{ol}">{"".join(lis)}</ol></nav>'
+    code = ['<nav aria-label="Progress">', f'  <ol class="{ol}">'] + lc + ['  </ol>', '</nav>']
+    return html, '\n'.join(code)
+
+
+def stp_box(orient='horizontal', cur='3', desc='on', surf='canvas'):
+    return f'<div class="stp-box" data-surf="{surf}" data-orient="{orient}">{stp_demo(orient, cur, desc)[0]}</div>'
+
+
+def stp_fake(items, cls=''):
+    """Casca de exemplo a evitar: parece um Stepper, não é o componente.
+    items = [(estado, rótulo)], estado em done, cur, next ou flat (só cor)."""
+    cells = ''.join(f'<span class="stp-fake__s is-{k}"><span class="stp-fake__c">'
+                    f'{"✓" if k == "done" else n}</span><span class="stp-fake__l">{lab}</span></span>'
+                    for n, (k, lab) in enumerate(items, 1))
+    return f'<div class="stp-fake {cls}" aria-hidden="true">{cells}</div>'
+
+
+STP_DEMOS = {f'{o}|{c}|{d}': dict(zip(('html', 'code'), stp_demo(o, c, d)))
+             for o, _ in STP_ORIENT for c, _ in STP_CUR for d, _ in STP_DESC}
+
+
+def stp_token_rows(names):
+    rows = []
+    for name in names:
+        res = STP['resolved'][name]
+        if isinstance(res, dict) and str(res.get('light', '')).startswith('#'):
+            light = f'<span class="chip sm" style="background:{res["light"]}"></span>{res["light"]}'
+            dark = f'<span class="chip sm" style="background:{res["dark"]}"></span>{res["dark"]}'
+        elif isinstance(res, (int, float)):
+            light = dark = f'{res}px'
+        else:
+            light = dark = '—'
+        rows.append(f'<tr><td class="tok">--al-{name}</td>'
+                    f'<td class="tok dim">{STP["alias"][name]}</td>'
+                    f'<td class="tok dim">{light}</td><td class="tok dim">{dark}</td></tr>')
+    return '\n'.join(rows)
+
+
+STP_COLOR_NAMES = tuple(f'stepper-{r}' for r in (
+    'label', 'label-upcoming', 'description', 'completed-bg', 'completed-border', 'completed-icon',
+    'current-bg', 'current-number', 'upcoming-bg', 'upcoming-border', 'upcoming-number',
+    'connector', 'connector-done'))
+STP_GEO_NAMES = tuple(f'stepper-{r}' for r in (
+    'indicator-size', 'indicator-radius', 'indicator-border-width', 'icon-size', 'connector-thickness',
+    'text-gap', 'horizontal-gap', 'horizontal-text-padding', 'vertical-gap', 'vertical-rail-gap',
+    'vertical-step-gap'))
+
+
+def stp_playground(t):
+    return f'''
+<section>
+  <h2>Playground</h2>
+  <div class="pg">
+    <div class="stage" id="stepper-stage">{stp_box()}</div>
+
+    <div class="controls controls--fields" id="stepper-controls">
+      {pg_field('stporient', t['orient'], STP_ORIENT, 'horizontal')}
+      {pg_field('stpcur', t['cur'], STP_CUR, '3')}
+      {pg_field('stpdesc', t['desc'], STP_DESC, 'on')}
+      {pg_field('stpsurf', t['surf'], STP_SURF, 'canvas')}
+      {pg_field('stptheme', t['theme'], t['themes'], 'auto')}
+    </div>
+
+    <div class="codewrap">
+      <div class="codebar"><span>{t['markup']}</span>
+        <button type="button" class="copy" id="stepper-copy">{t['copy']}</button></div>
+      <pre><code id="stepper-code"></code></pre>
+    </div>
+  </div>
+  <p style="margin-top:14px">{t['note']}</p>
+</section>'''
+
+
+def stp_overview(t):
+    cells = ''.join(f'''
+    <div class="cell">
+      <span class="lab" style="color:var(--al-text-secondary)">{STP_LAB[o]}</span>
+      <div class="stage2" style="display:block">{stp_box(o)}</div>
+      <p class="cap">{t['cap_' + o]}</p>
+    </div>''' for o, _ in STP_ORIENT)
+    return stp_playground(t) + f'''
+
+<section>
+  <h2>{t['h_line']}</h2>
+  <div class="dd">
+    <div class="cell do">
+      <span class="lab">{t['do_lab']}</span>
+      <div class="stage2" style="display:block">{stp_box('horizontal', '3', 'off')}</div>
+      <p class="cap">{t['do_cap']}</p>
+    </div>
+    <div class="cell no">
+      <span class="lab">{t['no_lab']}</span>
+      <div class="stage2" style="display:block">{stp_fake([('done', STP_TITLES[0]), ('next', STP_TITLES[1]), ('cur', STP_TITLES[2]), ('done', STP_TITLES[3])])}</div>
+      <p class="cap">{t['no_cap']}</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>{STP_H_STATES}</h2>
+  <div class="dd">{cells}
+  </div>
+</section>'''
+
+
+STP_OVERVIEW = tr(stp_overview({
+    'orient': 'Orientação', 'cur': 'Passo atual', 'desc': 'Descrição', 'surf': 'Superfície', 'theme': 'Tema',
+    'themes': [('auto', 'Do sistema'), ('light', 'Claro'), ('dark', 'Escuro')],
+    'markup': 'Marcação', 'copy': 'Copiar',
+    'note': 'Troque o <b>Passo atual</b>: os anteriores viram concluídos, os seguintes ficam pendentes e a linha '
+            'pinta o caminho até o atual. Os passos não são clicáveis: quem anda é o formulário.',
+    'h_line': 'Um caminho em sequência',
+    'do_lab': 'Concluídos antes, pendentes depois', 'do_cap': 'A linha laranja vai até o passo atual e para ali.',
+    'no_lab': 'Concluído depois do atual', 'no_cap': 'Num fluxo linear isso não existe: a pessoa não sabe onde está.',
+    'cap_horizontal': 'Título embaixo do círculo, numa linha contínua.',
+    'cap_vertical': 'Trilho à esquerda; cabe descrição sem apertar.'}), stp_overview({
+    'orient': 'Orientation', 'cur': 'Current step', 'desc': 'Description', 'surf': 'Surface', 'theme': 'Theme',
+    'themes': [('auto', 'System'), ('light', 'Light'), ('dark', 'Dark')],
+    'markup': 'Markup', 'copy': 'Copy',
+    'note': 'Change the <b>Current step</b>: the ones before become completed, the ones after stay upcoming and '
+            'the line paints the path up to the current one. Steps are not clickable: the form moves the person.',
+    'h_line': 'A path in sequence',
+    'do_lab': 'Completed before, upcoming after', 'do_cap': 'The brand line runs up to the current step and stops there.',
+    'no_lab': 'Completed after the current one', 'no_cap': 'In a linear flow this does not exist: the person loses their place.',
+    'cap_horizontal': 'Title under the circle, on one continuous line.',
+    'cap_vertical': 'Rail on the left; room for a description.'}))
+
+
+def stp_specs(t):
+    return f'''
+<section>
+  <h2>{T_ANAT}</h2>
+  <div class="anat">{''.join(f'<div><b>{a}</b><span>{b}</span></div>' for a, b in t['anat'])}</div>
+  <div class="note" style="margin-top:16px"><b>{t['note_t']}</b> {t['note']}</div>
+</section>
+
+<section>
+  <h2>{T_MEASURES}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{stp_token_rows(STP_GEO_NAMES)}</tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>{T_COLOR_TOKENS}</h2>
+  <div class="scroller"><table>
+    <thead><tr><th>{t['th']}</th><th>{t['to']}</th><th>{t['light']}</th><th>{t['dark']}</th></tr></thead>
+    <tbody>{stp_token_rows(STP_COLOR_NAMES)}</tbody>
+  </table></div>
+</section>'''
+
+
+STP_SPECS = tr(stp_specs({
+    'anat': [('Container', '<code>&lt;nav aria-label="Progress"&gt;</code> com uma <code>&lt;ol class="al-stepper"&gt;</code>.'),
+             ('Círculo', '32×32, borda de 1px. Concluído tonal com check de 16, atual cheio na marca, pendente contornado em <code>border-strong</code>.'),
+             ('Linha', '1px. No horizontal, meia linha de cada lado do círculo, e os passos se encostam; no vertical, embaixo do círculo, 4px de folga.'),
+             ('Título', 'Label/md 14/20. <code>text-primary</code> no concluído e no atual, <code>text-secondary</code> no pendente.'),
+             ('Descrição', 'Body/sm 14/20 em <code>text-secondary</code>, 2px abaixo do título.'),
+             ('Estado oculto', '<code>.al-stepper__status</code>: "concluído", "atual" ou "pendente", só para o leitor de tela.')],
+    'note_t': 'Sem token, de propósito.',
+    'note': 'No vertical, o texto desce (32 − 20) / 2 = 6px para a primeira linha centrar no círculo. No horizontal, '
+            'cada passo ocupa uma fatia igual da largura.',
+    'th': 'Token do Stepper', 'to': 'Aponta para', 'light': 'Claro', 'dark': 'Escuro'}), stp_specs({
+    'anat': [('Container', 'A <code>&lt;nav aria-label="Progress"&gt;</code> with an <code>&lt;ol class="al-stepper"&gt;</code>.'),
+             ('Circle', '32×32, 1px border. Completed tonal with a 16px check, current filled in the brand, upcoming outlined in <code>border-strong</code>.'),
+             ('Line', '1px. Horizontal: half a line on each side of the circle, and the steps touch; vertical: under the circle, 4px apart.'),
+             ('Title', 'Label/md 14/20. <code>text-primary</code> when completed or current, <code>text-secondary</code> when upcoming.'),
+             ('Description', 'Body/sm 14/20 in <code>text-secondary</code>, 2px under the title.'),
+             ('Hidden status', '<code>.al-stepper__status</code>: "completed", "current" or "upcoming", for the screen reader only.')],
+    'note_t': 'No token, on purpose.',
+    'note': 'Vertical: the text drops (32 − 20) / 2 = 6px so its first line centers on the circle. Horizontal: '
+            'each step takes an equal share of the width.',
+    'th': 'Stepper token', 'to': 'Points to', 'light': 'Light', 'dark': 'Dark'}))
+
+STP_A11Y_TAB = tr('''
+<section>
+  <h2>Teclado e leitor de tela, medidos na etapa 6</h2>
+  <div class="anat">
+    <div><b>Ordem do Tab</b><span>O Stepper não recebe foco: os passos não são clicáveis (regra 24). O Tab vai para os botões do formulário.</span></div>
+    <div><b>Passo atual</b><span><code>aria-current="step"</code> é o que pinta o passo atual: o visual nunca discorda do que é anunciado.</span></div>
+    <div><b>Estado de cada passo</b><span>Texto oculto depois do título: "Conta, concluído". O check fica fora da leitura.</span></div>
+    <div><b>Estrutura</b><span>Uma lista ordenada num landmark de navegação: o leitor anuncia "lista de 4 itens".</span></div>
+    <div><b>Troca de passo</b><span>O foco vai para o título do conteúdo do novo passo, não para o Stepper.</span></div>
+  </div>
+</section>''', '''
+<section>
+  <h2>Keyboard and screen reader, measured in stage 6</h2>
+  <div class="anat">
+    <div><b>Tab order</b><span>The Stepper takes no focus: steps are not clickable (rule 24). Tab goes to the form's buttons.</span></div>
+    <div><b>Current step</b><span><code>aria-current="step"</code> is what paints the current step: the look never disagrees with what is announced.</span></div>
+    <div><b>Status of each step</b><span>Hidden text after the title: "Account, completed". The check is out of reading.</span></div>
+    <div><b>Structure</b><span>An ordered list in a navigation landmark: the reader announces "list, 4 items".</span></div>
+    <div><b>Changing step</b><span>Focus goes to the heading of the new step's content, not to the Stepper.</span></div>
+  </div>
+</section>''')
+
+STP_MD = guide_md('stepper')
+STP_GUIDE = guide_tab(STP_MD, [
+    (stp_box('horizontal', '2', 'off'), stp_fake([('cur', STP_TITLES[0]), ('next', STP_TITLES[3])])),
+    (stp_box('vertical', '2'), stp_fake([('done', tr('Dados da sua conta', 'Your account details')),
+                                         ('cur', tr('Endereço de entrega', 'Delivery address')),
+                                         ('next', tr('Forma de pagamento', 'Payment method'))], 'stp-fake--wrap')),
+    (stp_box('horizontal', '3', 'off'), stp_fake([('done', tr('Crie sua conta', 'Create your account')),
+                                                  ('cur', tr('Conte quem você é', 'Tell us who you are')),
+                                                  ('next', tr('Confira e envie', 'Check and send'))], 'stp-fake--wrap')),
+    (stp_box('horizontal', '3', 'off'), stp_fake([('done', STP_TITLES[0]), ('next', STP_TITLES[1]),
+                                                  ('cur', STP_TITLES[2]), ('done', STP_TITLES[3])])),
+    (stp_box('horizontal', '2', 'off'), stp_fake([('flat', STP_TITLES[0]), ('flat is-brand', STP_TITLES[1]),
+                                                  ('flat', STP_TITLES[2])])),
+    (stp_box('vertical', '2', 'off'), stp_fake([('done', STP_TITLES[0]), ('cur', STP_TITLES[1]),
+                                                ('next', STP_TITLES[2])], 'stp-fake--click')),
+])
+
+TH_STEPPER = ('<div class="stp-th" aria-hidden="true">'
+              f'<span class="al-stepper__indicator" style="background:var(--al-stepper-completed-bg);border-color:var(--al-stepper-completed-border);color:var(--al-stepper-completed-icon)">{STP_CHECK}</span>'
+              '<span class="stp-th__l is-done"></span>'
+              '<span class="al-stepper__indicator" style="background:var(--al-stepper-current-bg);border-color:var(--al-stepper-current-bg);color:var(--al-stepper-current-number)">2</span>'
+              '<span class="stp-th__l"></span>'
+              '<span class="al-stepper__indicator">3</span></div>')
+
+STP_OVERVIEW, STP_PLAYGROUND, STP_A11Y_TAB = model_tabs(
+    'stepper', old_ov=STP_OVERVIEW, old_specs=STP_SPECS, guide=STP_GUIDE, old_a11y=STP_A11Y_TAB,
+    preview=stp_box(),
+    usage=tr('Use numa tarefa linear de 3 a 5 passos, com os botões Voltar e Continuar no formulário. '
+             'Horizontal em tela larga, <code>al-stepper--vertical</code> em tela estreita ou com descrição.',
+             'Use it in a linear task of 3 to 5 steps, with Back and Continue in the form. '
+             'Horizontal on a wide screen, <code>al-stepper--vertical</code> on a narrow one or with descriptions.'),
+    states=[STP_H_STATES],
+    presets={STP_LAB[o]: {'stporient': o} for o, _ in STP_ORIENT},
+    classes=tr([
+        ('ol.al-stepper', '—', 'Horizontal, dentro de <code>&lt;nav aria-label="Progress"&gt;</code>.'),
+        ('.al-stepper--vertical', '—', 'Trilho à esquerda, texto à direita.'),
+        ('.al-stepper__step', '<code>aria-current="step"</code>', 'Um passo. O atual é marcado pelo atributo.'),
+        ('.al-stepper__step--completed', '—', 'Passo concluído: tonal com check.'),
+        ('.al-stepper__indicator', '<code>aria-hidden="true"</code> com número', 'O círculo; o check dentro é decorativo.'),
+        ('.al-stepper__label / __description', '—', 'Título e descrição opcional.'),
+        ('.al-stepper__status', '—', 'O estado em texto, só para o leitor de tela.'),
+    ], [
+        ('ol.al-stepper', '—', 'Horizontal, inside a <code>&lt;nav aria-label="Progress"&gt;</code>.'),
+        ('.al-stepper--vertical', '—', 'Rail on the left, text on the right.'),
+        ('.al-stepper__step', '<code>aria-current="step"</code>', 'A step. The current one is marked by the attribute.'),
+        ('.al-stepper__step--completed', '—', 'A completed step: tonal with a check.'),
+        ('.al-stepper__indicator', '<code>aria-hidden="true"</code> with a number', 'The circle; the check inside is decorative.'),
+        ('.al-stepper__label / __description', '—', 'Title and optional description.'),
+        ('.al-stepper__status', '—', 'The status in text, for the screen reader only.'),
+    ]),
+    contrast=role_contrast([dict(r, floor=r['min']) for r in STP_A11Y['rows']], tr([
+        ('Título e descrição', {'completed title', 'current title', 'upcoming title', 'description'}, 'ok',
+         'Use <code>text-primary</code> e <code>text-secondary</code>.', WCAG_143, 'Canvas, surface e raised'),
+        ('Borda do círculo', {'completed circle edge', 'current circle edge', 'upcoming circle edge'}, 'ok',
+         'A forma do círculo passa 3:1 nos três estados.', WCAG_1411, 'Canvas, surface e raised'),
+        ('Check e número do pendente', {'completed check', 'upcoming number'}, 'ok',
+         'Contra o fundo do próprio círculo.', WCAG_143, 'Canvas, surface e raised'),
+        ('Número do passo atual', {'current number'}, 'exc',
+         'Exceção de marca: branco sobre <code>bg-brand</code>, herdada da Foundation.', WCAG_143, 'Os dois temas'),
+        ('Linha percorrida', {'walked line'}, 'ok', 'A marca passa 3:1.', WCAG_1411, 'Canvas, surface e raised'),
+        ('Linha pendente', {'pending line'}, 'exc',
+         'Exceção declarada: decorativa, como o Divider (regra 21).', WCAG_1411, 'Canvas, surface e raised'),
+    ], [
+        ('Title and description', {'completed title', 'current title', 'upcoming title', 'description'}, 'ok',
+         'Use <code>text-primary</code> and <code>text-secondary</code>.', WCAG_143, 'Canvas, surface and raised'),
+        ('Circle edge', {'completed circle edge', 'current circle edge', 'upcoming circle edge'}, 'ok',
+         'The circle\'s shape passes 3:1 in all three states.', WCAG_1411, 'Canvas, surface and raised'),
+        ('Check and upcoming number', {'completed check', 'upcoming number'}, 'ok',
+         'Against the circle\'s own fill.', WCAG_143, 'Canvas, surface and raised'),
+        ('Current step number', {'current number'}, 'exc',
+         'Brand exception: white on <code>bg-brand</code>, inherited from the Foundation.', WCAG_143, 'Both themes'),
+        ('Walked line', {'walked line'}, 'ok', 'The brand passes 3:1.', WCAG_1411, 'Canvas, surface and raised'),
+        ('Pending line', {'pending line'}, 'exc',
+         'Declared exception: decorative, like the Divider (rule 21).', WCAG_1411, 'Canvas, surface and raised'),
+    ]), tr(f'<p>São {N_STP_MEDIDAS} medições no portão de build: nenhuma reprova e {N_STP_EXC} exceções '
+           f'declaradas, todas herdadas da tokenização.</p>',
+           f'<p>That is {N_STP_MEDIDAS} measurements in the build gate: no failures and {N_STP_EXC} declared '
+           f'exceptions, all inherited from tokenization.</p>'), key='what'),
+)
+
+
 # ═══════════════════════════════════════════════════════════════ Card · abas
 # Segundo componente do Tier 3. Tres tipos, tres paddings, estatico ou
 # clicavel. Todo card da pagina sai do card.css real; os exemplos "a evitar"
@@ -22668,6 +23127,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('icon-button', 'Icon Button', 'O botão sem rótulo visível. Mesma pílula e mesmos estados do Button, com nome acessível obrigatório.', TH_ICONBUTTON)}
     {card('link', 'Link', 'Leva a outra página, a outra seção ou a um arquivo. Um &lt;a href&gt; de verdade, sempre sublinhado — solto ou no meio do texto.', TH_LINK)}
     {card('menu', 'Menu', 'As ações que não cabem na tela, atrás de um ⋮. Lista de ações com teclado da W3C, Danger por último e atalho só mostrado.', TH_MENU)}
+    {card('stepper', 'Stepper', 'Onde a pessoa está numa tarefa linear de 3 a 5 passos: concluído, atual e pendente, numa linha contínua. Horizontal ou vertical, nunca a única navegação.', TH_STEPPER)}
     {card('tag', 'Tag', 'Rótulo curto de estado ou categoria. Conteúdo, não controle — e o primeiro do AL a fechar em zero exceções carregando texto.', TH_TAG)}
     {card('avatar', 'Avatar', 'Quem é a pessoa, em três tipos que são uma cadeia: foto, iniciais, ícone — nessa ordem, nunca uma caixa vazia.', TH_AVATAR)}
     {card('select', 'Select', 'Escolha única num formulário. É o &lt;select&gt; nativo: a lista é do navegador, e é isso que compra teclado e mobile de graça.', TH_SELECT)}
@@ -22700,6 +23160,7 @@ LANDING_COMPONENTES = tr(f'''
     {card('icon-button', 'Icon Button', 'The button with no visible label. The same pill and the same states as the Button, with a required accessible name.', TH_ICONBUTTON)}
     {card('link', 'Link', 'Takes the person to another page, another section or a file. A real &lt;a href&gt;, always underlined, standalone or inside running text.', TH_LINK)}
     {card('menu', 'Menu', 'The actions that do not fit on screen, behind a ⋮. A list of actions with the W3C keyboard pattern, Danger last and the shortcut only shown.', TH_MENU)}
+    {card('stepper', 'Stepper', 'Where the person is in a linear task of 3 to 5 steps: completed, current and upcoming, on one continuous line. Horizontal or vertical, never the only navigation.', TH_STEPPER)}
     {card('tag', 'Tag', 'A short label of state or category. Content, not a control, and the first in AL to close with zero exceptions while carrying text.', TH_TAG)}
     {card('avatar', 'Avatar', 'Who the person is, in three types that form a chain: photo, initials, icon, in that order, never an empty box.', TH_AVATAR)}
     {card('select', 'Select', 'A single choice in a form. It is the native &lt;select&gt;: the list belongs to the browser, and that is what buys keyboard and mobile for free.', TH_SELECT)}
@@ -22754,7 +23215,7 @@ SITE_NAV = [
     ('Content', [('card', 'Card'), ('modal', 'Modal'), ('drawer', 'Drawer'), ('avatar', 'Avatar'),
                  ('divider', 'Divider'), ('accordion', 'Accordion')]),
     ('Navigation', [('sidebar', 'Sidebar'), ('breadcrumb', 'Breadcrumb'), ('pagination', 'Pagination'),
-                    ('tab', 'Tab')]),
+                    ('stepper', 'Stepper'), ('tab', 'Tab')]),
     ('Feedback and status', [('alert', 'Alert'), ('progress', 'Progress'), ('toast', 'Toast'),
                              ('tooltip', 'Tooltip'), ('tag', 'Tag')]),
 ]
@@ -23632,6 +24093,17 @@ PAGES = [
          (f'{N_MENU_TOKENS} tokens', False), (tr('2 exceções declaradas', '2 declared exceptions'), False)],
         [('overview', T_OV, MENU_OVERVIEW), ('playground', 'Playground', MENU_PLAYGROUND),
          ('guide', T_GUIDE, anat_to_tables(MENU_GUIDE)), ('a11y', T_A11Y, MENU_A11Y_TAB)])),
+
+    ('stepper', 'Componentes', page(
+        'stepper',
+        tr('Mostra onde a pessoa está numa tarefa linear dividida em passos: o que já foi feito, o que é agora e o '
+           'que falta. Horizontal ou vertical, uma <code>&lt;ol&gt;</code> com o passo atual em <code>aria-current="step"</code>.',
+           'Shows where the person is in a linear task split into steps: what is done, what is now and what is '
+           'left. Horizontal or vertical, an <code>&lt;ol&gt;</code> with the current step in <code>aria-current="step"</code>.'),
+        [(T_STABLE, True), (tr('6 variantes no Figma', '6 variants in Figma'), False),
+         (f'{N_STP_TOKENS} tokens', False), (tr(f'{N_STP_EXC} exceções declaradas', f'{N_STP_EXC} declared exceptions'), False)],
+        [('overview', T_OV, STP_OVERVIEW), ('playground', 'Playground', STP_PLAYGROUND),
+         ('guide', T_GUIDE, anat_to_tables(STP_GUIDE)), ('a11y', T_A11Y, STP_A11Y_TAB)])),
 
     ('pagination', 'Componentes', page(
         'pagination',
@@ -25700,6 +26172,76 @@ JS_MENU = r"""
 """
 
 
+JS_STEPPER_DATA = 'var STP_DEMOS = ' + json.dumps(STP_DEMOS, ensure_ascii=False) + ';\n'
+
+JS_STEPPER = r"""
+(function () {
+  // ── playground do Stepper ──
+  var stage = document.getElementById('stepper-stage');
+  if (!stage) return;
+  var code = document.getElementById('stepper-code');
+
+  function pick(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked, select[name="' + name + '"]');
+    return el ? el.value : null;
+  }
+  function esc(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  // O HTML de cada combinação vem pronto do site.py (STP_DEMOS).
+  function render() {
+    var o = pick('stporient'), cur = pick('stpcur'), d = pick('stpdesc'), surf = pick('stpsurf'), theme = pick('stptheme');
+    if (theme === 'auto') stage.removeAttribute('data-theme');
+    else stage.setAttribute('data-theme', theme);
+    var demo = STP_DEMOS[o + '|' + cur + '|' + d];
+    stage.innerHTML = '<div class="stp-box" data-surf="' + surf + '" data-orient="' + o + '">' + demo.html + '</div>';
+    code.innerHTML = esc(demo.code);
+  }
+
+  document.querySelectorAll('#stepper-controls input, #stepper-controls select').forEach(function (i) {
+    i.addEventListener('input', render);
+  });
+  document.getElementById('stepper-copy').addEventListener('click', function () {
+    var btn = this;
+    var done = function () {
+      btn.textContent = AL_T.copied;
+      setTimeout(function () { btn.textContent = AL_T.copy; }, 1400);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(code.textContent).then(done, function () { btn.textContent = AL_T.failed; });
+    }
+  });
+  render();
+})();
+"""
+
+
+CHROME_STEPPER = """
+/* ── páginas do Stepper ──
+   Casca do site. O Stepper em si é sempre o .al-stepper, do stepper.css real. */
+.stp-box{box-sizing:border-box; inline-size:100%; padding:var(--al-space-24) var(--al-space-16);
+  border-radius:8px; background:var(--al-bg-canvas)}
+.stp-box[data-surf="surface"]{background:var(--al-bg-surface)}
+.stp-box[data-surf="raised"]{background:var(--al-bg-surface-raised)}
+.stp-box[data-orient="horizontal"]{inline-size:min(560px, 100%); min-inline-size:0}
+.stp-box[data-orient="vertical"]{inline-size:min(320px, 100%); min-inline-size:0}
+.stp-th{display:flex; align-items:center; gap:0}
+.stp-th .al-stepper__indicator{flex:none}
+.stp-th__l{inline-size:28px; block-size:1px; background:var(--al-stepper-connector)}
+.stp-th__l.is-done{background:var(--al-stepper-connector-done)}
+/* exemplos a evitar: casca, nunca um .al-stepper errado */
+.stp-fake{display:flex; align-items:flex-start; gap:16px; font-size:14px; line-height:20px; font-weight:500;
+  color:var(--al-text-primary); max-inline-size:100%}
+.stp-fake__s{display:flex; flex-direction:column; align-items:center; gap:8px; flex:1 1 0; min-inline-size:0; text-align:center}
+.stp-fake__c{display:inline-flex; align-items:center; justify-content:center; inline-size:32px; block-size:32px;
+  box-sizing:border-box; border-radius:999px; border:1px solid var(--al-border-strong); color:var(--al-text-secondary)}
+.stp-fake__s.is-done .stp-fake__c{border-color:var(--al-border-brand); background:var(--al-bg-brand-subtle); color:var(--al-text-brand)}
+.stp-fake__s.is-cur .stp-fake__c{border-color:var(--al-bg-brand); background:var(--al-bg-brand); color:var(--al-text-on-brand)}
+.stp-fake__s.is-flat .stp-fake__c{border-color:var(--al-border-default); color:var(--al-text-secondary)}
+.stp-fake__s.is-flat.is-brand .stp-fake__c{border-color:var(--al-border-brand); color:var(--al-text-brand)}
+.stp-fake--click .stp-fake__l{text-decoration:underline; color:var(--al-text-brand)}
+"""
+
+
 CHROME_MENU = """
 /* ── páginas do Menu ──
    Casca do site. O menu em si é sempre o .al-menu, do menu.css real. */
@@ -26263,7 +26805,7 @@ HTML = (
     + CSS_REAL +
     '\n</style>\n<style>\n/* ═══ Chrome do site ═══ */\n' + CHROME + CHROME_ICON + CHROME_AVATAR + CHROME_SELECT
     + CHROME_CHECKBOX + CHROME_RADIO + CHROME_SWITCH + CHROME_INPUT + CHROME_TEXTAREA + CHROME_PASSWORD
-    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_MENU + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
+    + CHROME_DIVIDER + CHROME_LINK + CHROME_PROGRESS + CHROME_PAGINATION + CHROME_NUMBER_FIELD + CHROME_MENU + CHROME_STEPPER + CHROME_CARD + CHROME_TAB + CHROME_ACCORDION + CHROME_MODAL + CHROME_DRAWER + CHROME_SIDEBAR + CHROME_BREADCRUMB + CHROME_TOOLTIP + CHROME_TOAST + CHROME_ALERT + CHROME_MOTION
     + '</style>\n\n'
     '<div class="shell">\n' + RAIL + '\n<main class="main" id="conteudo" tabindex="-1">' + TOPBAR + '<div class="inner">\n'
     + '\n'.join(html for _, _, html in PAGES) + '\n' + FOOTER +
@@ -26274,6 +26816,7 @@ HTML = (
     + PASSWORD_JS + JS_PASSWORD + JS_DIVIDER_DATA + JS_DIVIDER + JS_LINK_DATA + JS_LINK + JS_PROGRESS_DATA + JS_PROGRESS + JS_PAGINATION_DATA + JS_PAGINATION
     + NF_JS + JS_NUMBER_FIELD
     + MENU_JS.replace('</', '<\\/') + JS_MENU_DATA + JS_MENU
+    + JS_STEPPER_DATA + JS_STEPPER
     + JS_CARD_DATA + JS_CARD
     + TAB_JS_INLINE + JS_TAB_DATA + JS_TAB
     + JS_ACCORDION_DATA + JS_ACCORDION + MOD_JS.replace('</', '<\\/') + JS_MODAL_DATA + JS_MODAL
