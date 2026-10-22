@@ -112,7 +112,14 @@
         timer = setTimeout(update, 100);
       });
     }
-    window.addEventListener('resize', update);
+    // A carousel born hidden (a closed Tab panel, a Modal, an Accordion) has
+    // no width yet: both arrows would start disabled. Watching the viewport's
+    // size updates it the moment it shows, and on every resize after that.
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(update).observe(viewport);
+    } else {
+      window.addEventListener('resize', update);
+    }
     update();
   }
 
