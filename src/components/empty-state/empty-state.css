@@ -1,0 +1,104 @@
+/* AL Design System - Empty state
+ * Written by hand. Depends on al-foundation.css and al-empty-state-tokens.css,
+ * in that order.
+ *
+ * No value here is literal: color, space, radius and typography come in
+ * through var(--al-empty-state-*). The check.py next to it rejects the file if
+ * any escapes.
+ *
+ * MARKUP CONTRACT
+ *
+ *   <section class="al-empty-state" aria-labelledby="es-title">
+ *     <svg class="al-empty-state__icon" aria-hidden="true">...</svg>
+ *     <div class="al-empty-state__text">
+ *       <h2 class="al-empty-state__title" id="es-title">No projects yet</h2>
+ *       <p class="al-empty-state__description">Projects you create show up
+ *         here. <a class="al-link" href="/docs">Learn more</a></p>
+ *     </div>
+ *     <button class="al-btn al-btn--primary" type="button">Create project</button>
+ *   </section>
+ *
+ *   Icon, description and button are optional (rules 9, 13, 16). At most one
+ *   button, always Primary (rule 15); a second action is a Link in the
+ *   description (rule 18).
+ *
+ *   After a search or filter (decision A=a), the empty state is rendered into
+ *   a container with role="status", so it is announced once. On first load it
+ *   is static, with no role.
+ *
+ * THE TITLE IS ALWAYS A HEADING (B=a), THE LEVEL BELONGS TO THE PAGE
+ *   The class doesn't pin a tag (rule 19), same as the Card.
+ *
+ * THE BORDER IS OUTSIDE
+ *   In Figma the stroke is OUTSIDE. Here it is a 1px shadow with no blur, the
+ *   same as the Card Border: the 48 of padding discounts nothing.
+ *
+ * ONLY ON bg-canvas OR bg-surface (rule 5). Nothing here stops it; it is a
+ * usage rule.
+ *
+ * HIGH CONTRAST
+ *   In `forced-colors` the shadow is removed and the box would vanish: it
+ *   gets an outline in the system's text color, the same as the Card.
+ */
+
+.al-empty-state {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--al-empty-state-gap-action);
+  width: 100%;
+  max-width: var(--al-empty-state-max-width);
+  margin-inline: auto;
+  padding: var(--al-empty-state-padding);
+  border-radius: var(--al-empty-state-radius);
+  background-color: var(--al-empty-state-bg);
+  box-shadow: 0 0 0 var(--al-empty-state-border-width) var(--al-empty-state-border);
+  text-align: center;
+}
+
+/* The box gap is gap-action (text -> button). Icon -> text is shorter, so the
+   text block pulls itself up by the difference (24 - 16 = 8). */
+.al-empty-state__icon {
+  flex: none;
+  width: var(--al-empty-state-icon-size);
+  height: var(--al-empty-state-icon-size);
+  color: var(--al-empty-state-icon);
+}
+
+.al-empty-state__icon + .al-empty-state__text {
+  margin-top: calc(var(--al-empty-state-gap-icon) - var(--al-empty-state-gap-action));
+}
+
+.al-empty-state__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-empty-state-gap-text);
+}
+
+.al-empty-state__title {
+  margin: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-empty-state-title-font-size);
+  line-height: var(--al-empty-state-title-line-height);
+  font-weight: var(--al-empty-state-title-font-weight);
+  letter-spacing: var(--al-empty-state-title-tracking);
+  color: var(--al-empty-state-title);
+}
+
+.al-empty-state__description {
+  margin: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-empty-state-description-font-size);
+  line-height: var(--al-empty-state-description-line-height);
+  font-weight: var(--al-empty-state-description-font-weight);
+  letter-spacing: var(--al-empty-state-description-tracking);
+  color: var(--al-empty-state-description);
+}
+
+/* ---------------------------------------------------------- high contrast */
+@media (forced-colors: active) {
+  .al-empty-state {
+    outline: var(--al-empty-state-border-width) solid CanvasText;
+  }
+}
