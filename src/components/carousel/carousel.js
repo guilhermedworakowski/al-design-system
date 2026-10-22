@@ -1,8 +1,9 @@
 /* AL Design System - Carousel, arrows, dots and announcement
  *
  * What it does on every .al-carousel inside `root` (usage rules 13-22):
- *   - previous / next scroll by one page: the viewport's own width, and the
- *     snap lands it on a slide start (rule 14, A=a);
+ *   - previous / next scroll by one page (rule 14, A=a): next starts at the
+ *     first slide not fully in view, so the one cut at the edge is never
+ *     skipped; previous goes back as far as one viewport allows;
  *   - the arrows get `disabled` at the ends - no loop (rule 13). When the
  *     arrow that has focus turns disabled, focus moves to the other one, so
  *     it never falls back to <body>;
@@ -78,9 +79,24 @@
       announce = false;
     }
 
+    // a slide's start, in the viewport's scroll coordinates
+    function start(s) { return s.offsetLeft - slides[0].offsetLeft; }
+
+    // Next: the first slide not fully in view becomes the first one - a slide
+    // cut at the edge is never skipped. Previous: the mirror, the earliest
+    // slide that still fits one viewport back.
     function page(dir) {
       announce = true;
-      viewport.scrollBy({ left: dir * viewport.clientWidth });
+      var pos = inView();
+      var left;
+      if (dir > 0) {
+        left = start(slides[Math.min(pos.last, slides.length - 1)]);
+      } else {
+        var floor = viewport.scrollLeft - viewport.clientWidth;
+        var target = slides.filter(function (s) { return start(s) >= floor - 1; })[0];
+        left = Math.min(start(target), start(slides[Math.max(pos.first - 2, 0)]));
+      }
+      viewport.scrollTo({ left: left });
     }
 
     if (prev) prev.addEventListener('click', function () { page(-1); });
