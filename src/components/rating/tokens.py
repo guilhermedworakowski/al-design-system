@@ -69,6 +69,7 @@ GEOM = {
   'star-size':     'iconSize.24',
   'star-stroke':   'border.width.2',
   'gap':           'space.4',
+  'label-gap':     'space.8',
   'focus-radius':  'radius.sm',
 }
 

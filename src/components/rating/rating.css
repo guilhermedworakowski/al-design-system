@@ -1,0 +1,159 @@
+/* AL Design System - Rating
+ *
+ * A radio group of five whole stars (APG rating pattern, rule 15). The radios
+ * are native and sit invisible on top of each star: the browser gives the
+ * single Tab stop, the arrows that move and check (rule 17) and the group
+ * announcement. No script.
+ *
+ *   <fieldset class="al-rating">
+ *     <legend class="al-rating__label">Como foi a entrega?</legend>
+ *     <div class="al-rating__stars">
+ *       <label class="al-rating__star">
+ *         <input class="al-rating__input" type="radio" name="entrega" value="1"
+ *                aria-label="1 estrela">
+ *         <svg class="al-rating__glyph" viewBox="0 0 24 24" aria-hidden="true">
+ *           <path d="..."/></svg>
+ *       </label>
+ *       ... x5
+ *     </div>
+ *   </fieldset>
+ *
+ * READ-ONLY IS ANOTHER MARKUP (rule 12, H=a)
+ *
+ *   <span class="al-rating al-rating--readonly" role="img"
+ *         aria-label="4,3 de 5 estrelas">
+ *     <span class="al-rating__stars">
+ *       <svg class="al-rating__glyph al-rating__glyph--on" ...> x4 (rounded)
+ *       <svg class="al-rating__glyph" ...> x1
+ *     </span>
+ *   </span>
+ *   No radios, no focus, no hover. Looks the same as Default (rule 14).
+ *
+ * WHICH STARS ARE ON
+ *
+ *   A star is on when its radio is checked or a later one is: `:has()` on the
+ *   star and on its following siblings. Nothing checked = all off (rule 8).
+ */
+
+.al-rating {
+  display: flex;
+  flex-direction: column;
+  gap: var(--al-rating-label-gap);
+  margin: 0;
+  padding: 0;
+  border: none;
+  min-inline-size: 0;
+  font-family: var(--al-font-sans);
+  font-size: var(--al-rating-font-size);
+  line-height: var(--al-rating-line-height);
+  font-weight: var(--al-rating-font-weight);
+}
+
+.al-rating__label {
+  padding: 0;
+  color: var(--al-rating-label-text);
+}
+
+.al-rating__stars {
+  display: flex;
+  gap: var(--al-rating-gap);
+}
+
+.al-rating__star {
+  --_ink: var(--al-rating-star-off);
+  --_fill: none;
+
+  position: relative;
+  display: block;
+  inline-size: var(--al-rating-star-size);
+  block-size: var(--al-rating-star-size);
+  border-radius: var(--al-rating-focus-radius);
+  cursor: pointer;
+}
+
+/* the radio covers the star: it takes the click and the focus, and stays
+   in the accessibility tree (never display:none) */
+.al-rating__input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.al-rating__glyph {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  fill: var(--_fill);
+  stroke: var(--_ink);
+  stroke-width: var(--al-rating-star-stroke);
+  stroke-linejoin: round;
+  pointer-events: none;
+  transition:
+    fill var(--al-motion-duration-feedback) var(--al-motion-easing-exit),
+    stroke var(--al-motion-duration-feedback) var(--al-motion-easing-exit);
+}
+
+/* --------------------------------------------------------------- states */
+/* hover preview: the hovered star and the ones before it (rule 10). The
+   on rule below comes later, so a checked star stays brand. */
+.al-rating:not(:disabled) .al-rating__star:hover,
+.al-rating:not(:disabled) .al-rating__star:has(~ .al-rating__star:hover) {
+  --_ink: var(--al-rating-star-preview);
+  --_fill: var(--al-rating-star-preview);
+}
+
+/* on: checked, or before the checked one */
+.al-rating__star:has(.al-rating__input:checked),
+.al-rating__star:has(~ .al-rating__star .al-rating__input:checked),
+.al-rating__glyph--on {
+  --_ink: var(--al-rating-star-on);
+  --_fill: var(--al-rating-star-on);
+}
+
+/* focus: the ring on the star that holds it (rule 18); the box gets
+   bg-canvas so the ring's gap shows (audit A4) */
+.al-rating__star:has(.al-rating__input:focus-visible) {
+  background-color: var(--al-rating-focus-gap);
+  box-shadow: var(--al-focus-ring-default);
+}
+
+/* disabled - last, because it wins over all. The on stars stay filled. */
+.al-rating:disabled .al-rating__star {
+  --_ink: var(--al-rating-star-disabled);
+  cursor: not-allowed;
+}
+
+.al-rating:disabled .al-rating__star:has(.al-rating__input:checked),
+.al-rating:disabled .al-rating__star:has(~ .al-rating__star .al-rating__input:checked) {
+  --_fill: var(--al-rating-star-disabled);
+}
+
+.al-rating:disabled .al-rating__label {
+  color: var(--al-rating-label-text-disabled);
+}
+
+/* read-only: the glyphs paint themselves, nothing reacts */
+.al-rating--readonly .al-rating__glyph {
+  fill: none;
+  stroke: var(--al-rating-star-off);
+  inline-size: var(--al-rating-star-size);
+  block-size: var(--al-rating-star-size);
+}
+
+.al-rating--readonly .al-rating__glyph--on {
+  fill: var(--al-rating-star-on);
+  stroke: var(--al-rating-star-on);
+}
+
+/* ENTER - the destination states take the enter curve */
+.al-rating:not(:disabled) .al-rating__star:hover .al-rating__glyph,
+.al-rating:not(:disabled) .al-rating__star:has(~ .al-rating__star:hover) .al-rating__glyph {
+  transition-timing-function: var(--al-motion-easing-enter);
+}
+
+/* --------------------------------------------------------- environment */
+@media (prefers-reduced-motion: reduce) {
+  .al-rating__glyph { transition: none; }
+}
