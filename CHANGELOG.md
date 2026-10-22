@@ -2,6 +2,12 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.7.0] - 2026-10-22
+
+### Added
+- **Empty state**, in Feedback: takes the place of content that is not there and says what is empty, why and what to do. A `<section>` named by its heading, on `bg-surface-raised` with a 1px `border-default` outline drawn outside, up to 600px, only on `bg-canvas` or `bg-surface`. Optional icon and description, at most one Primary button, no Link inside. After a search or filter it renders inside `role="status"`. No script, 15 tokens (one declared width), 23 usage rules, its own CSS and accessibility gates, and a page in the documentation site in English and Portuguese.
+- No new Foundation token. One declared contrast exception: the box border, decorative like the Card's.
+
 ## [1.6.0] - 2026-10-22
 
 ### Added
@@ -191,6 +197,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
+[1.7.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.6.0...v1.7.0
 [1.6.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.3.0...v1.4.0

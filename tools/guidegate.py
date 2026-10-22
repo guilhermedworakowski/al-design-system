@@ -27,7 +27,7 @@ APPROVED = {
     'modal': 29, 'drawer': 30, 'sidebar': 33, 'breadcrumb': 28, 'tooltip': 28,
     'toast': 27, 'alert': 29, 'link': 22, 'progress': 24, 'pagination': 24,
     'number-field': 24,
-    'menu': 26, 'stepper': 24,
+    'menu': 26, 'stepper': 24, 'empty-state': 23,
 }
 
 # The Icon gets no guidelines: only the Foundation icons page.
