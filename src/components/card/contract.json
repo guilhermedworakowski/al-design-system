@@ -28,7 +28,9 @@
       "forbid": [
         "tabindex",
         "onclick",
-        "role"
+        "role",
+        "disabled",
+        "aria-disabled"
       ]
     },
     {
@@ -85,13 +87,6 @@
       "require": {
         "type": "button"
       }
-    },
-    {
-      "id": "nothing-clickable-inside",
-      "rule": 15,
-      "why": "Any other target inside a clickable card overlaps the stretched link.",
-      "on": ".al-card--clickable button, .al-card--clickable input, .al-card--clickable select",
-      "absent": true
     }
   ],
   "manual": [
@@ -100,9 +95,14 @@
       "why": "--border and --elevated never together; --spaced and --tight never together."
     },
     {
-      "id": "no-disabled",
-      "rule": 19,
-      "why": "A card is never disabled: it hides or explains itself in the content."
+      "id": "nothing-clickable-inside",
+      "rule": 15,
+      "why": "Nothing interactive inside a clickable card besides the title link: it would overlap the stretched link."
+    },
+    {
+      "id": "no-handlers",
+      "rule": 16,
+      "why": "No event handler on the card: the title link is what acts."
     }
   ]
 }

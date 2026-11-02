@@ -71,7 +71,9 @@
       ],
       "require": {
         "type": "button",
-        "aria-expanded": true
+        "aria-label": true,
+        "aria-expanded": true,
+        "aria-controls": true
       },
       "ref": [
         "aria-controls"
@@ -82,7 +84,22 @@
     {
       "id": "one-per-page",
       "rule": 7,
-      "why": "One live Breadcrumb per page; samples sit under inert."
+      "why": "One live Breadcrumb per page, never inside a Card, Modal or Drawer; samples sit under inert."
+    },
+    {
+      "id": "trail-shape",
+      "rule": 19,
+      "why": "The <ol> is the only child and holds only items; at least 2 levels; the last is the current page, with text and no separator; every other item ends with a separator."
+    },
+    {
+      "id": "collapse",
+      "rule": 5,
+      "why": "At 5 levels or more the trail collapses to first, second, … and current; the … is the third of four items, and only one."
+    },
+    {
+      "id": "more-menu",
+      "rule": 17,
+      "why": "The … opens a <ul class=\"al-tabs al-tabs--square al-breadcrumb__menu\"> in the same item: links (<a href class=\"al-tab\"> with a label), never an actions menu."
     }
   ]
 }

@@ -76,6 +76,15 @@
     {
       "id": "template-only-child",
       "why": "Each <template> has the .al-toast as its only child."
+    },
+    {
+      "id": "exact-shape",
+      "why": "On the AL site, a toast is exactly icon, text and X, in that order, one status modifier, the status icon drawn from the Foundation; checked by the a11y.py, not a rule for other products."
+    },
+    {
+      "id": "region-live",
+      "rule": 22,
+      "why": "The two live areas are born empty, and the region is never under inert, aria-hidden or a <template>."
     }
   ]
 }

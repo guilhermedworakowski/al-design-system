@@ -78,6 +78,15 @@
     {
       "id": "no-x-on-warning-danger",
       "why": "Warning and Danger have no X."
+    },
+    {
+      "id": "exact-shape",
+      "why": "On the AL site, an Alert is exactly body (icon, text, optional X) and optional actions, in that order, with the status icon drawn from the Foundation; checked by the a11y.py."
+    },
+    {
+      "id": "actions",
+      "rule": 17,
+      "why": "One or two actions; with two, Ghost first and Primary after; nothing else interactive inside."
     }
   ]
 }

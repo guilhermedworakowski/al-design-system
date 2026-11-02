@@ -70,8 +70,9 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr, composite  # noqa: E402
-from htmltree import Tree, walk, classes, has, ancestors, text_of  # noqa: E402
+from htmltree import Tree, walk, classes, has, text_of  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 DRW = json.load(open(comp_out('drawer', 'tokens.json')))
 BTN = json.load(open(comp_out('button', 'tokens.json')))
@@ -169,7 +170,11 @@ def markup_contract(path):
     nodes = list(walk(t.root))
     ids = {n['attrs']['id']: n for n in nodes if 'id' in n['attrs']}
 
-    checked, problems = 0, []
+    # The rules of one Drawer's parts are in contract.json, checked by
+    # tools/contract.py (samples under inert skipped: they sit open on purpose).
+    # What stays below compares parts with each other - the `manual` entries.
+    problems, _ = contract.check('drawer', t, skip='[inert]')
+    checked = 0
 
     # (k) every opener points to a <dialog>
     for n in nodes:
@@ -185,19 +190,8 @@ def markup_contract(path):
         if not has(n, 'al-drawer'):
             continue
         checked += 1
-        frozen = any('inert' in p['attrs'] for p in ancestors(n))
-
-        # (a)
         if tag != 'dialog':
-            problems.append(f'line {ln}: .al-drawer on <{tag}> - the Drawer is a native <dialog> (rule 24)')
             continue
-        # (b)
-        if 'open' in a and not frozen:
-            problems.append(f'line {ln}: <dialog open> - the Drawer opens through showModal(), never '
-                            f'through the attribute (rule 24)')
-        # (j)
-        if any(has(p, 'al-drawer') for p in ancestors(n)):
-            problems.append(f'line {ln}: Drawer inside a Drawer (rule 4)')
         # (m)
         sizes = [c for c in classes(n) if c in ('al-drawer--sm', 'al-drawer--md', 'al-drawer--lg')]
         if len(sizes) > 1 or any(c.startswith('al-drawer--') and c not in sizes for c in classes(n)):
@@ -206,21 +200,12 @@ def markup_contract(path):
         kids = [k for k in n['kids']]
         titles = [d for d in walk(n) if has(d, 'al-drawer__title')]
         headers = [k for k in kids if has(k, 'al-drawer__header')]
-        # (d)
-        if len(titles) != 1 or not text_of(titles[0]):
-            problems.append(f'line {ln}: the Drawer needs exactly one .al-drawer__title with '
-                            f'text (rule 6)')
-        elif len(headers) != 1 or titles[0] not in list(walk(headers[0])):
-            problems.append(f'line {ln}: the title lives inside the .al-drawer__header (rule 6)')
         # (c)
         lab = a.get('aria-labelledby')
-        if not lab:
-            problems.append(f'line {ln}: no aria-labelledby - the <dialog> doesn\'t name itself '
-                            f'(rule 25)')
-        elif lab not in ids or not has(ids[lab], 'al-drawer__title'):
+        if lab and (lab not in ids or not has(ids[lab], 'al-drawer__title')):
             problems.append(f'line {ln}: aria-labelledby="{lab}" does not point to a '
                             f'.al-drawer__title (rule 25)')
-        elif titles and ids[lab] is not titles[0]:
+        elif lab and titles and ids[lab] is not titles[0]:
             problems.append(f'line {ln}: aria-labelledby points to the title of ANOTHER Drawer (rule 25)')
 
         # (e) order header, body, actions; actions optional
@@ -231,8 +216,6 @@ def markup_contract(path):
         if any(o is None for o in order):
             problems.append(f'line {ln}: direct child without a Drawer class - no divider or '
                             f'loose piece between the parts (rule 9)')
-        if 'al-drawer__content' not in order:
-            problems.append(f'line {ln}: the .al-drawer__content is missing')
 
         # (i) the X
         head = headers[0] if headers else None
@@ -240,18 +223,6 @@ def markup_contract(path):
         for x in x_btns:
             if not has(x, 'al-icon-btn'):
                 problems.append(f'line {x["line"]}: the only button in the header is the X, an Icon Button (rule 26)')
-                continue
-            if not x['attrs'].get('aria-label', '').strip():
-                problems.append(f'line {x["line"]}: X without aria-label - an Icon Button without a name is a mute button (rule 26)')
-            if x['attrs'].get('type') != 'button':
-                problems.append(f'line {x["line"]}: X without type="button"')
-            if 'data-al-drawer-close' not in x['attrs']:
-                problems.append(f'line {x["line"]}: X without data-al-drawer-close - it doesn\'t close')
-            for s in walk(x):
-                if s['tag'] == 'svg' and s['attrs'].get('aria-hidden') != 'true':
-                    problems.append(f'line {s["line"]}: the X\'s svg without aria-hidden="true"')
-        if len(x_btns) > 1:
-            problems.append(f'line {ln}: more than one button in the header (only the X)')
         has_x = len(x_btns) == 1 and has(x_btns[0], 'al-icon-btn')
 
         # other buttons without a visible label (besides the X)
@@ -261,13 +232,8 @@ def markup_contract(path):
 
         actions_box = [k for k in kids if has(k, 'al-drawer__actions')]
         actions = []
-        if len(actions_box) > 1:
-            problems.append(f'line {ln}: more than one .al-drawer__actions')
-        elif actions_box:
+        if len(actions_box) == 1:
             actions = [d for d in walk(actions_box[0]) if is_action(d)]
-            # (f)
-            if not 1 <= len(actions) <= 2:
-                problems.append(f'line {ln}: {len(actions)} actions in the footer - one or two (rule 20)')
             # (g)
             if len(actions) == 2:
                 first, last = actions
@@ -279,12 +245,6 @@ def markup_contract(path):
                                     f'a destructive one opens a Modal, it is not the Drawer\'s main action (rules 20 and 22)')
             if len(actions) == 1 and has(actions[0], 'al-btn--danger'):
                 problems.append(f'line {actions[0]["line"]}: Danger is not the Drawer\'s main action (rule 22)')
-            # (l) type
-            for ac in actions:
-                if ac['tag'] == 'button' and ac['attrs'].get('type') not in ('button', 'submit', 'reset'):
-                    problems.append(f'line {ac["line"]}: <button> without type - inside a <form> the '
-                                    f'default is submit')
-
         # (h) always a visible way out
         footer_exit = any('data-al-drawer-close' in d['attrs'] for d in actions) or \
             any(d['tag'] == 'form' and d['attrs'].get('method') == 'dialog' for d in walk(n))
@@ -331,7 +291,7 @@ def run():
         for p in mk:
             print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} drawer(s) checked, 13 rules (a-m)')
+        print(f'     {checked} drawer(s) checked, {len(contract.whys("drawer"))} rules of contract.json')
         for p in mk:
             print(f'     PROBLEM: {p}')
 

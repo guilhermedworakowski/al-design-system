@@ -75,6 +75,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_src, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr  # noqa: E402
 from htmltree import Tree, walk, classes, has, ancestors, text_of  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -247,14 +248,10 @@ def check_region(regions, problems):
         if not regions:
             return
     for r in regions:
-        a = r['attrs']
-
         def bad(msg):
             problems.append(f'line {r["line"]}: {msg}')
 
-        # (a)
-        if r['tag'] != 'section' or a.get('popover') != 'manual' or not a.get('aria-label', '').strip():
-            bad('region = <section class="al-toast-region" aria-label popover="manual"> (rule 23)')
+        # (a) tag, name and popover are in contract.json
         under = list(ancestors(r))
         if any(x['tag'] == 'template' for x in under):
             bad('the region is inside a <template> - it exists from page load (rule 23)')
@@ -276,7 +273,10 @@ def markup_contract(html):
     t = Tree()
     t.feed(html)
     nodes = list(walk(t.root))
-    problems = []
+    # The rules of each part on its own are in contract.json, checked by
+    # tools/contract.py. What stays here is the exact shape the site uses (the
+    # children in order, the English wording, the icon drawn) and the counts.
+    problems, _ = contract.check('toast', t, skip='[inert]')
 
     check_region([n for n in nodes if has(n, 'al-toast-region')], problems)
 
@@ -333,7 +333,7 @@ def run():
             print(f'     PENDING: {p}')
     else:
         summary = ', '.join(f'{s} {n}' for s, n in by_status.items())
-        print(f'     1 region + {live} template(s) checked, 9 rules (a-i) - {summary}; '
+        print(f'     1 region + {live} template(s) checked, {len(contract.whys("toast"))} rules of contract.json - {summary}; '
               f'{frozen} frozen sample(s) under inert')
         for p in mk:
             print(f'     PROBLEM: {p}')

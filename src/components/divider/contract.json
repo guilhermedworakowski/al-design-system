@@ -27,19 +27,18 @@
       "why": "A focusable separator is a Window Splitter, another component.",
       "on": ".al-divider",
       "forbid": [
-        "tabindex",
-        "onclick"
+        "tabindex"
       ]
     },
     {
       "id": "vertical-announced",
       "why": "A vertical divider that is announced says so; the separator is horizontal by default.",
       "on": ".al-divider--vertical",
-      "when": {
-        "role": "separator"
-      },
       "require": {
         "aria-orientation": "vertical"
+      },
+      "unless": {
+        "aria-hidden": "true"
       }
     },
     {
@@ -61,6 +60,21 @@
       "id": "hr-parent",
       "rule": 15,
       "why": "<hr> never goes directly inside <ul>/<ol> - invalid HTML; use <li role=\"separator\">."
+    },
+    {
+      "id": "no-content",
+      "rule": 11,
+      "why": "The separator takes no text; name the group with a heading."
+    },
+    {
+      "id": "horizontal-orientation",
+      "rule": 14,
+      "why": "A horizontal divider never says aria-orientation=\"vertical\"."
+    },
+    {
+      "id": "never-clickable",
+      "rule": 16,
+      "why": "No event handler, and no role other than separator."
     }
   ]
 }

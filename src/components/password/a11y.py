@@ -54,6 +54,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 # this gate compares the ratio already rounded to 2 places, as it always has
 from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -190,77 +191,29 @@ def attr(tag, name):
 
 
 def markup(path):
-    if not os.path.exists(path):
-        return ([f'HTML not found at {path} - markup contract NOT measured'], 0)
-
-    html = markup_only(open(path, encoding='utf-8').read())
-    findings = []
-
-    label_of = {}
-    for lb in re.findall(r'<label\b[^>]*>', html):
-        if 'al-password__label' in (attr(lb, 'class') or '') and attr(lb, 'for'):
-            label_of[attr(lb, 'for')] = True
-
-    # each whole component, to match the field and the button of the same block
-    blocks = re.findall(r'<div class="al-password">(.*?)</div>\s*(?:<p\b[^>]*>.*?</p>\s*)?</div>',
-                        html, flags=re.S)
-    n_fields = 0
-    for block in blocks:
-        field = re.search(r'<input\b[^>]*al-password__field[^>]*>', block)
-        if not field:
+    """The rules of each field and its eye are in contract.json
+    (tools/contract.py checks them). What stays here ties the eye to its own
+    field: the `manual` entries of contract.json."""
+    findings, n, html = contract.audit('password', path, '.al-password__field')
+    if not html:
+        return (findings, n)
+    html = markup_only(html)
+    for block in re.findall(r'<div\b[^>]*class="[^"]*al-password__control[^"]*"[^>]*>.*?</button>', html, flags=re.S):
+        tag = re.search(r'<input\b[^>]*al-password__field[^>]*>', block)
+        btag = re.search(r'<button\b[^>]*al-password__toggle[^>]*>', block)
+        if not tag:
             continue
-        n_fields += 1
-        tag = field.group(0)
-        cid = attr(tag, 'id')
-        if not cid:
-            findings.append(f'(a) <input> without id: {tag[:70]}')
-            continue
-        n_id = len(re.findall(rf'\bid="{re.escape(cid)}"', html))
-        if n_id > 1:
-            findings.append(f'(j) id "{cid}" appears {n_id} times')
-        if cid not in label_of:
-            findings.append(f'(a) no <label class="al-password__label" for="{cid}">')
-        if re.search(r'\baria-label=', tag) and cid in label_of:
-            findings.append(f'(c) field "{cid}" uses aria-label when there is a visible label')
-        if re.search(r'\bmaxlength=', tag):
-            findings.append(f'(d) field "{cid}" uses maxlength')
-        if attr(tag, 'type') != 'password':
-            findings.append(f'(e) field "{cid}" does not start as type="password"')
+        tag, cid = tag.group(0), attr(tag.group(0), 'id')
         if attr(tag, 'autocomplete') not in ('current-password', 'new-password'):
-            findings.append(f'(f) field "{cid}": autocomplete must be current-password or new-password')
-        if attr(tag, 'spellcheck') != 'false' or attr(tag, 'autocapitalize') != 'none':
-            findings.append(f'(f) field "{cid}": missing spellcheck="false" or autocapitalize="none"')
-
-        if 'aria-invalid="true"' in tag:
-            desc = attr(tag, 'aria-describedby')
-            if not desc:
-                findings.append(f'(b) field "{cid}" is in error and has no aria-describedby')
-            else:
-                for ref in desc.split():
-                    m = re.search(rf'<(\w+)\b[^>]*\bid="{re.escape(ref)}"[^>]*>(.*?)</\1>', html, flags=re.S)
-                    if not m:
-                        findings.append(f'(b) field "{cid}" is described by "{ref}", which does not exist')
-                    elif not re.sub(r'<[^>]+>', '', m.group(2)).strip():
-                        findings.append(f'(b) field "{cid}": the message "{ref}" is empty')
-
-        button = re.search(r'<button\b[^>]*al-password__toggle[^>]*>(.*?)</button>', block, flags=re.S)
-        if not button:
-            findings.append(f'(g) field "{cid}" without the eye button')
+            findings.append(f'[autocomplete-value] field "{cid}": autocomplete must be current-password or new-password')
+        if not btag:
             continue
-        btag = re.match(r'<button\b[^>]*>', button.group(0)).group(0)
-        if attr(btag, 'type') != 'button':
-            findings.append(f'(g) eye of "{cid}" without type="button" - it would submit the form')
+        btag = btag.group(0)
         if attr(btag, 'aria-controls') != cid:
-            findings.append(f'(g) eye of "{cid}": aria-controls does not point to the field')
-        if not (attr(btag, 'aria-label') or '').strip():
-            findings.append(f'(g) eye of "{cid}" without aria-label')
-        for svg in re.findall(r'<svg\b[^>]*>', button.group(1)):
-            if 'aria-hidden="true"' not in svg or 'focusable="false"' not in svg:
-                findings.append(f'(h) eye icon of "{cid}" without aria-hidden/focusable')
+            findings.append(f'[eye-points-to-field] eye of "{cid}": aria-controls does not point to its own field')
         if re.search(r'\sdisabled\b', tag) and not re.search(r'\sdisabled\b', btag):
-            findings.append(f'(i) field "{cid}" is disabled and the eye is not')
-
-    return (findings, n_fields)
+            findings.append(f'[disabled-together] field "{cid}" is disabled and the eye is not')
+    return (findings, n)
 
 
 def run():
@@ -310,7 +263,7 @@ def run():
         for a in findings:
             print('   ', a)
     else:
-        print('    the ten rules pass on every field')
+        print(f'    the {len(contract.whys("password"))} rules of contract.json pass on every field')
     print('-' * 78)
 
     json.dump({
@@ -321,18 +274,7 @@ def run():
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': n_fields,
         'markupPending': n_fields == 0,
-        'markupRules': [
-            'every field has an id and a label <label for> pointing to it',
-            'a field in error has aria-invalid="true" and aria-describedby to a non-empty message',
-            'no field uses aria-label when there is a visible label',
-            'no field uses maxlength',
-            'the field starts as type="password"',
-            'autocomplete current/new-password, spellcheck="false", autocapitalize="none"',
-            'the eye is a <button type="button"> with aria-controls and aria-label',
-            'eye icons with aria-hidden="true" focusable="false"',
-            'disabled field -> disabled eye',
-            'the field id is unique in the document',
-        ],
+        'markupRules': contract.whys('password'),
         'fails': len(fails),
         'exceptions': {k: len([l for l in exceptions if l['exc'] == k]) for k in PENDING},
         'rows': rows,

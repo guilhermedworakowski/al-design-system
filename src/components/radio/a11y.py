@@ -66,6 +66,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 # this gate compares the ratio already rounded to 2 places, as it always has
 from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -186,51 +187,27 @@ def text(fragment):
 
 
 def markup(path):
-    if not os.path.exists(path):
-        return ([f'HTML not found at {path} - markup contract NOT measured'], 0)
-
-    html = markup_only(open(path, encoding='utf-8').read())
-    findings = []
-
-    inputs = re.findall(r'<input\b[^>]*class="[^"]*al-radio__input[^"]*"[^>]*>', html)
-    blocks = re.findall(r'<label\b[^>]*class="[^"]*\bal-radio\b[^"]*"[^>]*>(.*?)</label>',
-                        html, flags=re.S)
-    inside = sum(len(re.findall(r'al-radio__input', b)) for b in blocks)
-
-    # (a)
-    if inside != len(inputs):
-        findings.append(f'(a) {len(inputs) - inside} input(s) outside <label class="al-radio">')
-    # Only inside a TAG: prose can quote role="radio" in <code> to say it is not used.
-    if re.search(r'<[a-zA-Z][^>]*\srole="radio"', html):
-        findings.append('(a) role="radio" on the page - the component is the native input')
+    """The rules of one radio are in contract.json (tools/contract.py checks
+    them). What stays here needs the whole question - every radio of a name,
+    and the fieldset around them: the `manual` entries of contract.json."""
+    findings, n, html = contract.audit('radio', path, '.al-radio__input')
+    if not html:
+        return (findings, n)
+    html = markup_only(html)
 
     names = {}
-    for tag in inputs:
-        if not re.search(r'\btype="radio"', tag):
-            findings.append(f'(a) input without type="radio": {tag[:70]}')
-        if 'aria-label' in tag:
-            findings.append(f'(b) input uses aria-label when there is a visible label: {tag[:70]}')
-        if 'aria-invalid' in tag:
-            findings.append(f'(e) aria-invalid on the radio - the error belongs to the question and goes on the fieldset: {tag[:70]}')
+    for tag in re.findall(r'<input\b[^>]*class="[^"]*al-radio__input[^"]*"[^>]*>', html):
         m = re.search(r'\bname="([^"]+)"', tag)
-        if not m:
-            findings.append(f'(c) radio without a name: {tag[:70]}')
-        else:
+        if m:
             names[m.group(1)] = names.get(m.group(1), 0) + 1
 
-    # (b) a visible, non-empty label in each block
-    for b in blocks:
-        m = re.search(r'<span\b[^>]*al-radio__label[^>]*>(.*?)</span>', b, flags=re.S)
-        if not m or not text(m.group(1)):
-            findings.append('(b) radio without a visible label in .al-radio__label')
+    # never-alone: each question has two options or more
+    for name, k in names.items():
+        if k < 2:
+            findings.append(f'[never-alone] name="{name}" has a single radio - a lone radio doesn\'t exist')
 
-    # (c) each question has two options or more
-    for name, n in names.items():
-        if n < 2:
-            findings.append(f'(c) name="{name}" has a single radio - a lone radio doesn\'t exist')
-
-    # (d) and (e) - per fieldset. Fieldsets don't nest on AL pages; if they ever
-    # do, this cut starts lying and needs to become a parser.
+    # group-in-fieldset and error-on-question - per fieldset. Fieldsets don't
+    # nest on AL pages; if they ever do, this cut starts lying and needs the tree.
     fieldsets = re.findall(r'(<fieldset\b[^>]*>)(.*?)</fieldset>', html, flags=re.S)
     name_in = {}
     for opening, body in fieldsets:
@@ -239,30 +216,25 @@ def markup(path):
             continue
         lg = re.search(r'<legend\b[^>]*>(.*?)</legend>', body, flags=re.S)
         if not lg or not text(lg.group(1)):
-            findings.append(f'(d) fieldset with radios and no visible <legend>: {opening[:60]}')
+            findings.append(f'[group-in-fieldset] fieldset with radios and no visible <legend>: {opening[:60]}')
         for name in inside_fs:
             name_in.setdefault(name, set()).add(opening)
         if 'aria-invalid="true"' in opening:
             m = re.search(r'aria-describedby="([^"]+)"', opening)
             if not m:
-                findings.append(f'(e) question in error without aria-describedby: {opening[:60]}')
+                findings.append(f'[error-on-question] question in error without aria-describedby: {opening[:60]}')
             else:
                 for ref in m.group(1).split():
                     if not re.search(rf'\bid="{re.escape(ref)}"', html):
-                        findings.append(f'(e) question is described by "{ref}", which does not exist')
+                        findings.append(f'[error-on-question] question is described by "{ref}", which does not exist')
     for name in names:
         where = name_in.get(name)
         if not where:
-            findings.append(f'(d) name="{name}" outside a <fieldset> - the question is not announced')
+            findings.append(f'[group-in-fieldset] name="{name}" outside a <fieldset> - the question is not announced')
         elif len(where) > 1:
-            findings.append(f'(d) name="{name}" spread over {len(where)} fieldsets')
+            findings.append(f'[group-in-fieldset] name="{name}" spread over {len(where)} fieldsets')
 
-    # (f)
-    for dot in re.findall(r'<span\b[^>]*al-radio__dot[^>]*>', html):
-        if 'aria-hidden="true"' not in dot:
-            findings.append(f'(f) dot without aria-hidden="true": {dot[:60]}')
-
-    return (findings, len(inputs))
+    return (findings, n)
 
 
 def run():
@@ -314,7 +286,7 @@ def run():
     elif n == 0:
         print('    PENDING - no radio in this HTML. Nothing measured is not nothing wrong.')
     else:
-        print('    the six rules pass on every radio')
+        print(f'    the {len(contract.whys("radio"))} rules of contract.json pass on every radio')
     print('-' * 78)
 
     json.dump({
@@ -325,14 +297,7 @@ def run():
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': n,
         'markupPending': n == 0,
-        'markupRules': [
-            'native input type="radio" inside <label class="al-radio">, no role="radio"',
-            'a visible, non-empty label, no aria-label',
-            'every radio has a name, and each name groups two options or more',
-            'the radios of a name live in a single <fieldset> with a visible <legend>',
-            'error on the fieldset: aria-invalid="true" + an aria-describedby that exists; never on the radio',
-            'decorative dot: aria-hidden="true"',
-        ],
+        'markupRules': contract.whys('radio'),
         'fails': len(fails),
         'exceptions': {k: len([l for l in exceptions if l['exc'] == k]) for k in PENDING},
         'codeOnlyStates': list(CODE_ONLY),

@@ -57,6 +57,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 # this gate compares the ratio already rounded to 2 places, as it always has
 from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -197,17 +198,15 @@ def attr(tag, name):
 
 
 def markup(path):
-    if not os.path.exists(path):
-        return ([f'HTML not found at {path} - markup contract NOT measured'], 0)
-
-    html = markup_only(open(path, encoding='utf-8').read())
-    findings = []
-
-    fields = re.findall(r'<input\b[^>]*class="[^"]*al-input__field[^"]*"[^>]*>', html)
-    labels = re.findall(r'<label\b[^>]*>', html)
-    label_of = {}
-    affixes_of = {}
-    for lb in labels:
+    """The rules of each field are in contract.json (tools/contract.py checks
+    them). What stays here crosses elements in a way the engine doesn't
+    express: the `manual` entries of contract.json."""
+    findings, n, html = contract.audit('input', path, '.al-input__field')
+    if not html:
+        return (findings, n)
+    html = markup_only(html)
+    label_of, affixes_of = {}, {}
+    for lb in re.findall(r'<label\b[^>]*>', html):
         target, cls = attr(lb, 'for'), attr(lb, 'class') or ''
         if not target:
             continue
@@ -216,51 +215,16 @@ def markup(path):
         elif 'al-input__affix' in cls:
             affixes_of.setdefault(target, []).append(attr(lb, 'id'))
 
-    for tag in fields:
+    for tag in re.findall(r'<input\b[^>]*class="[^"]*al-input__field[^"]*"[^>]*>', html):
         cid = attr(tag, 'id')
-        if not cid:
-            findings.append(f'(a) <input> without id: {tag[:70]}')
-            continue
-        n_id = len(re.findall(rf'\bid="{re.escape(cid)}"', html))
-        if n_id > 1:
-            findings.append(f'(h) id "{cid}" appears {n_id} times - the <label for> may link to another element')
-        if cid not in label_of:
-            findings.append(f'(a) no <label class="al-input__label" for="{cid}">')
-        if re.search(r'\baria-label=', tag) and cid in label_of:
-            findings.append(f'(d) field "{cid}" uses aria-label when there is a visible label')
-        if re.search(r'\bmaxlength=', tag):
-            findings.append(f'(e) field "{cid}" uses maxlength - the limit doesn\'t block typing')
-
-        if 'aria-invalid="true"' in tag:
-            desc = attr(tag, 'aria-describedby')
-            if not desc:
-                findings.append(f'(b) field "{cid}" is in error and has no aria-describedby')
-            else:
-                for ref in desc.split():
-                    m = re.search(rf'<(\w+)\b[^>]*\bid="{re.escape(ref)}"[^>]*>(.*?)</\1>', html, flags=re.S)
-                    if not m:
-                        findings.append(f'(b) field "{cid}" is described by "{ref}", which does not exist')
-                    elif not re.sub(r'<[^>]+>', '', m.group(2)).strip():
-                        findings.append(f'(b) field "{cid}" is in error and the message "{ref}" is empty')
-
-        affixes = affixes_of.get(cid, [])
-        if affixes:
-            names = (attr(tag, 'aria-labelledby') or '').split()
-            missing = [i for i in [label_of.get(cid)] + affixes if i and i not in names]
-            if not names:
-                findings.append(f'(c) field "{cid}" has an affix and no aria-labelledby')
-            elif missing:
-                findings.append(f'(c) field "{cid}": aria-labelledby does not include {missing}')
-
-        if re.search(r'\sreadonly\b', tag):
-            if not (attr(tag, 'value') or '').strip():
-                findings.append(f'(g) read-only field "{cid}" is empty - use "—" as the value')
-
-    for sp in re.findall(r'<span\b[^>]*class="[^"]*al-input__counter[^"]*"[^>]*>', html):
-        if 'aria-live=' not in sp:
-            findings.append(f'(f) counter without aria-live: {sp[:60]}')
-
-    return (findings, len(fields))
+        # label-in-name: with an affix, aria-labelledby reads the label too
+        if cid and affixes_of.get(cid) and label_of.get(cid):
+            if label_of[cid] not in (attr(tag, 'aria-labelledby') or '').split():
+                findings.append(f'[label-in-name] field "{cid}": aria-labelledby does not include the label "{label_of[cid]}"')
+        # readonly-empty-dash
+        if re.search(r'\sreadonly\b', tag) and not (attr(tag, 'value') or '').strip():
+            findings.append(f'[readonly-empty-dash] read-only field "{cid}" is empty - use "—" as the value')
+    return (findings, n)
 
 
 def run():
@@ -311,7 +275,7 @@ def run():
         for a in findings:
             print('   ', a)
     else:
-        print('    the eight rules pass on every field')
+        print(f'    the {len(contract.whys("input"))} rules of contract.json pass on every field')
     print('-' * 78)
 
     json.dump({
@@ -322,16 +286,7 @@ def run():
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': n_fields,
         'markupPending': n_fields == 0,
-        'markupRules': [
-            'every field has an id and a label <label for> pointing to it',
-            'a field in error has aria-invalid="true" and aria-describedby to a non-empty message',
-            'a field with an affix has aria-labelledby = label + affixes',
-            'no field uses aria-label when there is a visible label',
-            'no field uses maxlength',
-            'every counter declares aria-live',
-            'a read-only field has a value ("—" when empty)',
-            'the field id is unique in the document',
-        ],
+        'markupRules': contract.whys('input'),
         'fails': len(fails),
         'exceptions': {k: len([l for l in exceptions if l['exc'] == k]) for k in PENDING},
         'layerEffect': [

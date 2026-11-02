@@ -63,8 +63,9 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr  # noqa: E402
-from htmltree import Tree, walk, classes, has, ancestors, text_of  # noqa: E402
+from htmltree import Tree, walk, classes, has  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 CARD = json.load(open(comp_out('card', 'tokens.json')))
 
@@ -87,7 +88,6 @@ PAGES = {
     'elevated': ('bg-canvas', 'bg-surface'),
 }
 
-HEADINGS = {'h1', 'h2', 'h3', 'h4', 'h5', 'h6'}
 ACTIONABLE_ROLES = {'button', 'link', 'checkbox', 'radio', 'switch', 'menuitem', 'tab', 'option'}
 
 
@@ -186,54 +186,22 @@ def markup_contract(path):
     t = Tree()
     t.feed(open(path, encoding='utf-8').read())
 
-    checked, problems = 0, []
+    # The rules of each part are in contract.json, checked by tools/contract.py.
+    # What stays below needs a negation or the full list of interactive
+    # elements - the `manual` entries.
+    problems, _ = contract.check('card', t, skip=None)
+    checked = 0
     for n in walk(t.root):
-        a, tag, ln = n['attrs'], n['tag'], n['line']
-
-        # (a) the title is a heading
-        if has(n, 'al-card__title') and tag not in HEADINGS:
-            problems.append(f'line {ln}: .al-card__title on <{tag}> - the card title is '
-                            f'h1-h6 according to the page, never a paragraph (rule 11)')
-
-        # (f) link without a clickable card
-        if has(n, 'al-card__link'):
-            owner = next((p for p in ancestors(n) if has(p, 'al-card')), None)
-            if owner is None or not has(owner, 'al-card--clickable'):
-                problems.append(f'line {ln}: .al-card__link outside .al-card--clickable - '
-                                f'the link stretches over the card with no hover or ring (rule 13)')
+        a, ln = n['attrs'], n['line']
 
         if not has(n, 'al-card'):
             continue
         checked += 1
         cl = classes(n)
 
-        # (e) the card itself is not actionable
-        if tag in ('a', 'button'):
-            problems.append(f'line {ln}: .al-card on <{tag}> - the link goes in the title and '
-                            f'stretches; it never wraps the card (rule 16)')
-        if 'tabindex' in a:
-            problems.append(f'line {ln}: tabindex on the card - the title link is what '
-                            f'receives Tab (rule 16)')
         if any(k.startswith('on') for k in a):
             problems.append(f'line {ln}: event handler on the card - use the title '
                             f'link (rule 16)')
-        if a.get('role') in ACTIONABLE_ROLES:
-            problems.append(f'line {ln}: role="{a["role"]}" on the card - the card is not '
-                            f'actionable, the title link is (rule 16)')
-
-        # (g) list item
-        if tag == 'li' and n['parent']['tag'] not in ('ul', 'ol'):
-            problems.append(f'line {ln}: <li class="al-card"> outside <ul>/<ol> (rule 22)')
-
-        # (h) card inside a card
-        if any(has(p, 'al-card') for p in ancestors(n)):
-            problems.append(f'line {ln}: card inside a card - subdivide with a Divider or '
-                            f'a heading (rule 6)')
-
-        # (i) no disabled
-        if 'disabled' in a or 'aria-disabled' in a:
-            problems.append(f'line {ln}: disabled card - it hides or explains itself in '
-                            f'the content (rule 19)')
 
         # (j) consistent modifiers
         if 'al-card--border' in cl and 'al-card--elevated' in cl:
@@ -244,30 +212,8 @@ def markup_contract(path):
         if 'al-card--clickable' not in cl:
             continue
 
-        # (b) one link, inside the title
         desc = list(walk(n))
         links = [d for d in desc if has(d, 'al-card__link')]
-        if len(links) != 1:
-            problems.append(f'line {ln}: clickable card with {len(links)} .al-card__link - '
-                            f'it must be exactly one (rule 13)')
-        for lk in links:
-            if not any(has(p, 'al-card__title') for p in ancestors(lk)):
-                problems.append(f'line {lk["line"]}: .al-card__link outside the title - the '
-                                f'announced name must be the title (rule 16)')
-            # (c) element and name
-            la = lk['attrs']
-            if lk['tag'] == 'a' and 'href' not in la:
-                problems.append(f'line {lk["line"]}: <a class="al-card__link"> without href - '
-                                f'it is not a link, it doesn\'t receive Tab (rule 16)')
-            elif lk['tag'] == 'button' and la.get('type') != 'button':
-                problems.append(f'line {lk["line"]}: <button class="al-card__link"> without '
-                                f'type="button" - inside a form it would submit (rule 16)')
-            elif lk['tag'] not in ('a', 'button'):
-                problems.append(f'line {lk["line"]}: .al-card__link on <{lk["tag"]}> - '
-                                f'use <a href> or <button type="button"> (rule 16)')
-            if not text_of(lk) and not la.get('aria-label'):
-                problems.append(f'line {lk["line"]}: .al-card__link without a name (rule 16)')
-
         # (d) nothing clickable besides the link
         for d in desc:
             if d in links or any(d is x for lk in links for x in walk(lk)):
@@ -314,7 +260,7 @@ def run():
         for p in mk:
             print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} card(s) checked, 10 rules (a-j)')
+        print(f'     {checked} card(s) checked, {len(contract.whys("card"))} rules of contract.json')
         for p in mk:
             print(f'     PROBLEM: {p}')
 

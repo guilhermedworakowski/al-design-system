@@ -74,6 +74,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 # this gate compares the ratio already rounded to 2 places, as it always has
 from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -224,53 +225,19 @@ def markup_only(html):
 
 
 def markup(path):
-    """Reads the rendered HTML and enforces the rules. Returns (findings, count)."""
-    if not os.path.exists(path):
-        return ([f'HTML not found at {path} - markup contract NOT measured'], 0)
-
-    html = markup_only(open(path, encoding='utf-8').read())
-    findings = []
-
-    fields = re.findall(r'<select\b[^>]*class="[^"]*al-select__field[^"]*"[^>]*>', html)
-    label_ids = dict(re.findall(r'<label\b[^>]*for="([^"]+)"[^>]*>(.*?)</label>', html, flags=re.S))
-
-    for tag in fields:
-        m_id = re.search(r'\bid="([^"]+)"', tag)
-        if not m_id:
-            findings.append(f'(a) <select> without id: {tag[:70]}')
-            continue
-        sid = m_id.group(1)
-        n_id = len(re.findall(rf'\bid="{re.escape(sid)}"', html))
-        if n_id > 1:
-            findings.append(f'(f) id "{sid}" appears {n_id} times - the <label for> may link to another element')
-        if sid not in label_ids:
-            findings.append(f'(a) no <label for="{sid}"> points to this field')
-        if 'aria-label' in tag and sid in label_ids:
-            findings.append(f'(e) field "{sid}" uses aria-label when there is a visible label')
-        if re.search(r'aria-invalid="true"', tag):
-            m_desc = re.search(r'aria-describedby="([^"]+)"', tag)
-            if not m_desc:
-                findings.append(f'(b) field "{sid}" is in error and has no aria-describedby')
-            else:
-                for ref in m_desc.group(1).split():
-                    if not re.search(rf'\bid="{re.escape(ref)}"', html):
-                        findings.append(f'(b) field "{sid}" is described by "{ref}", which does not exist')
-
-    # (c) placeholder: the first empty <option> has to be selected
+    """The rules of each field are in contract.json (tools/contract.py checks
+    them). What stays here reads the options: the `manual` entries of
+    contract.json."""
+    findings, n, html = contract.audit('select', path, '.al-select__field')
+    if not html:
+        return (findings, n)
+    html = markup_only(html)
+    # empty-option-selected: the placeholder <option value=""> is the selected one
     for block in re.findall(r'<select\b[^>]*al-select__field.*?</select>', html, flags=re.S):
-        empty = re.findall(r'<option\b[^>]*value=""[^>]*>', block)
-        for op in empty:
+        for op in re.findall(r'<option\b[^>]*value=""[^>]*>', block):
             if 'selected' not in op:
-                findings.append(f'(c) <option value=""> without selected: {op[:60]}')
-
-    # (d) the chevron is decorative
-    for svg in re.findall(r'<svg\b[^>]*al-select__chevron[^>]*>', html):
-        if 'aria-hidden="true"' not in svg:
-            findings.append(f'(d) chevron without aria-hidden="true": {svg[:60]}')
-        if 'focusable="false"' not in svg:
-            findings.append(f'(d) chevron without focusable="false": {svg[:60]}')
-
-    return (findings, len(fields))
+                findings.append(f'[empty-option-selected] <option value=""> without selected: {op[:60]}')
+    return (findings, n)
 
 
 def run():
@@ -327,7 +294,7 @@ def run():
         print('    PENDING - no field in this HTML. Run site/site.py and call')
         print('    this gate again (see RUN ORDER in the header).')
     else:
-        print('    the six rules pass on every field')
+        print(f'    the {len(contract.whys("select"))} rules of contract.json pass on every field')
     print('-' * 78)
 
     # The site reads this file to build the Accessibility tab.
@@ -339,14 +306,7 @@ def run():
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': n_fields,
         'markupPending': n_fields == 0,
-        'markupRules': [
-            'every field has an id and a <label for> pointing to it',
-            'a field in error has aria-invalid="true" and an aria-describedby that exists',
-            'the placeholder is the first selected <option value="">',
-            'the chevron is decorative: aria-hidden="true" and focusable="false"',
-            'no field uses aria-label when there is a visible label',
-            'the field id is unique in the document',
-        ],
+        'markupRules': contract.whys('select'),
         'fails': len(fails),
         'exceptions': {k: len([l for l in exceptions if l['exc'] == k]) for k in PENDING},
         'layerEffect': [

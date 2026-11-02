@@ -74,6 +74,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr, composite  # noqa: E402
 from htmltree import Tree, walk, has, ancestors, text_flat  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -183,22 +184,17 @@ def contrast_rows():
 
 # ─────────────────────────────────────────────── markup
 def check_sidebar(n, ids, problems):
-    a, ln = n['attrs'], n['line']
-    # (a)
-    if n['tag'] != 'aside':
-        problems.append(f'line {ln}: .al-sidebar on <{n["tag"]}> - the Sidebar is an <aside> (rule 26)')
-    if not a.get('aria-label', '').strip() and not a.get('aria-labelledby'):
-        problems.append(f'line {ln}: <aside> without a name (aria-label) (rule 26)')
-
+    """The rules of each part on its own are in contract.json, checked by
+    tools/contract.py (the named <aside> and <nav>, the profile's Avatar, name
+    and action, the items as links, aria-current="page"). What stays here is
+    the Sidebar as a whole - order, groups, counts: the `manual` entries."""
+    ln = n['line']
     kids = n['kids']
     navs = [d for d in walk(n) if has(d, 'al-sidebar__nav')]
     # (c)
     if len(navs) != 1:
-        problems.append(f'line {ln}: {len(navs)} .al-sidebar__nav - it is exactly one (rule 26)')
         return
     nav = navs[0]
-    if nav['tag'] != 'nav' or not nav['attrs'].get('aria-label', '').strip():
-        problems.append(f'line {nav["line"]}: .al-sidebar__nav must be <nav aria-label> (rule 26)')
 
     # (d) order
     order = [('profile' if has(k, 'al-sidebar__profile') else 'nav' if k is nav else None) for k in kids]
@@ -212,27 +208,11 @@ def check_sidebar(n, ids, problems):
 
     # (e) (f) profile
     for prof in (d for d in walk(n) if has(d, 'al-sidebar__profile')):
-        if any(p is nav for p in ancestors(prof)):
-            problems.append(f'line {prof["line"]}: the profile stays OUTSIDE the <nav> (rule 26)')
-        for av in (d for d in walk(prof) if has(d, 'al-avatar')):
-            if av['attrs'].get('aria-hidden') != 'true':
-                problems.append(f'line {av["line"]}: the profile Avatar is decorative - aria-hidden="true" (rule 18)')
-            for img in (d for d in walk(av) if d['tag'] == 'img'):
-                if img['attrs'].get('alt', None) != '':
-                    problems.append(f'line {img["line"]}: profile photo with alt="" (rule 18)')
-        name = [d for d in walk(prof) if has(d, 'al-sidebar__name')]
-        if len(name) != 1 or not text_flat(name[0]):
-            problems.append(f'line {prof["line"]}: the profile has one .al-sidebar__name with text (rule 18)')
         for b in (d for d in walk(prof) if d['tag'] in ('a', 'button')):
             if not has(b, 'al-icon-btn'):
                 problems.append(f'line {b["line"]}: the profile action is an Icon Button (rule 19)')
-            if not b['attrs'].get('aria-label', '').strip():
-                problems.append(f'line {b["line"]}: profile button without a name (aria-label) (rule 19)')
             if b['tag'] == 'a' and 'href' not in b['attrs']:
                 problems.append(f'line {b["line"]}: profile link without href (rule 19)')
-            for s in walk(b):
-                if s['tag'] == 'svg' and s['attrs'].get('aria-hidden') != 'true':
-                    problems.append(f'line {s["line"]}: profile button svg without aria-hidden="true"')
 
     # (g) groups
     for g in (d for d in walk(nav) if has(d, 'al-sidebar__group')):
@@ -262,10 +242,6 @@ def check_sidebar(n, ids, problems):
     current, labels_seen = 0, {}
     for it in (d for d in walk(nav) if has(d, 'al-tab')):
         ia = it['attrs']
-        if it['tag'] != 'a' or 'href' not in ia:
-            problems.append(f'line {it["line"]}: a Sidebar item is <a href> (rule 28)')
-        if ia.get('role') == 'tab' or 'aria-selected' in ia:
-            problems.append(f'line {it["line"]}: a navigation item is never role="tab"/aria-selected (rule 28)')
         lab = [d for d in walk(it) if has(d, 'al-tab__label')]
         txt = text_flat(lab[0]) if lab else ''
         if not txt:
@@ -277,8 +253,6 @@ def check_sidebar(n, ids, problems):
         cur = ia.get('aria-current')
         if cur is not None and cur != 'false':
             current += 1
-            if cur != 'page':
-                problems.append(f'line {it["line"]}: aria-current="{cur}" - in the Sidebar it is "page" (rule 28)')
     if current > 1:
         problems.append(f'line {ln}: {current} current items - at most one (rule 12)')
 
@@ -292,7 +266,8 @@ def markup_contract(path):
     ids = {n['attrs']['id']: n for n in nodes if 'id' in n['attrs']}
     order = {id(n): i for i, n in enumerate(nodes)}
 
-    checked, problems, live = 0, [], []
+    problems, _ = contract.check('sidebar', t, skip=None)
+    checked, live = 0, []
     for n in nodes:
         if not has(n, 'al-sidebar'):
             continue
@@ -300,8 +275,6 @@ def markup_contract(path):
         frozen = any('inert' in p['attrs'] for p in ancestors(n))
         if not frozen:
             live.append(n)
-        if any(has(p, 'al-sidebar') for p in ancestors(n)):
-            problems.append(f'line {n["line"]}: Sidebar inside a Sidebar (rule 4)')
         check_sidebar(n, ids, problems)
 
     # (b)
@@ -316,12 +289,8 @@ def markup_contract(path):
         d = ids.get(target)
         if d is None or not has(d, 'al-sidebar'):
             problems.append(f'line {n["line"]}: data-al-sidebar-open="{target}" does not point to a .al-sidebar')
-        if not n['attrs'].get('aria-label', '').strip():
-            problems.append(f'line {n["line"]}: Menu button without aria-label (rule 24)')
         if n['attrs'].get('aria-controls') != target:
             problems.append(f'line {n["line"]}: Menu button with aria-controls different from the Sidebar id')
-        if n['attrs'].get('aria-expanded') not in ('true', 'false'):
-            problems.append(f'line {n["line"]}: Menu button without aria-expanded (rule 25)')
 
     # (n) skip to content, before the live Sidebar
     for s in live:
@@ -368,7 +337,7 @@ def run():
         for p in mk:
             print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} sidebar(s) checked, 14 rules (a-n)')
+        print(f'     {checked} sidebar(s) checked, {len(contract.whys("sidebar"))} rules of contract.json')
         for p in mk:
             print(f'     PROBLEM: {p}')
 

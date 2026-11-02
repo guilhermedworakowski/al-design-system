@@ -68,6 +68,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr  # noqa: E402
 from htmltree import Tree, walk, classes, has, ancestors, text_of, SKIP_TEMPLATE  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -151,8 +152,8 @@ def check_tooltip(tip, triggers, problems, where):
     def bad(msg):
         problems.append(f'{where}line {ln}: {msg}')
 
-    # (a)
-    if tip['tag'] != 'div' or a.get('role') != 'tooltip' or a.get('popover') != 'manual':
+    # (a) role and popover are in contract.json
+    if tip['tag'] != 'div':
         bad('live tooltip = <div role="tooltip" popover="manual"> (rule 24)')
     # (b)
     if 'data-placement' in a and a['data-placement'] not in PLACEMENTS:
@@ -205,7 +206,10 @@ def markup_contract(html, where=''):
     t = Tree(skip=SKIP_TEMPLATE)
     t.feed(html)
     nodes = list(walk(t.root))
-    problems = []
+    # The rules of the tooltip on its own (role, popover, unique id, icon, text)
+    # are in contract.json, checked by tools/contract.py. What stays here is
+    # the exact shape the site uses and the tie to its trigger.
+    problems, _ = contract.check('tooltip', t, skip='[inert]')
 
     ids = {}
     for n in nodes:
@@ -229,10 +233,7 @@ def markup_contract(html, where=''):
         live += 1
         tid = n['attrs'].get('id', '')
         if not tid:
-            problems.append(f'{where}line {n["line"]}: live tooltip without id (rule 24)')
             continue
-        if len(ids.get(tid, [])) > 1:
-            problems.append(f'{where}line {n["line"]}: id "{tid}" repeated in the document')
         triggers = [x for x in nodes if tid in refs(x, 'aria-labelledby') + refs(x, 'aria-describedby')]
         check_tooltip(n, triggers, problems, where)
     return live, frozen, problems
@@ -274,7 +275,7 @@ def run():
         for p in mk:
             print(f'     PENDING: {p}')
     else:
-        print(f'     {live} live tooltip(s) checked, 9 rules (a-i) - '
+        print(f'     {live} live tooltip(s) checked, {len(contract.whys("tooltip"))} rules of contract.json - '
               f'{len(demos)} playground variants included; {frozen} frozen sample(s) under inert')
         for p in mk:
             print(f'     PROBLEM: {p}')

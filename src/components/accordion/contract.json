@@ -11,8 +11,12 @@
         "details"
       ],
       "forbid": [
+        "role",
         "aria-expanded",
-        "role"
+        "aria-controls",
+        "tabindex",
+        "disabled",
+        "aria-disabled"
       ]
     },
     {
@@ -24,8 +28,10 @@
         "summary"
       ],
       "forbid": [
-        "aria-expanded",
         "role",
+        "aria-expanded",
+        "aria-controls",
+        "tabindex",
         "disabled",
         "aria-disabled"
       ]
@@ -48,13 +54,13 @@
       "id": "no-heading-in-summary",
       "rule": 25,
       "why": "A heading inside <summary> leaves the headings list in some screen readers.",
-      "on": ".al-accordion__header h1, .al-accordion__header h2, .al-accordion__header h3, .al-accordion__header h4",
+      "on": ".al-accordion__header h1, .al-accordion__header h2, .al-accordion__header h3, .al-accordion__header h4, .al-accordion__header h5, .al-accordion__header h6",
       "absent": true
     },
     {
       "id": "nothing-clickable-inside",
       "why": "The whole header is already the button.",
-      "on": ".al-accordion__header a, .al-accordion__header button, .al-accordion__header input",
+      "on": ".al-accordion__header a, .al-accordion__header button, .al-accordion__header input, .al-accordion__header select, .al-accordion__header textarea",
       "absent": true
     },
     {
@@ -89,7 +95,12 @@
     {
       "id": "summary-first",
       "rule": 24,
-      "why": "The <summary> is the first child of the <details>, and the content comes after it."
+      "why": "The <summary> is the first child of the <details>; the content is a direct child that comes after it."
+    },
+    {
+      "id": "nothing-interactive-inside",
+      "rule": 17,
+      "why": "Nothing focusable inside the <summary> (tabindex, actionable roles): the whole header is already the button."
     },
     {
       "id": "no-disabled",

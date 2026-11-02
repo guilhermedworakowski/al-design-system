@@ -24,8 +24,8 @@
       ]
     },
     {
-      "id": "one-title",
-      "why": "Exactly one title, with text.",
+      "id": "parts",
+      "why": "Exactly one title with text, one content block, and at most one footer.",
       "on": ".al-drawer",
       "has": [
         {
@@ -33,6 +33,16 @@
           "min": 1,
           "max": 1,
           "text": true
+        },
+        {
+          "sel": ".al-drawer__content",
+          "min": 1,
+          "max": 1
+        },
+        {
+          "sel": ".al-drawer__actions",
+          "min": 0,
+          "max": 1
         }
       ]
     },
@@ -56,8 +66,8 @@
       ]
     },
     {
-      "id": "opener-points",
-      "why": "data-al-drawer-open points to a dialog id.",
+      "id": "opener-is-button",
+      "why": "The element that opens the Drawer is a button.",
       "on": "[data-al-drawer-open]",
       "tag": [
         "button"
@@ -130,6 +140,19 @@
     {
       "id": "way-out",
       "why": "There is always a visible way out: data-al-*-close or <form method=\"dialog\">."
+    },
+    {
+      "id": "opener-target",
+      "why": "data-al-drawer-open names the id of a <dialog class=\"al-drawer\">."
+    },
+    {
+      "id": "size",
+      "why": "One size modifier at most: --sm, --md or --lg."
+    },
+    {
+      "id": "x-is-icon-button",
+      "rule": 26,
+      "why": "The only button in the header is the X, an Icon Button; every other button has visible text."
     }
   ]
 }

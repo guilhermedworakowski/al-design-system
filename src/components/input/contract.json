@@ -71,6 +71,10 @@
     {
       "id": "readonly-empty-dash",
       "why": "An empty read-only field shows \"—\" as the value, never a blank box."
+    },
+    {
+      "id": "label-in-name",
+      "why": "With a prefix or suffix, aria-labelledby lists the label too, so the name reads label + affixes."
     }
   ]
 }

@@ -43,6 +43,7 @@ combinator (a space) and alternatives separated by commas. No >, + or ~.
     load(component)            the contract dict
     check(component, tree)     (findings, n) - n = elements the rules saw;
                                skip= a selector whose subtree is not checked
+    audit(component, path, n)  what an a11y.py calls: (findings, count, html)
     markup_block(component)    the MARKUP CONTRACT block of the CSS, as text
     catalog(components)        what dist/components.json carries
 """
@@ -52,7 +53,7 @@ import re
 from functools import lru_cache
 
 from cssgate import CONTRACT_HEAD, CONTRACT_END, ROOT_CLASS
-from htmltree import walk, classes, ancestors, text_of
+from htmltree import Tree, walk, classes, ancestors, text_of
 from paths import comp_src
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -331,3 +332,24 @@ def catalog(components):
             'manual': data.get('manual', []),
         }
     return out
+
+
+def audit(component, path, count, skip=None):
+    """For an a11y.py: reads the page, checks the contract and counts the
+    component's elements (selector `count`). Returns (findings, n, html).
+    The a11y.py adds its `manual` checks on top, from the same html."""
+    if not os.path.exists(path):
+        return ([f'HTML not found at {path} - markup contract NOT measured'], 0, '')
+    html = open(path, encoding='utf-8').read()
+    tree = Tree()
+    tree.feed(html)
+    findings, _ = check(component, tree, skip=skip)
+    gone = skipped(tree, skip) if skip else set()
+    n = len([x for x in select(tree, count) if x['_i'] not in gone])
+    return (findings, n, html)
+
+
+def whys(component):
+    """One line per rule, checked and manual - what a11y.json lists."""
+    data = load(component)
+    return [r.get('why', '') for r in data.get('rules', []) + data.get('manual', [])]

@@ -24,8 +24,8 @@
       ]
     },
     {
-      "id": "one-title",
-      "why": "Exactly one title, with text.",
+      "id": "one-title-one-footer",
+      "why": "Exactly one title with text and one footer with the actions.",
       "on": ".al-modal",
       "has": [
         {
@@ -33,6 +33,11 @@
           "min": 1,
           "max": 1,
           "text": true
+        },
+        {
+          "sel": ".al-modal__actions",
+          "min": 1,
+          "max": 1
         }
       ]
     },
@@ -56,8 +61,8 @@
       ]
     },
     {
-      "id": "opener-points",
-      "why": "data-al-modal-open points to a dialog id.",
+      "id": "opener-is-button",
+      "why": "The element that opens the Modal is a button.",
       "on": "[data-al-modal-open]",
       "tag": [
         "button"
@@ -99,6 +104,15 @@
     {
       "id": "way-out",
       "why": "There is always a visible way out: data-al-*-close or <form method=\"dialog\">."
+    },
+    {
+      "id": "opener-target",
+      "why": "data-al-modal-open names the id of a <dialog class=\"al-modal\">."
+    },
+    {
+      "id": "no-icon-only",
+      "rule": 16,
+      "why": "Every button inside the Modal has visible text: no X, no icon-only button."
     }
   ]
 }

@@ -77,6 +77,7 @@ from collections import Counter
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr  # noqa: E402
 from htmltree import Tree, walk, has, ancestors, text_flat  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -237,7 +238,11 @@ def markup_contract(path):
     t.feed(open(path, encoding='utf-8').read())
     nodes = list(walk(t.root))
     ids = {n['attrs']['id']: n for n in nodes if n['attrs'].get('id')}
-    problems = []
+    # The rules of each tab and panel on their own are in contract.json, checked
+    # by tools/contract.py (samples under inert skipped, as below). What stays
+    # here is the group as a whole - counts, levels, links between tab and
+    # panel: the `manual` entries.
+    problems, _ = contract.check('tab', t, skip='[inert]')
 
     # (i) unique id
     for i, c in Counter(n['attrs']['id'] for n in nodes if n['attrs'].get('id')).items():
@@ -295,30 +300,14 @@ def markup_contract(path):
                                     f'<{g["tag"]} class="al-tabs"> - only <li>')
 
         if panel:
-            # (a) group name
-            if not named(g, ids):
-                problems.append(f'line {ln}: tablist without a name - aria-label or aria-labelledby '
-                                f'(rule 21)')
             selected = 0
             for tb in tabs:
                 ta, tl = tb['attrs'], tb['line']
-                # (b) element, role and state
-                if tb['tag'] != 'button' or ta.get('type') != 'button' or ta.get('role') != 'tab':
-                    problems.append(f'line {tl}: a panel tab must be <button type="button" '
-                                    f'role="tab"> (rule 21)')
                 sel = ta.get('aria-selected')
-                if sel not in ('true', 'false'):
-                    problems.append(f'line {tl}: aria-selected missing or invalid (rule 21)')
+                if sel not in ('true', 'false', None):
+                    problems.append(f'line {tl}: aria-selected is "true" or "false" (rule 21)')
                 if sel == 'true':
                     selected += 1
-                # (c) initial tabindex
-                ti = ta.get('tabindex')
-                if sel == 'true' and ti == '-1':
-                    problems.append(f'line {tl}: selected tab with tabindex=-1 - the Tab key '
-                                    f'never enters the group (rule 21)')
-                if sel == 'false' and ti != '-1':
-                    problems.append(f'line {tl}: unselected tab without tabindex=-1 - the Tab '
-                                    f'key stops on every one (rule 21)')
                 # panel linked both ways
                 pid = ta.get('aria-controls', '')
                 p = ids.get(pid)
@@ -350,28 +339,12 @@ def markup_contract(path):
                 problems.append(f'line {nav["line"]}: <nav> without a name (rule 22)')
             current = 0
             for tb in tabs:
-                ta, tl = tb['attrs'], tb['line']
-                if tb['tag'] != 'a' or 'href' not in ta:
-                    problems.append(f'line {tl}: a navigation tab must be <a href> (rule 22)')
-                if ta.get('role') == 'tab' or 'aria-selected' in ta:
-                    problems.append(f'line {tl}: role="tab"/aria-selected on a link - promises '
-                                    f'a panel that does not exist (rule 22)')
+                ta = tb['attrs']
                 if ta.get('aria-current') not in (None, 'false'):
                     current += 1
             if current > 1:
                 problems.append(f'line {ln}: {current} links with aria-current - at most one '
                                 f'(rule 22)')
-
-        for tb in tabs:
-            # (e) name
-            lab = next((d for d in walk(tb) if has(d, 'al-tab__label')), None)
-            if lab is None or not text_flat(lab):
-                problems.append(f'line {tb["line"]}: .al-tab without an .al-tab__label with text '
-                                f'(rule 14)')
-            # (f) no disabled
-            if 'disabled' in tb['attrs'] or 'aria-disabled' in tb['attrs']:
-                problems.append(f'line {tb["line"]}: disabled tab - it leaves the group '
-                                f'(rule 18)')
 
     # (h) tab outside a group
     for n in nodes:

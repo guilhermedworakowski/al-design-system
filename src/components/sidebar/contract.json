@@ -119,24 +119,38 @@
       "why": "Children in the order profile, nav; inside the nav, body then Help (optional)."
     },
     {
-      "id": "groups",
-      "rule": 27,
-      "why": "A group has a label with text and id, and its list points to it with aria-labelledby."
+      "id": "profile-action-kind",
+      "rule": 19,
+      "why": "The profile action is an Icon Button; as a link it has href."
     },
     {
-      "id": "help-max-3",
-      "rule": 21,
-      "why": "Help has at most 3 items."
+      "id": "groups",
+      "rule": 27,
+      "why": "A group has one label with text and id, and its list points to it with aria-labelledby; Help is a group with at most 3 items (rule 21)."
+    },
+    {
+      "id": "lists-are-square-tabs",
+      "rule": 11,
+      "why": "Every list in the nav is .al-tabs.al-tabs--square."
+    },
+    {
+      "id": "labels",
+      "rule": 16,
+      "why": "Every item has a label with text, and labels never repeat."
     },
     {
       "id": "one-current",
       "rule": 12,
-      "why": "At most one current item; labels never repeat."
+      "why": "At most one current item."
     },
     {
       "id": "one-per-screen",
       "rule": 4,
       "why": "One live Sidebar per screen."
+    },
+    {
+      "id": "menu-button-target",
+      "why": "data-al-sidebar-open and aria-controls of the Menu button both name the Sidebar id."
     },
     {
       "id": "skip-link",

@@ -84,6 +84,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_src, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr  # noqa: E402
 from htmltree import Tree, walk, classes, has, ancestors, text_of  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -296,7 +297,10 @@ def markup_contract(html):
     t = Tree()
     t.feed(html)
     nodes = list(walk(t.root))
-    problems = []
+    # The rules of each part on its own are in contract.json, checked by
+    # tools/contract.py. What stays here is the exact shape the site uses (the
+    # children in order, the English wording, the icon drawn) and the slot.
+    problems, _ = contract.check('alert', t, skip='[inert]')
 
     # (a)
     slots = [n for n in nodes if has(n, 'al-alert-slot')]

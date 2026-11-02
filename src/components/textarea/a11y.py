@@ -59,6 +59,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 # this gate compares the ratio already rounded to 2 places, as it always has
 from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -198,65 +199,22 @@ def attr(tag, name):
 
 
 def markup(path):
-    if not os.path.exists(path):
-        return ([f'HTML not found at {path} - markup contract NOT measured'], 0)
-
-    html = markup_only(open(path, encoding='utf-8').read())
-    findings = []
-
-    # (c) the field class can only be on a <textarea>
-    for m in re.finditer(r'<(\w+)\b[^>]*class="[^"]*al-textarea__field[^"]*"[^>]*>', html):
-        if m.group(1).lower() != 'textarea':
-            findings.append(f'(c) al-textarea__field on a <{m.group(1)}> - use a native <textarea>')
-    if re.search(r'class="[^"]*al-textarea[^"]*"[^>]*contenteditable|contenteditable[^>]*class="[^"]*al-textarea', html):
-        findings.append('(c) contenteditable inside the Textarea - use a native <textarea>')
-
-    fields = re.findall(r'(<textarea\b[^>]*class="[^"]*al-textarea__field[^"]*"[^>]*>)(.*?)</textarea>',
-                        html, flags=re.S)
-    label_of = {}
-    for lb in re.findall(r'<label\b[^>]*>', html):
-        target, cls = attr(lb, 'for'), attr(lb, 'class') or ''
-        if target and 'al-textarea__label' in cls:
-            label_of[target] = attr(lb, 'id')
-
-    for tag, content in fields:
+    """The rules of each field are in contract.json (tools/contract.py checks
+    them). What stays here reads values the engine doesn't compare: the
+    `manual` entries of contract.json."""
+    findings, n, html = contract.audit('textarea', path, '.al-textarea__field')
+    if not html:
+        return (findings, n)
+    html = markup_only(html)
+    for m in re.finditer(r'(<textarea\b[^>]*class="[^"]*al-textarea__field[^"]*"[^>]*>)(.*?)</textarea>', html, flags=re.S):
+        tag, content = m.group(1), m.group(2)
         cid = attr(tag, 'id')
-        if not cid:
-            findings.append(f'(a) <textarea> without id: {tag[:70]}')
-            continue
-        n_id = len(re.findall(rf'\bid="{re.escape(cid)}"', html))
-        if n_id > 1:
-            findings.append(f'(h) id "{cid}" appears {n_id} times - the <label for> may link to another element')
         rows = attr(tag, 'rows')
         if not rows or not rows.isdigit() or int(rows) < 3:
-            findings.append(f'(h) field "{cid}" without rows >= 3 (has: {rows})')
-        if cid not in label_of:
-            findings.append(f'(a) no <label class="al-textarea__label" for="{cid}">')
-        if re.search(r'\baria-label=', tag) and cid in label_of:
-            findings.append(f'(d) field "{cid}" uses aria-label when there is a visible label')
-        if re.search(r'\bmaxlength=', tag):
-            findings.append(f'(e) field "{cid}" uses maxlength - the limit doesn\'t block typing')
-
-        if 'aria-invalid="true"' in tag:
-            desc = attr(tag, 'aria-describedby')
-            if not desc:
-                findings.append(f'(b) field "{cid}" is in error and has no aria-describedby')
-            else:
-                for ref in desc.split():
-                    m = re.search(rf'<(\w+)\b[^>]*\bid="{re.escape(ref)}"[^>]*>(.*?)</\1>', html, flags=re.S)
-                    if not m:
-                        findings.append(f'(b) field "{cid}" is described by "{ref}", which does not exist')
-                    elif not re.sub(r'<[^>]+>', '', m.group(2)).strip():
-                        findings.append(f'(b) field "{cid}" is in error and the message "{ref}" is empty')
-
+            findings.append(f'[rows-at-least-3] field "{cid}" without rows >= 3 (has: {rows})')
         if re.search(r'\sreadonly\b', tag) and not content.strip():
-            findings.append(f'(g) read-only field "{cid}" is empty - use "—" as the content')
-
-    for sp in re.findall(r'<span\b[^>]*class="[^"]*al-textarea__counter[^"]*"[^>]*>', html):
-        if 'aria-live=' not in sp:
-            findings.append(f'(f) counter without aria-live: {sp[:60]}')
-
-    return (findings, len(fields))
+            findings.append(f'[readonly-empty-dash] read-only field "{cid}" is empty - use "—" as the content')
+    return (findings, n)
 
 
 def run():
@@ -307,7 +265,7 @@ def run():
         for a in findings:
             print('   ', a)
     else:
-        print('    the eight rules pass on every field')
+        print(f'    the {len(contract.whys("textarea"))} rules of contract.json pass on every field')
     print('-' * 78)
 
     json.dump({
@@ -318,16 +276,7 @@ def run():
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': n_fields,
         'markupPending': n_fields == 0,
-        'markupRules': [
-            'every field has an id and a label <label for> pointing to it',
-            'a field in error has aria-invalid="true" and aria-describedby to a non-empty message',
-            'the field is a native <textarea>, never contenteditable',
-            'no field uses aria-label when there is a visible label',
-            'no field uses maxlength',
-            'every counter declares aria-live',
-            'a read-only field has content ("—" when empty)',
-            'every field declares rows >= 3 and the id is unique in the document',
-        ],
+        'markupRules': contract.whys('textarea'),
         'fails': len(fails),
         'exceptions': {k: len([l for l in exceptions if l['exc'] == k]) for k in PENDING},
         'layerEffect': [

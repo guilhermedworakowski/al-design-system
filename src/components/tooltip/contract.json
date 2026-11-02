@@ -47,6 +47,16 @@
     {
       "id": "never-essential",
       "why": "What the tooltip says is never essential."
+    },
+    {
+      "id": "one-trigger",
+      "rule": 24,
+      "why": "Exactly one trigger points to the tooltip, through aria-labelledby or aria-describedby - never both; the tooltip comes right after it (rule 25)."
+    },
+    {
+      "id": "exact-shape",
+      "rule": 11,
+      "why": "Inside the tooltip: the icon and the text, nothing else, nothing interactive; data-placement is top, bottom, left or right."
     }
   ]
 }

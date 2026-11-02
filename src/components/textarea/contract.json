@@ -57,6 +57,12 @@
       "require": {
         "aria-live": true
       }
+    },
+    {
+      "id": "no-contenteditable",
+      "why": "An editable div is not a field: no label, no form value. Use the native <textarea>.",
+      "on": ".al-textarea [contenteditable]",
+      "absent": true
     }
   ],
   "manual": [

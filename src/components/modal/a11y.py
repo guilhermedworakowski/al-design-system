@@ -58,8 +58,9 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr, composite  # noqa: E402
-from htmltree import Tree, walk, has, ancestors, text_of  # noqa: E402
+from htmltree import Tree, walk, has, text_of  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 MOD = json.load(open(comp_out('modal', 'tokens.json')))
 BTN = json.load(open(comp_out('button', 'tokens.json')))
@@ -145,7 +146,11 @@ def markup_contract(path):
     nodes = list(walk(t.root))
     ids = {n['attrs']['id']: n for n in nodes if 'id' in n['attrs']}
 
-    checked, problems = 0, []
+    # The rules of one Modal's parts are in contract.json, checked by
+    # tools/contract.py (samples under inert skipped: they sit open on purpose).
+    # What stays below compares parts with each other - the `manual` entries.
+    problems, _ = contract.check('modal', t, skip='[inert]')
+    checked = 0
 
     # (k) every opener points to a <dialog>
     for n in nodes:
@@ -161,35 +166,17 @@ def markup_contract(path):
         if not has(n, 'al-modal'):
             continue
         checked += 1
-        frozen = any('inert' in p['attrs'] for p in ancestors(n))
-
-        # (a)
         if tag != 'dialog':
-            problems.append(f'line {ln}: .al-modal on <{tag}> - the Modal is a native <dialog> (rule 24)')
             continue
-        # (b)
-        if 'open' in a and not frozen:
-            problems.append(f'line {ln}: <dialog open> - the Modal opens through showModal(), never '
-                            f'through the attribute (rule 24)')
-        # (j)
-        if any(has(p, 'al-modal') for p in ancestors(n)):
-            problems.append(f'line {ln}: Modal inside a Modal (rule 4)')
 
         kids = [k for k in n['kids'] if k['tag'] != '#text']
         titles = [d for d in walk(n) if has(d, 'al-modal__title')]
-        # (d)
-        if len(titles) != 1 or not text_of(titles[0]):
-            problems.append(f'line {ln}: the Modal needs exactly one .al-modal__title with '
-                            f'text (rule 5)')
-        # (c)
+        # (c) the name is this Modal's own title
         lab = a.get('aria-labelledby')
-        if not lab:
-            problems.append(f'line {ln}: no aria-labelledby - the <dialog> doesn\'t name itself '
-                            f'(rule 25)')
-        elif lab not in ids or not has(ids[lab], 'al-modal__title'):
+        if lab and (lab not in ids or not has(ids[lab], 'al-modal__title')):
             problems.append(f'line {ln}: aria-labelledby="{lab}" does not point to a '
                             f'.al-modal__title (rule 25)')
-        elif titles and ids[lab] is not titles[0]:
+        elif lab and titles and ids[lab] is not titles[0]:
             problems.append(f'line {ln}: aria-labelledby points to the title of ANOTHER Modal (rule 25)')
 
         # (e) order title, body, actions
@@ -203,19 +190,10 @@ def markup_contract(path):
             problems.append(f'line {ln}: direct child without a Modal class - no divider or '
                             f'loose piece between the parts (rule 10)')
 
-        # (i) no X
-        if any(has(d, 'al-modal__close') for d in walk(n)):
-            problems.append(f'line {ln}: .al-modal__close - the Modal has no X button (rule 16)')
-
         actions_box = [k for k in kids if has(k, 'al-modal__actions')]
         if len(actions_box) != 1:
-            problems.append(f'line {ln}: the Modal needs exactly one .al-modal__actions '
-                            f'(rules 16 and 22)')
             continue
         actions = [d for d in walk(actions_box[0]) if is_action(d)]
-        # (f)
-        if not 1 <= len(actions) <= 2:
-            problems.append(f'line {ln}: {len(actions)} actions in the footer - one or two (rules 16 and 19)')
         # (g)
         if len(actions) == 2:
             first, last = actions
@@ -237,11 +215,6 @@ def markup_contract(path):
             if d['tag'] == 'button' and not text_of(d):
                 problems.append(f'line {d["line"]}: button without visible text - the Modal has no X '
                                 f'nor an icon-only button (rule 16)')
-        # (l) type="button"
-        for ac in actions:
-            if ac['tag'] == 'button' and ac['attrs'].get('type') not in ('button', 'submit', 'reset'):
-                problems.append(f'line {ac["line"]}: <button> without type - inside a <form> the '
-                                f'default is submit')
 
     if checked == 0:
         return None, ['no .al-modal in the HTML']
@@ -280,7 +253,7 @@ def run():
         for p in mk:
             print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} modal(s) checked, 12 rules (a-l)')
+        print(f'     {checked} modal(s) checked, {len(contract.whys("modal"))} rules of contract.json')
         for p in mk:
             print(f'     PROBLEM: {p}')
 

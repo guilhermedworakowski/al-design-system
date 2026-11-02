@@ -106,6 +106,10 @@
     {
       "id": "disabled-together",
       "why": "A disabled field disables its eye too."
+    },
+    {
+      "id": "eye-points-to-field",
+      "why": "aria-controls of the eye is the id of its own field."
     }
   ]
 }

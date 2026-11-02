@@ -61,9 +61,6 @@
       "rule": 22,
       "why": "A navigation tab is a link, never role=\"tab\".",
       "on": "nav .al-tab",
-      "unless": {
-        "role": "tab"
-      },
       "tag": [
         "a"
       ],
@@ -71,6 +68,7 @@
         "href": true
       },
       "forbid": [
+        "role",
         "aria-selected"
       ]
     },
@@ -101,9 +99,31 @@
   ],
   "manual": [
     {
+      "id": "unique-ids",
+      "why": "Tab and panel are linked by id: no id repeats on the page."
+    },
+    {
       "id": "two-to-six",
       "rule": 8,
-      "why": "From 2 to 6 tabs in a group."
+      "why": "From 2 to 6 tabs in a group (a Sidebar list owns its own count)."
+    },
+    {
+      "id": "two-levels",
+      "why": "Two levels at most: the second lives in the panel, never inside the group; Line outside, Square inside."
+    },
+    {
+      "id": "list-items",
+      "why": "A <ul>/<ol> group holds only <li>."
+    },
+    {
+      "id": "panel-linked-both-ways",
+      "rule": 21,
+      "why": "aria-controls points to a role=\"tabpanel\" whose aria-labelledby is that same tab."
+    },
+    {
+      "id": "panel-heading",
+      "rule": 25,
+      "why": "The panel starts with a heading equal to the tab's label - it is what pays for the tonal selection."
     },
     {
       "id": "one-selected",
@@ -111,18 +131,18 @@
       "why": "Exactly one selected tab; at most one link with aria-current."
     },
     {
-      "id": "panel-heading",
-      "rule": 25,
-      "why": "The panel starts with a heading equal to the tab's label."
-    },
-    {
-      "id": "two-levels",
-      "why": "Two levels at most: Line outside, Square inside, the second in the panel."
-    },
-    {
       "id": "panel-or-nav",
       "rule": 22,
       "why": "A group is role=\"tablist\" or lives in a named <nav> - one of the two."
+    },
+    {
+      "id": "tab-in-group",
+      "rule": 6,
+      "why": "A .al-tab lives inside a .al-tabs: the type belongs to the group."
+    },
+    {
+      "id": "samples-inert",
+      "why": "An aria-hidden sample is also inert, or the keyboard reaches a tab the screen reader cannot see."
     }
   ]
 }
