@@ -77,7 +77,9 @@ def main():
     with open(path, 'w', encoding='utf-8') as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     with open(os.path.join(ROOT, 'tools', 'figma_apply.js'), encoding='utf-8') as f:
-        script = f.read().replace('__DATA__', json.dumps(data, ensure_ascii=False), 1)
+        script = f.read().replace('const M = __DATA__;', f'const M = {json.dumps(data, ensure_ascii=False)};', 1)
+    if 'const M = {' not in script:
+        raise SystemExit('tools/figma_apply.js: the data line "const M = __DATA__;" is missing')
     with open(os.path.join(BUILD, 'figma-apply.js'), 'w', encoding='utf-8') as f:
         f.write(script)
     print(f'{rel(path)}: {len(data["components"])} components, {len(data["internal"])} internal pieces')
