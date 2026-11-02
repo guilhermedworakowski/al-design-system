@@ -29,32 +29,13 @@ FOUR JUDGMENTS
      fails: the exception covers a subtle separation, not its absence.
   The separator is decorative (aria-hidden, rule 21): outside 1.4.11.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-breadcrumb` is a <nav> with aria-label (rule 19);
-    b) one live breadcrumb per page; the sample ones sit under `inert`
-       (on it or on an ancestor) and are exempt, and so does an interactive
-       demo that can't be inert, marked by `data-al-demo` on an ancestor. A
-       single-file site keeps each page in a subtree that toggles `hidden`:
-       the nearest `hidden` ancestor marks the page, so one per subtree (rule 7);
-    c) the only child is <ol class="al-breadcrumb__list"> and each of its
-       children is <li class="al-breadcrumb__item"> (rule 19);
-    d) the LAST item is only <span class="al-breadcrumb__current"
-       aria-current="page"> with text - no <a>, no separator (rules 15 and 20);
-    e) every item but the last ends in an <svg class="al-breadcrumb__separator">
-       with aria-hidden="true" and focusable="false" (rule 21);
-    f) every link is an <a href> with text and without aria-current;
-       aria-current only on the current one (rules 15 and 20);
-    g) the `…` only exists with 5 levels or more, and always as the THIRD
-       item; it is a <button type="button"> with aria-label, aria-expanded and
-       aria-controls pointing to the menu in the same item (rules 5, 6 and 22);
-    h) the menu is <ul class="al-tabs al-tabs--square al-breadcrumb__menu">
-       with no role; each item is <a href class="al-tab"> with a text
-       .al-tab__label, no role nor aria-selected/aria-current (rule 17);
-    i) no breadcrumb inside a Card, Modal or Drawer (rule 7);
-    j) no empty label anywhere in the trail (rule 10).
+  The rules are data: src/components/breadcrumb/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
@@ -68,6 +49,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr  # noqa: E402
 from htmltree import Tree, walk, classes, has, ancestors, text_of, SKIP_TEMPLATE  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -151,9 +133,10 @@ def check_breadcrumb(n, ids, problems):
     def bad(msg):
         problems.append(f'line {ln}: {msg}')
 
-    # (a)
-    if n['tag'] != 'nav' or not n['attrs'].get('aria-label', '').strip():
-        bad('.al-breadcrumb must be <nav aria-label="…"> (rule 19)')
+    # The rules of each part on its own are in contract.json, checked by
+    # tools/contract.py (the <nav>, the <ol>, the links, the current page, the
+    # separators and the `…` button). What stays here is the trail as a whole:
+    # how many levels, what sits where, and the menu the `…` opens.
     # (i)
     for a in ancestors(n):
         if any(has(a, c) for c in ('al-card', 'al-modal', 'al-drawer')):
@@ -175,8 +158,7 @@ def check_breadcrumb(n, ids, problems):
     # (d) last item
     last = items[-1]
     cur = [k for k in walk(last) if has(k, 'al-breadcrumb__current')]
-    if (len(cur) != 1 or cur[0]['tag'] != 'span' or cur[0]['attrs'].get('aria-current') != 'page'
-            or not text_of(cur[0])):
+    if len(cur) != 1 or not text_of(cur[0]):
         bad('last item = <span class="al-breadcrumb__current" aria-current="page"> with text (rules 15 and 20)')
     if any(k['tag'] in ('a', 'button') for k in walk(last)):
         bad('the current page is neither a link nor a button (rule 15)')
@@ -188,15 +170,10 @@ def check_breadcrumb(n, ids, problems):
         if not it['kids'] or not has(it['kids'][-1], 'al-breadcrumb__separator'):
             bad(f'item "{text_of(it)[:20]}" without a separator at the end (rule 21)')
             continue
-        s = it['kids'][-1]
-        if s['tag'] != 'svg' or s['attrs'].get('aria-hidden') != 'true' or s['attrs'].get('focusable') != 'false':
-            bad('the separator is an <svg> with aria-hidden="true" focusable="false" (rule 21)')
 
     # (f) links
     for k in walk(n):
         if has(k, 'al-breadcrumb__link'):
-            if k['tag'] != 'a' or not k['attrs'].get('href'):
-                bad('.al-breadcrumb__link must be <a href> (rule 15)')
             if not text_of(k):
                 bad('link without text (rule 10)')
         if 'aria-current' in k['attrs'] and not has(k, 'al-breadcrumb__current'):
@@ -211,9 +188,8 @@ def check_breadcrumb(n, ids, problems):
             bad('`…` item without .al-breadcrumb__more-button')
             continue
         b = btn[0]['attrs']
-        if (btn[0]['tag'] != 'button' or b.get('type') != 'button' or not b.get('aria-label', '').strip()
-                or b.get('aria-expanded') not in ('true', 'false') or not b.get('aria-controls')):
-            bad('`…` = <button type="button"> with aria-label, aria-expanded and aria-controls (rule 22)')
+        if b.get('aria-expanded') not in ('true', 'false', None):
+            bad('`…` aria-expanded is "true" or "false" (rule 22)')
         menu = ids.get(b.get('aria-controls'))
         if menu is None or menu.get('parent') is not m:
             bad('the `…` aria-controls does not point to a menu in the same item (rule 22)')
@@ -252,7 +228,8 @@ def markup_contract(path):
     t.feed(open(path, encoding='utf-8').read())
     ids = {n['attrs']['id']: n for n in walk(t.root) if n['attrs'].get('id')}
 
-    found, problems, live = 0, [], {}
+    problems, _ = contract.check('breadcrumb', t, skip=None)
+    found, live = 0, {}
     for n in walk(t.root):
         if not has(n, 'al-breadcrumb'):
             continue
@@ -301,7 +278,7 @@ def run():
         for p in mk:
             print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} breadcrumb(s) checked, 10 rules (a-j)')
+        print(f'     {checked} breadcrumb(s) checked, {len(contract.whys("breadcrumb"))} rules of contract.json')
         for p in mk:
             print(f'     PROBLEM: {p}')
 

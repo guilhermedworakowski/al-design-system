@@ -1,0 +1,148 @@
+{
+  "component": "tab",
+  "root": "al-tab",
+  "rules": [
+    {
+      "id": "panel-group-named",
+      "rule": 21,
+      "why": "A tab group for panels is named.",
+      "on": ".al-tabs[role=tablist]",
+      "require": {
+        "aria-label": true
+      }
+    },
+    {
+      "id": "panel-tab",
+      "rule": 21,
+      "why": "A panel tab is <button type=\"button\" role=\"tab\"> with aria-selected and aria-controls to its panel.",
+      "on": ".al-tabs[role=tablist] .al-tab",
+      "tag": [
+        "button"
+      ],
+      "require": {
+        "type": "button",
+        "role": "tab",
+        "aria-selected": true,
+        "id": true
+      },
+      "ref": [
+        "aria-controls"
+      ]
+    },
+    {
+      "id": "roving-selected",
+      "rule": 21,
+      "why": "Only the selected tab sits in the Tab order.",
+      "on": ".al-tab[aria-selected=true]",
+      "forbid": {
+        "tabindex": "-1"
+      }
+    },
+    {
+      "id": "roving-others",
+      "rule": 21,
+      "why": "The others are reached with the arrows.",
+      "on": ".al-tab[aria-selected=false]",
+      "require": {
+        "tabindex": "-1"
+      }
+    },
+    {
+      "id": "panel",
+      "rule": 21,
+      "why": "The panel points back to its tab.",
+      "on": "[role=tabpanel]",
+      "refText": [
+        "aria-labelledby"
+      ]
+    },
+    {
+      "id": "nav-tab",
+      "rule": 22,
+      "why": "A navigation tab is a link, never role=\"tab\".",
+      "on": "nav .al-tab",
+      "tag": [
+        "a"
+      ],
+      "require": {
+        "href": true
+      },
+      "forbid": [
+        "role",
+        "aria-selected"
+      ]
+    },
+    {
+      "id": "label",
+      "rule": 14,
+      "why": "Each tab has a visible label.",
+      "on": ".al-tab",
+      "has": [
+        {
+          "sel": ".al-tab__label",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "no-disabled",
+      "rule": 18,
+      "why": "A disabled tab leaves the group.",
+      "on": ".al-tab",
+      "forbid": [
+        "disabled",
+        "aria-disabled"
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "id": "unique-ids",
+      "why": "Tab and panel are linked by id: no id repeats on the page."
+    },
+    {
+      "id": "two-to-six",
+      "rule": 8,
+      "why": "From 2 to 6 tabs in a group (a Sidebar list owns its own count)."
+    },
+    {
+      "id": "two-levels",
+      "why": "Two levels at most: the second lives in the panel, never inside the group; Line outside, Square inside."
+    },
+    {
+      "id": "list-items",
+      "why": "A <ul>/<ol> group holds only <li>."
+    },
+    {
+      "id": "panel-linked-both-ways",
+      "rule": 21,
+      "why": "aria-controls points to a role=\"tabpanel\" whose aria-labelledby is that same tab."
+    },
+    {
+      "id": "panel-heading",
+      "rule": 25,
+      "why": "The panel starts with a heading equal to the tab's label - it is what pays for the tonal selection."
+    },
+    {
+      "id": "one-selected",
+      "rule": 7,
+      "why": "Exactly one selected tab; at most one link with aria-current."
+    },
+    {
+      "id": "panel-or-nav",
+      "rule": 22,
+      "why": "A group is role=\"tablist\" or lives in a named <nav> - one of the two."
+    },
+    {
+      "id": "tab-in-group",
+      "rule": 6,
+      "why": "A .al-tab lives inside a .al-tabs: the type belongs to the group."
+    },
+    {
+      "id": "samples-inert",
+      "why": "An aria-hidden sample is also inert, or the keyboard reaches a tab the screen reader cannot see."
+    }
+  ]
+}

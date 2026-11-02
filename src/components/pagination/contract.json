@@ -1,0 +1,70 @@
+{
+  "component": "pagination",
+  "root": "al-pagination",
+  "rules": [
+    {
+      "id": "landmark",
+      "why": "Numbered and simple Pagination are a named <nav>; Load more is a plain <div>.",
+      "on": ".al-pagination",
+      "tag": [
+        "nav",
+        "div"
+      ]
+    },
+    {
+      "id": "nav-named",
+      "why": "A navigation landmark names itself.",
+      "on": "nav.al-pagination",
+      "require": {
+        "aria-label": true
+      }
+    },
+    {
+      "id": "page-button",
+      "why": "A page is a native button that names the page; without type=\"button\" it submits the form.",
+      "on": ".al-pagination__item",
+      "tag": [
+        "button",
+        "a"
+      ],
+      "require": {
+        "aria-label": true
+      }
+    },
+    {
+      "id": "page-type",
+      "why": "Inside a form a button without type submits.",
+      "on": "button.al-pagination__item",
+      "require": {
+        "type": "button"
+      }
+    },
+    {
+      "id": "pages-list",
+      "why": "The pages are a list.",
+      "on": ".al-pagination__pages",
+      "tag": [
+        "ul",
+        "ol"
+      ]
+    },
+    {
+      "id": "ellipsis-decorative",
+      "why": "The … between pages is paint; the page labels already say the numbers.",
+      "on": ".al-pagination__ellipsis",
+      "require": {
+        "aria-hidden": "true"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "one-current",
+      "why": "At most one page has aria-current=\"page\"."
+    },
+    {
+      "id": "never-on-raised",
+      "why": "Never on bg-surface-raised: the current page's tonal fill disappears there."
+    }
+  ]
+}

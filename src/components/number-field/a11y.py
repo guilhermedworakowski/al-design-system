@@ -24,16 +24,11 @@ TWO FLOORS: text 4.5:1 (1.4.3); border, rings and steppers 3:1 (1.4.11).
 
 THE MARKUP CONTRACT
 
-    a) every `.al-number-field__field` is `<input type="number">` with an `id`
-       and a `<label for>` pointing to it (rule 20);
-    b) the field is born with a `value` and has no `placeholder` (rule 9);
-    c) a field with `aria-invalid="true"` has `aria-describedby` to a
-       non-empty message (rule 16);
-    d) each stepper is `<button type="button" tabindex="-1">` with
-       `aria-controls` = the field id and a non-empty `aria-label` (rules 13, 21);
-    e) the stepper icons are `aria-hidden="true" focusable="false"`;
-    f) a disabled field -> both steppers `disabled`;
-    g) the field `id` is UNIQUE in the document.
+  The rules are data: src/components/number-field/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - runs AFTER site.py. With no argument it measures
 build/site/index.html; while the site doesn't have a Number field, the JSON
@@ -49,6 +44,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 NF = json.load(open(comp_out('number-field', 'tokens.json')))
@@ -178,71 +174,24 @@ def attr(tag, name):
 
 
 def markup(path):
-    if not os.path.exists(path):
-        return ([f'HTML not found at {path} - markup contract NOT measured'], 0)
-
-    html = markup_only(open(path, encoding='utf-8').read())
-    findings = []
-
-    label_of = {attr(lb, 'for') for lb in re.findall(r'<label\b[^>]*>', html)
-                if 'al-number-field__label' in (attr(lb, 'class') or '')}
-
-    blocks = re.findall(r'<div class="al-number-field__control">(.*?)</div>', html, flags=re.S)
-    n_fields = 0
-    for block in blocks:
-        field = re.search(r'<input\b[^>]*al-number-field__field[^>]*>', block)
-        if not field:
+    """The rules of each field and its steppers are in contract.json
+    (tools/contract.py checks them). What stays here ties each stepper to its
+    own field: the `manual` entries of contract.json."""
+    findings, n, html = contract.audit('number-field', path, '.al-number-field__field')
+    if not html:
+        return (findings, n)
+    html = markup_only(html)
+    for block in re.findall(r'<div\b[^>]*class="[^"]*al-number-field__control[^"]*"[^>]*>.*?</div>', html, flags=re.S):
+        tag = re.search(r'<input\b[^>]*al-number-field__field[^>]*>', block)
+        if not tag:
             continue
-        n_fields += 1
-        tag = field.group(0)
-        cid = attr(tag, 'id')
-        if not cid:
-            findings.append(f'(a) <input> without id: {tag[:70]}')
-            continue
-        if attr(tag, 'type') != 'number':
-            findings.append(f'(a) field "{cid}" is not type="number"')
-        n_id = len(re.findall(rf'\bid="{re.escape(cid)}"', html))
-        if n_id > 1:
-            findings.append(f'(g) id "{cid}" appears {n_id} times')
-        if cid not in label_of:
-            findings.append(f'(a) no <label class="al-number-field__label" for="{cid}">')
-        if attr(tag, 'value') in (None, ''):
-            findings.append(f'(b) field "{cid}" is born without a value')
-        if re.search(r'\bplaceholder=', tag):
-            findings.append(f'(b) field "{cid}" uses a placeholder')
-
-        if 'aria-invalid="true"' in tag:
-            desc = attr(tag, 'aria-describedby')
-            if not desc:
-                findings.append(f'(c) field "{cid}" is in error and has no aria-describedby')
-            else:
-                for ref in desc.split():
-                    m = re.search(rf'<(\w+)\b[^>]*\bid="{re.escape(ref)}"[^>]*>(.*?)</\1>', html, flags=re.S)
-                    if not m:
-                        findings.append(f'(c) field "{cid}" is described by "{ref}", which does not exist')
-                    elif not re.sub(r'<[^>]+>', '', m.group(2)).strip():
-                        findings.append(f'(c) field "{cid}": the message "{ref}" is empty')
-
-        buttons = re.findall(r'<button\b[^>]*al-number-field__step[^>]*>.*?</button>', block, flags=re.S)
-        if len(buttons) != 2:
-            findings.append(f'(d) field "{cid}" has {len(buttons)} stepper(s), expected 2')
-        for b in buttons:
-            btag = re.match(r'<button\b[^>]*>', b).group(0)
-            if attr(btag, 'type') != 'button':
-                findings.append(f'(d) stepper of "{cid}" without type="button" - it would submit the form')
-            if attr(btag, 'tabindex') != '-1':
-                findings.append(f'(d) stepper of "{cid}" is in the Tab order')
+        tag, cid = tag.group(0), attr(tag.group(0), 'id')
+        for btag in re.findall(r'<button\b[^>]*al-number-field__step[^>]*>', block):
             if attr(btag, 'aria-controls') != cid:
-                findings.append(f'(d) stepper of "{cid}": aria-controls does not point to the field')
-            if not (attr(btag, 'aria-label') or '').strip():
-                findings.append(f'(d) stepper of "{cid}" without aria-label')
-            for svg in re.findall(r'<svg\b[^>]*>', b):
-                if 'aria-hidden="true"' not in svg or 'focusable="false"' not in svg:
-                    findings.append(f'(e) stepper icon of "{cid}" without aria-hidden/focusable')
+                findings.append(f'[stepper-points-to-field] stepper of "{cid}": aria-controls does not point to its own field')
             if re.search(r'\sdisabled\b', tag) and not re.search(r'\sdisabled\b', btag):
-                findings.append(f'(f) field "{cid}" is disabled and a stepper is not')
-
-    return (findings, n_fields)
+                findings.append(f'[disabled-together] field "{cid}" is disabled and a stepper is not')
+    return (findings, n)
 
 
 def run():
@@ -288,7 +237,7 @@ def run():
         for a in findings:
             print('   ', a)
     else:
-        print('    the seven rules pass on every field')
+        print(f'    the {len(contract.whys("number-field"))} rules of contract.json pass on every field')
     print('-' * 78)
 
     json.dump({

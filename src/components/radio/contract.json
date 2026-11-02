@@ -1,0 +1,64 @@
+{
+  "component": "radio",
+  "root": "al-radio",
+  "rules": [
+    {
+      "id": "native-input",
+      "why": "The radio is the native input inside its <label>, with a name that groups the question.",
+      "on": ".al-radio__input",
+      "tag": [
+        "input"
+      ],
+      "within": "label.al-radio",
+      "require": {
+        "type": "radio",
+        "name": true
+      },
+      "forbid": [
+        "aria-label",
+        "aria-invalid"
+      ]
+    },
+    {
+      "id": "no-fake-radio",
+      "why": "Only the native input is a radio; role=\"radio\" needs JS the AL does not ship.",
+      "on": "[role=radio]",
+      "absent": true
+    },
+    {
+      "id": "visible-label",
+      "why": "The visible label is the accessible name.",
+      "on": "label.al-radio",
+      "has": [
+        {
+          "sel": ".al-radio__label",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "dot-decorative",
+      "why": "The dot is paint; the input already announces the state.",
+      "on": ".al-radio__dot",
+      "require": {
+        "aria-hidden": "true"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "group-in-fieldset",
+      "why": "All radios of a name live in one <fieldset> with a visible <legend>: the legend is the question."
+    },
+    {
+      "id": "never-alone",
+      "why": "A name has two radios or more - a lone radio can't be unchecked."
+    },
+    {
+      "id": "error-on-question",
+      "why": "The error goes on the fieldset (aria-describedby to the message), never on each radio."
+    }
+  ]
+}

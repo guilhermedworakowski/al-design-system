@@ -1,0 +1,111 @@
+{
+  "component": "number-field",
+  "root": "al-number-field",
+  "rules": [
+    {
+      "id": "native-field",
+      "why": "The field is a native <input>: the browser gives it the keyboard, the value and the announcement.",
+      "on": ".al-number-field__field",
+      "tag": [
+        "input"
+      ],
+      "uniqueId": true,
+      "require": {
+        "type": "number"
+      }
+    },
+    {
+      "id": "visible-label",
+      "why": "A <label for> names the field; clicking it focuses the field.",
+      "on": ".al-number-field__field",
+      "referencedBy": {
+        "sel": "label",
+        "attr": "for"
+      }
+    },
+    {
+      "id": "no-hidden-name",
+      "why": "With a visible label, aria-label makes what is read differ from what is seen.",
+      "on": ".al-number-field__field",
+      "forbid": [
+        "aria-label",
+        "placeholder"
+      ]
+    },
+    {
+      "id": "error-described",
+      "why": "A field in error points to its message, and the message has text - the color alone says nothing.",
+      "on": ".al-number-field__field",
+      "when": {
+        "aria-invalid": "true"
+      },
+      "refText": [
+        "aria-describedby"
+      ]
+    },
+    {
+      "id": "describedby-exists",
+      "why": "Every id in aria-describedby exists, or the help text is never read.",
+      "on": ".al-number-field__field",
+      "ref": [
+        "aria-describedby",
+        "aria-labelledby"
+      ]
+    },
+    {
+      "id": "born-with-value",
+      "why": "The field always has a value: an empty number field has no meaning for the steppers.",
+      "on": ".al-number-field__field",
+      "require": {
+        "value": true
+      }
+    },
+    {
+      "id": "two-steppers",
+      "why": "Each field has exactly two steppers, minus and plus.",
+      "on": ".al-number-field__control",
+      "has": [
+        {
+          "sel": ".al-number-field__step",
+          "min": 2,
+          "max": 2
+        }
+      ]
+    },
+    {
+      "id": "stepper-button",
+      "why": "A stepper is a named button outside the Tab order that controls the field; without type=\"button\" it submits the form.",
+      "on": ".al-number-field__step",
+      "tag": [
+        "button"
+      ],
+      "require": {
+        "type": "button",
+        "tabindex": "-1",
+        "aria-label": true
+      },
+      "ref": [
+        "aria-controls"
+      ]
+    },
+    {
+      "id": "stepper-icon-decorative",
+      "why": "The minus and plus are paint: the button's aria-label is what speaks.",
+      "on": ".al-number-field__step svg",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "stepper-points-to-field",
+      "why": "aria-controls of each stepper is the id of its own field."
+    },
+    {
+      "id": "disabled-together",
+      "why": "A disabled field disables both steppers."
+    }
+  ]
+}

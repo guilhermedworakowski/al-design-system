@@ -1,0 +1,118 @@
+{
+  "component": "modal",
+  "root": "al-modal",
+  "rules": [
+    {
+      "id": "native-dialog",
+      "rule": 24,
+      "why": "The Modal is a native <dialog>, opened through showModal() - never through the open attribute: that is what traps focus and closes on Esc.",
+      "on": ".al-modal",
+      "tag": [
+        "dialog"
+      ],
+      "forbid": [
+        "open"
+      ]
+    },
+    {
+      "id": "named-by-title",
+      "rule": 25,
+      "why": "The <dialog> is named by its visible title.",
+      "on": ".al-modal",
+      "refText": [
+        "aria-labelledby"
+      ]
+    },
+    {
+      "id": "one-title-one-footer",
+      "why": "Exactly one title with text and one footer with the actions.",
+      "on": ".al-modal",
+      "has": [
+        {
+          "sel": ".al-modal__title",
+          "min": 1,
+          "max": 1,
+          "text": true
+        },
+        {
+          "sel": ".al-modal__actions",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "no-nesting",
+      "rule": 4,
+      "why": "A Modal never opens inside another.",
+      "on": ".al-modal .al-modal",
+      "absent": true
+    },
+    {
+      "id": "actions-count",
+      "why": "The footer has one or two actions.",
+      "on": ".al-modal__actions",
+      "has": [
+        {
+          "sel": "button",
+          "min": 1,
+          "max": 2
+        }
+      ]
+    },
+    {
+      "id": "opener-is-button",
+      "why": "The element that opens the Modal is a button.",
+      "on": "[data-al-modal-open]",
+      "tag": [
+        "button"
+      ]
+    },
+    {
+      "id": "button-type",
+      "why": "Inside a <form> a button without type submits.",
+      "on": ".al-modal button",
+      "require": {
+        "type": true
+      }
+    },
+    {
+      "id": "no-x",
+      "rule": 16,
+      "why": "The Modal has no X: the way out is a footer button.",
+      "on": ".al-modal__close",
+      "absent": true
+    }
+  ],
+  "manual": [
+    {
+      "id": "last-is-primary-or-danger",
+      "why": "The last action is Primary or Danger."
+    },
+    {
+      "id": "order",
+      "why": "The direct children follow the order title, content, actions, with no loose piece between them."
+    },
+    {
+      "id": "main-action-last",
+      "why": "The main action is the last one; the first is the secondary."
+    },
+    {
+      "id": "title-of-own-dialog",
+      "why": "aria-labelledby points to this dialog's own title, never to another one."
+    },
+    {
+      "id": "way-out",
+      "why": "There is always a visible way out: data-al-*-close or <form method=\"dialog\">."
+    },
+    {
+      "id": "opener-target",
+      "why": "data-al-modal-open names the id of a <dialog class=\"al-modal\">."
+    },
+    {
+      "id": "no-icon-only",
+      "rule": 16,
+      "why": "Every button inside the Modal has visible text: no X, no icon-only button."
+    }
+  ]
+}

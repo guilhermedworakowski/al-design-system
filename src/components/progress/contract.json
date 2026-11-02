@@ -1,0 +1,31 @@
+{
+  "component": "progress",
+  "root": "al-progress",
+  "rules": [
+    {
+      "id": "native-progress",
+      "why": "The bar is a native <progress> with value and max, named by its label.",
+      "on": ".al-progress__bar",
+      "tag": [
+        "progress"
+      ],
+      "require": {
+        "value": true,
+        "max": true
+      },
+      "refText": [
+        "aria-labelledby"
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "id": "never-the-only-cue",
+      "why": "The bar is never the only cue: the label (and the value, when there is one) say it in text."
+    },
+    {
+      "id": "no-live",
+      "why": "No aria-live and no focus on the bar."
+    }
+  ]
+}

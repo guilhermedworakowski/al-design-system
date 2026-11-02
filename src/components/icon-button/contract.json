@@ -1,0 +1,70 @@
+{
+  "component": "icon-button",
+  "root": "al-icon-btn",
+  "rules": [
+    {
+      "id": "native-button",
+      "why": "The Icon Button is a native <button>, or <a href> when it navigates.",
+      "on": ".al-icon-btn",
+      "tag": [
+        "button",
+        "a"
+      ],
+      "forbid": [
+        "aria-hidden",
+        "disabled"
+      ]
+    },
+    {
+      "id": "type-button",
+      "why": "Inside a <form> the HTML default is submit: the type is always written.",
+      "on": "button.al-icon-btn",
+      "require": {
+        "type": true
+      }
+    },
+    {
+      "id": "link-has-href",
+      "why": "An Icon Button that navigates is <a href>; without href it receives no Tab.",
+      "on": "a.al-icon-btn",
+      "require": {
+        "href": true
+      }
+    },
+    {
+      "id": "busy-is-disabled",
+      "why": "While loading, the button stays focusable but inert: aria-busy goes with aria-disabled.",
+      "on": ".al-icon-btn",
+      "when": {
+        "aria-busy": "true"
+      },
+      "require": {
+        "aria-disabled": "true"
+      }
+    },
+    {
+      "id": "icon-decorative",
+      "why": "The svg is paint; the button's name is what speaks.",
+      "on": ".al-icon-btn svg",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    },
+    {
+      "id": "spinner-decorative",
+      "why": "The spinner is paint.",
+      "on": ".al-icon-btn__spinner",
+      "require": {
+        "aria-hidden": "true"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "one-name",
+      "rule": 10,
+      "why": "The name is on the button, in one way: a non-empty aria-label or an aria-labelledby to an element with text - never both, never neither."
+    }
+  ]
+}

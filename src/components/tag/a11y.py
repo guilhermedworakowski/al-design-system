@@ -30,15 +30,11 @@ THE PILL BOUNDARY IS NOT A GATE, IT IS A REPORT
 
 THE MARKUP CONTRACT
 
-  Two of this component's contracts don't live in the CSS:
-
-    a) the read-only tag is NOT focusable and NOT actionable - it is content;
-    b) the X needs an aria-label that INCLUDES the tag's label. In a list of
-       six filters, six buttons called "Remove" are indistinguishable to a
-       screen reader.
-
-  (b) is really checkable: the tag's text can be extracted and looked up
-  inside the aria-label. That is what the markup section does.
+  The rules are data: src/components/tag/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 Run: python3 a11y.py [path.html]
      with no argument, measures build/site/index.html
@@ -51,6 +47,8 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
+from htmltree import Tree  # noqa: E402
 from contrast import cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 TAG = json.load(open(comp_out('tag', 'tokens.json')))
@@ -97,78 +95,43 @@ def strip_tags(s):
 
 
 def markup_contract(path):
-    """Enforces the contract of each .al-tag on the HTML.
-
-    Usage rules:
-      23/24  the read-only tag is not focusable or actionable - no <button>,
-             role="button" or tabindex on the .al-tag itself
-      25     the X has a non-empty aria-label AND it includes the tag's label
-      -      the X is type="button": inside a <form> the HTML default is submit
-      -      the svg inside the X is decorative: aria-hidden
+    """The contract of each .al-tag is in contract.json, checked by
+    tools/contract.py: not a control (usage rules 23/24), the X a named
+    type="button" with a decorative svg. What stays here reads text against an
+    attribute - the `manual` entry: the X's aria-label includes the tag's label
+    (rule 25), or several "Remove" buttons sound the same.
 
     Returns (checked, problems). checked = None when the HTML doesn't emit the
-    component yet - the case until the playground is built. That is PENDING,
-    not a pass: the gate starts counting by itself when the HTML shows up.
+    component yet: that is PENDING, not a pass.
     """
     if not os.path.exists(path):
         return None, [f'{path} does not exist']
+
+    t = Tree()
+    t.feed(open(path, encoding='utf-8').read())
+    problems, _ = contract.check('tag', t, skip=None)
 
     html = open(path).read()
     for pat in (r'<style\b.*?</style>', r'<script\b.*?</script>', r'<!--.*?-->'):
         html = re.sub(pat, lambda m: '\n' * m.group(0).count('\n'), html, flags=re.S)
 
-    checked, problems = 0, []
-
-    for m in OPEN_TAG.finditer(html):
-        elem, attrs = m.group(1), m.group(2)
-        if re.search(r'\bal-tag__', attrs):      # the X itself, handled below
-            continue
-        checked += 1
-        line = html.count('\n', 0, m.start()) + 1
-        if elem.lower() == 'button':
-            problems.append(f'line {line}: the tag is a <button> - it is content, '
-                            f'not a control; only the X is actionable')
-        if 'role="button"' in attrs:
-            problems.append(f'line {line}: role="button" on the tag - clicking the label '
-                            f'does nothing, and announcing it as a button lies')
-        if re.search(r'\btabindex="0"', attrs):
-            problems.append(f'line {line}: tabindex="0" on the tag - the read-only tag '
-                            f'stays out of the tab order')
-
+    checked = sum(1 for m in OPEN_TAG.finditer(html) if not re.search(r'\bal-tag__', m.group(2)))
     for m in DISMISS.finditer(html):
-        tagstr = m.group(0)
-        line = html.count('\n', 0, m.start()) + 1
-
-        label = re.search(r'aria-label="([^"]*)"', tagstr)
+        label = re.search(r'aria-label="([^"]*)"', m.group(0))
         if not (label and label.group(1).strip()):
-            problems.append(f'line {line}: X without aria-label - a mute button for '
-                            f'the screen reader')
-        else:
-            # the tag's label is the text between the .al-tag opening and the X
-            start = html.rfind('class="', 0, m.start())
-            open_m = None
-            for om in OPEN_TAG.finditer(html[:m.start()]):
-                if not re.search(r'\bal-tag__', om.group(2)):
-                    open_m = om
-            text = strip_tags(html[open_m.end():m.start()]) if open_m else ''
-            if text and text.lower() not in label.group(1).lower():
-                problems.append(
-                    f'line {line}: aria-label "{label.group(1)}" does not include the label '
-                    f'"{text}" - in a list of filters, several "Remove" buttons are '
-                    f'indistinguishable to a screen reader')
-
-        if not re.search(r'type="button"', tagstr):
-            problems.append(f'line {line}: X without type="button" - inside a <form> '
-                            f'the HTML default is submit')
-
-    n_dismiss = len(DISMISS.findall(html))
-    for m in DISMISS.finditer(html):
-        end = html.find('</button>', m.end())
-        body = html[m.end():end if end > 0 else m.end()]
-        if '<svg' in body and 'aria-hidden="true"' not in body:
+            continue
+        # the tag's label is the text between the .al-tag opening and the X
+        open_m = None
+        for om in OPEN_TAG.finditer(html[:m.start()]):
+            if not re.search(r'\bal-tag__', om.group(2)):
+                open_m = om
+        text = strip_tags(html[open_m.end():m.start()]) if open_m else ''
+        if text and text.lower() not in label.group(1).lower():
             line = html.count('\n', 0, m.start()) + 1
-            problems.append(f'line {line}: X svg without aria-hidden - the name lives '
-                            f'on the button, announcing both is duplicate noise')
+            problems.append(
+                f'line {line}: aria-label "{label.group(1)}" does not include the label '
+                f'"{text}" - in a list of filters, several "Remove" buttons are '
+                f'indistinguishable to a screen reader')
 
     if checked == 0:
         return None, ['no .al-tag in the HTML - the component enters the site with its '

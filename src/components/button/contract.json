@@ -1,0 +1,62 @@
+{
+  "component": "button",
+  "root": "al-btn",
+  "rules": [
+    {
+      "id": "native-button",
+      "why": "The Button is a native <button> (or a link styled as one): keyboard, focus and announcement come from the browser.",
+      "on": ".al-btn",
+      "tag": [
+        "button",
+        "a"
+      ]
+    },
+    {
+      "id": "type-button",
+      "why": "Inside a <form> the HTML default is submit: the type is always written.",
+      "on": "button.al-btn",
+      "require": {
+        "type": true
+      }
+    },
+    {
+      "id": "link-has-href",
+      "why": "A Button that navigates is <a href>; without href it receives no Tab.",
+      "on": "a.al-btn",
+      "require": {
+        "href": true
+      }
+    },
+    {
+      "id": "label-text",
+      "why": "The label is the accessible name.",
+      "on": ".al-btn",
+      "has": [
+        {
+          "sel": ".al-btn__label",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "spinner-decorative",
+      "why": "The spinner is paint; aria-busy on the button is what speaks.",
+      "on": ".al-btn__spinner",
+      "require": {
+        "aria-hidden": "true"
+      }
+    },
+    {
+      "id": "icon-decorative",
+      "why": "The icon beside a label is paint: the label already says it.",
+      "on": ".al-btn svg",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    }
+  ],
+  "manual": []
+}

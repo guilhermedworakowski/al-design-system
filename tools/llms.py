@@ -27,6 +27,7 @@ REPO = 'guilhermedworakowski/al-design-system'
 RAW = f'https://raw.githubusercontent.com/{REPO}/main'
 SITE = 'https://al.guilhermedesignd.com'
 TOKENS = 'https://cdn.jsdelivr.net/npm/al-design-system/dist/tokens.json'
+CATALOG = 'https://cdn.jsdelivr.net/npm/al-design-system/dist/components.json'
 TARGET = os.path.join(BUILD, 'site', 'llms.txt')
 
 # The Icon has no guidelines (guidegate.NO_GUIDELINES): its line is written here.
@@ -66,6 +67,13 @@ def build():
         'the markup (native elements and ARIA attributes), never from a state class. '
         'Never write a literal color, size or duration: use the --al-* tokens.',
         '',
+        'For agents: `dist/components.json` gathers, per component, the markup to write, '
+        'the markup rules (each with the reason) and the files to import; the package '
+        'also ships the guidelines in `dist/guidelines/`. `npx al-design-system validate '
+        'page.html` checks HTML against those rules, and `npx al-design-system mcp` runs '
+        'an MCP server (stdio) with list_components, get_component, get_tokens and '
+        'validate_markup. Same version as the CSS installed, no dependencies.',
+        '',
         '## Docs',
         '',
         f'- [README]({RAW}/README.md): install, structure, themes, the build gates',
@@ -74,6 +82,7 @@ def build():
         f'- [Tokens]({TOKENS}): primitives, semantic colors as [light, dark], type, '
         'space, radius, motion and the contrast report of every allowed '
         'text/background pair',
+        f'- [Components catalog]({CATALOG}): markup, rules and files of every component, as JSON',
         f'- [Site]({SITE}): live examples, playground and contrast report (one HTML page)',
         '',
         '## Components',

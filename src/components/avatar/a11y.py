@@ -24,21 +24,13 @@ WHAT DOESN'T EXIST HERE, AND WHY
   No TOUCH TARGET section: the Avatar is not actionable, so the 2.5.8 floor
   (minimum touch area) doesn't apply - it is not a control.
 
-THE MARKUP CONTRACT IS THE HEART OF THIS GATE
+THE MARKUP CONTRACT
 
-  Three rules, all from usage rule 12:
-
-    a) the `.al-avatar` wrapper is ALWAYS decorative (aria-hidden="true") OR
-       carries the meaning (role="img" + a non-empty aria-label) - never
-       neither, never both at the same time;
-    b) the photo (`.al-avatar__photo`) ALWAYS has `alt=""`, because the name
-       lives on the wrapper - a filled alt would duplicate the announcement;
-    c) the icon (`.al-icon` inside the Avatar) is ALWAYS decorative on its own
-       tag, because the Icon type's meaning (if any) lives on the wrapper,
-       never on the glyph - the same contract icon.css already documents for
-       the inside of any actionable element.
-
-  That is really checkable on the emitted HTML, and it is what this section does.
+  The rules are data: src/components/avatar/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 Run: python3 a11y.py [path.html]
      with no argument, measures build/site/index.html
@@ -51,6 +43,8 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
+from htmltree import Tree  # noqa: E402
 from contrast import cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 AVATAR = json.load(open(comp_out('avatar', 'tokens.json')))
@@ -72,8 +66,6 @@ def tok(name, theme):
 
 # ─────────────────────────────────────────────── markup contract
 OPEN_AVATAR = re.compile(r'<(\w+)\b([^>]*\bclass="[^"]*\bal-avatar\b[^"]*"[^>]*)>')
-IMG_TAG = re.compile(r'<img\b[^>]*\bclass="[^"]*\bal-avatar__photo\b[^"]*"[^>]*/?>')
-SVG_TAG = re.compile(r'<svg\b[^>]*\bclass="[^"]*\bal-icon\b[^"]*"[^>]*>')
 ATTR = re.compile(r'(\w[\w-]*)="([^"]*)"')
 
 
@@ -81,100 +73,35 @@ def attrs_of(tag_str):
     return dict(ATTR.findall(tag_str))
 
 
-def find_matching_close(html, start, elem):
-    """Finds the </elem> that closes the tag opened at `start`, respecting the
-    nesting of the SAME element (the wrapper is a <span>, and the Initials are
-    a <span> too - closing at the first </span> would catch the child)."""
-    open_re = re.compile(rf'<{elem}\b')
-    close_re = re.compile(rf'</{elem}>')
-    depth, pos = 1, start
-    while depth > 0:
-        cm = close_re.search(html, pos)
-        if not cm:
-            return None
-        om = open_re.search(html, pos, cm.start())
-        if om:
-            depth += 1
-            pos = om.end()
-        else:
-            depth -= 1
-            pos = cm.end()
-    return cm.start(), cm.end()
-
-
 def markup_contract(path):
-    """Enforces the contract of each .al-avatar on the HTML. See the module
-    docstring for the three rules (a, b, c).
+    """The contract of each .al-avatar is in contract.json, checked by
+    tools/contract.py: content and not a control, a photo with alt="", a
+    decorative glyph, a name when it is role="img". What stays here is the
+    `manual` entry the engine has no "one of" for: decorative OR content,
+    never neither.
 
     Returns (checked, problems). checked = None when the HTML doesn't emit the
-    component yet - the case until the playground is built. PENDING, not a
-    failure: the gate starts counting by itself when the HTML shows up.
+    component yet: PENDING, not a failure.
     """
     if not os.path.exists(path):
         return None, [f'{path} does not exist']
+
+    t = Tree()
+    t.feed(open(path, encoding='utf-8').read())
+    problems, _ = contract.check('avatar', t, skip=None)
 
     html = open(path).read()
     for pat in (r'<style\b.*?</style>', r'<script\b.*?</script>', r'<!--.*?-->'):
         html = re.sub(pat, lambda m: '\n' * m.group(0).count('\n'), html, flags=re.S)
 
-    checked, problems = 0, []
-
+    checked = 0
     for m in OPEN_AVATAR.finditer(html):
-        elem, attr_str = m.group(1), m.group(2)
-        attrs = attrs_of(attr_str)
-        line = html.count('\n', 0, m.start()) + 1
+        attrs = attrs_of(m.group(2))
         checked += 1
-
-        # (a) decorative XOR carries the meaning - never neither, never both
-        hidden = attrs.get('aria-hidden') == 'true'
-        role_img = attrs.get('role') == 'img'
-        label = attrs.get('aria-label', '').strip()
-
-        if elem.lower() == 'button':
-            problems.append(f'line {line}: .al-avatar is a <button> - it is content, '
-                            f'not a control; a clickable avatar wraps an actionable OUTSIDE it')
-        if 'role="button"' in attr_str:
-            problems.append(f'line {line}: role="button" on the avatar - it is never '
-                            f'actionable on its own')
-        if re.search(r'\btabindex="0"', attr_str):
-            problems.append(f'line {line}: tabindex="0" on the avatar - it stays out '
-                            f'of the tab order by design')
-
-        if hidden and role_img:
-            problems.append(f'line {line}: aria-hidden="true" and role="img" together - '
-                            f'contradictory, the screen reader doesn\'t know which to follow')
-        elif not hidden and not role_img:
+        if attrs.get('aria-hidden') != 'true' and attrs.get('role') != 'img':
+            line = html.count('\n', 0, m.start()) + 1
             problems.append(f'line {line}: neither aria-hidden nor role="img" - the '
                             f'contract requires one of the two, never neither')
-        elif role_img and not label:
-            problems.append(f'line {line}: role="img" without aria-label (or empty) - '
-                            f'an avatar on its own with no accessible name')
-
-        close = find_matching_close(html, m.end(), elem)
-        inner = html[m.end():close[0]] if close else html[m.end():]
-
-        img_m = IMG_TAG.search(inner)
-        if img_m:
-            img_attrs = attrs_of(img_m.group(0))
-            if 'alt' not in img_attrs:
-                problems.append(f'line {line}: .al-avatar__photo without an alt attribute - '
-                                f'it has to exist and be empty, the name lives on the wrapper')
-            elif img_attrs['alt'] != '':
-                problems.append(f'line {line}: .al-avatar__photo with alt="'
-                                f'{img_attrs["alt"]}" - it has to be empty, or the name '
-                                f'is announced twice (rule 12)')
-
-        svg_m = SVG_TAG.search(inner)
-        if svg_m:
-            svg_attrs = attrs_of(svg_m.group(0))
-            if svg_attrs.get('aria-hidden') != 'true':
-                problems.append(f'line {line}: .al-icon inside the avatar without '
-                                f'aria-hidden="true" - the meaning lives on the wrapper, '
-                                f'never on the glyph')
-            if svg_attrs.get('focusable') != 'false':
-                problems.append(f'line {line}: .al-icon inside the avatar without '
-                                f'focusable="false" - inline SVG enters the tab order '
-                                f'by itself in some browsers')
 
     if checked == 0:
         return None, ['no .al-avatar in the HTML - the component enters the site with '

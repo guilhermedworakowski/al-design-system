@@ -1,0 +1,108 @@
+{
+  "component": "card",
+  "root": "al-card",
+  "rules": [
+    {
+      "id": "title-heading",
+      "why": "The card title is h1-h6 according to the page, never a paragraph.",
+      "on": ".al-card__title",
+      "tag": [
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6"
+      ]
+    },
+    {
+      "id": "card-not-actionable",
+      "why": "The card itself is never actionable: the title link is what receives Tab.",
+      "on": ".al-card",
+      "tag": [
+        "div",
+        "li",
+        "article",
+        "section"
+      ],
+      "forbid": [
+        "tabindex",
+        "onclick",
+        "role",
+        "disabled",
+        "aria-disabled"
+      ]
+    },
+    {
+      "id": "no-card-in-card",
+      "rule": 6,
+      "why": "Subdivide with a Divider or a heading, never with another card.",
+      "on": ".al-card .al-card",
+      "absent": true
+    },
+    {
+      "id": "li-in-list",
+      "rule": 22,
+      "why": "A list of cards is <ul>/<ol> with <li class=\"al-card\">.",
+      "on": "li.al-card",
+      "within": "ul, ol"
+    },
+    {
+      "id": "one-link",
+      "rule": 13,
+      "why": "A clickable card has exactly one link, in the title.",
+      "on": ".al-card--clickable",
+      "has": [
+        {
+          "sel": ".al-card__link",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "link-in-title",
+      "rule": 16,
+      "why": "The announced name of the card is its title.",
+      "on": ".al-card__link",
+      "tag": [
+        "a",
+        "button"
+      ],
+      "within": ".al-card--clickable .al-card__title"
+    },
+    {
+      "id": "link-href",
+      "why": "An <a> without href is not a link and receives no Tab.",
+      "on": "a.al-card__link",
+      "require": {
+        "href": true
+      }
+    },
+    {
+      "id": "button-type",
+      "why": "Inside a form a button without type submits.",
+      "on": "button.al-card__link",
+      "require": {
+        "type": "button"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "one-type-one-padding",
+      "why": "--border and --elevated never together; --spaced and --tight never together."
+    },
+    {
+      "id": "nothing-clickable-inside",
+      "rule": 15,
+      "why": "Nothing interactive inside a clickable card besides the title link: it would overlap the stretched link."
+    },
+    {
+      "id": "no-handlers",
+      "rule": 16,
+      "why": "No event handler on the card: the title link is what acts."
+    }
+  ]
+}

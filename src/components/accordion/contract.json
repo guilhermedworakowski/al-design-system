@@ -1,0 +1,111 @@
+{
+  "component": "accordion",
+  "root": "al-accordion",
+  "rules": [
+    {
+      "id": "native-details",
+      "rule": 24,
+      "why": "The item is a native <details>: the browser announces and toggles the state.",
+      "on": ".al-accordion",
+      "tag": [
+        "details"
+      ],
+      "forbid": [
+        "role",
+        "aria-expanded",
+        "aria-controls",
+        "tabindex",
+        "disabled",
+        "aria-disabled"
+      ]
+    },
+    {
+      "id": "native-summary",
+      "rule": 24,
+      "why": "The header is the native <summary>, pure, with no manual ARIA and never disabled.",
+      "on": ".al-accordion__header",
+      "tag": [
+        "summary"
+      ],
+      "forbid": [
+        "role",
+        "aria-expanded",
+        "aria-controls",
+        "tabindex",
+        "disabled",
+        "aria-disabled"
+      ]
+    },
+    {
+      "id": "title-text",
+      "rule": 15,
+      "why": "The title is the announced name.",
+      "on": ".al-accordion__header",
+      "has": [
+        {
+          "sel": ".al-accordion__title",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "no-heading-in-summary",
+      "rule": 25,
+      "why": "A heading inside <summary> leaves the headings list in some screen readers.",
+      "on": ".al-accordion__header h1, .al-accordion__header h2, .al-accordion__header h3, .al-accordion__header h4, .al-accordion__header h5, .al-accordion__header h6",
+      "absent": true
+    },
+    {
+      "id": "nothing-clickable-inside",
+      "why": "The whole header is already the button.",
+      "on": ".al-accordion__header a, .al-accordion__header button, .al-accordion__header input, .al-accordion__header select, .al-accordion__header textarea",
+      "absent": true
+    },
+    {
+      "id": "one-content",
+      "why": "Exactly one content block per item.",
+      "on": ".al-accordion",
+      "has": [
+        {
+          "sel": ".al-accordion__content",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "no-nesting",
+      "rule": 5,
+      "why": "An Accordion never goes inside another.",
+      "on": ".al-accordion .al-accordion",
+      "absent": true
+    },
+    {
+      "id": "icons-decorative",
+      "why": "The icon and the chevron are paint; the title speaks.",
+      "on": ".al-accordion__header svg",
+      "require": {
+        "aria-hidden": "true"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "summary-first",
+      "rule": 24,
+      "why": "The <summary> is the first child of the <details>; the content is a direct child that comes after it."
+    },
+    {
+      "id": "nothing-interactive-inside",
+      "rule": 17,
+      "why": "Nothing focusable inside the <summary> (tabindex, actionable roles): the whole header is already the button."
+    },
+    {
+      "id": "no-disabled",
+      "rule": 20,
+      "why": "An item with no content leaves the stack; it is never disabled."
+    }
+  ]
+}
