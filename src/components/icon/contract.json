@@ -1,0 +1,46 @@
+{
+  "component": "icon",
+  "root": "al-icon",
+  "rules": [
+    {
+      "id": "on-the-svg",
+      "why": "The class goes on the inline <svg>: only inline SVG inherits currentColor.",
+      "on": ".al-icon",
+      "tag": [
+        "svg"
+      ]
+    },
+    {
+      "id": "decorative-or-meaningful",
+      "why": "An icon is either decorative (aria-hidden=\"true\" + focusable=\"false\") or carries meaning (role=\"img\" + aria-label) - never neither.",
+      "on": ".al-icon",
+      "when": {
+        "aria-hidden": "true"
+      },
+      "require": {
+        "focusable": "false"
+      },
+      "forbid": [
+        "role",
+        "aria-label"
+      ]
+    },
+    {
+      "id": "meaningful-named",
+      "why": "An icon that carries meaning names itself.",
+      "on": "svg.al-icon[role=img]",
+      "require": {
+        "aria-label": true
+      },
+      "forbid": [
+        "aria-hidden"
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "id": "one-contract",
+      "why": "Every .al-icon has aria-hidden=\"true\" or role=\"img\" - checked by the a11y.py, the engine has no \"one of\"."
+    }
+  ]
+}

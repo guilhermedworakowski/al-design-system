@@ -1,0 +1,58 @@
+{
+  "component": "carousel",
+  "root": "al-carousel",
+  "rules": [
+    {
+      "id": "section-named",
+      "why": "The carousel is a <section> that says it is a carousel and is named by its visible title.",
+      "on": ".al-carousel",
+      "tag": [
+        "section"
+      ],
+      "require": {
+        "aria-roledescription": "carousel"
+      },
+      "refText": [
+        "aria-labelledby"
+      ]
+    },
+    {
+      "id": "slide-group",
+      "why": "Each slide is a named group (\"1 of 5\").",
+      "on": ".al-carousel__slide",
+      "require": {
+        "role": "group",
+        "aria-roledescription": "slide",
+        "aria-label": true
+      }
+    },
+    {
+      "id": "dots-decorative",
+      "why": "The dots are paint; the arrows and the announcement do the work.",
+      "on": ".al-carousel__dots",
+      "require": {
+        "aria-hidden": "true"
+      }
+    },
+    {
+      "id": "arrows",
+      "why": "The arrows are named Icon Buttons.",
+      "on": ".al-carousel__nav button",
+      "require": {
+        "type": "button",
+        "aria-label": true,
+        "data-al-carousel": true
+      }
+    },
+    {
+      "id": "live-region",
+      "why": "The polite region announces the slide after a click.",
+      "on": ".al-carousel__live",
+      "require": {
+        "aria-live": "polite",
+        "aria-atomic": "true"
+      }
+    }
+  ],
+  "manual": []
+}

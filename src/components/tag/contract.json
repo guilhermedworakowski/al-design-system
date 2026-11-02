@@ -1,0 +1,45 @@
+{
+  "component": "tag",
+  "root": "al-tag",
+  "rules": [
+    {
+      "id": "not-a-control",
+      "why": "The tag is content, not a control: only the X is actionable.",
+      "on": ".al-tag",
+      "tag": [
+        "span",
+        "li"
+      ],
+      "forbid": [
+        "role",
+        "tabindex"
+      ]
+    },
+    {
+      "id": "dismiss-button",
+      "why": "The X is a native button that names what it removes; without type=\"button\" it submits the form.",
+      "on": ".al-tag__dismiss",
+      "tag": [
+        "button"
+      ],
+      "require": {
+        "type": "button",
+        "aria-label": true
+      }
+    },
+    {
+      "id": "dismiss-icon-decorative",
+      "why": "The name lives on the button; announcing the svg too is duplicate noise.",
+      "on": ".al-tag__dismiss svg",
+      "require": {
+        "aria-hidden": "true"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "dismiss-names-label",
+      "why": "The X's aria-label includes the tag's label (\"Remove Books\")."
+    }
+  ]
+}

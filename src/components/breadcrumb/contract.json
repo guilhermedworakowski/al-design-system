@@ -1,0 +1,88 @@
+{
+  "component": "breadcrumb",
+  "root": "al-breadcrumb",
+  "rules": [
+    {
+      "id": "nav-named",
+      "why": "The Breadcrumb is a named landmark.",
+      "on": ".al-breadcrumb",
+      "tag": [
+        "nav"
+      ],
+      "require": {
+        "aria-label": true
+      }
+    },
+    {
+      "id": "ordered-list",
+      "rule": 19,
+      "why": "The order has meaning: <ol>.",
+      "on": ".al-breadcrumb__list",
+      "tag": [
+        "ol"
+      ]
+    },
+    {
+      "id": "item-li",
+      "why": "Each level is an <li> of the list.",
+      "on": ".al-breadcrumb__item",
+      "tag": [
+        "li"
+      ],
+      "within": ".al-breadcrumb__list"
+    },
+    {
+      "id": "link-href",
+      "why": "A level is a real link.",
+      "on": ".al-breadcrumb__link",
+      "tag": [
+        "a"
+      ],
+      "require": {
+        "href": true
+      }
+    },
+    {
+      "id": "current-is-text",
+      "why": "The current page is text, not a link, and says it is the current one.",
+      "on": ".al-breadcrumb__current",
+      "tag": [
+        "span"
+      ],
+      "require": {
+        "aria-current": "page"
+      }
+    },
+    {
+      "id": "separator-decorative",
+      "why": "The chevron is paint; the list already gives the order.",
+      "on": ".al-breadcrumb__separator",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    },
+    {
+      "id": "more-button",
+      "why": "The … is a button that says whether its menu is open and which menu it opens.",
+      "on": ".al-breadcrumb__more-button",
+      "tag": [
+        "button"
+      ],
+      "require": {
+        "type": "button",
+        "aria-expanded": true
+      },
+      "ref": [
+        "aria-controls"
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "id": "one-per-page",
+      "rule": 7,
+      "why": "One live Breadcrumb per page; samples sit under inert."
+    }
+  ]
+}

@@ -20,6 +20,7 @@ A rule is an object with:
     why         one sentence: what breaks if the rule is broken
     on          selector of the elements the rule applies to
     when        {attr: value | true} - applies only to elements that match
+    unless      {attr: value | true} - skips elements that match
     tag         list of allowed tag names
     within      selector one of the ancestors must match
     notWithin   selector no ancestor may match
@@ -28,20 +29,27 @@ A rule is an object with:
     has         [{sel, min, max, text}] - descendants matching sel, counted;
                 text: true means each one needs visible text
     ref         [attr] - every id listed in the attribute exists in the page
+    refText     [attr] - and each element it points to has visible text
+    uniqueId    true - the element has an id, and no other element shares it
+    referencedBy {sel, attr} - some element matching sel lists this id in attr
+                (a <label for>, an aria-controls)
+    absent      true - no element may match "on" at all (a role the AL never
+                uses, a nesting it forbids); every other key is ignored
 
 Selectors are a small subset of CSS, enough for the contracts: a tag, classes
-and attributes chained without spaces (input.al-switch__input[type=checkbox]),
-and alternatives separated by commas. No descendant combinator: that is what
-within, notWithin and has are for.
+and attributes chained (input.al-switch__input[type=checkbox]), the descendant
+combinator (a space) and alternatives separated by commas. No >, + or ~.
 
     load(component)            the contract dict
-    check(component, tree)     (findings, n) - n = elements the rules saw
+    check(component, tree)     (findings, n) - n = elements the rules saw;
+                               skip= a selector whose subtree is not checked
     markup_block(component)    the MARKUP CONTRACT block of the CSS, as text
     catalog(components)        what dist/components.json carries
 """
 import json
 import os
 import re
+from functools import lru_cache
 
 from cssgate import CONTRACT_HEAD, CONTRACT_END, ROOT_CLASS
 from htmltree import walk, classes, ancestors, text_of
@@ -50,8 +58,10 @@ from paths import comp_src
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 
-RULE_KEYS = {'id', 'rule', 'why', 'on', 'when', 'tag', 'within', 'notWithin',
-             'require', 'forbid', 'has', 'ref'}
+RULE_KEYS = {'id', 'rule', 'why', 'on', 'when', 'unless', 'tag', 'within', 'notWithin',
+             'require', 'forbid', 'has', 'ref', 'refText', 'uniqueId', 'referencedBy',
+             'absent'}
+CHECKS = RULE_KEYS - {'id', 'rule', 'why', 'on', 'when', 'unless'}
 CONTRACT_KEYS = {'component', 'root', 'rules', 'manual'}
 
 _PART = re.compile(r'([a-zA-Z][a-zA-Z0-9-]*)|\.([a-zA-Z0-9_-]+)|\[([a-zA-Z-]+)(?:="?([^"\]]*)"?)?\]')
@@ -65,39 +75,97 @@ def load(component):
     return json.load(open(path_of(component), encoding='utf-8'))
 
 
-def parse(selector):
-    """'input.a[type=checkbox], span.b' -> [(tag, {classes}, {attr: value|None})]"""
-    out = []
-    for alt in selector.split(','):
-        alt = alt.strip()
-        tag, cls, attrs, pos = None, set(), {}, 0
-        for m in _PART.finditer(alt):
-            if m.start() != pos:
-                raise ValueError(f'selector not supported: "{alt}"')
-            pos = m.end()
-            if m.group(1):
-                tag = m.group(1).lower()
-            elif m.group(2):
-                cls.add(m.group(2))
-            else:
-                attrs[m.group(3)] = m.group(4)
-        if pos != len(alt) or not alt:
+def _compound(alt):
+    tag, cls, attrs, pos = None, set(), {}, 0
+    for m in _PART.finditer(alt):
+        if m.start() != pos:
             raise ValueError(f'selector not supported: "{alt}"')
-        out.append((tag, cls, attrs))
-    return out
+        pos = m.end()
+        if m.group(1):
+            tag = m.group(1).lower()
+        elif m.group(2):
+            cls.add(m.group(2))
+        else:
+            attrs[m.group(3)] = m.group(4)
+    if pos != len(alt) or not alt:
+        raise ValueError(f'selector not supported: "{alt}"')
+    return (tag, frozenset(cls), tuple(attrs.items()))
+
+
+@lru_cache(maxsize=None)
+def parse(selector):
+    """'.a input[type=checkbox], span.b' -> [[compound, ...]] - one chain per
+    alternative, ancestors first, the element itself last."""
+    return tuple(tuple(_compound(p) for p in alt.split()) for alt in selector.split(','))
+
+
+def _one(node, compound):
+    tag, cls, attrs = compound
+    if tag and node['tag'] != tag:
+        return False
+    if not cls <= set(classes(node)):
+        return False
+    return not any(k not in node['attrs'] or (v is not None and node['attrs'][k] != v)
+                   for k, v in attrs)
 
 
 def matches(node, selector):
-    for tag, cls, attrs in parse(selector):
-        if tag and node['tag'] != tag:
+    for chain in parse(selector):
+        if not _one(node, chain[-1]):
             continue
-        if not cls <= set(classes(node)):
-            continue
-        if any(k not in node['attrs'] or (v is not None and node['attrs'][k] != v)
-               for k, v in attrs.items()):
-            continue
-        return True
+        rest = chain[:-1]
+        for a in ancestors(node):
+            if rest and _one(a, rest[-1]):
+                rest = rest[:-1]
+        if not rest:
+            return True
     return False
+
+
+def _index(tree):
+    """Nodes, ids and a class/tag index, built once per tree."""
+    ix = getattr(tree, '_contract_ix', None)
+    if ix is None:
+        nodes = list(walk(tree.root))
+        by_class, by_tag, by_id = {}, {}, {}
+        for i, n in enumerate(nodes):
+            n['_i'] = i
+            for k in classes(n):
+                by_class.setdefault(k, []).append(n)
+            by_tag.setdefault(n['tag'], []).append(n)
+            if n['attrs'].get('id'):
+                by_id.setdefault(n['attrs']['id'], []).append(n)
+        ix = tree._contract_ix = {'nodes': nodes, 'class': by_class, 'tag': by_tag,
+                                  'id': by_id, 'skip': {}}
+    return ix
+
+
+def select(tree, selector):
+    """Elements matching the selector, in document order."""
+    ix, out = _index(tree), {}
+    for chain in parse(selector):
+        tag, cls, _ = chain[-1]
+        if cls:
+            pool = ix['class'].get(min(cls, key=lambda k: len(ix['class'].get(k, ()))), [])
+        elif tag:
+            pool = ix['tag'].get(tag, [])
+        else:
+            pool = ix['nodes']
+        for n in pool:
+            if n['_i'] not in out and matches(n, selector):
+                out[n['_i']] = n
+    return [out[i] for i in sorted(out)]
+
+
+def skipped(tree, skip):
+    ix = _index(tree)
+    if skip not in ix['skip']:
+        gone = set()
+        for top in select(tree, skip):
+            gone.add(top['_i'])
+            gone.update(d['_i'] for d in walk(top))
+        ix['skip'][skip] = gone
+    return ix['skip'][skip]
 
 
 def _attr_ok(node, k, v):
@@ -144,27 +212,36 @@ def validate(contract, component):
                     parse(r[key])
                 except ValueError as e:
                     errs.append(f'{rid}: {e}')
-        if not set(r) & {'tag', 'within', 'notWithin', 'require', 'forbid', 'has', 'ref'}:
+        if 'referencedBy' in r:
+            try:
+                parse(r['referencedBy']['sel'])
+            except (ValueError, KeyError, TypeError) as e:
+                errs.append(f'{rid}: referencedBy {e}')
+        if not set(r) & CHECKS:
             errs.append(f'{rid}: the rule checks nothing')
     return errs
 
 
-def check(component, tree, contract=None):
+def check(component, tree, contract=None, skip='[inert]'):
     contract = contract or load(component)
     errs = validate(contract, component)
     if errs:
         return ([f'contract.json: {e}' for e in errs], 0)
 
-    nodes = list(walk(tree.root))
-    ids = {n['attrs']['id'] for n in nodes if n['attrs'].get('id')}
+    ix = _index(tree)
+    by_id = ix['id']
+    ids = set(by_id)
+    gone = skipped(tree, skip) if skip else set()
     findings, seen = [], set()
 
     for r in contract['rules']:
         tagline = f'[{r["id"]}{", rule " + str(r["rule"]) if r.get("rule") else ""}]'
-        for n in nodes:
-            if not matches(n, r['on']):
+        for n in select(tree, r['on']):
+            if n['_i'] in gone:
                 continue
             if any(not _attr_ok(n, k, v) for k, v in r.get('when', {}).items()):
+                continue
+            if r.get('unless') and all(_attr_ok(n, k, v) for k, v in r['unless'].items()):
                 continue
             seen.add(id(n))
             where = f'line {n["line"]}: {_show(n)}'
@@ -172,6 +249,9 @@ def check(component, tree, contract=None):
             def fail(what):
                 findings.append(f'{where} {what} {tagline}')
 
+            if r.get('absent'):
+                fail('must not exist')
+                continue
             if 'tag' in r and n['tag'] not in r['tag']:
                 fail(f'is a <{n["tag"]}>, must be {" or ".join("<" + t + ">" for t in r["tag"])}')
             if 'within' in r and not any(matches(a, r['within']) for a in ancestors(n)):
@@ -186,7 +266,7 @@ def check(component, tree, contract=None):
                 if _attr_ok(n, k, v):
                     fail(f'with {k}' + ('' if v is True else f'="{v}"'))
             for h in r.get('has', []):
-                found = [d for d in walk(n) if matches(d, h['sel'])]
+                found = [d for d in walk(n) if matches(d, h['sel'])]  # subtree only
                 lo, hi = h.get('min', 1), h.get('max')
                 if len(found) < lo or (hi is not None and len(found) > hi):
                     want = f'{lo}' if hi == lo else (f'{lo} to {hi}' if hi is not None else f'at least {lo}')
@@ -199,6 +279,26 @@ def check(component, tree, contract=None):
                 for ref in n['attrs'].get(k, '').split():
                     if ref not in ids:
                         fail(f'{k}="{ref}" points to no element')
+            for k in r.get('refText', []):
+                refs = n['attrs'].get(k, '').split()
+                if not refs:
+                    fail(f'without {k}')
+                for ref in refs:
+                    if ref not in ids:
+                        fail(f'{k}="{ref}" points to no element')
+                    elif not text_of(by_id[ref][0]):
+                        fail(f'{k}="{ref}" points to an element without text')
+            if r.get('uniqueId'):
+                i = n['attrs'].get('id')
+                if not i:
+                    fail('without id')
+                elif len(by_id[i]) > 1:
+                    fail(f'id "{i}" appears {len(by_id[i])} times')
+            if 'referencedBy' in r:
+                rb, i = r['referencedBy'], n['attrs'].get('id')
+                if not i or not any(i in x['attrs'].get(rb['attr'], '').split()
+                                    for x in select(tree, rb['sel'])):
+                    fail(f'no {rb["sel"]} points to it through {rb["attr"]}')
     return (findings, len(seen))
 
 

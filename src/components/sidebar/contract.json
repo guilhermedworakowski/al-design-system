@@ -1,0 +1,147 @@
+{
+  "component": "sidebar",
+  "root": "al-sidebar",
+  "rules": [
+    {
+      "id": "aside-named",
+      "rule": 26,
+      "why": "The Sidebar is a named <aside>.",
+      "on": ".al-sidebar",
+      "tag": [
+        "aside"
+      ],
+      "require": {
+        "aria-label": true
+      }
+    },
+    {
+      "id": "one-nav",
+      "rule": 26,
+      "why": "Exactly one named <nav> inside.",
+      "on": ".al-sidebar",
+      "has": [
+        {
+          "sel": "nav.al-sidebar__nav[aria-label]",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "profile-outside-nav",
+      "rule": 26,
+      "why": "The profile stays outside the <nav>.",
+      "on": ".al-sidebar__profile",
+      "notWithin": "nav"
+    },
+    {
+      "id": "profile-avatar",
+      "rule": 18,
+      "why": "The profile Avatar is decorative: the name beside it speaks.",
+      "on": ".al-sidebar__profile .al-avatar",
+      "require": {
+        "aria-hidden": "true"
+      }
+    },
+    {
+      "id": "profile-name",
+      "rule": 18,
+      "why": "The profile has one name with text.",
+      "on": ".al-sidebar__profile",
+      "has": [
+        {
+          "sel": ".al-sidebar__name",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "profile-action",
+      "rule": 19,
+      "why": "The profile action is a named Icon Button.",
+      "on": ".al-sidebar__profile .al-icon-btn",
+      "require": {
+        "aria-label": true
+      }
+    },
+    {
+      "id": "item-link",
+      "rule": 28,
+      "why": "A Sidebar item is a link, never role=\"tab\".",
+      "on": ".al-sidebar .al-tab",
+      "tag": [
+        "a"
+      ],
+      "require": {
+        "href": true
+      },
+      "forbid": [
+        "role",
+        "aria-selected"
+      ]
+    },
+    {
+      "id": "current-page",
+      "rule": 28,
+      "why": "In the Sidebar the current item is aria-current=\"page\".",
+      "on": ".al-sidebar .al-tab[aria-current]",
+      "require": {
+        "aria-current": "page"
+      }
+    },
+    {
+      "id": "no-nesting",
+      "rule": 4,
+      "why": "A Sidebar never goes inside another.",
+      "on": ".al-sidebar .al-sidebar",
+      "absent": true
+    },
+    {
+      "id": "menu-button",
+      "rule": 24,
+      "why": "The Menu button names itself, says whether the panel is open and which one it opens.",
+      "on": "[data-al-sidebar-open]",
+      "require": {
+        "aria-label": true,
+        "aria-expanded": true
+      },
+      "ref": [
+        "aria-controls"
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "id": "order",
+      "rule": 5,
+      "why": "Children in the order profile, nav; inside the nav, body then Help (optional)."
+    },
+    {
+      "id": "groups",
+      "rule": 27,
+      "why": "A group has a label with text and id, and its list points to it with aria-labelledby."
+    },
+    {
+      "id": "help-max-3",
+      "rule": 21,
+      "why": "Help has at most 3 items."
+    },
+    {
+      "id": "one-current",
+      "rule": 12,
+      "why": "At most one current item; labels never repeat."
+    },
+    {
+      "id": "one-per-screen",
+      "rule": 4,
+      "why": "One live Sidebar per screen."
+    },
+    {
+      "id": "skip-link",
+      "rule": 29,
+      "why": "A \"skip to content\" link comes before the Sidebar."
+    }
+  ]
+}

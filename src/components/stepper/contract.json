@@ -1,0 +1,55 @@
+{
+  "component": "stepper",
+  "root": "al-stepper",
+  "rules": [
+    {
+      "id": "ordered-list",
+      "why": "The order has meaning: <ol> inside <nav aria-label>.",
+      "on": ".al-stepper",
+      "tag": [
+        "ol"
+      ],
+      "within": "nav[aria-label]"
+    },
+    {
+      "id": "step-li",
+      "why": "Each step is an <li>.",
+      "on": ".al-stepper__step",
+      "tag": [
+        "li"
+      ]
+    },
+    {
+      "id": "step-label",
+      "why": "Each step has a visible label.",
+      "on": ".al-stepper__step",
+      "has": [
+        {
+          "sel": ".al-stepper__label",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "indicator-decorative",
+      "why": "The number or the check is paint; the label and the status speak.",
+      "on": ".al-stepper__indicator svg",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "one-current",
+      "why": "Exactly one step has aria-current=\"step\"."
+    },
+    {
+      "id": "three-to-five",
+      "why": "From 3 to 5 steps."
+    }
+  ]
+}

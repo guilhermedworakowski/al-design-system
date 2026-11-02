@@ -1,0 +1,111 @@
+{
+  "component": "password",
+  "root": "al-password",
+  "rules": [
+    {
+      "id": "native-field",
+      "why": "The field is a native <input>: the browser gives it the keyboard, the value and the announcement.",
+      "on": ".al-password__field",
+      "tag": [
+        "input"
+      ],
+      "uniqueId": true,
+      "require": {
+        "type": "password"
+      }
+    },
+    {
+      "id": "visible-label",
+      "why": "A <label for> names the field; clicking it focuses the field.",
+      "on": ".al-password__field",
+      "referencedBy": {
+        "sel": "label",
+        "attr": "for"
+      }
+    },
+    {
+      "id": "no-hidden-name",
+      "why": "With a visible label, aria-label makes what is read differ from what is seen.",
+      "on": ".al-password__field",
+      "forbid": [
+        "aria-label",
+        "maxlength"
+      ]
+    },
+    {
+      "id": "error-described",
+      "why": "A field in error points to its message, and the message has text - the color alone says nothing.",
+      "on": ".al-password__field",
+      "when": {
+        "aria-invalid": "true"
+      },
+      "refText": [
+        "aria-describedby"
+      ]
+    },
+    {
+      "id": "describedby-exists",
+      "why": "Every id in aria-describedby exists, or the help text is never read.",
+      "on": ".al-password__field",
+      "ref": [
+        "aria-describedby",
+        "aria-labelledby"
+      ]
+    },
+    {
+      "id": "autocomplete",
+      "why": "The password manager needs to know whether to fill or to suggest.",
+      "on": ".al-password__field",
+      "require": {
+        "spellcheck": "false",
+        "autocapitalize": "none"
+      }
+    },
+    {
+      "id": "eye-button",
+      "why": "The eye is a real button that names itself and controls the field; without type=\"button\" it submits the form.",
+      "on": ".al-password__toggle",
+      "tag": [
+        "button"
+      ],
+      "require": {
+        "type": "button",
+        "aria-label": true
+      },
+      "ref": [
+        "aria-controls"
+      ]
+    },
+    {
+      "id": "one-eye",
+      "why": "Every password field has exactly one eye button next to it.",
+      "on": ".al-password__control",
+      "has": [
+        {
+          "sel": ".al-password__toggle",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "eye-icon-decorative",
+      "why": "The eye icon is paint: the button's aria-label is what speaks.",
+      "on": "svg.al-password__show, svg.al-password__hide",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "autocomplete-value",
+      "why": "autocomplete is current-password or new-password, nothing else."
+    },
+    {
+      "id": "disabled-together",
+      "why": "A disabled field disables its eye too."
+    }
+  ]
+}

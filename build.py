@@ -65,6 +65,7 @@ def steps():
     for c in after:
         out.append((f'src/components/{c}', 'a11y.py', False))
     out.append(('site', 'site.py', False))
+    out.append(('tools', 'contractgate.py', False))
     out.append(('tools', 'llms.py', False))
     out.append(('tools', 'dist.py', False))
     return out

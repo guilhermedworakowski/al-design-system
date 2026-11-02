@@ -1,0 +1,66 @@
+{
+  "component": "divider",
+  "root": "al-divider",
+  "rules": [
+    {
+      "id": "native-separator",
+      "why": "The divider is <hr>, or <li role=\"separator\"> inside a list.",
+      "on": ".al-divider",
+      "tag": [
+        "hr",
+        "li"
+      ]
+    },
+    {
+      "id": "li-separator",
+      "why": "An announced <li> divider without role=\"separator\" is read as an empty item.",
+      "on": "li.al-divider",
+      "unless": {
+        "aria-hidden": "true"
+      },
+      "require": {
+        "role": "separator"
+      }
+    },
+    {
+      "id": "never-focusable",
+      "why": "A focusable separator is a Window Splitter, another component.",
+      "on": ".al-divider",
+      "forbid": [
+        "tabindex",
+        "onclick"
+      ]
+    },
+    {
+      "id": "vertical-announced",
+      "why": "A vertical divider that is announced says so; the separator is horizontal by default.",
+      "on": ".al-divider--vertical",
+      "when": {
+        "role": "separator"
+      },
+      "require": {
+        "aria-orientation": "vertical"
+      }
+    },
+    {
+      "id": "hidden-is-true",
+      "why": "Decorative is aria-hidden=\"true\"; announced has no attribute.",
+      "on": ".al-divider[aria-hidden]",
+      "require": {
+        "aria-hidden": "true"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "separates-something",
+      "rule": 4,
+      "why": "A divider never opens or closes its container and never sits next to another one."
+    },
+    {
+      "id": "hr-parent",
+      "rule": 15,
+      "why": "<hr> never goes directly inside <ul>/<ol> - invalid HTML; use <li role=\"separator\">."
+    }
+  ]
+}

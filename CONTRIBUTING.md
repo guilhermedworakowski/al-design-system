@@ -41,7 +41,8 @@ src/components/<name>/
   <name>.css               the component CSS
   <name>.js                the script, when the component has one
   check.py                 component-specific CSS checks
-  a11y.py                  contrast of every rendered combination + markup contract
+  a11y.py                  contrast of every rendered combination + markup checks that need page logic
+  contract.json            the markup contract as data: rules the gate checks, read by people and agents
   guidelines.md            the usage rules
 tools/                   code shared by the build (paths, contrast, HTML reader, gates, dist)
 site/site.py             the documentation site generator
@@ -73,6 +74,7 @@ Validation is part of the build, not an optional check. Each gate stops the buil
 | Alias | `src/components/<name>/tokens.py` | A component token with its own value instead of pointing to the Foundation |
 | Literal CSS | `src/components/<name>/check.py` (through `tools/cssgate.py`) | A literal color, length, weight or duration in the component CSS; a token declared and never used; a token used and never declared |
 | Accessibility | `src/components/<name>/a11y.py` | A rendered combination (variant × state × theme) below the minimum against its real background, or HTML that breaks the component's markup contract |
+| Markup contract | `tools/contractgate.py` (through `tools/contract.py`) | HTML on the site that breaks a rule of a `contract.json`; a component without `contract.json`; a contract file with an unknown key, a rule without `why` or a selector outside the supported subset |
 | Icons | `src/components/icon/icons.py` | An SVG outside the family: another grid, another stroke, a hard-coded color |
 
 When a gate fails, its message names the file, the token or the element and the reason. Fix the source and run the build again. A gate is never relaxed to make a change pass. If you think a gate is wrong, open an issue.

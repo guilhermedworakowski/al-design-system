@@ -1,0 +1,36 @@
+{
+  "component": "link",
+  "root": "al-link",
+  "rules": [
+    {
+      "id": "native-link",
+      "why": "The Link only navigates: a native <a href>. An action is a Button.",
+      "on": ".al-link",
+      "tag": [
+        "a"
+      ],
+      "require": {
+        "href": true
+      },
+      "forbid": [
+        "role",
+        "onclick"
+      ]
+    },
+    {
+      "id": "icon-decorative",
+      "why": "The arrow is paint; the link text is the name.",
+      "on": ".al-link__icon",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "has-text",
+      "why": "The link has visible text that says where it goes - never \"click here\"."
+    }
+  ]
+}

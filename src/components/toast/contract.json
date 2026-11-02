@@ -1,0 +1,81 @@
+{
+  "component": "toast",
+  "root": "al-toast",
+  "rules": [
+    {
+      "id": "region",
+      "why": "One region per page, a named popover with the two live areas the script writes into.",
+      "on": ".al-toast-region",
+      "tag": [
+        "section"
+      ],
+      "require": {
+        "aria-label": true,
+        "popover": "manual"
+      },
+      "has": [
+        {
+          "sel": ".al-toast-region__live[role=status]",
+          "min": 1,
+          "max": 1
+        },
+        {
+          "sel": ".al-toast-region__live[role=alert]",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "in-template",
+      "why": "A toast is a <template>, cloned by toast.js; one sitting on the page never leaves.",
+      "on": ".al-toast",
+      "unless": {
+        "aria-hidden": "true"
+      },
+      "within": "template"
+    },
+    {
+      "id": "title",
+      "why": "The title is the message.",
+      "on": ".al-toast",
+      "has": [
+        {
+          "sel": ".al-toast__title",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "icon-named",
+      "why": "The status icon carries meaning (Success, Error…): it names itself.",
+      "on": ".al-toast__icon",
+      "require": {
+        "role": "img",
+        "aria-label": true
+      }
+    },
+    {
+      "id": "close-named",
+      "why": "The X names itself.",
+      "on": ".al-toast__close",
+      "require": {
+        "type": "button",
+        "aria-label": true
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "one-region",
+      "rule": 23,
+      "why": "Exactly one .al-toast-region in the document."
+    },
+    {
+      "id": "template-only-child",
+      "why": "Each <template> has the .al-toast as its only child."
+    }
+  ]
+}

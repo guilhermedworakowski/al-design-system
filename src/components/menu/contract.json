@@ -1,0 +1,84 @@
+{
+  "component": "menu",
+  "root": "al-menu",
+  "rules": [
+    {
+      "id": "trigger",
+      "why": "The trigger says whether the menu is open and which menu it opens.",
+      "on": ".al-menu button[aria-controls]",
+      "require": {
+        "aria-expanded": true
+      },
+      "ref": [
+        "aria-controls"
+      ]
+    },
+    {
+      "id": "list-role",
+      "why": "The list is a named role=\"menu\": arrows move, Esc closes.",
+      "on": ".al-menu__list",
+      "tag": [
+        "ul"
+      ],
+      "require": {
+        "role": "menu",
+        "aria-label": true,
+        "id": true
+      }
+    },
+    {
+      "id": "item-role",
+      "why": "An item is a native button with role=\"menuitem\", out of the Tab order (arrows move focus).",
+      "on": ".al-menu__item",
+      "tag": [
+        "button"
+      ],
+      "require": {
+        "role": "menuitem",
+        "tabindex": "-1"
+      }
+    },
+    {
+      "id": "item-label",
+      "why": "The label is the item's name.",
+      "on": ".al-menu__item",
+      "has": [
+        {
+          "sel": ".al-menu__label",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "li-none",
+      "why": "The <li> around an item is presentation only.",
+      "on": ".al-menu__list li",
+      "unless": {
+        "role": "separator"
+      },
+      "require": {
+        "role": "none"
+      }
+    },
+    {
+      "id": "decor-hidden",
+      "why": "The icon and the shortcut are paint; the label speaks.",
+      "on": ".al-menu__item svg, .al-menu__shortcut",
+      "require": {
+        "aria-hidden": "true"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "danger-last",
+      "why": "Danger is the last item, after a divider."
+    },
+    {
+      "id": "disabled-focusable",
+      "why": "A disabled item stays focusable with aria-disabled=\"true\", never disabled."
+    }
+  ]
+}

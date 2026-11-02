@@ -1,0 +1,83 @@
+{
+  "component": "alert",
+  "root": "al-alert",
+  "rules": [
+    {
+      "id": "in-slot",
+      "why": "The Alert lives in the slot at the top of the page.",
+      "on": ".al-alert",
+      "unless": {
+        "aria-hidden": "true"
+      },
+      "within": ".al-alert-slot, template"
+    },
+    {
+      "id": "slot-div",
+      "why": "The slot is a plain <div>, present from page load.",
+      "on": ".al-alert-slot",
+      "tag": [
+        "div"
+      ],
+      "forbid": [
+        "role",
+        "aria-live"
+      ],
+      "notWithin": "template"
+    },
+    {
+      "id": "title-not-heading",
+      "why": "Title and description are <p>, never a heading.",
+      "on": ".al-alert__title, .al-alert__description",
+      "tag": [
+        "p"
+      ]
+    },
+    {
+      "id": "title",
+      "why": "The title says what happened.",
+      "on": ".al-alert",
+      "has": [
+        {
+          "sel": ".al-alert__title",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "icon-named",
+      "why": "The status icon carries meaning: it names itself.",
+      "on": ".al-alert__icon",
+      "require": {
+        "role": "img",
+        "aria-label": true
+      }
+    },
+    {
+      "id": "close-named",
+      "why": "The X names itself.",
+      "on": ".al-alert__close",
+      "require": {
+        "type": "button",
+        "aria-label": true
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "one-per-page",
+      "rule": 11,
+      "why": "One Alert in the slot."
+    },
+    {
+      "id": "loaded-is-content",
+      "rule": 23,
+      "why": "An Alert present on load has no role/aria-live: it is regular content; only one inserted later announces."
+    },
+    {
+      "id": "no-x-on-warning-danger",
+      "why": "Warning and Danger have no X."
+    }
+  ]
+}
