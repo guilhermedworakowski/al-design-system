@@ -10,7 +10,8 @@
  *   file only removes the box the browser draws (`appearance: none`) and paints
  *   AL's in its place. No <div role="checkbox"> - the first rule of ARIA.
  *
- * ANATOMY
+ * MARKUP CONTRACT
+ *
  *   <label class="al-checkbox">
  *     <span class="al-checkbox__control">
  *       <input class="al-checkbox__input" type="checkbox" name="news">

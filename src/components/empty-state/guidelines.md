@@ -5,6 +5,7 @@ The Empty state takes the place of content that is not there: it says what is em
 - **Built on:** a `<section>` with a heading; after a search or filter it renders inside `role="status"`
 - **Parts:** optional icon, title, optional description, at most one Primary button
 - **Size:** one, up to 600px wide
+- **States:** none of its own; the action is a Primary Button
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#empty-state](https://al.guilhermedesignd.com/#empty-state)
 
 ## Do and don't

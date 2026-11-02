@@ -6,6 +6,7 @@ A drawer is a side panel to **view or edit something without losing the page** b
 - **Sizes:** `sm`, `md`, `lg`
 - **Side:** right only
 - **Closing:** X (optional), Esc always; the backdrop only when there are no fields
+- **States:** closed, open (enters and leaves from the right)
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#drawer](https://al.guilhermedesignd.com/#drawer)
 
 ## Do and don't

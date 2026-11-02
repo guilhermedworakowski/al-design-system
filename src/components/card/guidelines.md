@@ -2,9 +2,11 @@
 
 A card groups **one subject** that can be read or acted on by itself.
 
+- **Built on:** a `<div>`; when clickable, one real link (or `<button>`) in the title, stretched over the card
 - **Types:** Filled, Border, Elevated
 - **Padding:** Tight (8px), Default (16px), Spaced (24px)
 - **Behavior:** static, or clickable with a single action
+- **States:** static has none; clickable has hover and focus
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#card](https://al.guilhermedesignd.com/#card)
 
 ## Do and don't

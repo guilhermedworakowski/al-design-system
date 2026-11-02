@@ -2,14 +2,23 @@
  *
  * Depends on: foundation/al-foundation.css + components/icon/al-icon-tokens.css
  *
- * ANATOMY
+ * MARKUP CONTRACT
+ *
+ *   decorative (the default):
+ *     <svg class="al-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…</svg>
+ *
+ *   carries the meaning:
+ *     <svg class="al-icon" viewBox="0 0 24 24" role="img" aria-label="Warning">…</svg>
+ *
+ *   size : --16 | --20 | --24 | --32 (no modifier = 24)
+ *   ink  : --ink-default | --ink-disabled | --ink-on-brand | --ink-on-solid
+ *          (no modifier = currentColor)
+ *
  *   The class goes on the <svg> itself, not on a wrapper. The icon file lives
  *   in components/icon/icons/ and is inserted inline in the HTML - inline
  *   because only then does the stroke inherit the surrounding text color,
  *   which is this component's whole mechanism. <img> doesn't inherit color;
  *   neither does background-image.
- *
- *     <svg class="al-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">…</svg>
  *
  * SIZE
  *   There is no fixed scale. The drawing is outlined on the 24 grid, so the

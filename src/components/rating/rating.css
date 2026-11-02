@@ -5,12 +5,15 @@
  * single Tab stop, the arrows that move and check (rule 17) and the group
  * announcement. No script.
  *
+ * MARKUP CONTRACT
+ *
+ *   interactive (the default):
  *   <fieldset class="al-rating">
- *     <legend class="al-rating__label">Como foi a entrega?</legend>
+ *     <legend class="al-rating__label">How was the delivery?</legend>
  *     <div class="al-rating__stars">
  *       <label class="al-rating__star">
- *         <input class="al-rating__input" type="radio" name="entrega" value="1"
- *                aria-label="1 estrela">
+ *         <input class="al-rating__input" type="radio" name="delivery" value="1"
+ *                aria-label="1 star">
  *         <svg class="al-rating__glyph" viewBox="0 0 24 24" aria-hidden="true">
  *           <path d="..."/></svg>
  *       </label>
@@ -18,10 +21,9 @@
  *     </div>
  *   </fieldset>
  *
- * READ-ONLY IS ANOTHER MARKUP (rule 12, H=a)
- *
+ *   read-only is another markup (rule 12, H=a):
  *   <span class="al-rating al-rating--readonly" role="img"
- *         aria-label="4,3 de 5 estrelas">
+ *         aria-label="4.3 out of 5 stars">
  *     <span class="al-rating__stars">
  *       <svg class="al-rating__glyph al-rating__glyph--on" ...> x4 (rounded)
  *       <svg class="al-rating__glyph" ...> x1

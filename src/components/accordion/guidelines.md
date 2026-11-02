@@ -5,6 +5,7 @@ An accordion item shows a heading and **hides secondary content** until the pers
 - **Built on:** the native `<details>` and `<summary>`, with no JS
 - **Size:** one size (76px closed)
 - **Behavior:** several items open at once by default; one at a time with `name`
+- **States:** closed, open, hover, pressed, focus
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#accordion](https://al.guilhermedesignd.com/#accordion)
 
 ## Do and don't

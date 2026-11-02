@@ -8,6 +8,8 @@
  * the content, disabled at the ends, no loop, no auto-rotation. The dots are
  * decorative.
  *
+ * MARKUP CONTRACT
+ *
  *   <section class="al-carousel" aria-roledescription="carousel" aria-labelledby="t">
  *     <h2 id="t">Visible title</h2>                         (rule 9 - the page's heading)
  *     <div class="al-carousel__viewport">

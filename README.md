@@ -64,7 +64,7 @@ npm install al-design-system
 Or straight from a CDN, pinned to a version:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.9.0/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.9.1/dist/al.css">
 ```
 
 Each [GitHub Release](https://github.com/guilhermedworakowski/al-design-system/releases) also carries the `dist/` folder as a zip.
@@ -148,7 +148,7 @@ In CSS they are custom properties prefixed with `--al-`. `tokens.json` has the s
 
 The minimums are the WCAG contrast ones: 4.5:1 for text, 3:1 for icons, borders and focus. When the brand color doesn't reach the minimum, the exception is named one by one, never goes below 3:1, and is paid for with a usage rule (a visible label, a title, a second cue). When a component has exceptions, they are listed in its guidelines.
 
-Besides contrast, each component has a markup contract checked against the HTML: the right native element, an accessible name, the right attributes, nothing interactive where it shouldn't be.
+Besides contrast, each component has a markup contract checked against the HTML: the right native element, an accessible name, the right attributes, nothing interactive where it shouldn't be. The contract is written at the top of each component's CSS, in a `MARKUP CONTRACT` block with the HTML to copy, and the build fails if the CSS styles a class the block doesn't name.
 
 ## Versioning
 
@@ -171,7 +171,7 @@ src/components/<name>/ one folder per component:
   check.py, a11y.py      the gates (literal CSS, orphan tokens, contrast, markup)
   guidelines.md          the usage rules
 site/                  the documentation site generator
-tools/                 what the build shares (paths, dist assembly)
+tools/                 what the build shares (paths, dist assembly, the site's llms.txt)
 build.py               runs everything, in order
 build/                 generated output (CSS, tokens, site)
 dist/                  the package that goes to npm

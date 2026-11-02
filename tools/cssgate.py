@@ -14,6 +14,10 @@ CSS and JS consume:
     public adjustment point, not a token (e.g. the Icon's --al-icon-box), and
     passes.
 
+It also requires the MARKUP CONTRACT block at the top of the CSS, naming every
+class the file styles (see markup_contract). Whether the site's HTML follows
+the contract is a11y.py's job.
+
 Each src/components/<c>/check.py only states what is specific to the
 component: what the gate can't reach (markup contracts, enforced by a11y.py on
 the site's HTML), declared exceptions and extra checks. Example:
@@ -40,8 +44,65 @@ WEIGHT = re.compile(r'font-weight\s*:\s*\d+')
 JS_TOKEN = re.compile(r"token\([\w.]+, '([\w-]+)'\)")
 
 
+# The component's root class, when it isn't al-<c>.
+ROOT_CLASS = {'button': 'al-btn', 'icon-button': 'al-icon-btn'}
+# The block opens on this heading inside the header comment and ends at the
+# next section heading (a blank comment line, then capitals) or at the end of
+# the comment.
+CONTRACT_HEAD = re.compile(r'^ \* MARKUP CONTRACT\b[^\n]*\n', re.M)
+CONTRACT_END = re.compile(r'\n \*\n \* [A-Z]{2}')
+
+
 def strip_comments(text):
     return re.sub(r'/\*.*?\*/', '', text, flags=re.S)
+
+
+def markup_contract(c, text):
+    """
+    Every component's CSS opens with the same MARKUP CONTRACT block: the HTML
+    to write, then the modifier axes and the notes. It is what a person - or
+    an agent reading node_modules - copies, so it can't miss a class.
+
+    Fails if the header comment has no block, if the block has no HTML with
+    the root class, or if the CSS styles a class of its own that the block
+    never names. A modifier counts when the block names the whole class or
+    only its suffix, as in `size : --sm | --md`.
+
+    Returns (ok, report lines).
+    """
+    root = ROOT_CLASS.get(c, f'al-{c}')
+    header = text[:text.find('*/')] if text.lstrip().startswith('/*') else ''
+    head = CONTRACT_HEAD.search(header)
+    if not head:
+        return False, ['NO MARKUP CONTRACT BLOCK IN THE HEADER COMMENT - GATE FAILS:',
+                       f'   src/components/{c}/{c}.css must open with " * MARKUP CONTRACT",',
+                       '   the HTML to write and the modifier axes (see the Button).']
+    block = header[head.end():]
+    end = CONTRACT_END.search(block)
+    block = block[:end.start()] if end else block
+
+    def named(k):
+        return re.search(rf'(?<![\w-]){re.escape(k)}(?![\w-])', block)
+
+    in_html = {k for v in re.findall(r'class="([^"]*)"', block) for k in v.split()}
+    styled = sorted({k for k in re.findall(r'\.(al-[\w-]+)', strip_comments(text))
+                     if k == root or k.startswith((root + '__', root + '--'))})
+    missing = []
+    for k in styled:
+        suffix = k[len(root):]
+        options = [k, suffix] + (['--' + suffix.split('--')[-1]] if '--' in suffix else [])
+        if not any(named(o) for o in options if o):
+            missing.append(k)
+
+    lines = []
+    if root not in in_html:
+        lines += [f'THE MARKUP CONTRACT HAS NO HTML WITH class="{root}" - GATE FAILS.']
+    if missing:
+        lines += [f'{len(missing)} CLASS(ES) STYLED BY THE CSS AND MISSING FROM THE MARKUP CONTRACT - GATE FAILS:']
+        lines += [f'    {k}' for k in missing]
+    if lines:
+        return False, lines
+    return True, [f'markup contract: {len(styled)} class(es) styled, all named in the block.']
 
 
 def title(c):
@@ -64,7 +125,8 @@ def gate(c, outside_css=(), exceptions=(), extra=None):
         print(f'{c}.css not found at {target}')
         return 1
 
-    body = strip_comments(open(target).read())
+    text = open(target).read()
+    body = strip_comments(text)
     lines = body.split('\n')
     failures, declared_exc = [], []
 
@@ -114,7 +176,9 @@ def gate(c, outside_css=(), exceptions=(), extra=None):
     for ln, exc, src in declared_exc:
         print(f'declared exception `{exc}`: line {ln:>3}  {src[:52]}')
 
-    ok = True
+    ok, contract_lines = markup_contract(c, text)
+    for t in contract_lines:
+        print(t)
     if extra:
         extra_ok, extra_lines = extra(body)
         for t in extra_lines:

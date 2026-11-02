@@ -2,8 +2,10 @@
 
 A button triggers an action.
 
+- **Built on:** the native `<button type="button">`
 - **Variants:** Primary, Secondary, Ghost, Danger
 - **Sizes:** `sm`, `md` (default)
+- **States:** default, hover, pressed, focus, disabled, loading
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#button](https://al.guilhermedesignd.com/#button)
 
 ## Do and don't
