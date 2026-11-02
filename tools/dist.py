@@ -6,6 +6,8 @@ Assembles the published package (dist/) from build/ and src/.
       foundation.css           only the Foundation
       tokens.json              the Foundation tokens, to read from code
       components.json          per component: files, markup to write, contract rules
+      guidelines/<c>.md        the usage guidelines, for people and agents offline
+      mcp/                     the `al-design-system` command: validate + MCP server
       components/<c>.css       the component's tokens + its CSS, in one file
       components/<c>.js        the behavior, for components that have a script
       icons/*.svg, icons.json  the icons (Lucide, ISC - see icons/NOTICE)
@@ -70,6 +72,13 @@ def run():
     json.dump({'version': version, 'components': contract.catalog(COMPONENTS)},
               open(os.path.join(DIST, 'components.json'), 'w', encoding='utf-8'),
               indent=2, ensure_ascii=False)
+
+    for c in COMPONENTS:
+        g = comp_src(c, 'guidelines.md')
+        if os.path.exists(g):
+            os.makedirs(os.path.join(DIST, 'guidelines'), exist_ok=True)
+            shutil.copyfile(g, os.path.join(DIST, 'guidelines', f'{c}.md'))
+    shutil.copytree(os.path.join(SRC, 'mcp'), os.path.join(DIST, 'mcp'))
 
     banner = (f'/* AL Design System {version} - Foundation + {len(COMPONENTS)} components.\n'
               f' * MIT. https://github.com/guilhermedworakowski/al-design-system\n'

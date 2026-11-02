@@ -68,6 +68,7 @@ def steps():
     out.append(('tools', 'contractgate.py', False))
     out.append(('tools', 'llms.py', False))
     out.append(('tools', 'dist.py', False))
+    out.append(('tools', 'parity.py', False))
     return out
 
 

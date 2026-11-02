@@ -317,16 +317,21 @@ def markup_block(component):
 
 
 def catalog(components):
-    """One entry per component: where its files are, the markup to write and
-    the rules. A component without contract.json yet goes in with no rules."""
+    """One entry per component: title and summary (the guidelines header, as
+    in llms.txt), where its files are in dist/, the markup to write and the
+    rules. dist/mcp reads this file."""
+    from llms import name_and_summary
     out = {}
     for c in components:
-        data = load(c) if os.path.exists(path_of(c)) else {'root': ROOT_CLASS.get(c, f'al-{c}')}
+        data = load(c)
+        title, summary = name_and_summary(c)
         out[c] = {
+            'title': title,
+            'summary': summary,
             'root': data['root'],
             'css': f'components/{c}.css',
             'js': f'components/{c}.js' if os.path.exists(comp_src(c, f'{c}.js')) else None,
-            'guidelines': f'https://raw.githubusercontent.com/guilhermedworakowski/al-design-system/main/src/components/{c}/guidelines.md',
+            'guidelines': f'guidelines/{c}.md' if os.path.exists(comp_src(c, 'guidelines.md')) else None,
             'markup': markup_block(c),
             'rules': data.get('rules', []),
             'manual': data.get('manual', []),

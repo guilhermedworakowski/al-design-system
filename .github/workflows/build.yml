@@ -19,4 +19,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.9'
+      - uses: actions/setup-node@v4   # the parity gate runs the package's Node validator
+        with:
+          node-version: '24'
       - run: python3 build.py --check
