@@ -1,5 +1,5 @@
 from color import *
-from palette import SEM, PAIRS, EXCEPTIONS, HARD_FLOOR
+from palette import SEM, SEM_USAGE, PAIRS, EXCEPTIONS, HARD_FLOOR
 import json, os, sys
 
 # Path anchored on the file itself, never on the folder it runs from:
@@ -84,7 +84,7 @@ TOKENS = {
     "brandAnchor": "#FC5000", "colorSpace": "OKLCH", "wcag": "2.1 AA",
     "lLadder": L_LADDER, "neutralHue": NEUTRAL_HUE,
   },
-  "color": {"primitive": P, "semantic": SEM, "brandHover": BRAND_HOVER},
+  "color": {"primitive": P, "semantic": SEM, "usage": SEM_USAGE, "brandHover": BRAND_HOVER},
   "type": {
     "family": {
       "sans": "'InterVariable', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
@@ -215,6 +215,15 @@ if fails:
     raise SystemExit(f"{len(fails)} pair(s) fail the contrast gate - export aborted: {fails}")
 
 TOKENS["contrastReport"] = report
+
+# Every semantic carries its usage sentence (palette.py -> SEM_USAGE), and no
+# sentence describes a token that does not exist.
+missing = sorted(set(SEM) - set(SEM_USAGE))
+orphan = sorted(set(SEM_USAGE) - set(SEM))
+empty = sorted(k for k, v in SEM_USAGE.items() if not str(v).strip())
+if missing or orphan or empty:
+    raise SystemExit(f"semantic usage gate - export aborted: missing {missing}, "
+                     f"orphan {orphan}, empty {empty}")
 
 json.dump(TOKENS, open(TOKENS_PATH,'w'), indent=2, ensure_ascii=False)
 
