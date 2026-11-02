@@ -29,22 +29,13 @@ WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
 TWO FLOORS: text 4.5:1 (1.4.3); border and ring 3:1 (1.4.11).
 
-THE MARKUP CONTRACT - eight rules, all from the usage rules
+THE MARKUP CONTRACT
 
-    a) every `.al-textarea__field` has an `id` and a label `<label for>`
-       (`.al-textarea__label`) pointing to it (rules 4 and 27);
-    b) a field with `aria-invalid="true"` has `aria-describedby`, the id
-       exists and the text inside is not empty - the message is required
-       (rules 19, 28);
-    c) the field is a native `<textarea>` - no other element gets the
-       `al-textarea__field` class, and nothing gets `contenteditable` instead
-       (rule 26);
-    d) no field uses `aria-label` when there is a visible label (rule 27);
-    e) no field uses `maxlength` - the limit doesn't block typing (rule 16);
-    f) every counter declares `aria-live` (rule 28);
-    g) a `readonly` field has non-empty content - empty shows "—" (rule 24);
-    h) every field declares `rows` >= 3 (rules 9 and 10) and the `id` is
-       UNIQUE in the document (the Select's lesson until 0.11.0).
+  The rules are data: src/components/textarea/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - runs AFTER site.py (the same arrangement as the Select). While the
 site doesn't have a Textarea, the JSON comes out with `markupPending: true`.

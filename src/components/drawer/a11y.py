@@ -30,33 +30,13 @@ FIVE JUDGMENTS
      and the state disappeared); the Drawer is born with the override and
      this judgment locks it.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-drawer` is a <dialog> (rule 24);
-    b) no `open` in the markup: it opens through showModal(), never through
-       the attribute or show(). The frozen ones in the matrix sit under
-       `inert` and are exempt;
-    c) aria-labelledby points to a .al-drawer__title that exists (rule 25);
-    d) exactly one .al-drawer__title with text, inside the header (rule 6);
-    e) children in the order header, body, actions - the actions are
-       optional, and no divider or loose piece between the parts (rule 9);
-    f) .al-drawer__actions, when it exists, has 1 or 2 actions (rule 20);
-    g) the secondary action comes before the main one; the main one is
-       Primary and NEVER Danger (rules 20 and 22);
-    h) there is ALWAYS a visible way out (rule 14): the X, or the footer with
-       a data-al-drawer-close button, or a <form method="dialog">;
-    i) the X, when it exists, is an Icon Button (.al-icon-btn) with a
-       non-empty aria-label, type="button", data-al-drawer-close and an
-       aria-hidden svg; no other button without visible text inside the
-       dialog (rule 26);
-    j) never a Drawer inside a Drawer (rule 4);
-    k) every data-al-drawer-open points to a <dialog class="al-drawer"> that
-       exists;
-    l) a button inside the footer has type="button" (or sits in a <form>):
-       without it the click submits the form;
-    m) size: at most one --sm|--md|--lg modifier (no modifier = md).
+  The rules are data: src/components/drawer/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 

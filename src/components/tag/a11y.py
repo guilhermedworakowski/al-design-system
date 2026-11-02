@@ -30,15 +30,11 @@ THE PILL BOUNDARY IS NOT A GATE, IT IS A REPORT
 
 THE MARKUP CONTRACT
 
-  Two of this component's contracts don't live in the CSS:
-
-    a) the read-only tag is NOT focusable and NOT actionable - it is content;
-    b) the X needs an aria-label that INCLUDES the tag's label. In a list of
-       six filters, six buttons called "Remove" are indistinguishable to a
-       screen reader.
-
-  (b) is really checkable: the tag's text can be extracted and looked up
-  inside the aria-label. That is what the markup section does.
+  The rules are data: src/components/tag/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 Run: python3 a11y.py [path.html]
      with no argument, measures build/site/index.html

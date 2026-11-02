@@ -20,22 +20,13 @@ TWO JUDGMENTS, NOT ONE
      covers a subtle line; it does not cover a line that doesn't exist on
      screen. This fails.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-divider` is `<hr>` or `<li role="separator">` - no painted <div>
-       (rules 12 and 15);
-    b) `<hr>` is never a direct child of <ul>/<ol> - only <li> fits there
-       (rule 15);
-    c) the separator in a list is empty - no text in the divider (rule 11);
-    d) an announced vertical one has aria-orientation="vertical"; a
-       horizontal one doesn't (rule 14);
-    e) never focusable or clickable: no tabindex, no onclick, no role other
-       than `separator` (rule 16);
-    f) decorative is aria-hidden="true" and nothing else (rule 13);
-    g) no divider at the start or end of the container, nor two in a row
-       (rule 4).
+  The rules are data: src/components/divider/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 

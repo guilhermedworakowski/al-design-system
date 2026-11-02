@@ -37,22 +37,13 @@ TWO FLOORS, ON PURPOSE
   Text (label)                          = 4.5:1 from 1.4.3.
   Non-text (border, box, glyph, ring)   = 3:1 from 1.4.11.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Five rules, all from the usage rules:
-
-    a) every `.al-checkbox__input` is a native `<input type="checkbox">`,
-       inside a `<label class="al-checkbox">` (rules 9 and 21);
-    b) every checkbox has a VISIBLE, non-empty label in `.al-checkbox__label`,
-       and doesn't use `aria-label` (rule 23 - the rule that pays for the
-       1.57:1 border);
-    c) a checkbox with `aria-invalid="true"` has `aria-describedby`, and the
-       id it points to exists in the document (rules 19 and 22 - the error
-       text belongs to the form, but it has to exist);
-    d) the glyphs are decorative: `aria-hidden="true"` and `focusable="false"`;
-    e) nobody writes `indeterminate` as an HTML attribute: it doesn't exist,
-       and the browser ignores it silently. Indeterminate only through JS
-       (rule 8).
+  The rules are data: src/components/checkbox/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the Select: runs AFTER the HTML it measures.
 

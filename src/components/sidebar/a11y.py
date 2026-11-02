@@ -34,33 +34,13 @@ FOUR JUDGMENTS
      shadow. A panel EQUAL to the dimmed page fails: the exception covers a
      subtle separation, not its absence.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-sidebar` is an <aside> with aria-label (rule 26);
-    b) one live Sidebar per document; frozen ones sit under `inert` and are
-       exempt (rule 4);
-    c) exactly one `.al-sidebar__nav`, which is a <nav> with aria-label
-       (rule 26);
-    d) children in the order profile (optional), nav; inside the nav, body
-       and Help (optional), in that order (rule 5);
-    e) the profile stays OUTSIDE the nav; Avatar with aria-hidden and
-       <img alt=""> (rules 18 and 26);
-    f) the profile button is an Icon Button with a name (aria-label) and an
-       aria-hidden svg (rule 19);
-    g) every group has a label with text and an id, and its list has
-       aria-labelledby pointing to that label (rule 27);
-    h) every list is `.al-tabs.al-tabs--square` (rule 11);
-    i) every item is an <a href> `.al-tab` with a text `.al-tab__label`, no
-       role="tab" nor aria-selected (rule 28);
-    j) at most one aria-current="page" in the Sidebar (rule 12);
-    k) no repeated item label (rule 16);
-    l) Help: it is a group, with at most 3 items (rule 21);
-    m) every data-al-sidebar-open points to a `.al-sidebar` that exists and
-       the button has aria-label, aria-controls equal to the id and
-       aria-expanded (rules 24 and 25);
-    n) there is a "skip" link (href="#...") BEFORE the Sidebar (rule 29).
+  The rules are data: src/components/sidebar/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 

@@ -2,6 +2,24 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.10.0] - 2026-11-01
+
+A new layer: AL for AI agents. An agent that installs the package finds every component's markup, rules and guidelines, checks what it writes, and gets the same answer the AL build gets. No class, token, style or behavior changed; the published CSS is identical to 1.9.1.
+
+### Added
+- `dist/components.json`: for each of the 33 components, its title and summary, the CSS and JS to import, the HTML to write (read from the CSS `MARKUP CONTRACT` block, never copied by hand), and its markup rules, each with the reason. Also exported as `al-design-system/components.json`.
+- `dist/guidelines/<name>.md`: the usage rules travel with the package.
+- The `al-design-system` command, in Node with no dependency and nothing run on install: `npx al-design-system validate page.html` checks HTML against the markup rules and names the line, the element and the rule; `npx al-design-system mcp` runs an MCP server on stdio with `list_components`, `get_component`, `get_tokens` and `validate_markup`.
+- Markup rules for the 11 components that had none checked: Button, Icon Button, Link, Menu, Pagination, Progress, Stepper, Empty state, Slider, Rating and Carousel.
+- `llms.txt` points to the catalog and to the command.
+
+### Changed
+- The markup contract is data: each component keeps its rules in `contract.json` (191 checked by the engine, plus the ones that need page logic, listed with their reason). The accessibility gates read it instead of repeating it in code, and a new gate checks every contract on the rendered site.
+- A parity gate runs the package's Node validator and the build's Python checker on the site and on broken copies of it, and fails on any difference. The build now needs Node 18 or later.
+
+### Fixed
+- The Number field gate skipped the Hover sample, whose control carries an inline style: it now checks 20 fields on the site, not 19. The field was already right.
+
 ## [1.9.1] - 2026-11-01
 
 First step toward an AI-ready AL: the same information, in a shape an agent can find and trust. No class, token, style or behavior changed; the published CSS differs from 1.9.0 only in comments.
@@ -224,6 +242,7 @@ V1 closed: Foundation and 23 components in five tiers.
 - Foundation: color primitives, semantic layer with light and dark themes, typography, spacing, radius, elevation and focus ring.
 - **Button**: the first component through the full pipeline.
 
+[1.10.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.9.1...v1.10.0
 [1.9.1]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.9.0...v1.9.1
 [1.9.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.8.0...v1.9.0
 [1.8.0]: https://github.com/guilhermedworakowski/al-design-system/compare/v1.7.0...v1.8.0

@@ -25,24 +25,13 @@ THREE JUDGMENTS
   3. INVISIBLE item - background equal to the page. The exception covers a
      subtle item, not an item that doesn't exist. This fails.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-accordion` is a <details> (rule 24);
-    b) the first child is the <summary class="al-accordion__header"> - and
-       `.al-accordion__header` only exists on <summary> (rule 24);
-    c) the <summary> has a name: `.al-accordion__title` with text (rule 15);
-    d) no <h1>-<h6> inside the <summary> (rule 25);
-    e) nothing interactive inside the <summary> - link, button, field,
-       tabindex, actionable role (rule 17);
-    f) icon and chevron with aria-hidden="true" (rules 18 and 19);
-    g) no Accordion inside an Accordion (rule 5);
-    h) pure native: no role, aria-expanded, aria-controls or tabindex on the
-       <details> or the <summary> (rule 24);
-    i) no disabled: neither `disabled` nor `aria-disabled` (rule 20);
-    j) exactly one `.al-accordion__content`, direct child, after the
-       <summary>.
+  The rules are data: src/components/accordion/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 

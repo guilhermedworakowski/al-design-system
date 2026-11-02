@@ -23,28 +23,13 @@ FOUR JUDGMENTS
   4. INVISIBLE card (equal to the dimmed page) fails. The exception covers a
      subtle separation, not its absence.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-modal` is a <dialog> (rule 24);
-    b) no `open` in the markup: it opens through showModal(), never through
-       the attribute or show(). The frozen ones in the matrix sit under
-       `inert` and are exempt;
-    c) aria-labelledby points to a .al-modal__title that exists (rule 25);
-    d) exactly one .al-modal__title with text, first child (rule 5);
-    e) children in the order title, body, actions (rule 10 - no divider);
-    f) .al-modal__actions with 1 or 2 actions (rules 16 and 19);
-    g) the secondary action comes before the main one; the main one is
-       Primary or Danger, never the first (rules 19 and 20);
-    h) there is a way out: a button with data-al-modal-close, or a <form
-       method="dialog"> (rule 16);
-    i) no X button: nothing with .al-modal__close, nor a button without a
-       visible label inside the dialog (rule 16);
-    j) never a Modal inside a Modal (rule 4);
-    k) every data-al-modal-open points to a <dialog> that exists;
-    l) a button inside the footer has type="button" (or sits in a <form>):
-       without it the click submits the form.
+  The rules are data: src/components/modal/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 

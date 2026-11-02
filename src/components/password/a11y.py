@@ -23,22 +23,13 @@ WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
 TWO FLOORS: text 4.5:1 (1.4.3); border, rings and eye 3:1 (1.4.11).
 
-THE MARKUP CONTRACT - ten usage rules, plus the unique id
+THE MARKUP CONTRACT
 
-    a) every `.al-password__field` has an `id` and a label `<label for>`
-       pointing to it (rules 4 and 29);
-    b) a field with `aria-invalid="true"` has `aria-describedby`, the id
-       exists and the text inside is not empty (rules 8 and 29);
-    c) no field uses `aria-label` when there is a visible label (rule 29);
-    d) no field uses `maxlength` (rule 12);
-    e) the field starts as `type="password"` (rule 13);
-    f) the field declares `autocomplete` current-password or new-password,
-       `spellcheck="false"` and `autocapitalize="none"` (rules 25-26);
-    g) the eye is a `<button type="button">` with `aria-controls` = the field
-       id and a non-empty `aria-label` (rule 28);
-    h) the eye icons are `aria-hidden="true" focusable="false"` (Icon contract);
-    i) a disabled field -> the eye button is `disabled` too (rule 20);
-    j) the field `id` is UNIQUE in the document (the Select's lesson, 0.11.0).
+  The rules are data: src/components/password/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - runs AFTER site.py (the same arrangement as the Input). With no
 argument it measures build/site/index.html; while the site doesn't have a

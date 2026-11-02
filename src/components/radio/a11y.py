@@ -33,24 +33,13 @@ TWO FLOORS, ON PURPOSE
   Text (label)                     = 4.5:1 from 1.4.3.
   Non-text (border, dot, ring)     = 3:1 from 1.4.11.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Six rules, all from the usage rules:
-
-    a) every `.al-radio__input` is a native `<input type="radio">`, inside a
-       `<label class="al-radio">`, and nobody writes `role="radio"` (rules 11
-       and 25);
-    b) every radio has a VISIBLE, non-empty label in `.al-radio__label`, and
-       doesn't use `aria-label` (rule 27 - the rule that pays for the 1.57:1
-       border);
-    c) every radio has a `name`, and each `name` groups TWO options or more - a
-       lone radio doesn't exist (rules 3 and 5);
-    d) the radios of a `name` live in the same `<fieldset>`, with a non-empty
-       `<legend>` - it is the question, which the application builds (rule 6);
-    e) the error belongs to the question: `aria-invalid="true"` goes on the
-       `<fieldset>`, with `aria-describedby` to an id that exists - never on
-       the radio, where ARIA doesn't provide for it (rules 21, 22 and 26);
-    f) the dot is decorative: `aria-hidden="true"`.
+  The rules are data: src/components/radio/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the Select and the Checkbox: runs AFTER the HTML it
 measures.

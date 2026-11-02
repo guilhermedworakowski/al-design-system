@@ -24,16 +24,11 @@ TWO FLOORS: text 4.5:1 (1.4.3); border, rings and steppers 3:1 (1.4.11).
 
 THE MARKUP CONTRACT
 
-    a) every `.al-number-field__field` is `<input type="number">` with an `id`
-       and a `<label for>` pointing to it (rule 20);
-    b) the field is born with a `value` and has no `placeholder` (rule 9);
-    c) a field with `aria-invalid="true"` has `aria-describedby` to a
-       non-empty message (rule 16);
-    d) each stepper is `<button type="button" tabindex="-1">` with
-       `aria-controls` = the field id and a non-empty `aria-label` (rules 13, 21);
-    e) the stepper icons are `aria-hidden="true" focusable="false"`;
-    f) a disabled field -> both steppers `disabled`;
-    g) the field `id` is UNIQUE in the document.
+  The rules are data: src/components/number-field/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - runs AFTER site.py. With no argument it measures
 build/site/index.html; while the site doesn't have a Number field, the JSON

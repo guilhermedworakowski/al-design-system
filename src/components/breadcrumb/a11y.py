@@ -29,32 +29,13 @@ FOUR JUDGMENTS
      fails: the exception covers a subtle separation, not its absence.
   The separator is decorative (aria-hidden, rule 21): outside 1.4.11.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-breadcrumb` is a <nav> with aria-label (rule 19);
-    b) one live breadcrumb per page; the sample ones sit under `inert`
-       (on it or on an ancestor) and are exempt, and so does an interactive
-       demo that can't be inert, marked by `data-al-demo` on an ancestor. A
-       single-file site keeps each page in a subtree that toggles `hidden`:
-       the nearest `hidden` ancestor marks the page, so one per subtree (rule 7);
-    c) the only child is <ol class="al-breadcrumb__list"> and each of its
-       children is <li class="al-breadcrumb__item"> (rule 19);
-    d) the LAST item is only <span class="al-breadcrumb__current"
-       aria-current="page"> with text - no <a>, no separator (rules 15 and 20);
-    e) every item but the last ends in an <svg class="al-breadcrumb__separator">
-       with aria-hidden="true" and focusable="false" (rule 21);
-    f) every link is an <a href> with text and without aria-current;
-       aria-current only on the current one (rules 15 and 20);
-    g) the `…` only exists with 5 levels or more, and always as the THIRD
-       item; it is a <button type="button"> with aria-label, aria-expanded and
-       aria-controls pointing to the menu in the same item (rules 5, 6 and 22);
-    h) the menu is <ul class="al-tabs al-tabs--square al-breadcrumb__menu">
-       with no role; each item is <a href class="al-tab"> with a text
-       .al-tab__label, no role nor aria-selected/aria-current (rule 17);
-    i) no breadcrumb inside a Card, Modal or Drawer (rule 7);
-    j) no empty label anywhere in the trail (rule 10).
+  The rules are data: src/components/breadcrumb/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 

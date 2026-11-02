@@ -29,27 +29,13 @@ THREE JUDGMENTS
      the Filled on the canvas would be, and that is why the combination
      isn't even measured - rule 2 forbids it.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-card__title` is a real heading, h1 to h6 (rule 11);
-    b) a clickable card has ONE `.al-card__link`, and it lives inside the
-       title (rules 13 and 16);
-    c) `.al-card__link` is `<a href>` or `<button type="button">`, with a
-       name (rule 16);
-    d) nothing clickable besides the link inside a clickable card - link,
-       button, field, tabindex (rule 15);
-    e) the card itself is not clickable: no <a>/<button>, no onclick, no
-       tabindex, no actionable role (rule 16);
-    f) `.al-card__link` outside a clickable card doesn't exist - without the
-       modifier the link stretches with no hover or ring (rule 13);
-    g) `<li class="al-card">` only inside <ul>/<ol> (rule 22);
-    h) no card inside a card (rule 6);
-    i) no disabled: neither `disabled` nor `aria-disabled` on the card
-       (rule 19);
-    j) one type and one padding per card - `--border` with `--elevated`, or
-       `--spaced` with `--tight`, is contradictory markup.
+  The rules are data: src/components/card/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 

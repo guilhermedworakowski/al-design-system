@@ -32,14 +32,13 @@ TWO FLOORS, ON PURPOSE
   Text (label)                                = 4.5:1 from 1.4.3.
   Non-text (border, track, thumb, ring)       = 3:1 from 1.4.11.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
   The rules are data: src/components/switch/contract.json, checked by
-  tools/contract.py (and by the package's validator, from the same file).
-  In short: a native <input type="checkbox" role="switch"> inside
-  <label class="al-switch"> (rule 22); a visible label and no aria-label
-  (rule 23 - the rule that pays for the 1.47:1 border and the 1.96:1 thumb);
-  no aria-checked; no required or aria-invalid (rule 20); a decorative thumb.
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the Select, the Checkbox and the Radio: runs AFTER the
 HTML it measures.

@@ -32,37 +32,13 @@ THREE JUDGMENTS
      The exception covers a subtle selection, not a selection that doesn't
      exist. This fails.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML. Frozen samples
-  (`aria-hidden="true"` + `inert`) are left out: they don't exist for the
-  screen reader or the keyboard - but the sample has to be truly inert.
-
-    a) panel group: `.al-tabs[role=tablist]` with a name (aria-label or an
-       aria-labelledby that exists) (rule 21);
-    b) a panel tab is `<button type="button" role="tab">` with aria-selected
-       "true"/"false" and aria-controls pointing to a `role="tabpanel"` linked
-       back by aria-labelledby (rule 21);
-    c) exactly one selected per group, and the initial tabindex roves: the
-       selected tab without tabindex=-1, the others with -1 (rules 7 and 21);
-    d) navigation: a group that is not a tablist lives in a named `<nav>`,
-       each tab is `<a href>`, no role="tab"/aria-selected, at most one
-       aria-current (rule 22);
-    e) every tab has a `.al-tab__label` with text - it is the announced name
-       (rule 14);
-    f) no disabled or aria-disabled (rule 18);
-    g) nesting: at most two levels, Line outside and Square inside ("Tabs
-       inside tabs" in guidelines.md). An interactive demo, marked by
-       `data-al-demo` on an ancestor, doesn't count levels: it is a sample of
-       the component sitting in a documentation page that has its own tabs;
-    h) `<ul class="al-tabs">` only with `<li>` children, and the tab inside
-       the `<li>`;
-    i) unique ids in the document - tab and panel are linked by id (lesson
-       from the Select);
-    j) from 2 to 6 tabs per group (rule 8), except in a Sidebar;
-    k) the panel starts with a heading equal to the tab's label (rule 25 - it
-       is what pays for `tonal-selection`);
-    l) a frozen sample (aria-hidden) is `inert`.
+  The rules are data: src/components/tab/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
@@ -415,7 +391,7 @@ def run():
             print(f'     PENDING: {p}')
     else:
         print(f'     {groups} group(s) checked, {samples} frozen sample(s), '
-              f'12 rules (a-l)')
+              f'{len(contract.whys("tab"))} rules of contract.json')
         for p in mk:
             print(f'     PROBLEM: {p}')
 

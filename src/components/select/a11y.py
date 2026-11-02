@@ -30,29 +30,13 @@ TWO FLOORS, ON PURPOSE
   Non-text (border, chevron, ring) = 3:1 from 1.4.11.
   Each role against its own floor, never against the easier one.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  In a form field, almost everything that goes wrong is markup, not style -
-  and markup only exists in the rendered output. The usage rules:
-
-    a) every `.al-select__field` has an `id`, and there is a `<label for>`
-       pointing to it (rules 5 and 24);
-    b) a field with `aria-invalid="true"` has `aria-describedby`, and the id it
-       points to really exists in the document (rule 26);
-    c) the placeholder is the first <option> with `value=""` and `selected`,
-       never an invented attribute (rule 12);
-    d) the chevron is decorative: `aria-hidden="true"` and `focusable="false"`
-       on its own tag - the meaning lives in the label (icon.css contract);
-    e) no field uses `aria-label` when there is a visible label, because the
-       announced name has to match the text the person reads (rule 24);
-    f) the field's `id` is UNIQUE in the document. Without it the `<label for>`
-       links to the first element with that id, which may not be the field -
-       that is what happened on the site's playground until 0.11.0: the field
-       was called `pg-select`, the same id as the page's container, and the
-       label pointed to the page. Rules (a) to (e) all passed; only counting
-       the id caught it.
-
-  A rule written on a page goes stale; a measured rule breaks the build.
+  The rules are data: src/components/select/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - this gate runs AFTER site.py
 

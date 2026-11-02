@@ -32,36 +32,13 @@ FOUR JUDGMENTS
      background. 3:1.
   No contrast exception: none was declared.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) a single .al-toast-region per document: <section popover="manual">
-       with aria-label, outside <template> and outside inert (rule 23);
-    b) inside it, exactly two live regions: one
-       <div class="al-toast-region__live" role="status"> and one with
-       role="alert" - EMPTY on load: the region exists before the first
-       message (rules 22 and 23);
-    c) every live toast is born from a <template> whose only child is the
-       <div class="al-toast"> (toast.js clones from there);
-    d) one, and only one, status modifier: --success, --warning, --error or
-       --info. No Neutral (rule 26);
-    e) first child = <svg class="al-icon al-icon--20 al-toast__icon"> with
-       role="img", aria-label with the status name, no aria-hidden, and the
-       status icon's drawing: circle-check, triangle-alert, circle-alert,
-       info (rules 13 and 14);
-    f) second child = <div class="al-toast__text"> with a
-       <p class="al-toast__title"> with text and, optionally, a
-       <p class="al-toast__description"> with text - nothing else;
-    g) third and last child = the X: <button type="button"> Ghost sm Icon
-       Button with the al-toast__close class, the close aria-label and the
-       icon inside aria-hidden (rule 24);
-    h) nothing interactive besides the X - no link, field, other button,
-       tabindex or contenteditable (rule 25);
-    i) the site's frozen samples (.al-toast outside <template>) sit under
-       `inert` and `aria-hidden` on an ancestor: a toast stuck forever
-       doesn't exist in the component. Their markup meets (d) to (h) all the
-       same - it is what the documentation shows.
+  The rules are data: src/components/toast/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 

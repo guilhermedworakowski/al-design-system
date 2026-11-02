@@ -36,41 +36,13 @@ FIVE JUDGMENTS
      ring (X, Ghost and Primary) against the Alert background, 3:1.
   No new contrast exception: none was declared.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) .al-alert-slot is a <div> outside <template> and outside inert, with
-       at most one .al-alert inside - one per page (rules 9 and 11);
-    b) the Alert present on page load (in the slot, outside <template>) has
-       no role nor aria-live, neither it nor the slot: it is regular content
-       (rule 23). The role only appears when alert.js inserts it later;
-    c) every Alert inserted later is born from a <template> whose only child
-       is the <div class="al-alert"> (alert.js clones from there);
-    d) one, and only one, status modifier: --success, --warning, --danger or
-       --info. No Neutral (rule 28);
-    e) children = <div class="al-alert__body"> and, optionally,
-       <div class="al-alert__actions">, in that order;
-    f) in the body, first child = <svg class="al-icon al-icon--24
-       al-alert__icon"> with role="img", aria-label with the status name, no
-       aria-hidden, and the status icon's drawing: circle-check,
-       triangle-alert, circle-alert, info (rules 15 and 16);
-    g) then, <div class="al-alert__text"> with <p class="al-alert__title">
-       and <p class="al-alert__description">, both with text - nothing else.
-       The description is required (rule 13). No heading anywhere in the
-       Alert: neither h1-h6 nor role="heading" (rule 26);
-    h) the X, if present, is the body's last child: <button type="button">
-       Ghost sm Icon Button with the al-alert__close class,
-       data-al-alert-close, the close aria-label and the icon inside
-       aria-hidden (rule 27);
-    i) actions: one or two <button type="button" class="al-btn ... al-btn--md">
-       with a label; with two, Ghost first and Primary after (rule 17).
-       Nothing interactive outside the X and the actions - no link, field,
-       tabindex or contenteditable;
-    j) the site's frozen samples (.al-alert outside <template> and outside
-       the slot) sit under `inert` and `aria-hidden` on an ancestor. Their
-       markup meets (d) to (i) all the same - it is what the documentation
-       shows.
+  The rules are data: src/components/alert/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
@@ -384,7 +356,7 @@ def run():
     else:
         summary = ', '.join(f'{s} {n}' for s, n in by_status.items())
         print(f'     {slots} slot(s), {present} Alert(s) present on load, {tpls} template(s) - '
-              f'{summary}; {frz} frozen sample(s) under inert; 10 rules (a-j)')
+              f'{summary}; {frz} frozen sample(s) under inert; {len(contract.whys("alert"))} rules of contract.json')
         for p in mk:
             print(f'     PROBLEM: {p}')
 

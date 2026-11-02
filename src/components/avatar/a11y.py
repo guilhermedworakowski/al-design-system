@@ -24,21 +24,13 @@ WHAT DOESN'T EXIST HERE, AND WHY
   No TOUCH TARGET section: the Avatar is not actionable, so the 2.5.8 floor
   (minimum touch area) doesn't apply - it is not a control.
 
-THE MARKUP CONTRACT IS THE HEART OF THIS GATE
+THE MARKUP CONTRACT
 
-  Three rules, all from usage rule 12:
-
-    a) the `.al-avatar` wrapper is ALWAYS decorative (aria-hidden="true") OR
-       carries the meaning (role="img" + a non-empty aria-label) - never
-       neither, never both at the same time;
-    b) the photo (`.al-avatar__photo`) ALWAYS has `alt=""`, because the name
-       lives on the wrapper - a filled alt would duplicate the announcement;
-    c) the icon (`.al-icon` inside the Avatar) is ALWAYS decorative on its own
-       tag, because the Icon type's meaning (if any) lives on the wrapper,
-       never on the glyph - the same contract icon.css already documents for
-       the inside of any actionable element.
-
-  That is really checkable on the emitted HTML, and it is what this section does.
+  The rules are data: src/components/avatar/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 Run: python3 a11y.py [path.html]
      with no argument, measures build/site/index.html

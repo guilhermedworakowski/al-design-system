@@ -25,24 +25,13 @@ WHAT THE EFFECTIVE BACKGROUND CHANGES HERE
 
 TWO FLOORS: text 4.5:1 (1.4.3); border and ring 3:1 (1.4.11).
 
-THE MARKUP CONTRACT - eight rules, seven from the usage rules and one from the
-Select's lesson
+THE MARKUP CONTRACT
 
-    a) every `.al-input__field` has an `id` and a label `<label for>`
-       (`.al-input__label`) pointing to it (rules 4 and 28);
-    b) a field with `aria-invalid="true"` has `aria-describedby`, the id
-       exists and the text inside is not empty - the message is required
-       (rules 17, 30);
-    c) a field with an affix has `aria-labelledby` with the label's id and the
-       id of each affix pointing to it (rule 29);
-    d) no field uses `aria-label` when there is a visible label (rule 28);
-    e) no field uses `maxlength` - the limit doesn't block typing (rule 14);
-    f) every counter declares `aria-live` (rule 30);
-    g) a `readonly` field has a non-empty `value` - empty shows "—" (rule 22);
-    h) the field's `id` is UNIQUE in the document - otherwise the `<label for>`
-       links to the first element with that id. The Select's playground fell
-       into that until 0.11.0 (`pg-select` was also the page's id) and no
-       other rule saw it.
+  The rules are data: src/components/input/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - runs AFTER site.py (the same arrangement as the Select). While the
 site doesn't have an Input, the JSON comes out with `markupPending: true`.
