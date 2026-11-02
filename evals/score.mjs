@@ -56,17 +56,18 @@ export function score(html, ctx) {
   const unknown = [...new Set(nodes.flatMap(classes)
     .filter((c) => c.startsWith('al-') && !known.has(c)))];
 
-  const styles = [
-    ...nodes.filter((n) => n.attrs.style).map((n) => n.attrs.style),
-    ...nodes.filter((n) => n.tag === 'style').map((n) => n.text),
-  ].join('\n');
+  // The package parser drops <style> and <script> (the contract never looks
+  // inside them), so those two are read from the raw text.
+  const blocks = [...html.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]);
+  const scripts = [...html.matchAll(/<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/gi)].map((m) => m[1]);
+  const styles = [...nodes.filter((n) => n.attrs.style).map((n) => n.attrs.style), ...blocks].join('\n');
   // var(--al-x, #fff) fallbacks count too: the value is still written by hand
   const hardcoded = styles.match(COLOR) || [];
   const px = (styles.match(PX) || []).length;
 
   const refs = [
     ...nodes.filter((n) => n.tag === 'link').map((n) => n.attrs.href || ''),
-    ...nodes.filter((n) => n.tag === 'script').map((n) => n.attrs.src || ''),
+    ...scripts,
     ...[...styles.matchAll(/@import\s+(?:url\()?["']?([^"')\s;]+)/g)].map((m) => m[1]),
   ];
   const has = (file) => refs.some((r) => r.endsWith(file) || r.includes(`/${file}`) || r.includes(`al-design-system/${file}`));
