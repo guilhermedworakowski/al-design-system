@@ -26,6 +26,8 @@ const catalog = JSON.parse(readFileSync(join(DIST, 'components.json'), 'utf8'));
 const HELP = `AL Design System ${catalog.version}
 
   npx al-design-system validate <file.html ...>   check the markup contract
+      --json              findings per component, one JSON line per file
+      --skip <selector>   leave a subtree out (default: [inert])
   npx al-design-system mcp                        MCP server on stdio
 
 The rules are in node_modules/al-design-system/dist/components.json.`;
@@ -35,6 +37,10 @@ function validate(args) {
   let skip = '[inert]';
   let json = false;
   for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--help' || args[i] === '-h') {
+      console.log(HELP);
+      return 0;
+    }
     if (args[i] === '--skip') skip = args[++i];
     else if (args[i] === '--json') json = true;
     else files.push(args[i]);

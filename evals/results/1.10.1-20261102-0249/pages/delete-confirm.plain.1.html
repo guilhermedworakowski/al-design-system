@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Projects</title>
+  <link rel="stylesheet" href="node_modules/al-design-system/dist/al.css">
+  <style>
+    /* Page layout only: every value comes from the AL Foundation tokens. */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background-color: var(--al-bg-canvas);
+      color: var(--al-text-primary);
+      font-family: var(--al-font-sans);
+      font-size: var(--al-font-size-md);
+      line-height: var(--al-line-height-md);
+    }
+
+    .page {
+      max-inline-size: 880px;
+      margin-inline: auto;
+      padding: var(--al-space-48) var(--al-space-16) var(--al-space-96);
+    }
+
+    .page__header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--al-space-16);
+      margin-block-end: var(--al-space-32);
+    }
+
+    .page__title {
+      margin: 0;
+      font-size: var(--al-font-size-4xl);
+      line-height: var(--al-line-height-4xl);
+      font-weight: var(--al-font-weight-semibold);
+      letter-spacing: -0.02em;
+    }
+
+    .page__title:focus { outline: none; }
+
+    .page__count {
+      margin: var(--al-space-4) 0 0;
+      color: var(--al-text-secondary);
+    }
+
+    .projects {
+      display: grid;
+      gap: var(--al-space-16);
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .project {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--al-space-16) var(--al-space-24);
+    }
+
+    .project__main {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--al-space-16);
+      min-inline-size: 0;
+      flex: 1 1 320px;
+    }
+
+    .project__icon {
+      flex: none;
+      display: grid;
+      place-items: center;
+      inline-size: var(--al-space-48);
+      block-size: var(--al-space-48);
+      border-radius: var(--al-radius-lg);
+      background-color: var(--al-bg-brand-subtle);
+      color: var(--al-text-brand);
+    }
+
+    .project__heading {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--al-space-8) var(--al-space-12);
+    }
+
+    .project__meta {
+      margin: var(--al-space-8) 0 0;
+      color: var(--al-text-secondary);
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+    }
+
+    .modal__name { font-weight: var(--al-font-weight-semibold); }
+    .modal__text { margin: 0; }
+    .modal__text + .modal__text { margin-block-start: var(--al-space-12); }
+    .modal__warning { font-weight: var(--al-font-weight-medium); }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="page__header">
+      <div>
+        <h1 class="page__title" id="page-title" tabindex="-1">Projects</h1>
+        <p class="page__count" id="project-count" aria-live="polite">4 projects</p>
+      </div>
+      <button type="button" class="al-btn al-btn--primary al-btn--md">
+        <span class="al-btn__icon al-btn__icon--leading">
+          <svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        </span>
+        <span class="al-btn__label">New project</span>
+      </button>
+    </header>
+
+    <ul class="projects" id="projects">
+      <li class="al-card al-card--border al-card--spaced project" data-name="Website redesign" data-files="128">
+        <div class="project__main">
+          <span class="project__icon"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
+          <div class="al-card__header">
+            <div class="project__heading">
+              <h2 class="al-card__title" id="p1">Website redesign</h2>
+              <span class="al-tag al-tag--filled al-tag--success al-tag--sm">Active</span>
+            </div>
+            <p class="al-card__description">New marketing site, from wireframes to launch.</p>
+            <p class="project__meta">128 files · Updated 2 hours ago</p>
+          </div>
+        </div>
+        <button type="button" class="al-btn al-btn--secondary al-btn--sm js-delete" aria-describedby="p1">
+          <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+          <span class="al-btn__label">Delete project</span>
+        </button>
+      </li>
+
+      <li class="al-card al-card--border al-card--spaced project" data-name="Mobile app onboarding" data-files="42">
+        <div class="project__main">
+          <span class="project__icon"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
+          <div class="al-card__header">
+            <div class="project__heading">
+              <h2 class="al-card__title" id="p2">Mobile app onboarding</h2>
+              <span class="al-tag al-tag--filled al-tag--warning al-tag--sm">In review</span>
+            </div>
+            <p class="al-card__description">First-run flow and permission screens for iOS and Android.</p>
+            <p class="project__meta">42 files · Updated yesterday</p>
+          </div>
+        </div>
+        <button type="button" class="al-btn al-btn--secondary al-btn--sm js-delete" aria-describedby="p2">
+          <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+          <span class="al-btn__label">Delete project</span>
+        </button>
+      </li>
+
+      <li class="al-card al-card--border al-card--spaced project" data-name="Q4 brand campaign" data-files="67">
+        <div class="project__main">
+          <span class="project__icon"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
+          <div class="al-card__header">
+            <div class="project__heading">
+              <h2 class="al-card__title" id="p3">Q4 brand campaign</h2>
+              <span class="al-tag al-tag--filled al-tag--info al-tag--sm">Planning</span>
+            </div>
+            <p class="al-card__description">Social, print and out-of-home assets for the holiday season.</p>
+            <p class="project__meta">67 files · Updated 3 days ago</p>
+          </div>
+        </div>
+        <button type="button" class="al-btn al-btn--secondary al-btn--sm js-delete" aria-describedby="p3">
+          <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+          <span class="al-btn__label">Delete project</span>
+        </button>
+      </li>
+
+      <li class="al-card al-card--border al-card--spaced project" data-name="Design system audit" data-files="15">
+        <div class="project__main">
+          <span class="project__icon"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg></span>
+          <div class="al-card__header">
+            <div class="project__heading">
+              <h2 class="al-card__title" id="p4">Design system audit</h2>
+              <span class="al-tag al-tag--filled al-tag--neutral al-tag--sm">Archived</span>
+            </div>
+            <p class="al-card__description">Contrast, token and component inventory from last spring.</p>
+            <p class="project__meta">15 files · Updated in April</p>
+          </div>
+        </div>
+        <button type="button" class="al-btn al-btn--secondary al-btn--sm js-delete" aria-describedby="p4">
+          <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
+          <span class="al-btn__label">Delete project</span>
+        </button>
+      </li>
+    </ul>
+
+    <section class="al-empty-state" id="empty" aria-labelledby="empty-title" hidden>
+      <svg class="al-empty-state__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></svg>
+      <div class="al-empty-state__text">
+        <h2 class="al-empty-state__title" id="empty-title">No projects yet</h2>
+        <p class="al-empty-state__description">Projects you create show up here.</p>
+      </div>
+      <button type="button" class="al-btn al-btn--primary al-btn--md">
+        <span class="al-btn__label">Create project</span>
+      </button>
+    </section>
+  </main>
+
+  <!-- Confirmation: sm (short confirmation), Danger main action, Cancel first.
+       modal.js puts initial focus on Cancel because the main action is Danger. -->
+  <dialog class="al-modal al-modal--sm" id="delete-modal" aria-labelledby="delete-title" aria-describedby="delete-desc">
+    <h2 class="al-modal__title" id="delete-title">Delete project?</h2>
+    <div class="al-modal__content" id="delete-desc">
+      <p class="modal__text"><span class="modal__name" id="delete-name">This project</span> and its <span id="delete-files">files</span> will be permanently deleted for everyone.</p>
+      <p class="modal__text modal__warning">This can't be undone.</p>
+    </div>
+    <div class="al-modal__actions">
+      <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
+        <span class="al-btn__label">Cancel</span>
+      </button>
+      <button type="button" class="al-btn al-btn--danger al-btn--md" id="confirm-delete">
+        <span class="al-btn__label">Delete project</span>
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Toast region: one per page, present from load -->
+  <section class="al-toast-region" aria-label="Notifications" popover="manual">
+    <div class="al-toast-region__live" role="status"></div>
+    <div class="al-toast-region__live" role="alert"></div>
+  </section>
+
+  <template id="toast-deleted">
+    <div class="al-toast al-toast--success">
+      <svg class="al-icon al-icon--20 al-toast__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Success"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></svg>
+      <div class="al-toast__text">
+        <p class="al-toast__title">Project deleted</p>
+      </div>
+      <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Close notification">
+        <svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+  </template>
+
+  <script src="node_modules/al-design-system/dist/components/modal.js"></script>
+  <script src="node_modules/al-design-system/dist/components/toast.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      var list = document.getElementById('projects');
+      var empty = document.getElementById('empty');
+      var count = document.getElementById('project-count');
+      var pageTitle = document.getElementById('page-title');
+      var modal = document.getElementById('delete-modal');
+      var title = document.getElementById('delete-title');
+      var nameEl = document.getElementById('delete-name');
+      var filesEl = document.getElementById('delete-files');
+      var confirmBtn = document.getElementById('confirm-delete');
+      var pending = null;
+
+      function updateCount() {
+        var n = list.children.length;
+        count.textContent = n === 1 ? '1 project' : n + ' projects';
+        if (n === 0) {
+          list.hidden = true;
+          empty.hidden = false;
+        }
+      }
+
+      // Open: fill the dialog with the project's name, then showModal().
+      // The title names the action (rule 6) and the body states the consequence (rule 8).
+      list.addEventListener('click', function (e) {
+        var btn = e.target.closest('.js-delete');
+        if (!btn) return;
+        pending = btn.closest('.project');
+        var name = pending.dataset.name;
+        var files = Number(pending.dataset.files);
+        title.textContent = 'Delete “' + name + '”?';
+        nameEl.textContent = name;
+        filesEl.textContent = files === 1 ? '1 file' : files + ' files';
+        modal.showModal();
+      });
+
+      // Cancel / Esc / backdrop: the native <dialog> returns focus to the opener.
+      modal.addEventListener('close', function () {
+        if (modal.returnValue !== 'deleted') pending = null;
+        modal.returnValue = '';
+      });
+
+      // Confirm: remove the card, move focus somewhere sensible, announce it.
+      confirmBtn.addEventListener('click', function () {
+        if (!pending) return;
+        var item = pending;
+        var name = item.dataset.name;
+        var next = item.nextElementSibling || item.previousElementSibling;
+
+        modal.close('deleted');
+        item.remove();
+        pending = null;
+        updateCount();
+
+        // The opener no longer exists, so focus goes to the neighbouring
+        // project's delete button, or to the page title when the list is empty.
+        var target = next ? next.querySelector('.js-delete') : pageTitle;
+        requestAnimationFrame(function () { target.focus(); });
+
+        window.alToast.show('toast-deleted', { title: '“' + name + '” deleted' });
+      });
+    })();
+  </script>
+</body>
+</html>

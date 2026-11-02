@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Orders</title>
+  <link rel="stylesheet" href="node_modules/al-design-system/dist/al.css">
+  <style>
+    body {
+      margin: 0;
+      background: var(--al-bg-canvas);
+      color: var(--al-text-primary);
+      font-family: var(--al-font-sans);
+      font-size: var(--al-font-size-md);
+      line-height: var(--al-line-height-md);
+    }
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: var(--al-space-48) var(--al-space-16);
+    }
+    .page__header { margin-bottom: var(--al-space-24); }
+    .page__title {
+      margin: 0;
+      font-size: var(--al-font-size-4xl);
+      line-height: var(--al-line-height-4xl);
+      font-weight: var(--al-font-weight-semibold);
+      letter-spacing: -0.02em;
+    }
+    .page__lead {
+      margin: var(--al-space-4) 0 0;
+      color: var(--al-text-secondary);
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+    }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--al-border-default);
+      border-radius: var(--al-radius-lg);
+    }
+    .orders {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+    }
+    .orders th,
+    .orders td {
+      padding: var(--al-space-12) var(--al-space-16);
+      text-align: left;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--al-border-subtle);
+    }
+    .orders tbody tr:last-child td { border-bottom: 0; }
+    .orders th {
+      background: var(--al-bg-surface);
+      color: var(--al-text-secondary);
+      font-weight: var(--al-font-weight-medium);
+    }
+    .orders .num { font-variant-numeric: tabular-nums; }
+    .orders .total { text-align: right; }
+    .orders td.order { font-weight: var(--al-font-weight-medium); }
+    .list-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--al-space-12) var(--al-space-24);
+      margin-top: var(--al-space-16);
+    }
+    .list-footer__range {
+      margin: 0;
+      color: var(--al-text-secondary);
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="page__header">
+      <h1 class="page__title">Orders</h1>
+      <p class="page__lead">Every order placed in the store, newest first.</p>
+    </header>
+
+    <div class="table-wrap">
+      <table class="orders">
+        <caption class="sr-only">Customer orders</caption>
+        <thead>
+          <tr>
+            <th scope="col">Order</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Status</th>
+            <th scope="col" class="total">Total</th>
+          </tr>
+        </thead>
+        <tbody id="orders-body">
+          <tr><td class="order num">#10482</td><td>Ana Ribeiro</td><td><span class="al-tag al-tag--filled al-tag--success al-tag--md">Paid</span></td><td class="total num">$248.90</td></tr>
+          <tr><td class="order num">#10481</td><td>Marcus Chen</td><td><span class="al-tag al-tag--filled al-tag--info al-tag--md">Processing</span></td><td class="total num">$72.00</td></tr>
+          <tr><td class="order num">#10480</td><td>Sofia Almeida</td><td><span class="al-tag al-tag--filled al-tag--warning al-tag--md">Pending</span></td><td class="total num">$1,104.35</td></tr>
+          <tr><td class="order num">#10479</td><td>James O'Connor</td><td><span class="al-tag al-tag--filled al-tag--success al-tag--md">Paid</span></td><td class="total num">$39.99</td></tr>
+          <tr><td class="order num">#10478</td><td>Priya Nair</td><td><span class="al-tag al-tag--filled al-tag--error al-tag--md">Canceled</span></td><td class="total num">$515.20</td></tr>
+          <tr><td class="order num">#10477</td><td>Lucas Ferreira</td><td><span class="al-tag al-tag--filled al-tag--info al-tag--md">Processing</span></td><td class="total num">$88.40</td></tr>
+          <tr><td class="order num">#10476</td><td>Emma Schulz</td><td><span class="al-tag al-tag--filled al-tag--neutral al-tag--md">Refunded</span></td><td class="total num">$129.00</td></tr>
+          <tr><td class="order num">#10475</td><td>Kenji Watanabe</td><td><span class="al-tag al-tag--filled al-tag--success al-tag--md">Paid</span></td><td class="total num">$302.75</td></tr>
+          <tr><td class="order num">#10474</td><td>Olivia Martins</td><td><span class="al-tag al-tag--filled al-tag--warning al-tag--md">Pending</span></td><td class="total num">$64.10</td></tr>
+          <tr><td class="order num">#10473</td><td>Diego Herrera</td><td><span class="al-tag al-tag--filled al-tag--success al-tag--md">Paid</span></td><td class="total num">$957.60</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="list-footer">
+      <p class="list-footer__range" id="range" aria-live="polite">Showing 1–10 of 120</p>
+
+      <nav class="al-pagination" aria-label="Pagination">
+        <button type="button" class="al-btn al-btn--ghost al-btn--sm" id="prev" aria-disabled="true">
+          <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg></span>
+          <span class="al-btn__label">Previous</span>
+        </button>
+        <ul class="al-pagination__pages" id="pages">
+          <li><button type="button" class="al-pagination__item" aria-label="Page 1" aria-current="page">1</button></li>
+          <li><button type="button" class="al-pagination__item" aria-label="Page 2">2</button></li>
+          <li><button type="button" class="al-pagination__item" aria-label="Page 3">3</button></li>
+          <li><button type="button" class="al-pagination__item" aria-label="Page 4">4</button></li>
+          <li><button type="button" class="al-pagination__item" aria-label="Page 5">5</button></li>
+          <li><span class="al-pagination__ellipsis" aria-hidden="true"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span></li>
+          <li><button type="button" class="al-pagination__item" aria-label="Page 12">12</button></li>
+        </ul>
+        <button type="button" class="al-btn al-btn--ghost al-btn--sm" id="next">
+          <span class="al-btn__label">Next</span>
+          <span class="al-btn__icon al-btn__icon--trailing"><svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"/></svg></span>
+        </button>
+      </nav>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var TOTAL_PAGES = 12, PER_PAGE = 10, TOTAL = TOTAL_PAGES * PER_PAGE, FIRST_ORDER = 10482;
+      var NAMES = ["Ana Ribeiro","Marcus Chen","Sofia Almeida","James O'Connor","Priya Nair","Lucas Ferreira",
+        "Emma Schulz","Kenji Watanabe","Olivia Martins","Diego Herrera","Chloe Dubois","Rafael Costa",
+        "Hannah Becker","Mateo Rossi","Aisha Bello","Noah Kim","Isabela Rocha","Liam Walsh","Yara Haddad","Tomás Silva"];
+      var STATUSES = [
+        ["Paid","success"],["Processing","info"],["Pending","warning"],["Paid","success"],["Canceled","error"],
+        ["Processing","info"],["Refunded","neutral"],["Paid","success"],["Pending","warning"],["Paid","success"]
+      ];
+      var ELLIPSIS = '<svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>';
+
+      var body = document.getElementById("orders-body");
+      var pages = document.getElementById("pages");
+      var range = document.getElementById("range");
+      var prev = document.getElementById("prev");
+      var next = document.getElementById("next");
+      var current = 1;
+      var money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" });
+
+      function esc(s) { return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/'/g, "&#39;"); }
+
+      function rows(page) {
+        if (page === 1) return null; // keep the hand-written first page
+        var html = "";
+        for (var i = 0; i < PER_PAGE; i++) {
+          var n = (page - 1) * PER_PAGE + i;
+          var st = STATUSES[(n * 7 + page) % STATUSES.length];
+          var total = ((n * 7919) % 120000) / 100 + 12;
+          html += '<tr><td class="order num">#' + (FIRST_ORDER - n) + '</td><td>' + esc(NAMES[(n * 3 + page) % NAMES.length]) +
+            '</td><td><span class="al-tag al-tag--filled al-tag--' + st[1] + ' al-tag--md">' + st[0] +
+            '</span></td><td class="total num">' + money.format(total) + '</td></tr>';
+        }
+        return html;
+      }
+
+      // Fixed window of 7 positions: first and last always shown.
+      function windowFor(p, n) {
+        if (n <= 7) return Array.from({ length: n }, function (_, i) { return i + 1; });
+        if (p <= 4) return [1, 2, 3, 4, 5, "…", n];
+        if (p >= n - 3) return [1, "…", n - 4, n - 3, n - 2, n - 1, n];
+        return [1, "…", p - 1, p, p + 1, "…", n];
+      }
+
+      function renderPages() {
+        pages.innerHTML = windowFor(current, TOTAL_PAGES).map(function (v) {
+          if (v === "…") return '<li><span class="al-pagination__ellipsis" aria-hidden="true">' + ELLIPSIS + '</span></li>';
+          return '<li><button type="button" class="al-pagination__item" aria-label="Page ' + v + '"' +
+            (v === current ? ' aria-current="page"' : '') + '>' + v + '</button></li>';
+        }).join("");
+        setDisabled(prev, current === 1);
+        setDisabled(next, current === TOTAL_PAGES);
+      }
+
+      function setDisabled(btn, off) {
+        if (off) btn.setAttribute("aria-disabled", "true"); else btn.removeAttribute("aria-disabled");
+      }
+
+      var firstPage = body.innerHTML;
+      function go(p) {
+        if (p < 1 || p > TOTAL_PAGES || p === current) return;
+        current = p;
+        body.innerHTML = rows(p) || firstPage;
+        var start = (p - 1) * PER_PAGE + 1;
+        range.textContent = "Showing " + start + "–" + Math.min(start + PER_PAGE - 1, TOTAL) + " of " + TOTAL;
+        renderPages();
+        var btn = pages.querySelector('[aria-current="page"]');
+        if (btn) btn.focus();
+      }
+
+      pages.addEventListener("click", function (e) {
+        var b = e.target.closest(".al-pagination__item");
+        if (b) go(Number(b.textContent));
+      });
+      prev.addEventListener("click", function () { if (prev.getAttribute("aria-disabled") !== "true") go(current - 1); });
+      next.addEventListener("click", function () { if (next.getAttribute("aria-disabled") !== "true") go(current + 1); });
+    })();
+  </script>
+</body>
+</html>

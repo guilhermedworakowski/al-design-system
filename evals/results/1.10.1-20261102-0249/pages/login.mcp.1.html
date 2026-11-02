@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in</title>
+  <link rel="stylesheet" href="node_modules/al-design-system/dist/al.css">
+  <script type="module" src="node_modules/al-design-system/dist/components/password.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--al-bg-canvas);
+      color: var(--al-text-primary);
+      font-family: var(--al-font-sans);
+    }
+
+    .signin {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: var(--al-space-48) var(--al-space-16);
+    }
+
+    .signin__panel {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .signin__header {
+      margin-bottom: var(--al-space-32);
+    }
+
+    .signin__title {
+      margin: 0 0 var(--al-space-8);
+      font-size: var(--al-font-size-3xl);
+      line-height: var(--al-line-height-3xl);
+      font-weight: var(--al-font-weight-semibold);
+      letter-spacing: -0.015em;
+    }
+
+    .signin__lead {
+      margin: 0;
+      font-size: var(--al-font-size-md);
+      line-height: var(--al-line-height-md);
+      color: var(--al-text-secondary);
+    }
+
+    .signin__form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--al-space-24);
+    }
+
+    .signin__options {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--al-space-12) var(--al-space-16);
+    }
+
+    .signin__message {
+      margin: 0;
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+      color: var(--al-text-danger);
+    }
+
+    .signin__message:empty { display: none; }
+  </style>
+</head>
+<body>
+  <main class="signin">
+    <div class="signin__panel">
+      <header class="signin__header">
+        <h1 class="signin__title">Sign in</h1>
+        <p class="signin__lead">Welcome back. Use the email you signed up with.</p>
+      </header>
+
+      <form class="signin__form" id="signin-form" action="/api/sessions" method="post" novalidate>
+        <div class="al-input">
+          <div class="al-input__labelrow">
+            <label class="al-input__label" for="email">Email</label>
+          </div>
+          <div class="al-input__control">
+            <input class="al-input__field" id="email" name="email" type="email"
+                   autocomplete="username" spellcheck="false" autocapitalize="none"
+                   placeholder="name@company.com" required>
+          </div>
+          <p class="al-input__help" id="email-error" hidden></p>
+        </div>
+
+        <div class="al-password">
+          <label class="al-password__label" for="password">Password</label>
+          <div class="al-password__control">
+            <input class="al-password__field" id="password" name="password" type="password"
+                   autocomplete="current-password" spellcheck="false"
+                   autocapitalize="none" placeholder="Enter your password" required>
+            <button class="al-password__toggle" type="button" aria-controls="password"
+                    aria-label="Show password" hidden>
+              <svg class="al-icon al-password__show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="al-icon al-password__hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>
+            </button>
+          </div>
+          <p class="al-password__help" id="password-error" hidden></p>
+        </div>
+
+        <div class="signin__options">
+          <label class="al-checkbox">
+            <span class="al-checkbox__control">
+              <input class="al-checkbox__input" type="checkbox" name="remember" value="1">
+              <svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>
+              <svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/></svg>
+            </span>
+            <span class="al-checkbox__label">Keep me signed in</span>
+          </label>
+
+          <a class="al-link" href="/forgot-password">Forgot your password?</a>
+        </div>
+
+        <p class="signin__message" id="form-message" role="alert"></p>
+
+        <div>
+          <button type="submit" class="al-btn al-btn--primary al-btn--md" id="signin-submit">
+            <span class="al-btn__spinner" aria-hidden="true"></span>
+            <span class="al-btn__label">Sign in</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var form = document.getElementById('signin-form');
+      var email = document.getElementById('email');
+      var password = document.getElementById('password');
+      var submit = document.getElementById('signin-submit');
+      var formMessage = document.getElementById('form-message');
+      var busy = false;
+
+      // Field errors: aria-invalid paints the state; the message replaces the
+      // help slot and is linked with aria-describedby only while it exists.
+      function setError(field, messageId, text) {
+        var message = document.getElementById(messageId);
+        if (text) {
+          message.textContent = text;
+          message.hidden = false;
+          field.setAttribute('aria-invalid', 'true');
+          field.setAttribute('aria-describedby', messageId);
+        } else {
+          message.textContent = '';
+          message.hidden = true;
+          field.removeAttribute('aria-invalid');
+          field.removeAttribute('aria-describedby');
+        }
+      }
+
+      function validateEmail() {
+        var value = email.value.trim();
+        if (!value) return 'Enter your email address';
+        if (!email.checkValidity()) return 'Enter an email address like name@company.com';
+        return '';
+      }
+
+      function validatePassword() {
+        return password.value ? '' : 'Enter your password';
+      }
+
+      // Errors show when leaving a field, never on every keystroke.
+      // Once a field is in error, it clears as soon as it becomes valid.
+      email.addEventListener('blur', function () {
+        if (email.value) setError(email, 'email-error', validateEmail());
+      });
+      email.addEventListener('input', function () {
+        if (email.getAttribute('aria-invalid') === 'true' && !validateEmail()) {
+          setError(email, 'email-error', '');
+        }
+      });
+      password.addEventListener('input', function () {
+        if (password.getAttribute('aria-invalid') === 'true' && password.value) {
+          setError(password, 'password-error', '');
+        }
+      });
+
+      function setBusy(on) {
+        busy = on;
+        if (on) {
+          submit.setAttribute('aria-busy', 'true');
+          submit.setAttribute('aria-disabled', 'true');
+        } else {
+          submit.removeAttribute('aria-busy');
+          submit.removeAttribute('aria-disabled');
+        }
+      }
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        if (busy) return;
+        formMessage.textContent = '';
+
+        var emailError = validateEmail();
+        var passwordError = validatePassword();
+        setError(email, 'email-error', emailError);
+        setError(password, 'password-error', passwordError);
+
+        if (emailError) { email.focus(); return; }
+        if (passwordError) { password.focus(); return; }
+
+        setBusy(true);
+        var started = Date.now();
+
+        fetch(form.action, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            email: email.value.trim(),
+            password: password.value,
+            remember: form.elements.remember.checked
+          })
+        })
+          .then(function (response) {
+            if (response.ok) {
+              window.location.assign('/');
+              return;
+            }
+            if (response.status === 401 || response.status === 400) {
+              // Never say which credential was wrong; the password comes back empty.
+              password.value = '';
+              setError(password, 'password-error', 'Incorrect email or password. Check both and try again.');
+              password.focus();
+              return;
+            }
+            throw new Error('Unexpected status ' + response.status);
+          })
+          .catch(function () {
+            formMessage.textContent = "We couldn't sign you in right now. Check your connection and try again.";
+          })
+          .finally(function () {
+            // Hold the loading state for at least ~400ms so it doesn't flicker.
+            var wait = Math.max(0, 400 - (Date.now() - started));
+            setTimeout(function () { setBusy(false); }, wait);
+          });
+      });
+    })();
+  </script>
+</body>
+</html>

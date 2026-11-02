@@ -2,6 +2,17 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.10.2] - 2026-11-02
+
+Closes phase 2 of AL for AI agents. No class, token value, style or behavior changed; the published CSS is identical to 1.10.1.
+
+### Added
+- Every component in the Figma library carries a description generated from `components.json` (summary, class, CSS and JS to import, where the rules are, the MCP call) and a documentation link to its page on the site. Internal pieces say which component to use instead. `tools/figma_desc.py` writes them on every build; the maintainer applies them through the Figma MCP.
+- `evals/` in the repository (not in the package): real requests to an AI agent in a project with AL installed, with and without the MCP server, each page scored by the package's own rules. First run on 1.10.1: 10 of 10 pages pass in both modes; with the MCP server the agent was about 25% faster, read fewer files and wrote about 30% less CSS of its own.
+
+### Fixed
+- `npx al-design-system validate --help` prints the help instead of trying to read a file named `--help`.
+
 ## [1.10.1] - 2026-11-01
 
 The semantic tokens say what they are for. No class, token value, style or behavior changed; the published CSS is identical to 1.10.0.

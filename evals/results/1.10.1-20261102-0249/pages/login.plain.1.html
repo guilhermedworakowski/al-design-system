@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+
+  <!-- AL Design System: Foundation + components -->
+  <link rel="stylesheet" href="node_modules/al-design-system/dist/al.css">
+
+  <style>
+    /* Page layout only. Every color, size and space comes from AL tokens. */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body { margin: 0; min-height: 100%; }
+
+    body {
+      background: var(--al-bg-surface);
+      color: var(--al-text-primary);
+      font-family: var(--al-font-sans);
+      font-size: var(--al-font-size-md);
+      line-height: var(--al-line-height-md);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: var(--al-space-40) var(--al-space-16);
+    }
+
+    .signin {
+      inline-size: 100%;
+      max-inline-size: 440px;
+    }
+
+    .signin__card {
+      background: var(--al-bg-canvas);
+    }
+
+    .signin__header {
+      margin-block-end: var(--al-space-32);
+    }
+
+    .signin__title {
+      margin: 0;
+      font-size: var(--al-font-size-2xl);
+      line-height: var(--al-line-height-2xl);
+      font-weight: var(--al-font-weight-semibold);
+      color: var(--al-text-primary);
+    }
+
+    .signin__lede {
+      margin: var(--al-space-8) 0 0;
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+      color: var(--al-text-secondary);
+    }
+
+    .signin__form {
+      display: flex;
+      flex-direction: column;
+      gap: var(--al-space-24);
+    }
+
+    .signin__password {
+      display: flex;
+      flex-direction: column;
+      gap: var(--al-space-12);
+    }
+
+    .signin__recover {
+      align-self: flex-start;
+    }
+
+    .signin__actions {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--al-space-16);
+      margin-block-start: var(--al-space-8);
+    }
+
+    /* Form-level message after a failed sign-in (Password rule 9:
+       never say which credential was wrong). The text carries the error;
+       the icon and the color only reinforce it. */
+    .signin__error {
+      display: flex;
+      gap: var(--al-space-12);
+      align-items: flex-start;
+      margin: 0 0 var(--al-space-24);
+      padding: var(--al-space-12) var(--al-space-16);
+      border: var(--al-border-width-1) solid var(--al-border-danger);
+      border-radius: var(--al-radius-lg);
+      background: var(--al-bg-danger-subtle);
+      color: var(--al-text-danger);
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+    }
+
+    .signin__error:focus { outline: none; }
+    .signin__error:focus-visible { box-shadow: var(--al-focus-ring-error); }
+
+    .signin__error p { margin: 0; }
+    .signin__error strong { font-weight: var(--al-font-weight-semibold); }
+
+    /* Help/error slots only exist in error: keep `hidden` stronger than
+       any component `display`. */
+    .al-input__help[hidden],
+    .al-password__help[hidden],
+    .signin__error[hidden] { display: none; }
+
+    .visually-hidden {
+      position: absolute !important;
+      inline-size: 1px; block-size: 1px;
+      margin: -1px; padding: 0; border: 0;
+      overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="signin">
+      <div class="al-card al-card--elevated al-card--spaced signin__card">
+        <header class="signin__header">
+          <h1 class="signin__title">Sign in</h1>
+          <p class="signin__lede">Use the email and password of your account.</p>
+        </header>
+
+        <!-- Shown when the server sends the person back after a failed attempt
+             (e.g. /signin?error=credentials). -->
+        <div class="signin__error" id="signin-error" role="alert" tabindex="-1" hidden>
+          <svg class="al-icon al-icon--20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <p><strong>Incorrect email or password.</strong> Check both and try again.</p>
+        </div>
+
+        <form class="signin__form" id="signin-form" action="/session" method="post" novalidate>
+
+          <!-- Email · AL Input -->
+          <div class="al-input">
+            <div class="al-input__labelrow">
+              <label class="al-input__label" for="email">Email</label>
+            </div>
+            <div class="al-input__control">
+              <input class="al-input__field" id="email" name="email" type="email"
+                     autocomplete="username" inputmode="email"
+                     spellcheck="false" autocapitalize="none"
+                     placeholder="name@company.com" required>
+            </div>
+            <p class="al-input__help" id="email-error" hidden></p>
+          </div>
+
+          <!-- Password · AL Password, followed by the recovery link -->
+          <div class="signin__password">
+            <div class="al-password">
+              <label class="al-password__label" for="password">Password</label>
+              <div class="al-password__control">
+                <input class="al-password__field" id="password" name="password" type="password"
+                       autocomplete="current-password" spellcheck="false"
+                       autocapitalize="none" placeholder="Enter your password" required>
+                <button class="al-password__toggle" type="button" aria-controls="password"
+                        aria-label="Show password" hidden>
+                  <svg class="al-icon al-password__show" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg class="al-icon al-password__hide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/></svg>
+                </button>
+              </div>
+              <p class="al-password__help" id="password-error" hidden></p>
+            </div>
+
+            <a class="al-link signin__recover" href="/forgot-password">Forgot your password?</a>
+          </div>
+
+          <!-- Keep me signed in · AL Checkbox -->
+          <label class="al-checkbox">
+            <span class="al-checkbox__control">
+              <input class="al-checkbox__input" type="checkbox" name="remember" value="1">
+              <svg class="al-icon al-checkbox__check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6 9 17l-5-5"/></svg>
+              <svg class="al-icon al-checkbox__dash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/></svg>
+            </span>
+            <span class="al-checkbox__label">Keep me signed in</span>
+          </label>
+
+          <!-- The one Primary action of the screen -->
+          <div class="signin__actions">
+            <button type="submit" class="al-btn al-btn--primary al-btn--md" id="signin-submit">
+              <span class="al-btn__spinner" aria-hidden="true"></span>
+              <span class="al-btn__label">Sign in</span>
+            </button>
+          </div>
+
+          <p class="visually-hidden" id="signin-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="node_modules/al-design-system/dist/components/password.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var form = document.getElementById('signin-form');
+    var email = document.getElementById('email');
+    var password = document.getElementById('password');
+    var submit = document.getElementById('signin-submit');
+    var status = document.getElementById('signin-status');
+    var formError = document.getElementById('signin-error');
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var submitting = false;
+
+    /* Show or clear a field error. The message replaces the help slot and
+       is linked with aria-describedby only while it exists (Input rules 16-17, 30). */
+    function setError(field, messageEl, message) {
+      if (message) {
+        messageEl.textContent = message;
+        messageEl.hidden = false;
+        field.setAttribute('aria-invalid', 'true');
+        field.setAttribute('aria-describedby', messageEl.id);
+      } else {
+        messageEl.textContent = '';
+        messageEl.hidden = true;
+        field.removeAttribute('aria-invalid');
+        field.removeAttribute('aria-describedby');
+      }
+    }
+
+    function emailMessage() {
+      var v = email.value.trim();
+      if (!v) return 'Enter your email address';
+      if (!EMAIL_RE.test(v)) return 'Enter an email address in the format name@company.com';
+      return '';
+    }
+
+    function passwordMessage() {
+      return password.value ? '' : 'Enter your password';
+    }
+
+    var emailError = document.getElementById('email-error');
+    var passwordError = document.getElementById('password-error');
+
+    /* Errors appear on leaving the field or submitting, never per keystroke
+       (Input rule 19). Typing only clears an error once it's fixed. */
+    email.addEventListener('blur', function () {
+      if (email.value.trim()) setError(email, emailError, emailMessage());
+    });
+    email.addEventListener('input', function () {
+      if (email.getAttribute('aria-invalid') === 'true' && !emailMessage()) {
+        setError(email, emailError, '');
+      }
+    });
+    password.addEventListener('input', function () {
+      if (password.getAttribute('aria-invalid') === 'true' && !passwordMessage()) {
+        setError(password, passwordError, '');
+      }
+    });
+
+    form.addEventListener('submit', function (event) {
+      if (submitting) { event.preventDefault(); return; }
+
+      var eMsg = emailMessage();
+      var pMsg = passwordMessage();
+      setError(email, emailError, eMsg);
+      setError(password, passwordError, pMsg);
+
+      if (eMsg || pMsg) {
+        event.preventDefault();
+        (eMsg ? email : password).focus();
+        return;
+      }
+
+      /* Loading: aria-busy + aria-disabled, never `disabled`, so focus
+         stays on the button (Button rule 6). */
+      submitting = true;
+      submit.setAttribute('aria-busy', 'true');
+      submit.setAttribute('aria-disabled', 'true');
+      status.textContent = 'Signing in…';
+    });
+
+    /* A failed sign-in comes back from the server: one message that never
+       says which credential was wrong, password empty and hidden (Password rules 9-10). */
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('error') === 'credentials') {
+      formError.hidden = false;
+      password.value = '';
+      password.type = 'password';
+      var prefill = params.get('email');
+      if (prefill) email.value = prefill;
+      formError.focus();
+    }
+  })();
+  </script>
+</body>
+</html>

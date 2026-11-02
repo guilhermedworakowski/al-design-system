@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notification settings</title>
+  <link rel="stylesheet" href="node_modules/al-design-system/dist/al.css">
+  <script type="module" src="node_modules/al-design-system/dist/components/toast.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: var(--al-bg-canvas);
+      color: var(--al-text-primary);
+      font-family: var(--al-font-sans);
+      font-size: var(--al-font-size-md);
+      line-height: var(--al-line-height-md);
+    }
+
+    .page {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: var(--al-space-48) var(--al-space-16) var(--al-space-96);
+    }
+
+    .page__header { margin-bottom: var(--al-space-40); }
+
+    .page__title {
+      margin: 0 0 var(--al-space-8);
+      font-size: var(--al-font-size-4xl);
+      line-height: var(--al-line-height-4xl);
+      font-weight: var(--al-font-weight-semibold);
+      letter-spacing: -0.02em;
+    }
+
+    .page__lead,
+    .section__description {
+      margin: 0;
+      color: var(--al-text-secondary);
+    }
+
+    .page__lead {
+      font-size: var(--al-font-size-lg);
+      line-height: var(--al-line-height-lg);
+    }
+
+    /* Each section is a fieldset whose legend is the section heading. */
+    .section {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      min-width: 0;
+    }
+
+    .section__legend {
+      padding: 0;
+      margin-bottom: var(--al-space-4);
+    }
+
+    .section__title {
+      margin: 0;
+      font-size: var(--al-font-size-xl);
+      line-height: var(--al-line-height-xl);
+      font-weight: var(--al-font-weight-semibold);
+      letter-spacing: -0.01em;
+    }
+
+    .section__description {
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+      margin-bottom: var(--al-space-24);
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--al-space-16);
+    }
+
+    .page .al-divider { margin: var(--al-space-40) 0; }
+
+    .actions { margin-top: var(--al-space-32); }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="page__header">
+      <h1 class="page__title">Notification settings</h1>
+      <p class="page__lead">Choose how we reach you and the language we write in.</p>
+    </header>
+
+    <fieldset class="section" aria-describedby="notifications-desc">
+      <legend class="section__legend"><h2 class="section__title">Notifications</h2></legend>
+      <p class="section__description" id="notifications-desc">Changes apply as soon as you flip a switch.</p>
+
+      <div class="stack">
+        <label class="al-switch">
+          <span class="al-switch__control">
+            <input class="al-switch__input" type="checkbox" role="switch" name="email" checked>
+            <span class="al-switch__thumb" aria-hidden="true"></span>
+          </span>
+          <span class="al-switch__label">Email notifications</span>
+        </label>
+
+        <label class="al-switch">
+          <span class="al-switch__control">
+            <input class="al-switch__input" type="checkbox" role="switch" name="push">
+            <span class="al-switch__thumb" aria-hidden="true"></span>
+          </span>
+          <span class="al-switch__label">Push notifications</span>
+        </label>
+
+        <label class="al-switch">
+          <span class="al-switch__control">
+            <input class="al-switch__input" type="checkbox" role="switch" name="weeklySummary" checked>
+            <span class="al-switch__thumb" aria-hidden="true"></span>
+          </span>
+          <span class="al-switch__label">Weekly summary</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <hr class="al-divider" aria-hidden="true">
+
+    <form id="language-form">
+      <fieldset class="section" aria-describedby="language-desc">
+        <legend class="section__legend"><h2 class="section__title">Language</h2></legend>
+        <p class="section__description" id="language-desc">Used in emails, push notifications and the weekly summary.</p>
+
+        <div class="stack">
+          <label class="al-radio">
+            <span class="al-radio__control">
+              <input class="al-radio__input" type="radio" name="language" value="en" checked>
+              <span class="al-radio__dot" aria-hidden="true"></span>
+            </span>
+            <span class="al-radio__label" lang="en">English</span>
+          </label>
+
+          <label class="al-radio">
+            <span class="al-radio__control">
+              <input class="al-radio__input" type="radio" name="language" value="pt">
+              <span class="al-radio__dot" aria-hidden="true"></span>
+            </span>
+            <span class="al-radio__label" lang="pt">Português</span>
+          </label>
+
+          <label class="al-radio">
+            <span class="al-radio__control">
+              <input class="al-radio__input" type="radio" name="language" value="es">
+              <span class="al-radio__dot" aria-hidden="true"></span>
+            </span>
+            <span class="al-radio__label" lang="es">Español</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit" class="al-btn al-btn--primary al-btn--md">
+          <span class="al-btn__spinner" aria-hidden="true"></span>
+          <span class="al-btn__label">Save language</span>
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <!-- One toast region per page, present from load. -->
+  <section class="al-toast-region" aria-label="Notifications" popover="manual">
+    <div class="al-toast-region__live" role="status"></div>
+    <div class="al-toast-region__live" role="alert"></div>
+  </section>
+
+  <template id="toast-saved">
+    <div class="al-toast al-toast--success">
+      <svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></svg>
+      <div class="al-toast__text">
+        <p class="al-toast__title">Language saved</p>
+      </div>
+      <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Close notification">
+        <svg class="al-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+  </template>
+
+  <template id="toast-error">
+    <div class="al-toast al-toast--error">
+      <svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Error" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+      <div class="al-toast__text">
+        <p class="al-toast__title">Setting not changed</p>
+        <p class="al-toast__description">Check your connection and try again.</p>
+      </div>
+      <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Close notification">
+        <svg class="al-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+  </template>
+
+  <script type="module">
+    // Stand-in for the real API. Replace with fetch() calls to your backend.
+    const api = {
+      updateNotification(key, enabled) {
+        return new Promise((resolve) => setTimeout(() => resolve({ key, enabled }), 300));
+      },
+      updateLanguage(language) {
+        return new Promise((resolve) => setTimeout(() => resolve({ language }), 500));
+      },
+    };
+
+    const LABELS = {
+      email: 'Email notifications',
+      push: 'Push notifications',
+      weeklySummary: 'Weekly summary',
+    };
+
+    // Switches: immediate effect. The thumb moves on click; if the system
+    // refuses, it goes back to the real state and an Error toast explains.
+    document.querySelectorAll('.al-switch__input').forEach((input) => {
+      input.addEventListener('change', async () => {
+        const wanted = input.checked;
+        try {
+          await api.updateNotification(input.name, wanted);
+        } catch {
+          input.checked = !wanted;
+          window.alToast?.show('toast-error', {
+            title: `${LABELS[input.name]} not changed`,
+          });
+        }
+      });
+    });
+
+    // Language: a radio choice applies only on save.
+    const form = document.getElementById('language-form');
+    const button = form.querySelector('.al-btn');
+    let busy = false;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (busy) return;
+      busy = true;
+      button.setAttribute('aria-busy', 'true');
+      button.setAttribute('aria-disabled', 'true');
+      const language = new FormData(form).get('language');
+      const started = performance.now();
+      try {
+        await api.updateLanguage(language);
+        const wait = 400 - (performance.now() - started);
+        if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+        document.documentElement.dataset.contentLanguage = language;
+        window.alToast?.show('toast-saved');
+      } catch {
+        window.alToast?.show('toast-error', { title: 'Language not saved' });
+      } finally {
+        busy = false;
+        button.removeAttribute('aria-busy');
+        button.removeAttribute('aria-disabled');
+      }
+    });
+  </script>
+</body>
+</html>

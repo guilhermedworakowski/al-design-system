@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Team members</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="node_modules/al-design-system/dist/al.css">
+  <style>
+    /* Page layout only. Every value comes from the AL Foundation tokens. */
+    body {
+      margin: 0;
+      background: var(--al-bg-canvas);
+      color: var(--al-text-primary);
+      font-family: var(--al-font-sans);
+      font-size: var(--al-font-size-md);
+      line-height: var(--al-line-height-md);
+    }
+
+    .page {
+      max-inline-size: 1040px;
+      margin-inline: auto;
+      padding: var(--al-space-48) var(--al-space-24) var(--al-space-96);
+    }
+
+    .page__header { margin-block-end: var(--al-space-24); }
+
+    .page__title {
+      margin: 0;
+      font-size: var(--al-font-size-2xl);
+      line-height: var(--al-line-height-2xl);
+      font-weight: var(--al-font-weight-semibold);
+    }
+
+    .page__subtitle {
+      margin: var(--al-space-4) 0 0;
+      color: var(--al-text-secondary);
+    }
+
+    /* ------------------------------------------------------------ table */
+    .members {
+      background: var(--al-bg-surface);
+      border: var(--al-border-width-1) solid var(--al-border-subtle);
+      border-radius: var(--al-radius-lg);
+    }
+
+    .members table {
+      inline-size: 100%;
+      border-collapse: collapse;
+    }
+
+    .members caption {
+      position: absolute;
+      inline-size: 1px; block-size: 1px;
+      overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+    }
+
+    .members th {
+      padding: var(--al-space-12) var(--al-space-16);
+      text-align: start;
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+      font-weight: var(--al-font-weight-semibold);
+      color: var(--al-text-secondary);
+      border-block-end: var(--al-border-width-1) solid var(--al-border-default);
+    }
+
+    .members td {
+      padding: var(--al-space-12) var(--al-space-16);
+      vertical-align: middle;
+      border-block-end: var(--al-border-width-1) solid var(--al-border-subtle);
+    }
+
+    .members tbody tr:last-child td { border-block-end: 0; }
+
+    .members__actions-col { inline-size: 1%; text-align: end; }
+    .members td.members__actions-col { padding-block: var(--al-space-8); }
+
+    .person {
+      display: flex;
+      align-items: center;
+      gap: var(--al-space-12);
+      min-inline-size: 0;
+    }
+
+    .person__text { display: flex; flex-direction: column; min-inline-size: 0; }
+
+    .person__name {
+      font-weight: var(--al-font-weight-medium);
+      display: flex; align-items: center; gap: var(--al-space-8); flex-wrap: wrap;
+    }
+
+    .person__name--missing {
+      color: var(--al-text-secondary);
+      font-weight: var(--al-font-weight-regular);
+      font-style: italic;
+    }
+
+    .cell-role { white-space: nowrap; }
+
+    .cell-email {
+      color: var(--al-text-secondary);
+      overflow-wrap: anywhere;
+    }
+
+    /* The actions column is the last one: open the 200px panel towards the
+       inside of the table instead of past the right edge. */
+    .members .al-menu__list { left: auto; right: 0; text-align: start; }
+
+    .members__empty {
+      padding: var(--al-space-48) var(--al-space-16);
+      text-align: center;
+      color: var(--al-text-secondary);
+    }
+
+    /* Edit modal: space between the fields */
+    .form-stack { display: flex; flex-direction: column; gap: var(--al-space-20); }
+
+    /* ------------------------------------------------- narrow screens */
+    /* No horizontal scroll: each row becomes a small card. A scroll
+       container would also clip the menu panel. */
+    @media (max-width: 640px) {
+      .page { padding: var(--al-space-32) var(--al-space-16) var(--al-space-80); }
+
+      .members thead {
+        position: absolute;
+        inline-size: 1px; block-size: 1px;
+        overflow: hidden; clip-path: inset(50%);
+      }
+
+      .members table, .members tbody { display: block; }
+
+      .members tbody tr {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "person actions"
+          "role   role"
+          "email  email";
+        row-gap: var(--al-space-4);
+        padding: var(--al-space-16);
+        border-block-end: var(--al-border-width-1) solid var(--al-border-subtle);
+      }
+      .members tbody tr:last-child { border-block-end: 0; }
+
+      .members td { display: block; padding: 0; border: 0; }
+      .members td.members__actions-col { grid-area: actions; padding: 0; }
+      .members td.cell-person { grid-area: person; margin-block-end: var(--al-space-8); }
+      .members td.cell-role   { grid-area: role;  padding-inline-start: calc(32px + var(--al-space-12)); }
+      .members td.cell-email  { grid-area: email; padding-inline-start: calc(32px + var(--al-space-12)); }
+
+      .members td.cell-role::before,
+      .members td.cell-email::before {
+        content: attr(data-label) " · ";
+        color: var(--al-text-secondary);
+        font-size: var(--al-font-size-sm);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Icon sprite: drawings from al-design-system/dist/icons (lucide, ISC) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+  </svg>
+
+  <main class="page">
+    <header class="page__header">
+      <h1 class="page__title" id="page-title">Team members</h1>
+      <p class="page__subtitle" id="member-count"></p>
+    </header>
+
+    <section class="members" aria-labelledby="page-title">
+      <table>
+        <caption>Team members, with role, email and actions</caption>
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Role</th>
+            <th scope="col">Email</th>
+            <th scope="col" class="members__actions-col"><span class="visually-hidden" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%)">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody id="members-body"></tbody>
+      </table>
+      <p class="members__empty" id="members-empty" hidden>No team members yet.</p>
+    </section>
+  </main>
+
+  <!-- Edit member -->
+  <dialog class="al-modal al-modal--sm" id="edit-modal" aria-labelledby="edit-title">
+    <h2 class="al-modal__title" id="edit-title">Edit member</h2>
+    <div class="al-modal__content">
+      <div class="form-stack">
+        <div class="al-input">
+          <div class="al-input__labelrow">
+            <label class="al-input__label" for="edit-name">Name</label>
+          </div>
+          <div class="al-input__control">
+            <input class="al-input__field" id="edit-name" type="text" autocomplete="off" aria-describedby="edit-name-help">
+          </div>
+          <p class="al-input__help" id="edit-name-help">As it appears to the rest of the team.</p>
+        </div>
+
+        <div class="al-select">
+          <div class="al-select__labelrow">
+            <label class="al-select__label" for="edit-role">Role</label>
+          </div>
+          <div class="al-select__control">
+            <select class="al-select__field" id="edit-role" aria-describedby="edit-role-help">
+              <option value="Admin">Admin</option>
+              <option value="Editor">Editor</option>
+              <option value="Viewer">Viewer</option>
+            </select>
+            <svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false"><use href="#i-chevron"/></svg>
+          </div>
+          <p class="al-select__help" id="edit-role-help">Admins manage members and billing. Editors change content. Viewers only read.</p>
+        </div>
+      </div>
+    </div>
+    <div class="al-modal__actions">
+      <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
+        <span class="al-btn__label">Cancel</span>
+      </button>
+      <button type="button" class="al-btn al-btn--primary al-btn--md" id="edit-save">
+        <span class="al-btn__label">Save changes</span>
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Remove member: cannot be undone, so it is confirmed (Menu rule 15) -->
+  <dialog class="al-modal al-modal--sm" id="remove-modal" aria-labelledby="remove-title">
+    <h2 class="al-modal__title" id="remove-title">Remove member?</h2>
+    <div class="al-modal__content">
+      <p id="remove-text" style="margin:0"></p>
+    </div>
+    <div class="al-modal__actions">
+      <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
+        <span class="al-btn__label">Cancel</span>
+      </button>
+      <button type="button" class="al-btn al-btn--danger al-btn--md" id="remove-confirm">
+        <span class="al-btn__label">Remove member</span>
+      </button>
+    </div>
+  </dialog>
+
+  <!-- Toasts: one region per page, present from load -->
+  <section class="al-toast-region" aria-label="Notifications" popover="manual">
+    <div class="al-toast-region__live" role="status"></div>
+    <div class="al-toast-region__live" role="alert"></div>
+  </section>
+
+  <template id="toast-success">
+    <div class="al-toast al-toast--success">
+      <svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Success"><use href="#i-check"/></svg>
+      <div class="al-toast__text">
+        <p class="al-toast__title">Done</p>
+      </div>
+      <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Close notification">
+        <svg class="al-icon" aria-hidden="true" focusable="false"><use href="#i-x"/></svg>
+      </button>
+    </div>
+  </template>
+
+  <script src="node_modules/al-design-system/dist/components/menu.js"></script>
+  <script src="node_modules/al-design-system/dist/components/tooltip.js"></script>
+  <script src="node_modules/al-design-system/dist/components/modal.js"></script>
+  <script src="node_modules/al-design-system/dist/components/toast.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var members = [
+      { id: 1, name: 'Marina Souza',    role: 'Owner',  email: 'marina.souza@acme.io',   status: 'active'  },
+      { id: 2, name: 'Rafael Lima',     role: 'Admin',  email: 'rafael.lima@acme.io',    status: 'active'  },
+      { id: 3, name: 'Júlia Ferreira',  role: 'Editor', email: 'julia.ferreira@acme.io', status: 'active'  },
+      { id: 4, name: 'Thiago Martins',  role: 'Editor', email: 'thiago.m@acme.io',       status: 'pending' },
+      { id: 5, name: 'Camila Rocha',    role: 'Viewer', email: 'camila.rocha@acme.io',   status: 'active'  },
+      { id: 6, name: '',                role: 'Viewer', email: 'ops-contractor@vendor.com', status: 'pending' },
+      { id: 7, name: 'Bruno Carvalho',  role: 'Admin',  email: 'bruno.carvalho@acme.io', status: 'active'  }
+    ];
+
+    var body = document.getElementById('members-body');
+    var empty = document.getElementById('members-empty');
+    var count = document.getElementById('member-count');
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    // Avatar rule 8: at most 2 uppercase characters.
+    function initials(name) {
+      var parts = name.trim().split(/\s+/);
+      var s = parts.length > 1 ? parts[0][0] + parts[parts.length - 1][0] : parts[0].slice(0, 2);
+      return s.toUpperCase();
+    }
+
+    function displayName(m) { return m.name || m.email; }
+
+    // Avatar chain: Photo -> Initials -> Icon. No photos here, so initials
+    // when the name is known, the user icon when it isn't. Decorative: the
+    // name is written right beside it.
+    function avatar(m) {
+      var child = m.name
+        ? '<span class="al-avatar__initials">' + esc(initials(m.name)) + '</span>'
+        : '<svg class="al-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><use href="#i-user"/></svg>';
+      return '<span class="al-avatar al-avatar--sm" aria-hidden="true">' + child + '</span>';
+    }
+
+    function row(m) {
+      var id = m.id;
+      var pending = m.status === 'pending';
+      var isOwner = m.role === 'Owner';
+      var nameHtml = m.name
+        ? '<span id="name-' + id + '">' + esc(m.name) + '</span>'
+        : '<span class="person__name--missing" id="name-' + id + '">Name not set</span>';
+      var tag = pending
+        ? '<span class="al-tag al-tag--outlined al-tag--warning al-tag--sm">Invite pending</span>'
+        : '';
+
+      // Resend invite exists for everyone but only applies to pending invites;
+      // Remove exists but the owner can't be removed: aria-disabled, never `disabled`.
+      var resendOff = pending ? '' : ' aria-disabled="true"';
+      var removeOff = isOwner ? ' aria-disabled="true"' : '';
+
+      return '' +
+        '<tr data-id="' + id + '">' +
+          '<td class="cell-person"><div class="person">' + avatar(m) +
+            '<div class="person__text"><span class="person__name">' + nameHtml + tag + '</span></div>' +
+          '</div></td>' +
+          '<td class="cell-role" data-label="Role">' + esc(m.role) + '</td>' +
+          '<td class="cell-email" data-label="Email">' + esc(m.email) + '</td>' +
+          '<td class="members__actions-col">' +
+            '<div class="al-menu">' +
+              '<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm"' +
+                ' aria-labelledby="tt-' + id + ' name-' + id + '"' +
+                ' aria-haspopup="menu" aria-expanded="false" aria-controls="menu-' + id + '">' +
+                '<span class="al-icon-btn__spinner" aria-hidden="true"></span>' +
+                '<svg class="al-icon" aria-hidden="true" focusable="false"><use href="#i-more"/></svg>' +
+              '</button>' +
+              '<div class="al-tooltip" id="tt-' + id + '" role="tooltip" popover="manual" data-placement="left">' +
+                '<svg class="al-icon al-icon--20 al-tooltip__icon" aria-hidden="true" focusable="false"><use href="#i-info"/></svg>' +
+                '<span class="al-tooltip__text">More actions</span>' +
+              '</div>' +
+              '<ul class="al-menu__list" role="menu" id="menu-' + id + '" aria-label="Actions for ' + esc(displayName(m)) + '" hidden>' +
+                '<li role="none"><button type="button" class="al-menu__item" role="menuitem" tabindex="-1" data-action="edit">' +
+                  '<svg class="al-icon al-icon--16" aria-hidden="true" focusable="false"><use href="#i-edit"/></svg>' +
+                  '<span class="al-menu__label">Edit</span></button></li>' +
+                '<li role="none"><button type="button" class="al-menu__item" role="menuitem" tabindex="-1" data-action="resend"' + resendOff + '>' +
+                  '<svg class="al-icon al-icon--16" aria-hidden="true" focusable="false"><use href="#i-send"/></svg>' +
+                  '<span class="al-menu__label">Resend invite</span></button></li>' +
+                '<li class="al-divider" role="separator"></li>' +
+                '<li role="none"><button type="button" class="al-menu__item al-menu__item--danger" role="menuitem" tabindex="-1" data-action="remove"' + removeOff + '>' +
+                  '<svg class="al-icon al-icon--16" aria-hidden="true" focusable="false"><use href="#i-trash"/></svg>' +
+                  '<span class="al-menu__label">Remove</span></button></li>' +
+              '</ul>' +
+            '</div>' +
+          '</td>' +
+        '</tr>';
+    }
+
+    function render() {
+      body.innerHTML = members.map(row).join('');
+      empty.hidden = members.length > 0;
+      var pending = members.filter(function (m) { return m.status === 'pending'; }).length;
+      count.textContent = members.length + (members.length === 1 ? ' member' : ' members') +
+        (pending ? ' · ' + pending + ' invite' + (pending === 1 ? '' : 's') + ' pending' : '');
+      window.alMenu.init(body);
+      window.alTooltip.init(body);
+    }
+
+    function find(id) {
+      for (var i = 0; i < members.length; i++) if (members[i].id === id) return members[i];
+      return null;
+    }
+
+    function trigger(id) {
+      return body.querySelector('[aria-controls="menu-' + id + '"]');
+    }
+
+    function toast(title) {
+      window.alToast.show('toast-success', { title: title });
+    }
+
+    // ------------------------------------------------------------ actions
+    var activeId = null;   // the member the open modal is about
+    var editModal = document.getElementById('edit-modal');
+    var removeModal = document.getElementById('remove-modal');
+    var nameField = document.getElementById('edit-name');
+    var nameHelp = document.getElementById('edit-name-help');
+    var roleField = document.getElementById('edit-role');
+    var NAME_HELP = nameHelp.textContent;
+
+    body.addEventListener('click', function (e) {
+      var item = e.target.closest('.al-menu__item');
+      if (!item || item.getAttribute('aria-disabled') === 'true') return;
+      var id = Number(item.closest('tr').getAttribute('data-id'));
+      var m = find(id);
+      if (!m) return;
+      activeId = id;
+      var action = item.getAttribute('data-action');
+
+      if (action === 'edit') {
+        nameField.value = m.name;
+        nameField.removeAttribute('aria-invalid');
+        nameHelp.textContent = NAME_HELP;
+        var isOwner = m.role === 'Owner';
+        // The owner's role is fixed; the select shows it but can't change it.
+        roleField.innerHTML = (isOwner ? '<option value="Owner">Owner</option>' : '') +
+          '<option value="Admin">Admin</option><option value="Editor">Editor</option><option value="Viewer">Viewer</option>';
+        roleField.value = m.role;
+        roleField.disabled = isOwner;
+        editModal.showModal();
+      } else if (action === 'resend') {
+        toast('Invite sent again to ' + m.email);
+      } else if (action === 'remove') {
+        document.getElementById('remove-text').textContent =
+          displayName(m) + ' will lose access to the workspace right away. You can invite them again later.';
+        removeModal.showModal();
+      }
+    });
+
+    document.getElementById('edit-save').addEventListener('click', function () {
+      var m = find(activeId);
+      if (!m) return;
+      var name = nameField.value.trim();
+      if (!name && m.status !== 'pending') {
+        nameField.setAttribute('aria-invalid', 'true');
+        nameHelp.textContent = 'Enter a name.';
+        nameField.focus();
+        return;
+      }
+      m.name = name;
+      if (!roleField.disabled) m.role = roleField.value;
+      editModal.close();
+      render();
+      toast('Changes to ' + displayName(m) + ' saved');
+    });
+
+    nameField.addEventListener('input', function () {
+      if (nameField.hasAttribute('aria-invalid')) {
+        nameField.removeAttribute('aria-invalid');
+        nameHelp.textContent = NAME_HELP;
+      }
+    });
+
+    document.getElementById('remove-confirm').addEventListener('click', function () {
+      var idx = -1;
+      for (var i = 0; i < members.length; i++) if (members[i].id === activeId) idx = i;
+      if (idx < 0) return;
+      var removed = members.splice(idx, 1)[0];
+      removeModal.close();
+      render();
+      // Focus goes to the next row's actions, or the previous one, or the title.
+      var next = members[idx] || members[idx - 1];
+      var target = next ? trigger(next.id) : document.getElementById('page-title');
+      if (!next) target.setAttribute('tabindex', '-1');
+      target.focus();
+      activeId = null;
+      toast(displayName(removed) + ' removed from the team');
+    });
+
+    // The menu item that opened the modal is hidden by now: when a modal
+    // closes, focus returns to that row's ⋮ button.
+    [editModal, removeModal].forEach(function (d) {
+      d.addEventListener('close', function () {
+        if (activeId == null) return;
+        var t = trigger(activeId);
+        if (t) setTimeout(function () { t.focus(); }, 0);
+      });
+    });
+
+    render();
+  })();
+  </script>
+</body>
+</html>

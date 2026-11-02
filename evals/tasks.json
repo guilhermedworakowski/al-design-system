@@ -1,0 +1,17 @@
+{
+  "_note": "Real requests to an AI agent working in a project that has al-design-system installed. Each id is the file name of its answers. The runner appends the same output instruction to every prompt (run.mjs, OUTPUT).",
+  "tasks": [
+    {"id": "login", "prompt": "Build the sign-in page of our product: email, password, a 'Keep me signed in' option, the sign-in button and a link to recover the password."},
+    {"id": "signup", "prompt": "Build the sign-up form: full name, email, a password the person creates (show the requirements: at least 8 characters, one number), accept the terms, and create the account."},
+    {"id": "settings", "prompt": "Build a notification settings page: email notifications, push notifications and a weekly summary, each turned on or off with immediate effect, plus a language choice (English, Portuguese, Spanish)."},
+    {"id": "delete-confirm", "prompt": "Build a projects page with a 'Delete project' button that opens a confirmation dialog: it says the deletion can't be undone, and offers Cancel and Delete."},
+    {"id": "paginated-list", "prompt": "Build a list of 10 customer orders (number, customer, status, total) with the status shown as a colored label and pagination at the bottom for 12 pages."},
+    {"id": "empty-search", "prompt": "Build the search results page for the case where the search for 'blue sneakers' found nothing: say so, explain why it may have happened, and offer to clear the filters."},
+    {"id": "checkout-error", "prompt": "Build the payment step of a checkout: card holder name, card number, expiry date, number of installments (1 to 6) and a Pay button. Show it after a failed submit: the card number is invalid."},
+    {"id": "dashboard", "prompt": "Build a dashboard with three summary cards (revenue, new customers, open tickets) and below them tabs Overview, Reports and Settings, with the Overview panel open."},
+    {"id": "app-shell", "prompt": "Build the layout of our web app: main navigation on the left (Home, Projects, Team, Billing, Settings, with Projects current) and, in the content area, the page title 'Website redesign' under the path Projects > Clients > Website redesign."},
+    {"id": "product-review", "prompt": "Build a product review form: a star rating from 1 to 5, a title, the review text, whether you would recommend it (yes or no), and submit."},
+    {"id": "upload-progress", "prompt": "Build a file upload screen showing a report.pdf upload at 60%, and the message that appears in the corner when an upload finishes: 'report.pdf uploaded'."},
+    {"id": "row-actions", "prompt": "Build a team members table (name with avatar, role, email) where each row has an actions button that opens a menu with Edit, Resend invite and Remove."}
+  ]
+}

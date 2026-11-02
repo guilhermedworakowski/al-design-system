@@ -5,7 +5,7 @@ Runs every generator and gate in the right order: Foundation, tokens and CSS
 for each component, the site and the accessibility QA for each component.
 Then it writes the site's llms.txt (tools/llms.py), the plain-text map for
 agents. Last, it assembles the package in dist/ - it only gets there if every gate
-passed. It stops at the first step that fails and shows its output.
+passed - and writes the Figma descriptions from it (tools/figma_desc.py). It stops at the first step that fails and shows its output.
 
 Run (from the repo root):
     python3 build.py            full build
@@ -68,6 +68,7 @@ def steps():
     out.append(('tools', 'contractgate.py', False))
     out.append(('tools', 'llms.py', False))
     out.append(('tools', 'dist.py', False))
+    out.append(('tools', 'figma_desc.py', False))
     out.append(('tools', 'parity.py', False))
     return out
 
