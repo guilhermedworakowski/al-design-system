@@ -64,7 +64,7 @@ npm install al-design-system
 Ou direto de uma CDN, fixado numa versão:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.10.1/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.10.2/dist/al.css">
 ```
 
 Cada [Release no GitHub](https://github.com/guilhermedworakowski/al-design-system/releases) também traz a pasta `dist/` num zip.
@@ -149,7 +149,7 @@ O pacote traz o que um agente precisa para usar o AL sem adivinhar, na mesma ver
 claude mcp add al -- npx al-design-system mcp
 ```
 
-O site também publica o [llms.txt](https://al.guilhermedesignd.com/llms.txt).
+O site também publica o [llms.txt](https://al.guilhermedesignd.com/llms.txt). As [evals](evals/README.md) do repositório medem tudo isso: pedidos reais a um agente, com e sem o servidor MCP, pontuados por essas mesmas regras.
 
 ## Tokens
 
@@ -190,7 +190,8 @@ src/components/<nome>/ uma pasta por componente:
   guidelines.md          as regras de uso
 src/mcp/               o comando do pacote: validador e servidor MCP, em Node
 site/                  o gerador do site de documentação
-tools/                 o que o build compartilha (caminhos, portões, montagem do dist, o llms.txt do site)
+tools/                 o que o build compartilha (caminhos, portões, montagem do dist, o llms.txt do site, as descrições do Figma)
+evals/                 pedidos reais a um agente de IA, pontuados pelas regras do próprio pacote (fora do build)
 build.py               roda tudo, na ordem
 build/                 saída gerada (CSS, tokens, site)
 dist/                  o pacote que vai para o npm
