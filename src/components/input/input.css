@@ -8,7 +8,8 @@
  *   component; multiple lines is the Textarea. Neither of them stretches this
  *   file.
  *
- * ANATOMY
+ * MARKUP CONTRACT
+ *
  *   <div class="al-input">
  *     <div class="al-input__labelrow">
  *       <label class="al-input__label" id="site-label" for="site">Website</label>

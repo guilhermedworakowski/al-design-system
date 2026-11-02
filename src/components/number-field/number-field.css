@@ -10,7 +10,8 @@
  *   are not quantities (zip code, phone, card) are the Input with
  *   inputmode="numeric" - rule 2.
  *
- * ANATOMY
+ * MARKUP CONTRACT
+ *
  *   <div class="al-number-field">
  *     <div class="al-number-field__labelrow">
  *       <label class="al-number-field__label" for="qty">Quantity</label>

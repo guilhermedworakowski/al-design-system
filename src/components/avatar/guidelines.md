@@ -2,8 +2,10 @@
 
 An avatar shows **who**: the person behind a comment, a task or a conversation.
 
+- **Built on:** a `<span>` holding a photo, initials or an icon; decorative (`aria-hidden="true"`) next to a visible name, `role="img"` + `aria-label` when it stands alone
 - **Types:** Photo, Initials, Icon
 - **Sizes:** `sm`, `md`, `lg`
+- **States:** none - it is not interactive
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#avatar](https://al.guilhermedesignd.com/#avatar)
 
 ## Do and don't

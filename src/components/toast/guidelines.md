@@ -2,9 +2,11 @@
 
 A toast confirms **something that just happened**, in the corner of the screen, without interrupting.
 
+- **Built on:** a `<section popover="manual">` region with two live regions (`role="status"` and `role="alert"`); `toast.js` shows one at a time
 - **Status:** Success, Info, Warning, Error
 - **Position:** bottom right, one at a time, in a queue
 - **Behavior:** `toast.js`; Success and Info leave after 6s, Warning and Error stay until closed
+- **States:** none of its own; it enters and leaves with motion, and the X is an Icon Button
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#toast](https://al.guilhermedesignd.com/#toast)
 
 ## Do and don't

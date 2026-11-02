@@ -5,6 +5,7 @@ A divider is a line that separates **groups** of content.
 - **Built on:** the native `<hr>` (announced by default)
 - **Orientation:** horizontal (default), vertical
 - **Style:** one color (`border-default`) and one thickness (1px)
+- **States:** none - never focusable or clickable
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#divider](https://al.guilhermedesignd.com/#divider)
 
 ## Do and don't

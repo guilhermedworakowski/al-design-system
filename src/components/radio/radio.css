@@ -12,7 +12,8 @@
  *   browser draws (`appearance: none`) and paints AL's in its place. No
  *   <div role="radio"> - the first rule of ARIA.
  *
- * ANATOMY - ONE RADIO
+ * MARKUP CONTRACT - ONE RADIO
+ *
  *   <label class="al-radio">
  *     <span class="al-radio__control">
  *       <input class="al-radio__input" type="radio" name="plan" value="monthly">

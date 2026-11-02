@@ -5,6 +5,7 @@ A modal interrupts the page for a **short task that needs an answer**.
 - **Built on:** the native `<dialog>`, opened with `showModal()`
 - **Sizes:** `sm`, `md`, `lg`
 - **Closing:** Esc always; the backdrop only when there are no fields; no X button
+- **States:** closed, open (rises on opening, sinks on closing)
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#modal](https://al.guilhermedesignd.com/#modal)
 
 ## Do and don't

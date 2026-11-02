@@ -5,6 +5,8 @@
  * Home/End - rule 16), the click on the track (rule 21) and the value to
  * assistive tech. The name comes from the visible <label for> (rule 17).
  *
+ * MARKUP CONTRACT
+ *
  *   <div class="al-slider">
  *     <div class="al-slider__header">
  *       <label class="al-slider__label" for="vol">Volume</label>

@@ -2,8 +2,10 @@
 
 A button whose only content is an icon.
 
+- **Built on:** the native `<button type="button">`, named by `aria-label` or by a Tooltip
 - **Variants:** Primary, Secondary, Ghost, Danger
 - **Sizes:** `sm` (36px), `md` (48px)
+- **States:** default, hover, pressed, focus, disabled, loading
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#icon-button](https://al.guilhermedesignd.com/#icon-button)
 
 ## Do and don't

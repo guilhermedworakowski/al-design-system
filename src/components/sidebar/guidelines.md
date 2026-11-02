@@ -2,10 +2,12 @@
 
 The sidebar is the product's **main navigation between destinations**, always visible on the left.
 
+- **Built on:** an `<aside>` with a `<nav>` of links (the Tab Square); below 1024px `sidebar.js` moves it into a modal `<dialog>`
 - **Zones:** profile at the top, groups in the middle, Help at the bottom
 - **Items:** the full-width Tab Square, as links
 - **Size:** one size (296px wide, the screen's height)
 - **Below 1024px:** a modal panel from the left, opened by a Menu button
+- **States:** the items' own (Tab Square: hover, pressed, focus, current); below 1024px the panel is closed or open
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#sidebar](https://al.guilhermedesignd.com/#sidebar)
 
 ## Do and don't

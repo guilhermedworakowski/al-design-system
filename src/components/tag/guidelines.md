@@ -2,10 +2,12 @@
 
 A tag labels the status or the category of something.
 
+- **Built on:** a `<span>`; the dismissible one adds a native `<button>` X with its own `aria-label`
 - **Types:** Filled, Outlined
 - **Status:** Neutral, Info, Success, Warning, Error
 - **Sizes:** `sm`, `md`
 - **Behavior:** static, or dismissible (with an X)
+- **States:** none on the tag; the X takes focus, with no hover by design
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#tag](https://al.guilhermedesignd.com/#tag)
 
 ## Do and don't

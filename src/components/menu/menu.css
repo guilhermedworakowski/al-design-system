@@ -8,7 +8,7 @@
  * and type come from var(--al-menu-*). The check.py next to it rejects the
  * file if any escapes.
  *
- * MARKUP (WAI-ARIA menu button)
+ * MARKUP CONTRACT (WAI-ARIA menu button)
  *
  *   <div class="al-menu">
  *     <button class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm"

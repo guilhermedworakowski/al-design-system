@@ -11,7 +11,8 @@
  *   varies by operating system and breaks without warning. What that buys:
  *   keyboard, screen reader and mobile behavior for free.
  *
- * ANATOMY
+ * MARKUP CONTRACT
+ *
  *   <div class="al-select">
  *     <div class="al-select__labelrow">
  *       <label class="al-select__label" for="state">State</label>
