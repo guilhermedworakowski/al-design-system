@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team members</title>
+<link rel="stylesheet" href="node_modules/al-design-system/dist/al.css">
+<style>
+  body {
+    margin: 0;
+    background: var(--al-bg-canvas);
+    color: var(--al-text-primary);
+    font-family: var(--al-font-sans);
+    font-size: var(--al-font-size-md);
+    line-height: var(--al-line-height-md);
+  }
+  .page {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: var(--al-space-48) var(--al-space-24);
+  }
+  .page__header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--al-space-16);
+    flex-wrap: wrap;
+    margin-bottom: var(--al-space-24);
+  }
+  .page__title {
+    margin: 0;
+    font-size: var(--al-font-size-4xl);
+    line-height: var(--al-line-height-4xl);
+    font-weight: var(--al-font-weight-semibold);
+    letter-spacing: -0.02em;
+  }
+  .page__lead {
+    margin: var(--al-space-4) 0 0;
+    font-size: var(--al-font-size-sm);
+    line-height: var(--al-line-height-sm);
+    color: var(--al-text-secondary);
+  }
+
+  /* Table: no AL table component, so it is built from Foundation tokens */
+  .members {
+    border: var(--al-border-width-1) solid var(--al-border-default);
+    border-radius: var(--al-radius-xl);
+    background: var(--al-bg-canvas);
+  }
+  .members table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--al-font-size-sm);
+    line-height: var(--al-line-height-sm);
+  }
+  .members caption {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .members th {
+    text-align: left;
+    font-size: var(--al-font-size-xs);
+    line-height: var(--al-line-height-xs);
+    font-weight: var(--al-font-weight-medium);
+    letter-spacing: 0.01em;
+    color: var(--al-text-secondary);
+    background: var(--al-bg-surface);
+    padding: var(--al-space-12) var(--al-space-16);
+    border-bottom: var(--al-border-width-1) solid var(--al-border-default);
+  }
+  .members thead th:first-child { border-top-left-radius: var(--al-radius-xl); }
+  .members thead th:last-child  { border-top-right-radius: var(--al-radius-xl); }
+  .members td {
+    padding: var(--al-space-12) var(--al-space-16);
+    border-bottom: var(--al-border-width-1) solid var(--al-border-subtle);
+    vertical-align: middle;
+  }
+  .members tbody tr:last-child td { border-bottom: 0; }
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .members .col-actions { width: 1%; text-align: right; }
+
+  .person {
+    display: flex;
+    align-items: center;
+    gap: var(--al-space-12);
+    min-width: 0;
+  }
+  .person__name {
+    font-weight: var(--al-font-weight-medium);
+    color: var(--al-text-primary);
+  }
+  .person__meta { display: none; color: var(--al-text-secondary); }
+  .cell-secondary { color: var(--al-text-secondary); }
+  .cell-email { word-break: break-all; }
+
+  /* The trigger sits on the right edge: open the 200px panel toward the left */
+  .members .al-menu__list { left: auto; right: 0; z-index: 10; text-align: left; }
+
+  .members__empty { padding: var(--al-space-48) var(--al-space-16); text-align: center; color: var(--al-text-secondary); }
+
+  .edit-form { display: grid; gap: var(--al-space-16); }
+
+  /* Narrow screens: role and email move under the name, nothing scrolls sideways */
+  @media (max-width: 640px) {
+    .page { padding: var(--al-space-32) var(--al-space-16); }
+    .page__title { font-size: var(--al-font-size-3xl); line-height: var(--al-line-height-3xl); }
+    .members .col-role, .members .col-email { display: none; }
+    .person__meta { display: block; font-size: var(--al-font-size-xs); line-height: var(--al-line-height-xs); word-break: break-all; }
+    .members td, .members th { padding-left: var(--al-space-12); padding-right: var(--al-space-12); }
+  }
+</style>
+</head>
+<body>
+<main class="page">
+  <header class="page__header">
+    <div>
+      <h1 class="page__title">Team members</h1>
+      <p class="page__lead" id="member-count">6 people have access to this workspace.</p>
+    </div>
+    <button type="button" class="al-btn al-btn--primary al-btn--md" id="invite-btn">
+      <span class="al-btn__icon al-btn__icon--leading">
+        <svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      </span>
+      <span class="al-btn__label">Invite member</span>
+    </button>
+  </header>
+
+  <div class="members">
+    <table>
+      <caption>Team members</caption>
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col" class="col-role">Role</th>
+          <th scope="col" class="col-email">Email</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="col-actions"><span class="sr-only">Actions</span></th>
+        </tr>
+      </thead>
+      <tbody id="members-body"></tbody>
+    </table>
+  </div>
+</main>
+
+<!-- Edit member -->
+<dialog class="al-modal al-modal--md" id="edit-modal" aria-labelledby="edit-title">
+  <h2 class="al-modal__title" id="edit-title">Edit member</h2>
+  <div class="al-modal__content">
+    <form class="edit-form" id="edit-form" novalidate>
+      <div class="al-input">
+        <div class="al-input__labelrow">
+          <label class="al-input__label" for="edit-name">Name</label>
+        </div>
+        <div class="al-input__control">
+          <input class="al-input__field" id="edit-name" type="text" autocomplete="name" required>
+        </div>
+      </div>
+      <div class="al-input">
+        <div class="al-input__labelrow">
+          <label class="al-input__label" for="edit-email">Email</label>
+        </div>
+        <div class="al-input__control">
+          <input class="al-input__field" id="edit-email" type="email" autocomplete="email" placeholder="name@company.com" required>
+        </div>
+      </div>
+      <div class="al-select">
+        <div class="al-select__labelrow">
+          <label class="al-select__label" for="edit-role">Role</label>
+        </div>
+        <div class="al-select__control">
+          <select class="al-select__field" id="edit-role" required>
+            <option>Owner</option>
+            <option>Admin</option>
+            <option>Editor</option>
+            <option>Viewer</option>
+          </select>
+          <svg class="al-icon al-select__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m6 9 6 6 6-6"/></svg>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="al-modal__actions">
+    <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
+      <span class="al-btn__label">Cancel</span></button>
+    <button type="button" class="al-btn al-btn--primary al-btn--md" id="edit-save">
+      <span class="al-btn__label">Save changes</span></button>
+  </div>
+</dialog>
+
+<!-- Remove member -->
+<dialog class="al-modal al-modal--sm" id="remove-modal" aria-labelledby="remove-title">
+  <h2 class="al-modal__title" id="remove-title">Remove member?</h2>
+  <div class="al-modal__content">
+    <p id="remove-text" style="margin:0">They lose access to this workspace right away. To bring them back, you'll need to invite them again.</p>
+  </div>
+  <div class="al-modal__actions">
+    <button type="button" class="al-btn al-btn--ghost al-btn--md" data-al-modal-close>
+      <span class="al-btn__label">Cancel</span></button>
+    <button type="button" class="al-btn al-btn--danger al-btn--md" id="remove-confirm">
+      <span class="al-btn__label">Remove member</span></button>
+  </div>
+</dialog>
+
+<!-- Toasts -->
+<section class="al-toast-region" aria-label="Notifications" popover="manual">
+  <div class="al-toast-region__live" role="status"></div>
+  <div class="al-toast-region__live" role="alert"></div>
+</section>
+
+<template id="toast-success">
+  <div class="al-toast al-toast--success">
+    <svg class="al-icon al-icon--20 al-toast__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Success"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></svg>
+    <div class="al-toast__text">
+      <p class="al-toast__title">Done</p>
+      <p class="al-toast__description">Saved.</p>
+    </div>
+    <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Close notification">
+      <svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+</template>
+
+<template id="toast-info">
+  <div class="al-toast al-toast--info">
+    <svg class="al-icon al-icon--20 al-toast__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label="Information"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+    <div class="al-toast__text">
+      <p class="al-toast__title">Invite sent</p>
+      <p class="al-toast__description">Sent.</p>
+    </div>
+    <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Close notification">
+      <svg class="al-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+    </button>
+  </div>
+</template>
+
+<script src="node_modules/al-design-system/dist/components/menu.js"></script>
+<script src="node_modules/al-design-system/dist/components/modal.js"></script>
+<script src="node_modules/al-design-system/dist/components/toast.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var ICON = {
+    more:   '<circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>',
+    pencil: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+    send:   '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
+    trash:  '<path d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'
+  };
+  function svg(name, cls) {
+    return '<svg class="al-icon' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' + ICON[name] + '</svg>';
+  }
+
+  var members = [
+    { id: 1, name: 'Marina Souza',    role: 'Owner',  email: 'marina.souza@acme.co',    status: 'active'  },
+    { id: 2, name: 'Daniel Okafor',   role: 'Admin',  email: 'daniel.okafor@acme.co',   status: 'active'  },
+    { id: 3, name: 'Priya Raman',     role: 'Editor', email: 'priya.raman@acme.co',     status: 'active'  },
+    { id: 4, name: 'Lucas Ferreira',  role: 'Editor', email: 'lucas.ferreira@acme.co',  status: 'invited' },
+    { id: 5, name: 'Hana Kobayashi',  role: 'Viewer', email: 'hana.kobayashi@acme.co',  status: 'active'  },
+    { id: 6, name: 'Tomás Alvarez',   role: 'Viewer', email: 'tomas.alvarez@acme.co',   status: 'invited' }
+  ];
+
+  var body = document.getElementById('members-body');
+  var count = document.getElementById('member-count');
+  var current = null;   // member the open modal acts on
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function initials(name) {
+    var p = name.trim().split(/\s+/);
+    var s = p.length > 1 ? p[0][0] + p[p.length - 1][0] : p[0].slice(0, 2);
+    return s.toUpperCase();
+  }
+  function find(id) {
+    for (var i = 0; i < members.length; i++) if (members[i].id === id) return members[i];
+    return null;
+  }
+
+  function row(m) {
+    var menuId = 'menu-' + m.id;
+    var invited = m.status === 'invited';
+    return '' +
+      '<tr data-id="' + m.id + '">' +
+        '<td>' +
+          '<div class="person">' +
+            '<span class="al-avatar al-avatar--sm" aria-hidden="true"><span class="al-avatar__initials">' + esc(initials(m.name)) + '</span></span>' +
+            '<div>' +
+              '<div class="person__name">' + esc(m.name) + '</div>' +
+              '<div class="person__meta">' + esc(m.role) + ' · ' + esc(m.email) + '</div>' +
+            '</div>' +
+          '</div>' +
+        '</td>' +
+        '<td class="col-role">' + esc(m.role) + '</td>' +
+        '<td class="col-email cell-secondary cell-email">' + esc(m.email) + '</td>' +
+        '<td>' + (invited
+          ? '<span class="al-tag al-tag--filled al-tag--info al-tag--sm">Invited</span>'
+          : '<span class="al-tag al-tag--filled al-tag--success al-tag--sm">Active</span>') + '</td>' +
+        '<td class="col-actions">' +
+          '<div class="al-menu">' +
+            '<button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm" aria-label="Actions for ' + esc(m.name) + '" aria-haspopup="menu" aria-expanded="false" aria-controls="' + menuId + '">' +
+              svg('more') +
+            '</button>' +
+            '<ul class="al-menu__list" role="menu" id="' + menuId + '" aria-label="Actions for ' + esc(m.name) + '" hidden>' +
+              '<li role="none"><button type="button" class="al-menu__item" role="menuitem" tabindex="-1" data-action="edit">' +
+                svg('pencil', 'al-icon--16') + '<span class="al-menu__label">Edit</span></button></li>' +
+              '<li role="none"><button type="button" class="al-menu__item" role="menuitem" tabindex="-1" data-action="resend"' +
+                (invited ? '' : ' aria-disabled="true"') + '>' +
+                svg('send', 'al-icon--16') + '<span class="al-menu__label">Resend invite</span></button></li>' +
+              '<li class="al-divider" role="separator"></li>' +
+              '<li role="none"><button type="button" class="al-menu__item al-menu__item--danger" role="menuitem" tabindex="-1" data-action="remove">' +
+                svg('trash', 'al-icon--16') + '<span class="al-menu__label">Remove</span></button></li>' +
+            '</ul>' +
+          '</div>' +
+        '</td>' +
+      '</tr>';
+  }
+
+  function render(focusId) {
+    body.innerHTML = members.length
+      ? members.map(row).join('')
+      : '<tr><td colspan="5" class="members__empty">No team members yet. Invite someone to get started.</td></tr>';
+    count.textContent = members.length === 1
+      ? '1 person has access to this workspace.'
+      : members.length + ' people have access to this workspace.';
+    window.alMenu.init(body);
+    if (focusId != null) {
+      var t = body.querySelector('tr[data-id="' + focusId + '"] [aria-haspopup="menu"]');
+      if (t) t.focus();
+    }
+  }
+
+  function toast(id, title, description) {
+    window.alToast.show(id, { title: title, description: description });
+  }
+
+  // Menu actions (menu.js already blocks clicks on aria-disabled items)
+  body.addEventListener('click', function (e) {
+    var item = e.target.closest('[role="menuitem"][data-action]');
+    if (!item || item.getAttribute('aria-disabled') === 'true') return;
+    var m = find(Number(item.closest('tr').getAttribute('data-id')));
+    if (!m) return;
+    current = m;
+    var action = item.getAttribute('data-action');
+
+    if (action === 'edit') {
+      document.getElementById('edit-name').value = m.name;
+      document.getElementById('edit-email').value = m.email;
+      document.getElementById('edit-role').value = m.role;
+      document.getElementById('edit-modal').showModal();
+    } else if (action === 'resend') {
+      toast('toast-info', 'Invite sent', 'We emailed a new invite to ' + m.email + '.');
+    } else if (action === 'remove') {
+      document.getElementById('remove-text').textContent =
+        m.name + ' loses access to this workspace right away. To bring them back, you’ll need to invite them again.';
+      document.getElementById('remove-modal').showModal();
+    }
+  });
+
+  document.getElementById('edit-save').addEventListener('click', function () {
+    if (!current) return;
+    var name = document.getElementById('edit-name').value.trim();
+    var email = document.getElementById('edit-email').value.trim();
+    var role = document.getElementById('edit-role').value;
+    if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      (name ? document.getElementById('edit-email') : document.getElementById('edit-name')).focus();
+      return;
+    }
+    current.name = name; current.email = email; current.role = role;
+    document.getElementById('edit-modal').close();
+    render(current.id);
+    toast('toast-success', 'Member updated', name + '’s details were saved.');
+  });
+
+  document.getElementById('edit-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    document.getElementById('edit-save').click();
+  });
+
+  document.getElementById('remove-confirm').addEventListener('click', function () {
+    if (!current) return;
+    var i = members.indexOf(current);
+    var removed = current;
+    members.splice(i, 1);
+    document.getElementById('remove-modal').close();
+    var next = members[i] || members[i - 1];
+    render(next ? next.id : null);
+    if (!next) document.getElementById('invite-btn').focus();
+    toast('toast-success', 'Member removed', removed.name + ' no longer has access.');
+    current = null;
+  });
+
+  document.getElementById('invite-btn').addEventListener('click', function () {
+    toast('toast-info', 'Invites coming soon', 'Inviting new members isn’t part of this demo.');
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
