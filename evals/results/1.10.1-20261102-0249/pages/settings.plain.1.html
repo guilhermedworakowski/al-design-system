@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notification settings</title>
+  <link rel="stylesheet" href="node_modules/al-design-system/dist/al.css">
+  <style>
+    /* Page layout only. Every component look comes from al.css. */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--al-bg-canvas);
+      color: var(--al-text-primary);
+      font-family: var(--al-font-sans);
+      font-size: var(--al-font-size-md);
+      line-height: var(--al-line-height-md);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page {
+      max-inline-size: 640px;
+      margin-inline: auto;
+      padding: var(--al-space-48) var(--al-space-16) var(--al-space-96);
+    }
+
+    .page__title {
+      margin: 0 0 var(--al-space-8);
+      font-size: var(--al-font-size-3xl);
+      line-height: var(--al-line-height-3xl);
+      font-weight: var(--al-font-weight-semibold);
+      letter-spacing: -0.01em;
+    }
+
+    .page__intro {
+      margin: 0 0 var(--al-space-40);
+      color: var(--al-text-secondary);
+    }
+
+    .section { margin-block: var(--al-space-32); }
+
+    /* fieldset + legend is the group, as the Switch and Radio rules ask */
+    .group {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      min-inline-size: 0;
+    }
+
+    .group__legend {
+      padding: 0;
+      margin-block-end: var(--al-space-4);
+      font-size: var(--al-font-size-xl);
+      line-height: var(--al-line-height-xl);
+      font-weight: var(--al-font-weight-semibold);
+    }
+
+    .group__hint {
+      margin: 0 0 var(--al-space-20);
+      font-size: var(--al-font-size-sm);
+      line-height: var(--al-line-height-sm);
+      color: var(--al-text-secondary);
+    }
+
+    /* one control per row, each independent (Switch rule 5, Radio rule 7) */
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: var(--al-space-16);
+    }
+
+    .stack > .al-switch,
+    .stack > .al-radio { align-self: flex-start; }
+
+    .actions { margin-block-start: var(--al-space-24); }
+
+    @media (min-width: 640px) {
+      .page { padding-block-start: var(--al-space-64); }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <h1 class="page__title" data-i18n="title">Notifications</h1>
+    <p class="page__intro" data-i18n="intro">Choose how we reach you and the language of our messages.</p>
+
+    <!-- Switches: immediate effect, no Save button -->
+    <section class="section" aria-labelledby="channels-legend">
+      <fieldset class="group">
+        <legend class="group__legend" id="channels-legend" data-i18n="channels">Channels</legend>
+        <p class="group__hint" data-i18n="channelsHint">Changes apply as soon as you switch them.</p>
+
+        <div class="stack">
+          <label class="al-switch">
+            <span class="al-switch__control">
+              <input class="al-switch__input" type="checkbox" role="switch" name="email" data-setting="email">
+              <span class="al-switch__thumb" aria-hidden="true"></span>
+            </span>
+            <span class="al-switch__label" data-i18n="email">Email notifications</span>
+          </label>
+
+          <label class="al-switch">
+            <span class="al-switch__control">
+              <input class="al-switch__input" type="checkbox" role="switch" name="push" data-setting="push">
+              <span class="al-switch__thumb" aria-hidden="true"></span>
+            </span>
+            <span class="al-switch__label" data-i18n="push">Push notifications</span>
+          </label>
+
+          <label class="al-switch">
+            <span class="al-switch__control">
+              <input class="al-switch__input" type="checkbox" role="switch" name="weekly" data-setting="weekly">
+              <span class="al-switch__thumb" aria-hidden="true"></span>
+            </span>
+            <span class="al-switch__label" data-i18n="weekly">Weekly summary</span>
+          </label>
+        </div>
+      </fieldset>
+    </section>
+
+    <hr class="al-divider" aria-hidden="true">
+
+    <!-- Language: 3 options = Radio (Select starts at 4). A radio never acts
+         on its own, so the choice applies on Save. -->
+    <section class="section">
+      <form id="language-form" novalidate>
+        <fieldset class="group">
+          <legend class="group__legend" data-i18n="language">Language</legend>
+          <p class="group__hint" data-i18n="languageHint">Used for emails, push notifications and the weekly summary.</p>
+
+          <div class="stack">
+            <label class="al-radio">
+              <span class="al-radio__control">
+                <input class="al-radio__input" type="radio" name="language" value="en">
+                <span class="al-radio__dot" aria-hidden="true"></span>
+              </span>
+              <span class="al-radio__label" lang="en">English</span>
+            </label>
+
+            <label class="al-radio">
+              <span class="al-radio__control">
+                <input class="al-radio__input" type="radio" name="language" value="pt">
+                <span class="al-radio__dot" aria-hidden="true"></span>
+              </span>
+              <span class="al-radio__label" lang="pt">Português</span>
+            </label>
+
+            <label class="al-radio">
+              <span class="al-radio__control">
+                <input class="al-radio__input" type="radio" name="language" value="es">
+                <span class="al-radio__dot" aria-hidden="true"></span>
+              </span>
+              <span class="al-radio__label" lang="es">Español</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="actions">
+          <button type="submit" class="al-btn al-btn--primary al-btn--md">
+            <span class="al-btn__label" data-i18n="save">Save language</span>
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Toast region: present from page load (Toast rule 23) -->
+  <section class="al-toast-region" aria-label="Notifications" popover="manual" data-i18n-label="region">
+    <div class="al-toast-region__live" role="status"></div>
+    <div class="al-toast-region__live" role="alert"></div>
+  </section>
+
+  <template id="toast-success">
+    <div class="al-toast al-toast--success">
+      <svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m16 9-5.5 5.5L8 12"/></svg>
+      <div class="al-toast__text">
+        <p class="al-toast__title">Language saved</p>
+        <p class="al-toast__description">New messages will use this language.</p>
+      </div>
+      <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Close notification">
+        <svg class="al-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+  </template>
+
+  <template id="toast-error">
+    <div class="al-toast al-toast--error">
+      <svg class="al-icon al-icon--20 al-toast__icon" role="img" aria-label="Error" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+      <div class="al-toast__text">
+        <p class="al-toast__title">Setting not changed</p>
+        <p class="al-toast__description">Check your connection and try again.</p>
+      </div>
+      <button type="button" class="al-icon-btn al-icon-btn--ghost al-icon-btn--sm al-toast__close" aria-label="Close notification">
+        <svg class="al-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+  </template>
+
+  <script src="node_modules/al-design-system/dist/components/toast.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    /* ------------------------------------------------------------ copy */
+    var COPY = {
+      en: {
+        title: 'Notifications',
+        intro: 'Choose how we reach you and the language of our messages.',
+        channels: 'Channels',
+        channelsHint: 'Changes apply as soon as you switch them.',
+        email: 'Email notifications',
+        push: 'Push notifications',
+        weekly: 'Weekly summary',
+        language: 'Language',
+        languageHint: 'Used for emails, push notifications and the weekly summary.',
+        save: 'Save language',
+        region: 'Notifications',
+        savedTitle: 'Language saved',
+        savedDesc: 'New messages will use this language.',
+        switchErrTitle: 'Setting not changed',
+        langErrTitle: 'Language not saved',
+        errDesc: 'Check your connection and try again.',
+        success: 'Success', error: 'Error', close: 'Close notification'
+      },
+      pt: {
+        title: 'Notificações',
+        intro: 'Escolha como falamos com você e o idioma das nossas mensagens.',
+        channels: 'Canais',
+        channelsHint: 'As mudanças valem assim que você liga ou desliga.',
+        email: 'Notificações por e-mail',
+        push: 'Notificações push',
+        weekly: 'Resumo semanal',
+        language: 'Idioma',
+        languageHint: 'Usado nos e-mails, nas notificações push e no resumo semanal.',
+        save: 'Salvar idioma',
+        region: 'Notificações',
+        savedTitle: 'Idioma salvo',
+        savedDesc: 'As próximas mensagens vão usar este idioma.',
+        switchErrTitle: 'Configuração não alterada',
+        langErrTitle: 'Idioma não salvo',
+        errDesc: 'Verifique sua conexão e tente de novo.',
+        success: 'Sucesso', error: 'Erro', close: 'Fechar notificação'
+      },
+      es: {
+        title: 'Notificaciones',
+        intro: 'Elige cómo te contactamos y el idioma de nuestros mensajes.',
+        channels: 'Canales',
+        channelsHint: 'Los cambios se aplican en cuanto los activas o desactivas.',
+        email: 'Notificaciones por correo',
+        push: 'Notificaciones push',
+        weekly: 'Resumen semanal',
+        language: 'Idioma',
+        languageHint: 'Se usa en los correos, las notificaciones push y el resumen semanal.',
+        save: 'Guardar idioma',
+        region: 'Notificaciones',
+        savedTitle: 'Idioma guardado',
+        savedDesc: 'Los próximos mensajes usarán este idioma.',
+        switchErrTitle: 'Ajuste sin cambios',
+        langErrTitle: 'Idioma no guardado',
+        errDesc: 'Revisa tu conexión e inténtalo de nuevo.',
+        success: 'Éxito', error: 'Error', close: 'Cerrar notificación'
+      }
+    };
+
+    /* ------------------------------------------- the "system" (stand-in)
+     * A fake API backed by localStorage. Replace save() with a real request.
+     * Add ?fail=1 to the URL to see the rollback + Error Toast path. */
+    var STORE_KEY = 'notification-settings';
+    var DEFAULTS = { email: true, push: false, weekly: true, language: 'en' };
+    var simulateFailure = /[?&]fail=1\b/.test(location.search);
+
+    function load() {
+      var data = {};
+      try { data = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) {}
+      var out = {};
+      for (var k in DEFAULTS) out[k] = k in data ? data[k] : DEFAULTS[k];
+      if (!COPY[out.language]) out.language = DEFAULTS.language;
+      return out;
+    }
+
+    var system = load();
+
+    function save(key, value) {
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          if (simulateFailure) return reject(new Error('Network error'));
+          system[key] = value;
+          try { localStorage.setItem(STORE_KEY, JSON.stringify(system)); } catch (e) {}
+          resolve(value);
+        }, 350);
+      });
+    }
+
+    /* ----------------------------------------------------- translation */
+    var lang = system.language;
+    function t(key) { return COPY[lang][key]; }
+
+    function applyLanguage(code) {
+      lang = code;
+      document.documentElement.lang = code;
+      document.querySelectorAll('[data-i18n]').forEach(function (el) {
+        el.textContent = t(el.getAttribute('data-i18n'));
+      });
+      document.querySelector('.al-toast-region').setAttribute('aria-label', t('region'));
+      document.title = t('title');
+    }
+
+    function toast(id, title, description) {
+      var tpl = document.getElementById(id);
+      var root = tpl.content.firstElementChild;
+      root.querySelector('.al-toast__icon').setAttribute('aria-label', t(id === 'toast-error' ? 'error' : 'success'));
+      root.querySelector('.al-toast__close').setAttribute('aria-label', t('close'));
+      window.alToast.show(id, { title: title, description: description });
+    }
+
+    /* -------------------------------------------------------- switches
+     * The initial state is the system's real state (Switch rule 12).
+     * The change is immediate; if it fails, the thumb goes back to the
+     * confirmed state and an Error Toast says so (rule 21). No success
+     * toast: the switch already shows the new state (Toast rule 8). */
+    var latest = {};
+
+    document.querySelectorAll('[data-setting]').forEach(function (input) {
+      var key = input.getAttribute('data-setting');
+      input.checked = !!system[key];
+      latest[key] = 0;
+
+      input.addEventListener('change', function () {
+        var ticket = ++latest[key];
+        var wanted = input.checked;
+        save(key, wanted).catch(function () {
+          if (ticket !== latest[key]) return;   // a newer click took over
+          input.checked = !!system[key];
+          toast('toast-error', t('switchErrTitle'), t('errDesc'));
+        });
+      });
+    });
+
+    /* -------------------------------------------------------- language
+     * Radio: the choice applies on Save, never on arrow keys (Radio rule 4). */
+    var form = document.getElementById('language-form');
+    var current = form.querySelector('input[name="language"][value="' + system.language + '"]');
+    if (current) current.checked = true;
+
+    var saving = false;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (saving) return;
+      var picked = form.querySelector('input[name="language"]:checked');
+      if (!picked) return;
+      var code = picked.value;
+
+      saving = true;
+      save('language', code).then(function () {
+        applyLanguage(code);
+        toast('toast-success', t('savedTitle'), t('savedDesc'));
+      }).catch(function () {
+        var real = form.querySelector('input[name="language"][value="' + system.language + '"]');
+        if (real) real.checked = true;
+        toast('toast-error', t('langErrTitle'), t('errDesc'));
+      }).then(function () { saving = false; });
+    });
+
+    applyLanguage(lang);
+  })();
+  </script>
+</body>
+</html>
