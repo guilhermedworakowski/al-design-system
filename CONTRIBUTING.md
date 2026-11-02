@@ -91,6 +91,8 @@ When a gate fails, its message names the file, the token or the element and the 
 
 If the change affects what a product sees (a token value, a class, a script), add a line to the `Unreleased` section of the [CHANGELOG](CHANGELOG.md).
 
+The descriptions of the components in the Figma library are generated from `dist/components.json` by `tools/figma_desc.py`. The build can't reach Figma, so the maintainer applies `build/figma-apply.js` through the Figma MCP whenever a component is added or its summary, class, CSS or guidelines change. A designer note written in Figma below the `—` line is kept.
+
 ## Code style
 
 - Comments, messages and names in English.
