@@ -2,8 +2,9 @@
 Guidelines gate: src/components/<c>/guidelines.md.
 
 guidelines.md is the source of each component's usage rules. This gate fails
-the build if a rule goes missing, if the numbering skips or repeats, or if the
-total doesn't match what was approved. It also checks that the file points to
+the build if a rule goes missing, if the numbering skips or repeats, if the
+total doesn't match what was approved, or if the header lacks one of
+HEADER_FIELDS. It also checks that the file points to
 the right page of the site and that the Icon still has no guidelines.
 
 Did a component's number of approved rules change? Update APPROVED in the same
@@ -36,6 +37,11 @@ NO_GUIDELINES = {'icon'}
 # A rule is a line that starts with "**<n>. ", the bold title.
 RULE = re.compile(r'^\*\*(\d+)\. ', re.M)
 
+# Fields every header (the part before the first ##) must have, so a reader -
+# a person or an agent - always finds what the component is made of and which
+# states it has in the same place. The site doesn't read the header.
+HEADER_FIELDS = ('Built on', 'States')
+
 
 def problems(c):
     path = comp_src(c, 'guidelines.md')
@@ -64,6 +70,10 @@ def problems(c):
             detail.append('out of order')
         out.append(f'{rel(path)}: {len(nums)} rules, approved {APPROVED[c]} '
                    f'({"; ".join(detail)})')
+    header = text.split('\n## ', 1)[0]
+    for field in HEADER_FIELDS:
+        if f'\n- **{field}:** ' not in header:
+            out.append(f'{rel(path)}: the header is missing "- **{field}:**"')
     if f'{SITE}/#{c})' not in text:
         out.append(f'{rel(path)}: missing the link to {SITE}/#{c}')
     return out

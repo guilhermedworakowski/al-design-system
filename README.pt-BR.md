@@ -64,7 +64,7 @@ npm install al-design-system
 Ou direto de uma CDN, fixado numa versão:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.9.0/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.9.1/dist/al.css">
 ```
 
 Cada [Release no GitHub](https://github.com/guilhermedworakowski/al-design-system/releases) também traz a pasta `dist/` num zip.
@@ -148,7 +148,7 @@ No CSS, são custom properties com o prefixo `--al-`. O `tokens.json` tem os mes
 
 Os mínimos são os de contraste do WCAG: 4,5:1 para texto, 3:1 para ícone, borda e foco. Quando a cor da marca não chega ao mínimo, a exceção é nomeada uma a uma, nunca desce de 3:1 e é paga com uma regra de uso (um rótulo visível, um título, uma segunda pista). Quando um componente tem exceções, elas estão listadas nas diretrizes dele.
 
-Além do contraste, cada componente tem um contrato de marcação conferido contra o HTML: o elemento nativo certo, um nome acessível, os atributos certos, nada interativo onde não deve.
+Além do contraste, cada componente tem um contrato de marcação conferido contra o HTML: o elemento nativo certo, um nome acessível, os atributos certos, nada interativo onde não deve. O contrato fica no topo do CSS de cada componente, num bloco `MARKUP CONTRACT` com o HTML para copiar, e o build reprova se o CSS estiliza uma classe que o bloco não cita.
 
 ## Versionamento
 
@@ -171,7 +171,7 @@ src/components/<nome>/ uma pasta por componente:
   check.py, a11y.py      os portões (CSS literal, token órfão, contraste, marcação)
   guidelines.md          as regras de uso
 site/                  o gerador do site de documentação
-tools/                 o que o build compartilha (caminhos, montagem do dist)
+tools/                 o que o build compartilha (caminhos, montagem do dist, o llms.txt do site)
 build.py               roda tudo, na ordem
 build/                 saída gerada (CSS, tokens, site)
 dist/                  o pacote que vai para o npm

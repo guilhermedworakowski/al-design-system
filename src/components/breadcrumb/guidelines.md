@@ -2,8 +2,10 @@
 
 A breadcrumb shows **where the page sits in the hierarchy**, with a link to each level above it.
 
+- **Built on:** a `<nav aria-label="Breadcrumb">` with an `<ol>` of links; the current page is a `<span aria-current="page">`, never a link
 - **Depth:** Short, Medium, Large (5 levels or more collapse into "…")
 - **Behavior:** `breadcrumb.js` opens the "…" menu
+- **States:** links take focus only, with no hover color; the "…" menu items have hover, pressed and focus
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#breadcrumb](https://al.guilhermedesignd.com/#breadcrumb)
 
 ## Do and don't

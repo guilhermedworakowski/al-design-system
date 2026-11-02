@@ -12,7 +12,8 @@
  *   aria-pressed> - the first rule of ARIA (rule 22; a conscious divergence
  *   from Primer).
  *
- * ANATOMY
+ * MARKUP CONTRACT
+ *
  *   <label class="al-switch">
  *     <span class="al-switch__control">
  *       <input class="al-switch__input" type="checkbox" role="switch">

@@ -2,10 +2,12 @@
 
 Tabs switch between **related content of the same level** on the same screen, or between pages in a section.
 
+- **Built on:** `<button role="tab">` in a `role="tablist"` (panel use), or links with `aria-current="page"` (navigation use)
 - **Types:** Line, Square
 - **Uses:** panel (`role="tab"`) or navigation (links)
 - **Size:** one size (Line 42px, Square 32px)
 - **Behavior:** `tab.js` handles arrow keys, Home and End in the panel use
+- **States:** default, hover, pressed, focus, selected
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#tab](https://al.guilhermedesignd.com/#tab)
 
 ## Do and don't

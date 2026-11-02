@@ -174,7 +174,7 @@ def measure():
 # ------------------------------------------------------------ markup contract
 def markup_only(html):
     """Strips <style> and <script> before looking for markup - radio.css carries
-    the ANATOMY in a comment, and the QA page inlines it. A lesson from the
+    the MARKUP CONTRACT in a comment, and the QA page inlines it. A lesson from the
     Select."""
     html = re.sub(r'<style\b[^>]*>.*?</style>', '', html, flags=re.S | re.I)
     html = re.sub(r'<script\b[^>]*>.*?</script>', '', html, flags=re.S | re.I)

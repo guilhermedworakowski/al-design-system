@@ -212,7 +212,7 @@ def measure():
 def markup_only(html):
     """Strips <style> and <script> before looking for markup.
 
-    It isn't overcaution: select.css carries the ANATOMY in a header comment,
+    It isn't overcaution: select.css carries the MARKUP CONTRACT in a header comment,
     with an example <select> and <label> inside. The QA page inlines that CSS,
     so without this cleanup the gate would measure the comment's example as if
     it were a real field - and it PASSED, because the example is correct. A

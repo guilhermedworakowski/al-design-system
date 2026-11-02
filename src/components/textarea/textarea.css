@@ -9,7 +9,8 @@
  *   Enter breaks a line and never submits (rule 21) - native behavior, nothing
  *   to do here.
  *
- * ANATOMY
+ * MARKUP CONTRACT
+ *
  *   <div class="al-textarea">
  *     <div class="al-textarea__labelrow">
  *       <label class="al-textarea__label" for="desc">Problem description</label>

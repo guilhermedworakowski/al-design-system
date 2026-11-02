@@ -185,7 +185,7 @@ def measure():
 # ------------------------------------------------------------ markup contract
 def markup_only(html):
     """Strips <style> and <script> before looking for markup - input.css carries
-    the ANATOMY in a comment, and the page inlines it. A lesson from the Select."""
+    the MARKUP CONTRACT in a comment, and the page inlines it. A lesson from the Select."""
     html = re.sub(r'<style\b[^>]*>.*?</style>', '', html, flags=re.S | re.I)
     html = re.sub(r'<script\b[^>]*>.*?</script>', '', html, flags=re.S | re.I)
     return html

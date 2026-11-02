@@ -4,10 +4,36 @@
  * exposes the value to assistive tech with no extra ARIA, and the name comes
  * from the visible label through aria-labelledby (Thin: aria-label).
  *
- * Three types, one block:
- *   .al-progress               Label - label + percentage over an 8px bar
- *   .al-progress--steps        Steps - "N of total" in the meta ink
- *   .al-progress--thin         Thin  - a 4px bar alone, no header
+ * MARKUP CONTRACT
+ *
+ *   label (the default):
+ *     <div class="al-progress">
+ *       <div class="al-progress__header">
+ *         <span class="al-progress__label" id="install-label">Installing</span>
+ *         <span class="al-progress__value">67%</span>
+ *       </div>
+ *       <progress class="al-progress__bar" value="67" max="100"
+ *                 aria-labelledby="install-label"></progress>
+ *     </div>
+ *
+ *   steps - the header has the label only, "N of total" in the meta ink:
+ *     <div class="al-progress al-progress--steps">
+ *       <div class="al-progress__header">
+ *         <span class="al-progress__label" id="upload-label">File 3 of 5</span>
+ *       </div>
+ *       <progress class="al-progress__bar" value="3" max="5"
+ *                 aria-labelledby="upload-label"></progress>
+ *     </div>
+ *
+ *   thin - a 4px bar alone, no header; the name comes from text outside
+ *   (or aria-label when there is none):
+ *     <span id="sync-label">Syncing photos</span>
+ *     <div class="al-progress al-progress--thin">
+ *       <progress class="al-progress__bar" value="67" max="100"
+ *                 aria-labelledby="sync-label"></progress>
+ *     </div>
+ *
+ *   type : --steps | --thin (no modifier = label, an 8px bar)
  *
  * The bar is never the only carrier of progress (usage rule 22): that is what
  * pays the declared fill-on-track exception. No focus, no aria-live - the end

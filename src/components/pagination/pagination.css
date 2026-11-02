@@ -4,16 +4,54 @@
  * Secondary sm) and rows per page is the Select: this file only lays them out
  * and draws what is the Pagination's own - the page items and the range text.
  *
- *   .al-pagination                 Numbered - previous, pages, next
- *   .al-pagination--simple         Simple   - previous and next only
- *   .al-pagination--load-more      Load more - one Secondary Button
- *   .al-pagination--range          Range    - "Showing 41-60 of 312" + rows
+ * MARKUP CONTRACT (usage rules 20-22)
  *
- * Markup (usage rules 20-22): a <nav aria-label="Pagination"> with the pages
- * in a <ul>. A page is an <a> when it changes the URL and a <button> when it
- * swaps content in place. The current page carries aria-current="page" - that
- * is what styles it, so the look can never disagree with what is announced.
- * The ellipsis is aria-hidden: it is not a control (rule 10).
+ *   numbered (the default):
+ *     <nav class="al-pagination" aria-label="Pagination">
+ *       <button type="button" class="al-btn al-btn--ghost al-btn--sm" aria-disabled="true">
+ *         <span class="al-btn__icon al-btn__icon--leading"><svg class="al-icon" …>…</svg></span>
+ *         <span class="al-btn__label">Previous</span>
+ *       </button>
+ *       <ul class="al-pagination__pages">
+ *         <li><button type="button" class="al-pagination__item" aria-label="Page 1"
+ *                     aria-current="page">1</button></li>
+ *         <li><button type="button" class="al-pagination__item" aria-label="Page 2">2</button></li>
+ *         <li><span class="al-pagination__ellipsis" aria-hidden="true"><svg class="al-icon" …>…</svg></span></li>
+ *         <li><button type="button" class="al-pagination__item" aria-label="Page 16">16</button></li>
+ *       </ul>
+ *       <button type="button" class="al-btn al-btn--ghost al-btn--sm">
+ *         <span class="al-btn__label">Next</span>
+ *         <span class="al-btn__icon al-btn__icon--trailing"><svg class="al-icon" …>…</svg></span>
+ *       </button>
+ *     </nav>
+ *
+ *   simple - previous and next only:
+ *     <nav class="al-pagination al-pagination--simple" aria-label="Pagination">…the two buttons…</nav>
+ *
+ *   load more - one Secondary Button:
+ *     <div class="al-pagination al-pagination--load-more">
+ *       <button type="button" class="al-btn al-btn--secondary al-btn--sm">
+ *         <span class="al-btn__label">Load 20 more</span></button>
+ *     </div>
+ *
+ *   range - "Showing 41-60 of 312" + rows per page (the Select):
+ *     <div class="al-pagination al-pagination--range">
+ *       <p class="al-pagination__range">Showing 41–60 of 312</p>
+ *       <div class="al-pagination__rows">
+ *         <label class="al-pagination__rows-label" for="rows">Rows per page</label>
+ *         <div class="al-select"><div class="al-select__control">
+ *           <select class="al-select__field" id="rows">…</select>
+ *           <svg class="al-icon al-select__chevron" aria-hidden="true" focusable="false">…</svg>
+ *         </div></div>
+ *       </div>
+ *     </div>
+ *
+ *   type : --simple | --load-more | --range (no modifier = numbered)
+ *   - A page is an <a href> when it changes the URL and a <button> when it
+ *     swaps content in place.
+ *   - The current page carries aria-current="page" - that is what styles it,
+ *     so the look can never disagree with what is announced.
+ *   - The ellipsis is aria-hidden: it is not a control (rule 10).
  *
  * Disabled previous/next is the Button's own disabled state (rule 16), not a
  * Pagination style.

@@ -4,6 +4,20 @@
  * separates the link from text, not the color (WCAG 1.4.1) - and it is what
  * pays the default's declared contrast exception. Never remove it.
  *
+ * MARKUP CONTRACT
+ *
+ *   standalone:
+ *     <a class="al-link" href="/orders">See all orders
+ *       <svg class="al-link__icon" aria-hidden="true" focusable="false">…arrow-right…</svg>
+ *     </a>
+ *
+ *   inside running text (no icon):
+ *     <p>Review the <a class="al-link al-link--inline" href="/payment">payment</a> details.</p>
+ *
+ *   type : --inline (no modifier = standalone)
+ *   - Always href: an action without a destination is a Button.
+ *   - No visited, no disabled.
+ *
  * Standalone (.al-link) uses label-md. Inside running text (.al-link--inline)
  * it inherits the paragraph font and takes no icon.
  *

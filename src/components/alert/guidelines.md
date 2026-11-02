@@ -2,9 +2,11 @@
 
 An alert is a message at the top of the page about a **state that is still true**: something good, a context, a risk, or a reason for care.
 
+- **Built on:** a `<div>` in a slot at the top of the page; the icon carries the status (`role="img"` + `aria-label`)
 - **Status:** Success, Info, Warning, Danger
 - **Position:** at the top of the page, below the header, one per page
 - **Behavior:** `alert.js`; only Success and Info can be dismissed
+- **States:** none of its own; the actions and the X are Buttons and an Icon Button, with theirs
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#alert](https://al.guilhermedesignd.com/#alert)
 
 ## Do and don't

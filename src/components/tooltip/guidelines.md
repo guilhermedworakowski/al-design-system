@@ -2,9 +2,11 @@
 
 A tooltip shows a **short, complementary text** about a focusable element, usually the name of an icon-only button.
 
+- **Built on:** a `<div role="tooltip" popover="manual">` right after its trigger, linked by `aria-labelledby` or `aria-describedby`
 - **Look:** inverted, always with an icon, no arrow, 280px wide at most
 - **Position:** top by default, flips on its own
 - **Behavior:** `tooltip.js`, on hover (after 500ms) and on focus (immediately)
+- **States:** hidden, shown (opacity fade)
 - **Live examples, playground and contrast report:** [al.guilhermedesignd.com/#tooltip](https://al.guilhermedesignd.com/#tooltip)
 
 ## Do and don't

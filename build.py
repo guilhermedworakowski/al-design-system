@@ -3,7 +3,8 @@ Full build of the AL Design System, in a single command.
 
 Runs every generator and gate in the right order: Foundation, tokens and CSS
 for each component, the site and the accessibility QA for each component.
-Last, it assembles the package in dist/ - it only gets there if every gate
+Then it writes the site's llms.txt (tools/llms.py), the plain-text map for
+agents. Last, it assembles the package in dist/ - it only gets there if every gate
 passed. It stops at the first step that fails and shows its output.
 
 Run (from the repo root):
@@ -64,6 +65,7 @@ def steps():
     for c in after:
         out.append((f'src/components/{c}', 'a11y.py', False))
     out.append(('site', 'site.py', False))
+    out.append(('tools', 'llms.py', False))
     out.append(('tools', 'dist.py', False))
     return out
 

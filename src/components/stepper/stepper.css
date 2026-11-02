@@ -2,14 +2,7 @@
  *
  * Depends on: al-foundation.css, al-stepper-tokens.css, al-icon-tokens.css + icon.css
  *
- *   .al-stepper                 Horizontal - title under the circle, one line
- *   .al-stepper--vertical       Vertical   - rail on the left, text on the right
- *
- * Markup (usage rules 17-19): an <ol> inside <nav aria-label="Progress">.
- * Status is a class on the step; the current one also carries
- * aria-current="step", and that attribute is what styles it, so the look can
- * never disagree with what is announced. Each step spells its status out in
- * hidden text - the check and the color say nothing to a screen reader.
+ * MARKUP CONTRACT (usage rules 17-19)
  *
  *   <nav aria-label="Progress">
  *     <ol class="al-stepper">
@@ -29,6 +22,17 @@
  *       <li class="al-stepper__step"> … upcoming … </li>
  *     </ol>
  *   </nav>
+ *
+ *   orientation : --vertical (no modifier = horizontal: title under the
+ *                 circle, one line; vertical: rail on the left, text on the
+ *                 right)
+ *   step status : __step--completed | aria-current="step" (current) | none
+ *                 (upcoming)
+ *   - An <ol> inside <nav aria-label="Progress">. The current step's
+ *     aria-current="step" is what styles it, so the look can never disagree
+ *     with what is announced.
+ *   - Each step spells its status out in hidden text (__status) - the check
+ *     and the color say nothing to a screen reader.
  *
  * NOT CLICKABLE (rule 24): no hover, no focus, no link. Moving between steps
  * is the form's Back / Continue.
