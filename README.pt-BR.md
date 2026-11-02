@@ -64,7 +64,7 @@ npm install al-design-system
 Ou direto de uma CDN, fixado numa versão:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.10.0/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.10.1/dist/al.css">
 ```
 
 Cada [Release no GitHub](https://github.com/guilhermedworakowski/al-design-system/releases) também traz a pasta `dist/` num zip.
@@ -159,7 +159,7 @@ Três camadas, cada uma com um trabalho:
 2. **Semântica**: o papel (`bg-brand`, `text-secondary`, `border-focus`), com um valor por tema. É onde o tema é resolvido.
 3. **Componente**: um alias de um token semântico, um por papel do componente (`button-primary-bg-hover`). Nunca um hex solto.
 
-No CSS, são custom properties com o prefixo `--al-`. O `tokens.json` tem os mesmos valores para quem quiser ler por código.
+No CSS, são custom properties com o prefixo `--al-`. O `tokens.json` tem os mesmos valores para quem quiser ler por código, e o `color.usage` diz, numa frase por token semântico, quando usar e o que vai por cima dele.
 
 ## Acessibilidade
 

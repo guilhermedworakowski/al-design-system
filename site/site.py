@@ -29005,7 +29005,10 @@ LANG_REDIRECT = ('' if SITE_LANG != 'en' else
                  "<script>try{if(localStorage.getItem('al-lang')==='pt')"
                  "location.replace('pt/index.html'+location.hash)}catch(e){}</script>\n")
 
+# Without the doctype the browser renders in quirks mode (old box and line
+# height rules); every page the site writes starts with it.
 HTML = (
+    '<!doctype html>\n'
     f'<html lang="{HTML_LANG}">\n'
     '<meta charset="utf-8">\n'
     '<title>AL Design System</title>\n' + LANG_REDIRECT +

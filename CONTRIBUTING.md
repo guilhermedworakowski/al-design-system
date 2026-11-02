@@ -57,7 +57,7 @@ The list of components, in cascade order, lives in `tools/paths.py`.
 Three layers, and a component only talks to the last one:
 
 1. **Primitive**: raw color ramps. No component uses them directly.
-2. **Semantic**: a role (`bg-brand`, `text-secondary`), with one value per theme.
+2. **Semantic**: a role (`bg-brand`, `text-secondary`), with one value per theme. A new semantic needs its usage sentence in `SEM_USAGE` (`src/foundation/palette.py`), or the build fails.
 3. **Component**: an alias of a semantic token (`button-primary-bg-hover`), declared in the component's `tokens.py`.
 
 The component CSS only uses its own component tokens (`var(--al-button-...)`). A hex value, a pixel value or a duration written straight into the CSS fails the build.
