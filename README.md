@@ -64,7 +64,7 @@ npm install al-design-system
 Or straight from a CDN, pinned to a version:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.10.0/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.10.1/dist/al.css">
 ```
 
 Each [GitHub Release](https://github.com/guilhermedworakowski/al-design-system/releases) also carries the `dist/` folder as a zip.
@@ -159,7 +159,7 @@ Three layers, each with one job:
 2. **Semantic**: the role (`bg-brand`, `text-secondary`, `border-focus`), with one value per theme. This is where the theme is resolved.
 3. **Component**: an alias of a semantic token, one per role in the component (`button-primary-bg-hover`). Never a loose hex value.
 
-In CSS they are custom properties prefixed with `--al-`. `tokens.json` has the same values for anyone who wants to read them from code.
+In CSS they are custom properties prefixed with `--al-`. `tokens.json` has the same values for anyone who wants to read them from code, and `color.usage` says, in one sentence per semantic token, when to use it and what goes on top of it.
 
 ## Accessibility
 
