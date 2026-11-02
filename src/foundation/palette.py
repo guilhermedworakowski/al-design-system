@@ -98,6 +98,77 @@ SEM = {
   'shadow-focus-error':   (c('red',700),    c('red',400)),
 }
 
+# ---------------- semantic usage ----------------
+# One sentence per semantic: when to use it and what goes on top of it. It
+# ships as color.usage in tokens.json (same shape as motion.usage) and is what
+# an AI agent reads through get_tokens - the [light, dark] pairs above say
+# nothing about intent. export.py fails the build if a semantic has no
+# sentence or a sentence names no semantic, so a new token is born described.
+# "Reserved" marks a token no component uses yet, so nobody invents a use.
+SEM_USAGE = {
+  # surface
+  'bg-canvas':          'Page background, the lowest layer. Everything else sits on it.',
+  'bg-surface':         'A grouped area on the canvas (panel, section). Default background of Accordion, Card Filled and Alert.',
+  'bg-surface-raised':  'Raised surface: Card, Modal, Drawer, Menu, Toast. Controls on it use the -raised hover and pressed tokens.',
+  'bg-subtle':          'Quiet fill inside a component (read-only field, Avatar). Not a section background.',
+  'bg-hover':           'Hover of an unfilled item on canvas or surface.',
+  'bg-active':          'Pressed unfilled item on canvas or surface.',
+  'bg-disabled':        'Fill of a disabled control. Always paired with text-disabled.',
+  'bg-inverse':         'Inverted background (dark in light theme, light in dark), only for Tooltip and Avatar. Text on it uses text-inverse.',
+  'bg-hover-raised':    'Hover on bg-surface-raised. Use instead of bg-hover inside Card, Modal, Drawer and Menu.',
+  'bg-active-raised':   'Pressed on bg-surface-raised. Use instead of bg-active inside Card, Modal, Drawer and Menu.',
+  'bg-thumb':           'The piece that slides along a track (Switch off).',
+  'bg-thumb-disabled':  'The sliding piece when disabled.',
+  'bg-track':           'The empty part of a bar that fills up (Progress, Slider). A capacity hint, not information.',
+  'bg-scrim':           'Dimmed background behind Modal, Drawer and the Sidebar panel. The only semantic with transparency.',
+  # brand
+  'bg-brand':           'Fill of the main action and of selection (Button Primary, checked Checkbox, Progress fill). Text on it uses text-on-brand.',
+  'bg-brand-hover':     'Hover of bg-brand.',
+  'bg-brand-active':    'Pressed bg-brand.',
+  'bg-brand-subtle':    'Light brand tint for tonal selection (selected Tab, current Pagination page). Text on it uses text-brand.',
+  'bg-brand-strong':    'Reserved for a strong brand emphasis. No component uses it yet.',
+  # solid feedback
+  'bg-danger':          'Destructive action fill (Button Danger, Tag Solid Danger). Text on it uses text-on-solid.',
+  'bg-danger-hover':    'Hover of bg-danger.',
+  'bg-danger-active':   'Pressed bg-danger.',
+  'bg-danger-subtle':   'Light danger background (hover of the Danger item in Menu). Text on it uses text-danger.',
+  'bg-success':         'Solid success fill (Tag Solid). Text on it uses text-on-solid.',
+  'bg-success-hover':   'Reserved for the hover of a solid success control. No component uses it yet.',
+  'bg-success-subtle':  'Reserved for a light success background (strip, banner); text on it uses text-success. No component uses it yet.',
+  'bg-warning':         'Solid warning fill (Tag Solid) and the filled Rating star. Text on it uses text-on-solid.',
+  'bg-warning-hover':   'Reserved for the hover of a solid warning control. No component uses it yet.',
+  'bg-warning-subtle':  'Reserved for a light warning background (strip, banner); text on it uses text-warning. No component uses it yet.',
+  'bg-info':            'Solid info fill (Tag Solid). Text on it uses text-on-solid.',
+  'bg-info-hover':      'Reserved for the hover of a solid info control. No component uses it yet.',
+  'bg-info-subtle':     'Reserved for a light info background (strip, banner); text on it uses text-info. No component uses it yet.',
+  # text
+  'text-primary':       'Main text, headings and labels.',
+  'text-secondary':     'Supporting text (description, help, metadata). Passes 4.5:1 only on canvas and surface.',
+  'text-placeholder':   'Field placeholder only. Never content.',
+  'text-disabled':      'Disabled text. Exempt from contrast, so it never carries information.',
+  'text-inverse':       'Text on bg-inverse.',
+  'text-on-brand':      'Text and icons on bg-brand and its states.',
+  'text-on-solid':      'Text and icons on the solid feedback fills (danger, success, warning, info).',
+  'text-brand':         'Brand-colored text: Link, current item, tonal selection.',
+  'text-danger':        'Error messages and destructive actions written as text.',
+  'text-success':       'Success status text (Tag Subtle and Outline).',
+  'text-warning':       'Warning status text (Tag Subtle and Outline).',
+  'text-info':          'Info status text (Tag Subtle and Outline).',
+  # border
+  'border-subtle':      'Light divider inside a component. Needs no contrast.',
+  'border-default':     'Default container border (Card Outlined, Divider, Accordion).',
+  'border-strong':      'Border of a control that must be seen (fields, Checkbox, Radio). Passes 3:1.',
+  'border-brand':       'Brand-colored border: focused field, selected Tab Line.',
+  'border-focus':       'Focus border where there is no focus ring.',
+  'border-danger':      'Border of a field in error.',
+  'border-success':     'Success status border (Tag Outline).',
+  'border-warning':     'Warning status border (Tag Outline).',
+  'border-info':        'Info status border (Tag Outline).',
+  # focus ring
+  'shadow-focus-default': 'Color of the keyboard focus ring. The ring always touches the page background, never the component fill.',
+  'shadow-focus-error':   'Color of the focus ring on a field in error and on a Danger button.',
+}
+
 # ---------------- required contrast pairs ----------------
 # (foreground, background, minimum, label)
 PAIRS = [

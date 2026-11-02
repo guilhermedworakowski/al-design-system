@@ -2,6 +2,18 @@
 
 Every release of AL Design System, newest first. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the version numbers follow the rule in the [README](README.md#versioning): the third digit is an adjustment, the middle digit is a new component or layer.
 
+## [1.10.1] - 2026-11-01
+
+The semantic tokens say what they are for. No class, token value, style or behavior changed; the published CSS is identical to 1.10.0.
+
+### Added
+- `color.usage` in `tokens.json`: one sentence for each of the 55 semantic tokens, saying when to use it and what goes on top of it. Six that no component uses yet are marked as reserved. The `[light, dark]` values keep their shape.
+- The MCP `get_tokens` tool returns that sentence next to each semantic token.
+- The build fails if a semantic token has no sentence, or a sentence names a token that doesn't exist.
+
+### Fixed
+- The documentation site pages had no `<!doctype html>` and rendered in quirks mode. They now render in standards mode, the same mode a product using AL runs in; table rows and wrapped code lines gain 1 to 3px.
+
 ## [1.10.0] - 2026-11-01
 
 A new layer: AL for AI agents. An agent that installs the package finds every component's markup, rules and guidelines, checks what it writes, and gets the same answer the AL build gets. No class, token, style or behavior changed; the published CSS is identical to 1.9.1.

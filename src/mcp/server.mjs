@@ -33,7 +33,7 @@ const TOOLS = [
   },
   {
     name: 'get_tokens',
-    description: 'The Foundation design tokens as CSS custom properties. "semantic" (default) gives the color roles with their light and dark values - use these, never raw hex; "all" adds the palette, type, space, radius, motion and elevation.',
+    description: 'The Foundation design tokens as CSS custom properties. "semantic" (default) gives the color roles with their light and dark values and when to use each - use these, never raw hex; "all" adds the palette, type, space, radius, motion and elevation.',
     inputSchema: {
       type: 'object',
       properties: { scope: { type: 'string', enum: ['semantic', 'all'] } },
@@ -86,7 +86,8 @@ function getComponent(catalog, dist, name) {
 function getTokens(dist, scope) {
   const tokens = JSON.parse(readFileSync(join(dist, 'tokens.json'), 'utf8'));
   const semantic = Object.entries(tokens.color.semantic)
-    .map(([k, v]) => `--al-${k}: light ${v[0]}, dark ${v[1]}`);
+    .map(([k, v]) => `--al-${k}: light ${v[0]}, dark ${v[1]}`
+      + (tokens.color.usage?.[k] ? ` - ${tokens.color.usage[k]}` : ''));
   const out = [
     `AL Design System ${tokens.meta.version} - tokens. Use var(--al-<name>); the dark values apply`,
     'under [data-theme="dark"] or prefers-color-scheme, never write them by hand.', '',
