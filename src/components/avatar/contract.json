@@ -1,0 +1,56 @@
+{
+  "component": "avatar",
+  "root": "al-avatar",
+  "rules": [
+    {
+      "id": "not-a-control",
+      "why": "The avatar is content: a clickable avatar wraps an action, it is never one itself.",
+      "on": ".al-avatar",
+      "tag": [
+        "span",
+        "div"
+      ],
+      "forbid": {
+        "role": "button",
+        "tabindex": true
+      }
+    },
+    {
+      "id": "named-when-content",
+      "why": "An avatar that is content (role=\"img\") names the person.",
+      "on": ".al-avatar[role=img]",
+      "require": {
+        "aria-label": true
+      },
+      "forbid": [
+        "aria-hidden"
+      ]
+    },
+    {
+      "id": "photo-alt-empty",
+      "why": "The photo has alt=\"\" : the name lives on the wrapper, not on the image.",
+      "on": ".al-avatar__photo",
+      "tag": [
+        "img"
+      ],
+      "require": {
+        "alt": ""
+      }
+    },
+    {
+      "id": "icon-decorative",
+      "why": "The icon is paint: the meaning lives on the wrapper.",
+      "on": ".al-avatar svg",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "decorative-or-content",
+      "why": "The wrapper has aria-hidden=\"true\" or role=\"img\" with aria-label - one of the two, never both, never neither."
+    }
+  ]
+}

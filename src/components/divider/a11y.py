@@ -20,22 +20,13 @@ TWO JUDGMENTS, NOT ONE
      covers a subtle line; it does not cover a line that doesn't exist on
      screen. This fails.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-divider` is `<hr>` or `<li role="separator">` - no painted <div>
-       (rules 12 and 15);
-    b) `<hr>` is never a direct child of <ul>/<ol> - only <li> fits there
-       (rule 15);
-    c) the separator in a list is empty - no text in the divider (rule 11);
-    d) an announced vertical one has aria-orientation="vertical"; a
-       horizontal one doesn't (rule 14);
-    e) never focusable or clickable: no tabindex, no onclick, no role other
-       than `separator` (rule 16);
-    f) decorative is aria-hidden="true" and nothing else (rule 13);
-    g) no divider at the start or end of the container, nor two in a row
-       (rule 4).
+  The rules are data: src/components/divider/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
@@ -44,12 +35,12 @@ Run: python3 a11y.py [path.html]
 """
 import json
 import os
-import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr  # noqa: E402
 from htmltree import Tree, walk  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -104,23 +95,18 @@ def markup_contract(path):
     t = Tree()
     t.feed(open(path, encoding='utf-8').read())
 
-    checked, problems = 0, []
+    # The rules of each divider on its own are in contract.json, checked by
+    # tools/contract.py; what stays below needs the parent and the siblings,
+    # or a negation the engine doesn't express - the `manual` entries.
+    problems, _ = contract.check('divider', t, skip=None)
+    checked = 0
     for n in walk(t.root):
         if not is_divider(n):
             continue
         checked += 1
         a, tag, ln = n['attrs'], n['tag'], n['line']
         classes = a.get('class', '').split()
-        hidden = a.get('aria-hidden')
         parent = n['parent']
-
-        # (a) the right element
-        if tag not in ('hr', 'li'):
-            problems.append(f'line {ln}: .al-divider on <{tag}> - use <hr> (or '
-                            f'<li role="separator"> in a list) (rules 12 and 15)')
-        if tag == 'li' and a.get('role') != 'separator' and hidden != 'true':
-            problems.append(f'line {ln}: <li class="al-divider"> without role="separator" '
-                            f'- the screen reader would announce an empty item (rule 15)')
 
         # (b) loose <hr> in a list
         if tag == 'hr' and parent['tag'] in ('ul', 'ol'):
@@ -135,17 +121,11 @@ def markup_contract(path):
         # (d) orientation
         vertical = 'al-divider--vertical' in classes
         orient = a.get('aria-orientation')
-        if vertical and hidden != 'true' and orient != 'vertical':
-            problems.append(f'line {ln}: announced vertical without aria-orientation='
-                            f'"vertical" - the separator is horizontal by default (rule 14)')
         if not vertical and orient == 'vertical':
             problems.append(f'line {ln}: aria-orientation="vertical" on a horizontal '
                             f'divider - the announcement diverges from the screen (rule 14)')
 
-        # (e) never focusable or clickable
-        if 'tabindex' in a:
-            problems.append(f'line {ln}: tabindex on the divider - a focusable separator '
-                            f'is a Window Splitter, another component (rule 16)')
+        # (e) never clickable, one role only (tabindex and the tag are in contract.json)
         if any(k.startswith('on') for k in a):
             problems.append(f'line {ln}: event handler on the divider - it is never '
                             f'clickable (rule 16)')
@@ -153,11 +133,6 @@ def markup_contract(path):
         if role and role != 'separator':
             problems.append(f'line {ln}: role="{role}" - the divider\'s only role is '
                             f'separator; decorative is aria-hidden (rules 13 and 16)')
-
-        # (f) decorative
-        if hidden is not None and hidden != 'true':
-            problems.append(f'line {ln}: aria-hidden="{hidden}" - decorative is '
-                            f'"true"; announced has no attribute (rule 13)')
 
         # (g) position in the container
         siblings = [k for k in parent['kids']]
@@ -206,7 +181,7 @@ def run():
         for p in mk:
             print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} divider(s) checked, 7 rules (a-g)')
+        print(f'     {checked} divider(s) checked, {len(contract.whys("divider"))} rules of contract.json')
         for p in mk:
             print(f'     PROBLEM: {p}')
 

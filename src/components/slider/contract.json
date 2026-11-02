@@ -1,0 +1,42 @@
+{
+  "component": "slider",
+  "root": "al-slider",
+  "rules": [
+    {
+      "id": "native-range",
+      "why": "The slider is a native <input type=\"range\"> with a <label for>.",
+      "on": ".al-slider__input",
+      "tag": [
+        "input"
+      ],
+      "require": {
+        "type": "range"
+      },
+      "uniqueId": true,
+      "referencedBy": {
+        "sel": "label",
+        "attr": "for"
+      }
+    },
+    {
+      "id": "value-output",
+      "why": "The value is shown in text by an <output> tied to the input - that is what pays for the track.",
+      "on": ".al-slider__value",
+      "tag": [
+        "output"
+      ],
+      "require": {
+        "for": true
+      },
+      "ref": [
+        "for"
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "id": "no-error",
+      "why": "The slider has no error state and never marks optional."
+    }
+  ]
+}

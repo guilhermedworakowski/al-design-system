@@ -1,0 +1,75 @@
+{
+  "component": "checkbox",
+  "root": "al-checkbox",
+  "rules": [
+    {
+      "id": "native-input",
+      "why": "The checkbox is the native input inside its <label>: no for/id to keep in sync, and the whole row is the target.",
+      "on": ".al-checkbox__input",
+      "tag": [
+        "input"
+      ],
+      "within": "label.al-checkbox",
+      "require": {
+        "type": "checkbox"
+      }
+    },
+    {
+      "id": "no-fake-checkbox",
+      "why": "Only the native input is a checkbox; role=\"checkbox\" needs JS the AL does not ship.",
+      "on": "[role=checkbox]",
+      "absent": true
+    },
+    {
+      "id": "visible-label",
+      "why": "The visible label is the accessible name.",
+      "on": "label.al-checkbox",
+      "has": [
+        {
+          "sel": ".al-checkbox__label",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "no-hidden-name",
+      "why": "With a visible label, aria-label makes what is read differ from what is seen.",
+      "on": ".al-checkbox__input",
+      "forbid": [
+        "aria-label",
+        "indeterminate"
+      ]
+    },
+    {
+      "id": "error-described",
+      "why": "A checkbox in error points to its message - the color alone says nothing.",
+      "on": ".al-checkbox__input",
+      "when": {
+        "aria-invalid": "true"
+      },
+      "refText": [
+        "aria-describedby"
+      ]
+    },
+    {
+      "id": "describedby-exists",
+      "why": "Every id in aria-describedby exists.",
+      "on": ".al-checkbox__input",
+      "ref": [
+        "aria-describedby"
+      ]
+    },
+    {
+      "id": "glyph-decorative",
+      "why": "The check and the dash are paint; the input already announces the state.",
+      "on": "svg.al-checkbox__check, svg.al-checkbox__dash",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    }
+  ],
+  "manual": []
+}

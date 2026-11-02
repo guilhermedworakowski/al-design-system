@@ -1,0 +1,61 @@
+{
+  "component": "empty-state",
+  "root": "al-empty-state",
+  "rules": [
+    {
+      "id": "section-named",
+      "why": "The empty state is a <section> named by its title.",
+      "on": ".al-empty-state",
+      "tag": [
+        "section"
+      ],
+      "refText": [
+        "aria-labelledby"
+      ]
+    },
+    {
+      "id": "title-heading",
+      "why": "The title is always a heading.",
+      "on": ".al-empty-state__title",
+      "tag": [
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6"
+      ]
+    },
+    {
+      "id": "icon-decorative",
+      "why": "The icon is paint.",
+      "on": ".al-empty-state__icon",
+      "require": {
+        "aria-hidden": "true"
+      }
+    },
+    {
+      "id": "one-action",
+      "why": "At most one action, a Primary button - never a Link.",
+      "on": ".al-empty-state",
+      "has": [
+        {
+          "sel": ".al-btn",
+          "min": 0,
+          "max": 1
+        },
+        {
+          "sel": ".al-link",
+          "min": 0,
+          "max": 0
+        }
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "id": "status-after-search",
+      "why": "role=\"status\" only when it appears after a search or filter."
+    }
+  ]
+}

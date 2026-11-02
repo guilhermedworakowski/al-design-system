@@ -1,0 +1,158 @@
+{
+  "component": "drawer",
+  "root": "al-drawer",
+  "rules": [
+    {
+      "id": "native-dialog",
+      "rule": 24,
+      "why": "The Drawer is a native <dialog>, opened through showModal() - never through the open attribute: that is what traps focus and closes on Esc.",
+      "on": ".al-drawer",
+      "tag": [
+        "dialog"
+      ],
+      "forbid": [
+        "open"
+      ]
+    },
+    {
+      "id": "named-by-title",
+      "rule": 25,
+      "why": "The <dialog> is named by its visible title.",
+      "on": ".al-drawer",
+      "refText": [
+        "aria-labelledby"
+      ]
+    },
+    {
+      "id": "parts",
+      "why": "Exactly one title with text, one content block, and at most one footer.",
+      "on": ".al-drawer",
+      "has": [
+        {
+          "sel": ".al-drawer__title",
+          "min": 1,
+          "max": 1,
+          "text": true
+        },
+        {
+          "sel": ".al-drawer__content",
+          "min": 1,
+          "max": 1
+        },
+        {
+          "sel": ".al-drawer__actions",
+          "min": 0,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "no-nesting",
+      "rule": 4,
+      "why": "A Drawer never opens inside another.",
+      "on": ".al-drawer .al-drawer",
+      "absent": true
+    },
+    {
+      "id": "actions-count",
+      "why": "The footer has one or two actions.",
+      "on": ".al-drawer__actions",
+      "has": [
+        {
+          "sel": "button",
+          "min": 1,
+          "max": 2
+        }
+      ]
+    },
+    {
+      "id": "opener-is-button",
+      "why": "The element that opens the Drawer is a button.",
+      "on": "[data-al-drawer-open]",
+      "tag": [
+        "button"
+      ]
+    },
+    {
+      "id": "button-type",
+      "why": "Inside a <form> a button without type submits.",
+      "on": ".al-drawer button",
+      "require": {
+        "type": true
+      }
+    },
+    {
+      "id": "title-in-header",
+      "rule": 6,
+      "why": "The title lives in the header, next to the X.",
+      "on": ".al-drawer__title",
+      "within": ".al-drawer__header"
+    },
+    {
+      "id": "x-named",
+      "rule": 26,
+      "why": "The X is an Icon Button that names itself and closes.",
+      "on": ".al-drawer__header button",
+      "require": {
+        "type": "button",
+        "aria-label": true,
+        "data-al-drawer-close": true
+      },
+      "has": [
+        {
+          "sel": "svg[aria-hidden=true]",
+          "min": 1,
+          "max": 1
+        }
+      ]
+    },
+    {
+      "id": "one-x",
+      "why": "Only the X goes in the header.",
+      "on": ".al-drawer__header",
+      "has": [
+        {
+          "sel": "button",
+          "min": 0,
+          "max": 1
+        }
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "id": "last-is-primary",
+      "rule": 22,
+      "why": "The last action is Primary; a destructive action opens a Modal, it is not the Drawer's."
+    },
+    {
+      "id": "order",
+      "why": "The direct children follow the order header, content, actions, with no loose piece between them."
+    },
+    {
+      "id": "main-action-last",
+      "why": "The main action is the last one; the first is the secondary."
+    },
+    {
+      "id": "title-of-own-dialog",
+      "why": "aria-labelledby points to this dialog's own title, never to another one."
+    },
+    {
+      "id": "way-out",
+      "why": "There is always a visible way out: data-al-*-close or <form method=\"dialog\">."
+    },
+    {
+      "id": "opener-target",
+      "why": "data-al-drawer-open names the id of a <dialog class=\"al-drawer\">."
+    },
+    {
+      "id": "size",
+      "why": "One size modifier at most: --sm, --md or --lg."
+    },
+    {
+      "id": "x-is-icon-button",
+      "rule": 26,
+      "why": "The only button in the header is the X, an Icon Button; every other button has visible text."
+    }
+  ]
+}

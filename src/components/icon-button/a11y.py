@@ -36,6 +36,8 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
+from htmltree import Tree  # noqa: E402
 from contrast import cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 IB = json.load(open(comp_out('icon-button', 'tokens.json')))
@@ -93,17 +95,15 @@ def labelled_text(html, rid):
 def markup_contract():
     """Enforces the contract of each .al-icon-btn on the HTML the site emits.
 
-    Four usage rules:
+    The rules of each button on its own are in contract.json, checked by
+    tools/contract.py: 14 (aria-busy with aria-disabled), 17 (no `disabled`),
+    20 (never aria-hidden on the button), type and tag. What stays here is the
+    name - a `manual` entry, because it is "one of two, never both":
       10  the name is on the BUTTON, in a single way: a non-empty aria-label OR
           an aria-labelledby pointing to an element that exists and has text
           (the Tooltip, decided on 2026-10-08). Both together fail: labelledby
           wins and the aria-label becomes text nobody reads and that goes stale
           on its own.
-      14  aria-busy always comes with aria-disabled
-      17  the `disabled` attribute is not used: it takes the button out of the
-          focus order in the middle of the interaction and nothing is announced
-      20  the button never gets aria-hidden - what is decorative is the svg,
-          inside it
 
     Returns (checked, problems). checked = None when the site doesn't emit the
     component yet - which is the case until the playground is built. That is
@@ -118,7 +118,10 @@ def markup_contract():
     for pat in (r'<style\b.*?</style>', r'<script\b.*?</script>', r'<!--.*?-->'):
         html = re.sub(pat, lambda m: '\n' * m.group(0).count('\n'), html, flags=re.S)
 
-    checked, problems = 0, []
+    t = Tree()
+    t.feed(open(SITE, encoding='utf-8').read())
+    problems, _ = contract.check('icon-button', t, skip=None)
+    checked = 0
     for m in BTN_TAG.finditer(html):
         tag = m.group(0)
         if not re.search(r'class="[^"]*\bal-icon-btn\b', tag):
@@ -139,15 +142,6 @@ def markup_contract():
         elif not (label and label.group(1).strip()):
             problems.append(f'line {line}: no aria-label and no aria-labelledby - '
                             f'a mute button for the screen reader')
-        if 'aria-hidden="true"' in tag:
-            problems.append(f'line {line}: aria-hidden on the button itself - '
-                            f'the svg is decorative, not the actionable element')
-        if 'aria-busy="true"' in tag and 'aria-disabled="true"' not in tag:
-            problems.append(f'line {line}: aria-busy without aria-disabled - '
-                            f'the button stays clickable while loading')
-        if re.search(r'(?<![\w-])disabled(?![\w-])', tag):
-            problems.append(f'line {line}: disabled attribute - use aria-disabled, '
-                            f'or focus disappears in the middle of the interaction')
 
     if checked == 0:
         return None, ['no .al-icon-btn in build/site/index.html - the component enters '

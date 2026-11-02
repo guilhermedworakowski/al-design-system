@@ -1,0 +1,62 @@
+{
+  "component": "tooltip",
+  "root": "al-tooltip",
+  "rules": [
+    {
+      "id": "popover",
+      "why": "The tooltip is a role=\"tooltip\" popover with an id the trigger points to.",
+      "on": ".al-tooltip",
+      "unless": {
+        "aria-hidden": "true"
+      },
+      "require": {
+        "role": "tooltip",
+        "popover": "manual"
+      },
+      "uniqueId": true
+    },
+    {
+      "id": "icon-decorative",
+      "why": "The icon is paint; the text speaks.",
+      "on": ".al-tooltip__icon",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    },
+    {
+      "id": "text",
+      "why": "The tooltip has text.",
+      "on": ".al-tooltip",
+      "has": [
+        {
+          "sel": ".al-tooltip__text",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    }
+  ],
+  "manual": [
+    {
+      "id": "on-focusable-trigger",
+      "rule": 24,
+      "why": "Only a focusable element gets a tooltip, through aria-describedby (or aria-labelledby when it is the name)."
+    },
+    {
+      "id": "never-essential",
+      "why": "What the tooltip says is never essential."
+    },
+    {
+      "id": "one-trigger",
+      "rule": 24,
+      "why": "Exactly one trigger points to the tooltip, through aria-labelledby or aria-describedby - never both; the tooltip comes right after it (rule 25)."
+    },
+    {
+      "id": "exact-shape",
+      "rule": 11,
+      "why": "Inside the tooltip: the icon and the text, nothing else, nothing interactive; data-placement is top, bottom, left or right."
+    }
+  ]
+}

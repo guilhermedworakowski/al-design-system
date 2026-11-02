@@ -1,0 +1,56 @@
+{
+  "component": "rating",
+  "root": "al-rating",
+  "rules": [
+    {
+      "id": "fieldset",
+      "why": "The interactive rating is a radio group: <fieldset> with a <legend>.",
+      "on": "fieldset.al-rating",
+      "has": [
+        {
+          "sel": "legend.al-rating__label",
+          "min": 1,
+          "max": 1,
+          "text": true
+        }
+      ]
+    },
+    {
+      "id": "radio",
+      "why": "Each star is a native radio inside its <label>, with a name.",
+      "on": ".al-rating__input",
+      "tag": [
+        "input"
+      ],
+      "within": "label.al-rating__star",
+      "require": {
+        "type": "radio",
+        "name": true,
+        "aria-label": true
+      }
+    },
+    {
+      "id": "readonly-img",
+      "why": "The read-only rating is an image that says the exact value.",
+      "on": ".al-rating--readonly",
+      "require": {
+        "role": "img",
+        "aria-label": true
+      }
+    },
+    {
+      "id": "glyph-decorative",
+      "why": "The stars are paint.",
+      "on": "fieldset.al-rating .al-rating__glyph",
+      "require": {
+        "aria-hidden": "true"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "starts-empty",
+      "why": "The interactive rating starts with no star checked."
+    }
+  ]
+}

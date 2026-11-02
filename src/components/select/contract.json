@@ -1,0 +1,67 @@
+{
+  "component": "select",
+  "root": "al-select",
+  "rules": [
+    {
+      "id": "native-field",
+      "why": "The field is a native <select>: the browser gives it the keyboard, the value and the announcement.",
+      "on": ".al-select__field",
+      "tag": [
+        "select"
+      ],
+      "uniqueId": true
+    },
+    {
+      "id": "visible-label",
+      "why": "A <label for> names the field; clicking it focuses the field.",
+      "on": ".al-select__field",
+      "referencedBy": {
+        "sel": "label",
+        "attr": "for"
+      }
+    },
+    {
+      "id": "no-hidden-name",
+      "why": "With a visible label, aria-label makes what is read differ from what is seen.",
+      "on": ".al-select__field",
+      "forbid": [
+        "aria-label"
+      ]
+    },
+    {
+      "id": "error-described",
+      "why": "A field in error points to its message, and the message has text - the color alone says nothing.",
+      "on": ".al-select__field",
+      "when": {
+        "aria-invalid": "true"
+      },
+      "refText": [
+        "aria-describedby"
+      ]
+    },
+    {
+      "id": "describedby-exists",
+      "why": "Every id in aria-describedby exists, or the help text is never read.",
+      "on": ".al-select__field",
+      "ref": [
+        "aria-describedby",
+        "aria-labelledby"
+      ]
+    },
+    {
+      "id": "chevron-decorative",
+      "why": "The chevron is paint; the native select already announces itself.",
+      "on": ".al-select__chevron",
+      "require": {
+        "aria-hidden": "true",
+        "focusable": "false"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "empty-option-selected",
+      "why": "An <option value=\"\"> placeholder is the selected one, never a loose option in the middle."
+    }
+  ]
+}

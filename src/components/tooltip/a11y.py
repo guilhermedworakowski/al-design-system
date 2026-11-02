@@ -24,36 +24,13 @@ THREE JUDGMENTS
      loose. It must pass.
   No contrast exception: none was declared.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) every live tooltip is <div class="al-tooltip" id role="tooltip"
-       popover="manual"> with a unique id (rule 24; "manual" because of the
-       Modal's Esc);
-    b) data-placement, if present, is top, bottom, left or right (rule 13);
-    c) inside, in this order and nothing else: the <svg class="al-icon
-       al-icon--20 al-tooltip__icon"> with aria-hidden="true"
-       focusable="false" (rules 11 and 12; the icon is always present) and a
-       <span class="al-tooltip__text"> with text;
-    d) nothing interactive inside - no link, button, field, tabindex or
-       contenteditable (rule 10);
-    e) exactly one trigger points to it, through aria-labelledby OR
-       aria-describedby - never both on the same trigger (rule 24);
-    f) the trigger is focusable (button, link with href, field, or
-       tabindex >= 0) and never `disabled` (rules 22 and 23);
-    g) the tooltip is the element right after the trigger (rule 25);
-    h) a trigger with aria-labelledby doesn't take aria-label (as in the Icon
-       Button); a trigger with aria-describedby already has its own name -
-       text or aria-label (rule 24);
-    i) the site's frozen samples (.al-tooltip without popover) sit under
-       `inert` and `aria-hidden` on an ancestor: a tooltip open forever
-       doesn't exist in the component and doesn't count.
-
-  The playground swaps the stage with JavaScript (Use x Side): the variants
-  come from `var TT_DEMOS` in the HTML itself. The gate reads that object and
-  checks each fragment too - that way the aria-describedby path, which isn't
-  on the stage when the page loads, doesn't escape.
+  The rules are data: src/components/tooltip/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
@@ -68,6 +45,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr  # noqa: E402
 from htmltree import Tree, walk, classes, has, ancestors, text_of, SKIP_TEMPLATE  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -151,8 +129,8 @@ def check_tooltip(tip, triggers, problems, where):
     def bad(msg):
         problems.append(f'{where}line {ln}: {msg}')
 
-    # (a)
-    if tip['tag'] != 'div' or a.get('role') != 'tooltip' or a.get('popover') != 'manual':
+    # (a) role and popover are in contract.json
+    if tip['tag'] != 'div':
         bad('live tooltip = <div role="tooltip" popover="manual"> (rule 24)')
     # (b)
     if 'data-placement' in a and a['data-placement'] not in PLACEMENTS:
@@ -205,7 +183,10 @@ def markup_contract(html, where=''):
     t = Tree(skip=SKIP_TEMPLATE)
     t.feed(html)
     nodes = list(walk(t.root))
-    problems = []
+    # The rules of the tooltip on its own (role, popover, unique id, icon, text)
+    # are in contract.json, checked by tools/contract.py. What stays here is
+    # the exact shape the site uses and the tie to its trigger.
+    problems, _ = contract.check('tooltip', t, skip='[inert]')
 
     ids = {}
     for n in nodes:
@@ -229,10 +210,7 @@ def markup_contract(html, where=''):
         live += 1
         tid = n['attrs'].get('id', '')
         if not tid:
-            problems.append(f'{where}line {n["line"]}: live tooltip without id (rule 24)')
             continue
-        if len(ids.get(tid, [])) > 1:
-            problems.append(f'{where}line {n["line"]}: id "{tid}" repeated in the document')
         triggers = [x for x in nodes if tid in refs(x, 'aria-labelledby') + refs(x, 'aria-describedby')]
         check_tooltip(n, triggers, problems, where)
     return live, frozen, problems
@@ -274,7 +252,7 @@ def run():
         for p in mk:
             print(f'     PENDING: {p}')
     else:
-        print(f'     {live} live tooltip(s) checked, 9 rules (a-i) - '
+        print(f'     {live} live tooltip(s) checked, {len(contract.whys("tooltip"))} rules of contract.json - '
               f'{len(demos)} playground variants included; {frozen} frozen sample(s) under inert')
         for p in mk:
             print(f'     PROBLEM: {p}')

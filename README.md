@@ -64,7 +64,7 @@ npm install al-design-system
 Or straight from a CDN, pinned to a version:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.9.1/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.10.0/dist/al.css">
 ```
 
 Each [GitHub Release](https://github.com/guilhermedworakowski/al-design-system/releases) also carries the `dist/` folder as a zip.
@@ -79,6 +79,9 @@ Each [GitHub Release](https://github.com/guilhermedworakowski/al-design-system/r
 | `components/<name>.js` | The behavior, for the 13 components that have a script |
 | `icons/*.svg`, `icons/icons.json` | The 70 icons |
 | `tokens.json` | The Foundation tokens, to read from code |
+| `components.json` | Per component: the markup to write, the markup rules and the files to import |
+| `guidelines/<name>.md` | The usage rules of each component |
+| `mcp/` | The `al-design-system` command: a markup validator and an MCP server for AI agents |
 
 ## Usage
 
@@ -134,6 +137,20 @@ The SVGs go inline, with the `.al-icon` class on the `<svg>` itself, so they inh
 - decorative: `aria-hidden="true" focusable="false"`;
 - carries meaning: `role="img"` and an `aria-label`.
 
+### AI agents
+
+The package carries what an agent needs to use AL without guessing, at the same version as the CSS installed and with no dependencies. Nothing runs on install: a project that only imports the CSS never touches it.
+
+- `components.json`: for each component, the HTML to write, every markup rule with its reason, and the CSS and JS to import.
+- `npx al-design-system validate page.html` checks HTML against those rules and names the line, the element and the rule.
+- `npx al-design-system mcp` runs an MCP server on stdio, with `list_components`, `get_component`, `get_tokens` and `validate_markup`. To add it to Claude Code:
+
+```bash
+claude mcp add al -- npx al-design-system mcp
+```
+
+The site also publishes [llms.txt](https://al.guilhermedesignd.com/llms.txt).
+
 ## Tokens
 
 Three layers, each with one job:
@@ -148,7 +165,7 @@ In CSS they are custom properties prefixed with `--al-`. `tokens.json` has the s
 
 The minimums are the WCAG contrast ones: 4.5:1 for text, 3:1 for icons, borders and focus. When the brand color doesn't reach the minimum, the exception is named one by one, never goes below 3:1, and is paid for with a usage rule (a visible label, a title, a second cue). When a component has exceptions, they are listed in its guidelines.
 
-Besides contrast, each component has a markup contract checked against the HTML: the right native element, an accessible name, the right attributes, nothing interactive where it shouldn't be. The contract is written at the top of each component's CSS, in a `MARKUP CONTRACT` block with the HTML to copy, and the build fails if the CSS styles a class the block doesn't name.
+Besides contrast, each component has a markup contract checked against the HTML: the right native element, an accessible name, the right attributes, nothing interactive where it shouldn't be. The HTML to copy is at the top of each component's CSS, in a `MARKUP CONTRACT` block, and the build fails if the CSS styles a class the block doesn't name. The rules are data, in each component's `contract.json`: the build checks them on the site, and the package's validator checks them on yours, from the same file.
 
 ## Versioning
 
@@ -169,15 +186,17 @@ src/components/<name>/ one folder per component:
   <name>.css             the handwritten CSS
   <name>.js              the script, when there is one
   check.py, a11y.py      the gates (literal CSS, orphan tokens, contrast, markup)
+  contract.json          the markup contract, as data
   guidelines.md          the usage rules
+src/mcp/               the package's command: validator and MCP server, in Node
 site/                  the documentation site generator
-tools/                 what the build shares (paths, dist assembly, the site's llms.txt)
+tools/                 what the build shares (paths, gates, dist assembly, the site's llms.txt)
 build.py               runs everything, in order
 build/                 generated output (CSS, tokens, site)
 dist/                  the package that goes to npm
 ```
 
-To build from source you only need Python 3.9 or later, with no packages to install:
+To build from source you need Python 3.9 or later and Node 18 or later (one gate runs the package's validator), with no packages to install:
 
 ```bash
 python3 build.py

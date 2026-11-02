@@ -64,7 +64,7 @@ npm install al-design-system
 Ou direto de uma CDN, fixado numa versão:
 
 ```html
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.9.1/dist/al.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/al-design-system@1.10.0/dist/al.css">
 ```
 
 Cada [Release no GitHub](https://github.com/guilhermedworakowski/al-design-system/releases) também traz a pasta `dist/` num zip.
@@ -79,6 +79,9 @@ Cada [Release no GitHub](https://github.com/guilhermedworakowski/al-design-syste
 | `components/<nome>.js` | O comportamento, para os 13 componentes que têm script |
 | `icons/*.svg`, `icons/icons.json` | Os 70 ícones |
 | `tokens.json` | Os tokens da Foundation, para ler por código |
+| `components.json` | Por componente: o HTML a escrever, as regras de marcação e os arquivos a importar |
+| `guidelines/<nome>.md` | As regras de uso de cada componente |
+| `mcp/` | O comando `al-design-system`: um validador de marcação e um servidor MCP para agentes de IA |
 
 ## Uso
 
@@ -134,6 +137,20 @@ Os SVGs entram inline, com a classe `.al-icon` no próprio `<svg>`, para herdare
 - decorativo: `aria-hidden="true" focusable="false"`;
 - carrega sentido: `role="img"` e um `aria-label`.
 
+### Agentes de IA
+
+O pacote traz o que um agente precisa para usar o AL sem adivinhar, na mesma versão do CSS instalado e sem dependências. Nada roda na instalação: um projeto que só importa o CSS nunca encosta nisso.
+
+- `components.json`: para cada componente, o HTML a escrever, cada regra de marcação com o motivo, e o CSS e o JS a importar.
+- `npx al-design-system validate pagina.html` confere o HTML com essas regras e aponta a linha, o elemento e a regra.
+- `npx al-design-system mcp` roda um servidor MCP por stdio, com `list_components`, `get_component`, `get_tokens` e `validate_markup`. Para adicionar no Claude Code:
+
+```bash
+claude mcp add al -- npx al-design-system mcp
+```
+
+O site também publica o [llms.txt](https://al.guilhermedesignd.com/llms.txt).
+
 ## Tokens
 
 Três camadas, cada uma com um trabalho:
@@ -148,7 +165,7 @@ No CSS, são custom properties com o prefixo `--al-`. O `tokens.json` tem os mes
 
 Os mínimos são os de contraste do WCAG: 4,5:1 para texto, 3:1 para ícone, borda e foco. Quando a cor da marca não chega ao mínimo, a exceção é nomeada uma a uma, nunca desce de 3:1 e é paga com uma regra de uso (um rótulo visível, um título, uma segunda pista). Quando um componente tem exceções, elas estão listadas nas diretrizes dele.
 
-Além do contraste, cada componente tem um contrato de marcação conferido contra o HTML: o elemento nativo certo, um nome acessível, os atributos certos, nada interativo onde não deve. O contrato fica no topo do CSS de cada componente, num bloco `MARKUP CONTRACT` com o HTML para copiar, e o build reprova se o CSS estiliza uma classe que o bloco não cita.
+Além do contraste, cada componente tem um contrato de marcação conferido contra o HTML: o elemento nativo certo, um nome acessível, os atributos certos, nada interativo onde não deve. O HTML para copiar fica no topo do CSS de cada componente, num bloco `MARKUP CONTRACT`, e o build reprova se o CSS estiliza uma classe que o bloco não cita. As regras são dado, no `contract.json` de cada componente: o build confere no site, e o validador do pacote confere no seu, a partir do mesmo arquivo.
 
 ## Versionamento
 
@@ -169,15 +186,17 @@ src/components/<nome>/ uma pasta por componente:
   <nome>.css             o CSS escrito à mão
   <nome>.js              o script, quando existe
   check.py, a11y.py      os portões (CSS literal, token órfão, contraste, marcação)
+  contract.json          o contrato de marcação, como dado
   guidelines.md          as regras de uso
+src/mcp/               o comando do pacote: validador e servidor MCP, em Node
 site/                  o gerador do site de documentação
-tools/                 o que o build compartilha (caminhos, montagem do dist, o llms.txt do site)
+tools/                 o que o build compartilha (caminhos, portões, montagem do dist, o llms.txt do site)
 build.py               roda tudo, na ordem
 build/                 saída gerada (CSS, tokens, site)
 dist/                  o pacote que vai para o npm
 ```
 
-Para gerar a partir do código, basta o Python 3.9 ou mais novo, sem nenhum pacote para instalar:
+Para gerar a partir do código, bastam o Python 3.9 ou mais novo e o Node 18 ou mais novo (um portão roda o validador do pacote), sem nenhum pacote para instalar:
 
 ```bash
 python3 build.py

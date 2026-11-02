@@ -27,12 +27,13 @@ Run: python3 a11y.py   (requires the generated build/site/index.html)
 """
 import json
 import os
-import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
+from htmltree import Tree, walk, has  # noqa: E402
 from contrast import cr  # noqa: E402
 
 FOUND = json.load(open(TOKENS_JSON))
@@ -85,57 +86,29 @@ def effective_bg(variant, state, theme):
 
 
 # ─────────────────────────────────────────────── markup contract
-SVG_TAG = re.compile(r'<svg\b[^>]*>')
 
 
 def markup_contract():
-    """Reads the HTML the site emits and enforces the contract of each .al-icon.
-
-    Decorative -> aria-hidden="true" AND focusable="false"
-    Meaningful -> role="img" AND a non-empty aria-label
-    And never both at the same time: an icon hidden from the screen reader that
-    also carries a label is a contradiction, and the label loses.
+    """Reads the HTML the site emits. The contract of each .al-icon is in
+    contract.json, checked by tools/contract.py: on the <svg>; decorative ->
+    aria-hidden="true" AND focusable="false", no label; meaningful ->
+    role="img" AND aria-label. What stays here is the `manual` entry the
+    engine has no "one of" for: every icon is one of the two.
     """
     if not os.path.exists(SITE):
         return None, ['build/site/index.html does not exist - run site/site.py before this gate']
 
-    html = open(SITE).read()
+    t = Tree()
+    t.feed(open(SITE, encoding='utf-8').read())
+    problems, _ = contract.check('icon', t, skip=None)
 
-    # Markup only. <style> and <script> carry examples in comments - the header
-    # of icon.css itself has two - and an example in a comment is not a
-    # rendered element. Measuring there would fail documentation.
-    html = re.sub(r'<style\b.*?</style>', lambda m: '\n' * m.group(0).count('\n'),
-                  html, flags=re.S)
-    html = re.sub(r'<script\b.*?</script>', lambda m: '\n' * m.group(0).count('\n'),
-                  html, flags=re.S)
-    html = re.sub(r'<!--.*?-->', lambda m: '\n' * m.group(0).count('\n'), html, flags=re.S)
-
-    checked, problems = 0, []
-
-    for m in SVG_TAG.finditer(html):
-        tag = m.group(0)
-        if not re.search(r'class="[^"]*\bal-icon\b', tag):
+    checked = 0
+    for n in walk(t.root):
+        if n['tag'] != 'svg' or not has(n, 'al-icon'):
             continue
         checked += 1
-        line = html.count('\n', 0, m.start()) + 1
-
-        hidden = 'aria-hidden="true"' in tag
-        focusable_off = 'focusable="false"' in tag
-        role_img = 'role="img"' in tag
-        label = re.search(r'aria-label="([^"]*)"', tag)
-
-        if hidden and (role_img or (label and label.group(1).strip())):
-            problems.append(f'line {line}: aria-hidden together with a label - the label will never be read')
-        elif hidden:
-            if not focusable_off:
-                problems.append(f'line {line}: decorative without focusable="false" - '
-                                f'it enters the tab order in some browsers')
-        elif role_img:
-            if not (label and label.group(1).strip()):
-                problems.append(f'line {line}: role="img" without aria-label - '
-                                f'announced as an image with no name')
-        else:
-            problems.append(f'line {line}: no contract - neither decorative '
+        if n['attrs'].get('aria-hidden') != 'true' and n['attrs'].get('role') != 'img':
+            problems.append(f'line {n["line"]}: no contract - neither decorative '
                             f'(aria-hidden) nor meaningful (role="img")')
 
     return checked, problems

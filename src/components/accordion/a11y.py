@@ -25,24 +25,13 @@ THREE JUDGMENTS
   3. INVISIBLE item - background equal to the page. The exception covers a
      subtle item, not an item that doesn't exist. This fails.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Usage rules from guidelines.md, measured on the emitted HTML:
-
-    a) `.al-accordion` is a <details> (rule 24);
-    b) the first child is the <summary class="al-accordion__header"> - and
-       `.al-accordion__header` only exists on <summary> (rule 24);
-    c) the <summary> has a name: `.al-accordion__title` with text (rule 15);
-    d) no <h1>-<h6> inside the <summary> (rule 25);
-    e) nothing interactive inside the <summary> - link, button, field,
-       tabindex, actionable role (rule 17);
-    f) icon and chevron with aria-hidden="true" (rules 18 and 19);
-    g) no Accordion inside an Accordion (rule 5);
-    h) pure native: no role, aria-expanded, aria-controls or tabindex on the
-       <details> or the <summary> (rule 24);
-    i) no disabled: neither `disabled` nor `aria-disabled` (rule 20);
-    j) exactly one `.al-accordion__content`, direct child, after the
-       <summary>.
+  The rules are data: src/components/accordion/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the others: runs AFTER the HTML it measures.
 
@@ -56,8 +45,9 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 from contrast import cr  # noqa: E402
-from htmltree import Tree, walk, has, ancestors, text_of  # noqa: E402
+from htmltree import Tree, walk, has  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 ACC = json.load(open(comp_out('accordion', 'tokens.json')))
 
@@ -78,7 +68,6 @@ PAGE = 'bg-surface'     # rule 14: only here
 # state -> role of the header background. Focus = rest.
 STATES = (('rest', 'bg'), ('hover', 'bg-hover'), ('pressed', 'bg-active'), ('focus', 'bg'))
 
-HEADINGS = {'h1', 'h2', 'h3', 'h4', 'h5', 'h6'}
 ACTIONABLE_ROLES = {'button', 'link', 'checkbox', 'radio', 'switch', 'menuitem', 'tab', 'option'}
 
 
@@ -155,8 +144,6 @@ def interactive(node):
     return a.get('role') in ACTIONABLE_ROLES
 
 
-NATIVE_ONLY = ('role', 'aria-expanded', 'aria-controls', 'tabindex')
-
 
 def markup_contract(path):
     if not os.path.exists(path):
@@ -164,38 +151,17 @@ def markup_contract(path):
     t = Tree()
     t.feed(open(path, encoding='utf-8').read())
 
-    checked, problems = 0, []
+    # The rules of each part are in contract.json, checked by tools/contract.py.
+    # What stays below needs the position of the children or the full list of
+    # interactive elements - the `manual` entries.
+    problems, _ = contract.check('accordion', t, skip=None)
+    checked = 0
     for n in walk(t.root):
-        a, tag, ln = n['attrs'], n['tag'], n['line']
-
-        # (b) the header only exists on <summary>
-        if has(n, 'al-accordion__header') and tag != 'summary':
-            problems.append(f'line {ln}: .al-accordion__header on <{tag}> - the header is the '
-                            f'native <summary> (rule 24)')
+        tag, ln = n['tag'], n['line']
 
         if not has(n, 'al-accordion'):
             continue
         checked += 1
-
-        # (a) <details>
-        if tag != 'details':
-            problems.append(f'line {ln}: .al-accordion on <{tag}> - the item is a native '
-                            f'<details> (rule 24)')
-
-        # (g) no Accordion inside an Accordion
-        if any(has(p, 'al-accordion') for p in ancestors(n)):
-            problems.append(f'line {ln}: Accordion inside an Accordion (rule 5)')
-
-        # (i) no disabled
-        if 'disabled' in a or 'aria-disabled' in a:
-            problems.append(f'line {ln}: disabled Accordion - an item with no content leaves '
-                            f'the stack (rule 20)')
-
-        # (h) pure native on <details>
-        for attr in NATIVE_ONLY:
-            if attr in a:
-                problems.append(f'line {ln}: {attr} on <details> - the browser already announces '
-                                f'the state; no manual ARIA (rule 24)')
 
         kids = n['kids']
         # (b) the first child is the component's summary
@@ -205,43 +171,18 @@ def markup_contract(path):
                             f'<summary class="al-accordion__header"> (rule 24)')
             continue
 
-        ha, hl = head['attrs'], head['line']
-        # (h) pure native on <summary>
-        for attr in NATIVE_ONLY:
-            if attr in ha:
-                problems.append(f'line {hl}: {attr} on <summary> - pure native (rule 24)')
-        if 'disabled' in ha or 'aria-disabled' in ha:
-            problems.append(f'line {hl}: disabled <summary> (rule 20)')
-
         desc = list(walk(head))
-        # (c) name
-        titles = [d for d in desc if has(d, 'al-accordion__title')]
-        if len(titles) != 1 or not text_of(titles[0]):
-            problems.append(f'line {hl}: the <summary> needs one .al-accordion__title with '
-                            f'text - it is the announced name (rule 15)')
         for d in desc:
-            # (d) heading
-            if d['tag'] in HEADINGS:
-                problems.append(f'line {d["line"]}: <{d["tag"]}> inside the <summary> - in some '
-                                f'screen readers it leaves the headings list; the real heading '
-                                f'goes BEFORE the stack (rule 25)')
             # (e) interactive
             if interactive(d):
                 problems.append(f'line {d["line"]}: interactive <{d["tag"]}> inside the <summary> '
                                 f'- the whole header is already the button (rule 17)')
-            # (f) decorative icons
-            if (has(d, 'al-accordion__icon') or has(d, 'al-accordion__chevron')) \
-                    and d['attrs'].get('aria-hidden') != 'true':
-                problems.append(f'line {d["line"]}: Accordion icon without aria-hidden="true" - '
-                                f'it is decorative; the title is what speaks (rules 18 and 19)')
-
         # (j) one content, direct child, after the summary
         contents = [k for k in kids if has(k, 'al-accordion__content')]
         loose = [d for d in walk(n) if has(d, 'al-accordion__content') and d['parent'] is not n]
-        if len(contents) != 1 or loose:
-            problems.append(f'line {ln}: the Accordion must have exactly one '
-                            f'.al-accordion__content, direct child of the <details>')
-        elif kids.index(contents[0]) == 0:
+        if loose:
+            problems.append(f'line {ln}: .al-accordion__content must be a direct child of the <details>')
+        elif len(contents) == 1 and kids.index(contents[0]) == 0:
             problems.append(f'line {ln}: .al-accordion__content before the <summary>')
 
     if checked == 0:
@@ -282,7 +223,7 @@ def run():
         for p in mk:
             print(f'     PENDING: {p}')
     else:
-        print(f'     {checked} accordion(s) checked, 10 rules (a-j)')
+        print(f'     {checked} accordion(s) checked, {len(contract.whys("accordion"))} rules of contract.json')
         for p in mk:
             print(f'     PROBLEM: {p}')
 

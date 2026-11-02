@@ -37,22 +37,13 @@ TWO FLOORS, ON PURPOSE
   Text (label)                          = 4.5:1 from 1.4.3.
   Non-text (border, box, glyph, ring)   = 3:1 from 1.4.11.
 
-THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
+THE MARKUP CONTRACT
 
-  Five rules, all from the usage rules:
-
-    a) every `.al-checkbox__input` is a native `<input type="checkbox">`,
-       inside a `<label class="al-checkbox">` (rules 9 and 21);
-    b) every checkbox has a VISIBLE, non-empty label in `.al-checkbox__label`,
-       and doesn't use `aria-label` (rule 23 - the rule that pays for the
-       1.57:1 border);
-    c) a checkbox with `aria-invalid="true"` has `aria-describedby`, and the
-       id it points to exists in the document (rules 19 and 22 - the error
-       text belongs to the form, but it has to exist);
-    d) the glyphs are decorative: `aria-hidden="true"` and `focusable="false"`;
-    e) nobody writes `indeterminate` as an HTML attribute: it doesn't exist,
-       and the browser ignores it silently. Indeterminate only through JS
-       (rule 8).
+  The rules are data: src/components/checkbox/contract.json, checked by
+  tools/contract.py here and by the package's validator, from the same
+  file. Each rule says why it exists. What this file still checks in
+  code is listed there under "manual": what needs the whole page, the
+  site's exact shape or its wording.
 
 RUN ORDER - same as the Select: runs AFTER the HTML it measures.
 
@@ -67,6 +58,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
+import contract  # noqa: E402
 # this gate compares the ratio already rounded to 2 places, as it always has
 from contrast import cr2 as cr  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
@@ -183,64 +175,10 @@ def measure():
 
 
 # ------------------------------------------------------------ markup contract
-def markup_only(html):
-    """Strips <style> and <script> before looking for markup - checkbox.css
-    carries the MARKUP CONTRACT in a comment, and the QA page inlines it. A lesson from
-    the Select."""
-    html = re.sub(r'<style\b[^>]*>.*?</style>', '', html, flags=re.S | re.I)
-    html = re.sub(r'<script\b[^>]*>.*?</script>', '', html, flags=re.S | re.I)
-    return html
-
-
 def markup(path):
-    if not os.path.exists(path):
-        return ([f'HTML not found at {path} - markup contract NOT measured'], 0)
-
-    html = markup_only(open(path, encoding='utf-8').read())
-    findings = []
-
-    inputs = re.findall(r'<input\b[^>]*class="[^"]*al-checkbox__input[^"]*"[^>]*>', html)
-    blocks = re.findall(r'<label\b[^>]*class="[^"]*\bal-checkbox\b[^"]*"[^>]*>(.*?)</label>',
-                        html, flags=re.S)
-    inside = sum(len(re.findall(r'al-checkbox__input', b)) for b in blocks)
-
-    # (a)
-    if inside != len(inputs):
-        findings.append(f'(a) {len(inputs) - inside} input(s) outside <label class="al-checkbox">')
-    for tag in inputs:
-        if not re.search(r'\btype="checkbox"', tag):
-            findings.append(f'(a) input without type="checkbox": {tag[:70]}')
-        if 'aria-label' in tag:
-            findings.append(f'(b) input uses aria-label when there is a visible label: {tag[:70]}')
-        if re.search(r'\sindeterminate(\s|=|>|/)', tag):
-            findings.append(f'(e) indeterminate attribute in the markup - it doesn\'t exist, use JS: {tag[:70]}')
-        if 'aria-invalid="true"' in tag:
-            m = re.search(r'aria-describedby="([^"]+)"', tag)
-            if not m:
-                findings.append(f'(c) checkbox in error without aria-describedby: {tag[:70]}')
-            else:
-                for ref in m.group(1).split():
-                    if not re.search(rf'\bid="{re.escape(ref)}"', html):
-                        findings.append(f'(c) checkbox is described by "{ref}", which does not exist')
-    # Only inside a TAG: the site's Accessibility tab writes role="checkbox" in
-    # prose, inside <code>, precisely to say it is not used.
-    if re.search(r'<[a-zA-Z][^>]*\srole="checkbox"', html):
-        findings.append('(a) role="checkbox" on the page - the component is the native input')
-
-    # (b) a visible, non-empty label in each block
-    for b in blocks:
-        m = re.search(r'<span\b[^>]*al-checkbox__label[^>]*>(.*?)</span>', b, flags=re.S)
-        if not m or not re.sub(r'<[^>]+>', '', m.group(1)).strip():
-            findings.append('(b) checkbox without a visible label in .al-checkbox__label')
-
-    # (d)
-    for svg in re.findall(r'<svg\b[^>]*al-checkbox__(?:check|dash)[^>]*>', html):
-        if 'aria-hidden="true"' not in svg:
-            findings.append(f'(d) glyph without aria-hidden="true": {svg[:60]}')
-        if 'focusable="false"' not in svg:
-            findings.append(f'(d) glyph without focusable="false": {svg[:60]}')
-
-    return (findings, len(inputs))
+    """Every rule is in contract.json (tools/contract.py checks it)."""
+    findings, n, _ = contract.audit('checkbox', path, '.al-checkbox__input')
+    return (findings, n)
 
 
 def run():
@@ -292,7 +230,7 @@ def run():
     elif n == 0:
         print('    PENDING - no checkbox in this HTML. Nothing measured is not nothing wrong.')
     else:
-        print('    the five rules pass on every checkbox')
+        print(f'    the {len(contract.whys("checkbox"))} rules of contract.json pass on every checkbox')
     print('-' * 78)
 
     json.dump({
@@ -303,13 +241,7 @@ def run():
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': n,
         'markupPending': n == 0,
-        'markupRules': [
-            'native input type="checkbox" inside <label class="al-checkbox">',
-            'a visible, non-empty label, no aria-label',
-            'in error: aria-invalid="true" + an aria-describedby that exists',
-            'decorative glyphs: aria-hidden="true" and focusable="false"',
-            'indeterminate never as an HTML attribute - only through JS',
-        ],
+        'markupRules': contract.whys('checkbox'),
         'fails': len(fails),
         'exceptions': {k: len([l for l in exceptions if l['exc'] == k]) for k in PENDING},
         'codeOnlyStates': list(CODE_ONLY),

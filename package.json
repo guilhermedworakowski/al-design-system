@@ -1,6 +1,6 @@
 {
   "name": "al-design-system",
-  "version": "1.9.1",
+  "version": "1.10.0",
   "description": "AL Design System: Foundation and components in plain CSS, from Figma to code.",
   "license": "MIT",
   "author": "Guilherme Domingues",
@@ -11,6 +11,9 @@
   },
   "bugs": {
     "url": "https://github.com/guilhermedworakowski/al-design-system/issues"
+  },
+  "bin": {
+    "al-design-system": "dist/mcp/al.mjs"
   },
   "files": [
     "dist"
@@ -23,6 +26,8 @@
     "./al.css": "./dist/al.css",
     "./foundation.css": "./dist/foundation.css",
     "./tokens.json": "./dist/tokens.json",
+    "./components.json": "./dist/components.json",
+    "./guidelines/*": "./dist/guidelines/*",
     "./components/*": "./dist/components/*",
     "./icons/*": "./dist/icons/*",
     "./package.json": "./package.json"

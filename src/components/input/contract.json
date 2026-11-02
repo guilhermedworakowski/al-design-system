@@ -1,0 +1,80 @@
+{
+  "component": "input",
+  "root": "al-input",
+  "rules": [
+    {
+      "id": "native-field",
+      "why": "The field is a native <input>: the browser gives it the keyboard, the value and the announcement.",
+      "on": ".al-input__field",
+      "tag": [
+        "input"
+      ],
+      "uniqueId": true
+    },
+    {
+      "id": "visible-label",
+      "why": "A <label for> names the field; clicking it focuses the field.",
+      "on": ".al-input__field",
+      "referencedBy": {
+        "sel": "label",
+        "attr": "for"
+      }
+    },
+    {
+      "id": "no-hidden-name",
+      "why": "With a visible label, aria-label makes what is read differ from what is seen.",
+      "on": ".al-input__field",
+      "forbid": [
+        "aria-label",
+        "maxlength"
+      ]
+    },
+    {
+      "id": "error-described",
+      "why": "A field in error points to its message, and the message has text - the color alone says nothing.",
+      "on": ".al-input__field",
+      "when": {
+        "aria-invalid": "true"
+      },
+      "refText": [
+        "aria-describedby"
+      ]
+    },
+    {
+      "id": "describedby-exists",
+      "why": "Every id in aria-describedby exists, or the help text is never read.",
+      "on": ".al-input__field",
+      "ref": [
+        "aria-describedby",
+        "aria-labelledby"
+      ]
+    },
+    {
+      "id": "counter-polite",
+      "why": "The counter is announced politely only near the limit; aria-live must be present for the script to switch.",
+      "on": ".al-input__counter",
+      "require": {
+        "aria-live": true
+      }
+    },
+    {
+      "id": "affix-in-name",
+      "why": "A prefix or suffix is part of what the field asks; aria-labelledby reads label + affix together.",
+      "on": ".al-input__affix",
+      "referencedBy": {
+        "sel": ".al-input__field",
+        "attr": "aria-labelledby"
+      }
+    }
+  ],
+  "manual": [
+    {
+      "id": "readonly-empty-dash",
+      "why": "An empty read-only field shows \"—\" as the value, never a blank box."
+    },
+    {
+      "id": "label-in-name",
+      "why": "With a prefix or suffix, aria-labelledby lists the label too, so the name reads label + affixes."
+    }
+  ]
+}
