@@ -5,6 +5,7 @@ Assembles the published package (dist/) from build/ and src/.
       al.css                   Foundation + the 23 components, in one file
       foundation.css           only the Foundation
       tokens.json              the Foundation tokens, to read from code
+      components.json          per component: files, markup to write, contract rules
       components/<c>.css       the component's tokens + its CSS, in one file
       components/<c>.js        the behavior, for components that have a script
       icons/*.svg, icons.json  the icons (Lucide, ISC - see icons/NOTICE)
@@ -23,6 +24,8 @@ import json
 import os
 import shutil
 import sys
+
+import contract
 
 from paths import (COMPONENTS, DIST, FOUNDATION_CSS, SRC, TOKENS_JSON,
                    comp_out, comp_src, rel)
@@ -63,6 +66,10 @@ def run():
         if os.path.exists(js):
             shutil.copyfile(js, os.path.join(DIST, 'components', f'{c}.js'))
             scripts.append(c)
+
+    json.dump({'version': version, 'components': contract.catalog(COMPONENTS)},
+              open(os.path.join(DIST, 'components.json'), 'w', encoding='utf-8'),
+              indent=2, ensure_ascii=False)
 
     banner = (f'/* AL Design System {version} - Foundation + {len(COMPONENTS)} components.\n'
               f' * MIT. https://github.com/guilhermedworakowski/al-design-system\n'

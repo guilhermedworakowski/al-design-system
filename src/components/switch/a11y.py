@@ -34,19 +34,12 @@ TWO FLOORS, ON PURPOSE
 
 THE MARKUP CONTRACT IS THE OTHER HALF OF THIS GATE
 
-  Five rules, all from the usage rules:
-
-    a) every `.al-switch__input` is a native `<input type="checkbox"
-       role="switch">`, inside a `<label class="al-switch">`; no other element
-       gets `role="switch"` and nobody uses `aria-pressed` (rule 22);
-    b) every switch has a VISIBLE, non-empty label in `.al-switch__label`, and
-       the input doesn't use `aria-label` or `aria-labelledby` (rule 23 - the
-       rule that pays for the 1.47:1 border and the 1.96:1 thumb);
-    c) no `aria-checked` on the input: the state comes from `checked`, and a
-       parallel attribute drifts from what the screen paints;
-    d) no `required` and no `aria-invalid`: the switch has no error and is
-       never required (rule 20);
-    e) the thumb is decorative: `aria-hidden="true"`.
+  The rules are data: src/components/switch/contract.json, checked by
+  tools/contract.py (and by the package's validator, from the same file).
+  In short: a native <input type="checkbox" role="switch"> inside
+  <label class="al-switch"> (rule 22); a visible label and no aria-label
+  (rule 23 - the rule that pays for the 1.47:1 border and the 1.96:1 thumb);
+  no aria-checked; no required or aria-invalid (rule 20); a decorative thumb.
 
 RUN ORDER - same as the Select, the Checkbox and the Radio: runs AFTER the
 HTML it measures.
@@ -64,6 +57,8 @@ sys.path.insert(0, os.path.join(HERE, '..', '..', '..', 'tools'))
 from paths import ROOT, TOKENS_JSON, SITE_HTML, comp_out  # noqa: E402
 # this gate compares the ratio already rounded to 2 places, as it always has
 from contrast import cr2 as cr  # noqa: E402
+from htmltree import Tree, walk, has  # noqa: E402
+import contract  # noqa: E402
 FOUND = json.load(open(TOKENS_JSON))
 SWITCH = json.load(open(comp_out('switch', 'tokens.json')))
 
@@ -170,67 +165,16 @@ def measure():
 
 
 # ------------------------------------------------------------ markup contract
-def markup_only(html):
-    """Strips <style> and <script> before looking for markup - switch.css
-    carries the MARKUP CONTRACT in a comment, and the QA page inlines it. A lesson from
-    the Select."""
-    html = re.sub(r'<style\b[^>]*>.*?</style>', '', html, flags=re.S | re.I)
-    html = re.sub(r'<script\b[^>]*>.*?</script>', '', html, flags=re.S | re.I)
-    return html
-
-
-def text(fragment):
-    return re.sub(r'<[^>]+>', '', fragment).strip()
-
-
 def markup(path):
+    """The rules live in contract.json and are checked by tools/contract.py -
+    the same file the package's validator reads."""
     if not os.path.exists(path):
         return ([f'HTML not found at {path} - markup contract NOT measured'], 0)
-
-    html = markup_only(open(path, encoding='utf-8').read())
-    findings = []
-
-    inputs = re.findall(r'<input\b[^>]*class="[^"]*al-switch__input[^"]*"[^>]*>', html)
-    blocks = re.findall(r'<label\b[^>]*class="[^"]*\bal-switch\b[^"]*"[^>]*>(.*?)</label>',
-                        html, flags=re.S)
-    inside = sum(len(re.findall(r'al-switch__input', b)) for b in blocks)
-
-    # (a)
-    if inside != len(inputs):
-        findings.append(f'(a) {len(inputs) - inside} input(s) outside <label class="al-switch">')
-    # Only inside a TAG: prose can quote role="switch" in <code>.
-    for tag in re.findall(r'<([a-zA-Z]+)\b[^>]*\srole="switch"[^>]*>', html):
-        if tag.lower() != 'input':
-            findings.append(f'(a) <{tag} role="switch"> - the component is the native input')
-    if re.search(r'<[a-zA-Z][^>]*\saria-pressed=', html) and re.search(r'al-switch', html):
-        for tag in re.findall(r'<[a-zA-Z][^>]*\saria-pressed=[^>]*>', html):
-            if 'al-switch' in tag:
-                findings.append(f'(a) aria-pressed on a switch - the state belongs to the native checkbox: {tag[:70]}')
-
-    for tag in inputs:
-        if not re.search(r'\btype="checkbox"', tag):
-            findings.append(f'(a) input without type="checkbox": {tag[:70]}')
-        if not re.search(r'\brole="switch"', tag):
-            findings.append(f'(a) input without role="switch" - it would be announced as a checkbox: {tag[:70]}')
-        if 'aria-label' in tag:
-            findings.append(f'(b) input uses aria-label/aria-labelledby when there is a visible label: {tag[:70]}')
-        if 'aria-checked' in tag:
-            findings.append(f'(c) aria-checked on the input - the state is the native `checked`: {tag[:70]}')
-        if re.search(r'\srequired\b', tag) or 'aria-invalid' in tag:
-            findings.append(f'(d) required/aria-invalid on a switch - it has no error: {tag[:70]}')
-
-    # (b) a visible, non-empty label in each block
-    for b in blocks:
-        m = re.search(r'<span\b[^>]*al-switch__label[^>]*>(.*?)</span>', b, flags=re.S)
-        if not m or not text(m.group(1)):
-            findings.append('(b) switch without a visible label in .al-switch__label')
-
-    # (e)
-    for th in re.findall(r'<span\b[^>]*al-switch__thumb[^>]*>', html):
-        if 'aria-hidden="true"' not in th:
-            findings.append(f'(e) thumb without aria-hidden="true": {th[:60]}')
-
-    return (findings, len(inputs))
+    tree = Tree()
+    tree.feed(open(path, encoding='utf-8').read())
+    findings, _ = contract.check('switch', tree)
+    n = sum(1 for d in walk(tree.root) if has(d, 'al-switch__input'))
+    return (findings, n)
 
 
 def run():
@@ -283,7 +227,7 @@ def run():
     elif n == 0:
         print('    PENDING - no switch in this HTML. Nothing measured is not nothing wrong.')
     else:
-        print('    the five rules pass on every switch')
+        print(f'    the {len(contract.load("switch")["rules"])} rules of contract.json pass on every switch')
     print('-' * 78)
 
     json.dump({
@@ -294,13 +238,7 @@ def run():
         'markupSource': os.path.relpath(path, ROOT),
         'markupChecked': n,
         'markupPending': n == 0,
-        'markupRules': [
-            'native input type="checkbox" role="switch" inside <label class="al-switch">; no other role="switch", no aria-pressed',
-            'a visible, non-empty label, no aria-label and no aria-labelledby',
-            'no aria-checked: the state is the native checked',
-            'no required and no aria-invalid: the switch has no error',
-            'decorative thumb: aria-hidden="true"',
-        ],
+        'markupRules': [r.get('why', '') for r in contract.load('switch')['rules']],
         'fails': len(fails),
         'exceptions': {k: len([l for l in exceptions if l['exc'] == k]) for k in PENDING},
         'codeOnlyStates': list(CODE_ONLY),

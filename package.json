@@ -23,6 +23,7 @@
     "./al.css": "./dist/al.css",
     "./foundation.css": "./dist/foundation.css",
     "./tokens.json": "./dist/tokens.json",
+    "./components.json": "./dist/components.json",
     "./components/*": "./dist/components/*",
     "./icons/*": "./dist/icons/*",
     "./package.json": "./package.json"
